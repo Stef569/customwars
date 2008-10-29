@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Ant-Version: Apache Ant 1.6.5
+Created-By: 1.6.0_01-b06 (Sun Microsystems Inc.)
+Main-Class: cwsource.Main
+Class-Path: lib/easyogg.jar lib/jogg-0.0.7.jar lib/jorbis-0.0.15.jar l
+ ib/startup2.jar lib/lib
+X-COMMENT: Main-Class will be added automatically by build
+
