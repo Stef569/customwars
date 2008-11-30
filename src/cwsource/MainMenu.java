@@ -10,6 +10,7 @@ package cwsource;
 import java.awt.*;
 import javax.swing.*;
 import java.io.*;
+
 import javax.imageio.*;
 import java.awt.image.*;
 import java.awt.event.*;
@@ -1925,7 +1926,16 @@ public void drawNewLoadScreen(Graphics2D g){
 		    //load categories
 	        String mapsLocation = ResourceLoader.properties.getProperty("mapsLocation");
 	        mapsLocation = mapsLocation + "/";
-		    File[] dirs = new File(mapsLocation).listFiles();
+	        
+	        FilenameFilter filter = new FilenameFilter() {
+	        	public boolean accept(File dir, String name) {
+	        		return !name.startsWith(".");
+	        	}
+	        };
+	        
+	        File[] dirs = new File(mapsLocation).listFiles(filter);
+		    
+		    
 		    Vector<String> v = new Vector();
 		    int numcats = 0;
 		    for(int i = 0; i < dirs.length; i++){
@@ -1945,6 +1955,7 @@ public void drawNewLoadScreen(Graphics2D g){
 		    
 		    cat = 0;
 		    subcat = 0;
+		    
 		    mapDir = new File(mapsLocation + "/" + cats[cat]);
 		    loadMapDisplayNames();
 		    mapPage = 0;
