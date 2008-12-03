@@ -10,6 +10,9 @@ package cwsource;
 //import java.util.Random;
 import java.io.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public abstract class CO implements Serializable{
     //Style Constants
     protected final int ORANGE_STAR = 0;
@@ -35,6 +38,7 @@ public abstract class CO implements Serializable{
     protected String superPowerStats;
     protected String intel; //Holds the CO intel shown on the CO select screen
     protected String[] defeat;
+	final static Logger logger = LoggerFactory.getLogger(CO.class); 
     
     protected String[] COPower;            //Quotes that the CO uses when activating their CO Power
     protected String[] Victory;           //Quotes that the CO uses when victorious
@@ -139,8 +143,8 @@ public abstract class CO implements Serializable{
     public void activateCOP(){
         if(stars >= COPStars){
             //Random r = new Random();
-            System.out.println(name + ": " + COPower[army.getBattle().getRNG().nextInt(6)]);
-            System.out.println(COPName + "!");
+            logger.info(name + ": " + COPower[army.getBattle().getRNG().nextInt(6)]);
+            logger.info(COPName + "!");
             COPower();
             stars -= COPStars;
             powerUses++;
@@ -201,8 +205,8 @@ public abstract class CO implements Serializable{
     public void activateSCOP(){
         if(stars == maxStars){
             //Random r = new Random();
-            System.out.println(name + ": " + COPower[army.getBattle().getRNG().nextInt(6)]);
-            System.out.println(SCOPName + "!");
+            logger.info(name + ": " + COPower[army.getBattle().getRNG().nextInt(6)]);
+            logger.info(SCOPName + "!");
             superCOPower();
             stars = 0;
             powerUses++;
@@ -443,7 +447,7 @@ public abstract class CO implements Serializable{
         return false;
     }
     public void useSpecial1(Unit owned, Location target){
-        System.out.println("not overridden!");
+        logger.info("not overridden!");
     }
     //Call to see if a unit can be the target of the special ability
     public boolean canUseSpecial2(Unit owned){

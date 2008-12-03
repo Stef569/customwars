@@ -12,6 +12,9 @@ import javax.swing.*;
 import java.io.*;
 import java.awt.event.*;
 import javax.swing.event.MouseInputListener;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 //import javax.swing.filechooser.FileNameExtensionFilter;
 import java.util.Random;
 
@@ -28,6 +31,7 @@ public class MapEditor extends CWScreen
     private boolean constantMode;   //is "constant mode" on?
     private boolean minimap;    //is the minimap on?
     private boolean showCursor;
+	final static Logger logger = LoggerFactory.getLogger(MapEditor.class); 
     //private boolean fatMenu;
     private InGameMenu currentMenu = null; //contains the active menu (null if no menus are active)
 
@@ -1234,9 +1238,9 @@ public class MapEditor extends CWScreen
         for(int i = 0; i < colors.length; i++)colors[i]--;
      
         //DEBUG
-        /*System.out.println("Number of Armies: " + numArmies);
+        /*
+
         for(int i = 0; i < colors.length; i++)System.out.print(colors[i]);
-        System.out.println();
      
         try{
             DataOutputStream write = new DataOutputStream(new FileOutputStream(mapFilename));
@@ -1390,7 +1394,7 @@ public class MapEditor extends CWScreen
 		        String x = fc.getSelectedFile().getPath();
 		        if(x.length()<5 || !x.substring(x.length()-4).equals(".map"))x += ".map";
 		        mapFilename = x;
-		        System.out.println(mapFilename);
+		        logger.info("mapfilename =" +mapFilename );
 		        saveMap();
 		    }
 		}else if(menuselection == 4){
@@ -1417,7 +1421,7 @@ public class MapEditor extends CWScreen
 		    if(returnVal != 1){
 		        String x = fc.getSelectedFile().getPath();
 		        if(mapFilename.length()<5 || (!mapFilename.substring(mapFilename.length()-4).equals(".map") && !mapFilename.substring(mapFilename.length()-4).equals(".awd")))mapFilename += ".map";
-		        System.out.println(x);
+		        logger.info(x);
 		        File saveFile = new File(x);
 		        if(saveFile.exists()){
 		            mapFilename = x;
@@ -1771,12 +1775,12 @@ public class MapEditor extends CWScreen
 			if(constantMode)
 			{
 				constantMode = false;
-				System.out.println("Constant Mode Off");
+				logger.info("Constant Mode Off");
 			}
 			else
 			{
 				constantMode = true;
-				System.out.println("Constant Mode On");
+				logger.info("Constant Mode On");
 			}
 		}
 
@@ -1898,7 +1902,7 @@ public class MapEditor extends CWScreen
         public void mouseClicked(MouseEvent e){
             int x = e.getX() - parentFrame.getInsets().left;
             int y = e.getY() - parentFrame.getInsets().top;
-            System.out.println(x + "," + y + ":" + e.getButton());
+            logger.info(x + "," + y + ":" + e.getButton());
             
             if(e.getButton() == MouseEvent.BUTTON1)
             {
@@ -1967,7 +1971,7 @@ public class MapEditor extends CWScreen
         public void mousePressed(MouseEvent e) {
             int x = e.getX() - parentFrame.getInsets().left;
             int y = e.getY() - parentFrame.getInsets().top;
-            System.out.println(x + "," + y + ":" + e.getButton());
+            logger.info(x + "," + y + ":" + e.getButton());
             
             if(e.getButton() == MouseEvent.BUTTON1){
                 if(!menu && !umenu && !tmenu && !smenu){

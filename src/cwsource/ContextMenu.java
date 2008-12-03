@@ -12,8 +12,12 @@ import java.awt.*;
 import java.awt.image.*;
 import java.util.ArrayList;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class ContextMenu extends InGameMenu {
     Unit u;
+	final static Logger logger = LoggerFactory.getLogger(ContextMenu.class); 
     
     //[NEW]
     private static ArrayList<Location> contextTargs = new ArrayList<Location>();
@@ -68,73 +72,73 @@ public class ContextMenu extends InGameMenu {
        	String soundLocation = ResourceLoader.properties.getProperty("soundLocation");
         SFX.playClip(soundLocation + "/ok.wav");
         if(displayItems[item].equals("Wait")){
-            System.out.println("Wait");
+            logger.info("Wait");
             return 0;
         }else if(displayItems[item].equals("Fire")){
-            System.out.println("Fire");
+            logger.info("Fire");
             return 1;
         }else if(displayItems[item].equals("Capture")){
-            System.out.println("Capture");
+            logger.info("Capture");
             return 2;
         }else if(displayItems[item].equals("Resupply")){
-            System.out.println("Resupply");
+            logger.info("Resupply");
             return 3;
         }else if(displayItems[item].equals("Unload")){
             if(item-1>=0){
                 if(displayItems[item-1].equals("Unload")){
-                    System.out.println("Unload #2");
+                    logger.info("Unload #2");
                     return 7;
                 }
             }
-            System.out.println("Unload #1");
+            logger.info("Unload #1");
             return 6;
         }else if(displayItems[item].equals("Repair")){
-            System.out.println("Repair");
+            logger.info("Repair");
             return 10;
         }else if(displayItems[item].equals("Launch")){
-            System.out.println("Launch");
+            logger.info("Launch");
             return 8;
         }else if(displayItems[item].equals("Explode")){
-            System.out.println("Explode");
+            logger.info("Explode");
             return 9;
         }else if(displayItems[item].equals("Join")){
-            System.out.println("Join");
+            logger.info("Join");
             return 4;
         }else if(displayItems[item].equals("Load")){
-            System.out.println("Load");
+            logger.info("Load");
             return 5;
         }else if(displayItems[item].equals("Dive")){
-            System.out.println("Dive");
+            logger.info("Dive");
             return 11;
         }else if(displayItems[item].equals("Rise")){
-            System.out.println("Rise");
+            logger.info("Rise");
             return 12;
         }else if(displayItems[item].equals("Hide")){
-            System.out.println("Hide");
+            logger.info("Hide");
             return 13;
         }else if(displayItems[item].equals("Appear")){
-            System.out.println("Appear");
+            logger.info("Appear");
             return 14;
         }else if(displayItems[item].equals(u.getArmy().getCO().special1)){
-            System.out.println(u.getArmy().getCO().special1);
+            logger.info(u.getArmy().getCO().special1);
             return 22;
         }else if(displayItems[item].equals(u.getArmy().getCO().special2)){
-            System.out.println(displayItems[item].equals(u.getArmy().getCO().special2));
+            logger.info(""+displayItems[item].equals(u.getArmy().getCO().special2));
             return 23;
         }else if(displayItems[item].equals("Takeoff")){
             if(item-1>=0){
                 if(displayItems[item-1].equals("Takeoff")){
-                    System.out.println("Takeoff #2");
+                    logger.info("Takeoff #2");
                     return UNIT_COMMANDS.LAUNCH2;
                 }
             }
-            System.out.println("Takeoff #1");
+            logger.info("Takeoff #1");
             return UNIT_COMMANDS.LAUNCH;
         }else if(displayItems[item].equals("Build")){
-            System.out.println("Build");
+            logger.info("Build");
             return UNIT_COMMANDS.BUILD;
         }else if(displayItems[item].equals("No.")){
-            System.out.println("Invalid move");
+            logger.info("Invalid move");
         }else{
             System.err.println("ERROR, INVALID CONTEXT MENU ITEM");
         }

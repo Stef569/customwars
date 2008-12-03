@@ -8,8 +8,10 @@ package cwsource;
  */
 
 import java.io.*;
-import java.util.Vector;
 import java.util.*;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Map implements Serializable{
     
@@ -22,7 +24,7 @@ public class Map implements Serializable{
     private String description=""; //The map's description
     private Vector commands;
     //maxRow and maxCol are exclusive limits
-    
+	final static Logger logger = LoggerFactory.getLogger(Map.class); 
     //constructor
     public Map(int col, int row) {
         map = new Tile[col][row];
@@ -125,10 +127,11 @@ public class Map implements Serializable{
     
     //Tests to make sure that the location is on the map
     public boolean onMap(Location l){
-        if(l.getCol() >= 0 &&  l.getCol() < maxCol)
-            if(l.getRow() >= 0 && l.getRow() < maxRow)
+        if(l.getCol() >= 0 &&  l.getCol() < maxCol){
+            if(l.getRow() >= 0 && l.getRow() < maxRow){
                 return true;
-        //System.out.println("Trying to perform action off map");
+            }
+        }
         return false;
     }
     
@@ -197,7 +200,7 @@ public class Map implements Serializable{
     //makes an explosion (ex. Silos, Black Bombs)
     public void doExplosion(int radius, int damage, int x, int y, boolean paralyze){
         int offset = 0;
-        System.out.println("Center: " + x + "," + y);
+        logger.info("Center: " + x + "," + y);
         for(int i=-1*radius; i <= radius; i++){
             for(int j=-1*offset; j <= offset; j++){
                 if(onMap(x+j,y+i) && map[x+j][y+i].getUnit()!=null){
@@ -343,9 +346,9 @@ public class Map implements Serializable{
                    ll.add(map[col][row].getUnit());
         if(ll.size() == 0)
             return null;
-        System.out.println(ll.size());
+        logger.info("size:"+ll.size());
         Unit[] tagg = new Unit[ll.size()];
-        System.out.println(tagg.length);
+        logger.info("tagg.length:"+tagg.length);
         for(int i = 0; i < ll.size(); i++)
             tagg[i] =(Unit) ll.get(i);
         return tagg;

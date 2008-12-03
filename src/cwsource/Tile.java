@@ -8,11 +8,15 @@ package cwsource;
  */
 import java.io.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class Tile implements Locatable,Serializable{
     
     private Location loc;   //This tile's location
     private Terrain ter;    //This tile's terrain type
     private Unit unit;      //The unit occupying this tile (null if empty)
+	final static Logger logger = LoggerFactory.getLogger(Tile.class); 
     
     //constructor: makes a new tile at the given location with the given unit
     public Tile(int col, int row, Terrain tera, Unit un) {
@@ -559,7 +563,7 @@ public class Tile implements Locatable,Serializable{
         if(unit == null)
             unit = u;
         else
-            System.out.println("Error: Trying to add a Unit to Tile at: " + loc + ", Another Unit already present");
+            logger.info("Error: Trying to add a Unit to Tile at: " + loc + ", Another Unit already present");
     }
     
     //removes the occupying unit from the tile

@@ -9,6 +9,9 @@ package cwsource;
 
 import java.io.*;           //Necessary for file input
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class BaseDMG {
     public final static int NUM_UNITS = 32;
     //0=Infantry 1=Mech 2=Tank 3=Md Tank 4=Recon 5=Anti-Air 6=Missiles 7=Artillery 8=Rockets 9=APC
@@ -17,6 +20,7 @@ public class BaseDMG {
     private static int[][] altDMG = new int [NUM_UNITS][NUM_UNITS];   //Holds the Base Damage for the Secondary Weapon
     private static int[][] baseDMGb = new int[NUM_UNITS][NUM_UNITS];   //Holds the Base Damage for the Primary Weapon in Balance Mode
     private static int[][] altDMGb = new int [NUM_UNITS][NUM_UNITS];   //Holds the Base Damage for the Secondary Weapon in Balance Mode
+	final static Logger logger = LoggerFactory.getLogger(BaseDMG.class); 
     
     public static final int BASE_DMG = 0;
     public static final int ALT_DMG = 1;
@@ -357,7 +361,7 @@ public class BaseDMG {
                 }
             }
         }catch(Exception e){
-            System.out.println(e);
+        	logger.error("error:", e);
         }
     }
     
@@ -443,7 +447,7 @@ public class BaseDMG {
                 }
             }
         }catch(Exception e){
-            System.out.println(e);
+            logger.error("error=", e);
         }
     }
     
@@ -452,7 +456,7 @@ public class BaseDMG {
         try{
  
         }catch(Exception e){
-            System.out.println(e);
+
         }
     }*/
     
@@ -523,11 +527,9 @@ public class BaseDMG {
                     foundNum = true;
                     foundAt = i;
                 }
-                //System.out.println(c + " is a number");
             }else if(c == '-' && !foundNum){
                 foundNum = true;
                 foundAt = i;
-                //System.out.println(c + " is a minus");
             }else if(foundNum){
                 String sub = input.substring(foundAt,i--);
                 output[j] = Integer.parseInt(sub);

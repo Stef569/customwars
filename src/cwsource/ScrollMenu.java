@@ -61,7 +61,6 @@ public abstract class ScrollMenu extends InGameMenu{
             g.setColor(Color.black);
             g.setFont(new Font("SansSerif", Font.BOLD,16));
             for(int i=currentPosition; i<maxItems+currentPosition; i++){
-                //System.out.println(displayItems[i]);
                 g.drawImage(icons[i],mx+16,my+((i-currentPosition)*16)-(icons[i].getHeight(screen)-16),screen);
                 g.drawString(displayItems[i],mx+32,my+((i-currentPosition)*16)+16);
             }

@@ -15,6 +15,10 @@ import javax.imageio.*;
 import java.awt.image.*;
 import java.awt.event.*;
 import javax.swing.event.MouseInputListener;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.awt.color.*;
 //import javax.swing.filechooser.FileNameExtensionFilter;
 import java.net.*;
@@ -82,6 +86,7 @@ public class MainMenu extends JComponent{
     private int skipMax = 0;
     public boolean altcostume;
     public boolean mainaltcostume;
+	final static Logger logger = LoggerFactory.getLogger(MainMenu.class); 
     
     private CO[][] armyArray = new CO[8][14];
     
@@ -1460,19 +1465,19 @@ public void drawNewLoadScreen(Graphics2D g){
 	private void networkInfoScreenActions() {
 		if(item == 0){
 		    //refresh
-		    System.out.println("Refreshing");
+		    logger.info("Refreshing");
 		    refreshInfo();
 		}else if(item == 1){
 		    //play game
-		    System.out.println("Play Game");
+		    logger.info("Play Game");
 		    //refresh first
 		    refreshInfo();
 		    
 		    String reply = sendCommandToMain("canplay",Options.gamename+"\n"+Options.username+"\n"+Options.password);
-		    System.out.println(reply);
+		    logger.info(reply);
 		    if(reply.equals("permission granted")){
 		        if(day == 1){
-		            System.out.println("Starting Game");
+		            logger.info("Starting Game");
 		            //load map from server
 		            getFile("dmap.pl", Options.gamename, "./temporarymap.map");
 		            filename = "./temporarymap.map";
@@ -1587,9 +1592,9 @@ public void drawNewLoadScreen(Graphics2D g){
 		        //register new game
 		        String reply = sendCommandToMain("newgame",Options.gamename+"\n"+Options.masterpass+"\n"+numArmies+"\n"+Options.version+"\n"+comment+"\n"+mapName+"\n"+Options.username);
 		        while(!reply.equals("game created")){
-		            System.out.println(reply);
+		            logger.info(reply);
 		            if(reply.equals("no")){
-		                System.out.println("Game name taken");
+		                logger.info("Game name taken");
 		                JOptionPane.showMessageDialog(this,"Game name taken");
 		                Options.gamename = JOptionPane.showInputDialog("Type in a new name for your game");
 		                if(Options.gamename == null)return;
@@ -1604,12 +1609,12 @@ public void drawNewLoadScreen(Graphics2D g){
 		        
 		        //upload map
 		        String temp = sendFile("umap.pl", Options.gamename, filename);
-		        System.out.println(temp);
+		        logger.info(temp);
 		        //TODO: keep retrying if failed
 		        
 		        //Join Game
 		        reply = sendCommandToMain("join",Options.gamename+"\n"+Options.masterpass+"\n"+Options.username+"\n"+Options.password+"\n"+joinnum+"\n"+Options.version);
-		        System.out.println(reply);
+		        logger.info(reply);
 		        //TODO: keep retrying if failed OR merge with game creation in this case
 		        
 		        //Goto info screen
@@ -1673,7 +1678,7 @@ public void drawNewLoadScreen(Graphics2D g){
 		else if(item==3)
 		{
 		    //prompt for replay name
-		    System.out.println("REPLAY MODE");
+		    logger.info("REPLAY MODE");
 		    //Load Replay
 		    JFileChooser fc = new JFileChooser();
 		    fc.setDialogTitle("Load Replay");
@@ -1704,7 +1709,7 @@ public void drawNewLoadScreen(Graphics2D g){
 		        }
 		    }
 		}else if(item==4){
-		    System.out.println("Create Server Game");
+		    logger.info("Create Server Game");
 		    //try to connect to the server first to see that the user's URL is correct
 		    if(!tryToConnect())return;
 		    
@@ -1713,9 +1718,9 @@ public void drawNewLoadScreen(Graphics2D g){
 		    if(Options.gamename == null)return;
 		    String reply = sendCommandToMain("qname",Options.gamename);
 		    while(!reply.equals("yes")){
-		        System.out.println(reply);
+		        logger.info(reply);
 		        if(reply.equals("no")){
-		            System.out.println("Game name already taken");
+		            logger.info("Game name already taken");
 		            JOptionPane.showMessageDialog(this,"Game name already taken");
 		        }
 		        Options.gamename = JOptionPane.showInputDialog("Type in a name for your game");
@@ -1745,13 +1750,13 @@ public void drawNewLoadScreen(Graphics2D g){
 		    }
 		    
 		    //start game
-		    System.out.println("starting game");
+		    logger.info("starting game");
 		    Options.snailGame = true;
 		    startCOSelect = true;
 		    item = 0;
 		    
 		}else if(item==5){
-		    System.out.println("Join Server Game");
+		    logger.info("Join Server Game");
 		    
 		    //try to connect to the server first to see that the user's URL is correct
 		    if(!tryToConnect())return;
@@ -1799,9 +1804,9 @@ public void drawNewLoadScreen(Graphics2D g){
 		    //Join
 		    String reply = sendCommandToMain("join",Options.gamename+"\n"+Options.masterpass+"\n"+Options.username+"\n"+Options.password+"\n"+slot+"\n"+Options.version);
 		    while(!reply.equals("join successful")){
-		        System.out.println(reply);
+		        logger.info(reply);
 		        if(reply.equals("no")){
-		            System.out.println("Game does not exist");
+		            logger.info("Game does not exist");
 		            Options.gamename = JOptionPane.showInputDialog("Type in the name of the game you want to join");
 		            if(Options.gamename == null){
 		                title = true;
@@ -1815,7 +1820,7 @@ public void drawNewLoadScreen(Graphics2D g){
 		                return;
 		            }
 		        }else if(reply.equals("wrong password")){
-		            System.out.println("Incorrect Password");
+		            logger.info("Incorrect Password");
 		            Options.gamename = JOptionPane.showInputDialog("Type in the name of the game you want to join");
 		            if(Options.gamename == null){
 		                title = true;
@@ -1829,7 +1834,7 @@ public void drawNewLoadScreen(Graphics2D g){
 		                return;
 		            }
 		        }else if(reply.equals("out of range")){
-		            System.out.println("Army choice out of range or invalid");
+		            logger.info("Army choice out of range or invalid");
 		            slot = JOptionPane.showInputDialog("Type in the number of the army you will command");
 		            if(slot == null){
 		                title = true;
@@ -1837,7 +1842,7 @@ public void drawNewLoadScreen(Graphics2D g){
 		                return;
 		            }
 		        }else if(reply.equals("slot taken")){
-		            System.out.println("Army choice already taken");
+		            logger.info("Army choice already taken");
 		            slot = JOptionPane.showInputDialog("Type in the number of the army you will command");
 		            if(slot == null){
 		                title = true;
@@ -1845,7 +1850,7 @@ public void drawNewLoadScreen(Graphics2D g){
 		                return;
 		            }
 		        }else{
-		            System.out.println("Other problem");
+		            logger.info("Other problem");
 		            JOptionPane.showMessageDialog(this,"Version Mismatch");
 		            Options.snailGame = false;
 		            snailinfo = false;
@@ -1867,7 +1872,7 @@ public void drawNewLoadScreen(Graphics2D g){
 		    return;
 		    
 		}else if(item==6){
-		    System.out.println("Log in to Server Game");
+		    logger.info("Log in to Server Game");
 		    
 		    //try to connect to the server first to see that the user's URL is correct
 		    if(!tryToConnect())return;
@@ -1892,7 +1897,7 @@ public void drawNewLoadScreen(Graphics2D g){
 		    
 		    //try to connect
 		    String reply = sendCommandToMain("validup",Options.gamename+"\n"+Options.username+"\n"+Options.password+"\n"+Options.version);
-		    System.out.println(reply);
+		    logger.info(reply);
 		    if(!reply.equals("login successful")){
 		        if(reply.equals("version mismatch"))JOptionPane.showMessageDialog(this,"Version Mismatch");
 		        else JOptionPane.showMessageDialog(this,"Problem logging in, either the username/password is incorrect or the game has ended");
@@ -1945,7 +1950,7 @@ public void drawNewLoadScreen(Graphics2D g){
 		        }
 		    }
 		    if(numcats == 0){
-		        System.out.println("NO MAP DIRECTORIES! QUITTING!");
+		        logger.info("NO MAP DIRECTORIES! QUITTING!");
 		        System.exit(1);
 		    }
 		    cats = new String[numcats];
@@ -1992,11 +1997,11 @@ public void drawNewLoadScreen(Graphics2D g){
 		    cx = 0;
 		    cy = 0;
 		    
-		    System.out.println("Number of COs: "+numCOs);
-		    System.out.println("Number of Armies: "+numArmies);
+		    logger.info("Number of COs: "+numCOs);
+		    logger.info("Number of Armies: "+numArmies);
 		    
 		    if(Options.snailGame && numCOs == 2){
-		        System.out.println("Stop for snail game");
+		        logger.info("Stop for snail game");
 		        if(insertNewCO){
 		            //load mission
 		            getFile("dsave.pl", Options.gamename, "./temporarysave.save");
@@ -2022,8 +2027,8 @@ public void drawNewLoadScreen(Graphics2D g){
 		            if(i%2==0)coSelections[i]=1;
 		            else coSelections[i]=0;
 		        }
-		        for(int i = 0; i < coSelections.length; i++)System.out.println(coSelections[i]);
-		        System.out.println("Number of COs: "+numCOs);
+		        for(int i = 0; i < coSelections.length; i++)logger.info(""+coSelections[i]);
+		        logger.info("Number of COs: "+numCOs);
 		        if(numArmies > 2){
 		            COselect = false;
 		            sideSelect = true;
@@ -2043,8 +2048,8 @@ public void drawNewLoadScreen(Graphics2D g){
 		        //coSelections[numCOs] = cx+cy*4;
 		        //numCOs++;
 		        
-		        for(int i = 0; i < coSelections.length; i++)System.out.println(coSelections[i]);
-		        System.out.println("Number of COs: "+numCOs);
+		        for(int i = 0; i < coSelections.length; i++)logger.info(""+coSelections[i]);
+		        logger.info("Number of COs: "+numCOs);
 		        
 		        //int[] sideSelect = {0,0};
 		        if(numCOs > 4){
@@ -2179,7 +2184,7 @@ public void drawNewLoadScreen(Graphics2D g){
 		else if(item==1)
 		{
 		    //Start the map editor
-		    System.out.println("Map Editor");
+		    logger.info("Map Editor");
 		    Map m = new Map(30,20);
 		    //Map m = new Map(16,12);
 		    Battle bat = new Battle(m);
@@ -2223,17 +2228,17 @@ public void drawNewLoadScreen(Graphics2D g){
             }
             in.close();
         }catch(MalformedURLException e1){
-            System.out.println("Bad URL");
+            logger.error("Bad URL");
             JOptionPane.showMessageDialog(this,"Bad URL: "+Options.getServerName());
             return false;
         }catch(IOException e2){
-            System.out.println("Unable to connect to the server at "+Options.getServerName());
+            logger.error("Unable to connect to the server at "+Options.getServerName());
             JOptionPane.showMessageDialog(this,"Unable to connect to the server at "+Options.getServerName());
             return false;
         }
-        System.out.println(reply);
+        logger.info(reply);
         if(!reply.equals("success")){
-            System.out.println("Could not connect to server");
+        	logger.info("Could not connect to server");
             return false;
         }
         
@@ -2274,11 +2279,11 @@ public void drawNewLoadScreen(Graphics2D g){
             }
             in.close();
         }catch(MalformedURLException e1){
-            System.out.println("Bad URL "+Options.getServerName());
+            logger.info("Bad URL "+Options.getServerName());
             JOptionPane.showMessageDialog(this,"Bad URL: "+Options.getServerName());
             return null;
         }catch(IOException e2){
-            System.out.println("Connection Problem during command "+command+" with information:\n"+extra);
+            logger.error("Connection Problem during command "+command+" with information:\n"+extra);
             JOptionPane.showMessageDialog(this,"Connection Problem during command "+command+" with the following information:\n"+extra);
             return null;
         }
@@ -2296,7 +2301,7 @@ public void drawNewLoadScreen(Graphics2D g){
             con.setUseCaches(false);
             con.setRequestProperty("Content-type", "text/plain");
             byte buffer[] = new byte[1];
-            System.out.println("opening file");
+            logger.info("opening file");
             File source = new File(file);
             con.setRequestProperty("Content-length", (input.length()+1+source.length())+"");
             
@@ -2326,11 +2331,11 @@ public void drawNewLoadScreen(Graphics2D g){
             }
             in.close();
         }catch(MalformedURLException e1){
-            System.out.println("Bad URL "+Options.getServerName());
+            logger.error("Bad URL "+Options.getServerName());
             JOptionPane.showMessageDialog(this,"Bad URL: "+Options.getServerName());
             return null;
         }catch(IOException e2){
-            System.out.println("Connection problem, unable to send file");
+            logger.error("Connection problem, unable to send file");
             JOptionPane.showMessageDialog(this,"Connection problem, unable to send file");
             return null;
         }
@@ -2346,7 +2351,7 @@ public void drawNewLoadScreen(Graphics2D g){
             con.setDoInput(true);
             con.setUseCaches(false);
             con.setRequestProperty("Content-type", "text/plain");
-            System.out.println("opening file");
+            logger.info("opening file");
             File source = new File(file);
             con.setRequestProperty("Content-length", input.length()+"");
             PrintStream out = new PrintStream(con.getOutputStream());
@@ -2366,11 +2371,11 @@ public void drawNewLoadScreen(Graphics2D g){
             in.close();
             output.close();
         }catch(MalformedURLException e1){
-            System.out.println("Bad URL "+Options.getServerName());
+            logger.error("Bad URL "+Options.getServerName());
             JOptionPane.showMessageDialog(this,"Bad URL: "+Options.getServerName());
             return false;
         }catch(IOException e2){
-            System.out.println("Connection problem, unable to get file from server");
+            logger.error("Connection problem, unable to get file from server");
             JOptionPane.showMessageDialog(this,"Connection problem, unable to get file from server");
             return false;
         }
@@ -2582,7 +2587,7 @@ public void drawNewLoadScreen(Graphics2D g){
     
     public void refreshInfo(){
         String reply = sendCommandToMain("getturn",Options.gamename);
-        System.out.println(reply);
+        logger.info(reply);
         if(reply.equals("no")){
             snailinfo = false;
             newload = true;
@@ -3124,7 +3129,7 @@ public void drawNewLoadScreen(Graphics2D g){
                     loadMapDisplayNames();
                 }
             }else if(keypress == Options.constmode){
-                System.out.println("Alternating Costumes");
+                logger.info("Alternating Costumes");
                 if(altcostume)
                     altcostume = false;
                 else
@@ -3138,7 +3143,7 @@ public void drawNewLoadScreen(Graphics2D g){
                             Random r = new Random();
                             int sel = r.nextInt(COList.getListing().length);
                             CO sc = COList.getListing()[sel];
-                            System.out.println("Selecting "+sc.getName());
+                            logger.info("Selecting "+sc.getName());
                             selectedArmy = sc.getStyle();
                             for(int i=0;armyArray[selectedArmy][i]!=null;i++){
                                 if(armyArray[selectedArmy][i]==sc){
@@ -3167,7 +3172,7 @@ public void drawNewLoadScreen(Graphics2D g){
         public void mouseClicked(MouseEvent e){
             int x = e.getX() - parentFrame.getInsets().left;
             int y = e.getY() - parentFrame.getInsets().top;
-            //System.out.println(x + "," + y + ":" + e.getButton());
+            //logger.info(x + "," + y + ":" + e.getButton());
             
             if(e.getButton() == e.BUTTON1){
                 //first mouse button
@@ -3304,7 +3309,7 @@ public void drawNewLoadScreen(Graphics2D g){
                         String message = JOptionPane.showInputDialog("Type in your chat message");
                         if(message == null)return;
                         String reply = sendCommandToMain("sendchat",Options.gamename+"\n"+Options.username+"\n"+message);
-                        System.out.println(reply);
+                        logger.info(reply);
                         refreshInfo();
                     }else if(x >460  && x <480  && y > 0 && y < 20){
                         pressedPGUP();
@@ -3354,7 +3359,7 @@ public void drawNewLoadScreen(Graphics2D g){
     {
 
     	boolean startCOSelect = false;
-        System.out.println("Create Server Game");
+        logger.info("Create Server Game");
         //try to connect to the server first to see that the user's URL is correct
         if(!tryToConnect())return;
         
@@ -3363,9 +3368,9 @@ public void drawNewLoadScreen(Graphics2D g){
         if(Options.gamename == null)return;
         String reply = sendCommandToMain("qname",Options.gamename);
         while(!reply.equals("yes")){
-            System.out.println(reply);
+            logger.info(reply);
             if(reply.equals("no")){
-                System.out.println("Game name already taken");
+                logger.info("Game name already taken");
                 JOptionPane.showMessageDialog(this,"Game name already taken");
             }
             Options.gamename = JOptionPane.showInputDialog("Type in a name for your game");
@@ -3395,7 +3400,7 @@ public void drawNewLoadScreen(Graphics2D g){
         }
         
         //start game
-        System.out.println("starting game");
+        logger.info("starting game");
         Options.snailGame = true;
         startCOSelect = true;
         item = 0;
@@ -3419,7 +3424,7 @@ public void drawNewLoadScreen(Graphics2D g){
                 }
             }
             if(numcats == 0){
-                System.out.println("NO MAP DIRECTORIES! QUITTING!");
+                logger.info("NO MAP DIRECTORIES! QUITTING!");
                 System.exit(1);
             }
             cats = new String[numcats];
@@ -3442,7 +3447,7 @@ public void drawNewLoadScreen(Graphics2D g){
     {
 
     	boolean startCOSelect = false;
-        System.out.println("Create Server Game");
+        logger.info("Create Server Game");
         //try to connect to the server first to see that the user's URL is correct
         if(!tryToConnect())return;
         
@@ -3453,9 +3458,9 @@ public void drawNewLoadScreen(Graphics2D g){
         if(Options.gamename == null)return;
         String reply = sendCommandToMain("qname",Options.gamename);
         while(!reply.equals("yes")){
-            System.out.println(reply);
+            logger.info(reply);
             if(reply.equals("no")){
-                System.out.println("Game name already taken");
+                logger.info("Game name already taken");
                 JOptionPane.showMessageDialog(this,"Game name already taken");
             }
             Options.gamename = JOptionPane.showInputDialog("Type in a name for your game");
@@ -3484,7 +3489,7 @@ public void drawNewLoadScreen(Graphics2D g){
         if(Options.password == null)return;
         
         //start game
-        System.out.println("starting game");
+        logger.info("starting game");
         Options.snailGame = true;
         startCOSelect = true;
         item = 0;
@@ -3507,7 +3512,7 @@ public void drawNewLoadScreen(Graphics2D g){
                 }
             }
             if(numcats == 0){
-                System.out.println("NO MAP DIRECTORIES! QUITTING!");
+                logger.info("NO MAP DIRECTORIES! QUITTING!");
                 System.exit(1);
             }
             cats = new String[numcats];
@@ -3529,7 +3534,7 @@ public void drawNewLoadScreen(Graphics2D g){
     }
     public void LaunchLoginGame(String gamename, String username, String password)
     {
-        System.out.println("Log in to Server Game");
+        logger.info("Log in to Server Game");
         
         //try to connect to the server first to see that the user's URL is correct
         if(!tryToConnect())return;
@@ -3547,7 +3552,7 @@ public void drawNewLoadScreen(Graphics2D g){
         
         //try to connect
         String reply = sendCommandToMain("validup",Options.gamename+"\n"+Options.username+"\n"+Options.password+"\n"+Options.version);
-        System.out.println(reply);
+        logger.info(reply);
         if(!reply.equals("login successful")){
             if(reply.equals("version mismatch"))JOptionPane.showMessageDialog(this,"Version Mismatch");
             else JOptionPane.showMessageDialog(this,"Problem logging in, either the username/password is incorrect or the game has ended");
@@ -3567,7 +3572,7 @@ public void drawNewLoadScreen(Graphics2D g){
     
     public void LaunchJoinGame(String gamename, String masterpassword, String username, String password, int slotnumber)
     {
-        System.out.println("Join Server Game");
+        logger.info("Join Server Game");
         
         //try to connect to the server first to see that the user's URL is correct
         if(!tryToConnect())return;
@@ -3591,9 +3596,9 @@ public void drawNewLoadScreen(Graphics2D g){
         //Join
         String reply = sendCommandToMain("join",Options.gamename+"\n"+Options.masterpass+"\n"+Options.username+"\n"+Options.password+"\n"+slot+"\n"+Options.version);
         while(!reply.equals("join successful")){
-            System.out.println(reply);
+            logger.info(reply);
             if(reply.equals("no")){
-                System.out.println("Game does not exist");
+                logger.info("Game does not exist");
                 Options.gamename = JOptionPane.showInputDialog("Type in the name of the game you want to join");
                 if(Options.gamename == null){
                     title = true;
@@ -3607,7 +3612,7 @@ public void drawNewLoadScreen(Graphics2D g){
                     return;
                 }
             }else if(reply.equals("wrong password")){
-                System.out.println("Incorrect Password");
+                logger.info("Incorrect Password");
                 Options.gamename = JOptionPane.showInputDialog("Type in the name of the game you want to join");
                 if(Options.gamename == null){
                     title = true;
@@ -3621,7 +3626,7 @@ public void drawNewLoadScreen(Graphics2D g){
                     return;
                 }
             }else if(reply.equals("out of range")){
-                System.out.println("Army choice out of range or invalid");
+                logger.info("Army choice out of range or invalid");
                 slot = JOptionPane.showInputDialog("Type in the number of the army you will command");
                 if(slot == null){
                     title = true;
@@ -3629,7 +3634,7 @@ public void drawNewLoadScreen(Graphics2D g){
                     return;
                 }
             }else if(reply.equals("slot taken")){
-                System.out.println("Army choice already taken");
+                logger.info("Army choice already taken");
                 slot = JOptionPane.showInputDialog("Type in the number of the army you will command");
                 if(slot == null){
                     title = true;
@@ -3637,7 +3642,7 @@ public void drawNewLoadScreen(Graphics2D g){
                     return;
                 }
             }else{
-                System.out.println("Other problem");
+                logger.info("Other problem");
                 JOptionPane.showMessageDialog(this,"Version Mismatch");
                 Options.snailGame = false;
                 snailinfo = false;

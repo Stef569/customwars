@@ -1,9 +1,12 @@
 package cwsource;
 import java.awt.*;
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.Timer;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.awt.image.*;
 import java.util.ArrayList;
 
@@ -18,6 +21,7 @@ public class DialogueBox extends Animation{
     int[] pPosition; //Holds positions of periods and colons.
     Battle b;
     ArrayList<Animation> linkedAnimation;
+	final static Logger logger = LoggerFactory.getLogger(DialogueBox.class); 
     boolean linked = false;
     //public DialogueBox(Battle b, int layer, Color color, int height, int length, int appear, String contain, int startx, int starty, int endx, int endy, int sAlpha, int eAlpha ) {
     public DialogueBox(Battle b, String contain) {
@@ -103,7 +107,7 @@ public class DialogueBox extends Animation{
             else {
                 //Start all linked animations
                 b.animlock = false;
-                System.out.println("Unlock");
+                logger.info("Unlock");
                 for(int i = 0; i<linkedAnimation.size();i++) {
                     linkedAnimation.get(i).start();
                 }

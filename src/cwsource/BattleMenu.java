@@ -9,13 +9,17 @@ package cwsource;
 
 //TEMPORARY
 import javax.swing.*;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.*;
 import java.awt.*;
 import java.awt.image.*;
 
 public class BattleMenu extends InGameMenu{
     Battle b;   //Holds the battle this menu is used for
-    
+	final static Logger logger = LoggerFactory.getLogger(BattleMenu.class); 
     //constructor
     public BattleMenu(Battle battle, boolean COP, boolean SCOP, boolean tag, boolean swap, boolean end, ImageObserver screen){
         //super((256-96)/2,(192-80)/2);
@@ -57,19 +61,19 @@ public class BattleMenu extends InGameMenu{
         SFX.playClip(soundLocation + "/ok.wav");
         switch(item){
             case 0:
-                System.out.println("CO Dossier");
+            	logger.info("CO Dossier");
                 return 12;
             case 1:
-                System.out.println("Intel");
+            	logger.info("Intel");
                 return 1;
             case 2:
-                System.out.println("Options");
+            	logger.info("Options");
                 return 2;
             case 3:
                 return 13;
             default:
                 if(displayItems[item].equals("End")){
-                    System.out.println("End");
+                	logger.info("End");
                     boolean endGame = b.endTurn();
                     if(b.getBattleOptions().isRecording())b.getReplay().push(new CWEvent(6,b.getDay(),b.getTurn()));
                     if(endGame)return -10;
@@ -145,7 +149,7 @@ public class BattleMenu extends InGameMenu{
 
                     taunt.start();
                     
-                    System.out.println("COP");
+                    logger.info("COP");
                     b.getArmy(b.getTurn()).getCO().activateCOP();
                     if(b.getBattleOptions().isRecording())b.getReplay().push(new CWEvent(2,b.getDay(),b.getTurn()));
                 }else if(displayItems[item].equals("SCOP")){
@@ -226,15 +230,15 @@ public class BattleMenu extends InGameMenu{
                     taunt.linkTo(COmovein);
                     
                     taunt.start();
-                    System.out.println("SCOP");
+                    logger.info("SCOP");
                     b.getArmy(b.getTurn()).getCO().activateSCOP();
                     if(b.getBattleOptions().isRecording())b.getReplay().push(new CWEvent(3,b.getDay(),b.getTurn()));
                 }else if(displayItems[item].equals("Tag Break")){
-                    System.out.println("Tag Break");
+                	logger.info("Tag Break");
                     b.getArmy(b.getTurn()).tagBreak();
                     if(b.getBattleOptions().isRecording())b.getReplay().push(new CWEvent(4,b.getDay(),b.getTurn()));
                 }else if(displayItems[item].equals("Swap")){
-                    System.out.println("Swap");
+                	logger.info("Swap");
                     if(b.getBattleOptions().isRecording())b.getReplay().push(new CWEvent(5,b.getDay(),b.getTurn()));
                     /*if(b.getArmy(b.getTurn()).canTagSwap()){
                         b.getArmy(b.getTurn()).swap();

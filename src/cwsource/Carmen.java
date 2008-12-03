@@ -1,4 +1,7 @@
 package cwsource;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 /*
  *Carmen.java
  *Author: -
@@ -11,6 +14,7 @@ public class Carmen extends CO {
     private boolean itsWarpinTime;
     private double currStarCharge;
     private double altStarCharge;
+	final static Logger logger = LoggerFactory.getLogger(Carmen.class); 
     //constructor
     public Carmen() {
         name = "Carmen";
@@ -191,7 +195,7 @@ public class Carmen extends CO {
             for(int row = 0; row < army.getBattle().getMap().getMaxRow(); row++) {
                 if(army.getBattle().getMap().find(new Location(col,row)).getTerrain().isUrban()) {
                     army.getBattle().getMap().find(new Location(col,row)).getTerrain().newMoveSet(new double[] {0.00,0.00,0.00,0.00,0.00,-1,-1,0.00,-1,0.00});
-                    System.out.println(army.getBattle().getMap().find(new Location(col,row)).getTerrain().getBaseMove());
+                    logger.info("warpCity" +army.getBattle().getMap().find(new Location(col,row)).getTerrain().getBaseMove());
                 }
             }
         }

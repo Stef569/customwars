@@ -86,7 +86,6 @@ public class Mary extends CO {
         cleanEnemyStoreBegin = false;
         cleanEnemyStoreEnd = true;
         
-        //System.out.println("CostExaggerate = " + costExaggerate);
     }
     
 //used to get the attack bonus for damage calculation

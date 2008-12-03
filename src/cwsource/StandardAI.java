@@ -5,6 +5,9 @@ package cwsource;
 import java.io.*;
 import java.util.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class StandardAI extends AI{
     
     Army army;
@@ -13,6 +16,7 @@ public class StandardAI extends AI{
     Unit[] units;
     CO currCO;
     CO altCO;
+	final static Logger logger = LoggerFactory.getLogger(StandardAI.class); 
     
     
     public StandardAI(Army a){
@@ -21,10 +25,10 @@ public class StandardAI extends AI{
     
     
     public void turn(){
-        System.out.println("CURRENT THREAD COUNT====== : " + Thread.activeCount());
+       logger.info("CURRENT THREAD COUNT====== : " + Thread.activeCount());
         BattleScreen bs = Mission.getBattleScreen();
-        System.out.println("Generic AI running");
-        System.out.println(Thread.currentThread());
+       logger.info("Generic AI running");
+       logger.info("current thread count", Thread.currentThread());
         Thread.yield();
         
         //initiates
@@ -37,32 +41,31 @@ public class StandardAI extends AI{
             //Thread.sleep(5000);
             
             //CO Power checks and usage.
-            //System.out.println("Charging MA LAZER");
             //army.charge(500.0);
             
             if (army.getTag()>0)
                 ;
             else if(currCO.stars == currCO.maxStars && (altCO != null && altCO.stars == altCO.maxStars)) {
                 bs.executeNextAction(new CWEvent(4,0,0));
-                System.out.println("AI - TAG");
+               logger.info("AI - TAG");
             } else if(currCO.stars == currCO.maxStars && (altCO != null && altCO.stars > altCO.maxStars/2))
                 ;
             else if(currCO.stars == currCO.maxStars) {
                 bs.executeNextAction(new CWEvent(3,0,0));
-                System.out.println("AI - SCOP");
+               logger.info("AI - SCOP");
             } else if(currCO.stars > currCO.COPStars+1)
                 ;
             else if(currCO.stars > currCO.COPStars) {
                 bs.executeNextAction(new CWEvent(2,0,0));
-                System.out.println("AI - COP");
+               logger.info("AI - COP");
             }
             
             //Unit AI here.
             int con = 1;
             if(units != null)
                 for(Unit u: units){
-                     System.out.println("Total Number of Units: " + units.length);
-                     System.out.println("Unit AI moving: " + con);
+                    logger.info("Total Number of Units: " + units.length);
+                    logger.info("Unit AI moving: " + con);
                     unitAI(u, bs);
                     con++;
                 }
@@ -80,13 +83,13 @@ public class StandardAI extends AI{
                 
                 bs.executeNextAction(new CWEvent(6,0,0));
                 bs.setDayStart(true);
-                System.out.println("EndingTurn");
+               logger.info("EndingTurn");
                 bs = null;
-                System.out.println("CURRENT THREAD COUNT====== : " + Thread.activeCount());
+               logger.info("CURRENT THREAD COUNT====== : " + Thread.activeCount());
                 return;
         }catch(Exception e){
-            System.out.println("ERROR! ~ Alpha1A2: Bloody Venus");
-            System.out.println(e);
+           logger.info("ERROR! ~ Alpha1A2: Bloody Venus");
+           logger.info("error:", e);
             e.printStackTrace();
             army.getBattle().endTurn();
         }
@@ -100,9 +103,9 @@ public class StandardAI extends AI{
         try{
             Thread.sleep(500);
         }catch(Exception e){
-            System.out.println(e);
+           logger.error("error",e);
         }
-        System.out.println("Running Unit AI: " + u);
+       logger.info("Running Unit AI: " + u);
         
         //Capture Case Code
         if(u.getUType() < 2){
@@ -115,15 +118,15 @@ public class StandardAI extends AI{
                 }
             }
             Property[] pe = super.EnemyPropertiesInRange(u);
-            System.out.println("Enemy Prop List Length for Unit: " + u + " : " + pe.length);
+           logger.info("Enemy Prop List Length for Unit: " + u + " : " + pe.length);
             Property[] pn = super.NeutralPropertiesInRange(u);
-            System.out.println("Neutral Prop List Length for Unit: " + u + " : " + pn.length);
+           logger.info("Neutral Prop List Length for Unit: " + u + " : " + pn.length);
             if(pe.length > 0)
                 take = PSelect(pe);
             if(pn.length > 0 && take == null)
                 take = PSelect(pn);
             if(take != null){
-                System.out.println("capturing with unit: " + u + "Capturing: " + take);
+               logger.info("capturing with unit: " + u + "Capturing: " + take);
                 super.capture(u,take,bs);
                 return;
             }
@@ -159,7 +162,7 @@ public class StandardAI extends AI{
             return;
         }
         if(us.length > 0){
-            System.out.println("us greater than zero");
+           logger.info("us greater than zero");
             int max = -1, temp;
             Unit ma = null;
             for(Unit ut: us){
@@ -168,12 +171,12 @@ public class StandardAI extends AI{
                     max = temp;
                     ma = ut;
                 } else {
-                    System.out.println("temp not greater than max");
+                   logger.info("temp not greater than max");
                 }
             }
             
             if(ma == null){
-                System.out.println("wait for ma");
+               logger.info("wait for ma");
                 super.wait(u, bs);
                 return;
             }
@@ -193,14 +196,14 @@ public class StandardAI extends AI{
                     }
                 }
                 if(tt == null){
-                    System.out.println("wait for tt");
+                   logger.info("wait for tt");
                     super.wait(u, bs);
                     return;
                 }
-                System.out.println(u);
-                System.out.println(ma);
-                System.out.println(tt);
-                System.out.println(bs);
+               logger.info("u", u);
+               logger.info("ma",ma);
+               logger.info("tt",tt);
+               logger.info("bs",bs);
                 super.moveAndFire(u,ma,tt.getLocation().getCol(),tt.getLocation().getRow(), bs);
                 return;
             }super.standAndFire(u,ma,bs);
@@ -260,7 +263,7 @@ public class StandardAI extends AI{
     }
     
     private void buildAI(BattleScreen bs){
-        System.out.println("ARMY COLOR: " + army.getColor());
+        logger.info("ARMY COLOR: " + army.getColor());
         Property[] builds = army.getProperties();
         Property p;
         for(int i = builds.length-1; i > 0; i--){
@@ -270,25 +273,25 @@ public class StandardAI extends AI{
                     CWEvent n = new BuildEvent(0,p.getTile().getLocation().getCol(),p.getTile().getLocation().getRow(),0,0);
                     bs.executeNextAction(n);
                     if(army.getBattle().getMap().find(p.getTile().getLocation()).getUnit() == null)
-                    System.out.println("BUILDING ERROR ERROR ERROR =======================================================");
+                    logger.error("BUILDING ERROR ERROR ERROR =======================================================");
                    // super.wait(army.getBattle().getMap().find(p.getTile().getLocation()).getUnit(),bs);
                } else if(army.getFunds() >= 4000*army.getCO().getCostMultiplier()/100 && super.unitCount(4) == 0){
                     CWEvent n = new BuildEvent(4,p.getTile().getLocation().getCol(),p.getTile().getLocation().getRow(),0,0);
                     bs.executeNextAction(n);
                     if(army.getBattle().getMap().find(p.getTile().getLocation()).getUnit() == null)
-                    System.out.println("BUILDING ERROR ERROR ERROR =======================================================");
+                   logger.error("BUILDING ERROR ERROR ERROR =======================================================");
                   //  super.wait(army.getBattle().getMap().find(p.getTile().getLocation()).getUnit(),bs);
                 } else if(army.getFunds() >= 7000*army.getCO().getCostMultiplier()/100){
                     CWEvent n = new BuildEvent(2,p.getTile().getLocation().getCol(),p.getTile().getLocation().getRow(),0,0);
                     bs.executeNextAction(n);
                     if(army.getBattle().getMap().find(p.getTile().getLocation()).getUnit() == null)
-                    System.out.println("BUILDING ERROR ERROR ERROR =======================================================");
+                   logger.error("BUILDING ERROR ERROR ERROR =======================================================");
                    // super.wait(army.getBattle().getMap().find(p.getTile().getLocation()).getUnit(),bs);
                 } else if(army.getFunds() >= 1000*army.getCO().getCostMultiplier()/100){
                     CWEvent n = new BuildEvent(0,p.getTile().getLocation().getCol(),p.getTile().getLocation().getRow(),0,0);
                     bs.executeNextAction(n);
                     if(army.getBattle().getMap().find(p.getTile().getLocation()).getUnit() == null)
-                    System.out.println("BUILDING ERROR ERROR ERROR =======================================================");
+                   logger.error("BUILDING ERROR ERROR ERROR =======================================================");
                    // super.wait(army.getBattle().getMap().find(p.getTile().getLocation()).getUnit(),bs);
                 }
             }

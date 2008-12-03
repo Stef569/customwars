@@ -15,11 +15,15 @@ package cwsource;
 
 import java.io.*;
 import java.net.*;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 public class Listener implements Runnable{
     static ServerSocket ss;
     static  Socket s ;
     static InputStream is;
     static Writer out;
+	final static Logger logger = LoggerFactory.getLogger(Listener.class); 
     
     /** Creates a new instance of Listener */
     public Listener() throws Exception{
@@ -40,7 +44,7 @@ public class Listener implements Runnable{
                 }
             }
         } catch(Exception e){
-            System.out.println(e);
+            logger.error("error",e);
         }
     }
     
@@ -48,7 +52,7 @@ public class Listener implements Runnable{
         try{
             ss.close();
         } catch(Exception e){
-            System.out.println(e);
+        	logger.error("error",e);
         }
     }
     

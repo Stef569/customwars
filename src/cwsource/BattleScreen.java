@@ -17,6 +17,9 @@ import java.awt.event.*;
 import javax.swing.event.MouseInputListener;
 //import javax.swing.filechooser.FileNameExtensionFilter;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 //public class BattleScreen extends JComponent implements ComponentListener
 public class BattleScreen extends CWScreen 
 {
@@ -54,6 +57,7 @@ public class BattleScreen extends CWScreen
     //private Location currTile;       //the new location of the unit (used by join and load)
     private Tile moveToTile;
     private Tile targTile;
+	final static Logger logger = LoggerFactory.getLogger(BattleScreen.class); 
     
     private BSKeyControl keycontroller;   //the KeyControl, used to remove the component
     private BSMouseControl mousecontroller;//the MouseControl, used to remove the component
@@ -2025,7 +2029,7 @@ public class BattleScreen extends CWScreen
             return;
         if(b.getArmy(b.getTurn()).getCO().isSelecting()) 
         {
-        	System.out.println("Do Select Action");
+        	logger.info("Do Select Action");
         	
             selectAction(new Location(cx, cy));
 			return;
@@ -2033,7 +2037,7 @@ public class BattleScreen extends CWScreen
         
         if(delete)
         {
-        	System.out.println("Do Delete Command");
+        	logger.info("Do Delete Command");
         	//If the delete command won't work, don't let anything else work
             if(!deleteCommand(new Location(cx,cy)))
             	return;
@@ -2042,26 +2046,26 @@ public class BattleScreen extends CWScreen
         {
             if(menu)
             {
-            	System.out.println("Do Menu Action");
+            	logger.info("Do Menu Action");
             	
                 menuActions();
             }
             else if(cmenu)
             {
-            	System.out.println("Do Context Action");
+            	logger.info("Do Context Action");
             	
             	//Don't forget to move the unit first!
                 contextMenuActions(selected);
             }
             else if(bmenu)
             {
-            	System.out.println("Do Deploy Effect");
+            	logger.info("Do Deploy Effect");
             	
                 deployEffect();
             }
             else if(carbmenu)
             {
-                System.out.println("Do Carrier Build");
+                logger.info("Do Carrier Build");
                 buildEffect(selected);
             }
             else if(fireRange)
@@ -2071,7 +2075,7 @@ public class BattleScreen extends CWScreen
             else if(unload > 0 && 
             		selected instanceof Transport)
             {
-            	System.out.println("Do Unload Effect");
+            	logger.info("Do Unload Effect");
             	//user.checkUnloadRange(new Location(cx,cy), slot)
             	//Move the unit over and then start firing
     			if(autoMove(selected))	
@@ -2082,7 +2086,7 @@ public class BattleScreen extends CWScreen
             else if(takeoff > 0 && 
             		selected instanceof Carrier)
             {
-                System.out.println("Do Launch Effect");
+                logger.info("Do Launch Effect");
                 launchEffect((Carrier)selected,takeoff);
             }
             //else if(move)
@@ -2090,7 +2094,7 @@ public class BattleScreen extends CWScreen
             		selected.isActive() && 
             		(selected.getArmy().getID() == b.getArmy(b.getTurn()).getID() || b.getArmy(b.getTurn()).getCO().mayhem))
             {
-            	System.out.println("Do Move Command");
+            	logger.info("Do Move Command");
                 //if(!moveCommand())
                 	//return;
             	//move = true; //ASDF < BOOKMARK
@@ -2111,7 +2115,7 @@ public class BattleScreen extends CWScreen
             }
             else if(silo)
             {
-            	System.out.println("Display Silo Cursor");
+            	logger.info("Display Silo Cursor");
 
     			//Move the unit over and then start firing
     			if(autoMove(selected))	
@@ -2121,7 +2125,7 @@ public class BattleScreen extends CWScreen
             }
             else if(special1)
             {
-            	System.out.println("Display Special1");
+            	logger.info("Display Special1");
             	
             	//Move the unit over and then start firing
     			if(autoMove(selected))	
@@ -2131,7 +2135,7 @@ public class BattleScreen extends CWScreen
             }
             else if(special2)
             {
-            	System.out.println("Display Special2");
+            	logger.info("Display Special2");
             	
             	//Move the unit over and then start firing
     			if(autoMove(selected))	
@@ -2142,7 +2146,7 @@ public class BattleScreen extends CWScreen
             //Targeted abilities
             else if(m.find(new Location(cx,cy)).hasUnit())
             {
-            	System.out.println("Display Unit Targeting Options");
+            	logger.info("Display Unit Targeting Options");
             	
             	Unit target = m.find(new Location(cx,cy)).getUnit();
                 
@@ -2167,7 +2171,7 @@ public class BattleScreen extends CWScreen
                 	if(visibleAtXY(cx, cy))
                     {
                 		//Selecting a unit at this position
-                		System.out.println("Selection of a unit");
+                		logger.info("Selection of a unit");
                         selectUnitAction();
                     }
                 	else
@@ -2180,7 +2184,7 @@ public class BattleScreen extends CWScreen
             }
             else if(m.find(new Location(cx,cy)).getTerrain() instanceof Invention)
             {
-            	System.out.println("Display Invention Targeting Options");
+            	logger.info("Display Invention Targeting Options");
             	
                 if(fire)
                 {
@@ -2199,7 +2203,7 @@ public class BattleScreen extends CWScreen
             }
             else if(m.find(new Location(cx,cy)).getTerrain() instanceof Property && !fire && !repair)
             {
-            	System.out.println("Display Build Menu");
+            	logger.info("Display Build Menu");
             	
                 currentMenu = BuildMenu.generateContext((Property)m.find(new Location(cx,cy)).getTerrain(),b.getTurn(),b,this);
                 if(currentMenu != null)
@@ -2217,7 +2221,7 @@ public class BattleScreen extends CWScreen
             }
             else
             {
-            	System.out.println("Display Battle Menu");
+            	logger.info("Display Battle Menu");
                 //Same as hitting m
                 getBattleMenu();
                 return;
@@ -2225,7 +2229,7 @@ public class BattleScreen extends CWScreen
         }
         else if(daystart)
         {
-            System.out.println("ending day start screen");
+            logger.info("ending day start screen");
             if(!denyContinue)
             {
             	daystart = false;
@@ -2237,8 +2241,7 @@ public class BattleScreen extends CWScreen
                	b.getArmies()[b.getTurn()].ai = temp;
                 b.getArmies()[b.getTurn()].runAI();
                 Thread.yield();
-                System.out.println("post AI");
-                System.out.println(Thread.currentThread());
+                logger.info("post AI");
         	}
         	*/
         }
@@ -2274,7 +2277,7 @@ public class BattleScreen extends CWScreen
 	        	//if(joinCommand(user, targetUnit) && currProp != null)
 	        	//	currProp.setCapturePoints(currProp.getMaxCapturePoints()); //captures are reset if the join command succeeds
 	        	
-	        	System.out.println("JOIN-based context menu");
+	        	logger.info("JOIN-based context menu");
 	        	
 	        	//JOIN based context menu
 	        	Location origLoc = user.getLocation();
@@ -2295,7 +2298,7 @@ public class BattleScreen extends CWScreen
 	        	//if(loadCommand(user, (Transport)targetUnit) && currProp != null)
 	        	//	currProp.setCapturePoints(currProp.getMaxCapturePoints()); //captures are reset if the load command succeeds
 	        	
-	        	System.out.println("LOAD-based context menu");
+	        	logger.info("LOAD-based context menu");
 	        	
 	        	//LOAD based context menu
 	        	Location origLoc = user.getLocation();
@@ -2305,7 +2308,7 @@ public class BattleScreen extends CWScreen
 				user.setLocation(origLoc);
 	        	return;
 	        }
-        	System.out.println("What?");
+        	logger.info("What?");
         	
 	        //return;
 	    }
@@ -2314,7 +2317,7 @@ public class BattleScreen extends CWScreen
 	    		targetUnit != user)
 	    {
 	    */
-        	System.out.println("ANYTHING ELSE-based context menu");
+        	logger.info("ANYTHING ELSE-based context menu");
         	
 	        //safeMoveEffect(user);
         	Location origLoc = user.getLocation();
@@ -2328,12 +2331,7 @@ public class BattleScreen extends CWScreen
 			/*
 	    }
 	    
-    	System.out.print("No context menu generated: ");
     	
-    	if(targetUnit == null)
-    		System.out.println("Target unit is null!");
-    	if(targetUnit == user)
-    		System.out.println("Target unit is user!");
     		*/
     }
 
@@ -2563,7 +2561,7 @@ public class BattleScreen extends CWScreen
         //new code
         if(beingLaunched && ((originalLocation.equals(nextLoc)) || !selected.getMoveRange().checkMove(nextLoc)))
         {
-                    System.out.println("Cancel the move!");
+                    logger.info("Cancel the move!");
             //return to carrier
             Transport trans;
             trans = (Transport)tempCarrier;
@@ -2591,7 +2589,7 @@ public class BattleScreen extends CWScreen
 		    } 
 		    else 
 		    {
-                        System.out.println("Hurray!");
+                        logger.info("Hurray!");
                         return true;
 		        //safeMoveEffect(user);
 		    	//move = false;
@@ -2623,7 +2621,7 @@ public class BattleScreen extends CWScreen
 		        }
 		    else if (targetUnit != user)
 		    {
-                        System.out.println("no!");
+                        logger.info("no!");
                         move = false;
                         //WHY ARE YOU CRUSHING YOUR OWN UNITS
 		        //safeMoveEffect(user);
@@ -2854,7 +2852,7 @@ public class BattleScreen extends CWScreen
 		            }
 		            
 		            CWEvent tempev= new Action(replayAction,originalLocation.getCol(),originalLocation.getRow(),selected.getPath(),cx,cy,b.getDay(),b.getTurn());
-		            System.out.println(tempev);
+		            logger.info("temp env ="+tempev);
 		            b.getReplay().push(tempev);
 		        }
 		        else
@@ -2890,7 +2888,7 @@ public class BattleScreen extends CWScreen
 		cmenu=false;
 		move=false;
 		int action = currentMenu.doMenuItem();
-		System.out.println(action);
+		logger.info("action ="+action);
 		
 		if(action == UNIT_COMMANDS.UNDO)
 		{
@@ -3007,7 +3005,7 @@ public class BattleScreen extends CWScreen
         }
         else if(action == UNIT_COMMANDS.BUILD)
         {
-                    System.out.println("It's building time!");
+                    logger.info("It's building time!");
             //currentMenu = new BuildMenu(false,false,false,false,true,selected.getArmy().getFunds(),selected.getArmy().getCO(),b,this);
             currentMenu = BuildMenu.generateCarrierMenu(selected.getArmy().getFunds(),selected.getArmy().getCO(),b,this);
             carbmenu = true;
@@ -3077,11 +3075,11 @@ public class BattleScreen extends CWScreen
         {
             user.launched = true;
             tempCarrier = user;
-            System.out.println("we got this far man");
+            logger.info("we got this far man");
             m.remove(tempCarrier);
             launching = user.unload(slot);
             selected = launching;
-            System.out.println(selected.getName());
+            logger.info(selected.getName());
             
             //temporarily transfer the carrier into storage to make room for the launched unit
             beingLaunched = true;
@@ -3124,7 +3122,7 @@ public class BattleScreen extends CWScreen
                 }
                 
                 CWEvent tempev= new Action(replayAction,originalLocation.getCol(),originalLocation.getRow(),selected.getPath(),cx,cy,b.getDay(),b.getTurn());
-                System.out.println(tempev);
+                logger.info(tempev);
                 b.getReplay().push(tempev);
             } else {
                 endUnitTurn(6,user,target);
@@ -3252,7 +3250,7 @@ public class BattleScreen extends CWScreen
 	{
 		if(b.getArmy(b.getTurn()).getCO().validSelection(b.getMap().find(loc))) 
 		{
-		    System.out.println("Selection cycle activated!");
+		    logger.info("Selection cycle activated!");
 		    
 		    b.getArmy(b.getTurn()).getCO().selectAction(b.getMap().find(loc));
 		    
@@ -3326,7 +3324,7 @@ public class BattleScreen extends CWScreen
 		}
 		else if(menuselection == MENU_SEL.END_TURN)
 		{
-		    System.out.println("Turn Start");
+		    logger.info("Turn Start");
 		    daystart = true;
 		    if(Options.isNetworkGame() && Options.getSend())denyContinue = true;
 		    if(Options.snailGame){
@@ -3357,8 +3355,7 @@ public class BattleScreen extends CWScreen
 	{
 		if(b.getBattleOptions().isRecording()){
 		    if(!Options.isNetworkGame() && !Options.snailGame){
-		        System.out.println("Replay");
-		        System.out.println(b.getReplay());
+		        logger.info("Replay"+ b.getReplay());
 		        JFileChooser fc = new JFileChooser();
 		        fc.setDialogTitle("Save replay file...");
 		        fc.setCurrentDirectory(new File("./"));
@@ -3385,7 +3382,7 @@ public class BattleScreen extends CWScreen
 
 	private void saveGame() {
 		if(!Options.snailGame){
-		    System.out.println("Save");
+		    logger.info("Save");
 		    JFileChooser fc = new JFileChooser();
 		    fc.setDialogTitle("Save game...");
 		    fc.setCurrentDirectory(new File("./"));
@@ -3407,7 +3404,7 @@ public class BattleScreen extends CWScreen
 	}
 
 	private void loadLocalGame() {
-		System.out.println("Load");
+		logger.info("Load");
 		boolean validSave = false;
 		
 		JFileChooser fc = new JFileChooser();
@@ -3433,8 +3430,7 @@ public class BattleScreen extends CWScreen
 	private void saveReplay() {
 		if(!Options.isNetworkGame() && !Options.snailGame)
 		{
-		    System.out.println("Replay");
-		    System.out.println(b.getReplay());
+		    logger.info("Replay"+b.getReplay());
 		}
 	}
 
@@ -3465,7 +3461,7 @@ public class BattleScreen extends CWScreen
 		     options,
 		     options[0]);
 		
-		System.out.println("choice = " + choice);
+		logger.info("choice = " + choice);
 
 		//if(yield != null && !yield.equals("") && (yield.charAt(0) == 'y' || yield.charAt(0) == 'Y'))
 		if(choice == JOptionPane.YES_OPTION)
@@ -3495,7 +3491,7 @@ public class BattleScreen extends CWScreen
 		{
 			Unit dunit = m.find(loc).getUnit();
 
-            System.out.println("Delete Unit");
+            logger.info("Delete Unit");
             dunit.eliminateUnit();
             
             if(b.getBattleOptions().isRecording())
@@ -3783,7 +3779,7 @@ public class BattleScreen extends CWScreen
     }
     
     public void executeNextAction(CWEvent n){
-        System.out.println(n);
+        logger.info("n ="+n);
         if(n == null){
             //end of replay, resume
             replay = false;
@@ -3898,7 +3894,7 @@ public class BattleScreen extends CWScreen
                                                 trans.getArmy().getAltCO().afterAction(trans, 6, unloading, false);
                                             //do next action ASAP
                                             Action a2 = (Action) b.getNextReplayEvent();
-                                            System.out.println(a2);
+                                            logger.info("a2 ="+a2);
                                             int nextAction = a2.getID();
                                             if(nextAction==0){
                                                 endUnitTurn(0,selected,null);
@@ -4093,12 +4089,12 @@ public class BattleScreen extends CWScreen
             }
             if(replayAction >= 0){
                 CWEvent tempev= new Action(replayAction,originalLocation.getCol(),originalLocation.getRow(),selected.getPath(),cx,cy,b.getDay(),b.getTurn());
-                System.out.println(tempev);
+                logger.info("tempev="+tempev);
                 b.getReplay().push(tempev);
             }
         }
         
-        System.out.println("Deselect unit");
+        logger.info("Deselect unit");
         selected = null;
     }
     
@@ -4124,21 +4120,21 @@ public class BattleScreen extends CWScreen
             }
             else if(bmenu)
             {
-            	System.out.println("bmenu is active!");
+            	logger.info("bmenu is active!");
             }
             else if(cmenu)
             {
-            	System.out.println("cmenu is active!");
+            	logger.info("cmenu is active!");
             }
             else if(carbmenu)
             {
-                System.out.println("carbmenu is active!");
+                logger.info("carbmenu is active!");
             }
         }
         else
         {
-        	System.out.println("You are still selecting something!");
-                System.out.println("And that something is:" + selected);
+        	logger.info("You are still selecting something!");
+                logger.info("And that something is:" + selected);
         }
     }
     
@@ -4613,7 +4609,7 @@ public class BattleScreen extends CWScreen
         public void mouseClicked(MouseEvent e){
             int x = e.getX() - parentFrame.getInsets().left;
             int y = e.getY() - parentFrame.getInsets().top;
-            System.out.println(x + "," + y + ":" + e.getButton());
+            logger.info("info =" + x + "," + y + ":" + e.getButton());
             
             if(e.getButton() == MouseEvent.BUTTON1){
                 if(menu || cmenu){
@@ -4625,7 +4621,7 @@ public class BattleScreen extends CWScreen
                 }else if(bmenu || carbmenu){
                     int mitem = currentMenu.getMenuItemAt(x,y,scale);
                     if(mitem != -1){
-                        System.out.print(mitem);
+                        logger.info(""+mitem);
                         if(mitem == -2)currentMenu.goUp();
                         else if(mitem == -3)currentMenu.goDown();
                         else{
@@ -4823,12 +4819,12 @@ public class BattleScreen extends CWScreen
             if(ticker > duration)
             {
                 timer.setRepeats(false);
-                System.out.println("End");
+                logger.info("End");
             }
             else{
             sx+=(loc.getCol() - (sx+MAX_TILEW)/2)/duration; //increments distance equally over the duration
             sy+=(loc.getRow() - (sy+MAX_TILEH)/2)/duration;
-            System.out.println("Gliding");
+            logger.info("Gliding");
             }
         }
     }

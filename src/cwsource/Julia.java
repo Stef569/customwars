@@ -103,7 +103,7 @@ public class Julia extends CO{
                 return (int)(95/(attacker.getDisplayHP()/10.0-(attacker.getDisplayHP()/1100.0)));
             else
             {
-                System.out.println((int)(85/(attacker.getDisplayHP()/10.0-(attacker.getDisplayHP()/1100.0))));
+                logger.info(""+ (int)(85/(attacker.getDisplayHP()/10.0-(attacker.getDisplayHP()/1100.0))));
                 return (int)(85/(attacker.getDisplayHP()/10.0-(attacker.getDisplayHP()/1100.0)));
             }
         } else //if the unit is defending.
@@ -292,7 +292,7 @@ public class Julia extends CO{
             u.setLocation((Location)(location.get(u.enemyCOstore[statIndex][0])));
             u.gas = (fuel[u.enemyCOstore[statIndex][0]]);
             u.setActive(true);
-            System.out.println("Tried to move!");
+            logger.info("Tried to move!");
         }
     }
 }

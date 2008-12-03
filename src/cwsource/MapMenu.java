@@ -10,9 +10,13 @@ package cwsource;
 import java.awt.*;
 import java.awt.image.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class MapMenu extends InGameMenu{
     
     //constructor
+	final static Logger logger = LoggerFactory.getLogger(MapMenu.class);  
     public MapMenu(ImageObserver screen) {
         //super((256-96)/2,(192-80)/2);
         //super((480-96)/2,(320-112)/2,96,screen);
@@ -25,37 +29,37 @@ public class MapMenu extends InGameMenu{
     public int doMenuItem(){
         switch(item){
             case 0:
-                System.out.println("Scale Screen");
+                logger.info("Scale Screen");
                 return 1;
             case 1:
-                System.out.println("Fill Map");
+                logger.info("Fill Map");
                 return 2;
             case 2:
-                System.out.println("Save");
+                logger.info("Save");
                 return 3;
             case 3:
-                System.out.println("Load");
+                logger.info("Load");
                 return 4;
             case 4:
-                System.out.println("Set Map Info");
+                logger.info("Set Map Info");
                 return 9;
             case 5:
-                System.out.println("Map Size");
+                logger.info("Map Size");
                 return 5;
             case 6:
-                System.out.println("Map Resize");
+                logger.info("Map Resize");
                 return 7;
             case 7:
-                System.out.println("Resize");
+                logger.info("Resize");
                 return 6;
             case 8:
-                System.out.println("Mirror Map");
+                logger.info("Mirror Map");
                 return 11;
             case 9:
-                System.out.println("Random Map");
+                logger.info("Random Map");
                 return 10;
             case 10:
-                System.out.println("Return to Main");
+                logger.info("Return to Main");
                 return 8;
         }
         return 0;
