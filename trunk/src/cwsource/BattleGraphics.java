@@ -13,6 +13,10 @@ import javax.imageio.*;
 import java.awt.image.*;
 import java.io.*;
 import javax.swing.*;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Random;
 
 public class BattleGraphics {
@@ -32,6 +36,7 @@ public class BattleGraphics {
     
     private static Image[][] HQ = new Image[backStyle][5];
     private static Image[][] bHQ = new Image[backStyle][5];
+	final static Logger logger = LoggerFactory.getLogger(BattleGraphics.class); 
     
     private static Image MDTank;      //the images used for moving units
     private static Image Rocket;
@@ -140,7 +145,7 @@ public class BattleGraphics {
 /*            case 3:
                 return broad[style];*/
             default:
-                System.out.println("defaulted");
+            	logger.info("defaulted");
                 return bwood[style][0];
         }
     }

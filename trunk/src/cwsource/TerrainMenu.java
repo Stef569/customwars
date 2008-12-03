@@ -62,8 +62,6 @@ public class TerrainMenu extends ScrollMenu{
             
             for(int i = currentPosition; i < maxItems + currentPosition; i++)
             {
-                //System.out.println(displayItems[i]);
-
                 if(((i>=9 && i<=14)|| i == 17 | i == 16)) 
                 {
                     if(i == 16)

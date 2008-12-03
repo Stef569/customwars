@@ -12,11 +12,15 @@ import java.awt.image.*;
 import java.awt.Color.*;
 import java.awt.GradientPaint.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class BuildMenu extends ScrollMenu{
     private boolean[] canBuy = new boolean[BaseDMG.NUM_UNITS];
     private boolean[] canBuyDisplay = new boolean[BaseDMG.NUM_UNITS];
     private int[] unitCost = new int[BaseDMG.NUM_UNITS];
     private int order[] = new int[BaseDMG.NUM_UNITS];
+	final static Logger logger = LoggerFactory.getLogger(BuildMenu.class); 
     int color;
     int style;
     
@@ -504,100 +508,100 @@ public class BuildMenu extends ScrollMenu{
     public int doMenuItem(){
         if(displayItems != null && displayItems.length != 0){
             if(displayItems[item].equals("Infantry")){
-                System.out.println("Infantry");
+                logger.info("Infantry");
                 if(canBuy[0])return 0;
             }else if(displayItems[item].equals("Mech")){
-                System.out.println("Mech");
+                logger.info("Mech");
                 if(canBuy[1])return 1;
             }else if(displayItems[item].equals("Tank")){
-                System.out.println("Tank");
+                logger.info("Tank");
                 if(canBuy[2])return 2;
             }else if(displayItems[item].equals("Md Tank")){
-                System.out.println("Md Tank");
+                logger.info("Md Tank");
                 if(canBuy[3])return 3;
             }else if(displayItems[item].equals("Recon")){
-                System.out.println("Recon");
+                logger.info("Recon");
                 if(canBuy[4])return 4;
             }else if(displayItems[item].equals("Anti-Air")){
-                System.out.println("Anit-Air");
+                logger.info("Anit-Air");
                 if(canBuy[5])return 5;
             }else if(displayItems[item].equals("Missiles")){
-                System.out.println("Missiles");
+                logger.info("Missiles");
                 if(canBuy[6])return 6;
             }else if(displayItems[item].equals("Artillery")){
-                System.out.println("Artillery");
+                logger.info("Artillery");
                 if(canBuy[7])return 7;
             }else if(displayItems[item].equals("Rockets")){
-                System.out.println("Rockets");
+                logger.info("Rockets");
                 if(canBuy[8])return 8;
             }else if(displayItems[item].equals("APC")){
-                System.out.println("APC");
+                logger.info("APC");
                 if(canBuy[9])return 9;
             }else if(displayItems[item].equals("Lander")){
-                System.out.println("Lander");
+                logger.info("Lander");
                 if(canBuy[10])return 10;
             }else if(displayItems[item].equals("Cruiser")){
-                System.out.println("Cruiser");
+                logger.info("Cruiser");
                 if(canBuy[11])return 11;
             }else if(displayItems[item].equals("Sub")){
-                System.out.println("Sub");
+                logger.info("Sub");
                 if(canBuy[12])return 12;
             }else if(displayItems[item].equals("Battleship")){
-                System.out.println("Battleship");
+                logger.info("Battleship");
                 if(canBuy[13])return 13;
             }else if(displayItems[item].equals("T Copter")){
-                System.out.println("T Copter");
+                logger.info("T Copter");
                 if(canBuy[14])return 14;
             }else if(displayItems[item].equals("B Copter")){
-                System.out.println("B Copter");
+                logger.info("B Copter");
                 if(canBuy[15])return 15;
             }else if(displayItems[item].equals("Fighter")){
-                System.out.println("Fighter");
+                logger.info("Fighter");
                 if(canBuy[16])return 16;
             }else if(displayItems[item].equals("Bomber")){
-                System.out.println("Bomber");
+                logger.info("Bomber");
                 if(canBuy[17])return 17;
             }else if(displayItems[item].equals("Neotank")){
-                System.out.println("Neotank");
+                logger.info("Neotank");
                 if(canBuy[18])return 18;
             }else if(displayItems[item].equals("Megatank")){
-                System.out.println("Megatank");
+                logger.info("Megatank");
                 if(canBuy[19])return 19;
             }else if(displayItems[item].equals("Piperunner")){
-                System.out.println("Piperunner");
+                logger.info("Piperunner");
                 if(canBuy[20])return 20;
             }else if(displayItems[item].equals("Black Boat")){
-                System.out.println("Black Boat");
+                logger.info("Black Boat");
                 if(canBuy[21])return 21;
             }else if(displayItems[item].equals("Carrier")){
-                System.out.println("Carrier");
+                logger.info("Carrier");
                 if(canBuy[22])return 22;
             }else if(displayItems[item].equals("Stealth")){
-                System.out.println("Stealth");
+                logger.info("Stealth");
                 if(canBuy[23])return 23;
             }else if(displayItems[item].equals("Black Bomb")){
-                System.out.println("Black Bomb");
+                logger.info("Black Bomb");
                 if(canBuy[24])return 24;
             }else if(displayItems[item].equals("Bcraft")){
-                System.out.println("Bcraft");
+                logger.info("Bcraft");
                 if(canBuy[25])return 25;
             }else if(displayItems[item].equals("Acraft")){
-                System.out.println("Acraft");
+                logger.info("Acraft");
                 if(canBuy[26])return 26;
             }else if(displayItems[item].equals("SRunner")){
-                System.out.println("Shuttlerunner");
+                logger.info("Shuttlerunner");
                 if(canBuy[27])return 27;
             }else if(displayItems[item].equals("Zeppelin")){
-                System.out.println("Zeppelin");
+                logger.info("Zeppelin");
                 if(canBuy[28])return 28;
             }else if(displayItems[item].equals("Spyplane")){
-                System.out.println("Spyplane");
+                logger.info("Spyplane");
                 if(canBuy[29])return 29;
             }else if(displayItems[item].equals("Destroyer")){
-                System.out.println("Destroyer");
+                logger.info("Destroyer");
                 if(canBuy[30])return 30;
             }else if(displayItems[item].equals("Oozium")){
-                System.out.println("Oozium");
+                logger.info("Oozium");
                 if(canBuy[31])return 31;
             }else{
                 System.err.println("ERROR, INVALID CONTEXT MENU ITEM");

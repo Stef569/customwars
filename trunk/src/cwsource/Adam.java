@@ -1,4 +1,7 @@
 package cwsource;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 /*
  *Blandie.java... wait no I'm not, I'm Adam.java!
  *Author: Vimes
@@ -8,7 +11,9 @@ package cwsource;
  */
 
 public class Adam extends CO{
-    
+	final static Logger logger = LoggerFactory.getLogger(Adam.class); 
+	
+	
     //constructor
     public Adam() {
         name = "Adam";
@@ -232,7 +237,7 @@ public class Adam extends CO{
             
             
             u.setActive(true);
-            System.out.println(u.COstore[1]);
+    		logger.info("" + u.COstore[1]);
         }
     }
     

@@ -11,6 +11,9 @@ package cwsource;
 import java.io.*;
 import java.awt.Color;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class Army implements Serializable{
     //private final int unitLimit = 50;           //The Unit Limit
     private UnitList units;                     //The Unit List
@@ -30,6 +33,7 @@ public class Army implements Serializable{
     //private Color dayStartColor[] = new Color[2];//The army's day start color
 
     public AI ai = null;                        //The army's AI
+	final static Logger logger = LoggerFactory.getLogger(Army.class);  
     
     private int[][][] terrCost;       //The player's terrain costs increases on a map.
                                       //Yes it is a three dimensonal array.
@@ -121,12 +125,12 @@ public class Army implements Serializable{
         	}
         	else
         	{
-        		System.out.println("Map is null!");
+                logger.info("Map is null!");
         	}
         }
     	else
     	{
-    		System.out.println("Battle is null!");
+    		logger.info("Battle is null!");
     	}
 	}
     
@@ -336,21 +340,22 @@ public class Army implements Serializable{
         altCO = temp;
         setChangeAll();
         changeAllProp();
-        System.out.println(co.name + ": " + co.Swap[battle.getRNG().nextInt(2)]);
-        //What does the above statement do?
-        if(tag > 0)
+        logger.info(co.name + ": " + co.Swap[battle.getRNG().nextInt(2)]);
+
+        if(tag > 0) {
             canTagSwap = false;
+        }
     }
     
     //Tag Breaks!
     public void tagBreak(){
         int i = isSpecTag();
         if(i > -1){
-            System.out.println(co.TagNames[i] + "!");
+        	logger.info(""+co.TagNames[i] + "!");
             atkPercent = (co.TagPercent[i] - 100);
             if(battle.getBattleOptions().isBalance()) atkPercent = 0;
         } else
-            System.out.println("Dual Strike!");
+        	logger.info("Dual Strike!");
         tag = 1;
         canTagSwap = true;
         co.activateSCOP();

@@ -1,8 +1,11 @@
 package lobbyclient;
 
-import javax.swing.JFrame;
-import javax.swing.JSplitPane;
 import javax.swing.*;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import cwsource.Battle;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
@@ -25,6 +28,7 @@ public class BigFrame extends JFrame implements ActionListener {
 	JPanel buttonpane;
 
 	JButton create = new JButton("Create Game");
+	final static Logger logger = LoggerFactory.getLogger(BigFrame.class); 
 
 	JButton join = new JButton("Join Game");
 
@@ -121,7 +125,7 @@ public class BigFrame extends JFrame implements ActionListener {
 		if (e.getSource() == join)
 		{
 			int selectedpane = gpanel.getSelectedIndex();
-			System.out.println("Bah:" + selectedpane);
+			logger.info("Bah:" + selectedpane);
 			JTable opentab;
 			if (selectedpane == 0) 
 			{
@@ -137,7 +141,7 @@ public class BigFrame extends JFrame implements ActionListener {
 			}
 			
 			int i = opentab.getSelectedRow();
-			System.out.println("i:" + i);
+			logger.info("i:" + i);
 			if(i == -1)
 			{
 				return;
@@ -164,7 +168,7 @@ public class BigFrame extends JFrame implements ActionListener {
 		}
 		if (e.getSource() == login) {
 			int selectedpane = gpanel.getSelectedIndex();
-			System.out.println("Bah:" + selectedpane);
+			logger.info("Bah:" + selectedpane);
 			JTable opentab;
 			if (selectedpane == 0) 
 			{
@@ -180,7 +184,7 @@ public class BigFrame extends JFrame implements ActionListener {
 			}
 			
 			int i = opentab.getSelectedRow();
-			System.out.println("i:" + i);
+			logger.info("i:" + i);
 			if(i == -1)
 			{
 				return;

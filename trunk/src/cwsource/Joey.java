@@ -495,11 +495,6 @@ public class Joey extends CO {
             ((APC)u).load(temp);
         }
         if(SCOP && (u.unitType == 9 || u.unitType == 21) && index == 23) {
-            //Shouldn't be necessary
-            //u.calcMoveTraverse();
-            
-            //System.out.println(u.getMoveRange().checkMPLeft(u.getLocation().getCol(), u.getLocation().getRow()));
-            
             //Grrr, need to abuse mods again...
             //Well I have at least one thing I can depend on:
             //

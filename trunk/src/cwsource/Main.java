@@ -17,7 +17,6 @@ package cwsource;
 //Temporary, used for engine testing and error checking
 import java.io.*;
 import javax.swing.*;
-import javax.swing.JOptionPane;
 import lobbyclient.FobbahLauncher;
 import java.util.zip.CRC32;
 public class Main {
@@ -29,7 +28,7 @@ public class Main {
         JFrame frame = new JFrame("Custom Wars");
         frame.setSize(480,320);
         frame.setVisible(true);
-        frame.setIconImage(new ImageIcon("images/misc/icon.gif").getImage());
+        frame.setIconImage(new ImageIcon(ResourceLoader.properties.getProperty("imagesLocation") + "/misc/icon.gif").getImage());
         Mission.mainFrame = frame;
         
         //Initializes the static classes

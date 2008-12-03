@@ -233,24 +233,24 @@ public class Varlot extends CO{
         if(owned != null)
             for(int i = 0; i< owned.length; i++) {
             if(army.getBattle().getMap().find(owned[i]).getTerrain().urban) {
-                System.out.println("one");
+                logger.info("one");
                 if(((Property)army.getBattle().getMap().find(owned[i]).getTerrain()).repairAir && (owned[i].moveType == owned[i].MOVE_AIR)) {
-                    System.out.println("two");
+                    logger.info("two");
                     if(!owned[i].noCityResupply && !owned[i].noResupplied)
                         owned[i].resupply();
                 }
                 if(((Property)army.getBattle().getMap().find(owned[i]).getTerrain()).repairSea && ((owned[i].moveType == owned[i].MOVE_SEA) || (owned[i].moveType == owned[i].MOVE_TRANSPORT))) {
-                    System.out.println("two");
+                    logger.info("two");
                     if(!owned[i].noCityResupply && !owned[i].noResupplied)
                         owned[i].resupply();
                 }
                 if(((Property)army.getBattle().getMap().find(owned[i]).getTerrain()).repairLand && ((owned[i].moveType == owned[i].MOVE_HOVER) || (owned[i].moveType == owned[i].MOVE_MECH)|| (owned[i].moveType == owned[i].MOVE_INFANTRY)|| (owned[i].moveType == owned[i].MOVE_PIPE)|| (owned[i].moveType == owned[i].MOVE_TREAD)|| (owned[i].moveType == owned[i].MOVE_TIRE))) {
-                    System.out.println("two");
+                    logger.info("two");
                     if(!owned[i].noCityResupply && !owned[i].noResupplied)
                         owned[i].resupply();
                 }
                 if(((Property)army.getBattle().getMap().find(owned[i]).getTerrain()).repairPipe && (owned[i].moveType == owned[i].MOVE_PIPE)) {
-                    System.out.println("two");
+                    logger.info("two");
                     if(!owned[i].noCityResupply && !owned[i].noResupplied)
                         owned[i].resupply();
                 }

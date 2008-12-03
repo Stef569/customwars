@@ -9,6 +9,8 @@ package cwsource;
 
 import java.io.*;
 import org.omg.CORBA.BAD_CONTEXT;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class Unit implements Locatable, Serializable{
     //moveType 0=infantry, 1=mech, 2=tread, 3=tires, 4=air, 5=sea, 6=transport, 7=oozium, 8=pipe, 9=hover
@@ -22,7 +24,8 @@ public abstract class Unit implements Locatable, Serializable{
     final protected int MOVE_OOZIUM = 7;
     final protected int MOVE_PIPE = 8;
     final protected int MOVE_HOVER = 9;
-    
+	final static Logger logger = LoggerFactory.getLogger(Unit.class); 
+	
     protected int hP = 100; //HP (out of 100)
     protected int moveType; //move type
     protected int ammo;     //current ammunition
@@ -469,7 +472,7 @@ public abstract class Unit implements Locatable, Serializable{
         //ensures that a proper moveTraverse has been generated...in the final version, this will happen when the player selects the unit to move
         if(moveRange == null) 
         {
-            System.out.println("Cannot move yet, move range unchecked");
+            logger.info("Cannot move yet, move range unchecked");
             return trapper;
         }
         
@@ -600,10 +603,10 @@ public abstract class Unit implements Locatable, Serializable{
                 //moveRange = null;
                 moved = true;
             }else{
-                System.out.println("Cannot move, a friendly unit is already occupying that tile");
+                logger.info("Cannot move, a friendly unit is already occupying that tile");
             }
         }else{
-            System.out.println("Invalid Move");
+            logger.info("Invalid Move");
         }
         
         //return ambush;

@@ -1,10 +1,13 @@
 package cwsource;
 
 import java.awt.*;
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.Timer;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.awt.image.*;
 /*
  *Battle Animation.java
@@ -20,6 +23,7 @@ public class BattleAnimation_1 extends Animation{
     Terrain atkTerrain, defTerrain;
     int atkDmg, countDmg;
     //I can procedur
+    final static Logger logger = LoggerFactory.getLogger(BattleAnimation_1.class); 
     public BattleAnimation_1(Unit u, Unit d, int counterDamage, int damage) {
         super();
         atkDmg = damage;
@@ -210,7 +214,7 @@ public class BattleAnimation_1 extends Animation{
                     if (tick >= 155 && tick <166 && BaseDMG.find(defender,attacker, b.getBattleOptions().isBalance()) != -1 && defender.getMaxRange() == 1 && attacker.getMaxRange() == 1) {
                         //shooting
                         g.drawImage(BattleGraphics.getImage(defender),127-40+100+120+(whatnot*70)%100,220-whatnot*17,127-40+120+(whatnot*70)%100,220+70-whatnot*17,(int)(((tick-1)/11.0*7)%7+9)*100,0,(int)(((tick-1)/11.0*7)%7+10)*100,70,bs);
-                        System.out.println((int)(((tick-1)/11.0*7)%7+9)*100);
+                        logger.info( "tick tick:" +(int)(((tick-1)/11.0*7)%7+9)*100);
                         tick+=whatnot;
                         whatnot--;
                     }else{

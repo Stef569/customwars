@@ -11,6 +11,10 @@ import java.io.*;
 
 //TEMPORARY?
 import javax.swing.JOptionPane;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.net.*;
 //import javax.media.bean.playerbean.MediaPlayer;
 //import java.util.Random;
@@ -32,6 +36,7 @@ public class Battle implements Serializable{
     private boolean ismist;                         //is mist on this turn?
     //fog is stronger than mist; if fog is on,
     //mist will not appear.
+	final static Logger logger = LoggerFactory.getLogger(Battle.class); 
     
     private int currVisibility;                     //dictates the current visibility for
     //this turn.
@@ -238,9 +243,9 @@ public class Battle implements Serializable{
                 if(tempbyte==0)break;
                 desc += tempbyte;
             }
-            System.out.println(name);
-            System.out.println(aut);
-            System.out.println(desc);
+        	logger.info("name= ["+ name + "]");
+        	logger.info("aut= [" +aut+ "]");
+        	logger.info("desc= ["+ desc+ "]");
             
             //width, height, and number of armies
             width = read.readInt();
@@ -1010,7 +1015,7 @@ public void updateFoW() {
             
             //update server information
             String reply = sendCommandToMain("nextturn", Options.gamename+"\n"+Options.username+"\n"+Options.password);
-            System.out.println(reply);
+            logger.info("info = ["+ reply +"]");
             //TODO: retry?
         }
         
@@ -1054,11 +1059,11 @@ public void updateFoW() {
             }
             in.close();
         }catch(MalformedURLException e1){
-            System.out.println("Bad URL "+Options.getServerName());
+        	logger.error("Bad URL "+Options.getServerName());
             JOptionPane.showMessageDialog(Mission.mainFrame,"Bad URL: "+Options.getServerName());
             return null;
         }catch(IOException e2){
-            System.out.println("Connection Problem during command "+command+" with information:\n"+extra);
+        	logger.error("Connection Problem during command "+command+" with information:\n"+extra);
             JOptionPane.showMessageDialog(Mission.mainFrame,"Connection Problem during command "+command+" with the following information:\n"+extra);
             return null;
         }
@@ -1077,7 +1082,7 @@ public void updateFoW() {
                 con.setUseCaches(false);
                 con.setRequestProperty("Content-type", "text/plain");
                 byte buffer[] = new byte[1];
-                System.out.println("opening file");
+                logger.info("opening file");
                 File source = new File(file);
                 con.setRequestProperty("Content-length", (input.length()+1+source.length())+"");
                 
@@ -1109,16 +1114,17 @@ public void updateFoW() {
                 in.close();
                 
             }catch(MalformedURLException e1){
-                System.out.println("Bad URL "+Options.getServerName());
+            	logger.error("Bad URL "+Options.getServerName());
                 JOptionPane.showMessageDialog(Mission.mainFrame,"Bad URL: "+Options.getServerName());
                 return null;
             }catch(IOException e2){
-                System.out.println("Connection problem, unable to send file");
+            	logger.error("Connection problem, unable to send file");
                 JOptionPane.showMessageDialog(Mission.mainFrame,"Connection problem, unable to send file");
                 return null;
             }
         } while(!reply.equals(String.valueOf(Mission.getCheckSum(file))));
-        System.out.println("Reply " + reply);
+        
+        logger.info("Reply " + reply);
         
         return reply;
     }

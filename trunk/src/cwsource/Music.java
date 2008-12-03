@@ -6,13 +6,12 @@ package cwsource;
  *Creation: July 12, 2006, 12:26 PM
  */
 
-import java.io.*;
-import java.net.*;
-import org.newdawn.easyogg.*;
+import java.io.FileInputStream;
+
+import org.newdawn.easyogg.OggClip;
 
 
 public class Music extends Thread{
-    
     private static MusicStorage ms = new MusicStorage();
     private static OggClip eo;
     
@@ -22,7 +21,8 @@ public class Music extends Thread{
     
     public static void initializeMusic(){
         try {
-            eo = new OggClip(new FileInputStream("music/intro.ogg"));
+        	String soundLocation = ResourceLoader.properties.getProperty("soundLocation");
+            eo = new OggClip(new FileInputStream(soundLocation + "/intro.ogg"));
             eo.loop();
             
         } catch (Exception e) {
@@ -62,7 +62,8 @@ public class Music extends Thread{
     public static void startMainMenuMusic() {
         eo.stop();
          try {
-            eo = new OggClip(new FileInputStream("music/intro" + ".ogg"));
+        	 String soundLocation = ResourceLoader.properties.getProperty("soundLocation");
+        	 eo = new OggClip(new FileInputStream(soundLocation + "/intro" + ".ogg"));
             eo.loop();
             
         } catch (Exception e) {

@@ -221,7 +221,7 @@ public class Thanatos extends CO {
         if(suddenStrike) {
             suddenStrike = false;
             currentScouts = new ArrayList<Unit>();
-            System.out.println("Sudden Strike disabled!");
+            logger.info("Sudden Strike disabled!");
         }
     }
     
@@ -237,7 +237,7 @@ public class Thanatos extends CO {
             }
         } else {
             suddenStrike = false;
-            System.out.println("Sudden Strike disabled!");
+            logger.info("Sudden Strike disabled!");
         }
     }
     
@@ -293,8 +293,8 @@ public class Thanatos extends CO {
                         }
                         
                         if(rCol + rRow <= enemyUnits[e].vision) {
-                            System.out.println("Thanatos' unit is sighted at (" + mCol + ", " + mRow + ")");
-                            System.out.println("Sighting unit is = " + enemyUnits[e].name + " at (" + eCol + ", " + eRow + ")");
+                            logger.info("Thanatos' unit is sighted at (" + mCol + ", " + mRow + ")");
+                            logger.info("Sighting unit is = " + enemyUnits[e].name + " at (" + eCol + ", " + eRow + ")");
                             currentScouts.add(enemyUnits[e]);
                             break;
                         }

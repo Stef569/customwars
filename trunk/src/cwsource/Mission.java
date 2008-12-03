@@ -15,6 +15,10 @@ import com.thoughtworks.xstream.io.xml.DomDriver;*/
 import java.io.*;
 import java.net.*;
 import javax.swing.*;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.zip.CRC32;
 //import java.util.*;
 
@@ -31,7 +35,8 @@ public class Mission {
     public  static ServerSocket sServer;
     public  static String name;
     public  static int saveAttempts = 0;
-   
+	final static Logger logger = LoggerFactory.getLogger(Mission.class);  
+	
     //constructor
     public Mission() {
     }
@@ -72,10 +77,10 @@ public class Mission {
                 ObjectInputStream read = new ObjectInputStream(new FileInputStream(saveLocation + "/replay.save"));
                 initialState = (Battle)read.readObject();
             }catch(IOException e){
-                System.out.println(e);
+                logger.error("error", e);
                 System.exit(1);
             }catch(ClassNotFoundException e){
-                System.out.println(e);
+            	logger.error("error", e);
                 System.exit(1);
             }
         }
@@ -94,8 +99,6 @@ public class Mission {
         ObjectOutputStream write = new ObjectOutputStream(new FileOutputStream(filename));
         xstream.toXML(battle1,write);
         }catch(IOException e){
-            System.out.println(e);
-            System.exit(1);
         }
    }*/
     //saves the mission to file
@@ -115,20 +118,20 @@ public class Mission {
                 if(battle1.getBattleOptions().isRecording())write.writeObject(initialState);
                 if(!testSave(filename)){
                     saveAttempts++;
-                    System.out.println("Saving Error: " + saveAttempts);
+                    logger.error("Saving Error: " + saveAttempts);
                     //prevent from becoming potentially infinite
                     if(saveAttempts > 5){
-                        System.out.println("Unable to save!");
+                        logger.error("Unable to save!");
                         JOptionPane.showMessageDialog(mainFrame,"ERROR: Could not save after 5 attempts!");
                         return;
                     }
-                    System.out.println("Attempting to Resave");
+                    logger.info("Attempting to Resave");
                     saveMission(filename);
                     return;
                 }
             }
         }catch(IOException e){
-            System.out.println(e);
+        	logger.error("e",e);
             System.exit(1);
         }
     }
@@ -144,10 +147,10 @@ public class Mission {
             if(stype == 1){
                 initialState = (Battle) read.readObject();
             }
-            System.out.println("Save Success!");
+            logger.info("Save Success!");
             return true;
         } catch (Exception e){
-            System.out.println("SAVING ERROR: " + e);
+        	logger.error("SAVING ERROR: " + e);
             e.printStackTrace();
             return false;
         }
@@ -167,7 +170,7 @@ public class Mission {
             //replay queue
             write.writeObject(battle1.getReplay());
         }catch(IOException e){
-            System.out.println(e);
+            logger.error("error",e);
             System.exit(1);
         }
     }
@@ -185,10 +188,10 @@ public class Mission {
             //read replay queue
             rq = (ReplayQueue) read.readObject();
         }catch(IOException e){
-            System.out.println(e);
+            logger.error("error",e);
             System.exit(1);
         }catch(ClassNotFoundException e){
-            System.out.println(e);
+            logger.error("error",e);
             System.exit(1);
         }
        
@@ -208,28 +211,28 @@ public class Mission {
     //sends the mission to the IP Address
     public static void sendMission(){
         try{
-            System.out.println("1");
+            logger.info("1");
             InetAddress lol = InetAddress.getByAddress(Options.getIP());
-            System.out.println("2");
+            logger.info("2");
             socket = new Socket(lol, Options.getPort());
-            System.out.println("3");
+            logger.info("3");
             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-            System.out.println("4");
+            logger.info("4");
             //out.print(name.length());
-            System.out.println("5");
+            logger.info("5");
             //out.print(name);
-            System.out.println("6");
+            logger.info("6");
             ObjectOutputStream write = new ObjectOutputStream(socket.getOutputStream());
-            System.out.println("7");
+            logger.info("7");
             if(battle1 != null){
-                System.out.println("8");
+                logger.info("8");
                 write.writeObject(battle1);
                 write.writeObject(initialState);
             }
-            System.out.println("9");
+            logger.info("9");
         }catch(Exception e) {
-            System.out.println("Network Problem!");
-            System.out.println(e);
+            logger.error("Network Problem!");
+            logger.error("error:",e);
         }
     }
    
@@ -242,10 +245,10 @@ public class Mission {
             battle1 = (Battle) read.readObject();
             initialState = (Battle) read.readObject();
         }catch(IOException e){
-            System.out.println(e);
+            logger.error("error:",e);
             System.exit(1);
         }catch(ClassNotFoundException e){
-            System.out.println(e);
+            logger.error("error:",e);
             System.exit(1);
         }
        
@@ -274,10 +277,10 @@ public class Mission {
                 initialState = (Battle) read.readObject();
             }
         }catch(IOException e){
-            System.out.println(e);
+            logger.error("error:",e);
             System.exit(1);
         }catch(ClassNotFoundException e){
-            System.out.println(e);
+            logger.error("error:",e);
             System.exit(1);
         }
        
@@ -321,7 +324,7 @@ public class Mission {
             
             checksum.update(out.toByteArray());
         }catch(IOException e){
-            System.out.println(e);
+            logger.error("error:",e);
             System.exit(1);
         }
         return checksum.getValue();

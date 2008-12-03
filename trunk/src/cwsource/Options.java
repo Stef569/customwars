@@ -9,6 +9,10 @@ package cwsource;
 
 import java.io.*;
 import javax.swing.JOptionPane;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.awt.event.*;
 
 /** Class which contains options and functions to modify those options.
@@ -26,6 +30,7 @@ public class Options {
     private static int port = 55555;
     /** ? */
     private static boolean networkGame = false;
+	final static Logger logger = LoggerFactory.getLogger(Options.class); 
     /** ? */
     private static boolean send = true;
     /** The index of the cursor graphic selected by the user. */
@@ -177,7 +182,8 @@ public class Options {
             listenThread = new Thread(listen);
             listenThread.start();
         }catch(Exception e){
-            System.out.println(e); System.exit(1);
+            logger.error("error:", e); 
+            System.exit(1);
         }
     }
     
