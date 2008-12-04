@@ -17,33 +17,36 @@ public class FileSystemManager {
 	final static Logger logger = LoggerFactory.getLogger(AllTests.class);  
 	
 	private static final String DIR_IGNORE_FILTER = ".";
-
-	public static ArrayList<String> getMapCatagories() {
-		File mapDir = null;
-		ArrayList<String> directories = null; 
+	private static FilenameFilter fileNameFilters;
+	private static File MAP_DIR;
+	
+	public static void init(){
+		fileNameFilters = getFileFilters();
+		MAP_DIR = new File((String)ResourceLoader.properties.get("mapsLocation"));
+	}
+	
+	public static List<File> getMapCatagories() {
+		List<File> directories = null; 
 		
+		if (MAP_DIR !=null){
+			directories = readAllFiles(MAP_DIR);
+			
+			if (directories.isEmpty() && directories !=null) {
+				logger.error("Problem reading from MapLocation: [" + MAP_DIR + " ]");
+				return null;
+			}
+		}
+	    
+	    return directories;
+	}
+
+	private static FilenameFilter getFileFilters() {
 		FilenameFilter filter = new FilenameFilter() {
 	        public boolean accept(File dir, String name) {
 	            return !name.startsWith(DIR_IGNORE_FILTER);
 	        }
 	    };
-	    
-		mapDir = new File((String)ResourceLoader.properties.get("mapsLocation"));
-		
-		if (mapDir !=null){
-			String[] list = mapDir.list(filter);
-			List<String> asList = Arrays.asList(list);
-			directories = new ArrayList<String>(asList);
-			
-			if (directories.isEmpty() && directories !=null) {
-				logger.error("Problem reading from MapLocation: [" + mapDir + " ]");
-				return null;
-			}
-			
-		}
-		
-	    
-	    return directories;
+		return filter;
 	}
 	
 	protected static boolean deleteDir(String dirName) {
@@ -71,5 +74,20 @@ public class FileSystemManager {
 	    }
 	}
 
+	public static List<File> getAllAvailableMaps() {
+		
+		List<File> categories = FileSystemManager.getMapCatagories();
+		List<File> allMaps = new ArrayList<File>();
+		
+		for(File category: categories){
+			allMaps.addAll(readAllFiles(category.getAbsoluteFile()));
+		}
+		
+		return allMaps;
+	}
 
+	private static List<File> readAllFiles(File file) {
+		File[] list = file.listFiles(fileNameFilters);
+		return Arrays.asList(list);
+	}
 }

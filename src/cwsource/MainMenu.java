@@ -19,6 +19,8 @@ import javax.swing.event.MouseInputListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import cwsource.state.FileSystemManager;
+
 import java.awt.color.*;
 //import javax.swing.filechooser.FileNameExtensionFilter;
 import java.net.*;
@@ -1288,7 +1290,8 @@ public void drawNewLoadScreen(Graphics2D g){
     
     //loads the display names
     private void loadMapDisplayNames(){
-        File[] mapFiles = mapDir.listFiles();
+    	File[] mapFiles= new File[0];
+        mapFiles = (File[])FileSystemManager.getAllAvailableMaps().toArray(mapFiles);
         displayNames = new String[mapFiles.length];
         filenames = new String[mapFiles.length];
         //numPlayers = new int[mapFiles.length];
@@ -1338,9 +1341,9 @@ public void drawNewLoadScreen(Graphics2D g){
                         num = read.readInt();
                     }
                 }catch(IOException e){
-                    System.err.println("Corrupt .map file!");
-                    System.err.println(filenames[numMaps]);
-                    System.err.println(e);
+                    logger.error("Corrupt .map file!");
+                    logger.error(filenames[numMaps]);
+                    logger.error("error:", e);
                     continue;
                     /*
                     System.err.println("Exiting");
