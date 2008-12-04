@@ -37,6 +37,7 @@ public class BattleGraphics {
     private static Image[][] HQ = new Image[backStyle][5];
     private static Image[][] bHQ = new Image[backStyle][5];
 	final static Logger logger = LoggerFactory.getLogger(BattleGraphics.class); 
+    final static String imagesLocation = ResourceLoader.properties.getProperty("imagesLocation");
     
     private static Image MDTank;      //the images used for moving units
     private static Image Rocket;
@@ -49,50 +50,50 @@ public class BattleGraphics {
     
     //loads the images before use
     public static void loadImages(Component screen){
-        MDTank = new ImageIcon("images/ba/unit/mdtank_cannon.gif").getImage();
-        Rocket = new ImageIcon("images/ba/unit/rockets.gif").getImage();
-        Smoke = new ImageIcon("images/ba/unit/missile_smoke.gif").getImage();
-        missile = new ImageIcon("images/ba/unit/missile.gif").getImage();
+        MDTank = new ImageIcon(imagesLocation + "/ba/unit/mdtank_cannon.gif").getImage();
+        Rocket = new ImageIcon(imagesLocation + "/ba/unit/rockets.gif").getImage();
+        Smoke = new ImageIcon(imagesLocation + "/ba/unit/missile_smoke.gif").getImage();
+        missile = new ImageIcon(imagesLocation + "/ba/unit/missile.gif").getImage();
         for(int i = 0; i<backStyle; i++) {
-            sky[i][0] = new ImageIcon("images/ba/backdrop/bg/sky"+i+".gif").getImage();
-            sky[i][1] = new ImageIcon("images/ba/backdrop/bg/forest"+i+".gif").getImage();
+            sky[i][0] = new ImageIcon(imagesLocation + "/ba/backdrop/bg/sky"+i+".gif").getImage();
+            sky[i][1] = new ImageIcon(imagesLocation + "/ba/backdrop/bg/forest"+i+".gif").getImage();
             
-            wood[i][0] = new ImageIcon("images/ba/backdrop/fore/wood"+i+"a.gif").getImage();
-            wood[i][1] = new ImageIcon("images/ba/backdrop/fore/wood"+i+"b.gif").getImage();
+            wood[i][0] = new ImageIcon(imagesLocation + "/ba/backdrop/fore/wood"+i+"a.gif").getImage();
+            wood[i][1] = new ImageIcon(imagesLocation + "/ba/backdrop/fore/wood"+i+"b.gif").getImage();
             
-            plain[i][0] = new ImageIcon("images/ba/backdrop/fore/plain"+i+"a.gif").getImage();
-            plain[i][1] = new ImageIcon("images/ba/backdrop/fore/plain"+i+"b.gif").getImage();
-            plain[i][2] = new ImageIcon("images/ba/backdrop/fore/plain"+i+"c.gif").getImage();
+            plain[i][0] = new ImageIcon(imagesLocation + "/ba/backdrop/fore/plain"+i+"a.gif").getImage();
+            plain[i][1] = new ImageIcon(imagesLocation + "/ba/backdrop/fore/plain"+i+"b.gif").getImage();
+            plain[i][2] = new ImageIcon(imagesLocation + "/ba/backdrop/fore/plain"+i+"c.gif").getImage();
             
-            road[i] = new ImageIcon("images/ba/backdrop/fore/road"+i+".gif").getImage();
-            city[i][0] = new ImageIcon("images/ba/backdrop/fore/city"+i+".gif").getImage();
-            city[i][1] = new ImageIcon("images/ba/backdrop/fore/base"+i+".gif").getImage();
-            city[i][2] = new ImageIcon("images/ba/backdrop/fore/airport"+i+".gif").getImage();
-            city[i][3] = new ImageIcon("images/ba/backdrop/fore/port"+i+".gif").getImage();
-            mount[i] = new ImageIcon("images/ba/backdrop/fore/mount"+i+".gif").getImage();
+            road[i] = new ImageIcon(imagesLocation + "/ba/backdrop/fore/road"+i+".gif").getImage();
+            city[i][0] = new ImageIcon(imagesLocation + "/ba/backdrop/fore/city"+i+".gif").getImage();
+            city[i][1] = new ImageIcon(imagesLocation + "/ba/backdrop/fore/base"+i+".gif").getImage();
+            city[i][2] = new ImageIcon(imagesLocation + "/ba/backdrop/fore/airport"+i+".gif").getImage();
+            city[i][3] = new ImageIcon(imagesLocation + "/ba/backdrop/fore/port"+i+".gif").getImage();
+            mount[i] = new ImageIcon(imagesLocation + "/ba/backdrop/fore/mount"+i+".gif").getImage();
             
-            bwood[i][0] = new ImageIcon("images/ba/backdrop/back/wood"+i+"a.gif").getImage();
-            bwood[i][1] = new ImageIcon("images/ba/backdrop/back/wood"+i+"b.gif").getImage();
-            bplain[i] = new ImageIcon("images/ba/backdrop/back/plain"+i+".gif").getImage();
-            broad[i] = new ImageIcon("images/ba/backdrop/back/road"+i+".gif").getImage(); //dun have
-            burban[i][0] = new ImageIcon("images/ba/backdrop/back/city"+i+"a.gif").getImage(); //plain background
-            burban[i][1] = new ImageIcon("images/ba/backdrop/back/city"+i+"b.gif").getImage(); //city background
-            burban[i][2] = new ImageIcon("images/ba/backdrop/back/base"+i+".gif").getImage(); //city background
-            burban[i][3] = new ImageIcon("images/ba/backdrop/back/airport"+i+".gif").getImage(); //city background
-            burban[i][4] = new ImageIcon("images/ba/backdrop/back/port"+i+".gif").getImage(); //city background
-            bmount[i] = new ImageIcon("images/ba/backdrop/back/mount"+i+".gif").getImage();
+            bwood[i][0] = new ImageIcon(imagesLocation + "/ba/backdrop/back/wood"+i+"a.gif").getImage();
+            bwood[i][1] = new ImageIcon(imagesLocation + "/ba/backdrop/back/wood"+i+"b.gif").getImage();
+            bplain[i] = new ImageIcon(imagesLocation + "/ba/backdrop/back/plain"+i+".gif").getImage();
+            broad[i] = new ImageIcon(imagesLocation + "/ba/backdrop/back/road"+i+".gif").getImage(); //dun have
+            burban[i][0] = new ImageIcon(imagesLocation + "/ba/backdrop/back/city"+i+"a.gif").getImage(); //plain background
+            burban[i][1] = new ImageIcon(imagesLocation + "/ba/backdrop/back/city"+i+"b.gif").getImage(); //city background
+            burban[i][2] = new ImageIcon(imagesLocation + "/ba/backdrop/back/base"+i+".gif").getImage(); //city background
+            burban[i][3] = new ImageIcon(imagesLocation + "/ba/backdrop/back/airport"+i+".gif").getImage(); //city background
+            burban[i][4] = new ImageIcon(imagesLocation + "/ba/backdrop/back/port"+i+".gif").getImage(); //city background
+            bmount[i] = new ImageIcon(imagesLocation + "/ba/backdrop/back/mount"+i+".gif").getImage();
             
-            HQ[i][0] = new ImageIcon("images/ba/backdrop/fore/oshq" + i + ".gif").getImage();
-            HQ[i][1] = new ImageIcon("images/ba/backdrop/fore/bmhq" + i + ".gif").getImage();
-            HQ[i][2] = new ImageIcon("images/ba/backdrop/fore/gehq" + i + ".gif").getImage();
-            HQ[i][3] = new ImageIcon("images/ba/backdrop/fore/ychq" + i + ".gif").getImage();
-            HQ[i][4] = new ImageIcon("images/ba/backdrop/fore/bhhq" + i + ".gif").getImage();
+            HQ[i][0] = new ImageIcon(imagesLocation + "/ba/backdrop/fore/oshq" + i + ".gif").getImage();
+            HQ[i][1] = new ImageIcon(imagesLocation + "/ba/backdrop/fore/bmhq" + i + ".gif").getImage();
+            HQ[i][2] = new ImageIcon(imagesLocation + "/ba/backdrop/fore/gehq" + i + ".gif").getImage();
+            HQ[i][3] = new ImageIcon(imagesLocation + "/ba/backdrop/fore/ychq" + i + ".gif").getImage();
+            HQ[i][4] = new ImageIcon(imagesLocation + "/ba/backdrop/fore/bhhq" + i + ".gif").getImage();
             
-            bHQ[i][0] = new ImageIcon("images/ba/backdrop/back/oshq" + i + ".gif").getImage();
-            bHQ[i][1] = new ImageIcon("images/ba/backdrop/back/bmhq" + i + ".gif").getImage();
-            bHQ[i][2] = new ImageIcon("images/ba/backdrop/back/gehq" + i + ".gif").getImage();
-            bHQ[i][3] = new ImageIcon("images/ba/backdrop/back/ychq" + i + ".gif").getImage();
-            bHQ[i][4] = new ImageIcon("images/ba/backdrop/back/bhhq" + i + ".gif").getImage();
+            bHQ[i][0] = new ImageIcon(imagesLocation + "/ba/backdrop/back/oshq" + i + ".gif").getImage();
+            bHQ[i][1] = new ImageIcon(imagesLocation + "/ba/backdrop/back/bmhq" + i + ".gif").getImage();
+            bHQ[i][2] = new ImageIcon(imagesLocation + "/ba/backdrop/back/gehq" + i + ".gif").getImage();
+            bHQ[i][3] = new ImageIcon(imagesLocation + "/ba/backdrop/back/ychq" + i + ".gif").getImage();
+            bHQ[i][4] = new ImageIcon(imagesLocation + "/ba/backdrop/back/bhhq" + i + ".gif").getImage();
         }
     }
     
