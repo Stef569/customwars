@@ -11,7 +11,6 @@ public class TestWideSetup extends TestSetup {
 	public TestWideSetup(Test test) {
 			super(test);
 			ResourceLoader.initTestProperties();
-			logger.info("The ResourceManager has been setup with Test Properties");
 	}
 
 }
