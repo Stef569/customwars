@@ -239,7 +239,7 @@ public class MainMenu extends JComponent{
         //write the copyright notice
         g.setColor(Color.white);
         g.setFont(new Font("SansSerif", Font.PLAIN, 14));
-        g.drawString("Advance Wars is ©Nintendo/Intelligent Systems",100,310);
+        g.drawString("Advance Wars is ï¿½Nintendo/Intelligent Systems",100,310);
     }
     
     public void drawInfoScreen(Graphics2D g) {
@@ -439,17 +439,17 @@ public class MainMenu extends JComponent{
         g.fillRoundRect(180,275,280,40,20,20);
         g.setColor(Color.WHITE);
         g.setFont(new Font("SansSerif", Font.BOLD, 16));
-        g.drawImage(TerrainGraphics.getUrbanSpriteSheet(0),205+16,284,221+16,316,(3)*16, 0, (4)*16, 32, this);
+        g.drawImage(TerrainGraphics.getColoredSheet(0),205+16,284,221+16,316,0, TerrType.getYIndex(TerrType.CITY), 16, TerrType.getYIndex(TerrType.CITY) + 32, this);
         g.drawString(""+ptypes[0],205,300);
-        g.drawImage(TerrainGraphics.getUrbanSpriteSheet(0),247+16,284,263+16,316,(4)*16, 0, (5)*16, 32, this);
+        g.drawImage(TerrainGraphics.getColoredSheet(0),247+16,284,263+16,316,0, TerrType.getYIndex(TerrType.BASE), 16, TerrType.getYIndex(TerrType.BASE) + 32, this);
         g.drawString(""+ptypes[1],247,300);
-        g.drawImage(TerrainGraphics.getUrbanSpriteSheet(0),289+16,284,305+16,316,(6)*16, 0, (7)*16, 32, this);
+        g.drawImage(TerrainGraphics.getColoredSheet(0),289+16,284,305+16,316,0, TerrType.getYIndex(TerrType.PORT), 16, TerrType.getYIndex(TerrType.PORT) + 32, this);
         g.drawString(""+ptypes[2],289,300);
-        g.drawImage(TerrainGraphics.getUrbanSpriteSheet(0),331+16,284,347+16,316,(5)*16, 0, (6)*16, 32, this);
+        g.drawImage(TerrainGraphics.getColoredSheet(0),331+16,284,347+16,316,0, TerrType.getYIndex(TerrType.AIRPORT), 16, TerrType.getYIndex(TerrType.AIRPORT) + 32, this);
         g.drawString(""+ptypes[3],331,300);
-        g.drawImage(TerrainGraphics.getUrbanSpriteSheet(0),373+16,284,389+16,316,(7)*16, 0, (8)*16, 32, this);
+        g.drawImage(TerrainGraphics.getColoredSheet(0),373+16,284,389+16,316,0, TerrType.getYIndex(TerrType.COM_TOWER), 16, TerrType.getYIndex(TerrType.COM_TOWER) + 32, this);
         g.drawString(""+ptypes[4],373,300);
-        g.drawImage(TerrainGraphics.getUrbanSpriteSheet(0),415+16,284,431+16,316,(8)*16, 0, (9)*16, 32, this);
+        g.drawImage(TerrainGraphics.getColoredSheet(0),415+16,284,431+16,316,0, TerrType.getYIndex(TerrType.PIPE_STATION), 16, TerrType.getYIndex(TerrType.PIPE_STATION) + 32, this);
         g.drawString(""+ptypes[5],415,300);
         
         g.setColor(new Color(7,66,97));

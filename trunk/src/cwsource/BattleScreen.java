@@ -1464,9 +1464,9 @@ public class BattleScreen extends CWScreen
             
             //draw properties
             Image temp;
-            temp = TerrainGraphics.getUrbanSpriteSheet(arms[i].getColor()+1);
-            if(i<5)g.drawImage(temp,90,20+10+i*32-10,90+16,20+10+i*32+22,3*16,0,4*16,32,this);
-            else g.drawImage(temp,220,20+10+(i-5)*32-10,220+16,20+10+(i-5)*32+22,3*16,0,4*16,32,this);
+            temp = TerrainGraphics.getColoredSheet(arms[i].getColor()+1);
+            if(i<5)g.drawImage(temp,90,20+10+i*32-10,90+16,20+10+i*32+22,0,TerrType.getYIndex(TerrType.CITY),16,TerrType.getYIndex(TerrType.CITY) + 32,this);
+            else g.drawImage(temp,220,20+10+(i-5)*32-10,220+16,20+10+(i-5)*32+22,0,TerrType.getYIndex(TerrType.CITY),16,TerrType.getYIndex(TerrType.CITY) + 32,this);
             g.setColor(Color.black);
             g.setFont(new Font("SansSerif", Font.PLAIN, 10));
             
