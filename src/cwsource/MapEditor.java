@@ -288,32 +288,19 @@ public class MapEditor extends CWScreen
 		
         Terrain ter = selectedTerrain;
         
-        int spriteX1 = TerrType.getSearchIndex(ter);
+        int spriteX1 = TerrType.getXIndex(ter);
         int spriteX2 = spriteX1 + 16;
         
         if(ter instanceof Property) 
 		{
 		    if(((Property)ter).owner == null)
-		        temp = TerrainGraphics.getUrbanSpriteSheet(0);
+		        temp = TerrainGraphics.getColoredSheet(0);
 		    else
-		        temp = TerrainGraphics.getUrbanSpriteSheet(((Property)ter).owner.getColor()+1);
-		    
-		    if(b.isFog() && ter instanceof Property && b.getFog(cx,cy) && ter.getIndex()!=9 && ter.getIndex() != 16 && !(ter instanceof HQ))
-		    {
-		    	
-		    } 
-		    else if(ter instanceof Pipestation) 
-		    {
-		    	
-		    } 
-		    else if(ter instanceof HQ)
-		    {
-		        temp = TerrainGraphics.getHQSpriteSheet(((Property)ter).owner.getColor()+1);
-		    }
+		        temp = TerrainGraphics.getColoredSheet(((Property)ter).owner.getColor()+1);
 		} 
 		else
 		{
-		    temp = TerrainGraphics.getTerrainSpriteSheet();
+		    temp = TerrainGraphics.getSpriteSheet();
 		}
 		
 		g.drawImage(temp, cx*16-sx, cy*16-sy-16, (cx+1)*16-sx, cy*16-sy+16, spriteX1, 0, spriteX2, 32, this);

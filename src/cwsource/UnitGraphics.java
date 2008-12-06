@@ -49,13 +49,13 @@ public class UnitGraphics
     	String imagesLocation = ResourceLoader.properties.getProperty("imagesLocation");
        
         unitSheet = new ImageIcon(imagesLocation + "/units/units.gif").getImage();
-        rUnitSheet = new ImageIcon(imagesLocation + "images/units/unitsr.gif").getImage();
-        infSheet = new ImageIcon(imagesLocation + "images/units/infantry.gif").getImage();
-        rInfSheet = new ImageIcon(imagesLocation + "images/units/infantryr.gif").getImage();
-        moveUnitSheet[0] = new ImageIcon(imagesLocation + "images/units/units_up.gif").getImage();
-        moveUnitSheet[1] = new ImageIcon(imagesLocation + "images/units/units_right.gif").getImage();
-        moveUnitSheet[2] = new ImageIcon(imagesLocation + "images/units/units_down.gif").getImage();
-        moveUnitSheet[3] = new ImageIcon(imagesLocation + "images/units/units_left.gif").getImage();
+        rUnitSheet = new ImageIcon(imagesLocation + "/units/unitsr.gif").getImage();
+        infSheet = new ImageIcon(imagesLocation + "/units/infantry.gif").getImage();
+        rInfSheet = new ImageIcon(imagesLocation + "/units/infantryr.gif").getImage();
+        moveUnitSheet[0] = new ImageIcon(imagesLocation + "/units/units_up.gif").getImage();
+        moveUnitSheet[1] = new ImageIcon(imagesLocation + "/units/units_right.gif").getImage();
+        moveUnitSheet[2] = new ImageIcon(imagesLocation + "/units/units_down.gif").getImage();
+        moveUnitSheet[3] = new ImageIcon(imagesLocation + "/units/units_left.gif").getImage();
 
                 
         //This stuff is new!

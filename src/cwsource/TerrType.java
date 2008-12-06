@@ -41,8 +41,18 @@ public final class TerrType
 	public static final int SEA_PIPE = 23;
 	public static final int SP_SEAM = 24;
 	public static final int DEST_SPS = 25;	
-	
-	public static int getSearchIndex(Tile currTile, Battle b)
+
+    public static int getYIndex(Terrain ter)
+    {
+        return ter.getIndex() * 32;
+    }
+
+    public static int getYIndex(int value)
+    {
+        return value * 32;
+    }
+
+	public static int getXIndex(Tile currTile, Battle b)
 	{
 		if(currTile != null && b != null)
 		{
@@ -54,188 +64,25 @@ public final class TerrType
 		        {
 		        	//spriteX1 = (ter.getIndex()-7)*16;
 		        	//spriteX2 = (ter.getIndex()-6)*16;
-		        	return (ter.getIndex()-7)*16;
-		        } 
-		        else if(ter instanceof Pipestation) 
-		        {
-		        	//spriteX1 = 8*16;
-		        	//spriteX2 = (ter.getIndex()-6)*16;
-		        	return 8*16;
-		        } 
-		        else if(ter instanceof HQ)
-		        {
-		        	//spriteX1 = (((Property)ter).owner.getCO().getStyle())*16;
-		        	//spriteX2 = (((Property)ter).owner.getCO().getStyle()+1)*16;
-		        	return (((Property)ter).owner.getCO().getStyle())*16;
-		        } 
-		        else if (ter instanceof Silo)
-		        {
-		        	//Launched Silo
-		            if(((Silo)ter).launched)
-		            {
-		            	//spriteX1 = 1*16;
-		            	//spriteX2 = 2*16;
-		            	return 16;
-		            }
-		            //Loaded Silo
-		            else
-		            {	
-		            	//spriteX1 = 0*16;
-		            	//spriteX2 = 1*16;
-		            	return 0;
-		            }
+		        	return (ter.getStyle())*16;
 		        }
-		        else
-		        {
-		        	//spriteX1 = (ter.getIndex()-7)*16;
-		        	//spriteX2 = (ter.getIndex()-6)*16;
-		        	return (ter.getIndex()-7)*16;
-		        }
-		    } 
-		    else 
-		    {
-		        if(ter.index<3) 
-		        { 
-		        	//Plain, Wood, Mountain
-		        	//spriteX1 = (ter.getIndex())*16;
-		        	//spriteX2 = (ter.getIndex()+1)*16;
-		        	return (ter.getIndex())*16;
-		        } 
-		        else if(ter.index == 3)
-		        { 
-		        	//Road
-		        	//spriteX1 = (ter.getStyle()+3)*16;
-		        	//spriteX2 = (ter.getStyle()+4)*16;
-		        	return (ter.getStyle()+3)*16;
-		        } 
-		        else if(ter.index == 4)
-		        { 
-		        	//Bridge
-		        	//spriteX1 = (ter.getStyle()+14)*16;
-		        	//spriteX2 = (ter.getStyle()+15)*16;
-		        	return (ter.getStyle()+14)*16;
-		        }
-		        else if(ter.index == 20)
-		        {
-		            //Put suspension code here
-		        	//spriteX1 = (ter.getStyle()+16)*16;
-		        	//spriteX2 = (ter.getStyle()+17)*16;
-		        	return (ter.getStyle()+16)*16;
-		        }
-		        else if(ter.index == 5)
-		        { 
-		        	//River
-		        	//spriteX1 = (ter.getStyle()+18)*16;
-		        	//spriteX2 = (ter.getStyle()+19)*16;
-		        	return (ter.getStyle()+18)*16;
-		        } 
-		        else if (ter.index == 8)
-		        { 
-		        	//Shoal
-		        	//spriteX1 = (ter.getStyle()+33)*16;
-		        	//spriteX2 = (ter.getStyle()+34)*16;
-		        	return (ter.getStyle()+33)*16;
-		        } 
-		        else if (ter.index == 6)
-		        { 
-		        	//Sea
-		        	//spriteX1 = (ter.getStyle()+72)*16;
-		        	//spriteX2 = (ter.getStyle()+73)*16;
-		        	return (ter.getStyle()+72)*16;
-		        } 
-		        else if (ter.index == 7)
-		        { 
-		        	//Reef
-		        	//spriteX1 = 71*16;
-		        	//spriteX2 = 72*16;
-		        	return 71*16;
-		        } 
-		        else if (ter.index == 15)
-		        { 
-		        	//Pipe
-		        	//spriteX1 = (ter.getStyle()+103)*16;
-		        	//spriteX2 = (ter.getStyle()+104)*16;
-		        	return (ter.getStyle()+103)*16;
-		        } 
-		        else if (ter.index == 18)
-		        { 
-		        	//PipeSeam
-		        	//spriteX1 = (ter.getStyle()+118)*16;
-		        	//spriteX2 = (ter.getStyle()+119)*16;
-		        	return (ter.getStyle()+118)*16;
-		        } 
-		        else if (ter.index == 19)
-		        { 
-		        	//Destroyed Seam
-		        	//spriteX1 = (ter.getStyle()+120)*16;
-		        	//spriteX2 = (ter.getStyle()+121)*16;
-		        	return (ter.getStyle()+120)*16;
-		        } 
-		        // ****NEW STUFF****
-		        else if (ter.index == TerrType.WALL)
-		        { 
-		        	//Wall
-		        	//spriteX1 = (ter.getStyle()+122)*16;
-		        	//spriteX2 = (ter.getStyle()+123)*16;
-		        	return (ter.getStyle()+122)*16;
-		        } 
-		        else if (ter.index == TerrType.DEST_WALL)
-		        { 
-		        	//Destroyed Wall
-		        	//spriteX1 = (ter.getStyle()+137)*16;
-		        	//spriteX2 = (ter.getStyle()+138)*16;
-		        	return (ter.getStyle()+137)*16;
-		        }
-		        // ****NEW STUFF****
-		        else if (ter.index == TerrType.SEA_PIPE)
-		        { 
-		        	//Sea Pipe
-		        	//spriteX1 = (ter.getStyle()+139)*16;
-		        	//spriteX2 = (ter.getStyle()+140)*16;
-		        	return (ter.getStyle()+139)*16;
-		        } 
-		        else if (ter.index == TerrType.SP_SEAM)
-		        { 
-		        	//Sea Pipe Seam
-		        	//spriteX1 = (ter.getStyle()+154)*16;
-		        	//spriteX2 = (ter.getStyle()+155)*16;
-		        	return (ter.getStyle()+154)*16;
-		        } 
-		        else if (ter.index == TerrType.DEST_SPS)
-		        { 
-		        	//Destroyed Sea Pipe Seam
-		        	//spriteX1 = (ter.getStyle()+156)*16;
-		        	//spriteX2 = (ter.getStyle()+157)*16;
-		        	return (ter.getStyle()+156)*16;
-		        }
-	    	}
-	    }
-		
-		return NOT_A_TERRAIN;
+            }
+            else
+            {
+                return getXIndex(ter);
+            }
+        }
+        return NOT_A_TERRAIN;
 	}
 	
-	public static int getSearchIndex(Terrain ter)
+	public static int getXIndex(Terrain ter)
 	{
 		if(ter != null)
 		{
 			if(ter instanceof Property) 
 		    {
-		        if(ter.getIndex()!=9 && ter.getIndex() != 16 && !(ter instanceof HQ))
+                if(ter instanceof HQ)
 		        {
-		        	//spriteX1 = (ter.getIndex()-7)*16;
-		        	//spriteX2 = (ter.getIndex()-6)*16;
-		        	return (ter.getIndex()-7)*16;
-		        } 
-		        else if(ter instanceof Pipestation) 
-		        {
-		        	//spriteX1 = 8*16;
-		        	//spriteX2 = (ter.getIndex()-6)*16;
-		        	return 8*16;
-		        } 
-		        else if(ter instanceof HQ)
-		        {
-		        	//spriteX1 = (((Property)ter).owner.getCO().getStyle())*16;
-		        	//spriteX2 = (((Property)ter).owner.getCO().getStyle()+1)*16;
 		        	return (((Property)ter).owner.getCO().getStyle())*16;
 		        } 
 		        else if (ter instanceof Silo)
@@ -259,87 +106,73 @@ public final class TerrType
 		        {
 		        	//spriteX1 = (ter.getIndex()-7)*16;
 		        	//spriteX2 = (ter.getIndex()-6)*16;
-		        	return (ter.getIndex()-7)*16;
+		        	return 0;
 		        }
 		    } 
 		    else 
 		    {
-		        if(ter.index<3) 
-		        { 
-		        	//Plain, Wood, Mountain
-		        	//spriteX1 = (ter.getIndex())*16;
-		        	//spriteX2 = (ter.getIndex()+1)*16;
-		        	return (ter.getIndex())*16;
-		        } 
-		        else if(ter.index == 3)
+		        if(ter.index == ROAD)
 		        { 
 		        	//Road
 		        	//spriteX1 = (ter.getStyle()+3)*16;
 		        	//spriteX2 = (ter.getStyle()+4)*16;
-		        	return (ter.getStyle()+3)*16;
+		        	return (ter.getStyle())*16;
 		        } 
-		        else if(ter.index == 4)
+		        else if(ter.index == BRIDGE)
 		        { 
 		        	//Bridge
 		        	//spriteX1 = (ter.getStyle()+14)*16;
 		        	//spriteX2 = (ter.getStyle()+15)*16;
-		        	return (ter.getStyle()+14)*16;
+		        	return (ter.getStyle())*16;
 		        }
-		        else if(ter.index == 20)
+		        else if(ter.index == SUS_BRIDGE)
 		        {
 		            //Put suspension code here
 		        	//spriteX1 = (ter.getStyle()+16)*16;
 		        	//spriteX2 = (ter.getStyle()+17)*16;
 		        	return (ter.getStyle()+16)*16;
 		        }
-		        else if(ter.index == 5)
+		        else if(ter.index == RIVER)
 		        { 
 		        	//River
 		        	//spriteX1 = (ter.getStyle()+18)*16;
 		        	//spriteX2 = (ter.getStyle()+19)*16;
-		        	return (ter.getStyle()+18)*16;
+		        	return (ter.getStyle())*16;
 		        } 
-		        else if (ter.index == 8)
+		        else if (ter.index == SHOAL)
 		        { 
 		        	//Shoal
 		        	//spriteX1 = (ter.getStyle()+33)*16;
 		        	//spriteX2 = (ter.getStyle()+34)*16;
-		        	return (ter.getStyle()+33)*16;
+		        	return (ter.getStyle())*16;
 		        } 
-		        else if (ter.index == 6)
+		        else if (ter.index == SEA)
 		        { 
 		        	//Sea
 		        	//spriteX1 = (ter.getStyle()+72)*16;
 		        	//spriteX2 = (ter.getStyle()+73)*16;
-		        	return (ter.getStyle()+72)*16;
+		        	return (ter.getStyle())*16;
 		        } 
-		        else if (ter.index == 7)
-		        { 
-		        	//Reef
-		        	//spriteX1 = 71*16;
-		        	//spriteX2 = 72*16;
-		        	return 71*16;
-		        } 
-		        else if (ter.index == 15)
+		        else if (ter.index == PIPE)
 		        { 
 		        	//Pipe
 		        	//spriteX1 = (ter.getStyle()+103)*16;
 		        	//spriteX2 = (ter.getStyle()+104)*16;
-		        	return (ter.getStyle()+103)*16;
+		        	return (ter.getStyle())*16;
 		        } 
-		        else if (ter.index == 18)
+		        else if (ter.index == PIPE_SEAM)
 		        { 
 		        	//PipeSeam
 		        	//spriteX1 = (ter.getStyle()+118)*16;
 		        	//spriteX2 = (ter.getStyle()+119)*16;
-		        	return (ter.getStyle()+118)*16;
+		        	return (ter.getStyle())*16;
 		        } 
-		        else if (ter.index == 19)
+		        else if (ter.index == DEST_SEAM)
 		        { 
 		        	//Destroyed Seam
 		        	//spriteX1 = (ter.getStyle()+120)*16;
 		        	//spriteX2 = (ter.getStyle()+121)*16;
-		        	return (ter.getStyle()+120)*16;
+		        	return (ter.getStyle())*16;
 		        } 
 		        // ****NEW STUFF****
 		        else if (ter.index == TerrType.WALL)
@@ -347,14 +180,14 @@ public final class TerrType
 		        	//Wall
 		        	//spriteX1 = (ter.getStyle()+122)*16;
 		        	//spriteX2 = (ter.getStyle()+123)*16;
-		        	return (ter.getStyle()+122)*16;
+		        	return (ter.getStyle())*16;
 		        } 
 		        else if (ter.index == TerrType.DEST_WALL)
 		        { 
 		        	//Destroyed Wall
 		        	//spriteX1 = (ter.getStyle()+137)*16;
 		        	//spriteX2 = (ter.getStyle()+138)*16;
-		        	return (ter.getStyle()+137)*16;
+		        	return (ter.getStyle())*16;
 		        }
 		        // ****NEW STUFF****
 		        else if (ter.index == TerrType.SEA_PIPE)
@@ -362,22 +195,26 @@ public final class TerrType
 		        	//Sea Pipe
 		        	//spriteX1 = (ter.getStyle()+139)*16;
 		        	//spriteX2 = (ter.getStyle()+140)*16;
-		        	return (ter.getStyle()+139)*16;
+		        	return (ter.getStyle())*16;
 		        } 
 		        else if (ter.index == TerrType.SP_SEAM)
 		        { 
 		        	//Sea Pipe Seam
 		        	//spriteX1 = (ter.getStyle()+154)*16;
 		        	//spriteX2 = (ter.getStyle()+155)*16;
-		        	return (ter.getStyle()+154)*16;
+		        	return (ter.getStyle())*16;
 		        } 
 		        else if (ter.index == TerrType.DEST_SPS)
 		        { 
 		        	//Destroyed Sea Pipe Seam
 		        	//spriteX1 = (ter.getStyle()+156)*16;
 		        	//spriteX2 = (ter.getStyle()+157)*16;
-		        	return (ter.getStyle()+156)*16;
+		        	return (ter.getStyle())*16;
 		        }
+                else
+                {
+                return 0;
+                }
 	    	}
 	    }
 		
@@ -389,15 +226,15 @@ public final class TerrType
 		if(ter instanceof Property) 
 	    {
 			if(ter instanceof HQ)
-		        return TerrainGraphics.getHQSpriteSheet(((Property)ter).owner.getColor()+1);
+		        return TerrainGraphics.getColoredSheet(((Property)ter).owner.getColor()+1);
 			else if(((Property)ter).owner == null)
-	            return TerrainGraphics.getUrbanSpriteSheet(0);
+	            return TerrainGraphics.getColoredSheet(0);
 	        else
-	            return TerrainGraphics.getUrbanSpriteSheet(((Property)ter).owner.getColor()+1);
+	            return TerrainGraphics.getColoredSheet(((Property)ter).owner.getColor()+1);
 	    } 
 	    else 
 	    {
-	        return TerrainGraphics.getTerrainSpriteSheet();
+	        return TerrainGraphics.getSpriteSheet();
 	    }
 	}
 }

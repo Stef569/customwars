@@ -20,12 +20,14 @@ public class CWArtist
 		
         Terrain ter = currTile.getTerrain();
         
-        int spriteX1 = TerrType.getSearchIndex(currTile, obs.getBattle());
+        int spriteX1 = TerrType.getXIndex(currTile, obs.getBattle());
         int spriteX2 = spriteX1 + 16;
-        
+
+        int spriteY1 = TerrType.getYIndex(currTile.getTerrain());
+        int spriteY2 = spriteY1 + 32;
         temp = getCorrectTerrainSheet(currTile, ter, obs.getBattle());
 		
-		g.drawImage(temp, x, y-16, x+16, y+16, spriteX1, 0, spriteX2, 32, obs);
+		g.drawImage(temp, x, y-16, x+16, y+16, spriteX1, spriteY1, spriteX2, spriteY2, obs);
 	}
 
 	public static final Image getCorrectTerrainSheet(Tile currTile, Terrain ter, Battle b) 
@@ -33,17 +35,17 @@ public class CWArtist
 		if(ter instanceof Property) 
         {
         	if(ter instanceof HQ)
-        		return TerrainGraphics.getHQSpriteSheet(((Property)ter).owner.getColor()+1);
+                return TerrainGraphics.getColoredSheet(((Property)ter).owner.getColor()+1);
         	
         	else if(((Property)ter).owner == null || (b.isFog() && ter instanceof Property && b.getFog(currTile.getLocation().getCol(),currTile.getLocation().getRow())))
-                return TerrainGraphics.getUrbanSpriteSheet(0);
+                return TerrainGraphics.getColoredSheet(0);
         	
             else
-                return TerrainGraphics.getUrbanSpriteSheet(((Property)ter).owner.getColor()+1);
+                return TerrainGraphics.getColoredSheet(((Property)ter).owner.getColor()+1);
         } 
         else 
         {
-            return TerrainGraphics.getTerrainSpriteSheet();
+            return TerrainGraphics.getSpriteSheet();
         }
 	}
 	

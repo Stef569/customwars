@@ -62,92 +62,18 @@ public class TerrainMenu extends ScrollMenu{
             
             for(int i = currentPosition; i < maxItems + currentPosition; i++)
             {
-                if(((i>=9 && i<=14)|| i == 17 | i == 16)) 
+                if((i>=9 && i<=14)|| i == 17) 
                 {
-                    if(i == 16)
-                    {
-                        g.drawImage(TerrainGraphics.getUrbanSpriteSheet(0), mx+16, my+((i-currentPosition)*16)-16, mx+32, my+((i-currentPosition)*16)+16, 0, 0, 16, 32, screen);
-                    } 
-                    else if(i == 17) 
-                    {
-                        g.drawImage(TerrainGraphics.getUrbanSpriteSheet(side), mx+16, my+((i-currentPosition)*16)-16, mx+32, my+((i-currentPosition)*16)+16, 8*16, 0, 9*16, 32, screen);
-                    } 
-                    else if(i == 9)
-                    {
-                        g.drawImage(TerrainGraphics.getHQSpriteSheet(side), mx+16, my+((i-currentPosition)*16)-16, mx+32, my+((i-currentPosition)*16)+16, (side-1)*16, 0, (side)*16, 32, screen);
-                    } 
-                    else
-                    {
-                        g.drawImage(TerrainGraphics.getUrbanSpriteSheet(side), mx+16, my+((i-currentPosition)*16)-16, mx+32, my+((i-currentPosition)*16)+16, (i-7)*16, 0, (i-6)*16, 32, screen);
-                    }
+                    //use the colored sprite sheet for properties
+                    Image temp = TerrainGraphics.getColoredSheet(side);
+                    g.drawImage(temp, mx+16, my+((i-currentPosition)*16)-16, mx+32, my+((i-currentPosition)*16)+16, 0, TerrType.getYIndex(i), 16, TerrType.getYIndex(i) + 32, screen);
+                    
                 } 
                 else 
                 {
-                    Image temp = TerrainGraphics.getTerrainSpriteSheet();
-                    
-                    if(i<4) 
-                    { 	//Plain, Wood, Mountain
-                    	g.drawImage(temp, mx+16, my+((i-currentPosition)*16)-16, mx+32, my+((i-currentPosition)*16)+16, (i)*16, 0, (i+1)*16, 32, screen);
-                    }
-                    else if(i == 4)
-                    { 	//Bridge
-                    	g.drawImage(temp, mx+16, my+((i-currentPosition)*16)-16, mx+32, my+((i-currentPosition)*16)+16, (14)*16, 0, (15)*16, 32, screen);
-                    }
-                    else if(i == 20)
-                    {
-                    	//Put suspension code here
-                    	g.drawImage(temp, mx+16, my+((i-currentPosition)*16)-16, mx+32, my+((i-currentPosition)*16)+16, (16)*16, 0, (17)*16, 32, screen);
-                    }
-                    else if(i == 5)
-                    { 	//River
-                    	g.drawImage(temp, mx+16, my+((i-currentPosition)*16)-16, mx+32, my+((i-currentPosition)*16)+16, (18)*16, 0, (19)*16, 32, screen);
-                    }
-                    else if (i == 8)
-                    { 	//Shoal
-                    	g.drawImage(temp, mx+16, my+((i-currentPosition)*16)-16, mx+32, my+((i-currentPosition)*16)+16, (33)*16, 0, (34)*16, 32, screen);
-                    }
-                    else if (i == 6)
-                    { 	//Sea
-                        g.drawImage(temp, mx+16, my+((i-currentPosition)*16)-16, mx+32, my+((i-currentPosition)*16)+16, (72)*16, 0, (73)*16, 32, screen);
-                    }
-                    else if (i == 7)
-                    { 	//Reef
-                        g.drawImage(temp, mx+16, my+((i-currentPosition)*16)-16, mx+32, my+((i-currentPosition)*16)+16, (71)*16, 0, (72)*16, 32, screen);
-                    }
-                    else if (i == 15)
-                    { 	//Pipe
-                        g.drawImage(temp, mx+16, my+((i-currentPosition)*16)-16, mx+32, my+((i-currentPosition)*16)+16, (103)*16, 0, (104)*16, 32, screen);
-                    }
-                    else if (i == 18)
-                    { 	//PipeSeam
-                        g.drawImage(temp, mx+16, my+((i-currentPosition)*16)-16, mx+32, my+((i-currentPosition)*16)+16, (118)*16, 0, (119)*16, 32, screen);
-                    }
-                    else if (i == 19)
-                    { 	//Destroyed Seam
-                        g.drawImage(temp, mx+16, my+((i-currentPosition)*16)-16, mx+32, my+((i-currentPosition)*16)+16, (120)*16, 0, (121)*16, 32, screen);
-                    }
-                    // ****NEW STUFF****
-                    else if (i == TerrType.WALL)
-                    { 	//Wall
-                        g.drawImage(temp, mx+16, my+((i-currentPosition)*16)-16, mx+32, my+((i-currentPosition)*16)+16, (122)*16, 0, (123)*16, 32, screen);
-                    }
-                    else if (i == TerrType.DEST_WALL)
-                    { 	//Destroyed Wall
-                        g.drawImage(temp, mx+16, my+((i-currentPosition)*16)-16, mx+32, my+((i-currentPosition)*16)+16, (124)*16, 0, (125)*16, 32, screen);
-                    }
-                    // ****NEW STUFF****
-                    else if (i == TerrType.SEA_PIPE)
-                    { 	//Pipe
-                        g.drawImage(temp, mx+16, my+((i-currentPosition)*16)-16, mx+32, my+((i-currentPosition)*16)+16, (126)*16, 0, (127)*16, 32, screen);
-                    }
-                    else if (i == TerrType.SP_SEAM)
-                    { 	//PipeSeam
-                        g.drawImage(temp, mx+16, my+((i-currentPosition)*16)-16, mx+32, my+((i-currentPosition)*16)+16, (141)*16, 0, (142)*16, 32, screen);
-                    }
-                    else if (i == TerrType.DEST_SPS)
-                    { 	//Destroyed Seam
-                        g.drawImage(temp, mx+16, my+((i-currentPosition)*16)-16, mx+32, my+((i-currentPosition)*16)+16, (143)*16, 0, (144)*16, 32, screen);
-                    }
+                    // the uncolored sprite sheet will work
+                    Image temp = TerrainGraphics.getSpriteSheet();
+                    g.drawImage(temp, mx+16, my+((i-currentPosition)*16)-16, mx+32, my+((i-currentPosition)*16)+16, 0, TerrType.getYIndex(i), 16, TerrType.getYIndex(i) + 32, screen);
                 }
                     
                 g.drawString(displayItems[i],mx+32,my+((i-currentPosition)*16)+16);
