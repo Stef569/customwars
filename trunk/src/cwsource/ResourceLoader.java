@@ -11,8 +11,7 @@ public class ResourceLoader {
 	
 	public static Properties properties;
 	final static Logger logger = LoggerFactory.getLogger(ResourceLoader.class);
-    //note, temporarily changed to work locally. /Users/kevin/Documents/_Dev/customwars/trunk
-	public static final String PROJECT_LOCATION = "/Users/Albert/Documents/NetBeansProjects/folder";
+	public static final String PROJECT_LOCATION = SET THIS VARIABLE TO YOUR CUSTOM WARS CHECK OUT LOCATION;
 		
 	public static void init() {
 		properties = new Properties(); 
