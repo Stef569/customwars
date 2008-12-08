@@ -8,8 +8,18 @@
 
 package cwsource;
 
-import javax.sound.sampled.*;
-import java.io.*;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.DataLine;
+import javax.sound.sampled.LineEvent;
+import javax.sound.sampled.LineListener;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
+
+import java.io.File;
+import java.io.IOException;
 
 public class SFX {
     private static boolean mute = false;
@@ -19,8 +29,11 @@ public class SFX {
         if(!mute){
             Clip c = openClip(filename);
             if(c!=null){
-                c.loop(0);
-                c.addLineListener(new Ender(c));
+                if ( c.isRunning()){
+                	 c.stop();   // Stop the player if it is still running
+                }c.setFramePosition(0); // rewind to the beginning
+                c.start();     // Start playing
+
             }
         }
     }
@@ -59,12 +72,10 @@ public class SFX {
         try {
             // From file
             AudioInputStream stream = AudioSystem.getAudioInputStream(new File(filename));
-            AudioFormat format = stream.getFormat();
-            // Create the clip
-            DataLine.Info info = new DataLine.Info(Clip.class, stream.getFormat(), ((int)stream.getFrameLength()*format.getFrameSize()));
-            clip = (Clip) AudioSystem.getLine(info);
-            // This method does not return until the audio file is completely loaded
+            clip = AudioSystem.getClip();
+            // Open audio clip and load samples from the audio input stream.
             clip.open(stream);
+
         } catch (IOException e) {
             System.err.println("Error: Could not read file " + filename);
             return null;
@@ -75,6 +86,7 @@ public class SFX {
             System.err.println("Error: " + filename + " not an audio file");
             return null;
         }
+
         return clip;
     }
    
