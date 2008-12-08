@@ -242,7 +242,7 @@ public class MapEditor extends CWScreen
 		//if a unit is there, draw it
 		if(visibleAtXY(x, y))
 		{
-			Unit thisUnit = m.find(new Location(x,y)).getUnit();
+			Unit thisUnit = map.find(new Location(x,y)).getUnit();
 
 			CWArtist.drawUnitAtXY(g, this, thisUnit.getUType(), thisUnit.getArmy().getColor(), x*16-sx, y*16-sy);
 		}
@@ -263,20 +263,20 @@ public class MapEditor extends CWScreen
     	
         //g.setColor(Color.red);
         //g.drawRect(cx*16-sx,cy*16-sy,16,16);
-        g.drawImage(MiscGraphics.getCursor(), cx*16-sx-7, cy*16-sy-7,this);
+        g.drawImage(MiscGraphics.getCursor(), cursorXpos*16-sx-7, cursorYpos*16-sy-7,this);
         
         if(constantMode)
         {
-        	g.drawImage(MiscGraphics.getBigStar(5), cx*16-sx-7, cy*16-sy-7, this);
-        	g.drawImage(MiscGraphics.getBigStar(5), cx*16-sx-7, cy*16-sy+11, this);
-        	g.drawImage(MiscGraphics.getBigStar(5), cx*16-sx+12, cy*16-sy-7, this);
+        	g.drawImage(MiscGraphics.getBigStar(5), cursorXpos*16-sx-7, cursorYpos*16-sy-7, this);
+        	g.drawImage(MiscGraphics.getBigStar(5), cursorXpos*16-sx-7, cursorYpos*16-sy+11, this);
+        	g.drawImage(MiscGraphics.getBigStar(5), cursorXpos*16-sx+12, cursorYpos*16-sy-7, this);
         }
     }
 
 	private void drawCursorUnit(Graphics2D g)
 	{
     	g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f));
-		g.drawImage(UnitGraphics.getUnitImage(unitType, selectedArmy.getID()),cx*16-sx,cy*16-sy,cx*16-sx+16,cy*16-sy+16,0,UnitGraphics.findYPosition(unitType, selectedArmy.getID()),16,UnitGraphics.findYPosition(unitType, selectedArmy.getID())+16,this);
+		g.drawImage(UnitGraphics.getUnitImage(unitType, selectedArmy.getID()),cursorXpos*16-sx,cursorYpos*16-sy,cursorXpos*16-sx+16,cursorYpos*16-sy+16,0,UnitGraphics.findYPosition(unitType, selectedArmy.getID()),16,UnitGraphics.findYPosition(unitType, selectedArmy.getID())+16,this);
         g.setComposite(AlphaComposite.SrcOver);
 	}
 	
@@ -303,7 +303,7 @@ public class MapEditor extends CWScreen
 		    temp = TerrainGraphics.getSpriteSheet();
 		}
 		
-		g.drawImage(temp, cx*16-sx, cy*16-sy-16, (cx+1)*16-sx, cy*16-sy+16, spriteX1, 0, spriteX2, 32, this);
+		g.drawImage(temp, cursorXpos*16-sx, cursorYpos*16-sy-16, (cursorXpos+1)*16-sx, cursorYpos*16-sy+16, spriteX1, 0, spriteX2, 32, this);
 		
         g.setComposite(AlphaComposite.SrcOver);
 	}
@@ -312,18 +312,18 @@ public class MapEditor extends CWScreen
     public void fillMap(){
         if(selectedTerrain.getIndex()!=8 && selectedTerrain.getIndex()!=9 && selectedTerrain.getIndex()!=18){
             Unit temp;
-            for(int i=0; i < m.getMaxCol(); i++){
-                for(int j=0; j < m.getMaxRow(); j++){
-                    m.find(new Location(i,j)).setTerrain(selectedTerrain);
+            for(int i=0; i < map.getMaxCol(); i++){
+                for(int j=0; j < map.getMaxRow(); j++){
+                    map.find(new Location(i,j)).setTerrain(selectedTerrain);
                     selectTerrain(selectedTerrain.getIndex());
-                    temp = m.find(new Location(i,j)).getUnit();
+                    temp = map.find(new Location(i,j)).getUnit();
                     if(temp != null){
-                        m.remove(temp);
+                        map.remove(temp);
                         temp.getArmy().removeUnit(temp);
                     }
                 }
             }
-            m.initStyle();
+            map.initStyle();
         }
     }
     
@@ -367,60 +367,60 @@ public class MapEditor extends CWScreen
         }
         
         //remember to apply the correct visual style
-        m.initStyle();
+        map.initStyle();
     }
     
     public void createSeededArea(int SEC, int LIM, boolean cont){
         //seed ocean
         Random r = new Random();
         int numfill = 0;
-        int r1 = r.nextInt(m.getMaxCol());
-        int r2 = r.nextInt(m.getMaxRow());
+        int r1 = r.nextInt(map.getMaxCol());
+        int r2 = r.nextInt(map.getMaxRow());
         selectTerrain(SEC);
-        m.find(new Location(r1,r2)).setTerrain(selectedTerrain);
+        map.find(new Location(r1,r2)).setTerrain(selectedTerrain);
         selectTerrain(SEC);
         numfill++;
         
         //fill out ocean
-        boolean grid[][] = new boolean[m.getMaxCol()][m.getMaxRow()];
-        for(int i=0; i<m.getMaxCol(); i++){
-            for(int j=0; j<m.getMaxRow(); j++){
-                if(m.find(new Location(i,j)).getTerrain().getIndex()==SEC){
+        boolean grid[][] = new boolean[map.getMaxCol()][map.getMaxRow()];
+        for(int i=0; i<map.getMaxCol(); i++){
+            for(int j=0; j<map.getMaxRow(); j++){
+                if(map.find(new Location(i,j)).getTerrain().getIndex()==SEC){
                     grid[i][j]=true;
                 }
             }
         }
-        Tile node = m.find(new Location(r1,r2));
+        Tile node = map.find(new Location(r1,r2));
         int x = r1;
         int y = r2;
         while(node != null){
-            if(m.onMap(x+1,y)){
+            if(map.onMap(x+1,y)){
                 if(r.nextInt(2)==1){
-                    m.find(new Location(x+1,y)).setTerrain(selectedTerrain);
+                    map.find(new Location(x+1,y)).setTerrain(selectedTerrain);
                     selectTerrain(SEC);
                     numfill++;
                     if(numfill > LIM)break;
                 }
             }
-            if(m.onMap(x-1,y)){
+            if(map.onMap(x-1,y)){
                 if(r.nextInt(2)==1){
-                    m.find(new Location(x-1,y)).setTerrain(selectedTerrain);
+                    map.find(new Location(x-1,y)).setTerrain(selectedTerrain);
                     selectTerrain(SEC);
                     numfill++;
                     if(numfill > LIM)break;
                 }
             }
-            if(m.onMap(x,y+1)){
+            if(map.onMap(x,y+1)){
                 if(r.nextInt(2)==1){
-                    m.find(new Location(x,y+1)).setTerrain(selectedTerrain);
+                    map.find(new Location(x,y+1)).setTerrain(selectedTerrain);
                     selectTerrain(SEC);
                     numfill++;
                     if(numfill > LIM)break;
                 }
             }
-            if(m.onMap(x,y-1)){
+            if(map.onMap(x,y-1)){
                 if(r.nextInt(2)==1){
-                    m.find(new Location(x,y-1)).setTerrain(selectedTerrain);
+                    map.find(new Location(x,y-1)).setTerrain(selectedTerrain);
                     selectTerrain(SEC);
                     numfill++;
                     if(numfill > LIM)break;
@@ -430,11 +430,11 @@ public class MapEditor extends CWScreen
             if(numfill > LIM)break;
             
             boolean found = false;
-            for(int i=0; i < m.getMaxCol(); i++){
-                for(int j=0; j < m.getMaxRow(); j++){
+            for(int i=0; i < map.getMaxCol(); i++){
+                for(int j=0; j < map.getMaxRow(); j++){
                     if(!grid[i][j]){
-                        if(m.find(new Location(i,j)).getTerrain().getIndex()==SEC){
-                            node = m.find(new Location(i,j));
+                        if(map.find(new Location(i,j)).getTerrain().getIndex()==SEC){
+                            node = map.find(new Location(i,j));
                             x = i;
                             y = j;
                             found = true;
@@ -450,14 +450,14 @@ public class MapEditor extends CWScreen
         
         //remove totally surrounded single tiles
         if(cont){
-            for(int i=0; i < m.getMaxCol(); i++){
-                for(int j=0; j < m.getMaxRow(); j++){
-                    if(m.find(new Location(i,j)).getTerrain().getIndex()!=SEC){
-                        if(!m.onMap(i+1,j) || m.find(new Location(i+1,j)).getTerrain().getIndex() == SEC){
-                            if(!m.onMap(i-1,j) || m.find(new Location(i-1,j)).getTerrain().getIndex() == SEC){
-                                if(!m.onMap(i,j+1) || m.find(new Location(i,j+1)).getTerrain().getIndex() == SEC){
-                                    if(!m.onMap(i,j-1) || m.find(new Location(i,j-1)).getTerrain().getIndex() == SEC){
-                                        m.find(new Location(i,j)).setTerrain(selectedTerrain);
+            for(int i=0; i < map.getMaxCol(); i++){
+                for(int j=0; j < map.getMaxRow(); j++){
+                    if(map.find(new Location(i,j)).getTerrain().getIndex()!=SEC){
+                        if(!map.onMap(i+1,j) || map.find(new Location(i+1,j)).getTerrain().getIndex() == SEC){
+                            if(!map.onMap(i-1,j) || map.find(new Location(i-1,j)).getTerrain().getIndex() == SEC){
+                                if(!map.onMap(i,j+1) || map.find(new Location(i,j+1)).getTerrain().getIndex() == SEC){
+                                    if(!map.onMap(i,j-1) || map.find(new Location(i,j-1)).getTerrain().getIndex() == SEC){
+                                        map.find(new Location(i,j)).setTerrain(selectedTerrain);
                                         selectTerrain(SEC);
                                     }
                                 }
@@ -471,30 +471,30 @@ public class MapEditor extends CWScreen
     
     public void mirrorHorizontal(){
         //create double width map
-        int w = m.getMaxCol()*2;
-        int h = m.getMaxRow();
-        int oldw = m.getMaxCol();
-        int oldh = m.getMaxRow();
+        int w = map.getMaxCol()*2;
+        int h = map.getMaxRow();
+        int oldw = map.getMaxCol();
+        int oldh = map.getMaxRow();
         
         Map temp = new Map(w,h);
-        temp.copyMap(m);
+        temp.copyMap(map);
         
-        m = temp;
-        b = new Battle(m);
+        map = temp;
+        b = new Battle(map);
         
         //finalize copy
         selectedArmy = null;
         selected = null;
-        cx = 0;
-        cy = 0;
+        cursorXpos = 0;
+        cursorYpos = 0;
         sx = 0;
         sy = 0;
         //center small maps
-        if(m.getMaxCol() < 30){
-            sx = -((30 - m.getMaxCol())/2)*16;
+        if(map.getMaxCol() < 30){
+            sx = -((30 - map.getMaxCol())/2)*16;
         }
-        if(m.getMaxRow() < 20){
-            sy = -((20 - m.getMaxRow())/2)*16;
+        if(map.getMaxRow() < 20){
+            sy = -((20 - map.getMaxRow())/2)*16;
         }
         item = 0;
         unitType = 0;
@@ -510,41 +510,41 @@ public class MapEditor extends CWScreen
         //mirror
         for(int j = 0; j < oldh; j++){
             for(int i = 0; i < oldw; i++){
-                selectTerrain(m.find(new Location(i,j)).getTerrain().getIndex());
-                m.find(new Location(w-i-1,j)).setTerrain(selectedTerrain);
+                selectTerrain(map.find(new Location(i,j)).getTerrain().getIndex());
+                map.find(new Location(w-i-1,j)).setTerrain(selectedTerrain);
             }
         }
         
         selectedTerrain = new Plain();
-        m.initStyle();
+        map.initStyle();
     }
     
     public void mirrorVertical(){
         //create double height map
-        int w = m.getMaxCol();
-        int h = m.getMaxRow()*2;
-        int oldw = m.getMaxCol();
-        int oldh = m.getMaxRow();
+        int w = map.getMaxCol();
+        int h = map.getMaxRow()*2;
+        int oldw = map.getMaxCol();
+        int oldh = map.getMaxRow();
         
         Map temp = new Map(w,h);
-        temp.copyMap(m);
+        temp.copyMap(map);
         
-        m = temp;
-        b = new Battle(m);
+        map = temp;
+        b = new Battle(map);
         
         //finalize copy
         selectedArmy = null;
         selected = null;
-        cx = 0;
-        cy = 0;
+        cursorXpos = 0;
+        cursorYpos = 0;
         sx = 0;
         sy = 0;
         //center small maps
-        if(m.getMaxCol() < 30){
-            sx = -((30 - m.getMaxCol())/2)*16;
+        if(map.getMaxCol() < 30){
+            sx = -((30 - map.getMaxCol())/2)*16;
         }
-        if(m.getMaxRow() < 20){
-            sy = -((20 - m.getMaxRow())/2)*16;
+        if(map.getMaxRow() < 20){
+            sy = -((20 - map.getMaxRow())/2)*16;
         }
         item = 0;
         unitType = 0;
@@ -561,13 +561,13 @@ public class MapEditor extends CWScreen
         //mirror
         for(int j = 0; j < oldh; j++){
             for(int i = 0; i < oldw; i++){
-                selectTerrain(m.find(new Location(i,j)).getTerrain().getIndex());
-                m.find(new Location(i,h-j-1)).setTerrain(selectedTerrain);
+                selectTerrain(map.find(new Location(i,j)).getTerrain().getIndex());
+                map.find(new Location(i,h-j-1)).setTerrain(selectedTerrain);
             }
         }
         
         selectedTerrain = new Plain();
-        m.initStyle();
+        map.initStyle();
     }
     
     //removes the component from the frame
@@ -595,19 +595,19 @@ public class MapEditor extends CWScreen
     private void placeTile(){
         //erase any previous HQs of the same type
         if(selectedTerrain.getIndex() == 9){
-            for(int i=0; i<m.getMaxCol(); i++){
-                for(int j=0; j<m.getMaxRow(); j++){
-                    if(m.find(new Location(i,j)).getTerrain().getIndex()==9){
-                        if(((Property)m.find(new Location(i,j)).getTerrain()).getColor() == ((Property)selectedTerrain).getColor()){
-                            m.find(new Location(i,j)).setTerrain(new Plain());
+            for(int i=0; i<map.getMaxCol(); i++){
+                for(int j=0; j<map.getMaxRow(); j++){
+                    if(map.find(new Location(i,j)).getTerrain().getIndex()==9){
+                        if(((Property)map.find(new Location(i,j)).getTerrain()).getColor() == ((Property)selectedTerrain).getColor()){
+                            map.find(new Location(i,j)).setTerrain(new Plain());
                         }
                     }
                 }
             }
         }
-        m.find(new Location(cx,cy)).setTerrain(selectedTerrain);
+        map.find(new Location(cursorXpos,cursorYpos)).setTerrain(selectedTerrain);
         selectTerrain(selectedTerrain.getIndex());
-        m.initStyle();
+        map.initStyle();
     }
     
     //Select a Terrain
@@ -832,12 +832,12 @@ public class MapEditor extends CWScreen
         boolean unique = true;
         
         //find the armies on the map
-        for(int i=0; i<m.getMaxCol(); i++){
-            for(int j=0; j<m.getMaxRow(); j++){
+        for(int i=0; i<map.getMaxCol(); i++){
+            for(int j=0; j<map.getMaxRow(); j++){
                 //check for owned properties
-                if(m.find(new Location(i,j)).getTerrain() instanceof Property){
-                    int color = ((Property)m.find(new Location(i,j)).getTerrain()).getColor();
-                    if(m.find(new Location(i,j)).getTerrain().getIndex() == 9)color++;
+                if(map.find(new Location(i,j)).getTerrain() instanceof Property){
+                    int color = ((Property)map.find(new Location(i,j)).getTerrain()).getColor();
+                    if(map.find(new Location(i,j)).getTerrain().getIndex() == 9)color++;
                     if(color != 0){
                         for(int k=0; k<cindex; k++){
                             if(colors[k]==color){
@@ -856,8 +856,8 @@ public class MapEditor extends CWScreen
                 }
                 
                 //check for units
-                if(m.find(new Location(i,j)).getUnit()!=null){
-                    int color = m.find(new Location(i,j)).getUnit().getArmy().getColor() + 1;
+                if(map.find(new Location(i,j)).getUnit()!=null){
+                    int color = map.find(new Location(i,j)).getUnit().getArmy().getColor() + 1;
                     for(int k=0; k<cindex; k++){
                         if(colors[k]==color){
                             unique = false;
@@ -897,27 +897,27 @@ public class MapEditor extends CWScreen
             //version number
             write.writeInt(-1);
             //name
-            write.writeBytes(m.getMapName());
+            write.writeBytes(map.getMapName());
             write.writeByte(0);
             //author
-            write.writeBytes(m.getMapAuthor());
+            write.writeBytes(map.getMapAuthor());
             write.writeByte(0);
             //description
-            write.writeBytes(m.getMapDescription());
+            write.writeBytes(map.getMapDescription());
             write.writeByte(0);
             //Width
-            write.writeInt(m.getMaxCol());
+            write.writeInt(map.getMaxCol());
             //Height
-            write.writeInt(m.getMaxRow());
+            write.writeInt(map.getMaxRow());
             //Number of Armies
             write.writeByte(numArmies);
             //write colors
             for(int i=0;i<numArmies;i++)write.writeByte(colors[i]);
             
             //TERRAIN
-            for(int i=0; i<m.getMaxCol(); i++){
-                for(int j=0; j<m.getMaxRow(); j++){
-                    ter = m.find(new Location(i,j)).getTerrain();
+            for(int i=0; i<map.getMaxCol(); i++){
+                for(int j=0; j<map.getMaxRow(); j++){
+                    ter = map.find(new Location(i,j)).getTerrain();
                     //Terrain Type
                     write.writeByte(ter.getIndex());
                     
@@ -939,9 +939,9 @@ public class MapEditor extends CWScreen
             }
             
             //UNITS
-            for(int i=0; i<m.getMaxCol(); i++){
-                for(int j=0; j<m.getMaxRow(); j++){
-                    uni = m.find(new Location(i,j)).getUnit();
+            for(int i=0; i<map.getMaxCol(); i++){
+                for(int j=0; j<map.getMaxRow(); j++){
+                    uni = map.find(new Location(i,j)).getUnit();
                     if(uni != null){
                         //type
                         write.writeByte(uni.getUnitType());
@@ -957,28 +957,28 @@ public class MapEditor extends CWScreen
             
             //Signals end of Unit List (so we can add extra info later if we wish)
             write.writeByte(-10);
-            for(int i = 0; i<m.getTriggers().size(); i++){
-                write.writeInt(m.getTriggers().get(i).type);
-                write.writeInt(m.getTriggers().get(i).day);
-                write.writeInt(m.getTriggers().get(i).turn);
-                switch(m.getTriggers().get(i).type)
+            for(int i = 0; i<map.getTriggers().size(); i++){
+                write.writeInt(map.getTriggers().get(i).type);
+                write.writeInt(map.getTriggers().get(i).day);
+                write.writeInt(map.getTriggers().get(i).turn);
+                switch(map.getTriggers().get(i).type)
                 {
                     case 0:
                         //unit trigger
-                        write.writeInt(((UnitTrigger)m.getTriggers().get(i)).unitType);
-                        write.writeInt(((UnitTrigger)m.getTriggers().get(i)).x);
-                        write.writeInt(((UnitTrigger)m.getTriggers().get(i)).y);
-                        write.writeInt(((UnitTrigger)m.getTriggers().get(i)).army);
-                        write.writeInt(((UnitTrigger)m.getTriggers().get(i)).UnitHP);
-                        write.writeInt(((UnitTrigger)m.getTriggers().get(i)).UnitFuel);
-                        write.writeInt(((UnitTrigger)m.getTriggers().get(i)).UnitAmmo);
+                        write.writeInt(((UnitTrigger)map.getTriggers().get(i)).unitType);
+                        write.writeInt(((UnitTrigger)map.getTriggers().get(i)).x);
+                        write.writeInt(((UnitTrigger)map.getTriggers().get(i)).y);
+                        write.writeInt(((UnitTrigger)map.getTriggers().get(i)).army);
+                        write.writeInt(((UnitTrigger)map.getTriggers().get(i)).UnitHP);
+                        write.writeInt(((UnitTrigger)map.getTriggers().get(i)).UnitFuel);
+                        write.writeInt(((UnitTrigger)map.getTriggers().get(i)).UnitAmmo);
                         break;
                     case 1:
                         //damage trigger
-                        write.writeInt(((DamageTrigger)m.getTriggers().get(i)).x);
-                        write.writeInt(((DamageTrigger)m.getTriggers().get(i)).y);
-                        write.writeInt(((DamageTrigger)m.getTriggers().get(i)).damage);
-                        write.writeBoolean(((DamageTrigger)m.getTriggers().get(i)).destroy);
+                        write.writeInt(((DamageTrigger)map.getTriggers().get(i)).x);
+                        write.writeInt(((DamageTrigger)map.getTriggers().get(i)).y);
+                        write.writeInt(((DamageTrigger)map.getTriggers().get(i)).damage);
+                        write.writeBoolean(((DamageTrigger)map.getTriggers().get(i)).destroy);
                 }
             }
             //Signals end of Command List
@@ -1314,7 +1314,7 @@ public class MapEditor extends CWScreen
         }
         else if(unit)
         {
-            placeUnit(m,m.find(new Location(cx,cy)),unitType);
+            placeUnit(map,map.find(new Location(cursorXpos,cursorYpos)),unitType);
         }
     }
 
@@ -1414,21 +1414,21 @@ public class MapEditor extends CWScreen
 		            mapFilename = x;
 		            
 		            b = new Battle(mapFilename);
-		            m = b.getMap();
+		            map = b.getMap();
 		            
 		            selectedArmy = null;
 		            selectedTerrain = new Plain();
 		            selected = null;
-		            cx = 0;
-		            cy = 0;
+		            cursorXpos = 0;
+		            cursorYpos = 0;
 		            sx = 0;
 		            sy = 0;
 		            //center small maps
-		            if(m.getMaxCol() < 30){
-		                sx = -((30 - m.getMaxCol())/2)*16;
+		            if(map.getMaxCol() < 30){
+		                sx = -((30 - map.getMaxCol())/2)*16;
 		            }
-		            if(m.getMaxRow() < 20){
-		                sy = -((20 - m.getMaxRow())/2)*16;
+		            if(map.getMaxRow() < 20){
+		                sy = -((20 - map.getMaxRow())/2)*16;
 		            }
 		            item = 0;
 		            unitType = 0;
@@ -1446,22 +1446,22 @@ public class MapEditor extends CWScreen
 		    int w = getPositiveInteger("Input the new map's width",1);
 		    int h = getPositiveInteger("Input the new map's height",1);
 		    
-		    m = new Map(w,h);
-		    b = new Battle(m);
+		    map = new Map(w,h);
+		    b = new Battle(map);
 		    
 		    selectedArmy = null;
 		    selectedTerrain = new Plain();
 		    selected = null;
-		    cx = 0;
-		    cy = 0;
+		    cursorXpos = 0;
+		    cursorYpos = 0;
 		    sx = 0;
 		    sy = 0;
 //center small maps
-		    if(m.getMaxCol() < 30){
-		        sx = -((30 - m.getMaxCol())/2)*16;
+		    if(map.getMaxCol() < 30){
+		        sx = -((30 - map.getMaxCol())/2)*16;
 		    }
-		    if(m.getMaxRow() < 20){
-		        sy = -((20 - m.getMaxRow())/2)*16;
+		    if(map.getMaxRow() < 20){
+		        sy = -((20 - map.getMaxRow())/2)*16;
 		    }
 		    item = 0;
 		    unitType = 0;
@@ -1483,24 +1483,24 @@ public class MapEditor extends CWScreen
 		    int h = getPositiveInteger("Input the new map's height",1);
 		    
 		    Map temp = new Map(w,h);
-		    temp.copyMap(m);
+		    temp.copyMap(map);
 		    
-		    m = temp;
-		    b = new Battle(m);
+		    map = temp;
+		    b = new Battle(map);
 		    
 		    selectedArmy = null;
 		    selectedTerrain = new Plain();
 		    selected = null;
-		    cx = 0;
-		    cy = 0;
+		    cursorXpos = 0;
+		    cursorYpos = 0;
 		    sx = 0;
 		    sy = 0;
 		    //center small maps
-		    if(m.getMaxCol() < 30){
-		        sx = -((30 - m.getMaxCol())/2)*16;
+		    if(map.getMaxCol() < 30){
+		        sx = -((30 - map.getMaxCol())/2)*16;
 		    }
-		    if(m.getMaxRow() < 20){
-		        sy = -((20 - m.getMaxRow())/2)*16;
+		    if(map.getMaxRow() < 20){
+		        sy = -((20 - map.getMaxRow())/2)*16;
 		    }
 		    item = 0;
 		    unitType = 0;
@@ -1516,9 +1516,9 @@ public class MapEditor extends CWScreen
 		}else if(menuselection == 8){
 		    endBattle();
 		}else if(menuselection == 9){
-		    m.setMapName(JOptionPane.showInputDialog("Enter a name for the map",m.getMapName()));
-		    m.setMapAuthor(JOptionPane.showInputDialog("Enter the author's name",m.getMapAuthor()));
-		    m.setMapDescription(JOptionPane.showInputDialog("Enter a description for this map",m.getMapDescription()));
+		    map.setMapName(JOptionPane.showInputDialog("Enter a name for the map",map.getMapName()));
+		    map.setMapAuthor(JOptionPane.showInputDialog("Enter the author's name",map.getMapAuthor()));
+		    map.setMapDescription(JOptionPane.showInputDialog("Enter a description for this map",map.getMapDescription()));
 		}else if(menuselection == 10){
 		    randomMap();
 		}else if(menuselection == 11){
@@ -1543,13 +1543,13 @@ public class MapEditor extends CWScreen
             smenu = false;
             currentMenu = null;
         }else{
-            if(m.find(new Location(cx,cy)).getTerrain() instanceof Property){
-                if(((Property)m.find(new Location(cx,cy)).getTerrain()).getOwner()!=null)
-                    selectedArmy = b.getArmy(((Property)m.find(new Location(cx,cy)).getTerrain()).getOwner().getID());
+            if(map.find(new Location(cursorXpos,cursorYpos)).getTerrain() instanceof Property){
+                if(((Property)map.find(new Location(cursorXpos,cursorYpos)).getTerrain()).getOwner()!=null)
+                    selectedArmy = b.getArmy(((Property)map.find(new Location(cursorXpos,cursorYpos)).getTerrain()).getOwner().getID());
                 else
                     selectedArmy = null;
             }
-            selectTerrain(m.find(new Location(cx,cy)).getTerrain().getIndex());
+            selectTerrain(map.find(new Location(cursorXpos,cursorYpos)).getTerrain().getIndex());
             terrain = true;
             unit = false;
         }
@@ -1751,9 +1751,9 @@ public class MapEditor extends CWScreen
 
 		private void deleteActions() 
 		{
-			Unit temp = m.find(new Location(cx,cy)).getUnit();
+			Unit temp = map.find(new Location(cursorXpos,cursorYpos)).getUnit();
 			if(temp != null){
-			    m.remove(temp);
+			    map.remove(temp);
 			    temp.getArmy().removeUnit(temp);
 			}
 		}
@@ -1796,9 +1796,9 @@ public class MapEditor extends CWScreen
 			        currentMenu = new TerrainMenu(selectedArmy.getColor()+1,parentScreen);
 			    else
 			        currentMenu = new TerrainMenu(0,parentScreen);
-			}else if(m.onMap(cx+1,cy)){
-			    cx++;
-			    if(cx >= sx/16+MAX_TILEW-2 && cx < m.getMaxCol()-2)sx += 16;
+			}else if(map.onMap(cursorXpos+1,cursorYpos)){
+			    cursorXpos++;
+			    if(cursorXpos >= sx/16+MAX_TILEW-2 && cursorXpos < map.getMaxCol()-2)sx += 16;
 			}
 			if(constantMode == true){
 			    constantModeAction();
@@ -1834,9 +1834,9 @@ public class MapEditor extends CWScreen
 			        currentMenu = new UnitMenu(selectedArmy.getColor(),parentScreen);
 			    else
 			        currentMenu = new UnitMenu(0,parentScreen);
-			}else if(m.onMap(cx-1,cy)){
-			    cx--;
-			    if(cx < sx/16+2 && sx > 0)sx -= 16;
+			}else if(map.onMap(cursorXpos-1,cursorYpos)){
+			    cursorXpos--;
+			    if(cursorXpos < sx/16+2 && sx > 0)sx -= 16;
 			}
 			if(constantMode == true){
 			    constantModeAction();
@@ -1847,9 +1847,9 @@ public class MapEditor extends CWScreen
 			setInfoBoxXYs();
 			if(menu || tmenu || umenu || smenu){
 			    currentMenu.goDown();
-			}else if(m.onMap(cx,cy+1)){
-			    cy++;
-			    if(cy >= sy/16+MAX_TILEH-2 && cy < m.getMaxRow()-2)sy += 16;
+			}else if(map.onMap(cursorXpos,cursorYpos+1)){
+			    cursorYpos++;
+			    if(cursorYpos >= sy/16+MAX_TILEH-2 && cursorYpos < map.getMaxRow()-2)sy += 16;
 			}
 			if(constantMode == true){
 			    constantModeAction();
@@ -1860,9 +1860,9 @@ public class MapEditor extends CWScreen
 			setInfoBoxXYs();
 			if(menu || tmenu || umenu || smenu){
 			    currentMenu.goUp();
-			}else if(m.onMap(cx,cy-1)){
-			    cy--;
-			    if(cy < sy/16+2 && sy > 0)sy -= 16;
+			}else if(map.onMap(cursorXpos,cursorYpos-1)){
+			    cursorYpos--;
+			    if(cursorYpos < sy/16+2 && sy > 0)sy -= 16;
 			}
 			if(constantMode == true)
 			{
@@ -1874,7 +1874,7 @@ public class MapEditor extends CWScreen
 		{
 			if(unit && selectedArmy != null)
 			{
-                placeUnit(m,m.find(new Location(cx,cy)),unitType);
+                placeUnit(map,map.find(new Location(cursorXpos,cursorYpos)),unitType);
 			}
 			if(terrain)
 			{
@@ -1917,35 +1917,35 @@ public class MapEditor extends CWScreen
                 //any other button
                 if(!menu && !umenu && !tmenu && !smenu){
                     if(x < 32*scale){
-                        if(m.getMaxCol() > DEF_TILEW){
+                        if(map.getMaxCol() > DEF_TILEW){
                             sx -= 16;
                             if(sx < 0)sx=0;
                         }
                     }else if(x > MAX_TILEW*16*scale-32*scale){
-                        if(m.getMaxCol() > DEF_TILEW){
+                        if(map.getMaxCol() > DEF_TILEW){
                             sx += 16;
-                            if(sx > (m.getMaxCol()-MAX_TILEW)*16)sx-=16;
+                            if(sx > (map.getMaxCol()-MAX_TILEW)*16)sx-=16;
                         }
                     }
                     
                     if(y < 32*scale){
-                        if(m.getMaxRow() > DEF_TILEH){
+                        if(map.getMaxRow() > DEF_TILEH){
                             sy -= 16;
                             if(sy < 0)sy=0;
                         }
                     }else if(y > MAX_TILEH*16*scale-32*scale){
-                        if(m.getMaxRow() > DEF_TILEH){
+                        if(map.getMaxRow() > DEF_TILEH){
                             sy += 16;
-                            if(sy > (m.getMaxRow()-MAX_TILEH)*16)sy-=16;
+                            if(sy > (map.getMaxRow()-MAX_TILEH)*16)sy-=16;
                         }
                     }
                     
-                    cx = sx/16 + x/(16*scale);
-                    if(cx < 0)cx=0;
-                    else if(cx >= m.getMaxCol())cx=m.getMaxCol()-1;
-                    cy = sy/16 + y/(16*scale);
-                    if(cy < 0)cy=0;
-                    else if(cy >= m.getMaxRow())cy=m.getMaxRow()-1;
+                    cursorXpos = sx/16 + x/(16*scale);
+                    if(cursorXpos < 0)cursorXpos=0;
+                    else if(cursorXpos >= map.getMaxCol())cursorXpos=map.getMaxCol()-1;
+                    cursorYpos = sy/16 + y/(16*scale);
+                    if(cursorYpos < 0)cursorYpos=0;
+                    else if(cursorYpos >= map.getMaxRow())cursorYpos=map.getMaxRow()-1;
                     pressedB();
                 }
             }
@@ -1963,35 +1963,35 @@ public class MapEditor extends CWScreen
             if(e.getButton() == MouseEvent.BUTTON1){
                 if(!menu && !umenu && !tmenu && !smenu){
                     if(x < 32*scale){
-                        if(m.getMaxCol() > DEF_TILEW){
+                        if(map.getMaxCol() > DEF_TILEW){
                             sx -= 16;
                             if(sx < 0)sx=0;
                         }
                     }else if(x > MAX_TILEW*16*scale-32*scale){
-                        if(m.getMaxCol() > DEF_TILEW){
+                        if(map.getMaxCol() > DEF_TILEW){
                             sx += 16;
-                            if(sx > (m.getMaxCol()-MAX_TILEW)*16)sx-=16;
+                            if(sx > (map.getMaxCol()-MAX_TILEW)*16)sx-=16;
                         }
                     }
                     
                     if(y < 32*scale){
-                        if(m.getMaxRow() > DEF_TILEH){
+                        if(map.getMaxRow() > DEF_TILEH){
                             sy -= 16;
                             if(sy < 0)sy=0;
                         }
                     }else if(y > MAX_TILEH*16*scale-32*scale){
-                        if(m.getMaxRow() > DEF_TILEH){
+                        if(map.getMaxRow() > DEF_TILEH){
                             sy += 16;
-                            if(sy > (m.getMaxRow()-MAX_TILEH)*16)sy-=16;
+                            if(sy > (map.getMaxRow()-MAX_TILEH)*16)sy-=16;
                         }
                     }
                     
-                    cx = sx/16 + x/(16*scale);
-                    if(cx < 0)cx=0;
-                    else if(cx >= m.getMaxCol())cx=m.getMaxCol()-1;
-                    cy = sy/16 + y/(16*scale);
-                    if(cy < 0)cy=0;
-                    else if(cy >= m.getMaxRow())cy=m.getMaxRow()-1;
+                    cursorXpos = sx/16 + x/(16*scale);
+                    if(cursorXpos < 0)cursorXpos=0;
+                    else if(cursorXpos >= map.getMaxCol())cursorXpos=map.getMaxCol()-1;
+                    cursorYpos = sy/16 + y/(16*scale);
+                    if(cursorYpos < 0)cursorYpos=0;
+                    else if(cursorYpos >= map.getMaxRow())cursorYpos=map.getMaxRow()-1;
                     pressedA();
                 }
             }
@@ -2005,37 +2005,37 @@ public class MapEditor extends CWScreen
                 
                 if(noScroll == 0){
                     if(x < 32*scale){
-                        if(m.getMaxCol() > DEF_TILEW){
+                        if(map.getMaxCol() > DEF_TILEW){
                             sx -= 16;
                             if(sx < 0)sx=0;
                         }
                     }else if(x > MAX_TILEW*16*scale-32*scale){
-                        if(m.getMaxCol() > DEF_TILEW){
+                        if(map.getMaxCol() > DEF_TILEW){
                             sx += 16;
-                            if(sx > (m.getMaxCol()-MAX_TILEW)*16)sx-=16;
+                            if(sx > (map.getMaxCol()-MAX_TILEW)*16)sx-=16;
                         }
                     }
                     
                     if(y < 32*scale){
-                        if(m.getMaxRow() > DEF_TILEH){
+                        if(map.getMaxRow() > DEF_TILEH){
                             sy -= 16;
                             if(sy < 0)sy=0;
                         }
                     }else if(y > MAX_TILEH*16*scale-32*scale){
-                        if(m.getMaxRow() > DEF_TILEH){
+                        if(map.getMaxRow() > DEF_TILEH){
                             sy += 16;
-                            if(sy > (m.getMaxRow()-MAX_TILEH)*16)sy-=16;
+                            if(sy > (map.getMaxRow()-MAX_TILEH)*16)sy-=16;
                         }
                     }
                     noScroll = 3;
                 }else noScroll--;
                 
-                cx = sx/16 + x/(16*scale);
-                if(cx < 0)cx=0;
-                else if(cx >= m.getMaxCol())cx=m.getMaxCol()-1;
-                cy = sy/16 + y/(16*scale);
-                if(cy < 0)cy=0;
-                else if(cy >= m.getMaxRow())cy=m.getMaxRow()-1;
+                cursorXpos = sx/16 + x/(16*scale);
+                if(cursorXpos < 0)cursorXpos=0;
+                else if(cursorXpos >= map.getMaxCol())cursorXpos=map.getMaxCol()-1;
+                cursorYpos = sy/16 + y/(16*scale);
+                if(cursorYpos < 0)cursorYpos=0;
+                else if(cursorYpos >= map.getMaxRow())cursorYpos=map.getMaxRow()-1;
                 pressedA();
             }
         }
@@ -2049,37 +2049,37 @@ public class MapEditor extends CWScreen
             if(!menu && !umenu && !tmenu && !smenu){
                 if(noScroll == 0){
                     if(x < 32*scale){
-                        if(m.getMaxCol() > DEF_TILEW){
+                        if(map.getMaxCol() > DEF_TILEW){
                             sx -= 16;
                             if(sx < 0)sx=0;
                         }
                     }else if(x > MAX_TILEW*16*scale-32*scale){
-                        if(m.getMaxCol() > DEF_TILEW){
+                        if(map.getMaxCol() > DEF_TILEW){
                             sx += 16;
-                            if(sx > (m.getMaxCol()-MAX_TILEW)*16)sx-=16;
+                            if(sx > (map.getMaxCol()-MAX_TILEW)*16)sx-=16;
                         }
                     }
                     
                     if(y < 32*scale){
-                        if(m.getMaxRow() > DEF_TILEH){
+                        if(map.getMaxRow() > DEF_TILEH){
                             sy -= 16;
                             if(sy < 0)sy=0;
                         }
                     }else if(y > MAX_TILEH*16*scale-32*scale){
-                        if(m.getMaxRow() > DEF_TILEH){
+                        if(map.getMaxRow() > DEF_TILEH){
                             sy += 16;
-                            if(sy > (m.getMaxRow()-MAX_TILEH)*16)sy-=16;
+                            if(sy > (map.getMaxRow()-MAX_TILEH)*16)sy-=16;
                         }
                     }
                     noScroll = 3;
                 }else noScroll--;
                 
-                cx = sx/16 + x/(16*scale);
-                if(cx < 0)cx=0;
-                else if(cx >= m.getMaxCol())cx=m.getMaxCol()-1;
-                cy = sy/16 + y/(16*scale);
-                if(cy < 0)cy=0;
-                else if(cy >= m.getMaxRow())cy=m.getMaxRow()-1;
+                cursorXpos = sx/16 + x/(16*scale);
+                if(cursorXpos < 0)cursorXpos=0;
+                else if(cursorXpos >= map.getMaxCol())cursorXpos=map.getMaxCol()-1;
+                cursorYpos = sy/16 + y/(16*scale);
+                if(cursorYpos < 0)cursorYpos=0;
+                else if(cursorYpos >= map.getMaxRow())cursorYpos=map.getMaxRow()-1;
             }
         }
     }
