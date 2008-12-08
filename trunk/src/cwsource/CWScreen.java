@@ -23,10 +23,10 @@ public abstract class CWScreen extends JComponent implements ComponentListener
     protected static final int MAX_ARMIES = 10;   //The max allowed armies is 10
     
 	protected Battle b;
-	protected Map m;
+	protected Map map;
 	protected Unit selected;      //holds the currently selected unit
-	protected int cx;             //holds the cursor's x position on the map (in map tiles)
-	protected int cy;             //holds the cursor's y position on the map (in map tiles)
+	protected int cursorXpos;             //holds the cursor's x position on the map (in map tiles)
+	protected int cursorYpos;             //holds the cursor's y position on the map (in map tiles)
 	protected int sx;             //holds the battle screen's x position over the map (in pixels)
 	protected int sy;             //holds the battle screen's y position over the map (in pixels)
 
@@ -52,22 +52,22 @@ public abstract class CWScreen extends JComponent implements ComponentListener
         this.setOpaque(true);
         
         this.b = b;
-        this.m = b.getMap();
+        this.map = b.getMap();
         selected = null;
-        cx = 0;
-        cy = 0;
+        cursorXpos = 0;
+        cursorYpos = 0;
         sx = 0;
         sy = 0;
         
         //center small maps
-        if(m.getMaxCol() < 30)
+        if(map.getMaxCol() < 30)
         {
-            sx = -((30 - m.getMaxCol())/2)*16;
+            sx = -((30 - map.getMaxCol())/2)*16;
         }
         
-        if(m.getMaxRow() < 20)
+        if(map.getMaxRow() < 20)
         {
-            sy = -((20 - m.getMaxRow())/2)*16;
+            sy = -((20 - map.getMaxRow())/2)*16;
         }
 
         scale = 1;
@@ -128,9 +128,9 @@ public abstract class CWScreen extends JComponent implements ComponentListener
     //Draws the map and the units
     public  void drawMap(Graphics2D g)
     {
-        for(int x = sx / 16; x < m.getMaxCol(); x++)
+        for(int x = sx / 16; x < map.getMaxCol(); x++)
         {
-            for(int y = sy / 16; y < m.getMaxRow(); y++)
+            for(int y = sy / 16; y < map.getMaxRow(); y++)
             {
                 drawTerrainOnMap(g, x, y);
                 drawUnitOnMap(g, x, y);
@@ -140,7 +140,7 @@ public abstract class CWScreen extends JComponent implements ComponentListener
 
 	public final void drawTerrainOnMap(Graphics2D g, int x, int y) 
 	{
-		Tile currTile = m.find(new Location(x,y));
+		Tile currTile = map.find(new Location(x,y));
 		CWArtist.drawTerrainAtXY(g, this, currTile, x*16-sx, y*16-sy);
 	}
 
@@ -149,7 +149,7 @@ public abstract class CWScreen extends JComponent implements ComponentListener
 		//if a unit is there, draw it
 		if(visibleAtXY(x, y))
 		{
-			Unit thisUnit = m.find(new Location(x,y)).getUnit();
+			Unit thisUnit = map.find(new Location(x,y)).getUnit();
 
 			//Spacing issues I can't bother to fix at the moment. <_<
 		    if(thisUnit == selected && selected.direction != -1 && selected.getMType() >1)
@@ -186,7 +186,7 @@ public abstract class CWScreen extends JComponent implements ComponentListener
     
     public final void drawInfoBox(Graphics2D g) 
     {
-        Tile currTile = m.find(new Location(cx,cy));
+        Tile currTile = map.find(new Location(cursorXpos,cursorYpos));
         
         drawTerrainInfoBox(g, currTile);
         drawUnitInfoBox(g, currTile);
@@ -196,7 +196,7 @@ public abstract class CWScreen extends JComponent implements ComponentListener
 	{
 		//Unit box
         //The following visibility evaluation method be working
-        if(visibleAtXY(cx, cy))
+        if(visibleAtXY(cursorXpos, cursorYpos))
         {
             CWArtist.drawUnitInfo(g, this, currTile, unitBox_x, unitBox_y);
             CWArtist.drawTransInfoBox(g, this, currTile.getUnit(), trnsBox_x, trnsBox_y);
@@ -236,17 +236,17 @@ public abstract class CWScreen extends JComponent implements ComponentListener
 	
 	public final void setMap(Map m)
 	{
-		this.m = m;
+		this.map = m;
 	}
 	
 	public final Map getMap()
 	{
-		return m;
+		return map;
 	}
 	
 	public final Location getCursorLoc()
 	{
-		return new Location(cx, cy);
+		return new Location(cursorXpos, cursorYpos);
 	}
 	
 	public final Unit getSelectedUnit()
@@ -257,9 +257,9 @@ public abstract class CWScreen extends JComponent implements ComponentListener
 	public final boolean visibleAtXY(int x, int y)
     {                   	  
     	//If there is no unit at the given location, then nothing should be displayed
-    	if(m != null && m.onMap(x, y) && m.find(new Location(x,y)).getUnit() != null)
+    	if(map != null && map.onMap(x, y) && map.find(new Location(x,y)).getUnit() != null)
     	    	{
-    		Unit thisUnit = m.find(new Location(x,y)).getUnit();
+    		Unit thisUnit = map.find(new Location(x,y)).getUnit();
     		
     		//Do not display the unit if it is moving
     		if(!thisUnit.moving )
@@ -317,7 +317,7 @@ public abstract class CWScreen extends JComponent implements ComponentListener
 	{
 		//So if the cursor's x coordinate is far enough to the right,
 		//print the boxes to the left side.
-		if(cx > (MAX_TILEW/2)+(sx/16))
+		if(cursorXpos > (MAX_TILEW/2)+(sx/16))
 		{
 			//Define the top left-most corner of the terrain box
 			terrBox_x = 0;
@@ -350,7 +350,7 @@ public abstract class CWScreen extends JComponent implements ComponentListener
     
     public final void drawMiniMap(Graphics2D g, int x, int y){
         Image minimap = MiscGraphics.getMinimap();
-        Map map = m;
+        Map map = this.map;
         for(int i=0; i < map.getMaxCol(); i++){
             for(int j=0; j < map.getMaxRow();j++){
                 //draw terrain
@@ -392,13 +392,13 @@ public abstract class CWScreen extends JComponent implements ComponentListener
         //Takes the window size, divides by tile size, rounds up
         MAX_TILEW = (int)(Math.ceil(PanelSize.getWidth() /(16 * scale)));
         MAX_TILEH = (int)(Math.ceil(PanelSize.getHeight() / (16 * scale)));
-        if(MAX_TILEW > m.getMaxCol()) //Frame cant be wider than map
+        if(MAX_TILEW > map.getMaxCol()) //Frame cant be wider than map
         {
-            MAX_TILEW = m.getMaxCol();
+            MAX_TILEW = map.getMaxCol();
         }
-        if(MAX_TILEH > m.getMaxRow()) //Frame cant be shorter than map
+        if(MAX_TILEH > map.getMaxRow()) //Frame cant be shorter than map
         {
-            MAX_TILEH = m.getMaxRow();
+            MAX_TILEH = map.getMaxRow();
         }
         if(MAX_TILEW < 30) //Maintain minimum width
         {
@@ -411,17 +411,17 @@ public abstract class CWScreen extends JComponent implements ComponentListener
         //Rounds up the screen size itself to whole tiles
         int sizex = MAX_TILEW * (16 * scale);
         int sizey = MAX_TILEH * (16 * scale);
-        if(sx/16+MAX_TILEW > m.getMaxCol() || sy/16+MAX_TILEH > m.getMaxRow()){
+        if(sx/16+MAX_TILEW > map.getMaxCol() || sy/16+MAX_TILEH > map.getMaxRow()){
             sx = 0;
             sy = 0;
-            cx = 0;
-            cy = 0;
+            cursorXpos = 0;
+            cursorYpos = 0;
             //center small maps
-            if(m.getMaxCol() < 30){
-                sx = -((30 - m.getMaxCol())/2)*16;
+            if(map.getMaxCol() < 30){
+                sx = -((30 - map.getMaxCol())/2)*16;
             }
-            if(m.getMaxRow() < 20){
-                sy = -((20 - m.getMaxRow())/2)*16;
+            if(map.getMaxRow() < 20){
+                sy = -((20 - map.getMaxRow())/2)*16;
             }
         }
         setPreferredSize(new Dimension(sizex, sizey));
