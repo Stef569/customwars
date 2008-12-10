@@ -80,7 +80,7 @@ public class BattleScreen extends CWScreen
     private float a;
     private boolean dialogue;
     
-    private ArrayList<Location> contextTargs;
+    private ArrayList<Location> targetTilesWithinRange;
     private int currContextTarg;
     
     int cx_p = 0;
@@ -111,7 +111,7 @@ public class BattleScreen extends CWScreen
         delete = false;
         scale = 1;
         
-        contextTargs = new ArrayList<Location>();
+        targetTilesWithinRange = new ArrayList<Location>();
         currContextTarg = 0;
         
         int numArmies = b.getArmies().length;
@@ -620,9 +620,9 @@ public class BattleScreen extends CWScreen
         }
         */
         
-        for(int k = 0; k < contextTargs.size(); k++)
+        for(int k = 0; k < targetTilesWithinRange.size(); k++)
         {
-        	Location currLoc = contextTargs.get(k);
+        	Location currLoc = targetTilesWithinRange.get(k);
         	int i = currLoc.getCol();
         	int j = currLoc.getRow();
         	g.drawImage(MiscGraphics.getAttackTile(),i*16-sx,j*16-sy,this);
@@ -2326,7 +2326,7 @@ public class BattleScreen extends CWScreen
         	Location origLoc = user.getLocation();
         	user.setLocation(moveToTile.getLocation());
 			currentMenu = ContextMenu.generateContext(user, false,false,false,false, this);
-			contextTargs = ContextMenu.getContextTargs();
+			targetTilesWithinRange = ContextMenu.getContextTargs();
 			cmenu = true;
 			user.setLocation(origLoc);
 			
@@ -2725,7 +2725,7 @@ public class BattleScreen extends CWScreen
                 selected.moved = false;
 		currentMenu = ContextMenu.generateContext(user,false,false,false,false, this);
 		//currentMenu = ContextMenu.generateContext(user,user.getLocation(),false,false,false,false, this);
-		contextTargs = ContextMenu.getContextTargs();
+		targetTilesWithinRange = ContextMenu.getContextTargs();
 		cmenu = true;
         String soundLocation = ResourceLoader.properties.getProperty("soundLocation");
 		SFX.playClip(soundLocation + "/ok.wav");
@@ -2904,11 +2904,11 @@ public class BattleScreen extends CWScreen
 		    fire = true;
 		    
 		    //[NEW]
-		    if(contextTargs.size() > 0)
+		    if(targetTilesWithinRange.size() > 0)
 		    {
 		    	currContextTarg = 0;
-		    	cursorXpos = contextTargs.get(currContextTarg).getCol();
-		    	cursorYpos = contextTargs.get(currContextTarg).getRow();
+		    	cursorXpos = targetTilesWithinRange.get(currContextTarg).getCol();
+		    	cursorYpos = targetTilesWithinRange.get(currContextTarg).getRow();
 		    }
 		}
 		else if(action == UNIT_COMMANDS.CAPTURE)
@@ -4405,11 +4405,11 @@ public class BattleScreen extends CWScreen
 					currContextTarg++;
 			            SFX.playClip(ResourceLoader.properties.getProperty("soundLocation") + "/target.wav");
 					
-					if(currContextTarg >= contextTargs.size())
+					if(currContextTarg >= targetTilesWithinRange.size())
 						currContextTarg = 0;
 					
-					cursorXpos = contextTargs.get(currContextTarg).getCol();
-					cursorYpos = contextTargs.get(currContextTarg).getRow();
+					cursorXpos = targetTilesWithinRange.get(currContextTarg).getCol();
+					cursorYpos = targetTilesWithinRange.get(currContextTarg).getRow();
 				}
 				else
 				{
@@ -4470,10 +4470,10 @@ public class BattleScreen extends CWScreen
 					SFX.playClip(ResourceLoader.properties.getProperty("soundLocation") + "/target.wav");
 			            
 					if(currContextTarg < 0)
-						currContextTarg = contextTargs.size() - 1;
+						currContextTarg = targetTilesWithinRange.size() - 1;
 					
-					cursorXpos = contextTargs.get(currContextTarg).getCol();
-					cursorYpos = contextTargs.get(currContextTarg).getRow();
+					cursorXpos = targetTilesWithinRange.get(currContextTarg).getCol();
+					cursorYpos = targetTilesWithinRange.get(currContextTarg).getRow();
 				}
 				else
 				{
@@ -4522,10 +4522,10 @@ public class BattleScreen extends CWScreen
 			        SFX.playClip(ResourceLoader.properties.getProperty("soundLocation") + "/target.wav");
 					
 					if(currContextTarg < 0)
-						currContextTarg = contextTargs.size() - 1;
+						currContextTarg = targetTilesWithinRange.size() - 1;
 					
-					cursorXpos = contextTargs.get(currContextTarg).getCol();
-					cursorYpos = contextTargs.get(currContextTarg).getRow();
+					cursorXpos = targetTilesWithinRange.get(currContextTarg).getCol();
+					cursorYpos = targetTilesWithinRange.get(currContextTarg).getRow();
 				}
 				else
 				{
@@ -4570,11 +4570,11 @@ public class BattleScreen extends CWScreen
 			            currContextTarg++;
 			            SFX.playClip(ResourceLoader.properties.getProperty("soundLocation") + "/target.wav");
 					
-					if(currContextTarg >= contextTargs.size())
+					if(currContextTarg >= targetTilesWithinRange.size())
 						currContextTarg = 0;
 					
-					cursorXpos = contextTargs.get(currContextTarg).getCol();
-					cursorYpos = contextTargs.get(currContextTarg).getRow();
+					cursorXpos = targetTilesWithinRange.get(currContextTarg).getCol();
+					cursorYpos = targetTilesWithinRange.get(currContextTarg).getRow();
 				}
 				else
 				{
@@ -4610,19 +4610,19 @@ public class BattleScreen extends CWScreen
     
     class BSMouseControl implements MouseInputListener{
         public void mouseClicked(MouseEvent e){
-            int x = e.getX() - parentFrame.getInsets().left;
-            int y = e.getY() - parentFrame.getInsets().top;
-            logger.info("info =" + x + "," + y + ":" + e.getButton());
+            int xCoOrdinates = e.getX() - parentFrame.getInsets().left;
+            int yCoOrdinates = e.getY() - parentFrame.getInsets().top;
+            logger.info("info =" + xCoOrdinates + "," + yCoOrdinates + ":" + e.getButton());
             
             if(e.getButton() == MouseEvent.BUTTON1){
                 if(menu || cmenu){
-                    int mitem = currentMenu.getMenuItemAt(x,y,scale);
+                    int mitem = currentMenu.getMenuItemAt(xCoOrdinates,yCoOrdinates,scale);
                     if(mitem != -1){
                         currentMenu.setMenuItem(mitem);
                         pressedA();
                     }
                 }else if(bmenu || carbmenu){
-                    int mitem = currentMenu.getMenuItemAt(x,y,scale);
+                    int mitem = currentMenu.getMenuItemAt(xCoOrdinates,yCoOrdinates,scale);
                     if(mitem != -1){
                         logger.info(""+mitem);
                         if(mitem == -2)currentMenu.goUp();
@@ -4634,24 +4634,24 @@ public class BattleScreen extends CWScreen
                     }
                 }else{
                     if(noScroll == 0){
-                        if(x < 32*scale){
+                        if(xCoOrdinates < 32*scale){
                             if(map.getMaxCol() > DEF_TILEW){
                                 sx -= 16;
                                 if(sx < 0)sx=0;
                             }
-                        }else if(x > MAX_TILEW*16*scale-32*scale){
+                        }else if(xCoOrdinates > MAX_TILEW*16*scale-32*scale){
                             if(map.getMaxCol() > DEF_TILEW){
                                 sx += 16;
                                 if(sx > (map.getMaxCol()-MAX_TILEW)*16)sx-=16;
                             }
                         }
                         
-                        if(y < 32*scale){
+                        if(yCoOrdinates < 32*scale){
                             if(map.getMaxRow() > DEF_TILEH){
                                 sy -= 16;
                                 if(sy < 0)sy=0;
                             }
-                        }else if(y > MAX_TILEH*16*scale-32*scale){
+                        }else if(yCoOrdinates > MAX_TILEH*16*scale-32*scale){
                             if(map.getMaxRow() > DEF_TILEH){
                                 sy += 16;
                                 if(sy > (map.getMaxRow()-MAX_TILEH)*16)sy-=16;
@@ -4662,32 +4662,17 @@ public class BattleScreen extends CWScreen
 
                     boolean validClick = true;
                     
-                    if(fire)
+                    if(fire) 
                     {
-                    	//Check to see if the cursor's new position is over a valid target.
-                    	boolean onTarg = false;
-                    	
-                    	//Get the cursor's current location (in terms of tiles)
-                    	Location targ = new Location(x * scale / 16, y * scale / 16); 
-                    	
-                        for(int k = 0; k < contextTargs.size() && !onTarg; k++)
-                        {
-                        	if(targ.equals(contextTargs.get(k)))
-                        	{
-                        		onTarg = true;
-                        	}
-                        }
-
-                        //The result of the above for loop is given to validClick
-                        validClick = onTarg;
+                    	validClick = validFiringTargetSelected(xCoOrdinates, yCoOrdinates, targetTilesWithinRange);
                     }
                     
                     if(validClick)
                     {
-	                    cursorXpos = sx/16 + x/(16*scale);
+	                    cursorXpos = sx/16 + xCoOrdinates/(16*scale);
 	                    if(cursorXpos < 0)cursorXpos=0;
 	                    else if(cursorXpos >= map.getMaxCol())cursorXpos=map.getMaxCol()-1;
-	                    cursorYpos = sy/16 + y/(16*scale);
+	                    cursorYpos = sy/16 + yCoOrdinates/(16*scale);
 	                    if(cursorYpos < 0)cursorYpos=0;
 	                    else if(cursorYpos >= map.getMaxRow())cursorYpos=map.getMaxRow()-1;
 	                    
@@ -4703,6 +4688,23 @@ public class BattleScreen extends CWScreen
                 pressedB();
             }
         }
+
+		private boolean validFiringTargetSelected(int xCoOrdinates, int yCoOrdinates, ArrayList<Location> targetTilesWithinRange) {
+			boolean validTargetSelected = false;
+			
+			int hackyColAdjustment = -10;
+			int hackyRowAdjustment = -5;
+			
+			Location clickedTile = new Location((xCoOrdinates * scale / 16) + hackyColAdjustment, (yCoOrdinates * scale / 16) + hackyRowAdjustment); 
+			
+			for(int tileNo = 0; tileNo < targetTilesWithinRange.size() && !validTargetSelected; tileNo++) {
+				if(clickedTile.equals(targetTilesWithinRange.get(tileNo))) {
+					validTargetSelected = true;
+				}
+			}
+
+			return validTargetSelected;
+		}
         
         public void mouseEntered(MouseEvent e) {}
         
@@ -4777,9 +4779,9 @@ public class BattleScreen extends CWScreen
             	//Check to see if the cursor's new position is over a valid target.
             	boolean onTarg = false;
             	
-                for(int k = 0; k < contextTargs.size() && !onTarg; k++)
+                for(int k = 0; k < targetTilesWithinRange.size() && !onTarg; k++)
                 {
-                	if((new Location(cursorXpos, cursorYpos).equals(contextTargs.get(k))))
+                	if((new Location(cursorXpos, cursorYpos).equals(targetTilesWithinRange.get(k))))
                 	{
                 		currContextTarg = k;
                 		onTarg = true;
@@ -4789,8 +4791,8 @@ public class BattleScreen extends CWScreen
                 //Set the cusor's current coordinates to that of the current target.
                 //If the mouse does not move over any valid targets, this code should
                 //keep locking the coordinates back to that of the target before.
-        		cursorXpos = contextTargs.get(currContextTarg).getCol();
-        		cursorYpos = contextTargs.get(currContextTarg).getRow();
+        		cursorXpos = targetTilesWithinRange.get(currContextTarg).getCol();
+        		cursorYpos = targetTilesWithinRange.get(currContextTarg).getRow();
             }
         }
     }
