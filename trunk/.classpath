@@ -2,6 +2,8 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="test"/>
+	<classpathentry kind="src" path="res"/>
+	<classpathentry kind="src" path="test-res"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="src/lib/slf4j-log4j12-1.5.6.jar"/>
 	<classpathentry kind="lib" path="src/lib/easyogg.jar"/>
