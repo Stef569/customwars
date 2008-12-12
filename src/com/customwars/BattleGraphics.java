@@ -17,6 +17,8 @@ import javax.swing.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.customwars.state.ResourceLoader;
+
 import java.util.Random;
 
 public class BattleGraphics {

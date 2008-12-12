@@ -10,6 +10,8 @@ import java.io.FileInputStream;
 
 import org.newdawn.easyogg.OggClip;
 
+import com.customwars.state.ResourceLoader;
+
 
 public class Music extends Thread{
     private static MusicStorage ms = new MusicStorage();

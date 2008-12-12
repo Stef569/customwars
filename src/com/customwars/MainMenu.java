@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import com.customwars.lobbyclient.*;
 import com.customwars.state.FileSystemManager;
+import com.customwars.state.ResourceLoader;
 
 
 import java.awt.color.*;

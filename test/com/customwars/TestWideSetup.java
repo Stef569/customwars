@@ -2,7 +2,7 @@ package com.customwars;
 import org.slf4j.Logger;  
 import org.slf4j.LoggerFactory;  
 
-import com.customwars.ResourceLoader;
+import com.customwars.state.ResourceLoader;
 
 import junit.extensions.TestSetup;
 import junit.framework.Test;

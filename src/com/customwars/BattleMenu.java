@@ -13,6 +13,8 @@ import javax.swing.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.customwars.state.ResourceLoader;
+
 import java.io.*;
 import java.awt.*;
 import java.awt.image.*;

@@ -13,6 +13,8 @@ import javax.swing.JOptionPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.customwars.state.ResourceLoader;
+
 import java.awt.event.*;
 
 /** Class which contains options and functions to modify those options.

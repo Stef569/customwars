@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.customwars.state.ResourceLoader;
+
 public class ContextMenu extends InGameMenu {
     Unit u;
 	final static Logger logger = LoggerFactory.getLogger(ContextMenu.class); 

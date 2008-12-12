@@ -9,7 +9,6 @@ import junit.framework.TestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.customwars.ResourceLoader;
 
 public class TestFileSystemManager extends TestCase {
 

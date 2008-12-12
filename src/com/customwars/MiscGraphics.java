@@ -13,6 +13,8 @@ import java.awt.image.*;
 import java.io.*;
 import javax.swing.*;
 
+import com.customwars.state.ResourceLoader;
+
 public class MiscGraphics {
     private static Image attackTile;    //the image used for attack range
     private static Image moveTile;      //the image used for move range
