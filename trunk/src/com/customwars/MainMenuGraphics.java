@@ -13,6 +13,8 @@ import java.awt.image.*;
 import java.io.*;
 import javax.swing.*;
 
+import com.customwars.state.ResourceLoader;
+
 public class MainMenuGraphics {
     private static Image background;        //the background image
     private static Image newGame;           //the new game icon

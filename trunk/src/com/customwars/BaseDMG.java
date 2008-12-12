@@ -12,6 +12,8 @@ import java.io.*;           //Necessary for file input
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.customwars.state.ResourceLoader;
+
 public class BaseDMG {
     public final static int NUM_UNITS = 32;
     //0=Infantry 1=Mech 2=Tank 3=Md Tank 4=Recon 5=Anti-Air 6=Missiles 7=Artillery 8=Rockets 9=APC

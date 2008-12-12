@@ -19,6 +19,7 @@ import java.io.*;
 import javax.swing.*;
 
 import com.customwars.lobbyclient.FobbahLauncher;
+import com.customwars.state.ResourceLoader;
 
 import java.util.zip.CRC32;
 public class Main {

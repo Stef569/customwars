@@ -12,6 +12,8 @@ import java.awt.color.*;
 import java.awt.GradientPaint;
 import java.awt.image.*;
 
+import com.customwars.state.ResourceLoader;
+
 public abstract class InGameMenu {
     protected String[] displayItems;
     protected Image[] icons;

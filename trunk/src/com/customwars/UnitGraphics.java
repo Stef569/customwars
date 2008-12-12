@@ -13,6 +13,8 @@ import java.awt.image.*;
 import java.io.*;
 import javax.swing.*;
 
+import com.customwars.state.ResourceLoader;
+
 public class UnitGraphics 
 {
 	private static int MAX_ARMIES = 10;
