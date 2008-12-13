@@ -14,6 +14,7 @@ package com.customwars;
 import com.thoughtworks.xstream.io.xml.DomDriver;*/
 import java.io.*;
 import java.net.*;
+
 import javax.swing.*;
 
 import org.slf4j.Logger;
@@ -190,6 +191,7 @@ public class Mission {
             //read replay queue
             rq = (ReplayQueue) read.readObject();
         }catch(IOException e){
+        	logger.error("Problem with file [" + saveLocation + "/" +filename + "] throwing stack trace: "+ e );
             logger.error("error",e);
             System.exit(1);
         }catch(ClassNotFoundException e){
@@ -211,12 +213,25 @@ public class Mission {
     }
    
     //sends the mission to the IP Address
-    public static void sendMission(){
-        try{
+    public static void sendMission() throws IOException{
+
             logger.info("1");
-            InetAddress lol = InetAddress.getByAddress(Options.getIP());
+            InetAddress lol = null;
+            
+			try {
+				lol = InetAddress.getByAddress(Options.getIP());
+			} catch (UnknownHostException e) {
+				logger.error("Could not find host! ", e);
+			}
+			
             logger.info("2");
-            socket = new Socket(lol, Options.getPort());
+            
+			try {           
+				socket = new Socket(lol, Options.getPort());
+			} catch (NullPointerException e) {
+				logger.error("Host not found so couldn't connect to socket", e);
+			}            
+            
             logger.info("3");
             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
             logger.info("4");
@@ -232,10 +247,8 @@ public class Mission {
                 write.writeObject(initialState);
             }
             logger.info("9");
-        }catch(Exception e) {
-            logger.error("Network Problem!");
-            logger.error("error:",e);
-        }
+            
+
     }
    
     //gets the mission
@@ -279,7 +292,7 @@ public class Mission {
                 initialState = (Battle) read.readObject();
             }
         }catch(IOException e){
-            logger.error("error:",e);
+            logger.error("Problem reading the mission file: [" + saveLocation + "/" +filename+ "]",e);
             System.exit(1);
         }catch(ClassNotFoundException e){
             logger.error("error:",e);

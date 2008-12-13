@@ -15,13 +15,17 @@ import javax.swing.JOptionPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.customwars.state.ResourceLoader;
+
 import java.net.*;
 //import javax.media.bean.playerbean.MediaPlayer;
 //import java.util.Random;
 import java.util.ArrayList;
 
 public class Battle implements Serializable{
-    private final int ARMY_LIMIT = 10;               //The maximum number of armies allowed in one battle
+    private static final String TEMPORARYSAVE_SAVE_FILENAME = "temporarysave.save";
+
+	private final int ARMY_LIMIT = 10;               //The maximum number of armies allowed in one battle
     
     private Map m;                                  //The battle's map
     private Army armies[] = new Army[ARMY_LIMIT];   //The battle's army list
@@ -187,8 +191,7 @@ public class Battle implements Serializable{
             //close file
             read.close();
         }catch(IOException e){
-            System.err.println(e);
-            System.err.println("Exiting");
+        	logger.error("Couldn't read map file [" + filename + "]", e);
             System.exit(1);
         }
         
@@ -320,8 +323,7 @@ public class Battle implements Serializable{
                 }
             }*/
         }catch(IOException e){
-            System.err.println(e);
-            System.err.println("Exiting");
+        	logger.error("Couldn't read NEW map file [" +filename +"]" , e);
             System.exit(1);
         }
     }
@@ -376,8 +378,7 @@ public class Battle implements Serializable{
                 placeUnit(m, m.find(new Location(x,y)), type, getColorArmy(side));
             }
         }catch(IOException e){
-            System.err.println(e);
-            System.err.println("Exiting");
+        	logger.error("Couldn't read old map file [" + filename +"]", e);
             System.exit(1);
         }
     }
@@ -422,8 +423,7 @@ public class Battle implements Serializable{
                 }
             }
         }catch(IOException e){
-            System.err.println(e);
-            System.err.println("Exiting");
+        	logger.error("Couldn't read AWD file [" + filename +"]", e);
             System.exit(1);
         }
     }
@@ -1002,15 +1002,19 @@ public void updateFoW() {
         //deal with network games
         if(Options.isNetworkGame() && Options.getSend()){
             if(!(day == 1 && turn == 0)){
-                Mission.sendMission();
+                try {
+					Mission.sendMission();
+				} catch (IOException e) {
+					logger.error("IO Error sending mission", e);
+				}
             }
         }
         
         //deal with snail games
         if(Options.snailGame && !(turn == 0 && day == 1)){
             //upload save
-            Mission.saveMission("temporarysave.save");
-            sendFile("usave.pl", Options.gamename,"temporarysave.save");
+            Mission.saveMission(TEMPORARYSAVE_SAVE_FILENAME);
+            sendFile("usave.pl", Options.gamename,TEMPORARYSAVE_SAVE_FILENAME);
             //TODO: retry?
             
             //update server information
@@ -1072,6 +1076,9 @@ public void updateFoW() {
     }
     
     public String sendFile(String script, String input, String file){
+    	
+    	
+    	
         String reply = "";
         do{
             try{
@@ -1083,7 +1090,7 @@ public void updateFoW() {
                 con.setRequestProperty("Content-type", "text/plain");
                 byte buffer[] = new byte[1];
                 logger.info("opening file");
-                File source = new File(file);
+                File source = new File(ResourceLoader.properties.getProperty("saveLocation") + "/" +file);
                 con.setRequestProperty("Content-length", (input.length()+1+source.length())+"");
                 
                 PrintStream out1 = new PrintStream(con.getOutputStream());
@@ -1187,8 +1194,10 @@ public void updateFoW() {
                         }
                         sendCommandToMain("dplay",Options.gamename + "\n" + Options.username + "\n" + Options.password + "\n" + opos);
                         //upload save
-                        Mission.saveMission("temporarysave.save");
-                        sendFile("usave.pl", Options.gamename,"temporarysave.save");
+                        Mission.saveMission(TEMPORARYSAVE_SAVE_FILENAME);
+                        
+                        
+                        sendFile("usave.pl", Options.gamename,TEMPORARYSAVE_SAVE_FILENAME);
                         //TODO: retry?
                     }
                 }
