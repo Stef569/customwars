@@ -100,11 +100,12 @@ public class MainMenu extends JComponent{
     public MainMenu(JFrame f){
         //makes the panel opaque, and thus visible
         this.setOpaque(true);
-        
+        logger.info("Yeah me too");
         cx = 0;
         cy = 0;
         item = 0;
         item2 = 0;
+        logger.info("This one is fine though");
         
         scale = 1;
         
