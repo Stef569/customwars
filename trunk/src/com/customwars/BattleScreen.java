@@ -25,6 +25,8 @@ import com.customwars.state.ResourceLoader;
 //public class BattleScreen extends JComponent implements ComponentListener
 public class BattleScreen extends CWScreen 
 {
+	private static final String SAVE_FILE_EXT = ".save";
+	private static final String REPLAY_FILE_EXT = ".replay";
 	private static final String TEMPORARYSAVE_SAVE_FILENAME = "temporarysave.save";
 	private int item;           //holds the menu's current item (both menus use this)
     private boolean menu;       //is the main menu in use?
@@ -1768,7 +1770,7 @@ public class BattleScreen extends CWScreen
             
             if(returnVal != 1){
                 String filename = fc.getSelectedFile().getPath();
-                if(filename.length()<8 || !filename.substring(filename.length()-7).equals(".replay"))filename += ".replay";
+                if(filename.length()<8 || !filename.substring(filename.length()-7).equals(REPLAY_FILE_EXT))filename += REPLAY_FILE_EXT;
                 Mission.saveReplay(filename);
             }
         }
@@ -3375,9 +3377,9 @@ public class BattleScreen extends CWScreen
 		        {
 		            String filename = fc.getSelectedFile().getPath();
 		            
-		            if(filename.length()<8 || !filename.substring(filename.length()-7).equals(".replay"))
+		            if(filename.length()<8 || !filename.substring(filename.length()-7).equals(REPLAY_FILE_EXT))
 		            {
-		            	filename += ".replay";
+		            	filename += REPLAY_FILE_EXT;
 		            }
 		            
 		            Mission.saveReplay(filename);
@@ -3400,7 +3402,7 @@ public class BattleScreen extends CWScreen
 		    
 		    if(returnVal != 1){
 		        String x = fc.getSelectedFile().getPath();
-		        if(x.length()<6 || !x.substring(x.length()-5).equals(".save"))x += ".save";
+		        if(x.length()<6 || !x.substring(x.length()-5).equals(SAVE_FILE_EXT))x += SAVE_FILE_EXT;
 		        Mission.saveMission(x);
 		    }
 		}else{

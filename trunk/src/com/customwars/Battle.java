@@ -1024,7 +1024,7 @@ public void updateFoW() {
         }
         
         //autosave if applicable
-        else if(Options.isAutosaveOn())Mission.saveMission("temp.save");
+        else if(Options.isAutosaveOn())Mission.saveMission(TEMPORARYSAVE_SAVE_FILENAME);
         
         return battleEnd;
     }

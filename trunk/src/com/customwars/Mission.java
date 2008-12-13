@@ -26,7 +26,11 @@ import java.util.zip.CRC32;
 //import java.util.*;
 
 public class Mission {
-    private static Battle battle1;   //the primary battle
+    private static final String REPLAY_SAVE_FILENAME = "/replay.save";
+
+	private static final String MISSION_TEMP_SAVE_FILENAME = "temporarysave.save";
+    
+	private static Battle battle1;   //the primary battle
     private static Battle battle2;   //a second battle for 2-screen games
     private static BattleScreen screen1; //The screen displaying the battle1
     private static BattleScreen screen2; //The screen displaying the battle2
@@ -72,12 +76,13 @@ public class Mission {
     //saves the initial state to memory
     public static void saveInitialState(){
         String saveLocation = ResourceLoader.properties.getProperty("saveLocation");
+        logger.debug("Saving initial state file [" + saveLocation + REPLAY_SAVE_FILENAME+"]");
         
         if(battle1 != null){
             try{
-                ObjectOutputStream write = new ObjectOutputStream(new FileOutputStream(saveLocation + "/replay.save"));
+                ObjectOutputStream write = new ObjectOutputStream(new FileOutputStream(saveLocation + REPLAY_SAVE_FILENAME));
                 write.writeObject(battle1);
-                ObjectInputStream read = new ObjectInputStream(new FileInputStream(saveLocation + "/replay.save"));
+                ObjectInputStream read = new ObjectInputStream(new FileInputStream(saveLocation + REPLAY_SAVE_FILENAME));
                 initialState = (Battle)read.readObject();
             }catch(IOException e){
                 logger.error("error", e);
@@ -108,6 +113,7 @@ public class Mission {
    
     public static void saveMission(String filename){
     	String saveLocation = ResourceLoader.properties.getProperty("saveLocation");
+    	logger.debug("Saving file ["   + saveLocation +  "/" +  filename +"]");
         try{
         	
             ObjectOutputStream write = new ObjectOutputStream(new FileOutputStream(saveLocation + "/" +filename));
@@ -140,7 +146,9 @@ public class Mission {
     }
    
     public static boolean testSave(String filename){
+    	
     	String saveLocation = ResourceLoader.properties.getProperty("saveLocation");
+    	logger.debug("Testsaving file ["   + saveLocation +  "/" + filename+"]");
 
     	try{
             ObjectInputStream read = new ObjectInputStream(new FileInputStream(saveLocation + "/"+filename));
@@ -162,6 +170,7 @@ public class Mission {
     //saves a replay, which includes a save of the initial state, and a list of the actions that occured
     public static void saveReplay(String filename){
     	String saveLocation = ResourceLoader.properties.getProperty("saveLocation");
+    	logger.debug("Saving Replay file ["   + saveLocation +  "/" + filename+"]");
         try{
             ObjectOutputStream write = new ObjectOutputStream(new FileOutputStream(saveLocation + "/" + filename));
             //version number
@@ -181,6 +190,7 @@ public class Mission {
     //loads a mission from file
     public static void loadReplay(String filename){
     	String saveLocation = ResourceLoader.properties.getProperty("saveLocation");
+    	logger.debug("Loading replay file ["  + saveLocation +  "/"  +filename+"]");
         ReplayQueue rq = new ReplayQueue();
         try{
             ObjectInputStream read = new ObjectInputStream(new FileInputStream(saveLocation + "/" +filename));
@@ -253,8 +263,8 @@ public class Mission {
    
     //gets the mission
     public static void recieveMission(InputStream in){
-    	String saveLocation = ResourceLoader.properties.getProperty("saveLocation");
-    	
+    
+    logger.debug("recieving Mission file");	
         try{
             ObjectInputStream read = new ObjectInputStream(in);
             battle1 = (Battle) read.readObject();
@@ -277,12 +287,15 @@ public class Mission {
         }
        
         //autosave after recieving correctly
-        if(Options.isAutosaveOn())saveMission(saveLocation + "/temp.save");
+        if(Options.isAutosaveOn())saveMission(MISSION_TEMP_SAVE_FILENAME);
+        
+        logger.debug("Just recieved Mission");
     }
    
     //loads a mission from file
     public static void loadMission(String filename){
     	String saveLocation = ResourceLoader.properties.getProperty("saveLocation");
+    	logger.debug("Loading mission file [" + saveLocation +  "/" + filename+"]");
 
     	try{
             ObjectInputStream read = new ObjectInputStream(new FileInputStream(saveLocation + "/" +filename));
