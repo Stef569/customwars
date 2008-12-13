@@ -31,7 +31,11 @@ import java.util.Vector;
 import java.util.Random;
 
 public class MainMenu extends JComponent{
-    private int cx;             //holds the cursor's x position on the co select screen
+    private static final String TEMPORARYMAP_MAP_FILENAME = "temporarymap.map";
+	private static final String TEMPORARYSAVE_SAVE_FILENAME = "temporarysave.save";
+	private static String ABSOLUTE_TEMP_FILENAME = "";
+	
+	private int cx;             //holds the cursor's x position on the co select screen
     private int cy;             //holds the cursor's y position on the co select screen
     private int item;           //holds the menu's current item (both menus use this)
     private int item2;          //holds the second menu's current item (only used by server info screen)
@@ -100,8 +104,10 @@ public class MainMenu extends JComponent{
     public MainMenu(JFrame f){
         //makes the panel opaque, and thus visible
         this.setOpaque(true);
-        logger.info("Yeah I made a change");
 
+        String fileSysLocation = ResourceLoader.properties.getProperty("saveLocation");
+        ABSOLUTE_TEMP_FILENAME = fileSysLocation + TEMPORARYMAP_MAP_FILENAME;
+        
         cx = 0;
         cy = 0;
         item = 0;
@@ -1345,14 +1351,10 @@ public void drawNewLoadScreen(Graphics2D g){
                         num = read.readInt();
                     }
                 }catch(IOException e){
-                    logger.error("Corrupt .map file!");
+                	logger.error("Couldn't read MAP file [ " + filename+ "]", e);
                     logger.error(filenames[numMaps]);
                     logger.error("error:", e);
                     continue;
-                    /*
-                    System.err.println("Exiting");
-                    System.exit(1);
-                     */
                 }
                 
                 if(subcat == 0 || subcat == num - 1){
@@ -1486,8 +1488,8 @@ public void drawNewLoadScreen(Graphics2D g){
 		        if(day == 1){
 		            logger.info("Starting Game");
 		            //load map from server
-		            getFile("dmap.pl", Options.gamename, "./temporarymap.map");
-		            filename = "./temporarymap.map";
+		            getFile("dmap.pl", Options.gamename, TEMPORARYMAP_MAP_FILENAME);
+		            filename = TEMPORARYMAP_MAP_FILENAME;
 		            
 		            //goto co select
 		            mapSelect = false;
@@ -1496,7 +1498,7 @@ public void drawNewLoadScreen(Graphics2D g){
 		            
 		            //find number of armies, and thus COs
 		            try{
-		                DataInputStream read = new DataInputStream(new FileInputStream(filename));
+		                DataInputStream read = new DataInputStream(new FileInputStream( ResourceLoader.properties.getProperty("saveLocation") + "/" + filename));
 		                int maptype = read.readInt();
 		                if(maptype == -1){
 		                    while(read.readByte()!=0); //skip name
@@ -1510,8 +1512,7 @@ public void drawNewLoadScreen(Graphics2D g){
 		                    numArmies = read.readInt();
 		                }
 		            }catch(IOException exc){
-		                System.err.println(exc);
-		                System.err.println("Exiting");
+		            	logger.error("Couldn't read MAP file [" + filename+"]", exc);
 		                System.exit(1);
 		            }
 		            numCOs = 0;
@@ -1524,8 +1525,8 @@ public void drawNewLoadScreen(Graphics2D g){
 		        }
 		        
 		        //load mission
-		        getFile("dsave.pl", Options.gamename, "./temporarysave.save");
-		        String loadFilename = "./temporarysave.save";
+		        getFile("dsave.pl", Options.gamename, TEMPORARYSAVE_SAVE_FILENAME);
+		        String loadFilename = TEMPORARYSAVE_SAVE_FILENAME;
 		        //load mission
 		        Battle b = new Battle(new Map(30,20));
 		        //Initialize a swing frame and put a BattleScreen inside
@@ -1569,8 +1570,7 @@ public void drawNewLoadScreen(Graphics2D g){
 		            numArmies = read.readInt();
 		        }
 		    }catch(IOException exc){
-		        System.err.println(exc);
-		        System.err.println("Exiting");
+		    	logger.error("Could not read Map file [" + filename+ "]", exc);
 		        System.exit(1);
 		    }
 		    
@@ -2011,8 +2011,8 @@ public void drawNewLoadScreen(Graphics2D g){
 		        logger.info("Stop for snail game");
 		        if(insertNewCO){
 		            //load mission
-		            getFile("dsave.pl", Options.gamename, "./temporarysave.save");
-		            String loadFilename = "./temporarysave.save";
+		            getFile("dsave.pl", Options.gamename, TEMPORARYSAVE_SAVE_FILENAME);
+		            String loadFilename = TEMPORARYSAVE_SAVE_FILENAME;
 		            //load mission
 		            Battle b = new Battle(new Map(30,20));
 		            //Initialize a swing frame and put a BattleScreen inside
@@ -2351,6 +2351,7 @@ public void drawNewLoadScreen(Graphics2D g){
     }
     
     public boolean getFile(String script, String input, String file){
+    	
         try{
             URL url = new URL(Options.getServerName() + script);
             URLConnection con = url.openConnection();
@@ -2359,7 +2360,7 @@ public void drawNewLoadScreen(Graphics2D g){
             con.setUseCaches(false);
             con.setRequestProperty("Content-type", "text/plain");
             logger.info("opening file");
-            File source = new File(file);
+            File source = new File(ResourceLoader.properties.getProperty("saveLocation") + "/" + file);
             con.setRequestProperty("Content-length", input.length()+"");
             PrintStream out = new PrintStream(con.getOutputStream());
             out.print(input);
@@ -2368,7 +2369,7 @@ public void drawNewLoadScreen(Graphics2D g){
             
             //recieve reply
             byte buffer[] = new byte[1];
-            FileOutputStream output = new FileOutputStream(file);
+            FileOutputStream output = new FileOutputStream(ResourceLoader.properties.getProperty("saveLocation") + "/" +file);
             InputStream in = con.getInputStream();
             while(true){
                 int count = in.read(buffer);

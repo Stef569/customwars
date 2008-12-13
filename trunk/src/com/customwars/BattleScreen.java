@@ -25,6 +25,7 @@ import com.customwars.state.ResourceLoader;
 //public class BattleScreen extends JComponent implements ComponentListener
 public class BattleScreen extends CWScreen 
 {
+	private static final String TEMPORARYSAVE_SAVE_FILENAME = "temporarysave.save";
 	private int item;           //holds the menu's current item (both menus use this)
     private boolean menu;       //is the main menu in use?
     private boolean cmenu;      //is the context menu in use?
@@ -3403,8 +3404,8 @@ public class BattleScreen extends CWScreen
 		        Mission.saveMission(x);
 		    }
 		}else{
-		    Mission.saveMission("./temporarysave.save");
-		    b.sendFile("usave.pl", Options.gamename,"./temporarysave.save");
+		    Mission.saveMission(TEMPORARYSAVE_SAVE_FILENAME);
+		    b.sendFile("usave.pl", Options.gamename,TEMPORARYSAVE_SAVE_FILENAME);
 		}
 	}
 
