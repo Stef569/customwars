@@ -32,7 +32,7 @@ public class ResourceLoader {
 		properties.setProperty("AltDMGLocation",  ResourceLoader.class.getResource("/core/damagetables/AltDMG.txt").getFile().toString());
 		properties.setProperty("imagesLocation", ResourceLoader.class.getResource("/core/images").getFile().toString());
 		properties.setProperty("soundLocation", ResourceLoader.class.getResource("/core/sound").getFile().toString());
-		properties.setProperty("tempSaveLocation", ResourceLoader.class.getResource("/save/temp.save").getFile().toString());
+		properties.setProperty("tempSaveLocation", ResourceLoader.class.getResource("/save").getFile().toString());
 		properties.setProperty("mapsLocation", ResourceLoader.class.getResource("/core/maps").getFile().toString());
 		properties.setProperty("saveLocation", ResourceLoader.class.getResource("/save").getFile().toString());
 	}

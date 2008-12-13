@@ -1639,7 +1639,7 @@ public void drawNewLoadScreen(Graphics2D g){
 		boolean startCOSelect = false;
         String tempSaveLocation = ResourceLoader.properties.getProperty("tempSaveLocation");	
 		
-		String loadFilename = tempSaveLocation;
+		String loadFilename =  tempSaveLocation + "/temporarysave.save";
 		
 		if(item == 0)
 		{
@@ -2315,7 +2315,8 @@ public void drawNewLoadScreen(Graphics2D g){
             PrintStream out1 = new PrintStream(con.getOutputStream());
             out1.print(input);
             out1.print("\n");
-            FileInputStream src = new FileInputStream(file);
+            FileInputStream src = new FileInputStream(ResourceLoader.properties.getProperty("saveLocation") + "/" + file);
+            logger.debug("Sending file [" + src+"]");
             OutputStream out = con.getOutputStream();
             while(true){
                 int count = src.read(buffer);
@@ -2351,7 +2352,6 @@ public void drawNewLoadScreen(Graphics2D g){
     }
     
     public boolean getFile(String script, String input, String file){
-    	
         try{
             URL url = new URL(Options.getServerName() + script);
             URLConnection con = url.openConnection();
@@ -2361,6 +2361,7 @@ public void drawNewLoadScreen(Graphics2D g){
             con.setRequestProperty("Content-type", "text/plain");
             logger.info("opening file");
             File source = new File(ResourceLoader.properties.getProperty("saveLocation") + "/" + file);
+            logger.debug("Getting file [" + source+"]");
             con.setRequestProperty("Content-length", input.length()+"");
             PrintStream out = new PrintStream(con.getOutputStream());
             out.print(input);
@@ -2370,6 +2371,7 @@ public void drawNewLoadScreen(Graphics2D g){
             //recieve reply
             byte buffer[] = new byte[1];
             FileOutputStream output = new FileOutputStream(ResourceLoader.properties.getProperty("saveLocation") + "/" +file);
+            logger.debug("Getting reply [" + ResourceLoader.properties.getProperty("saveLocation") + "/" +file +"]");
             InputStream in = con.getInputStream();
             while(true){
                 int count = in.read(buffer);
