@@ -4532,7 +4532,7 @@ public class BattleScreen extends CWScreen
 				else
 				{
 			        cursorYpos++;
-			            SFX.playClip("sound/maptick.wav");
+			            SFX.playClip(ResourceLoader.properties.getProperty("soundLocation") + "/maptick.wav");
 			        if(cursorYpos >= sy/16+MAX_TILEH-2 && cursorYpos < map.getMaxRow()-2)sy += 16;
 			        if(move){
 			            if(selected.getMoveRange().checkMove(cursorXpos,cursorYpos)){
