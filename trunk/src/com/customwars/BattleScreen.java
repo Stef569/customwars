@@ -4697,10 +4697,7 @@ public class BattleScreen extends CWScreen
 		private boolean validFiringTargetSelected(int xCoOrdinates, int yCoOrdinates, ArrayList<Location> targetTilesWithinRange) {
 			boolean validTargetSelected = false;
 			
-			int hackyColAdjustment = -10;
-			int hackyRowAdjustment = -5;
-			
-			Location clickedTile = new Location((xCoOrdinates * scale / 16) + hackyColAdjustment, (yCoOrdinates * scale / 16) + hackyRowAdjustment); 
+			Location clickedTile = new Location(xCoOrdinates * scale / 16 , yCoOrdinates * scale / 16); 
 			
 			for(int tileNo = 0; tileNo < targetTilesWithinRange.size() && !validTargetSelected; tileNo++) {
 				if(clickedTile.equals(targetTilesWithinRange.get(tileNo))) {
