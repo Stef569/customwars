@@ -1,0 +1,77 @@
+#A guide on how to get started
+
+= Custom wars code =
+Custom wars is a Java swing application, kept under SVN version control, hosted by google hosting. In order to check out the latest version of the code you will need the following:
+
+ * Java Dev Kit 1.6.0 or higher 
+ * An IDE: [http://www.eclipse.org/downloads/ eclipse(plain java edition)], [http://www.netbeans.org/downloads/ netbeans(plain java edition)], [http://www.jetbrains.com/idea/download/ intelliJ(paid)]
+ * An SVN client: [http://tortoisesvn.net/downloads tortoiseSVN], [http://www.versionsapp.com/ versions], [http://www.rapidsvn.org/download/release/ rapidSVN]
+
+
+= Checking out the code =
+
+Using an svn client, anyone can get the code anonymously(no login required) via http. Alternatively commiters can checkout via the https address with their gmail account login and their google code password.
+
+http://customwars.googlecode.com/svn/trunk/
+
+Check out the code to somewhere on your local disc. If you are on windows be sure to check out the code to somewhere on C:/ as opposed to "Program Files" since this will have hidden space characters (%20) and just creates bother.
+
+
+= Your Dev environment =
+
+= Eclipse =
+
+== 1. Eclipse: Workspace ==
+
+When loading into eclipse you will be asked to choose a workspace, create a workspace in a separate location to the location of your checked out code. This 'workspace' contains the metadata about your development set up so should be kept away from your actual projects. 
+
+== 2. Eclipse: Plugins ==
+{{{
+Help > Software updates
+}}}
+Click the avialable software tab and then "Add Site..." add the following URL with the name SVN plugins.
+{{{
+http://subclipse.tigris.org/update_1.4.x
+}}}
+Now tick the site you just entered form the choice of boxes and hit "Install..."
+You will be asked if you want to install a whole range of stuff but all you really need is the plugins that have "core" in the name, they may appear under 1.2.x instead of 1.4.x, this is ok. Installing other things shouldn't hurt.
+
+After these have downloaded you will be prompted to restart.
+
+
+=== 3. Eclipse: Importing the code into your workspace ===
+
+You now need to import the code into your workspace. Please note that it is still separate from where the workspace is, you are just working on it via links. So if you delete things in here, it will not delete the real files without prompting you. Right click on the "Package explorer" on the left and then choose:
+{{{
+Import > existing projects into workspace
+}}}
+
+Browse to the root directory of the customwars project probably under trunk/customwars and a project should appear in the pane below saying "customwars". Do not click the copy into workspace box, just click "finish". The workspace is now building. Please wait for this to complete. You will see it's progress in the bottom right hand corner.After it has finished you should be able to see the names of those who last commited changes to the files reflected beside the filenames.
+
+
+=== 4. Eclipse: Running the application tests ===
+Every time you check out the code the first thing you shoud do is run the tests. The tests are the only way we know that everything we expect to work is working the way we expect it!
+{{{
+Run > Run Configurations
+}}}
+
+Select "Junit" and click the "new" icon.
+In the panel that has now cam up on the right choose customwars as the project. Now press browse and select "com.customwars.AllTests" as the Test class. Give this configuration the name of "custom wars AllTests " or something like that. Now click, "Apply" then "Run".
+If everything is working then you should see a green bar! 
+
+
+=== 5. Eclipse: Making a development build ===
+To actually run the application do the following.
+
+{{{
+Run > Run Configurations
+}}}
+
+Select Java Application and click the "new" icon.
+In the panel that has now cam up on the right choose customwars as the project. Now press browse and select "com.customwars.Main" as the main class. Give this configuration the name of "custom wars App" or something like that. Now click, "Apply" then "Run".
+If you have followed the steps to the letter you should see the application running.
+
+----
+
+== Eclipse FAQ ==
+It is also not recommended that you import the code directly from the repository into your workspace from within eclipse.
