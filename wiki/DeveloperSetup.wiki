@@ -6,7 +6,7 @@ Custom wars is a Java swing application, kept under SVN version control, hosted 
 
  * Java Dev Kit 1.6.0 or higher 
  * An IDE: [http://www.eclipse.org/downloads/ eclipse(plain java edition)], [http://www.netbeans.org/downloads/ netbeans(plain java edition)], [http://www.jetbrains.com/idea/download/ intelliJ(paid)]
- * An SVN client: [http://tortoisesvn.net/downloads tortoiseSVN], [http://www.versionsapp.com/ versions], [http://www.rapidsvn.org/download/release/ rapidSVN]
+ * An SVN client: [http://tortoisesvn.net/downloads tortoiseSVN], [http://www.versionsapp.com/ versions(paid)], [http://www.rapidsvn.org/download/release/ rapidSVN]
 
 
 = Checking out the code =
