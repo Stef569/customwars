@@ -69,7 +69,7 @@ Run > Run Configurations
 }}}
 
 Select Java Application and click the "new" icon.
-In the panel that has now cam up on the right choose customwars as the project. Now press browse and select "com.customwars.Main" as the main class. Give this configuration the name of "custom wars App" or something like that. Now click, "Apply" then "Run".
+In the panel that has now come up on the right choose customwars as the project. Now press browse and select "com.customwars.Main" as the main class. Give this configuration the name of "custom wars App" or something like that. Now click, "Apply" then "Run".
 If you have followed the steps to the letter you should see the application running.
 
 ----
