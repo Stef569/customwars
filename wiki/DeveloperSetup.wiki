@@ -1,6 +1,4 @@
 #labels Featured,Phase-Implementation,help,faq,setup
-#A guide on how to get started
-
 = Custom wars code =
 Custom wars is a Java swing application, kept under SVN version control, hosted by google hosting. In order to check out the latest version of the code you will need the following:
 
