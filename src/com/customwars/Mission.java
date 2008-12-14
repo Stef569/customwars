@@ -170,9 +170,9 @@ public class Mission {
     //saves a replay, which includes a save of the initial state, and a list of the actions that occured
     public static void saveReplay(String filename){
     	String saveLocation = ResourceLoader.properties.getProperty("saveLocation");
-    	logger.debug("Saving Replay file ["   + saveLocation +  "/" + filename+"]");
+    	logger.debug("Saving Replay file ["+filename+"]");
         try{
-            ObjectOutputStream write = new ObjectOutputStream(new FileOutputStream(saveLocation + "/" + filename));
+            ObjectOutputStream write = new ObjectOutputStream(new FileOutputStream(filename));
             //version number
             write.writeInt(1);
             //save file
