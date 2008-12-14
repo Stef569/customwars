@@ -57,7 +57,7 @@ Run > Run Configurations
 }}}
 
 Select "Junit" and click the "new" icon.
-In the panel that has now cam up on the right choose customwars as the project. Now press browse and select "com.customwars.AllTests" as the Test class. Give this configuration the name of "custom wars AllTests " or something like that. Now click, "Apply" then "Run".
+In the panel that has now come up on the right choose customwars as the project. Now press browse and select "com.customwars.AllTests" as the Test class. Give this configuration the name of "custom wars AllTests " or something like that. Now click, "Apply" then "Run".
 If everything is working then you should see a green bar! 
 
 
