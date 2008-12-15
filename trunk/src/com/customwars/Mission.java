@@ -190,10 +190,10 @@ public class Mission {
     //loads a mission from file
     public static void loadReplay(String filename){
     	String saveLocation = ResourceLoader.properties.getProperty("saveLocation");
-    	logger.debug("Loading replay file ["  + saveLocation +  "/"  +filename+"]");
+    	logger.debug("Loading replay file ["+filename+"]");
         ReplayQueue rq = new ReplayQueue();
         try{
-            ObjectInputStream read = new ObjectInputStream(new FileInputStream(saveLocation + "/" +filename));
+            ObjectInputStream read = new ObjectInputStream(new FileInputStream(filename));
             //determine version
             read.readInt();
             //read save
@@ -201,7 +201,7 @@ public class Mission {
             //read replay queue
             rq = (ReplayQueue) read.readObject();
         }catch(IOException e){
-        	logger.error("Problem with file [" + saveLocation + "/" +filename + "] throwing stack trace: "+ e );
+        	logger.error("Problem with file ["+filename + "] throwing stack trace: "+ e );
             logger.error("error",e);
             System.exit(1);
         }catch(ClassNotFoundException e){
@@ -294,18 +294,22 @@ public class Mission {
    
     //loads a mission from file
     public static void loadMission(String filename){
-    	String saveLocation = ResourceLoader.properties.getProperty("saveLocation");
-    	logger.debug("Loading mission file [" + saveLocation +  "/" + filename+"]");
+    	//String saveLocation = ResourceLoader.properties.getProperty("saveLocation");
+    	/*
+    	 * TODO: Check the above line to see if we need it or if we can use just the
+    	 * filename passed in.
+    	 */
+    	logger.debug("Loading mission file ["+filename+"]");
 
     	try{
-            ObjectInputStream read = new ObjectInputStream(new FileInputStream(saveLocation + "/" +filename));
+            ObjectInputStream read = new ObjectInputStream(new FileInputStream(filename));
             int stype = read.readInt();
             battle1 = (Battle) read.readObject();
             if(stype == 1){
                 initialState = (Battle) read.readObject();
             }
         }catch(IOException e){
-            logger.error("Problem reading the mission file: [" + saveLocation + "/" +filename+ "]",e);
+            logger.error("Problem reading the mission file: ["+filename+ "]",e);
             System.exit(1);
         }catch(ClassNotFoundException e){
             logger.error("error:",e);
