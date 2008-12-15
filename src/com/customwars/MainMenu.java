@@ -249,7 +249,7 @@ public class MainMenu extends JComponent{
         //write the copyright notice
         g.setColor(Color.white);
         g.setFont(new Font("SansSerif", Font.PLAIN, 14));
-        g.drawString("Advance Wars is �Nintendo/Intelligent Systems",100,310);
+        g.drawString("Advance Wars is � Nintendo/Intelligent Systems",100,310);
     }
     
     public void drawInfoScreen(Graphics2D g) {
@@ -2687,6 +2687,7 @@ public void drawNewLoadScreen(Graphics2D g){
                         Options.nextunit = keypress;
                         break;
                 }
+                logger.debug("Key Pressed: " + keypress);
                 chooseKey = false;
                 Options.saveOptions();
             }else if(keypress == Options.up){
