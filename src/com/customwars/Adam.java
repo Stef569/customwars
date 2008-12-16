@@ -79,6 +79,8 @@ public class Adam extends CO{
         TagNames = TagNamesx;
         TagStars = TagStarsx;
         TagPercent = TagPercentx;
+        logger.info("go go go");
+        
         
         COPName = "Decimation";
         SCOPName = "Cartesian Cleanup";
@@ -87,6 +89,8 @@ public class Adam extends CO{
         this.army = army;
         style = JADE_COSMOS;
         cleanStore = false; //Can't be true, SCOP/COP deactivation relies on this
+        logger.info("kevin");
+        
     }
     public void dayStart(boolean main) {
         if(main) {
