@@ -88,9 +88,8 @@ public class Adam extends CO{
         maxStars = 8.0;
         this.army = army;
         style = JADE_COSMOS;
-        cleanStore = false; //Can't be true, SCOP/COP deactivation relies on this
-        logger.info("kevin");
-        
+        cleanStore = false; //Can't be true, SCOP/COP deactivation relies on thi
+        logger.info("output");
     }
     public void dayStart(boolean main) {
         if(main) {
