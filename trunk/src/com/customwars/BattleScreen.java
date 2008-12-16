@@ -2896,140 +2896,147 @@ public class BattleScreen extends CWScreen
 		cmenu=false;
 		move=false;
 		int action = currentMenu.doMenuItem();
-		logger.info("action ="+action);
+		logger.info("Selected Action=["+action+"]");
 		
-		if(action == UNIT_COMMANDS.UNDO)
-		{
-			//hmmm... any need to undo move?
-			//user.undoMove(originalLocation, originalcp);
-			user.direction = -1;
-		}
-		else if(action == UNIT_COMMANDS.FIRE)
-		{
-		    fire = true;
-		    
-		    //[NEW]
-		    if(targetTilesWithinRange.size() > 0)
-		    {
-		    	currContextTarg = 0;
-		    	cursorXpos = targetTilesWithinRange.get(currContextTarg).getCol();
-		    	cursorYpos = targetTilesWithinRange.get(currContextTarg).getRow();
-		    }
-		}
-		else if(action == UNIT_COMMANDS.CAPTURE)
-		{
-			//Move the unit over and then start capturing
-			if(autoMove(user))	
-				captureEffect(user);
-		}
-		else if(action == UNIT_COMMANDS.RESUPPLY)
-		{
-			//Move the unit over and then start resupplying
-			if(autoMove(user))	
-				resupplyEffect(user);
-		}
-		else if(action == UNIT_COMMANDS.JOIN)
-		{
-			//Unit target = m.find(new Location(cx, cy)).getUnit();
-		    //joinEffect(user,target);
+		switch(action){
+		
+			case UNIT_COMMANDS.UNDO:	
+										user.direction = -1;
+										logger.debug("UNIT_COMMAND: Undoing action");
+										break;
+										
+			case UNIT_COMMANDS.FIRE:	
+										fire = true;
+									    if(targetTilesWithinRange.size() > 0) {
+									    	currContextTarg = 0;
+									    	cursorXpos = targetTilesWithinRange.get(currContextTarg).getCol();
+									    	cursorYpos = targetTilesWithinRange.get(currContextTarg).getRow();
+									    }
+									    logger.debug("UNIT_COMMAND: Firing at X[" + cursorXpos +"] Y[" + cursorYpos +"]");
+									    break;
 			
-			//autoMove takes care of joining
-			autoMove(user);		
-		}
-		else if(action == UNIT_COMMANDS.LOAD)
-		{
-			//Transport target = (Transport)m.find(new Location(cx, cy)).getUnit();
-		    //loadEffect(user,target);
+			case UNIT_COMMANDS.CAPTURE:	
+										if(autoMove(user)){
+											captureEffect(user);
+										}
+										logger.debug("UNIT_COMMAND: Capturing");
+										break;
+										
+			case UNIT_COMMANDS.RESUPPLY:	
+										if(autoMove(user)){
+											resupplyEffect(user);
+										}
+										logger.debug("UNIT_COMMAND: Resupplying");
+										break;
 			
-			//autoMove takes care of loading
-			autoMove(user);		
+			case UNIT_COMMANDS.JOIN: 	
+										autoMove(user);
+										logger.debug("UNIT_COMMAND: Joining");
+										break;
+										
+			
+			case UNIT_COMMANDS.LOAD: 	
+										autoMove(user);
+										logger.debug("UNIT_COMMAND: Loading");
+										break;
+			
+			case UNIT_COMMANDS.UNLOAD_1: 
+			    						unload = 1;
+			    						logger.debug("UNIT_COMMAND: Unloading 1");
+			    						break;
+			
+			case UNIT_COMMANDS.UNLOAD_2:
+										unload = 2;
+										logger.debug("UNIT_COMMAND: Unloading 2");
+										break;
+										
+			case UNIT_COMMANDS.LAUNCH_SILO:
+										silo = true;
+										logger.debug("UNIT_COMMAND: Launching Silo");
+										break;
+			
+			case UNIT_COMMANDS.EXPLODE:
+										explodeEffect(user);
+										logger.debug("UNIT_COMMAND: Exploding");
+										break;
+										
+			case UNIT_COMMANDS.REPAIR:
+										repair = true;
+										logger.debug("UNIT_COMMAND: Repairing");
+										break;
+			
+			case UNIT_COMMANDS.DIVE: 	
+										if(autoMove(user)){
+											diveEffect(user);
+										}
+										logger.debug("UNIT_COMMAND: Diving");
+										break;
+										
+			case UNIT_COMMANDS.RISE:			
+										if(autoMove(user)){
+											riseEffect(user);
+										}
+										logger.debug("UNIT_COMMAND: rising");
+										break;
+										
+			case UNIT_COMMANDS.HIDE:	
+										if(autoMove(user)){
+											hideEffect(user);
+										}
+										logger.debug("UNIT_COMMAND: Hiding");
+										break;
+										
+			case UNIT_COMMANDS.APPEAR:	
+										if(autoMove(user)){
+											appearEffect(user); 
+										}
+										logger.debug("UNIT_COMMAND: Appearing");
+										break;
+										
+			case UNIT_COMMANDS.SPECIAL1:
+										special1 = true;
+										logger.debug("UNIT_COMMAND: Special 1");
+										break;
+										
+			case UNIT_COMMANDS.SPECIAL2:							
+										special2 = true;
+										logger.debug("UNIT_COMMAND: Special 2");
+										break;
+										
+			case UNIT_COMMANDS.LAUNCH:	
+							            takeoff = 1;
+							            launching = ((Transport)selected).slot1;
+							            launching.calcMoveTraverse();
+							            logger.debug("UNIT_COMMAND: Launching");
+							            break;
+			
+			case UNIT_COMMANDS.LAUNCH2:							
+										takeoff = 2;
+										launching = ((Transport)selected).slot2;
+										launching.calcMoveTraverse();
+										logger.debug("UNIT_COMMAND: Launching 2");
+										break;
+										
+			case UNIT_COMMANDS.BUILD: 
+										logger.info("It's building time!");
+										currentMenu = BuildMenu.generateCarrierMenu(selected.getArmy().getFunds(),selected.getArmy().getCO(),b,this);
+										carbmenu = true;
+										cmenu = false;
+										logger.debug("UNIT_COMMAND: Building");
+										break;
+			default:							
+										if(autoMove(user)) {	
+											waitEffect(user);
+										}
+										logger.debug("UNIT_COMMAND: Move");
+										break;
+										
 		}
-		else if(action == UNIT_COMMANDS.UNLOAD_1)
-		{
-		    unload = 1;
+		
+		if(!cmenu && !carbmenu){
+			currentMenu = null;
 		}
-		else if(action == UNIT_COMMANDS.UNLOAD_2)
-		{
-		    unload = 2;
-		}
-		else if(action == UNIT_COMMANDS.LAUNCH_SILO)
-		{
-		    silo = true;
-		}
-		else if(action == UNIT_COMMANDS.EXPLODE)
-		{
-			//Move the unit over and then start exploding
-			//if(autoMove(user))
-
-			explodeEffect(user);
-		}
-		else if(action == UNIT_COMMANDS.REPAIR)
-		{
-		    repair = true;
-		}
-		else if(action == UNIT_COMMANDS.DIVE)
-		{
-			//Move the unit over and then dive
-			if(autoMove(user))	
-				diveEffect(user);
-		}
-		else if(action == UNIT_COMMANDS.RISE)
-		{
-			//Move the unit over and then rise
-			if(autoMove(user))	
-				riseEffect(user); //should be undoDive?
-		}
-		else if(action == UNIT_COMMANDS.HIDE)
-		{
-			//Move the unit over and then hide
-			if(autoMove(user))	
-				hideEffect(user);
-		}
-		else if(action == UNIT_COMMANDS.APPEAR)
-		{
-			//Move the unit over and then appear
-			if(autoMove(user))	
-				appearEffect(user); //should be undoHide?
-		}
-		else if(action == UNIT_COMMANDS.SPECIAL1)
-		{
-		    special1 = true;
-		}
-		else if(action == UNIT_COMMANDS.SPECIAL2)
-		{
-		    special2 = true;
-		}
-        else if(action == UNIT_COMMANDS.LAUNCH)
-        {
-            takeoff = 1;
-            launching = ((Transport)selected).slot1;
-            launching.calcMoveTraverse();
-        } 
-        else if(action == UNIT_COMMANDS.LAUNCH2)
-        {
-            takeoff = 2;
-            launching = ((Transport)selected).slot2;
-            launching.calcMoveTraverse();
-        }
-        else if(action == UNIT_COMMANDS.BUILD)
-        {
-                    logger.info("It's building time!");
-            //currentMenu = new BuildMenu(false,false,false,false,true,selected.getArmy().getFunds(),selected.getArmy().getCO(),b,this);
-            currentMenu = BuildMenu.generateCarrierMenu(selected.getArmy().getFunds(),selected.getArmy().getCO(),b,this);
-            carbmenu = true;
-            cmenu = false;
-            //build action
-        }
-		else
-		{
-			//moveCommand(user);
-			//HOLD ON
-                    
-			//Move the unit over and then wait
-			if(autoMove(user))	
-				waitEffect(user);
-		}
-		if(!cmenu && !carbmenu)currentMenu = null;
+			
 	}
 
 	private void waitEffect(Unit user) 
@@ -3786,16 +3793,17 @@ public class BattleScreen extends CWScreen
         executeNextAction(b.getNextReplayEvent());
     }
     
-    public void executeNextAction(CWEvent n){
-        logger.info("n ="+n);
-        if(n == null){
+    public void executeNextAction(CWEvent event){
+        logger.info("Next action event= ["+ event +"]");
+        if(event == null){
             //end of replay, resume
             replay = false;
         }else{
-            switch(n.getType()){
-                case 0:
+            switch(event.getType()){
+                case 0:	
+                	logger.info("In case 0");
                     //action
-                    Action a = (Action)n;
+                    Action a = (Action)event;
                     selected = map.find(new Location(a.getUnitX(),a.getUnitY())).getUnit();
                     originalLocation = new Location(a.getUnitX(),a.getUnitY());
                     if(a.getID()==4){
@@ -3822,6 +3830,7 @@ public class BattleScreen extends CWScreen
                         selected = null;
                         break;
                     }else if(a.getID()==5){
+                    	logger.info("In case 0 else if");
                         //load
                         targetUnit = map.find(new Location(a.getX(),a.getY())).getUnit();
                         loadEffect(selected, (Transport)targetUnit);
@@ -3831,6 +3840,7 @@ public class BattleScreen extends CWScreen
                     {
                         if(selected instanceof Oozium)
                         {
+                        	logger.info("In case 0 oozium");
                             //Ooziums act differently
                         	Oozium user = (Oozium)selected;
                         	user.calcMoveTraverse();
@@ -3848,16 +3858,19 @@ public class BattleScreen extends CWScreen
                             }
                         }else{
                             //move
+                        	logger.info("In case 0 else else");
                             selected.calcMoveTraverse();
                             selected.setPath(a.getPath());
                             selected.move(a.getPath().findEndCoordinates());
                             //action
                             switch(a.getID()){
                                 case 0:
-                                    //wait
+                                	logger.info("In case 0 again");
+                                	//wait
                                     endUnitTurn(0,selected,null);
                                     break;
                                 case 1:
+                                	logger.info("In case 1");
                                     //fire
                                     if(map.find(new Location(a.getX(),a.getY())).hasUnit()){
                                         //unit
@@ -3874,22 +3887,27 @@ public class BattleScreen extends CWScreen
                                     }
                                     break;
                                 case 2:
+                                	logger.info("In case 2");
                                     captureEffect(selected);
                                     break;
                                 case 3:
+                                	logger.info("In case 3");
                                     //resupply
                                     ((APC)selected).resupplyAdjacent();
                                     endUnitTurn(16,selected,null);
                                     break;
                                 case 6:
+                                	logger.info("In case 6");
                                     //unload slot 1
                                 case 7:
+                                	logger.info("In case 7");
                                     //unload slot 2
                                     Transport trans = (Transport) selected;
                                     if(map.find(new Location(a.getX(),a.getY())).hasUnit()){
                                         //ambush
                                         endUnitTurn(17,selected,null);
                                     }else{
+                                    	logger.info("In case 7 else");
                                         int tempUnload = 1;
                                         if(a.getID()==7)tempUnload = 2;
                                         Unit unloading = trans.unload(tempUnload);
@@ -3922,12 +3940,14 @@ public class BattleScreen extends CWScreen
                                     }
                                     break;
                                 case 8:
+                                	logger.info("In case 8");
                                     //launch
                                     ((Silo)map.find(selected.getLocation()).getTerrain()).launch();
                                     endUnitTurn(8,selected,null);
                                     map.doExplosion(2,3,a.getX(),a.getY(), false);
                                     break;
                                 case 9:
+                                	logger.info("In case 9");
                                     //explode
                                     if(b.getBattleOptions().isBalance())
                                         map.doExplosion(2,3,selected.getLocation().getCol(),selected.getLocation().getRow(), false);
@@ -3937,6 +3957,7 @@ public class BattleScreen extends CWScreen
                                     endUnitTurn(9,selected,null);
                                     break;
                                 case 10:
+                                	logger.info("In case 10");
                                     //repair
                                     Unit temp = map.find(new Location(a.getX(),a.getY())).getUnit();
                                     if(temp.getDisplayHP() != 10 && temp.getPrice()/10 <= b.getArmy(b.getTurn()).getFunds()){
@@ -3947,22 +3968,28 @@ public class BattleScreen extends CWScreen
                                     endUnitTurn(10,selected,temp);
                                     break;
                                 case 11:
+                                	logger.info("In case 11");
                                     diveEffect(selected);
                                     break;
                                 case 12:
+                                	logger.info("In case 12");
                                     riseEffect(selected);
                                     break;
                                 case 13:
+                                	logger.info("In case 13");
                                     hideEffect(selected);
                                     break;
                                 case 14:
+                                	logger.info("In case 14");
                                     appearEffect(selected);
                                     break;
                                 case 22:
+                                	logger.info("In case 22");
                                     //Special1
                                     selected.getArmy().getCO().useSpecial1(selected, (new Location(cursorXpos,cursorYpos)));
                                     endUnitTurn(22,selected,null);
                                 case 23:
+                                	logger.info("In case 23");
                                     selected.getArmy().getCO().useSpecial2(selected, (new Location(cursorXpos,cursorYpos)));
                                     endUnitTurn(23,selected,null);
                             }
@@ -3972,7 +3999,7 @@ public class BattleScreen extends CWScreen
                     break;
                 case 1:
                     //build
-                    BuildEvent be = (BuildEvent)n;
+                    BuildEvent be = (BuildEvent)event;
                     moveCursorTo(new Location(be.getX(),be.getY()));
                     buildUnit(map,map.find(new Location(be.getX(),be.getY())),be.getUnitType());
                     b.getArmy(b.getTurn()).removeFunds(map.find(new Location(cursorXpos,cursorYpos)).getUnit().getPrice());
@@ -4028,7 +4055,7 @@ public class BattleScreen extends CWScreen
                     break;
                 case 8:
                     //Delete
-                    DeleteEvent de = (DeleteEvent) n;
+                    DeleteEvent de = (DeleteEvent) event;
                     Unit dunit = map.find(new Location(de.getX(),de.getY())).getUnit();
                     moveCursorTo(new Location(de.getX(),de.getY()));
                     dunit.eliminateUnit();
@@ -4039,7 +4066,7 @@ public class BattleScreen extends CWScreen
                     break;
                 case 9:
                     //Selection
-                    SelectionEvent se = (SelectionEvent) n;
+                    SelectionEvent se = (SelectionEvent) event;
                     moveCursorTo(new Location(se.getX(),se.getY()));
                     if(b.getArmy(b.getTurn()).getCO().validSelection(b.getMap().find(new Location(se.getX(),se.getY())))) {
                         b.getArmy(b.getTurn()).getCO().selectAction(map.find(new Location(se.getX(),se.getY())));
