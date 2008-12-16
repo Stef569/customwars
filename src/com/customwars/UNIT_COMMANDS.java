@@ -21,7 +21,7 @@ public class UNIT_COMMANDS
 	public static final int APPEAR = 14;
 	public static final int SPECIAL1 = 22;
 	public static final int SPECIAL2 = 23;
-        public static final int LAUNCH = 24;
-        public static final int LAUNCH2 = 25;
-        public static final int BUILD = 26;
+    public static final int LAUNCH = 24;
+    public static final int LAUNCH2 = 25;
+    public static final int BUILD = 26;
 }
