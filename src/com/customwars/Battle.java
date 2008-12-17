@@ -15,6 +15,9 @@ import javax.swing.JOptionPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.customwars.officer.Andy;
+import com.customwars.officer.Fighter;
+import com.customwars.officer.Max;
 import com.customwars.state.ResourceLoader;
 
 import java.net.*;
@@ -753,7 +756,7 @@ public void updateFoW() {
                         if(COstorecheck != null)
                             for(int t = 0; t<COstorecheck.length; t++)
                                 for(int s = 0; s < 10; s++)
-                                    COstorecheck[t].enemyCOstore[armies[i].getCO().statIndex][s] = 0;
+                                    COstorecheck[t].getEnemyCOstore()[armies[i].getCO().statIndex][s] = 0;
                     }
                 }
             }
@@ -824,8 +827,8 @@ public void updateFoW() {
         if(COstorecheck != null)
             if(armies[turn].getCO().cleanStore)
                 for(int i = 0; i < COstorecheck.length; i++)
-                    for(int s = 0; s<COstorecheck[i].COstore.length; s++)
-                        COstorecheck[i].COstore[s] = 0;
+                    for(int s = 0; s<COstorecheck[i].getCOstore().length; s++)
+                        COstorecheck[i].getCOstore()[s] = 0;
         //This sets all COstore counters of the current CO to zero at the beginning of their day.
         if(turn >= 0 && armies[turn].getCO().cleanEnemyStoreBegin) {
             for(int i = 0; i<numArmies; i++) {
@@ -834,7 +837,7 @@ public void updateFoW() {
                     if(COstorecheck != null)
                         for(int t = 0; t<COstorecheck.length; t++)
                             for(int s = 0; s < 10; s++)
-                                COstorecheck[t].enemyCOstore[armies[i].getCO().statIndex][s] = 0;
+                                COstorecheck[t].getEnemyCOstore()[armies[i].getCO().statIndex][s] = 0;
                 }
             }
         }
@@ -877,7 +880,7 @@ public void updateFoW() {
             }
         }
         //reduces income by CO associated penalty
-        armies[turn].removeFunds(armies[turn].getCO().incomePenalty);
+        armies[turn].removeFunds(armies[turn].getCO().getIncomePenalty());
         //now, again, but for repairs and supplies
         if(prop!=null){
             for(int i = 0; i < prop.length; i++){
@@ -889,9 +892,9 @@ public void updateFoW() {
                                 (temp.getMType() != temp.MOVE_AIR && prop[i].canRepairLand())||
                                 (temp.getMType() == temp.MOVE_PIPE && prop[i].canRepairPipe())){
                             for(int numHeals = armies[turn].getCO().getRepairHp(); numHeals > 0; numHeals--){
-                                if(temp.getDisplayHP() != 10 && ((int)(temp.getPrice()/10*temp.repairMod)) <= armies[turn].getFunds() && !temp.noCityRepair){
+                                if(temp.getDisplayHP() != 10 && ((int)(temp.getPrice()/10*temp.getRepairMod())) <= armies[turn].getFunds() && !temp.isNoCityRepair()){
                                     temp.heal(10);
-                                    armies[turn].removeFunds((int)(temp.getPrice()/10 * temp.repairMod));
+                                    armies[turn].removeFunds((int)(temp.getPrice()/10 * temp.getRepairMod()));
                                     //Only activate if they are actually repairing, and only on the first time.
                                     if(numHeals == armies[turn].getCO().getRepairHp()) {
                                         armies[turn].getCO().afterAction(temp, 21, null, true);
@@ -908,7 +911,7 @@ public void updateFoW() {
                                     //
                                 }
                             }
-                            if(!temp.noCityResupply)
+                            if(!temp.isNoCityResupply())
                                 temp.resupply();
                             
                         }
@@ -934,9 +937,9 @@ public void updateFoW() {
                         if(trans.getUnitsCarried()==2){
                             trans.getUnit(2).resupply();
                             for(int numHeals = armies[turn].getCO().getRepairHp(); numHeals > 0; numHeals--){
-                                if(trans.getUnit(2).getDisplayHP() != 10 && ((int)(trans.getUnit(2).getPrice()/10*trans.getUnit(2).repairMod)) <= armies[turn].getFunds() && !trans.getUnit(2).noCityRepair){
+                                if(trans.getUnit(2).getDisplayHP() != 10 && ((int)(trans.getUnit(2).getPrice()/10*trans.getUnit(2).getRepairMod())) <= armies[turn].getFunds() && !trans.getUnit(2).isNoCityRepair()){
                                     trans.getUnit(2).heal(10);
-                                    armies[turn].removeFunds((int)(trans.getUnit(2).getPrice()/10 * trans.getUnit(2).repairMod));
+                                    armies[turn].removeFunds((int)(trans.getUnit(2).getPrice()/10 * trans.getUnit(2).getRepairMod()));
                                     //Only activate if they are actually repairing, and only on the first time.
                                     if(numHeals == armies[turn].getCO().getRepairHp()) {
                                         armies[turn].getCO().afterAction(trans.getUnit(2), 21, null, true);
@@ -954,9 +957,9 @@ public void updateFoW() {
                             }
                         }
                         for(int numHeals = armies[turn].getCO().getRepairHp(); numHeals > 0; numHeals--){
-                            if(trans.getUnit(1).getDisplayHP() != 10 && ((int)(trans.getUnit(1).getPrice()/10*trans.getUnit(1).repairMod)) <= armies[turn].getFunds() && !trans.getUnit(1).noCityRepair){
+                            if(trans.getUnit(1).getDisplayHP() != 10 && ((int)(trans.getUnit(1).getPrice()/10*trans.getUnit(1).getRepairMod())) <= armies[turn].getFunds() && !trans.getUnit(1).isNoCityRepair()){
                                 trans.getUnit(1).heal(10);
-                                armies[turn].removeFunds((int)(trans.getUnit(1).getPrice()/10 * trans.getUnit(1).repairMod));
+                                armies[turn].removeFunds((int)(trans.getUnit(1).getPrice()/10 * trans.getUnit(1).getRepairMod()));
                                 //Only activate if they are actually repairing, and only on the first time.
                                 if(numHeals == armies[turn].getCO().getRepairHp()) {
                                     armies[turn].getCO().afterAction(trans.getUnit(1), 21, null, true);

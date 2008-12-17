@@ -1,11 +1,5 @@
 package com.customwars;
-/*
- *Shoal.java
- *Author: Eskimoconvntion
- *Contributors:
- *Creation: 17/7/06
- *The Shoal class is used to create an instance of the Shoal Terrain.
- */
+
 
 public class Shoal extends Terrain{
    

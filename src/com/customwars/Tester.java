@@ -91,8 +91,8 @@ public class Tester extends CO{
         Unit[] u = army.getUnits();
         for(int i = 0; i < u.length; i++){
             if(u[i].getClass() != null){
-                    u[i].move++;
-                    u[i].changed = true;
+                    u[i].setMove(u[i].getMove() + 1);
+                    u[i].setChanged(true);
             }
             else
                 return;
@@ -111,9 +111,9 @@ public class Tester extends CO{
         Unit[] u = army.getUnits();
         for(int i = 0; i < u.length; i++){
             if(u[i].getClass() != null){
-                if(u[i].changed){
-                    u[i].move--;
-                    u[i].changed = false;
+                if(u[i].isChanged()){
+                    u[i].setMove(u[i].getMove() - 1);
+                    u[i].setChanged(false);
                 }
             }
             else

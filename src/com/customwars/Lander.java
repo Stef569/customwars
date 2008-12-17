@@ -1,11 +1,5 @@
 package com.customwars;
-/*
- *Lander.java
- *Author: Xaif
- *Contributors:
- *Creation: 17/7/06
- *The Lander class is used to create an instance of the Lander Unit
- */
+
 
 public class Lander extends Transport{
    
@@ -16,19 +10,19 @@ public class Lander extends Transport{
         //Statistics
         name = "Lander";
         unitType = 10;
-        moveType = MOVE_TRANSPORT;
-        move = 6;
+        setMoveType(MOVE_TRANSPORT);
+        setMove(6);
         if (army.getBattle().getBattleOptions().isBalance()==true){
             price = 10000;
         }
         if (army.getBattle().getBattleOptions().isBalance()==false){
         price = 12000;}
-        maxGas = 99;
-        maxAmmo = -1;
-        vision = 1;
+        setMaxGas(99);
+        setMaxAmmo(-1);
+        setVision(1);
         minRange = 0;
-        maxRange = 0;
-        dailyGas = 1;
+        setMaxRange(0);
+        setDailyGas(1);
         
         starValue = 1.0;
         
@@ -40,8 +34,8 @@ public class Lander extends Transport{
         //transportTable[20]=true;
        
         //Fills the Unit's gas and ammo
-        gas = maxGas;
-        ammo = maxAmmo;
+        setGas(getMaxGas());
+        setAmmo(getMaxAmmo());
         
         //make CO adjustments
         arm.getCO().setChange(this);

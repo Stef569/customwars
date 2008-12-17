@@ -16,24 +16,24 @@ public class BlackBomb extends Unit{
         //Statistics
         name = "Black Bomb";
         unitType = 24;
-        moveType = MOVE_AIR;
-        move = 9;
+        setMoveType(MOVE_AIR);
+        setMove(9);
         if(arm.getBattle().getBattleOptions().isBalance())
             price = 15000;
         else
             price = 25000;
-        maxGas = 45;
-        maxAmmo = -1;
-        vision = 1;
+        setMaxGas(45);
+        setMaxAmmo(-1);
+        setVision(1);
         minRange = 0;
-        maxRange = 0;
-        dailyGas = 5;
+        setMaxRange(0);
+        setDailyGas(5);
         
         starValue = 0.6;
         
         //Fills the Unit's gas and ammo
-        gas = maxGas;
-        ammo = maxAmmo;
+        setGas(getMaxGas());
+        setAmmo(getMaxAmmo());
         
         //make CO adjustments
         arm.getCO().setChange(this);

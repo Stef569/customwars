@@ -45,17 +45,17 @@ public class StandardAI extends AI{
             
             if (army.getTag()>0)
                 ;
-            else if(currCO.stars == currCO.maxStars && (altCO != null && altCO.stars == altCO.maxStars)) {
+            else if(currCO.getStars() == currCO.maxStars && (altCO != null && altCO.getStars() == altCO.maxStars)) {
                 bs.executeNextAction(new CWEvent(4,0,0));
                logger.info("AI - TAG");
-            } else if(currCO.stars == currCO.maxStars && (altCO != null && altCO.stars > altCO.maxStars/2))
+            } else if(currCO.getStars() == currCO.maxStars && (altCO != null && altCO.getStars() > altCO.maxStars/2))
                 ;
-            else if(currCO.stars == currCO.maxStars) {
+            else if(currCO.getStars() == currCO.maxStars) {
                 bs.executeNextAction(new CWEvent(3,0,0));
                logger.info("AI - SCOP");
-            } else if(currCO.stars > currCO.COPStars+1)
+            } else if(currCO.getStars() > currCO.COPStars+1)
                 ;
-            else if(currCO.stars > currCO.COPStars) {
+            else if(currCO.getStars() > currCO.COPStars) {
                 bs.executeNextAction(new CWEvent(2,0,0));
                logger.info("AI - COP");
             }
@@ -112,7 +112,7 @@ public class StandardAI extends AI{
             Property take = null;
             if(u.getMap().hasProperty(u.getLocation().getCol(),u.getLocation().getRow())){
                 Property temp = (Property) u.getMap().find(u).getTerrain();
-                if(temp.cp < temp.totalcp){
+                if(temp.getCp() < temp.getTotalcp()){
                     super.capture(u,temp,bs);
                     return;
                 }
@@ -268,7 +268,7 @@ public class StandardAI extends AI{
         Property p;
         for(int i = builds.length-1; i > 0; i--){
             p = builds[i];
-            if(p.createLand && army.getBattle().getMap().find(p.getTile().getLocation()).getUnit() == null){
+            if(p.isCreateLand() && army.getBattle().getMap().find(p.getTile().getLocation()).getUnit() == null){
                 if(army.getFunds() >= 1000 && super.unitCount(0) < 3){
                     CWEvent n = new BuildEvent(0,p.getTile().getLocation().getCol(),p.getTile().getLocation().getRow(),0,0);
                     bs.executeNextAction(n);

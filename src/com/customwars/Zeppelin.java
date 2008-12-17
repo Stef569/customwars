@@ -16,21 +16,21 @@ public class Zeppelin extends Unit{
         //Statistics
         name = "Zeppelin";
         unitType = 28;
-        moveType = MOVE_AIR;
-        move = 5;
+        setMoveType(MOVE_AIR);
+        setMove(5);
         price = 10000;
-        maxGas = 70;
-        maxAmmo = 9;
-        vision = 2;
+        setMaxGas(70);
+        setMaxAmmo(9);
+        setVision(2);
         minRange = 2;
-        maxRange = 4;
-        dailyGas = 2;
+        setMaxRange(4);
+        setDailyGas(2);
        
         starValue = 1.2;
        
         //Fills the Unit's gas and ammo
-        gas = maxGas;
-        ammo = maxAmmo;
+        setGas(getMaxGas());
+        setAmmo(getMaxAmmo());
        
         //make CO adjustments
         arm.getCO().setChange(this);

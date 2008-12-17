@@ -76,7 +76,7 @@ public class Thanatos extends CO {
         currentScouts = new ArrayList<Unit>();
         suddenStrike = false;
         
-        terrainDefenseMultiplier = 0.5;
+        setTerrainDefenseMultiplier(0.5);
     }
     
     //used to get the attack bonus for damage calculation
@@ -88,11 +88,11 @@ public class Thanatos extends CO {
         }
         
         if(COP) {
-            if(owned.vision <= 2) {
+            if(owned.getVision() <= 2) {
                 atk += 20;
-            } else if((owned.vision >= 3) && (owned.vision <= 4)) {
+            } else if((owned.getVision() >= 3) && (owned.getVision() <= 4)) {
                 atk += 30;
-            } else if((owned.vision >= 5)) {
+            } else if((owned.getVision() >= 5)) {
                 atk += 40;
             }
         }
@@ -119,9 +119,9 @@ public class Thanatos extends CO {
             def += 20;
         }
         
-        if((owned.vision >= 3) && (owned.vision <= 4)) {
+        if((owned.getVision() >= 3) && (owned.getVision() <= 4)) {
             def += 20;
-        } else if((owned.vision >= 5)) {
+        } else if((owned.getVision() >= 5)) {
             def += 30;
         }
         
@@ -141,9 +141,10 @@ public class Thanatos extends CO {
             if(armies[a].getSide() != army.getSide() && armies[a].getUnits() != null) {
                 Unit[] u = armies[a].getUnits();
                 for(int n = 0; n < u.length; n++) {
-                    if(u[n].name.equals("MDTank") || u[n].name.equals("Neotank")|| u[n].name.equals("Megatank")|| u[n].maxRange>1) {
-                        u[n].vision++;
-                        u[n].enemyCOstore[statIndex][0] = 1;
+                    if(u[n].name.equals("MDTank") || u[n].name.equals("Neotank")|| u[n].name.equals("Megatank")|| u[n].getMaxRange()>1) {
+                        u[n]
+								.setVision(u[n].getVision() + 1);
+                        u[n].getEnemyCOstore()[statIndex][0] = 1;
                     }
                 }
             }
@@ -165,11 +166,12 @@ public class Thanatos extends CO {
                     
                     if(u[n].getClass() != null) {
                         if(!u[n].isInTransport()) {
-                            u[n].damage(u[n].vision, false);
-                            if(u[n].name.equals("MDTank") || u[n].name.equals("Neotank")|| u[n].name.equals("Megatank")|| u[n].maxRange>1) {
+                            u[n].damage(u[n].getVision(), false);
+                            if(u[n].name.equals("MDTank") || u[n].name.equals("Neotank")|| u[n].name.equals("Megatank")|| u[n].getMaxRange()>1) {
                                 u[n].damage(10, false);
-                                u[n].vision++;
-                                u[n].enemyCOstore[statIndex][0] = 1;
+                                u[n].setVision(u[n]
+										.getVision() + 1);
+                                u[n].getEnemyCOstore()[statIndex][0] = 1;
                             }
                         }
                     } else {
@@ -191,8 +193,9 @@ public class Thanatos extends CO {
             if(armies[a].getSide() != army.getSide() && armies[a].getUnits() != null) {
                 Unit[] u = armies[a].getUnits();
                 for(int n = 0; n < u.length; n++) {
-                    if(u[n].enemyCOstore[statIndex][0] == 1)
-                        u[n].vision--;
+                    if(u[n].getEnemyCOstore()[statIndex][0] == 1)
+                        u[n]
+								.setVision(u[n].getVision() - 1);
                 }
             }
         }
@@ -209,8 +212,9 @@ public class Thanatos extends CO {
                 Unit[] u = armies[a].getUnits();
                 
                 for(int n = 0; n < u.length; n++) {
-                    if(u[n].enemyCOstore[statIndex][0] == 1)
-                        u[n].vision--;
+                    if(u[n].getEnemyCOstore()[statIndex][0] == 1)
+                        u[n]
+								.setVision(u[n].getVision() - 1);
                 }
             }
         }
@@ -292,7 +296,7 @@ public class Thanatos extends CO {
                             rRow *= -1;
                         }
                         
-                        if(rCol + rRow <= enemyUnits[e].vision) {
+                        if(rCol + rRow <= enemyUnits[e].getVision()) {
                             logger.info("Thanatos' unit is sighted at (" + mCol + ", " + mRow + ")");
                             logger.info("Sighting unit is = " + enemyUnits[e].name + " at (" + eCol + ", " + eRow + ")");
                             currentScouts.add(enemyUnits[e]);

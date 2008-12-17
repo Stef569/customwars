@@ -20,6 +20,7 @@ import javax.swing.event.MouseInputListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.customwars.officer.Fighter;
 import com.customwars.state.ResourceLoader;
 
 //public class BattleScreen extends JComponent implements ComponentListener
@@ -2380,12 +2381,12 @@ public class BattleScreen extends CWScreen
 	{
         if(canUseRepair(user, target))
         {
-			int repairCost = (int)(target.getPrice()/10* target.repairMod);
+			int repairCost = (int)(target.getPrice()/10* target.getRepairMod());
         	
         	target.heal(10);
         	b.getArmy(b.getTurn()).removeFunds(repairCost);
             
-            if(!target.noResupplied)
+            if(!target.isNoResupplied())
                 target.resupply();
             repair = false;
             endUnitTurn(10,user,target);
@@ -2400,7 +2401,7 @@ public class BattleScreen extends CWScreen
 		    {
 		        if(user.getArmy() == target.getArmy())
 		        {
-		            if(target.getDisplayHP() != 10 && (target.getPrice()/10 * target.repairMod) <= b.getArmy(b.getTurn()).getFunds()&& !target.noRepaired)
+		            if(target.getDisplayHP() != 10 && (target.getPrice()/10 * target.getRepairMod()) <= b.getArmy(b.getTurn()).getFunds()&& !target.isNoRepaired())
 		            {
 		            	return true;
 		            }
@@ -3056,7 +3057,7 @@ public class BattleScreen extends CWScreen
 		    buildCarrierUnit(carrierArmy, map,map.find(new Location(cursorXpos,cursorYpos)),newUnit);
                     Unit nooUnit = map.find(new Location(cursorXpos,cursorYpos)).getUnit();
                     map.remove(nooUnit);
-                    nooUnit.loc = new Location(cursorXpos,cursorYpos);
+                    nooUnit.setLoc(new Location(cursorXpos,cursorYpos));
                     ((Carrier)selected).load(nooUnit);
         	String soundLocation = ResourceLoader.properties.getProperty("soundLocation");
 		    SFX.playClip(soundLocation + "/ok.wav");
@@ -3217,7 +3218,7 @@ public class BattleScreen extends CWScreen
 		target.load(user);
 		//Remove Unit being moved from map
 		map.remove(user);
-                user.loc = target.loc;
+                user.setLoc(target.getLoc());
 		//end Unit's turn
 		endUnitTurn(5,user,(Unit)target);
 	}
@@ -3581,7 +3582,7 @@ public class BattleScreen extends CWScreen
 		// (3) The transport needs to have the loading ability be enabled
 		//
 		
-		return targ.canCarry(user.getUnitType()) && targ.roomAvailable() && !targ.noLoad;
+		return targ.canCarry(user.getUnitType()) && targ.roomAvailable() && !targ.isNoLoad();
 	}
 
 	private boolean joinCommand(Unit user, Unit target) 
@@ -3620,7 +3621,7 @@ public class BattleScreen extends CWScreen
             {
                 if(target.getArmy() == user.getArmy())
                 {
-                    if(target.getDisplayHP()!=10 && !target.noJoin && !user.noJoin)
+                    if(target.getDisplayHP()!=10 && !target.isNoJoin() && !user.isNoJoin())
                     {
                         if(target instanceof Transport)
                         {

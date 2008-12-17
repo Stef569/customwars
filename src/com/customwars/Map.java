@@ -206,7 +206,7 @@ public class Map implements Serializable{
                 if(onMap(x+j,y+i) && map[x+j][y+i].getUnit()!=null){
                     map[x+j][y+i].getUnit().damage(damage*10,false);
                     if(paralyze)
-                        map[x+j][y+i].getUnit().paralyzed = true;
+                        map[x+j][y+i].getUnit().setParalyzed(true);
                 }
             }
             if(i<0)offset++;
@@ -238,9 +238,9 @@ public class Map implements Serializable{
             si = arms[i].getSide();
             for(int s = 0; s < units.length; s++)
                 if(si != side)
-                    addExplosion(temp, radius, units[s].loc.getCol(), units[s].loc.getRow(), units[s].getValue() );
+                    addExplosion(temp, radius, units[s].getLoc().getCol(), units[s].getLoc().getRow(), units[s].getValue() );
                 else
-                    addExplosion(temp, radius, units[s].loc.getCol(), units[s].loc.getRow(), units[s].getValue() * -1);
+                    addExplosion(temp, radius, units[s].getLoc().getCol(), units[s].getLoc().getRow(), units[s].getValue() * -1);
         }
         int tempVal = 0;
         int tempCol = -1;
@@ -274,18 +274,18 @@ public class Map implements Serializable{
                         if(find(units[s].getLocation()).getTerrain() instanceof Property){
                             Property p = (Property)find(units[s].getLocation()).getTerrain();
                             if(p.getCapturePoints()<p.getMaxCapturePoints()){
-                                addExplosion(temp, radius, units[s].loc.getCol(), units[s].loc.getRow(), dam*6);
+                                addExplosion(temp, radius, units[s].getLoc().getCol(), units[s].getLoc().getRow(), dam*6);
                             }else{
-                                addExplosion(temp, radius, units[s].loc.getCol(), units[s].loc.getRow(), dam*3);
+                                addExplosion(temp, radius, units[s].getLoc().getCol(), units[s].getLoc().getRow(), dam*3);
                             }
                         }else{
-                            addExplosion(temp, radius, units[s].loc.getCol(), units[s].loc.getRow(), dam*3);
+                            addExplosion(temp, radius, units[s].getLoc().getCol(), units[s].getLoc().getRow(), dam*3);
                         }
                     }else{
-                        addExplosion(temp, radius, units[s].loc.getCol(), units[s].loc.getRow(), dam);
+                        addExplosion(temp, radius, units[s].getLoc().getCol(), units[s].getLoc().getRow(), dam);
                     }
                 }else{
-                    addExplosion(temp, radius, units[s].loc.getCol(), units[s].loc.getRow(), dam * -1);
+                    addExplosion(temp, radius, units[s].getLoc().getCol(), units[s].getLoc().getRow(), dam * -1);
                 }
             }
         }
@@ -317,9 +317,9 @@ public class Map implements Serializable{
                 int dam = units[s].getDisplayHP();
                 if(dam > damage)dam = damage;
                 if(si != side)
-                    addExplosion(temp, radius, units[s].loc.getCol(), units[s].loc.getRow(), dam );
+                    addExplosion(temp, radius, units[s].getLoc().getCol(), units[s].getLoc().getRow(), dam );
                 else
-                    addExplosion(temp, radius, units[s].loc.getCol(), units[s].loc.getRow(), dam * -1);
+                    addExplosion(temp, radius, units[s].getLoc().getCol(), units[s].getLoc().getRow(), dam * -1);
             }
         }
         int tempVal = 0;

@@ -16,20 +16,20 @@ public class MegaTank extends Unit{
         //Statistics
         name = "Megatank";
         unitType = 19;
-        moveType = MOVE_TREAD;
-        move = 4;
+        setMoveType(MOVE_TREAD);
+        setMove(4);
         price = 20000;
-        maxGas = 50;
-        maxAmmo = 3;
-        vision = 1;
+        setMaxGas(50);
+        setMaxAmmo(3);
+        setVision(1);
         minRange = 1;
-        maxRange = 1;
+        setMaxRange(1);
        
         starValue = 2.2;
        
         //Fills the Unit's gas and ammo
-        gas = maxGas;
-        ammo = maxAmmo;
+        setGas(getMaxGas());
+        setAmmo(getMaxAmmo());
         
         //make CO adjustments
         arm.getCO().setChange(this);

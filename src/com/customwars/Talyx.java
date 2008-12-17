@@ -201,7 +201,7 @@ public class Talyx extends CO {
                 for(int s = 0; s < enemyu.length; s++) { //Cycles through enemy units
                     damaged = 0;
                     for(int v = 0; v < u.length; v++) { //Cycles through own units
-                        if(u[v].moveType > 1) {
+                        if(u[v].getMoveType() > 1) {
                             storage = enemyu[s].getLocation();
                             t = Math.abs(u[v].getLocation().getRow() - storage.getRow()) + Math.abs(u[v].getLocation().getCol() - storage.getCol());
                             switch(t) {
@@ -230,12 +230,12 @@ public class Talyx extends CO {
 //used to deactivate Blandie's Super CO Power the next day
     public void deactivateSCOP(){
         SCOP = false;
-        enemyTerrainPenalty = 0;
+        setEnemyTerrainPenalty(0);
     }
     public void specialDamage(Unit u, int times) {
-        for(int i = 0; u.enemyCOstore[statIndex][0]<5 && i<times; i++) {
+        for(int i = 0; u.getEnemyCOstore()[statIndex][0]<5 && i<times; i++) {
             u.damage(10, false);
-            u.enemyCOstore[statIndex][0]++;
+            u.getEnemyCOstore()[statIndex][0]++;
         }
     }
 }

@@ -16,15 +16,15 @@ public class BlackBoat extends Transport{
         //Statistics
         name = "Black Boat";
         unitType = 21;
-        moveType = MOVE_TRANSPORT;
-        move = 7;
+        setMoveType(MOVE_TRANSPORT);
+        setMove(7);
         price = 7500;
-        maxGas = 60;
-        maxAmmo = -1;
-        vision = 1;
+        setMaxGas(60);
+        setMaxAmmo(-1);
+        setVision(1);
         minRange = 0;
-        maxRange = 0;
-        dailyGas = 1;
+        setMaxRange(0);
+        setDailyGas(1);
        
         starValue = 1.0;
         
@@ -34,8 +34,8 @@ public class BlackBoat extends Transport{
         transportTable[1]=true;
        
         //Fills the Unit's gas and ammo
-        gas = maxGas;
-        ammo = maxAmmo;
+        setGas(getMaxGas());
+        setAmmo(getMaxAmmo());
         
         //make CO adjustments
         arm.getCO().setChange(this);

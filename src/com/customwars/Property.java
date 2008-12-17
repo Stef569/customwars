@@ -13,17 +13,17 @@ public class Property extends Terrain{
     protected int color = -1;       //the color of the army that owns this property (-1 for neutral)
     protected Army owner;           //the owning army
     protected int income;           //the income recieved from this property
-    protected int totalcp;          //total Capture Points (usu. 20)
-    protected int cp;               //remaining Capture Points
+    private int totalcp;          //total Capture Points (usu. 20)
+    private int cp;               //remaining Capture Points
     protected boolean isCapturable; //is the property capturable? (if not it will have a special action, like silos)
-    protected boolean repairLand;   //can it repair Land Units?
-    protected boolean repairSea;    //can it repair Sea Units?
-    protected boolean repairAir;    //can it repair Air Units?
-    protected boolean repairPipe = false;    //can it repair Pipe Units? (Land includes Pipe units)
-    protected boolean createLand;   //can it produce Land Units?
-    protected boolean createSea;    //can it produce Sea Units?
-    protected boolean createAir;    //can it produce Air Units?
-    protected boolean createPipe = false;    //can it produce Pipe Units? (Land includes Pipe units)
+    private boolean repairLand;   //can it repair Land Units?
+    private boolean repairSea;    //can it repair Sea Units?
+    private boolean repairAir;    //can it repair Air Units?
+    private boolean repairPipe = false;    //can it repair Pipe Units? (Land includes Pipe units)
+    private boolean createLand;   //can it produce Land Units?
+    private boolean createSea;    //can it produce Sea Units?
+    private boolean createAir;    //can it produce Air Units?
+    private boolean createPipe = false;    //can it produce Pipe Units? (Land includes Pipe units)
     protected Tile tile;            //The tile that the property resides in
     
     //New variables!
@@ -82,9 +82,9 @@ public class Property extends Terrain{
             //is the capturing unit the right kind? (Infantry/Mech)
             if(u.getUType()==0||u.getUType()==1){
                 //reduce cp by the unit's HP
-                cp -= u.getDisplayHP()*u.getArmy().getCO().getCaptureMultiplier()/100;
+                setCp(getCp() - (u.getDisplayHP()*u.getArmy().getCO().getCaptureMultiplier()/100));
                 //if the capture is complete, change the property's status
-                if(cp <= 0){
+                if(getCp() <= 0){
                     if(this instanceof HQ){
                         if(owner.getBattle().removeArmy(owner,u.getArmy(),true))return true;
                     }else{
@@ -92,7 +92,7 @@ public class Property extends Terrain{
                         owner = u.getArmy();
                         owner.addProperty(this);
                         color = owner.getColor()+1;
-                        cp = totalcp;
+                        setCp(getTotalcp());
                     }
                     if(owner.getBattle().getBattleOptions().getCapLimit()>0 && owner.getBattle().getBattleOptions().getCapLimit() <= owner.getProperties().length){
                         JOptionPane.showMessageDialog(null, "Capture Limit Exceeded!");
@@ -106,12 +106,12 @@ public class Property extends Terrain{
     
     //call when a capture attempt ends in failure
     public void endCapture(){
-        cp = totalcp;
+        setCp(getTotalcp());
     }
     
     public void setCapturePoints(int amount){
         if(amount >= 0)
-            cp = amount;
+            setCp(amount);
     }
     
     //returns the owner of this property
@@ -139,7 +139,7 @@ public class Property extends Terrain{
             owner = A;
             owner.addProperty(this);
             color = owner.getColor()+1;
-            cp = totalcp;
+            setCp(getTotalcp());
         }
         if(owner.getBattle().getBattleOptions().getCapLimit()>0 && owner.getBattle().getBattleOptions().getCapLimit() <= owner.getProperties().length)
         {
@@ -165,52 +165,52 @@ public class Property extends Terrain{
     
     //can the property repair land units?
     public boolean canRepairLand(){
-        return repairLand;
+        return isRepairLand();
     }
     
     //can the property repair sea units?
     public boolean canRepairSea(){
-        return repairSea;
+        return isRepairSea();
     }
     
     //can the property repair Air units?
     public boolean canRepairAir(){
-        return repairAir;
+        return isRepairAir();
     }
     
     //can the property repair Pipe units?
     public boolean canRepairPipe(){
-        return repairPipe;
+        return isRepairPipe();
     }
     
     //can the property create land units?
     public boolean canCreateLand(){
-        return createLand;
+        return isCreateLand();
     }
     
     //can the property create sea units?
     public boolean canCreateSea(){
-        return createSea;
+        return isCreateSea();
     }
     
     //can the property create air units?
     public boolean canCreateAir(){
-        return createAir;
+        return isCreateAir();
     }
     
     //can the property create pipe units?
     public boolean canCreatePipe(){
-        return createPipe;
+        return isCreatePipe();
     }
     
     //returns the remaining capture points
     public int getCapturePoints(){
-        return cp;
+        return getCp();
     }
     
     //returns the maximum capture points
     public int getMaxCapturePoints(){
-        return totalcp;
+        return getTotalcp();
     }
     
     //returns the tile
@@ -220,7 +220,7 @@ public class Property extends Terrain{
     
     //Returns a string with the Property's important information
     public String toString(){
-        return (name + ": Color:" + color + " Capture Points:" + cp + " Income: " + income + " " + tile.getLocation());
+        return (name + ": Color:" + color + " Capture Points:" + getCp() + " Income: " + income + " " + tile.getLocation());
     }
     
     //Returns the property's current vision value
@@ -245,4 +245,84 @@ public class Property extends Terrain{
     {
     	vision = baseVis;
     }
+
+	public void setCp(int cp) {
+		this.cp = cp;
+	}
+
+	public int getCp() {
+		return cp;
+	}
+
+	public void setTotalcp(int totalcp) {
+		this.totalcp = totalcp;
+	}
+
+	public int getTotalcp() {
+		return totalcp;
+	}
+
+	public void setRepairAir(boolean repairAir) {
+		this.repairAir = repairAir;
+	}
+
+	public boolean isRepairAir() {
+		return repairAir;
+	}
+
+	public void setRepairSea(boolean repairSea) {
+		this.repairSea = repairSea;
+	}
+
+	public boolean isRepairSea() {
+		return repairSea;
+	}
+
+	public void setRepairLand(boolean repairLand) {
+		this.repairLand = repairLand;
+	}
+
+	public boolean isRepairLand() {
+		return repairLand;
+	}
+
+	public void setRepairPipe(boolean repairPipe) {
+		this.repairPipe = repairPipe;
+	}
+
+	public boolean isRepairPipe() {
+		return repairPipe;
+	}
+
+	public void setCreateAir(boolean createAir) {
+		this.createAir = createAir;
+	}
+
+	public boolean isCreateAir() {
+		return createAir;
+	}
+
+	public void setCreateLand(boolean createLand) {
+		this.createLand = createLand;
+	}
+
+	public boolean isCreateLand() {
+		return createLand;
+	}
+
+	public void setCreateSea(boolean createSea) {
+		this.createSea = createSea;
+	}
+
+	public boolean isCreateSea() {
+		return createSea;
+	}
+
+	public void setCreatePipe(boolean createPipe) {
+		this.createPipe = createPipe;
+	}
+
+	public boolean isCreatePipe() {
+		return createPipe;
+	}
 }

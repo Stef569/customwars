@@ -1,4 +1,5 @@
 package com.customwars;
+
 /*
  *Unit.java
  *Author: Adam Dziuk
@@ -14,77 +15,77 @@ import org.slf4j.LoggerFactory;
 
 public abstract class Unit implements Locatable, Serializable{
     //moveType 0=infantry, 1=mech, 2=tread, 3=tires, 4=air, 5=sea, 6=transport, 7=oozium, 8=pipe, 9=hover
-    final protected int MOVE_INFANTRY = 0;
-    final protected int MOVE_MECH = 1;
-    final protected int MOVE_TREAD = 2;
-    final protected int MOVE_TIRE = 3;
-    final protected int MOVE_AIR = 4;
-    final protected int MOVE_SEA = 5;
-    final protected int MOVE_TRANSPORT = 6;
+    public final int MOVE_INFANTRY = 0;
+    public final int MOVE_MECH = 1;
+    public final int MOVE_TREAD = 2;
+    public final int MOVE_TIRE = 3;
+    public final int MOVE_AIR = 4;
+    public final int MOVE_SEA = 5;
+    public final int MOVE_TRANSPORT = 6;
     final protected int MOVE_OOZIUM = 7;
-    final protected int MOVE_PIPE = 8;
-    final protected int MOVE_HOVER = 9;
+    public final int MOVE_PIPE = 8;
+    public final int MOVE_HOVER = 9;
 	final static Logger logger = LoggerFactory.getLogger(Unit.class); 
 	
     protected int hP = 100; //HP (out of 100)
-    protected int moveType; //move type
-    protected int ammo;     //current ammunition
-    protected int maxAmmo;  //maximum ammunition
+    private int moveType; //move type
+    private int ammo;     //current ammunition
+    private int maxAmmo;  //maximum ammunition
     protected int unitType; //unit's type, used by BaseDMG
     protected int price;    //price (factors into repair costs)
-    protected int vision;   //vision range
-    protected int gas;      //current gas
-    protected int maxGas;   //maximum gas
-    protected int dailyGas = 0; //Amount of Gas used daily
-    protected int move;     //total MP
+    private int vision;   //vision range
+    private int gas;      //current gas
+    private int maxGas;   //maximum gas
+    private int dailyGas = 0; //Amount of Gas used daily
+    private int move;     //total MP
     protected int minRange; //minimum range (1 for directs)
-    protected int maxRange; //maximum range (1 for directs)
+    private int maxRange; //maximum range (1 for directs)
     protected String name;  //Unit's name
-    protected Location loc; //Unit's location
+    private Location loc; //Unit's location
     protected Army army;    //Unit's army
     protected Map map;      //The map the unit is on
-    protected MoveTraverse moveRange;   //Unit's current movement range
+    public MoveTraverse moveRange;   //Unit's current movement range
     protected boolean active;           //is the unit able to be selected?
     protected double starValue;         //StarValue of the unit.
     protected boolean moved = false;    //has the unit moved?
-    protected boolean changed = false;  //has the unit been changed?
+    private boolean changed = false;  //has the unit been changed?
     protected boolean hidden = false;   //is the unit hidden?
     protected boolean dived = false;    //is the unit dived/hiding?
     protected boolean detected = false; //has this unit been detected by a spyplane?
     protected Path unitPath;            //the path the unit takes to get from point A to point B
     protected boolean inTransport = false;  //is the unit in a transport?
-    protected boolean paralyzed = false; //is the unit paralyzed (auto-waits next turn)
-    protected int COstore[] = new int[10]; // This stores stuff (Sabaki's damage based defense boost, for one) that the
+    private boolean paralyzed = false; //is the unit paralyzed (auto-waits next turn)
+    private int COstore[] = new int[10]; // This stores stuff (Sabaki's damage based defense boost, for one) that the
     //COs might alter on a changing Unit to Unit basis.
-    protected int altCOstore[] = new int[10];
-    protected float repairMod = 1; //This stores the temporary price modifications (Used for Falcone's SCOP)
-    protected int[][] enemyCOstore = new int[20][10]; //supports up to 20 armies. woop.
-    protected int[][] altEnemyCOstore = new int [20][10];
-    boolean noResupply = false; //True means that this unit cannot use Resupply!
-    boolean noRepair = false; //True means this unit cannot use Repair!
-    boolean noResupplied = false; //Can be repaired?
-    boolean noRepaired = false; //Can be resupplied?
-    boolean noCityRepair = false;
-    boolean noCityResupply = false;
-    boolean noFire = false;
-    boolean noCapture = false;
+    private int altCOstore[] = new int[10];
+    private float repairMod = 1; //This stores the temporary price modifications (Used for Falcone's SCOP)
+    private int[][] enemyCOstore = new int[20][10]; //supports up to 20 armies. woop.
+    private int[][] altEnemyCOstore = new int [20][10];
+    private boolean noResupply = false; //True means that this unit cannot use Resupply!
+    private boolean noRepair = false; //True means this unit cannot use Repair!
+    private boolean noResupplied = false; //Can be repaired?
+    private boolean noRepaired = false; //Can be resupplied?
+    private boolean noCityRepair = false;
+    private boolean noCityResupply = false;
+    private boolean noFire = false;
+    private boolean noCapture = false;
     boolean noLaunch = false;
     boolean noDive = false;
     boolean noRise = false;
     boolean noHide = false;
     boolean noAppear = false;
-    boolean noExplode = false;
-    boolean noUnload = false;
-    boolean noJoin = false;
-    boolean noLoad = false;
+    private boolean noExplode = false;
+    private boolean noUnload = false;
+    private boolean noJoin = false;
+    private boolean noLoad = false;
     boolean noSpecial1 = false;
     boolean noSpecial2 = false;
-    boolean noWait = false;
+    private boolean noWait = false;
     protected float fuelMult =1; //This determines how much fuel this unit burns, in addition to normal fuel.
     protected Unit trapper;
-    boolean perfectMovement = false; //Does this unit have perfect movement?
-    int defensePenalty = 0; //Penalty to defense
-    int attackPenalty = 0; //Penalty to offense
+    private boolean perfectMovement = false; //Does this unit have perfect movement?
+    private int defensePenalty = 0; //Penalty to defense
+    private int attackPenalty = 0; //Penalty to offense
     
     boolean moving = false;
     int direction = -1;//whether this unit is being moved or not (and what direction)
@@ -94,7 +95,7 @@ public abstract class Unit implements Locatable, Serializable{
     
     //constructor
     public Unit(Location l, Army arm, Map m) {
-        loc = l;
+        setLoc(l);
         arm.addUnit(this);
         army = arm;
         map = m;
@@ -120,7 +121,7 @@ public abstract class Unit implements Locatable, Serializable{
             return isgameover;
         }
         //start normal firing routines
-        int t = Math.abs(u.getLocation().getRow() - loc.getRow()) + Math.abs(u.getLocation().getCol() - loc.getCol());
+        int t = Math.abs(u.getLocation().getRow() - getLoc().getRow()) + Math.abs(u.getLocation().getCol() - getLoc().getCol());
         //t is distance from the unit.
         boolean destroyed = false;
         if(t >= minRange && t <= getMaxRange()){
@@ -149,12 +150,12 @@ public abstract class Unit implements Locatable, Serializable{
                     army.charge(chargeDamage*u.getStarValue()/200.0);
                     u.getArmy().charge(chargeDamage*u.getStarValue()/100.0);   
                     }
-                    army.addFunds(army.getCO().enemySalvage * chargeDamage * u.getPrice() /1000);
-                    u.getArmy().addFunds(u.getArmy().getCO().friendlySalvage * chargeDamage * u.getPrice() /10000);
+                    army.addFunds(army.getCO().getEnemySalvage() * chargeDamage * u.getPrice() /1000);
+                    u.getArmy().addFunds(u.getArmy().getCO().getFriendlySalvage() * chargeDamage * u.getPrice() /10000);
                 
-                    if(ammo > 0)
+                    if(getAmmo() > 0)
                         if(BaseDMG.findBase(this.getUType(), u.getUType(),army.getBattle().getBattleOptions().isBalance()) != -1)
-                            ammo--;
+                            setAmmo(getAmmo() - 1);
                     
                     getArmy().getCO().afterAttack(this, u, i, destroyed, true);
                     u.getArmy().getCO().afterAttack(u, this, i, destroyed, false);
@@ -203,12 +204,12 @@ public abstract class Unit implements Locatable, Serializable{
                             army.charge(chargeDamage*this.getStarValue()/100.0);
                             u.getArmy().charge(chargeDamage*this.getStarValue()/200.0);   
                             }
-                            u.getArmy().addFunds(u.getArmy().getCO().enemySalvage * chargeDamage * this.getPrice() /10000);
-                            army.addFunds(army.getCO().friendlySalvage * chargeDamage * this.getPrice() /10000);
+                            u.getArmy().addFunds(u.getArmy().getCO().getEnemySalvage() * chargeDamage * this.getPrice() /10000);
+                            army.addFunds(army.getCO().getFriendlySalvage() * chargeDamage * this.getPrice() /10000);
                             
-                            if(u.ammo > 0)
+                            if(u.getAmmo() > 0)
                                 if(BaseDMG.findBase(u.getUType(), this.getUType(),army.getBattle().getBattleOptions().isBalance()) != -1)
-                                    u.ammo--;
+                                    u.setAmmo(u.getAmmo() - 1);
                             
                             //This is the friendly CO's afterCounter call
                             getArmy().getCO().afterCounter(this, u, i, destroyed, false);
@@ -240,9 +241,9 @@ public abstract class Unit implements Locatable, Serializable{
             //if(inv.getArmy().getSide() != army.getSide()){
             int i = damageCalc(inv);
             inv.damage(i);
-            if(ammo > 0)
+            if(getAmmo() > 0)
                 if(inv.findBase(this.getUType()) != -1)
-                    ammo--;
+                    setAmmo(getAmmo() - 1);
             //}
         }
     }
@@ -255,21 +256,21 @@ public abstract class Unit implements Locatable, Serializable{
     
     //Determines is a given location is in the unit's immediate firing range
     public boolean checkFireRange(Location l){
-        int t = Math.abs(l.getRow() - loc.getRow()) + Math.abs(l.getCol() - loc.getCol());
+        int t = Math.abs(l.getRow() - getLoc().getRow()) + Math.abs(l.getCol() - getLoc().getCol());
         if(t >= minRange && t <= getMaxRange())return true;
         return false;
     }
     
     //Determines is a given location is adjacent to the unit
     public boolean checkAdjacent(Location l){
-        int t = Math.abs(l.getRow() - loc.getRow()) + Math.abs(l.getCol() - loc.getCol());
+        int t = Math.abs(l.getRow() - getLoc().getRow()) + Math.abs(l.getCol() - getLoc().getCol());
         if(t == 1)return true;
         return false;
     }
     
     //Determines is a given location is in the unit's firing range
     public boolean checkDisplayFireRange(Location l){
-        int t = Math.abs(l.getRow() - loc.getRow()) + Math.abs(l.getCol() - loc.getCol());
+        int t = Math.abs(l.getRow() - getLoc().getRow()) + Math.abs(l.getCol() - getLoc().getCol());
         //Indirects
         if(minRange > 1){
             if(t >= minRange && t <= getMaxRange())return true;
@@ -286,10 +287,10 @@ public abstract class Unit implements Locatable, Serializable{
         Location south = new Location(x,y+1);
         Location east = new Location(x+1,y);
         Location west = new Location(x-1,y);
-        if(map.onMap(north) && (moveRange.checkMove(north)||loc.equals(north)))return true;
-        if(map.onMap(south) && (moveRange.checkMove(south)||loc.equals(south)))return true;
-        if(map.onMap(east) && (moveRange.checkMove(east)||loc.equals(east)))return true;
-        if(map.onMap(west) && (moveRange.checkMove(west)||loc.equals(west)))return true;
+        if(map.onMap(north) && (moveRange.checkMove(north)||getLoc().equals(north)))return true;
+        if(map.onMap(south) && (moveRange.checkMove(south)||getLoc().equals(south)))return true;
+        if(map.onMap(east) && (moveRange.checkMove(east)||getLoc().equals(east)))return true;
+        if(map.onMap(west) && (moveRange.checkMove(west)||getLoc().equals(west)))return true;
         return false;
     }
     
@@ -365,7 +366,7 @@ public abstract class Unit implements Locatable, Serializable{
         }
         
         int negLuck, tdef;
-        if(u.moveType != MOVE_AIR)
+        if(u.getMoveType() != MOVE_AIR)
             tdef = map.find(u).getTerrain().getDef();
         else
             tdef = 0;
@@ -382,20 +383,20 @@ public abstract class Unit implements Locatable, Serializable{
         //NEW CODE
         //Adjusts the unit's negative luck damage inbetween
         //minNegLuck and maxNegLuck.
-        if(army.getCO().minNegLuck != -1 && negLuck < army.getCO().minNegLuck) {
-            negLuck = army.getCO().minNegLuck;
+        if(army.getCO().getMinNegLuck() != -1 && negLuck < army.getCO().getMinNegLuck()) {
+            negLuck = army.getCO().getMinNegLuck();
         } else if(army.getCO().maxNegLuck != -1 && negLuck > army.getCO().maxNegLuck) {
             negLuck = army.getCO().maxNegLuck;
         }
         
-        int baseDamage = BaseDMG.find(ammo, this.getUType(), u.getUType(),army.getBattle().getBattleOptions().isBalance());
+        int baseDamage = BaseDMG.find(getAmmo(), this.getUType(), u.getUType(),army.getBattle().getBattleOptions().isBalance());
         if(u instanceof Submarine && u.dived)baseDamage = ((Submarine)u).getDivedDamage(this.getUType());
         else if(u instanceof Stealth && u.dived)baseDamage = ((Stealth)u).getHiddenDamage(this.getUType());
         
         //main damage formula
-        int dmgResult =(int) Math.floor((this.getDisplayHP()/10.0 * ((baseDamage * (this.getArmy().getCO().getAtk(this,u)+ this.getArmy().getComTowers()*10 + this.getArmy().getAtkPercent()-attackPenalty)/100.0) + posLuck - negLuck) * ((200.0-(u.getArmy().getCO().getDef(this,u)+(tdef*u.getDisplayHP()) - u.defensePenalty))/100.0)));
+        int dmgResult =(int) Math.floor((this.getDisplayHP()/10.0 * ((baseDamage * (this.getArmy().getCO().getAtk(this,u)+ this.getArmy().getComTowers()*10 + this.getArmy().getAtkPercent()-getAttackPenalty())/100.0) + posLuck - negLuck) * ((200.0-(u.getArmy().getCO().getDef(this,u)+(tdef*u.getDisplayHP()) - u.getDefensePenalty()))/100.0)));
         //return (int) Math.floor((this.getDisplayHP()/10.0 * ((baseDamage * (this.getArmy().getCO().getAtk(this,u)+ this.getArmy().getComTowers()*10 + this.getArmy().getAtkPercent()-attackPenalty)/100.0) + posLuck - negLuck) * ((200.0-(u.getArmy().getCO().getDef(this,u)+(tdef*u.getDisplayHP()) - u.defensePenalty))/100.0)));
-        int bonus = this.getArmy().getCO().bonusDamage - this.getArmy().getCO().damagePenalty;
+        int bonus = this.getArmy().getCO().getBonusDamage() - this.getArmy().getCO().getDamagePenalty();
         
         if(dmgResult + bonus >= 0)
             return dmgResult+bonus;
@@ -405,7 +406,7 @@ public abstract class Unit implements Locatable, Serializable{
 //Calculates the likely damage caused by an attack, used for display
     public int displayDamageCalc(Unit u){
         int tdef;
-        if(u.moveType != MOVE_AIR)
+        if(u.getMoveType() != MOVE_AIR)
             tdef = map.find(u).getTerrain().getDef();
         else
             tdef = 0;
@@ -414,12 +415,12 @@ public abstract class Unit implements Locatable, Serializable{
         tdef -= this.getArmy().getCO().getEnemyTerrainPenalty();
         if(tdef < 0)tdef = 0;
         
-        int baseDamage = BaseDMG.find(ammo, this.getUType(), u.getUType(),army.getBattle().getBattleOptions().isBalance());
+        int baseDamage = BaseDMG.find(getAmmo(), this.getUType(), u.getUType(),army.getBattle().getBattleOptions().isBalance());
         if(u instanceof Submarine && u.dived)baseDamage = ((Submarine)u).getDivedDamage(this.getUType());
         else if(u instanceof Stealth && u.dived)baseDamage = ((Stealth)u).getHiddenDamage(this.getUType());
         
-        int dmgResult = (int) Math.floor((this.getDisplayHP()/10.0 * (baseDamage * ((this.getArmy().getCO().getAtk(this,u)+(this.getArmy().getComTowers()*10)+this.getArmy().getAtkPercent()- attackPenalty)/100.0 )) * ((200.0-(u.getArmy().getCO().getDef(this,u)+(tdef*u.getDisplayHP()) - u.defensePenalty))/100.0)));
-        int bonus = this.getArmy().getCO().bonusDamage - this.getArmy().getCO().damagePenalty;
+        int dmgResult = (int) Math.floor((this.getDisplayHP()/10.0 * (baseDamage * ((this.getArmy().getCO().getAtk(this,u)+(this.getArmy().getComTowers()*10)+this.getArmy().getAtkPercent()- getAttackPenalty())/100.0 )) * ((200.0-(u.getArmy().getCO().getDef(this,u)+(tdef*u.getDisplayHP()) - u.getDefensePenalty()))/100.0)));
+        int bonus = this.getArmy().getCO().getBonusDamage() - this.getArmy().getCO().getDamagePenalty();
         
         //main damage formula
         if(dmgResult >= 0) {
@@ -436,7 +437,7 @@ public abstract class Unit implements Locatable, Serializable{
         //AW1
         //return (int) ((((hP)/100.0)) * (((BaseDMG.find(ammo, this.getUType(), u.getUType()) * (this.getArmy().getCO().getAtk(this,u)/100.0))) * ((200.0 - u.getArmy().getCO().getDef(this,u))/100.0)) /((100.0 + d*(u.getHP()/10.0))/100.0));
         //AW2+
-        return (int) Math.floor((this.getDisplayHP()/10.0 * (i.find(ammo, this.getUType()) * ((this.getArmy().getCO().getInventionAtk(this,null)+(this.getArmy().getComTowers()*10)+this.getArmy().getAtkPercent() - attackPenalty)/100.0))));
+        return (int) Math.floor((this.getDisplayHP()/10.0 * (i.find(getAmmo(), this.getUType()) * ((this.getArmy().getCO().getInventionAtk(this,null)+(this.getArmy().getComTowers()*10)+this.getArmy().getAtkPercent() - getAttackPenalty())/100.0))));
     }
     
 //heals a unit (i is the amount healed out of 100)
@@ -456,15 +457,15 @@ public abstract class Unit implements Locatable, Serializable{
     
 //resupplies the unit
     public void resupply(){
-        gas = maxGas;
-        ammo = maxAmmo;
+        setGas(getMaxGas());
+        setAmmo(getMaxAmmo());
     }
     
     //moves the unit to the given Location, checks if the move is valid, returns ambush status
     //now returns the actual ambusher if one is found    
     public Unit move(Location endLoc) 
     {
-        Location originalLocation = loc;
+        Location originalLocation = getLoc();
     	trapper = null;
         //boolean ambush = false;
         int i = unitPath.getLength();
@@ -486,8 +487,8 @@ public abstract class Unit implements Locatable, Serializable{
                 
                 //check the path for ambushes
                 int[] dirs = unitPath.getItems();
-                int x = loc.getCol();
-                int y = loc.getRow();
+                int x = getLoc().getCol();
+                int y = getLoc().getRow();
                 for(int j=0; j < dirs.length; j++){
                     //apply direction
                     if(dirs[j]==0)y--;
@@ -515,11 +516,11 @@ public abstract class Unit implements Locatable, Serializable{
                     }
                     //FoW Updating
                     if((this.unitType == UnitID.INFANTRY || this.unitType == UnitID.MECHINF) && this.getArmy().getBattle().getMap().find(this).getTerrain().getName().equals("Mountain"))
-                        army.getBattle().clearFog(this.vision+2,x,y);
+                        army.getBattle().clearFog(this.getVision()+2,x,y);
                     else if(unitType != UnitID.SPYPLANE)
-                        army.getBattle().clearFog(this.vision,x,y);
+                        army.getBattle().clearFog(this.getVision(),x,y);
                     else
-                        army.getBattle().clearPiercingFog(vision,x,y);
+                        army.getBattle().clearPiercingFog(getVision(),x,y);
                     
                     //updates the position of units loaded within this
 
@@ -528,8 +529,8 @@ public abstract class Unit implements Locatable, Serializable{
                 //animation
                 if(!unitPath.isEmpty()) {
                     int[] movement = unitPath.getItems();
-                    int curx = loc.getCol()*16;
-                    int cury = loc.getRow()*16;
+                    int curx = getLoc().getCol()*16;
+                    int cury = getLoc().getRow()*16;
                     Animation[] animoots = new Animation[movement.length];
                     if(this.getMType() < 2) {
                         for(int s = 0; s < movement.length; s++) {
@@ -587,17 +588,17 @@ public abstract class Unit implements Locatable, Serializable{
                 //This finds the highest fuel multiplier of all COs on the field.
                 /*if(army.getBattle().getWeather()==2 && !army.getCO().isSnowImmune())gas -= (int)(i*2*mult);
                 else gas -= i;*/
-                if(army.getBattle().getWeather()==2 && !army.getCO().isSnowImmune())gas -= (int)(unitPath.getFuelUsage(this)*2*fuelMult);
-                else gas -= (int)(unitPath.getFuelUsage(this)*fuelMult);
+                if(army.getBattle().getWeather()==2 && !army.getCO().isSnowImmune())setGas(getGas() - ((int)(unitPath.getFuelUsage(this)*2*fuelMult)));
+                else setGas(getGas() - ((int)(unitPath.getFuelUsage(this)*fuelMult)));
                 
                 map.move(this, endLoc);
                 this.setLocation(endLoc);
                 
                 if(this instanceof Transport) {
                     if(((Transport)this).slot1 != null)
-                        ((Transport)this).slot1.loc = loc;
+                        ((Transport)this).slot1.setLoc(loc);
                     if(((Transport)this).slot2 != null)
-                        ((Transport)this).slot2.loc = loc;
+                        ((Transport)this).slot2.setLoc(loc);
                 }
                 //reset moveRange
                 //moveRange = null;
@@ -637,8 +638,8 @@ public abstract class Unit implements Locatable, Serializable{
         if(!army.getBattle().isFog()){
             /*if(army.getBattle().getWeather()==2 && !army.getCO().isSnowImmune())gas += i*2;
             else gas += i;*/
-            if(army.getBattle().getWeather()==2 && !army.getCO().isSnowImmune())gas += (int)(unitPath.getFuelUsage(this)*2*fuelMult);
-            else gas += (int)(unitPath.getFuelUsage(this)*fuelMult);
+            if(army.getBattle().getWeather()==2 && !army.getCO().isSnowImmune())setGas(getGas() + ((int)(unitPath.getFuelUsage(this)*2*fuelMult)));
+            else setGas(getGas() + ((int)(unitPath.getFuelUsage(this)*fuelMult)));
         }
         //reset moveRange
         moveRange = null;
@@ -652,8 +653,8 @@ public abstract class Unit implements Locatable, Serializable{
     
     //checks if the stealth unit is hidden
     public void setIfHidden(){
-        int x = loc.getCol();
-        int y = loc.getRow();
+        int x = getLoc().getCol();
+        int y = getLoc().getRow();
         if(army.getBattle().getFog(x,y)){
             //if in fog, always hidden
             hidden = true;
@@ -701,7 +702,7 @@ public abstract class Unit implements Locatable, Serializable{
     
     //checks if the unit reveals a stealth unit and unstealths them
     public void checkForStealth(Location l){
-        if(l == null)l = loc;
+        if(l == null)l = getLoc();
         int turn = army.getBattle().getTurn();
         int x = l.getCol();
         int y = l.getRow();
@@ -722,17 +723,17 @@ public abstract class Unit implements Locatable, Serializable{
     
 //returns the unit's moveTraverse
     public MoveTraverse getMoveRange(){
-        return moveRange;
+        return this.moveRange;
     }
     
 //returns the unit's location
     public Location getLocation(){
-        return loc;
+        return getLoc();
     }
     
 //sets the unit's location, used by move() and forceMove()
-    protected void setLocation(Location l){
-        loc = l;
+    public void setLocation(Location l){
+        setLoc(l);
     }
     
 //returns HP
@@ -760,7 +761,7 @@ public abstract class Unit implements Locatable, Serializable{
     
 //returns movement type
     public int getMType(){
-        return moveType;
+        return getMoveType();
     }
     
 //returns remaining ammunition
@@ -815,10 +816,10 @@ public abstract class Unit implements Locatable, Serializable{
         if(a == false){
             moved = false;
         }
-        if(a == true && paralyzed == true){
+        if(a == true && isParalyzed() == true){
             active = false;
             moved = true;
-            paralyzed = false;
+            setParalyzed(false);
         }
         
     }
@@ -826,11 +827,11 @@ public abstract class Unit implements Locatable, Serializable{
     //daily gas usage, returns true if the unit is destroyed and it causes the army to rout
     public boolean dailyUse(){
         boolean destroyed = false;
-        if(dailyGas > 0){
-            if(army.getBattle().getWeather()==2 && !army.getCO().isSnowImmune()) gas -= dailyGas*2;
-            else gas -= dailyGas;
+        if(getDailyGas() > 0){
+            if(army.getBattle().getWeather()==2 && !army.getCO().isSnowImmune()) setGas(getGas() - (getDailyGas()*2));
+            else setGas(getGas() - getDailyGas());
         }
-        if(gas <= 0 && (moveType == MOVE_AIR || moveType == MOVE_SEA || moveType == MOVE_TRANSPORT))
+        if(getGas() <= 0 && (getMoveType() == MOVE_AIR || getMoveType() == MOVE_SEA || getMoveType() == MOVE_TRANSPORT))
             destroyed = this.damage(1000 , true);
         if(destroyed && isRout())
             return true;
@@ -866,12 +867,12 @@ public abstract class Unit implements Locatable, Serializable{
     }
     
     public boolean isLowOnAmmo(){
-        if(ammo <= maxAmmo/2 && maxAmmo > 0)return true;
+        if(getAmmo() <= getMaxAmmo()/2 && getMaxAmmo() > 0)return true;
         return false;
     }
     
     public boolean isLowOnFuel(){
-        if((double)gas/maxGas < .5)return true;
+        if((double)getGas()/getMaxGas() < .5)return true;
         return false;
     }
     
@@ -886,14 +887,14 @@ public abstract class Unit implements Locatable, Serializable{
     
 //adds fuel, used in joining
     public void addGas(int amount){
-        gas += amount;
-        if(gas > maxGas)gas = maxGas;
+        setGas(getGas() + amount);
+        if(getGas() > getMaxGas())setGas(getMaxGas());
     }
     
 //adds ammo, used in joining
     public void addAmmo(int amount){
-        ammo += amount;
-        if(ammo > maxAmmo)ammo = maxAmmo;
+        setAmmo(getAmmo() + amount);
+        if(getAmmo() > getMaxAmmo())setAmmo(getMaxAmmo());
     }
     
     //moves the unit in a given direction
@@ -909,7 +910,7 @@ public abstract class Unit implements Locatable, Serializable{
     }
     
     public void startPath(){
-        unitPath = new Path(loc.getCol(),loc.getRow());
+        unitPath = new Path(getLoc().getCol(),getLoc().getRow());
     }
     
     public Path getPath(){
@@ -940,7 +941,7 @@ public abstract class Unit implements Locatable, Serializable{
     }
 //Returns a string with the Unit's important information
     public String toString(){
-        return (name + ": HP: " + hP + " Active: " + active + " LOCATION:" + loc);
+        return (name + ": HP: " + hP + " Active: " + active + " LOCATION:" + getLoc());
     }
     //This function charges the owner of this unit as if it dealt damage to army a.
     public void charge(int damage, Unit u) {
@@ -948,8 +949,8 @@ public abstract class Unit implements Locatable, Serializable{
         u.getArmy().charge(damage*starValue/200.0);
     }
     public void salvage(int damage, Unit u) {
-        army.addFunds(army.getCO().enemySalvage * damage * u.getPrice() /10000);
-        u.getArmy().addFunds(u.getArmy().getCO().friendlySalvage * damage * u.getPrice() /10000);
+        army.addFunds(army.getCO().getEnemySalvage() * damage * u.getPrice() /10000);
+        u.getArmy().addFunds(u.getArmy().getCO().getFriendlySalvage() * damage * u.getPrice() /10000);
     }
     
     public String writeToFile(){
@@ -1001,15 +1002,263 @@ public abstract class Unit implements Locatable, Serializable{
         output += "id : " + unitType + " </unit>\n";                            //id: # </unit>
         output += "<army = " + army.getID() + " >\n";                           //<army = # >
         //Map is assumed, moveTransverse ignored
-        output += "<location = " + loc.getCol() + "," + loc.getRow() + " >\n";  //<location = #,# >
+        output += "<location = " + getLoc().getCol() + "," + getLoc().getRow() + " >\n";  //<location = #,# >
         output += "<hP = " + hP + " >\n";                                       //<hP = # >
-        output += "<MoveType = " + moveType + " >\n";                           //<MoveType = # >
-        output += "<ammo = " + ammo + " of " + maxAmmo + " >\n";                //<ammo = # of # >
-        output += "<gas = " + gas + " of " + maxGas + " >\n";                   //<gas = # of # >
-        output += "Daily = " + dailyGas + "\n" + "Fuel Multiplier = "           //Daily = #
+        output += "<MoveType = " + getMoveType() + " >\n";                           //<MoveType = # >
+        output += "<ammo = " + getAmmo() + " of " + getMaxAmmo() + " >\n";                //<ammo = # of # >
+        output += "<gas = " + getGas() + " of " + getMaxGas() + " >\n";                   //<gas = # of # >
+        output += "Daily = " + getDailyGas() + "\n" + "Fuel Multiplier = "           //Daily = #
                 + fuelMult + " </gas>\n";                                       //Fuel Multiplier = # </gas>
-        output += "<price = " + price + " x " + repairMod + " >\n";             //<price = # x # >
-        output += "<vision = " + vision + " >\n";                               //<vision = # >
+        output += "<price = " + price + " x " + getRepairMod() + " >\n";             //<price = # x # >
+        output += "<vision = " + getVision() + " >\n";                               //<vision = # >
         return output;
     }
+
+	public void setMoveType(int moveType) {
+		this.moveType = moveType;
+	}
+
+	public int getMoveType() {
+		return moveType;
+	}
+
+	public void setVision(int vision) {
+		this.vision = vision;
+	}
+
+	public void setChanged(boolean changed) {
+		this.changed = changed;
+	}
+
+	public boolean isChanged() {
+		return changed;
+	}
+
+	public void setEnemyCOstore(int[][] enemyCOstore) {
+		this.enemyCOstore = enemyCOstore;
+	}
+
+	public int[][] getEnemyCOstore() {
+		return enemyCOstore;
+	}
+
+	public void setAltEnemyCOstore(int[][] altEnemyCOstore) {
+		this.altEnemyCOstore = altEnemyCOstore;
+	}
+
+	public int[][] getAltEnemyCOstore() {
+		return altEnemyCOstore;
+	}
+
+	public void setPrice(int price) {
+		this.price = price;
+	}
+
+	public void setCOstore(int cOstore[]) {
+		COstore = cOstore;
+	}
+
+	public int[] getCOstore() {
+		return COstore;
+	}
+
+	public void setRepairMod(float repairMod) {
+		this.repairMod = repairMod;
+	}
+
+	public float getRepairMod() {
+		return repairMod;
+	}
+
+	public void setDefensePenalty(int defensePenalty) {
+		this.defensePenalty = defensePenalty;
+	}
+
+	public int getDefensePenalty() {
+		return defensePenalty;
+	}
+
+	public void setNoRepair(boolean noRepair) {
+		this.noRepair = noRepair;
+	}
+
+	public boolean isNoRepair() {
+		return noRepair;
+	}
+
+	public void setNoResupply(boolean noResupply) {
+		this.noResupply = noResupply;
+	}
+
+	public boolean isNoResupply() {
+		return noResupply;
+	}
+
+	public void setNoCityRepair(boolean noCityRepair) {
+		this.noCityRepair = noCityRepair;
+	}
+
+	public boolean isNoCityRepair() {
+		return noCityRepair;
+	}
+
+	public void setNoCityResupply(boolean noCityResupply) {
+		this.noCityResupply = noCityResupply;
+	}
+
+	public boolean isNoCityResupply() {
+		return noCityResupply;
+	}
+
+	public void setNoResupplied(boolean noResupplied) {
+		this.noResupplied = noResupplied;
+	}
+
+	public boolean isNoResupplied() {
+		return noResupplied;
+	}
+
+	public void setNoUnload(boolean noUnload) {
+		this.noUnload = noUnload;
+	}
+
+	public boolean isNoUnload() {
+		return noUnload;
+	}
+
+	public void setNoJoin(boolean noJoin) {
+		this.noJoin = noJoin;
+	}
+
+	public boolean isNoJoin() {
+		return noJoin;
+	}
+
+	public void setNoLoad(boolean noLoad) {
+		this.noLoad = noLoad;
+	}
+
+	public boolean isNoLoad() {
+		return noLoad;
+	}
+
+	public void setNoExplode(boolean noExplode) {
+		this.noExplode = noExplode;
+	}
+
+	public boolean isNoExplode() {
+		return noExplode;
+	}
+
+	public void setNoWait(boolean noWait) {
+		this.noWait = noWait;
+	}
+
+	public boolean isNoWait() {
+		return noWait;
+	}
+
+	public void setGas(int gas) {
+		this.gas = gas;
+	}
+
+	public void setAltCOstore(int altCOstore[]) {
+		this.altCOstore = altCOstore;
+	}
+
+	public int[] getAltCOstore() {
+		return altCOstore;
+	}
+
+	public void setAmmo(int ammo) {
+		this.ammo = ammo;
+	}
+
+	public void setNoRepaired(boolean noRepaired) {
+		this.noRepaired = noRepaired;
+	}
+
+	public boolean isNoRepaired() {
+		return noRepaired;
+	}
+
+	public void setMove(int move) {
+		this.move = move;
+	}
+
+	public void setNoCapture(boolean noCapture) {
+		this.noCapture = noCapture;
+	}
+
+	public boolean isNoCapture() {
+		return noCapture;
+	}
+
+	public void setAttackPenalty(int attackPenalty) {
+		this.attackPenalty = attackPenalty;
+	}
+
+	public int getAttackPenalty() {
+		return attackPenalty;
+	}
+
+	public void setMaxRange(int maxRange) {
+		this.maxRange = maxRange;
+	}
+
+	public void setLoc(Location loc) {
+		this.loc = loc;
+	}
+
+	public Location getLoc() {
+		return loc;
+	}
+
+	public void setDailyGas(int dailyGas) {
+		this.dailyGas = dailyGas;
+	}
+
+	public int getDailyGas() {
+		return dailyGas;
+	}
+
+	public void setMaxAmmo(int maxAmmo) {
+		this.maxAmmo = maxAmmo;
+	}
+
+	public int getMaxAmmo() {
+		return maxAmmo;
+	}
+
+	public void setMaxGas(int maxGas) {
+		this.maxGas = maxGas;
+	}
+
+	public int getMaxGas() {
+		return maxGas;
+	}
+
+	public void setNoFire(boolean noFire) {
+		this.noFire = noFire;
+	}
+
+	public boolean isNoFire() {
+		return noFire;
+	}
+
+	public void setParalyzed(boolean paralyzed) {
+		this.paralyzed = paralyzed;
+	}
+
+	public boolean isParalyzed() {
+		return paralyzed;
+	}
+
+	public void setPerfectMovement(boolean perfectMovement) {
+		this.perfectMovement = perfectMovement;
+	}
+
+	public boolean isPerfectMovement() {
+		return perfectMovement;
+	}
 }

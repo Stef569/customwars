@@ -48,11 +48,11 @@ public class UnitTrigger extends Trigger{
         b.getMap().find(new Location(x,y)).getUnit().damage(10-UnitHP, false);
         if(UnitFuel != -1)
         {
-            b.getMap().find(new Location(x,y)).getUnit().gas = UnitFuel;
+            b.getMap().find(new Location(x,y)).getUnit().setGas(UnitFuel);
         }
         if(UnitAmmo != -1)
         {
-            b.getMap().find(new Location(x,y)).getUnit().ammo = UnitAmmo;
+            b.getMap().find(new Location(x,y)).getUnit().setAmmo(UnitAmmo);
         }
     }
 }

@@ -16,23 +16,23 @@ public class Artillerycraft extends Unit{
         //Statistics
         name = "Acraft";
         unitType = 26;
-        moveType = MOVE_HOVER;
-        move = 4;
+        setMoveType(MOVE_HOVER);
+        setMove(4);
         if(m.find(this).getTerrain().getName().equals("Port"))
             price = 15000;
         else
             price = 10000;
-        maxGas = 70;
-        maxAmmo = 6;
-        vision = 4;
+        setMaxGas(70);
+        setMaxAmmo(6);
+        setVision(4);
         minRange = 3;
-        maxRange = 4;
+        setMaxRange(4);
        
         starValue = 1.2;
        
         //Fills the Unit's gas and ammo
-        gas = maxGas;
-        ammo = maxAmmo;
+        setGas(getMaxGas());
+        setAmmo(getMaxAmmo());
         
         //make CO adjustments
         arm.getCO().setChange(this);

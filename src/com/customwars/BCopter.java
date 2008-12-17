@@ -16,21 +16,21 @@ public class BCopter extends Unit{
         //Statistics
         name = "B Copter";
         unitType = 15;
-        moveType = MOVE_AIR;
-        move = 6;
+        setMoveType(MOVE_AIR);
+        setMove(6);
         price = 9000;
-        maxGas = 99;
-        maxAmmo = 6;
-        vision = 3;
+        setMaxGas(99);
+        setMaxAmmo(6);
+        setVision(3);
         minRange = 1;
-        maxRange = 1;
-        dailyGas = 2;
+        setMaxRange(1);
+        setDailyGas(2);
         
         starValue = 1.2;
         
         //Fills the Unit's gas and ammo
-        gas = maxGas;
-        ammo = maxAmmo;
+        setGas(getMaxGas());
+        setAmmo(getMaxAmmo());
         
         //make CO adjustments
         arm.getCO().setChange(this);

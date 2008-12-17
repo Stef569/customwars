@@ -42,17 +42,17 @@ public class Silo extends Property{
         def = 3;
         index = 16;
         income = 0;
-        totalcp = 0;
+        setTotalcp(0);
         isCapturable = false;
-        repairLand = false;
-        repairSea = false;
-        repairAir = false;
-        createLand = false;
-        createSea = false;
-        createAir = false;
+        setRepairLand(false);
+        setRepairSea(false);
+        setRepairAir(false);
+        setCreateLand(false);
+        setCreateSea(false);
+        setCreateAir(false);
         
         //Set current Capture Points
-        cp = totalcp;
+        setCp(getTotalcp());
         
         launched = false;
     }

@@ -54,7 +54,7 @@ public class ContextMenu extends InGameMenu {
                 if(takeoff){s[i]="Takeoff";i++;}
                 if(takeoff2){s[i]="Takeoff";i++;}
                 if(build){s[i]="Build";i++;}
-                if(!u.noWait && (!temp.getArmy().getBattle().getMap().find(temp).getTerrain().getName().equals("Wall")) && !(temp.getUType() == UnitID.CARRIER && ((Carrier)temp).launched)){s[i] = "Wait"; i++;}
+                if(!u.isNoWait() && (!temp.getArmy().getBattle().getMap().find(temp).getTerrain().getName().equals("Wall")) && !(temp.getUType() == UnitID.CARRIER && ((Carrier)temp).launched)){s[i] = "Wait"; i++;}
             }else if(join == true){
                 s[0] = "Join";i++;
             }else{
@@ -162,7 +162,7 @@ public class ContextMenu extends InGameMenu {
         if(u.getMoved())
             if(u.getMinRange()>1)
                 canFire = false;
-        if(canFire && !u.noFire) {
+        if(canFire && !u.isNoFire()) {
             for(int i=0;i<m.getMaxCol();i++) {
                 for(int j=0;j<m.getMaxRow();j++) {
                     //if enemy unit in firing range, add fire to the context menu
@@ -196,7 +196,7 @@ public class ContextMenu extends InGameMenu {
             //is the terrain a property?
             if(m.find(u.getLocation()).getTerrain() instanceof Property){
                 Property p = (Property)m.find(u.getLocation()).getTerrain();
-                if(p.isCapturable() && !u.noCapture){
+                if(p.isCapturable() && !u.isNoCapture()){
                     if(p.getOwner()!=null){
                         if(p.getOwner().getSide()!=u.getArmy().getSide())
                             capture = true;
@@ -211,14 +211,14 @@ public class ContextMenu extends InGameMenu {
         
         //SUPPLY
         //is the unit an APC?
-        if(u.getUType()==9 && !u.noResupply){
+        if(u.getUType()==9 && !u.isNoResupply()){
             for(int i=0;i<m.getMaxCol();i++){
                 for(int j=0;j<m.getMaxRow();j++){
                     //if friendly in resupply range, add resupply to the context menu
                     if(u.checkAdjacent(new Location(i,j))&&
                             (m.find(new Location(i,j)).hasUnit()&&
                             m.find(new Location(i,j)).getUnit().getArmy()==u.getArmy()
-                            && !m.find(new Location(i,j)).getUnit().noResupplied))
+                            && !m.find(new Location(i,j)).getUnit().isNoResupplied()))
                         supply=true;
                 }
             }
@@ -227,15 +227,15 @@ public class ContextMenu extends InGameMenu {
         
         //REPAIR
         //Is the unit a Black Boat?
-        if(u.getUType()==21 && !u.noRepair){
+        if(u.getUType()==21 && !u.isNoRepair()){
             for(int i=0;i<m.getMaxCol();i++){
                 for(int j=0;j<m.getMaxRow();j++){
                     //if friendly in repair range, add repair to the context menu
                     if(u.checkAdjacent(new Location(i,j))&&
                             (m.find(new Location(i,j)).hasUnit()&&
                             m.find(new Location(i,j)).getUnit().getArmy()==u.getArmy()
-                            && !m.find(new Location(i,j)).getUnit().noResupplied
-                            && !m.find(new Location(i,j)).getUnit().noRepaired))
+                            && !m.find(new Location(i,j)).getUnit().isNoResupplied()
+                            && !m.find(new Location(i,j)).getUnit().isNoRepaired()))
                         repair=true;
                 }
             }
@@ -244,7 +244,7 @@ public class ContextMenu extends InGameMenu {
         
         //EXPLODE
         //is the unit a Black Bomb?
-        if(u.getUType()==24 && !u.noExplode){
+        if(u.getUType()==24 && !u.isNoExplode()){
             explode = true;
         }
         
@@ -275,7 +275,7 @@ public class ContextMenu extends InGameMenu {
             special2 = true;
         
         if(u.getUType()==UnitID.CARRIER && ((Transport)u).getUnitsCarried() > 0 && !u.getMoved()) {
-            if(u instanceof Transport && !u.noUnload){
+            if(u instanceof Transport && !u.isNoUnload()){
                 Transport trans = (Transport) u;
                 int x = trans.getLocation().getCol();
                 int y = trans.getLocation().getRow();
@@ -301,7 +301,7 @@ public class ContextMenu extends InGameMenu {
                         }
                     }
                 }
-            }        if(u instanceof Transport && !u.noUnload){
+            }        if(u instanceof Transport && !u.isNoUnload()){
                 Transport trans = (Transport) u;
                 int x = trans.getLocation().getCol();
                 int y = trans.getLocation().getRow();
@@ -333,7 +333,7 @@ public class ContextMenu extends InGameMenu {
 
 
         //UNLOAD
-        if(u instanceof Transport && !u.noUnload && u.getUnitType() != UnitID.CARRIER){
+        if(u instanceof Transport && !u.isNoUnload() && u.getUnitType() != UnitID.CARRIER){
             Transport trans = (Transport) u;
             int x = trans.getLocation().getCol();
             int y = trans.getLocation().getRow();

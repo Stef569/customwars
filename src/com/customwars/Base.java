@@ -43,17 +43,17 @@ public class Base extends Property{
         def  = 3;
         index = 11;
         income = 1000;
-        totalcp = 20;
+        setTotalcp(20);
         isCapturable = true;
-        repairLand = true;
-        repairSea = false;
-        repairAir = false;
-        createLand = true;
-        createSea = false;
-        createAir = false;
+        setRepairLand(true);
+        setRepairSea(false);
+        setRepairAir(false);
+        setCreateLand(true);
+        setCreateSea(false);
+        setCreateAir(false);
         urban = true;
         
         //Set current Capture Points
-        cp = totalcp;
+        setCp(getTotalcp());
     }
 }

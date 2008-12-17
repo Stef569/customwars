@@ -110,10 +110,10 @@ public class Aira extends CO{
                     if(u!= null)
                         for(int t = 0; t<u.length; t++) {
                         u[t].fuelMult = 1;
-                        if(u[t].enemyCOstore[statIndex][0]%10 != 1)
-                            u[t].noRepaired = false;
-                        if(u[t].enemyCOstore[statIndex][0]<10 )
-                            u[t].noResupplied = false;
+                        if(u[t].getEnemyCOstore()[statIndex][0]%10 != 1)
+                            u[t].setNoRepaired(false);
+                        if(u[t].getEnemyCOstore()[statIndex][0]<10 )
+                            u[t].setNoResupplied(false);
                         }
             }
             
@@ -123,7 +123,8 @@ public class Aira extends CO{
                     Unit[] u = armies[i].getUnits();
                     if(armies[i].getSide() != army.getSide())
                         for(int t = 0; t<u.length; t++) {
-                        u[t].move += u[t].enemyCOstore[statIndex][0];
+                        u[t].setMove(u[t].getMove()
+								+ u[t].getEnemyCOstore()[statIndex][0]);
                         }
                 }
             }
@@ -148,12 +149,12 @@ public class Aira extends CO{
                 for(int t = 0; t<u.length; t++) {
                     u[t].fuelMult = 5;
                     //The following if statements are to store the knowledge if the CO inherently cannot repair or resupply his or her own units
-                    if(u[t].noRepaired)
-                        u[t].enemyCOstore[statIndex][0] = 1;
-                    u[t].noRepaired = true;
-                    if(u[t].noResupplied)
-                        u[t].enemyCOstore[statIndex][0] += 10;
-                    u[t].noResupplied = true;
+                    if(u[t].isNoRepaired())
+                        u[t].getEnemyCOstore()[statIndex][0] = 1;
+                    u[t].setNoRepaired(true);
+                    if(u[t].isNoResupplied())
+                        u[t].getEnemyCOstore()[statIndex][0] += 10;
+                    u[t].setNoResupplied(true);
                 }
             }
         }
@@ -169,12 +170,13 @@ public class Aira extends CO{
             Unit[] u = armies[i].getUnits();
             if(armies[i].getSide() != army.getSide())
                 for(int t = 0; t<u.length; t++) {
-                u[t].enemyCOstore[statIndex][0]= 0;
-                if(u[t].moveType == u[t].MOVE_AIR || u[t].price<16000)
+                u[t].getEnemyCOstore()[statIndex][0]= 0;
+                if(u[t].getMoveType() == u[t].MOVE_AIR || u[t].price<16000)
                     if(!u[t].isInTransport())u[t].damage(30, false);
-                if(u[t].price>=16000 && u[t].moveType != u[t].MOVE_AIR) {
-                    u[t].enemyCOstore[statIndex][0] = ((int)(u[t].move/2.0+.5));
-                    u[t].move -= ((int)(u[t].move/2.0+.5));
+                if(u[t].price>=16000 && u[t].getMoveType() != u[t].MOVE_AIR) {
+                    u[t].getEnemyCOstore()[statIndex][0] = ((int)(u[t].getMove()/2.0+.5));
+                    u[t].setMove(u[t].getMove()
+							- ((int)(u[t].getMove()/2.0+.5)));
                 }
                 }
         }
@@ -194,9 +196,9 @@ public class Aira extends CO{
         Unit[] u = army.getUnits();
         for(int i = 0; i < u.length; i++){
             if(u[i].getClass() != null){
-                if(u[i].changed){
-                    u[i].move--;
-                    u[i].changed = false;
+                if(u[i].isChanged()){
+                    u[i].setMove(u[i].getMove() - 1);
+                    u[i].setChanged(false);
                 }
             } else
                 return;

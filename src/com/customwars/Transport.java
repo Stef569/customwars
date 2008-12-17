@@ -55,7 +55,7 @@ public abstract class Transport extends Unit{
     public boolean checkUnloadRange(Location l, int unloadslot){
         Map m = getMap();
         if(m.onMap(l)){
-            int r = Math.abs(l.getRow() - loc.getRow()) + Math.abs(l.getCol() - loc.getCol());
+            int r = Math.abs(l.getRow() - getLoc().getRow()) + Math.abs(l.getCol() - getLoc().getCol());
             if(r > 0 && r <= 1){
                 Tile t = m.find(new Location(l.getCol(),l.getRow()));
                 if(t!=null){

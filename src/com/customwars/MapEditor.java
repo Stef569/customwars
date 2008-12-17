@@ -15,6 +15,8 @@ import javax.swing.event.MouseInputListener;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.customwars.officer.Fighter;
 //import javax.swing.filechooser.FileNameExtensionFilter;
 import java.util.Random;
 

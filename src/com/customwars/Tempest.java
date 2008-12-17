@@ -113,8 +113,9 @@ public class Tempest extends CO{
             for(int i = 0; i < u.length; i++){
                 if(u[i].getClass() != null){
                     if(u[i].getMinRange() > 1 && !a[s].getCO().isSandImmune()){
-                        u[i].maxRange--;
-                        u[i].enemyCOstore[statIndex][1] = 1;
+                        u[i].setMaxRange(u[i]
+								.getMaxRange() - 1);
+                        u[i].getEnemyCOstore()[statIndex][1] = 1;
                     }
                 } else
                     return;
@@ -131,7 +132,7 @@ public class Tempest extends CO{
         // Refuel
         Unit[] u = army.getUnits();
         for(int i = 0; i < u.length; i++){
-            if(u[i].getClass() != null) u[i].gas = u[i].maxGas;
+            if(u[i].getClass() != null) u[i].setGas(u[i].getMaxGas());
             else return;
         }
         
@@ -144,8 +145,9 @@ public class Tempest extends CO{
                 for(int s = 0; s < e.length; s++){
                     if(e[s].getClass() != null){
                         if((e[s].getMType() != e[s].MOVE_AIR) || army.getBattle().getMap().find(e[s].getLocation()).getTerrain().getName() == "Airport"){
-                            e[s].enemyCOstore[statIndex][0] = army.getBattle().getMap().find(e[s].getLocation()).getTerrain().def;
-                            e[s].move -= e[s].enemyCOstore[statIndex][0];
+                            e[s].getEnemyCOstore()[statIndex][0] = army.getBattle().getMap().find(e[s].getLocation()).getTerrain().def;
+                            e[s].setMove(e[s].getMove()
+									- e[s].getEnemyCOstore()[statIndex][0]);
                         }
                     } else
                         return;
@@ -161,8 +163,9 @@ public class Tempest extends CO{
             Unit[] u = army.getUnits();
             for(int i = 0; i < u.length; i++){
                 if(u[i].getClass() != null){
-                    if(u[i].getMinRange() > 1 && u[i].enemyCOstore[statIndex][1]==1){
-                        u[i].maxRange++;
+                    if(u[i].getMinRange() > 1 && u[i].getEnemyCOstore()[statIndex][1]==1){
+                        u[i].setMaxRange(u[i]
+								.getMaxRange() + 1);
                     }
                 } else
                     return;
@@ -183,11 +186,13 @@ public class Tempest extends CO{
                 for(int s = 0; s < u.length; s++){
                     if(u[s].getClass() != null){
                         if(isFront){
-                            u[s].move += u[s].enemyCOstore[statIndex][0];
-                            u[s].enemyCOstore[statIndex][0] = 0;
+                            u[s].setMove(u[s].getMove()
+									+ u[s].getEnemyCOstore()[statIndex][0]);
+                            u[s].getEnemyCOstore()[statIndex][0] = 0;
                         } else{
-                            u[s].move += u[s].altEnemyCOstore[statIndex][0];
-                            u[s].altEnemyCOstore[statIndex][0] = 0;
+                            u[s].setMove(u[s].getMove()
+									+ u[s].getAltEnemyCOstore()[statIndex][0]);
+                            u[s].getAltEnemyCOstore()[statIndex][0] = 0;
                         }
                     } else
                         return;

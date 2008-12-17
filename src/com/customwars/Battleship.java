@@ -16,21 +16,21 @@ public class Battleship extends Unit{
         //Statistics
         name = "Battleship";
         unitType = 13;
-        moveType = MOVE_SEA;
-        move = 5;
+        setMoveType(MOVE_SEA);
+        setMove(5);
         price = 25000;
-        maxGas = 99;
-        maxAmmo = 9;
-        vision = 2;
+        setMaxGas(99);
+        setMaxAmmo(9);
+        setVision(2);
         minRange = 3;
-        maxRange = 7;
-        dailyGas = 1;
+        setMaxRange(7);
+        setDailyGas(1);
        
         starValue = 2.2;
        
         //Fills the Unit's gas and ammo
-        gas = maxGas;
-        ammo = maxAmmo;
+        setGas(getMaxGas());
+        setAmmo(getMaxAmmo());
         
         //make CO adjustments
         arm.getCO().setChange(this);

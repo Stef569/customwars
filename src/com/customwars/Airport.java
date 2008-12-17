@@ -43,17 +43,17 @@ public class Airport extends Property{
         def  = 3;
         index = 12;
         income = 1000;
-        totalcp = 20;
+        setTotalcp(20);
         isCapturable = true;
-        repairLand = false;
-        repairSea = false;
-        repairAir = true;
-        createLand = false;
-        createSea = false;
-        createAir = true;
+        setRepairLand(false);
+        setRepairSea(false);
+        setRepairAir(true);
+        setCreateLand(false);
+        setCreateSea(false);
+        setCreateAir(true);
         urban = true;
        
         //Set current Capture Points
-        cp = totalcp;
+        setCp(getTotalcp());
     }
 }

@@ -16,14 +16,14 @@ public class APC extends Transport{
         //Statistics
         name = "APC";
         unitType = 9;
-        moveType = MOVE_TREAD;
-        move = 6;
+        setMoveType(MOVE_TREAD);
+        setMove(6);
         price = 5000;
-        maxGas = 70;
-        maxAmmo = -1;
-        vision = 1;
+        setMaxGas(70);
+        setMaxAmmo(-1);
+        setVision(1);
         minRange = 0;
-        maxRange = 0;
+        setMaxRange(0);
         
         starValue = 0.8;
         
@@ -33,8 +33,8 @@ public class APC extends Transport{
         transportTable[1]=true;
         
         //Fills the Unit's gas and ammo
-        gas = maxGas;
-        ammo = maxAmmo;
+        setGas(getMaxGas());
+        setAmmo(getMaxAmmo());
         
         //make CO adjustments
         arm.getCO().setChange(this);
@@ -47,19 +47,19 @@ public class APC extends Transport{
         Tile south = map.find(new Location(x,y+1));
         Tile west = map.find(new Location(x-1,y));
         
-        if(north != null && north.hasUnit() && north.getUnit().getArmy() == this.getArmy() && !north.getUnit().noResupplied){
+        if(north != null && north.hasUnit() && north.getUnit().getArmy() == this.getArmy() && !north.getUnit().isNoResupplied()){
             north.getUnit().resupply();
             doAfterAction(north);
         }
-        if(east != null && east.hasUnit() && east.getUnit().getArmy() == this.getArmy() && !east.getUnit().noResupplied){
+        if(east != null && east.hasUnit() && east.getUnit().getArmy() == this.getArmy() && !east.getUnit().isNoResupplied()){
             east.getUnit().resupply();
             doAfterAction(east);
         }
-        if(south != null && south.hasUnit() && south.getUnit().getArmy() == this.getArmy() && !south.getUnit().noResupplied){
+        if(south != null && south.hasUnit() && south.getUnit().getArmy() == this.getArmy() && !south.getUnit().isNoResupplied()){
             south.getUnit().resupply();
             doAfterAction(south);
         }
-        if(west != null && west.hasUnit() && west.getUnit().getArmy() == this.getArmy() && !west.getUnit().noResupplied){
+        if(west != null && west.hasUnit() && west.getUnit().getArmy() == this.getArmy() && !west.getUnit().isNoResupplied()){
             west.getUnit().resupply();
             doAfterAction(west);
         }

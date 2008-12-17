@@ -16,20 +16,20 @@ public class Mech extends Unit{
         //Statistics
         name = "Mech";
         unitType = 1;
-        moveType = MOVE_MECH;
-        move = 2;
+        setMoveType(MOVE_MECH);
+        setMove(2);
         price = 3000;
-        maxGas = 70;
-        maxAmmo = 3;
-        vision = 2;
+        setMaxGas(70);
+        setMaxAmmo(3);
+        setVision(2);
         minRange = 1;
-        maxRange = 1;
+        setMaxRange(1);
         
         starValue = 0.4;
         
         //Fills the Unit's gas and ammo
-        gas = maxGas;
-        ammo = maxAmmo;
+        setGas(getMaxGas());
+        setAmmo(getMaxAmmo());
         
         //make CO adjustments
         arm.getCO().setChange(this);

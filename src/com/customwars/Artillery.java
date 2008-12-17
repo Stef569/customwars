@@ -16,20 +16,20 @@ public class Artillery extends Unit{
         //Statistics
         name = "Artillery";
         unitType = 7;
-        moveType = MOVE_TREAD;
-        move = 5;
+        setMoveType(MOVE_TREAD);
+        setMove(5);
         price = 6000;
-        maxGas = 50;
-        maxAmmo = 9;
-        vision = 1;
+        setMaxGas(50);
+        setMaxAmmo(9);
+        setVision(1);
         minRange = 2;
-        maxRange = 3;
+        setMaxRange(3);
         
         starValue = 1.0;
         
         //Fills the Unit's gas and ammo
-        gas = maxGas;
-        ammo = maxAmmo;
+        setGas(getMaxGas());
+        setAmmo(getMaxAmmo());
         
         //make CO adjustments
         arm.getCO().setChange(this);

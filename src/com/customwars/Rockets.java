@@ -16,20 +16,20 @@ public class Rockets extends Unit{
         //Statistics
         name = "Rockets";
         unitType = 8;
-        moveType = MOVE_TIRE;
-        move = 5;
+        setMoveType(MOVE_TIRE);
+        setMove(5);
         price = 14000;
-        maxGas = 50;
-        maxAmmo = 6;
-        vision = 2;
+        setMaxGas(50);
+        setMaxAmmo(6);
+        setVision(2);
         minRange = 3;
-        maxRange = 5;
+        setMaxRange(5);
        
         starValue = 1.4;
        
         //Fills the Unit's gas and ammo
-        gas = maxGas;
-        ammo = maxAmmo;
+        setGas(getMaxGas());
+        setAmmo(getMaxAmmo());
         
         //make CO adjustments
         arm.getCO().setChange(this);

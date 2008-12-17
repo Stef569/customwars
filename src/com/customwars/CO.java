@@ -50,14 +50,14 @@ public abstract class CO implements Serializable{
     protected int id;
     protected String COPName;
     protected String SCOPName;
-    protected int positiveLuck = 10;
-    protected int negativeLuck = 0;
+    private int positiveLuck = 10;
+    private int negativeLuck = 0;
     protected int minPosLuck = -1;
     protected int maxPosLuck = -1;
-    protected int minNegLuck = -1;
+    private int minNegLuck = -1;
     protected int maxNegLuck = -1; 
     protected boolean hiddenHP = false;   //Are the units HP hidden?
-    protected double stars = 0.0;         //The CO's current star meter level
+    private double stars = 0.0;         //The CO's current star meter level
     protected double COPStars;            //The number of stars required to use a CO Power
     protected double maxStars;            //The number of stars required to use a Super CO Power, and the maximum
     protected double chargeMult = 1.0;    //The charge multiplier, this starts at 1 and goes down as the CO uses their powers
@@ -71,29 +71,29 @@ public abstract class CO implements Serializable{
     protected int costMultiplier = 100;   //the CO's cost multiplier (usually 100%)
     protected int counterAttack = 100;    //the CO's boost to Counter Attacks'
     protected int captureMultiplier = 100;     //the CO's boost to capturing
-    protected int friendlySalvage = 0;            //What percent of the destroyed allied units is salvaged for funds.
-    protected int enemySalvage = 0;          // What percentt of the destroyed enemy units is salvaged for funds.
-    protected double terrainDefenseMultiplier = 1; //the terrain defense star multiplier for this COs units
+    private int friendlySalvage = 0;            //What percent of the destroyed allied units is salvaged for funds.
+    private int enemySalvage = 0;          // What percentt of the destroyed enemy units is salvaged for funds.
+    private double terrainDefenseMultiplier = 1; //the terrain defense star multiplier for this COs units
     protected boolean cleanStore = true ; //cleans COstore everyday - COstore is used for conditional boosts and so on. (ie: if I was built last turn, COStore = 1; if COStore = 1, reactivate this unit
     protected boolean cleanEnemyStoreBegin = true; //cleans enemyCOstore at the beginning of every day - used to store persistent enemy problems.
     protected boolean cleanEnemyStoreEnd = false; //cleans enemyCOstore at the end of every day - used to store persistent enemy problems.
     protected int statIndex; // MUST be used if enemyCOStore is used. Set this to army.getID() in the constructor.
-    protected int enemyTerrainPenalty = 0;  //the enemy loses this many terrain defense stars
+    private int enemyTerrainPenalty = 0;  //the enemy loses this many terrain defense stars
     protected boolean firstStrike = false;  //when true, the CO always attacks first
     protected boolean perfectMovement = false;  //when true, all passable terrain costs 1 mp
     protected boolean snowImmunity = false;     //is this CO immune to snow?
     protected boolean rainImmunity = false;     //is this CO immune to rain (the vision -1 part)?
     protected boolean sandImmunity = false;     //is this CO immune to sandstorms?
     protected boolean piercingVision = false;   //is piercing vision on? (able to see into woods and reefs in FoW)
-    protected double fundingMultiplier = 100;      //This is the percent change to day to day funding this CO has (ie: 90 = 90% income, 110 = 110% income
+    private double fundingMultiplier = 100;      //This is the percent change to day to day funding this CO has (ie: 90 = 90% income, 110 = 110% income
     protected double fundingBase = 100;            //This is 'base' funding, so you can return an enemy to their normal funding.
     protected boolean alwaysDelete = false;     //can this CO always delete their units?
     protected boolean selecting = false;        //Turn selecting on to cause BattleScreen to start applying selectAction to the A key presses until selecting is turned off.    protected boolean altCostume = false;       //Is the CO wearing his or her alt costume?
     protected boolean powerDisabled = false;
     protected boolean superDisabled = false;
     protected boolean altCostume = false;
-    protected boolean COPoff = false;            //used to determine if the CO can use the COP
-    protected boolean SCOPoff = false;           //used to determine if the CO can use the SCOP
+    private boolean COPoff = false;            //used to determine if the CO can use the COP
+    private boolean SCOPoff = false;           //used to determine if the CO can use the SCOP
     protected boolean hiddenPower = false;       //used to determine if the CO's D2D information is hidden or not
     protected boolean hiddenUnitInfo = false;    //used to determine if the CO's unit's information can be checked
     protected boolean hiddenUnitType = false;    //used to determine if the CO's unit's graphic is displayed correctly
@@ -104,9 +104,9 @@ public abstract class CO implements Serializable{
     public abstract int getAtk(Unit attacker, Unit defender);
     public String special1; //used to determine of the CO has a special action. woo~
     public String special2; //used to name the CO's special action
-    int bonusDamage = 0; //bonus, non-firepower effected damage Shown on the damage display.
-    int damagePenalty = 0; //penalty to firepower - shown on damage display
-    int incomePenalty = 0; //funds subtracted from income per turn.
+    private int bonusDamage = 0; //bonus, non-firepower effected damage Shown on the damage display.
+    private int damagePenalty = 0; //penalty to firepower - shown on damage display
+    private int incomePenalty = 0; //funds subtracted from income per turn.
     protected boolean seeFullHP = false; //Allows the CO to see full HP reading
     protected boolean hideAllHP = false; //Hides allied HP!
     protected boolean mayhem = false; //If this is on, setting this army's units to "active" alows mind control
@@ -141,19 +141,19 @@ public abstract class CO implements Serializable{
     
     //activates the CO's CO Power, deals with the stars
     public void activateCOP(){
-        if(stars >= COPStars){
+        if(getStars() >= COPStars){
             //Random r = new Random();
             logger.info(name + ": " + COPower[army.getBattle().getRNG().nextInt(6)]);
             logger.info(COPName + "!");
             COPower();
-            stars -= COPStars;
+            setStars(getStars() - COPStars);
             powerUses++;
             if(powerUses < 10)
                 chargeMult = 5.0/(++denom);
             else
                 chargeMult = 5.0/10.0;
-            double temp = stars;
-            stars = 0;
+            double temp = getStars();
+            setStars(0);
             this.charge(temp);
             
             if(Options.isMusicOn()){
@@ -172,16 +172,16 @@ public abstract class CO implements Serializable{
     
     
     public int getPosLuck(){
-        return positiveLuck;
+        return getPositiveLuck();
     }
     
     public int getNegLuck(){
-        return negativeLuck;
+        return getNegativeLuck();
     }
     
     //MODIFIED STUFF
     public boolean canCOP() {
-        if(stars >= COPStars && !COPoff)
+        if(getStars() >= COPStars && !isCOPoff())
             return true;
         return false;
     }
@@ -196,19 +196,19 @@ public abstract class CO implements Serializable{
     
     //MODIFIED STUFF
     public boolean canSCOP() {
-        if(stars == maxStars && !SCOPoff)
+        if(getStars() == maxStars && !isSCOPoff())
             return true;
         return false;
     }
     
     //activates the CO's Super CO Power, deals with the stars
     public void activateSCOP(){
-        if(stars == maxStars){
+        if(getStars() == maxStars){
             //Random r = new Random();
             logger.info(name + ": " + COPower[army.getBattle().getRNG().nextInt(6)]);
             logger.info(SCOPName + "!");
             superCOPower();
-            stars = 0;
+            setStars(0);
             powerUses++;
             if(powerUses < 10)
                 chargeMult = 5.0/(++denom);
@@ -225,11 +225,11 @@ public abstract class CO implements Serializable{
     //used to charge a CO's star meter
     public void charge(double d){
         if(army.getBattle().getBattleOptions().isCOP()){
-            stars += (d * chargeMult);
-            if(stars < 0)
-                stars = 0;
-            if(stars > maxStars)
-                stars = maxStars;
+            setStars(getStars() + (d * chargeMult));
+            if(getStars() < 0)
+                setStars(0);
+            if(getStars() > maxStars)
+                setStars(maxStars);
         }
     }
     
@@ -350,15 +350,15 @@ public abstract class CO implements Serializable{
     }
     
     public void setFunding(float change) {
-        fundingMultiplier = change; //changes the funding multiplier
+        setFundingMultiplier(change); //changes the funding multiplier
     }
     
     public void restoreFunding() {
-        fundingMultiplier = fundingBase;
+        setFundingMultiplier(fundingBase);
     }
     
     public double getFunding() {
-        return fundingMultiplier;
+        return getFundingMultiplier();
     }
     
     public boolean canAlwaysDelete(){
@@ -460,4 +460,104 @@ public abstract class CO implements Serializable{
     public void useSpecial2(Unit owned, Location target){
         
     }
+
+	public void setBonusDamage(int bonusDamage) {
+		this.bonusDamage = bonusDamage;
+	}
+
+	public int getBonusDamage() {
+		return bonusDamage;
+	}
+
+	public void setPositiveLuck(int positiveLuck) {
+		this.positiveLuck = positiveLuck;
+	}
+
+	public int getPositiveLuck() {
+		return positiveLuck;
+	}
+
+	public void setNegativeLuck(int negativeLuck) {
+		this.negativeLuck = negativeLuck;
+	}
+
+	public int getNegativeLuck() {
+		return negativeLuck;
+	}
+
+	public void setSCOPoff(boolean sCOPoff) {
+		SCOPoff = sCOPoff;
+	}
+
+	public boolean isSCOPoff() {
+		return SCOPoff;
+	}
+
+	public void setCOPoff(boolean cOPoff) {
+		COPoff = cOPoff;
+	}
+
+	public boolean isCOPoff() {
+		return COPoff;
+	}
+
+	public void setDamagePenalty(int damagePenalty) {
+		this.damagePenalty = damagePenalty;
+	}
+
+	public int getDamagePenalty() {
+		return damagePenalty;
+	}
+
+	public void setEnemySalvage(int enemySalvage) {
+		this.enemySalvage = enemySalvage;
+	}
+
+	public int getEnemySalvage() {
+		return enemySalvage;
+	}
+
+	public void setFriendlySalvage(int friendlySalvage) {
+		this.friendlySalvage = friendlySalvage;
+	}
+
+	public int getFriendlySalvage() {
+		return friendlySalvage;
+	}
+
+	public void setEnemyTerrainPenalty(int enemyTerrainPenalty) {
+		this.enemyTerrainPenalty = enemyTerrainPenalty;
+	}
+
+	public void setTerrainDefenseMultiplier(double terrainDefenseMultiplier) {
+		this.terrainDefenseMultiplier = terrainDefenseMultiplier;
+	}
+
+	public void setFundingMultiplier(double fundingMultiplier) {
+		this.fundingMultiplier = fundingMultiplier;
+	}
+
+	public double getFundingMultiplier() {
+		return fundingMultiplier;
+	}
+
+	public void setIncomePenalty(int incomePenalty) {
+		this.incomePenalty = incomePenalty;
+	}
+
+	public int getIncomePenalty() {
+		return incomePenalty;
+	}
+
+	public void setMinNegLuck(int minNegLuck) {
+		this.minNegLuck = minNegLuck;
+	}
+
+	public int getMinNegLuck() {
+		return minNegLuck;
+	}
+
+	public void setStars(double stars) {
+		this.stars = stars;
+	}
 }

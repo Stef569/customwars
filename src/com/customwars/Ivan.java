@@ -67,13 +67,13 @@ public class Ivan extends CO{
     //Ivan has +1 range D2D
     public void setChange(Unit u){ 
         if(u.getMinRange() > 1)
-                u.maxRange++;
+                u.setMaxRange(u.getMaxRange() + 1);
     }
     
     //unchanges unit
     public void unChange(Unit u){
         if(u.getMinRange() > 1)
-                u.maxRange--;
+                u.setMaxRange(u.getMaxRange() - 1);
     }    
     
 //used to get the defense bonus for damage calculation
@@ -104,8 +104,9 @@ public class Ivan extends CO{
         for(int i = 0; i < u.length; i++){
             if(u[i].getClass() != null){
                 if(u[i].getMinRange() > 1){
-                    u[i].maxRange++;
-                    u[i].changed = true;
+                    u[i]
+							.setMaxRange(u[i].getMaxRange() + 1);
+                    u[i].setChanged(true);
                 }
             } else
                 return;
@@ -122,9 +123,10 @@ public class Ivan extends CO{
         SCOP = false;
         Unit[] u = army.getUnits();
         for(int i = 0; i < u.length; i++){
-            if(u[i].getClass() != null && u[i].changed){
-                u[i].maxRange --;
-                u[i].changed = false;} else
+            if(u[i].getClass() != null && u[i].isChanged()){
+                u[i]
+						.setMaxRange(u[i].getMaxRange() - 1);
+                u[i].setChanged(false);} else
                     return;
         }
     }
@@ -142,7 +144,7 @@ public class Ivan extends CO{
         int temp;
         if(attack) //if Ivan attacked
             if(attacker.getMinRange()>1) //if ranged unit
-                if((Math.abs(defender.getLocation().getRow() - attacker.getLocation().getRow()) + Math.abs(defender.getLocation().getCol() - attacker.getLocation().getCol())) == attacker.maxRange)
+                if((Math.abs(defender.getLocation().getRow() - attacker.getLocation().getRow()) + Math.abs(defender.getLocation().getCol() - attacker.getLocation().getCol())) == attacker.getMaxRange())
                 {
                         temp = (damage/2) * (defender.getPrice()/attacker.getPrice());
                         attacker.damage(temp, false);
@@ -154,10 +156,10 @@ public class Ivan extends CO{
         if(attack)
             if(attacker.getMinRange()>1)
             {
-                attacker.COstore[0] +=1;
-                if(attacker.COstore[0] > 1) //1 = fired once, etc.
+                attacker.getCOstore()[0] +=1;
+                if(attacker.getCOstore()[0] > 1) //1 = fired once, etc.
                 {attacker.damage(10,false);}
-                if(attacker.COstore[0]<5)
+                if(attacker.getCOstore()[0]<5)
                 {attacker.setActive(true);}
                 
             }

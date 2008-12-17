@@ -16,19 +16,19 @@ public class Cruiser extends Transport{
         //Statistics
         name = "Cruiser";
         unitType = 11;
-        moveType = MOVE_SEA;
-        move = 6;
+        setMoveType(MOVE_SEA);
+        setMove(6);
         if (army.getBattle().getBattleOptions().isBalance()==true){
             price = 15000;
         }
         if (army.getBattle().getBattleOptions().isBalance()==false){
         price = 18000;}
-        maxGas = 99;
-        maxAmmo = 9;
-        vision = 3;
+        setMaxGas(99);
+        setMaxAmmo(9);
+        setVision(3);
         minRange = 1;
-        maxRange = 1;
-        dailyGas = 1;
+        setMaxRange(1);
+        setDailyGas(1);
         
         starValue = 1.6;
         
@@ -38,8 +38,8 @@ public class Cruiser extends Transport{
         transportTable[15]=true;
        
         //Fills the Unit's gas and ammo
-        gas = maxGas;
-        ammo = maxAmmo;
+        setGas(getMaxGas());
+        setAmmo(getMaxAmmo());
         
         //make CO adjustments
         arm.getCO().setChange(this);

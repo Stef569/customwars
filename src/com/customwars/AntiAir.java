@@ -16,20 +16,20 @@ public class AntiAir extends Unit{
         //Statistics
         name = "Anti-Air";
         unitType = 5;
-        moveType = MOVE_TREAD;
-        move = 6;
+        setMoveType(MOVE_TREAD);
+        setMove(6);
         price = 8000;
-        maxGas = 60;
-        maxAmmo = 9;
-        vision = 2;
+        setMaxGas(60);
+        setMaxAmmo(9);
+        setVision(2);
         minRange = 1;
-        maxRange = 1;
+        setMaxRange(1);
        
         starValue = 1.0;
        
         //Fills the Unit's gas and ammo
-        gas = maxGas;
-        ammo = maxAmmo;
+        setGas(getMaxGas());
+        setAmmo(getMaxAmmo());
         
         //make CO adjustments
         arm.getCO().setChange(this);

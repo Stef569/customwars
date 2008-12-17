@@ -33,17 +33,17 @@ public class HQ extends Property{
         def  = 4;
         index = 9;
         income = 1000;
-        totalcp = 20;
+        setTotalcp(20);
         isCapturable = true;
-        repairLand = true;
-        repairSea = false;
-        repairAir = false;
-        createLand = false;
-        createSea = false;
-        createAir = false;
+        setRepairLand(true);
+        setRepairSea(false);
+        setRepairAir(false);
+        setCreateLand(false);
+        setCreateSea(false);
+        setCreateAir(false);
         urban = true;
         
         //Set current Capture Points
-        cp = totalcp;
+        setCp(getTotalcp());
     }
 }
