@@ -9,8 +9,12 @@ package com.customwars;
 
 import java.io.*;
 
-class MoveTraverse implements Serializable{
-    private boolean moveArray[][];  //holds the valid moves
+public class MoveTraverse implements Serializable{
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 6103920041227648156L;
+	private boolean moveArray[][];  //holds the valid moves
     private int mpLeftArray[][];   //holds the move costs
     
     //constructor
@@ -85,7 +89,7 @@ class MoveTraverse implements Serializable{
             	moveCost += u.getArmy().getTerrCost(x, y, u.getMType());
             	
                 //deal with perfect movement
-                if(u.getArmy().getCO().hasPerfectMovement() || u.perfectMovement)moveCost = 1;
+                if(u.getArmy().getCO().hasPerfectMovement() || u.isPerfectMovement())moveCost = 1;
                 mp -= moveCost;
                 gas-= moveCost;
             }

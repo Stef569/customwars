@@ -16,21 +16,21 @@ public class Spyplane extends Unit{
         //Statistics
         name = "Spyplane";
         unitType = 29;
-        moveType = MOVE_AIR;
-        move = 8;
+        setMoveType(MOVE_AIR);
+        setMove(8);
         price = 15000;
-        maxGas = 99;
-        maxAmmo = -1;
-        vision = 7;
+        setMaxGas(99);
+        setMaxAmmo(-1);
+        setVision(7);
         minRange = 0;
-        maxRange = 0;
-        dailyGas = 5;
+        setMaxRange(0);
+        setDailyGas(5);
        
         starValue = 2.2;
        
         //Fills the Unit's gas and ammo
-        gas = maxGas;
-        ammo = maxAmmo;
+        setGas(getMaxGas());
+        setAmmo(getMaxAmmo());
        
         //make CO adjustments
         arm.getCO().setChange(this);

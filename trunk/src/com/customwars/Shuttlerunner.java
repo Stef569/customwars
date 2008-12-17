@@ -16,14 +16,14 @@ public class Shuttlerunner extends Transport{
         //Statistics
         name = "Shuttlerunner";
         unitType = 27;
-        moveType = MOVE_PIPE;
-        move = 11;
+        setMoveType(MOVE_PIPE);
+        setMove(11);
         price = 10000;
-        maxGas = 99;
-        maxAmmo = -1;
-        vision = 3;
+        setMaxGas(99);
+        setMaxAmmo(-1);
+        setVision(3);
         minRange = 0;
-        maxRange = 0;
+        setMaxRange(0);
        
         starValue = 1.0;
        
@@ -35,8 +35,8 @@ public class Shuttlerunner extends Transport{
         transportTable[20]=true;
        
         //Fills the Unit's gas and ammo
-        gas = maxGas;
-        ammo = maxAmmo;
+        setGas(getMaxGas());
+        setAmmo(getMaxAmmo());
        
         //make CO adjustments
         arm.getCO().setChange(this);

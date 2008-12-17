@@ -16,23 +16,23 @@ public class Battlecraft extends Unit{
         //Statistics
         name = "Bcraft";
         unitType = 25;
-        moveType = MOVE_HOVER;
-        move = 5;
+        setMoveType(MOVE_HOVER);
+        setMove(5);
         if(m.find(this).getTerrain().getName().equals("Port"))
             price = 15000;
         else
             price = 10000;
-        maxGas = 70;
-        maxAmmo = 9;
-        vision = 3;
+        setMaxGas(70);
+        setMaxAmmo(9);
+        setVision(3);
         minRange = 1;
-        maxRange = 1;
+        setMaxRange(1);
        
         starValue = 1.2;
        
         //Fills the Unit's gas and ammo
-        gas = maxGas;
-        ammo = maxAmmo;
+        setGas(getMaxGas());
+        setAmmo(getMaxAmmo());
         
         //make CO adjustments
         arm.getCO().setChange(this);

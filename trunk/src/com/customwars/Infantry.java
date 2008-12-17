@@ -16,20 +16,20 @@ public class Infantry extends Unit{
         //Statistics
         name = "Infantry";
         unitType = 0;
-        moveType =  MOVE_INFANTRY;
-        move = 3;
+        setMoveType(MOVE_INFANTRY);
+        setMove(3);
         price = 1000;
-        maxGas = 99;
-        maxAmmo = -1;
-        vision = 2;
+        setMaxGas(99);
+        setMaxAmmo(-1);
+        setVision(2);
         minRange = 1;
-        maxRange = 1;
+        setMaxRange(1);
         
         starValue = 0.4;
         
         //Fills the Unit's gas and ammo
-        gas = maxGas;
-        ammo = maxAmmo;
+        setGas(getMaxGas());
+        setAmmo(getMaxAmmo());
         
         //make CO adjustments
         arm.getCO().setChange(this);

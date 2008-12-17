@@ -139,8 +139,8 @@ public class Walter extends CO {
                             Unit targUnit = pickUnits[j];
                             
                             if(targUnit != null) {
-                                if(targUnit.maxAmmo > 0) {
-                                    targUnit.ammo = 0;
+                                if(targUnit.getMaxAmmo() > 0) {
+                                    targUnit.setAmmo(0);
                                     
                                     int leftoverHP = targUnit.getHP() % 10;
                                     

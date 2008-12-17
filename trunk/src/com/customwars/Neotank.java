@@ -16,20 +16,20 @@ public class Neotank extends Unit{
         //Statistics
         name = "Neotank";
         unitType = 18;
-        moveType = MOVE_TREAD;
-        move = 6;
+        setMoveType(MOVE_TREAD);
+        setMove(6);
         price = 20000;
-        maxGas = 99;
-        maxAmmo = 9;
-        vision = 2;
+        setMaxGas(99);
+        setMaxAmmo(9);
+        setVision(2);
         minRange = 1;
-        maxRange = 1;
+        setMaxRange(1);
        
         starValue = 1.8;
        
         //Fills the Unit's gas and ammo
-        gas = maxGas;
-        ammo = maxAmmo;
+        setGas(getMaxGas());
+        setAmmo(getMaxAmmo());
         
         //make CO adjustments
         arm.getCO().setChange(this);

@@ -16,15 +16,15 @@ public class TCopter extends Transport{
         //Statistics
         name = "T Copter";
         unitType = 14;
-        moveType = MOVE_AIR;
-        move = 6;
+        setMoveType(MOVE_AIR);
+        setMove(6);
         price = 5000;
-        maxGas = 99;
-        maxAmmo = -1;
-        vision = 2;
+        setMaxGas(99);
+        setMaxAmmo(-1);
+        setVision(2);
         minRange = 0;
-        maxRange = 0;
-        dailyGas = 2;
+        setMaxRange(0);
+        setDailyGas(2);
         
         starValue = 1;
         
@@ -34,8 +34,8 @@ public class TCopter extends Transport{
         transportTable[1]=true;
         
         //Fills the Unit's gas and ammo
-        gas = maxGas;
-        ammo = maxAmmo;
+        setGas(getMaxGas());
+        setAmmo(getMaxAmmo());
         
         //make CO adjustments
         arm.getCO().setChange(this);

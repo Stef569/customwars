@@ -106,12 +106,12 @@ public class Melanthe extends CO{
     
 //used to get the defense bonus for damage calculation
     public int getDef(Unit attacker, Unit defender){
-        terrainDefenseMultiplier = 1;
+        setTerrainDefenseMultiplier(1);
         if(army.getBattle().getMap().find(defender).getTerrain().getName().equals("Wood") || army.getBattle().getMap().find(defender).getTerrain().getName().equals("Plain") || army.getBattle().getMap().find(defender).getTerrain().getName().equals("Mountain")||army.getBattle().getMap().find(defender).getTerrain().getName().equals("Reef"))
-            terrainDefenseMultiplier = ((army.getBattle().getMap().find(defender).getTerrain().getDef() + 1.0)/army.getBattle().getMap().find(defender).getTerrain().getDef());
+            setTerrainDefenseMultiplier(((army.getBattle().getMap().find(defender).getTerrain().getDef() + 1.0)/army.getBattle().getMap().find(defender).getTerrain().getDef()));
         //Increases terrain stars by one on Plains, Reefs, Woods, and Mountains.
         if(COP)
-            if(army.getBattle().getMap().find(defender).getTerrain().getName().equals("Wood") || army.getBattle().getMap().find(defender).getTerrain().getName().equals("Plain") || army.getBattle().getMap().find(defender).getTerrain().getName().equals("Mountain")||army.getBattle().getMap().find(defender).getTerrain().getName().equals("Reef"))                terrainDefenseMultiplier = ((army.getBattle().getMap().find(defender).getTerrain().getDef() + 2.0)/army.getBattle().getMap().find(defender).getTerrain().getDef());
+            if(army.getBattle().getMap().find(defender).getTerrain().getName().equals("Wood") || army.getBattle().getMap().find(defender).getTerrain().getName().equals("Plain") || army.getBattle().getMap().find(defender).getTerrain().getName().equals("Mountain")||army.getBattle().getMap().find(defender).getTerrain().getName().equals("Reef"))                setTerrainDefenseMultiplier(((army.getBattle().getMap().find(defender).getTerrain().getDef() + 2.0)/army.getBattle().getMap().find(defender).getTerrain().getDef()));
         //Increases terrain stars by two under effects of COP
         if(SCOP || COP)return 110;
         return 100;

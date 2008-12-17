@@ -16,21 +16,21 @@ public class Oozium extends Unit{
         //Statistics
         name = "Oozium";
         unitType = 31;
-        moveType = MOVE_OOZIUM;
-        move = 1;
+        setMoveType(MOVE_OOZIUM);
+        setMove(1);
         //price = 0;
         price = 10000;
-        maxGas = 99;
-        maxAmmo = -1;
-        vision = 1;
+        setMaxGas(99);
+        setMaxAmmo(-1);
+        setVision(1);
         minRange = 0;
-        maxRange = 0;
+        setMaxRange(0);
         
         starValue = 4.0;
         
         //Fills the Unit's gas and ammo
-        gas = maxGas;
-        ammo = maxAmmo;
+        setGas(getMaxGas());
+        setAmmo(getMaxAmmo());
         
         //make CO adjustments
         arm.getCO().setChange(this);

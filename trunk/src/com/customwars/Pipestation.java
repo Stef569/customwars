@@ -42,19 +42,19 @@ public class Pipestation extends Property{
         def  = 3;
         index = 17;
         income = 1000;
-        totalcp = 20;
+        setTotalcp(20);
         isCapturable = true;
-        repairLand = false;
-        repairSea = false;
-        repairAir = false;
-        createLand = false;
-        createSea = false;
-        createAir = false;
-        repairPipe = true;
-        createPipe = true;
+        setRepairLand(false);
+        setRepairSea(false);
+        setRepairAir(false);
+        setCreateLand(false);
+        setCreateSea(false);
+        setCreateAir(false);
+        setRepairPipe(true);
+        setCreatePipe(true);
         urban = true;
         
         //Set current Capture Points
-        cp = totalcp;
+        setCp(getTotalcp());
     }
 }

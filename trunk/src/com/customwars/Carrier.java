@@ -19,15 +19,15 @@ public class Carrier extends Transport{
         //Statistics
         name = "Carrier";
         unitType = 22;
-        moveType = MOVE_SEA;
-        move = 5;
+        setMoveType(MOVE_SEA);
+        setMove(5);
         price = 25000;
-        maxGas = 99;
-        maxAmmo = 9;
-        vision = 4;
+        setMaxGas(99);
+        setMaxAmmo(9);
+        setVision(4);
         minRange = 3;
-        maxRange = 8;
-        dailyGas = 1;
+        setMaxRange(8);
+        setDailyGas(1);
        
         starValue = 2.2;
         
@@ -43,8 +43,8 @@ public class Carrier extends Transport{
         transportTable[29]=true;
        
         //Fills the Unit's gas and ammo
-        gas = maxGas;
-        ammo = maxAmmo;
+        setGas(getMaxGas());
+        setAmmo(getMaxAmmo());
         
         //make CO adjustments
         arm.getCO().setChange(this);
@@ -53,7 +53,7 @@ public class Carrier extends Transport{
     public boolean checkUnloadRange(Location l, int unloadslot){
         Map m = getMap();
         if(m.onMap(l)){
-            int r = Math.abs(l.getRow() - loc.getRow()) + Math.abs(l.getCol() - loc.getCol());
+            int r = Math.abs(l.getRow() - getLoc().getRow()) + Math.abs(l.getCol() - getLoc().getCol());
             if(r > 0 && r <= 1){
                 Tile t = m.find(new Location(l.getCol(),l.getRow()));
                 if(t!=null){

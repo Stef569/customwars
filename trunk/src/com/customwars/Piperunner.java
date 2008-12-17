@@ -16,20 +16,20 @@ public class Piperunner extends Unit{
         //Statistics
         name = "Piperunner";
         unitType = 20;
-        moveType = MOVE_PIPE;
-        move = 9;
+        setMoveType(MOVE_PIPE);
+        setMove(9);
         price = 18000;
-        maxGas = 99;
-        maxAmmo = 9;
-        vision = 4;
+        setMaxGas(99);
+        setMaxAmmo(9);
+        setVision(4);
         minRange = 2;
-        maxRange = 5;
+        setMaxRange(5);
        
         starValue = 2.0;
        
         //Fills the Unit's gas and ammo
-        gas = maxGas;
-        ammo = maxAmmo;
+        setGas(getMaxGas());
+        setAmmo(getMaxAmmo());
         
         //make CO adjustments
         arm.getCO().setChange(this);

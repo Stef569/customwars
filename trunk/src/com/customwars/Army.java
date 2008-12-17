@@ -307,11 +307,11 @@ public class Army implements Serializable{
         Unit[] u = this.getUnits();
         for(int i = 0; i < this.getNumberOfUnits(); i++)
         {
-            for(int s = 0; s< u[i].altCOstore.length; s++)
+            for(int s = 0; s< u[i].getAltCOstore().length; s++)
             {
-            storage[s] = u[i].altCOstore[s];
-            u[i].altCOstore[s] = u[i].COstore[s];
-            u[i].COstore[s] = storage[s];
+            storage[s] = u[i].getAltCOstore()[s];
+            u[i].getAltCOstore()[s] = u[i].getCOstore()[s];
+            u[i].getCOstore()[s] = storage[s];
             }
         }
         int[][] storage2;
@@ -327,9 +327,9 @@ public class Army implements Serializable{
                 {
                     for(int s = 0; s < 10; s++)
                     {
-                        storage2[t] = u[t].altEnemyCOstore[this.co.statIndex];
-                        u[t].altEnemyCOstore[this.co.statIndex] = u[t].enemyCOstore[this.co.statIndex];
-                        u[t].enemyCOstore[this.co.statIndex] = storage2[t];
+                        storage2[t] = u[t].getAltEnemyCOstore()[this.co.statIndex];
+                        u[t].getAltEnemyCOstore()[this.co.statIndex] = u[t].getEnemyCOstore()[this.co.statIndex];
+                        u[t].getEnemyCOstore()[this.co.statIndex] = storage2[t];
                     }
                 }
             }

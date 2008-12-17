@@ -149,7 +149,7 @@ public class Animation{
         this.delay = delay;
 
         //This block checks the type of the unit, and then fills in the details based on that.
-        if(u.moveType == 0 ||u.moveType ==1||u.moveType ==2||u.moveType ==3||u.moveType ==7||u.moveType ==8) {
+        if(u.getMoveType() == 0 ||u.getMoveType() ==1||u.getMoveType() ==2||u.getMoveType() ==3||u.getMoveType() ==7||u.getMoveType() ==8) {
             xoffset = 8;
             yoffset = 16;
             setSpriteSheet(32,32,10,false);
@@ -158,7 +158,7 @@ public class Animation{
             duration = MiscGraphics.getExplodeDelay();
             String soundLocation  = ResourceLoader.properties.getProperty("soundLocation");
             SFX.playClip(soundLocation + "/carsplod.wav");
-        } else if(u.moveType == 4) {
+        } else if(u.getMoveType() == 4) {
             xoffset = 8;
             yoffset = 8;
             setSpriteSheet(32,32,10,false);
@@ -167,7 +167,7 @@ public class Animation{
             duration = MiscGraphics.getExplodeDelay();
             String soundLocation  = ResourceLoader.properties.getProperty("soundLocation");
             SFX.playClip(soundLocation + "/airsplod.wav");
-        } else if(u.moveType == 5 ||u.moveType ==6||(u.moveType == 9 && (b.getMap().find(u).getTerrain().getName().equals("Reef") || b.getMap().find(u).getTerrain().getName().equals("Sea")))) {
+        } else if(u.getMoveType() == 5 ||u.getMoveType() ==6||(u.getMoveType() == 9 && (b.getMap().find(u).getTerrain().getName().equals("Reef") || b.getMap().find(u).getTerrain().getName().equals("Sea")))) {
             xoffset = 8;
             yoffset = 16;
             setSpriteSheet(32,8,32,false);
@@ -176,7 +176,7 @@ public class Animation{
             duration = MiscGraphics.getExplodeDelay();
             String soundLocation  = ResourceLoader.properties.getProperty("soundLocation");
             SFX.playClip(soundLocation + "/seasplod.wav");
-        } else if(u.moveType == 9) {
+        } else if(u.getMoveType() == 9) {
             xoffset = 8;
             yoffset = 16;
             //MiscGraphics.getLandExplode().flush();

@@ -138,13 +138,13 @@ public class BattleAnimation extends Animation{
         }
         
         //Draws the terrain stars for the attacker
-        if(attacker.moveType != attacker.MOVE_AIR)
-            for(int i = 0; i< (int)(attacker.getArmy().getCO().terrainDefenseMultiplier*attacker.getArmy().getBattle().getMap().find(attacker).getTerrain().getDef()); i++) {
+        if(attacker.getMoveType() != attacker.MOVE_AIR)
+            for(int i = 0; i< (int)(attacker.getArmy().getCO().getTerrainDefenseMultiplier()*attacker.getArmy().getBattle().getMap().find(attacker).getTerrain().getDef()); i++) {
             g.drawImage(MiscGraphics.getSmallStar(5),115+i*7,90,bs);
             }
         //Draws the terrain stars for the defender
-        if(defender.moveType != attacker.MOVE_AIR)
-            for(int i = 0; i< (int)(defender.getArmy().getCO().terrainDefenseMultiplier*defender.getArmy().getBattle().getMap().find(defender).getTerrain().getDef()); i++) {
+        if(defender.getMoveType() != attacker.MOVE_AIR)
+            for(int i = 0; i< (int)(defender.getArmy().getCO().getTerrainDefenseMultiplier()*defender.getArmy().getBattle().getMap().find(defender).getTerrain().getDef()); i++) {
             g.drawImage(MiscGraphics.getSmallStar(5),115+127+4+i*7,90,bs);
             }
         

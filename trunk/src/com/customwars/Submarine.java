@@ -18,24 +18,24 @@ public class Submarine extends Unit{
         //Statistics
         name = "Submarine";
         unitType = 12;
-        moveType = MOVE_SEA;
-        move = 5;
+        setMoveType(MOVE_SEA);
+        setMove(5);
         if (army.getBattle().getBattleOptions().isBalance()==true){
             price = 15000;
         }
         if (army.getBattle().getBattleOptions().isBalance()==false){
         price = 20000;}
-        maxGas = 60;
-        maxAmmo = 6;
-        vision = 5;
+        setMaxGas(60);
+        setMaxAmmo(6);
+        setVision(5);
         minRange = 1;
-        maxRange = 1;
+        setMaxRange(1);
        
         starValue = 1.8;
        
         //Fills the Unit's gas and ammo
-        gas = maxGas;
-        ammo = maxAmmo;
+        setGas(getMaxGas());
+        setAmmo(getMaxAmmo());
         
         //make CO adjustments
         arm.getCO().setChange(this);
@@ -43,13 +43,13 @@ public class Submarine extends Unit{
     
     public void dive(){
         dived = true;
-        dailyGas = 5;
+        setDailyGas(5);
         hidden = true;
     }
     
     public void rise(){
         dived = false;
-        dailyGas = 1;
+        setDailyGas(1);
         hidden = false;
     }
     

@@ -18,21 +18,21 @@ public class Stealth extends Unit{
         //Statistics
         name = "Stealth";
         unitType = 23;
-        moveType = MOVE_AIR;
-        move = 6;
+        setMoveType(MOVE_AIR);
+        setMove(6);
         price = 20000;
-        maxGas = 60;
-        maxAmmo = 6;
-        vision = 4;
+        setMaxGas(60);
+        setMaxAmmo(6);
+        setVision(4);
         minRange = 1;
-        maxRange = 1;
-        dailyGas = 5;
+        setMaxRange(1);
+        setDailyGas(5);
         
         starValue = 2;
         
         //Fills the Unit's gas and ammo
-        gas = maxGas;
-        ammo = maxAmmo;
+        setGas(getMaxGas());
+        setAmmo(getMaxAmmo());
         
         //make CO adjustments
         arm.getCO().setChange(this);
@@ -40,13 +40,13 @@ public class Stealth extends Unit{
     
     public void hide(){
         dived = true;
-        dailyGas = 8;
+        setDailyGas(8);
         hidden = true;
     }
     
     public void appear(){
         dived = false;
-        dailyGas = 5;
+        setDailyGas(5);
         hidden = false;
     }
     

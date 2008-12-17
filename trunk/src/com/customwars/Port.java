@@ -43,17 +43,17 @@ public class Port extends Property{
         def  = 3;
         index = 13;
         income = 1000;
-        totalcp = 20;
+        setTotalcp(20);
         isCapturable = true;
-        repairLand = false;
-        repairSea = true;
-        repairAir = false;
-        createLand = false;
-        createSea = true;
-        createAir = false;
+        setRepairLand(false);
+        setRepairSea(true);
+        setRepairAir(false);
+        setCreateLand(false);
+        setCreateSea(true);
+        setCreateAir(false);
         urban = true;
        
         //Set current Capture Points
-        cp = totalcp;
+        setCp(getTotalcp());
     }
 }

@@ -16,21 +16,21 @@ public class Bomber extends Unit{
         //Statistics
         name = "Bomber";
         unitType = 17;
-        moveType = MOVE_AIR;
-        move = 7;
+        setMoveType(MOVE_AIR);
+        setMove(7);
         price = 20000;
-        maxGas = 99;
-        maxAmmo = 9;
-        vision = 2;
+        setMaxGas(99);
+        setMaxAmmo(9);
+        setVision(2);
         minRange = 1;
-        maxRange = 1;
-        dailyGas = 5;
+        setMaxRange(1);
+        setDailyGas(5);
        
         starValue = 1.8;
        
         //Fills the Unit's gas and ammo
-        gas = maxGas;
-        ammo = maxAmmo;
+        setGas(getMaxGas());
+        setAmmo(getMaxAmmo());
         
         //make CO adjustments
         arm.getCO().setChange(this);

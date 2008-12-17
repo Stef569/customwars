@@ -111,7 +111,7 @@ public class Path implements Serializable{
             	 moveCost += u.getArmy().getTerrCost(x, y, u.getMType());
             	 
                 //deal with perfect movement
-                if(u.getArmy().getCO().hasPerfectMovement()|| u.perfectMovement)moveCost = 1;
+                if(u.getArmy().getCO().hasPerfectMovement()|| u.isPerfectMovement())moveCost = 1;
                 mp -= moveCost;
                 gas-= moveCost;
             }else{
@@ -215,7 +215,7 @@ public class Path implements Serializable{
                 //if not impassible, subtract move cost from mp
                 if(moveCost != -1){
                     //deal with perfect movement
-                    if(u.getArmy().getCO().hasPerfectMovement()|| u.perfectMovement)moveCost = 1;
+                    if(u.getArmy().getCO().hasPerfectMovement()|| u.isPerfectMovement())moveCost = 1;
                     mp -= moveCost;
                     gas-= moveCost;
                 }else{
@@ -266,7 +266,7 @@ public class Path implements Serializable{
                 //if not impassible, add move cost to moveCost
                 if(moveCost != -1){
                     //deal with perfect movement
-                    if(u.getArmy().getCO().hasPerfectMovement()|| u.perfectMovement)moveCost = 1;
+                    if(u.getArmy().getCO().hasPerfectMovement()|| u.isPerfectMovement())moveCost = 1;
                     gasUsage += moveCost;
                 }else{
                     //impassible
