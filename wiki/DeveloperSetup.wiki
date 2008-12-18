@@ -54,7 +54,7 @@ In rapid SVN:
  _Anonomously_: http://customwars.googlecode.com/svn/trunk/ or
  _as commiter_: https://customwars.googlecode.com/svn/trunk/
  * Choose a destination Directory of: /home/(username)/Documents/repos/customwars/trunk
- *make sure there are no spaces in the Directory path on _any_ OS as this will result in compile and/or run errors.
+ * Make sure there are no spaces in the Directory path on _any_ OS as this will result in compile and/or run errors.
 
 Now click ok on the dialog. If you are checking out as a commiter you will now have to enter your login details. Your login details are your gmail account name and your special generated google code password available here. If you are checking out anonymously then just sit back.
 
