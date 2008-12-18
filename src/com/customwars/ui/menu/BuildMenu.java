@@ -23,7 +23,7 @@ import com.customwars.officer.CO;
 import com.customwars.ui.BattleScreen;
 import com.customwars.ui.MiscGraphics;
 import com.customwars.ui.SwitchGradient;
-import com.customwars.unit.UnitGraphics;
+import com.customwars.ui.UnitGraphics;
 
 public class BuildMenu extends ScrollMenu{
     private boolean[] canBuy = new boolean[BaseDMG.NUM_UNITS];

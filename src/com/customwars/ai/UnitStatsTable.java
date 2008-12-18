@@ -1,6 +1,7 @@
-package com.customwars.unit;
+package com.customwars.ai;
 
-import com.customwars.ai.StatTable;
+import com.customwars.unit.UnitStats;
+import com.customwars.unit.UnitType;
 
 public class UnitStatsTable extends StatTable
 {

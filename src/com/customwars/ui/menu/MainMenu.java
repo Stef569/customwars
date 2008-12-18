@@ -39,7 +39,7 @@ import com.customwars.ui.MainMenuGraphics;
 import com.customwars.ui.MapEditor;
 import com.customwars.ui.MiscGraphics;
 import com.customwars.ui.TerrainGraphics;
-import com.customwars.unit.UnitGraphics;
+import com.customwars.ui.UnitGraphics;
 
 
 import java.awt.color.*;

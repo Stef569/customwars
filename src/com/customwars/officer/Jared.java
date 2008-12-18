@@ -9,9 +9,9 @@ package com.customwars.officer;
 import java.util.ArrayList;
 
 import com.customwars.ai.BaseDMG;
+import com.customwars.ai.MoveID;
 import com.customwars.map.location.Location;
 import com.customwars.unit.Army;
-import com.customwars.unit.MoveID;
 import com.customwars.unit.Unit;
 public class Jared extends CO{
     boolean sustain;

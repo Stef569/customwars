@@ -20,7 +20,6 @@ import com.customwars.map.location.Property;
 import com.customwars.ui.BattleScreen;
 import com.customwars.unit.Action;
 import com.customwars.unit.Army;
-import com.customwars.unit.MoveTraverse;
 import com.customwars.unit.Unit;
 
 public abstract class AI extends Thread implements Serializable{

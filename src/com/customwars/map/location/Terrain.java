@@ -9,7 +9,7 @@ package com.customwars.map.location;
 
 import java.io.*;
 
-import com.customwars.unit.MoveType;
+import com.customwars.ai.MoveType;
 
 public abstract class Terrain implements Serializable
 {    

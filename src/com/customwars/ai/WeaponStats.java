@@ -1,4 +1,4 @@
-package com.customwars.unit;
+package com.customwars.ai;
 
 public final class WeaponStats 
 {

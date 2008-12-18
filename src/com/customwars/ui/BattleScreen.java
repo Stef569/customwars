@@ -25,6 +25,7 @@ import com.customwars.ai.BuildEvent;
 import com.customwars.ai.CWEvent;
 import com.customwars.ai.DeleteEvent;
 import com.customwars.ai.Mission;
+import com.customwars.ai.MoveTraverse;
 import com.customwars.ai.Options;
 import com.customwars.ai.SelectionEvent;
 import com.customwars.map.Map;
@@ -68,7 +69,6 @@ import com.customwars.unit.MDTank;
 import com.customwars.unit.Mech;
 import com.customwars.unit.MegaTank;
 import com.customwars.unit.Missiles;
-import com.customwars.unit.MoveTraverse;
 import com.customwars.unit.Neotank;
 import com.customwars.unit.Oozium;
 import com.customwars.unit.Piperunner;
@@ -83,7 +83,6 @@ import com.customwars.unit.Tank;
 import com.customwars.unit.Transport;
 import com.customwars.unit.UNIT_COMMANDS;
 import com.customwars.unit.Unit;
-import com.customwars.unit.UnitGraphics;
 import com.customwars.unit.Zeppelin;
 
 //public class BattleScreen extends JComponent implements ComponentListener

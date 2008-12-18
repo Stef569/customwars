@@ -7,11 +7,9 @@
  * and open the template in the editor.
  */
 
-package com.customwars.unit;
+package com.customwars.ai;
 import java.io.*;
 
-import com.customwars.ai.Battle;
-import com.customwars.ai.Trigger;
 import com.customwars.map.location.Location;
 
 public class UnitTrigger extends Trigger{
