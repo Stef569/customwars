@@ -1,20 +1,12 @@
 package com.customwars.officer;
 
-import com.customwars.CO;
-import com.customwars.Unit;
-/*
- *Robo_Andy.java
- *Author: -
- *Contributors: -
- *Creation: -
- *The Robo_Andy class is used to create an instance of the CO Robo_Andy
- */
+import com.customwars.unit.Unit;
 
 public class Robo_Andy extends CO {
     //constructor
     public Robo_Andy() {
         name = "Robo-Andy";
-        id = 60;
+        setId(60);
         
         String CObiox = "After the (moderate) success of the Robo-Andys, Lash was asked by the military to create artificial intelligence able to direct troops. However, being given orders by a computer freaked out the soldiers of OS somewhat, so she fixed the problem by putting it in the original Robo-Andy.";             //Holds the condensed CO bio'
         String titlex = "Not Andy";
@@ -45,10 +37,10 @@ public class Robo_Andy extends CO {
         int[] TagStarsx = {0,0}; //Number of stars for each special tag.
         int[] TagPercentx = {115,110}; //Percent for each special tag.
         
-        TagCOs = TagCOsx;
-        TagNames = TagNamesx;
-        TagStars = TagStarsx;
-        TagPercent = TagPercentx;
+        setTagCOs(TagCOsx);
+        setTagNames(TagNamesx);
+        setTagStars(TagStarsx);
+        setTagPercent(TagPercentx);
         
         String[] COPowerx =
         {"DADADA! ANNOYING PESTS DESERVE TO BE SWATTED!",
@@ -67,8 +59,8 @@ public class Robo_Andy extends CO {
         {"HOW MAY I SERVE YOU, INFERIOR BEING?",
          "ALT+TAB! ALT+TAB! ALT+TAB!"};
         
-        Swap = Swapx;
-        COPower = COPowerx;
+        setSwap(Swapx);
+        setCOPower(COPowerx);
         Victory = Victoryx;
         
         COPName = "Cooldown";

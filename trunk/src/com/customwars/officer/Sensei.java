@@ -1,22 +1,14 @@
 package com.customwars.officer;
 
-import com.customwars.CO;
-import com.customwars.Infantry;
 import com.customwars.Property;
-import com.customwars.Transport;
-import com.customwars.Unit;
-/*
- *Kanbei.java
- *Author: Adam Dziuk, Xaif, Obito
- *Contributors:
- *Creation:
- *The Kanbei class is used to create an instance of the Yellow Comet CO Kanbei (copyright Intelligent Systems).
- */
+import com.customwars.unit.Infantry;
+import com.customwars.unit.Transport;
+import com.customwars.unit.Unit;
 
 public class Sensei extends CO{
     
     public Sensei() {
-        id = 17;
+        setId(17);
         
         name = "Sensei";
         
@@ -49,10 +41,10 @@ public class Sensei extends CO{
         int[] TagStarsx = {1,2,0,0,0,0}; //Number of stars for each special tag.
         int[] TagPercentx = {110,115,105,105,90,105}; //Percent of each special tag.
         
-        TagCOs = TagCOsx;
-        TagNames = TagNamesx;
-        TagStars = TagStarsx;
-        TagPercent = TagPercentx;
+        setTagCOs(TagCOsx);
+        setTagNames(TagNamesx);
+        setTagStars(TagStarsx);
+        setTagPercent(TagPercentx);
         
         String[] COPowerx =
         {"Nothing good ever comes from war... when this is done, let's go home.",
@@ -75,8 +67,8 @@ public class Sensei extends CO{
         {"Hah ha! We were defeated fair and square. Score one for the young 'uns.",
          "Eh? The battle's over? When did that happen?"} ;
         
-        Swap = Swapx;       
-        COPower = COPowerx;
+        setSwap(Swapx);       
+        setCOPower(COPowerx);
         Victory = Victoryx;
         defeat = defeatx;
         

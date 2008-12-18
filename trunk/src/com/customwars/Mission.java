@@ -20,6 +20,7 @@ import javax.swing.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.customwars.officer.COList;
 import com.customwars.state.ResourceLoader;
 
 import java.util.zip.CRC32;

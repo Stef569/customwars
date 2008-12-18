@@ -1,21 +1,13 @@
 package com.customwars.officer;
 
-import com.customwars.CO;
-import com.customwars.Unit;
-/*
- *Max.java
- *Author: Adam Dziuk, Kosheh
- *Contributors:
- *Creation:
- *The Max class is used to create an instance of the Orange Star CO Max (copyright Intelligent Systems).
- */
+import com.customwars.unit.Unit;
 
 public class Max extends CO{
    
     //constructor
     public Max() {
         name = "Max";
-        id = 1;
+        setId(1);
 
         String CObiox = "A brave and loyal friend, not to mention a strong fighter, Max hates any kind of treachery, preferring a good, old-fashioned brawl. ";             //Holds the condensed CO bio'
         String titlex = "Loyal Combatant";
@@ -45,10 +37,10 @@ public class Max extends CO{
         int[] TagStarsx = {1 ,2, 0, 0 ,0};           //Number of stars for each special tag.
         int[] TagPercentx = {110, 110, 105, 105, 90};       //Percent for each special tag.
         
-        TagCOs = TagCOsx;
-        TagNames = TagNamesx;
-        TagStars = TagStarsx;
-        TagPercent = TagPercentx;
+        setTagCOs(TagCOsx);
+        setTagNames(TagNamesx);
+        setTagStars(TagStarsx);
+        setTagPercent(TagPercentx);
         
        
         String[] COPowerx =
@@ -74,8 +66,8 @@ public class Max extends CO{
         {"Ouch... I let my guard down.",
         "Oh, man! Not good! What are we supposed to do now!?"} ;
         
-        Swap = Swapx;       
-        COPower = COPowerx;
+        setSwap(Swapx);       
+        setCOPower(COPowerx);
         Victory = Victoryx;
         defeat = defeatx;
        

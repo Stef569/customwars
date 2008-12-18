@@ -1,14 +1,6 @@
 package com.customwars.officer;
 
-import com.customwars.CO;
-import com.customwars.Unit;
-/*
- *Author: Albert Lai
- *Contributors: Albert Lai works alone. He's a lone wolf! A lone wolf!
- *Creation: Janurary something, 2007
- *KHAAAAAAAAAAAAAAAAAAAAAAAAAAAAN-
- *-RAD!
- */
+import com.customwars.unit.Unit;
 
 public class Conrad extends CO{
     int luckPool, tempPool = 0;
@@ -19,7 +11,7 @@ public class Conrad extends CO{
     //constructor
     public Conrad() {
         name = "Conrad";
-        id = 41;
+        setId(41);
        
         String CObiox = "A damage analyst from Green Earth who favors precise tactics. Very intelligent, but inexperienced.";             //Holds the condensed CO bio'
         String titlex = "Target Locked";
@@ -63,9 +55,9 @@ public class Conrad extends CO{
         {"Hey, hold on! I still need to make some calculations!" ,
         "The real test starts now!"};
        
-        COPower = COPowerx;
+        setCOPower(COPowerx);
         Victory = Victoryx;
-        Swap = Swapx;
+        setSwap(Swapx);
        
         //No special tags
         String[] TagCOsx = {"Sonja", "Peter", "Hawke", "Falcone"}; //Names of COs with special tags
@@ -73,10 +65,10 @@ public class Conrad extends CO{
         int[] TagStarsx = {1,1,0,0}; //Number of stars for each special tag.
         int[] TagPercentx = {110,110,90,90}; //Percent for each special tag.
        
-        TagCOs = TagCOsx;
-        TagNames = TagNamesx;
-        TagStars = TagStarsx;
-        TagPercent = TagPercentx;
+        setTagCOs(TagCOsx);
+        setTagNames(TagNamesx);
+        setTagStars(TagStarsx);
+        setTagPercent(TagPercentx);
        
         COPName = "Calculated Strike";
         SCOPName = "Precision Assault";
@@ -86,7 +78,7 @@ public class Conrad extends CO{
         style = GREEN_EARTH;
        
         setPositiveLuck(0); //Conrad, my pal, you shall have all the damage figured into your damage.
-        counterAttack = 80; //less than 100 for counterAttack nullifies all counters, for some reason.
+        setCounterAttack(80); //less than 100 for counterAttack nullifies all counters, for some reason.
     }
    
 //used to get the attack bonus for damage calculation

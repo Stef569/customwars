@@ -1,23 +1,15 @@
 package com.customwars.officer;
 
-import com.customwars.CO;
-import com.customwars.Infantry;
-import com.customwars.Mech;
-import com.customwars.Unit;
-/*
- *Sami.java
- *Author: Urusan
- *Contributors: Kosheh
- *Creation: August 12, 2006, 8:52 AM
- *The Sami class is used to create an instance of the Orange Star CO Sami (copyright Intelligent Systems).
- */
+import com.customwars.unit.Infantry;
+import com.customwars.unit.Mech;
+import com.customwars.unit.Unit;
 
 public class Sami extends CO{
     
     //constructor
     public Sami() {
         name = "Sami";
-        id = 2;
+        setId(2);
 
         String CObiox = "A strong-willed Orange Star special forces captain who loves long hair. Despite having short hair. Whatever, IS.";             //Holds the condensed CO bio'
         String titlex = "Darling of the Soldiers";
@@ -62,8 +54,8 @@ public class Sami extends CO{
         {"Things would be easier if we had more infantry units...",
          "Next time's for real. I won't lose focus."} ;
         
-        Swap = Swapx;       
-        COPower = COPowerx;
+        setSwap(Swapx);       
+        setCOPower(COPowerx);
         Victory = Victoryx;
         defeat = defeatx;
         
@@ -72,10 +64,10 @@ public class Sami extends CO{
         int[] TagStarsx = {3,1,0,0,0,0}; //Number of stars for each special tag.
         int[] TagPercentx = {120,110,105,105,105,90}; //Percent for each special tag.
         
-        TagCOs = TagCOsx;
-        TagNames = TagNamesx;
-        TagStars = TagStarsx;
-        TagPercent = TagPercentx;
+        setTagCOs(TagCOsx);
+        setTagNames(TagNamesx);
+        setTagStars(TagStarsx);
+        setTagPercent(TagPercentx);
         
         COPName = "Double Time";
         SCOPName = "Victory March";

@@ -1,21 +1,13 @@
 package com.customwars.officer;
 
-import com.customwars.CO;
-import com.customwars.Unit;
-/*
- *Max.java
- *Author: Adam Dziuk
- *Contributors: Kosheh
- *Creation:
- *The Grit class is used to create an instance of the Blue Moon CO Grit (copyright Intelligent Systems).
- */
+import com.customwars.unit.Unit;
 
 public class Grit extends CO{
     
     //constructor
     public Grit() {
         name = "Grit";
-        id = 8;
+        setId(8);
 
         String CObiox = "A laid-back style masks his dependability. A peerless marksman. Works well with Olaf.";             //Holds the condensed CO bio'
         String titlex = "The Lone Ranger";
@@ -45,10 +37,10 @@ public class Grit extends CO{
         int[] TagStarsx = {1 ,2, 0, 0 };           //Number of stars for each special tag.
         int[] TagPercentx = {110, 110, 105, 90};       //Percent for each special tag.
         
-        TagCOs = TagCOsx;
-        TagNames = TagNamesx;
-        TagStars = TagStarsx;
-        TagPercent = TagPercentx;
+        setTagCOs(TagCOsx);
+        setTagNames(TagNamesx);
+        setTagStars(TagStarsx);
+        setTagPercent(TagPercentx);
         
         String[] COPowerx =
         {"Once you're in my sights, there's no gettin' away!",
@@ -71,8 +63,8 @@ public class Grit extends CO{
         {"Aw, possum spit!",
          "Just as I reckoned... This ain't gonna be no Sunday stroll."} ;
         
-        Swap = Swapx;       
-        COPower = COPowerx;
+        setSwap(Swapx);       
+        setCOPower(COPowerx);
         Victory = Victoryx;
         defeat = defeatx;
         

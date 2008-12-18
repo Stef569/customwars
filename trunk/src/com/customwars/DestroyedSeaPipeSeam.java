@@ -14,7 +14,7 @@ public class DestroyedSeaPipeSeam extends Terrain
     {
         //Statistics
         name = "Sea";
-        move = new double[] {-1,-1,-1,-1,1,1,1,-1,-1,1};
+        setMove(new double[] {-1,-1,-1,-1,1,1,1,-1,-1,1});
         basemove = new double[] {-1,-1,-1,-1,1,1,1,-1,-1,1};
         def  = 0;
         index = TerrType.DEST_SPS;

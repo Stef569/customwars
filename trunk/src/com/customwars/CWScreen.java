@@ -14,6 +14,9 @@ import java.awt.image.BufferedImage;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 
+import com.customwars.unit.Unit;
+import com.customwars.unit.UnitGraphics;
+
 public abstract class CWScreen extends JComponent implements ComponentListener
 {
 	protected int DEF_TILEW = 30;   //BattleScreen width was 16 tiles
@@ -152,9 +155,9 @@ public abstract class CWScreen extends JComponent implements ComponentListener
 			Unit thisUnit = map.find(new Location(x,y)).getUnit();
 
 			//Spacing issues I can't bother to fix at the moment. <_<
-		    if(thisUnit == selected && selected.direction != -1 && selected.getMType() >1)
+		    if(thisUnit == selected && selected.getDirection() != -1 && selected.getMType() >1)
 		    {
-		        switch(selected.direction) 
+		        switch(selected.getDirection()) 
 		        {
 		            case 0: //north
 		                
@@ -262,7 +265,7 @@ public abstract class CWScreen extends JComponent implements ComponentListener
     		Unit thisUnit = map.find(new Location(x,y)).getUnit();
     		
     		//Do not display the unit if it is moving
-    		if(!thisUnit.moving )
+    		if(!thisUnit.isMoving() )
     		{
 	    		//If the current analyzed unit is allied to the current player, it should be
 	    		//visible no matter what the conditions are like
@@ -284,7 +287,7 @@ public abstract class CWScreen extends JComponent implements ComponentListener
     				//Check if the current unit is 'dived' or if the unit has been 
 	    			//detected. If it is not dived, or it has been detected, it should 
 	    			//be displayed
-	    			else if(b.isMist() && (!thisUnit.isDived() || thisUnit.detected))
+	    			else if(b.isMist() && (!thisUnit.isDived() || thisUnit.isDetected()))
 	    			{
 	    					return true;
 	    			}

@@ -24,8 +24,8 @@ import com.customwars.MiscGraphics;
 import com.customwars.Mission;
 import com.customwars.Options;
 import com.customwars.TerrainGraphics;
-import com.customwars.UnitGraphics;
 import com.customwars.state.ResourceLoader;
+import com.customwars.unit.UnitGraphics;
 
 
 public class FobbahLauncher 

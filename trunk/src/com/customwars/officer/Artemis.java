@@ -9,10 +9,9 @@ package com.customwars.officer;
 
 import java.util.ArrayList;
 
-import com.customwars.Army;
-import com.customwars.CO;
 import com.customwars.Property;
-import com.customwars.Unit;
+import com.customwars.unit.Army;
+import com.customwars.unit.Unit;
 
 public class Artemis extends CO {
     private ArrayList<Property> blindProps;
@@ -20,7 +19,7 @@ public class Artemis extends CO {
     //constructor
     public Artemis() {
         name = "Artemis";
-        id = 57;
+        setId(57);
         
         String CObiox = "Orange Star's hotheaded advisor turned CO. Weakness for cute girls.";             //Holds the condensed CO bio'
         String titlex = "Rain Man";
@@ -63,19 +62,19 @@ public class Artemis extends CO {
         {"Let's see.. Ah! Time to test out this strategy!",
          "Zzzz... Huh? My turn already? Better get started!"};
         
-        COPower = COPowerx;
+        setCOPower(COPowerx);
         Victory = Victoryx;
-        Swap = Swapx;
+        setSwap(Swapx);
         
         String[] TagCOsx = {"Rachel","Mina","Nana","Nell","Olaf","Ember","Dreadnaught"}; //Names of COs with special tags
         String[] TagNamesx = {"Ray of Hope","Kinship's Bond","Fire and Water","Dual Strike","Dual Strike","Dual Strike","Dual Strike"}; //Names of the corresponding Tags
         int[] TagStarsx = {1,2,2,0,0,0,0}; //Number of stars for each special tag.
         int[] TagPercentx = {110,115,120,105,90,80,80}; //Percent for each special tag.
         
-        TagCOs = TagCOsx;
-        TagNames = TagNamesx;
-        TagStars = TagStarsx;
-        TagPercent = TagPercentx;
+        setTagCOs(TagCOsx);
+        setTagNames(TagNamesx);
+        setTagStars(TagStarsx);
+        setTagPercent(TagPercentx);
         
         COPName = "Flash Flood";
         SCOPName = "Torrential Rain";
@@ -158,7 +157,7 @@ public class Artemis extends CO {
                         if(units[s].getClass() != null) {
                             units[s].setVision(units[s]
 									.getVision() - 1);
-                            units[s].getEnemyCOstore()[statIndex][0] = 5;
+                            units[s].getEnemyCOstore()[getStatIndex()][0] = 5;
                         } else {
                             //return;
                         }
@@ -204,16 +203,16 @@ public class Artemis extends CO {
                         if(units[s].getClass() != null) {
                             //Check if Artemis is the 'main' CO
                             if(army.getCO() == this) {
-                                if(units[s].getEnemyCOstore()[statIndex][0] == 5) {
+                                if(units[s].getEnemyCOstore()[getStatIndex()][0] == 5) {
                                     units[s].setVision(units[s]
 											.getVision() + 1);
-                                    units[s].getEnemyCOstore()[statIndex][0] = 0;
+                                    units[s].getEnemyCOstore()[getStatIndex()][0] = 0;
                                 }
                             } else {
-                                if(units[s].getAltEnemyCOstore()[statIndex][0] == 5) {
+                                if(units[s].getAltEnemyCOstore()[getStatIndex()][0] == 5) {
                                     units[s].setVision(units[s]
 											.getVision() + 1);
-                                    units[s].getAltEnemyCOstore()[statIndex][0] = 0;
+                                    units[s].getAltEnemyCOstore()[getStatIndex()][0] = 0;
                                 }
                             }
                         } else {
@@ -256,7 +255,7 @@ public class Artemis extends CO {
             //Blind enemy units which are newly created
             if(index == 15) {
                 u.setVision(u.getVision() - 1);
-                u.getEnemyCOstore()[statIndex][0] = 5;
+                u.getEnemyCOstore()[getStatIndex()][0] = 5;
             }
             //Blind enemy properties which are newly captured
             else if(index == 2) {

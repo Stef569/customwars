@@ -1,21 +1,13 @@
 package com.customwars.officer;
 
-import com.customwars.CO;
-import com.customwars.Unit;
-/*/*
- *Rachel.java
- *Author:
- *Contributors: Kosheh, Kanon the Blue Ferret, Adam Dziuk
- *Creation:
- *The Rachel class is used to create an instance of the Orange Star CO Rachel (copyright Intelligent Systems).
- */
+import com.customwars.unit.Unit;
 
 public class Rachel extends CO{
    
     //constructor
     public Rachel() {
         name = "Rachel";
-        id = 6;
+        setId(6);
 
         String CObiox = "Brings a breath of fresh air to her troops. Strives to follow in the footsteps of her older sister, Nell. Led the Allied Nations during the Omega war.";             //Holds the condensed CO bio'
         String titlex = "Rocket Girl";
@@ -45,10 +37,10 @@ public class Rachel extends CO{
         int[] TagStarsx = {3,2,1,2,0,0,0}; //Number of stars for each special tag.
         int[] TagPercentx = {130,120,105,115,105,65,90}; //Percent for each special tag.
 
-        TagCOs = TagCOsx;
-        TagNames = TagNamesx;
-        TagStars = TagStarsx;
-        TagPercent = TagPercentx;    
+        setTagCOs(TagCOsx);
+        setTagNames(TagNamesx);
+        setTagStars(TagStarsx);
+        setTagPercent(TagPercentx);    
        
         String[] COPowerx =
         {"I will protect this land to the end!",
@@ -71,8 +63,8 @@ public class Rachel extends CO{
         {"You beat me! Hmmm... Not bad!",
          "You've got to be kidding me!"} ;
         
-        Swap = Swapx;       
-        COPower = COPowerx;
+        setSwap(Swapx);       
+        setCOPower(COPowerx);
         Victory = Victoryx;
         defeat = defeatx;
        

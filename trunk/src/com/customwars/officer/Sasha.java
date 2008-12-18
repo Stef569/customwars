@@ -1,16 +1,8 @@
 package com.customwars.officer;
 
-import com.customwars.Army;
-import com.customwars.CO;
 import com.customwars.Property;
-import com.customwars.Unit;
-/*
- *Sasha.java
- *Author: Adam Dziuk, Kosheh
- *Contributors:
- *Creation:
- *The Sasha class is used to create an instance of the Blue Moon CO Sasha (copyright Intelligent Systems).
- */
+import com.customwars.unit.Army;
+import com.customwars.unit.Unit;
 
 public class Sasha extends CO{
     
@@ -18,7 +10,7 @@ public class Sasha extends CO{
     //constructor
     public Sasha() {
         name = "Sasha";
-        id = 10;
+        setId(10);
         
         String CObiox = "Colin's older sister. Normally ladylike, but becomes daring when she gets angry.";             //Holds the condensed CO bio'
         String titlex = "Dominatrix";
@@ -49,10 +41,10 @@ public class Sasha extends CO{
         int[] TagStarsx = {3,0,0,0,0}; //Number of stars for each special tag.
         int[] TagPercentx = {130,105,105,105,90}; //Percent for each special tag.
         
-        TagCOs = TagCOsx;
-        TagNames = TagNamesx;
-        TagStars = TagStarsx;
-        TagPercent = TagPercentx;
+        setTagCOs(TagCOsx);
+        setTagNames(TagNamesx);
+        setTagStars(TagStarsx);
+        setTagPercent(TagPercentx);
         
         String[] COPowerx =
         {"Wealth is power.",
@@ -75,8 +67,8 @@ public class Sasha extends CO{
         {"This is like some horrible dream.",
          "This is such a nightmare."} ;
         
-        Swap = Swapx;       
-        COPower = COPowerx;
+        setSwap(Swapx);       
+        setCOPower(COPowerx);
         Victory = Victoryx;
         defeat = defeatx;
         

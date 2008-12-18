@@ -13,6 +13,9 @@ import java.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.customwars.unit.Army;
+import com.customwars.unit.Unit;
+
 public class Map implements Serializable{
     
     private Tile[][] map;    //Contains the tile list
@@ -270,7 +273,7 @@ public class Map implements Serializable{
                 int dam = units[s].getDisplayHP();
                 if(dam > damage)dam = damage;
                 if(si != side){
-                    if(units[s].unitType < 2){
+                    if(units[s].getUnitType() < 2){
                         if(find(units[s].getLocation()).getTerrain() instanceof Property){
                             Property p = (Property)find(units[s].getLocation()).getTerrain();
                             if(p.getCapturePoints()<p.getMaxCapturePoints()){

@@ -8,6 +8,10 @@ import java.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.customwars.officer.CO;
+import com.customwars.unit.Army;
+import com.customwars.unit.Unit;
+
 public class StandardAI extends AI{
     
     Army army;
@@ -45,17 +49,17 @@ public class StandardAI extends AI{
             
             if (army.getTag()>0)
                 ;
-            else if(currCO.getStars() == currCO.maxStars && (altCO != null && altCO.getStars() == altCO.maxStars)) {
+            else if(currCO.getStars() == currCO.getMaxStars() && (altCO != null && altCO.getStars() == altCO.getMaxStars())) {
                 bs.executeNextAction(new CWEvent(4,0,0));
                logger.info("AI - TAG");
-            } else if(currCO.getStars() == currCO.maxStars && (altCO != null && altCO.getStars() > altCO.maxStars/2))
+            } else if(currCO.getStars() == currCO.getMaxStars() && (altCO != null && altCO.getStars() > altCO.getMaxStars()/2))
                 ;
-            else if(currCO.getStars() == currCO.maxStars) {
+            else if(currCO.getStars() == currCO.getMaxStars()) {
                 bs.executeNextAction(new CWEvent(3,0,0));
                logger.info("AI - SCOP");
-            } else if(currCO.getStars() > currCO.COPStars+1)
+            } else if(currCO.getStars() > currCO.getCOPStars()+1)
                 ;
-            else if(currCO.getStars() > currCO.COPStars) {
+            else if(currCO.getStars() > currCO.getCOPStars()) {
                 bs.executeNextAction(new CWEvent(2,0,0));
                logger.info("AI - COP");
             }

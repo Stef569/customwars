@@ -1,4 +1,6 @@
 package com.customwars;
+
+import com.customwars.unit.Army;
 /*
  *HQ.java
  *Author: Urusan
@@ -28,7 +30,7 @@ public class HQ extends Property{
         
         //Statistics
         name = "HQ";
-        move = new double[] {1,1,1,1,1,-1,-1,1,-1,1};
+        setMove(new double[] {1,1,1,1,1,-1,-1,1,-1,1});
         basemove = new double[] {1,1,1,1,1,-1,-1,1,-1,1};
         def  = 4;
         index = 9;

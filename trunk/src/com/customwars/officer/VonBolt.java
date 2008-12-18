@@ -1,22 +1,14 @@
 package com.customwars.officer;
 
-import com.customwars.CO;
-import com.customwars.Infantry;
-import com.customwars.Mech;
-import com.customwars.Unit;
-/*
- *Vonbolt.java
- *Author: Kosheh, Adam Dziuk
- *Contributors:
- *Creation:
- *The Von Bolt class is used to create an instance of the Black Hole CO Von Bolt (copyright Intelligent Systems).
- */
+import com.customwars.unit.Infantry;
+import com.customwars.unit.Mech;
+import com.customwars.unit.Unit;
 
 public class VonBolt extends CO {
     //constructor
     public VonBolt() {
         name = "Von Bolt";
-        id = 27;
+        setId(27);
         
         String CObiox = "Former commander-in-chief of the Black Hole forces. A mysterious old man who has been alive a very, very long time. Masterminded the Omega war.";             //Holds the condensed CO bio'
         String titlex = "Immortal Evil";
@@ -46,10 +38,10 @@ public class VonBolt extends CO {
         int[] TagStarsx = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}; //Number of stars for each special tag.
         int[] TagPercentx = {90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90}; //Percent for each special tag.
         
-        TagCOs = TagCOsx;
-        TagNames = TagNamesx;
-        TagStars = TagStarsx;
-        TagPercent = TagPercentx;
+        setTagCOs(TagCOsx);
+        setTagNames(TagNamesx);
+        setTagStars(TagStarsx);
+        setTagPercent(TagPercentx);
         
         String[] COPowerx =
         {"No matter how powerful...hhh...you are, you're...hhh...still a worm on a hook...",
@@ -72,8 +64,8 @@ public class VonBolt extends CO {
         {"Bah! Enough...hhh... Leave me...hhh... I grow...hhh...tired. I must...hhh...rest.",
          "No...hhhh... No...! Hhhhhh... Must...hhhh...live...hhhh..."} ;
         
-        Swap = Swapx;
-        COPower = COPowerx;
+        setSwap(Swapx);
+        setCOPower(COPowerx);
         Victory = Victoryx;
         defeat = defeatx;
         

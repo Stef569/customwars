@@ -13,7 +13,7 @@ public class Mountain extends Terrain{
     public Mountain(){
         //Statistics
         name = "Mountain";
-        move = new double[] {2,1,-1,-1,1,-1,-1,1,-1,-1};
+        setMove(new double[] {2,1,-1,-1,1,-1,-1,1,-1,-1});
         basemove = new double[] {2,1,-1,-1,1,-1,-1,1,-1,-1};;
         def  = 4;
         index = 2;

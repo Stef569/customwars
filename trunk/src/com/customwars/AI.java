@@ -13,6 +13,11 @@ import java.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.customwars.unit.Action;
+import com.customwars.unit.Army;
+import com.customwars.unit.MoveTraverse;
+import com.customwars.unit.Unit;
+
 public abstract class AI extends Thread implements Serializable{
    
 	final static Logger logger = LoggerFactory.getLogger(AI.class);  

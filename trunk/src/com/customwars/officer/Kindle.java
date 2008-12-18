@@ -1,22 +1,14 @@
 package com.customwars.officer;
 
-import com.customwars.Army;
-import com.customwars.CO;
-import com.customwars.Unit;
-/*
- *Kindle.java
- *Author: Paul Whan
- *Contributors: Adam Dzuik
- *Creation:
- *The Max class is used to create an instance of the Orange Star CO Max (copyright Intelligent Systems).
- */
+import com.customwars.unit.Army;
+import com.customwars.unit.Unit;
 
 public class Kindle extends CO{
     
     //Constructor
     public Kindle() {
         name = "Kindle";
-        id = 26;
+        setId(26);
         
         String CObiox = "Jugger and Koal's commanding officer. Has a blunt, queen-like personality.";             //Holds the condensed CO bio'
         String titlex = "Urban Terror";
@@ -47,10 +39,10 @@ public class Kindle extends CO{
         int[] TagStarsx = {1,1,0,0}; //Number of stars for each special tag.
         int[] TagPercentx = {105,105,90,80}; //Percent for each special tag.
         
-        TagCOs = TagCOsx;
-        TagNames = TagNamesx;
-        TagStars = TagStarsx;
-        TagPercent = TagPercentx;
+        setTagCOs(TagCOsx);
+        setTagNames(TagNamesx);
+        setTagStars(TagStarsx);
+        setTagPercent(TagPercentx);
         
         String[] COPowerx =
         {"So, you want to see me get serious? Very well! You asked for it!",
@@ -74,8 +66,8 @@ public class Kindle extends CO{
         {"Losing to you corn-fed country folk is enough to give me frown lines.",
          "That was a bit of a disappointment."} ;
         
-        Swap = Swapx;       
-        COPower = COPowerx;
+        setSwap(Swapx);       
+        setCOPower(COPowerx);
         Victory = Victoryx;
         defeat = defeatx;
         

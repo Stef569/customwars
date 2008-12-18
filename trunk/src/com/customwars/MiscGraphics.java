@@ -13,6 +13,8 @@ import java.awt.image.*;
 import java.io.*;
 import javax.swing.*;
 
+import com.customwars.officer.COList;
+import com.customwars.officer.COPAnimFilter;
 import com.customwars.state.ResourceLoader;
 
 public class MiscGraphics {

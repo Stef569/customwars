@@ -1,21 +1,13 @@
 package com.customwars.officer;
 
-import com.customwars.CO;
-import com.customwars.Unit;
-/*
- *Andy.java
- *Author: Adam Dziuk
- *Contributors:  Kosheh
- *Creation: July 4, 2006, 10:17 PM
- *The Andy class is used to create an instance of the Orange Star CO Andy (copyright Intelligent Systems).
- */
+import com.customwars.unit.Unit;
 
 public class Andy extends CO{
     
     //constructor
     public Andy() {
         name = "Andy";
-        id = 0;
+        setId(0);
         String CObiox = "A whiz with a wrench, this mechanical boy wonder earned fame as the hero who defeated Sturm in the first two great wars.";             //Holds the condensed CO bio'
         String titlex = "Mr. Fix-It ";
         String hitx = "Mechanics "; //Holds the hit
@@ -45,10 +37,10 @@ public class Andy extends CO{
         int[] TagStarsx = {1,2,1,1,0,0,0}; //Number of stars for each special tag.
         int[] TagPercentx = {110,115,105,105,105,105,90}; //Percent for each special tag.
 
-        TagCOs = TagCOsx;
-        TagNames = TagNamesx;
-        TagStars = TagStarsx;
-        TagPercent = TagPercentx;
+        setTagCOs(TagCOsx);
+        setTagNames(TagNamesx);
+        setTagStars(TagStarsx);
+        setTagPercent(TagPercentx);
         
         String[] COPowerx =
         {"I haven't even cranked the engine yet!",
@@ -71,8 +63,8 @@ public class Andy extends CO{
         {"Oh, come on!",
          "Next time I see you, you're in trouble!"};
         
-        Swap = Swapx;
-        COPower = COPowerx;
+        setSwap(Swapx);
+        setCOPower(COPowerx);
         Victory = Victoryx;
         defeat = defeatx;
         

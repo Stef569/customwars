@@ -1,16 +1,8 @@
 package com.customwars.officer;
 
-import com.customwars.Army;
-import com.customwars.CO;
 import com.customwars.Location;
-import com.customwars.Unit;
-/*
- *Amy.java
- *Author: Adam Dziuk
- *Contributors:
- *Creation: Xaif
- *The Amy class is used to create an instance of the Royal Cosmos CO Amy
- */
+import com.customwars.unit.Army;
+import com.customwars.unit.Unit;
 
 public class Amy extends CO{
     boolean counter; //Used to disable counter
@@ -19,7 +11,7 @@ public class Amy extends CO{
     //constructor
     public Amy() {
         name = "Amy";
-        id = 50;
+        setId(50);
         
         String CObiox =
                 "The Commander in Chief of Jade Cosmos. A" +
@@ -64,10 +56,10 @@ public class Amy extends CO{
         int[] TagStarsx = {2,1,1,0,0};           //Number of stars for each special tag.
         int[] TagPercentx = {115,110,110,70, 105};       //Percent for each special tag.
         
-        TagCOs = TagCOsx;
-        TagNames = TagNamesx;
-        TagStars = TagStarsx;
-        TagPercent = TagPercentx;
+        setTagCOs(TagCOsx);
+        setTagNames(TagNamesx);
+        setTagStars(TagStarsx);
+        setTagPercent(TagPercentx);
         
         String[] COPowerx =
         {"EMP? Why, it stands for Electromagnetic Pulse. You'll soon understand.",
@@ -86,9 +78,9 @@ public class Amy extends CO{
         {"Ok, I’ll put some theory into practice.",
          "Time to break some bonds."};
         
-        COPower = COPowerx;
+        setCOPower(COPowerx);
         Victory = Victoryx;
-        Swap = Swapx;
+        setSwap(Swapx);
         
         COPName = "Fluid Dynamics";
         SCOPName = "Photon Discharge";
@@ -96,8 +88,8 @@ public class Amy extends CO{
         maxStars = 8.0;
         this.army = army;
         style = JADE_COSMOS;
-        cleanEnemyStoreBegin = false;
-        cleanEnemyStoreEnd = true;
+        setCleanEnemyStoreBegin(false);
+        setCleanEnemyStoreEnd(true);
     }
     
     
@@ -149,7 +141,7 @@ public class Amy extends CO{
                     if(u[s].getMoveType() != u[s].MOVE_INFANTRY && u[s].getMoveType() != u[s].MOVE_MECH) {
                         u[s].setAttackPenalty(u[s]
 								.getAttackPenalty()
-								- u[s].getEnemyCOstore()[statIndex][0]);
+								- u[s].getEnemyCOstore()[getStatIndex()][0]);
                     }
                 }
             }

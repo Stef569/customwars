@@ -1,21 +1,13 @@
 package com.customwars.officer;
 
-import com.customwars.CO;
-import com.customwars.Unit;
-/*
- *Blandie.java
- *Author: Urusan
- *Contributors:
- *Creation: December 11, 2006
- *A bland CO, perhaps a generic commanding officer?
- */
+import com.customwars.unit.Unit;
 
 public class Blandie extends CO{
     
     //constructor
     public Blandie() {
         name = "Blandie";
-        id = 34;
+        setId(34);
 
         String CObiox = "This CO joined the military and rose    " +
                         "through the ranks. But not quickly      " +
@@ -54,9 +46,9 @@ public class Blandie extends CO{
         {"I won't let you down!",
          "I am assuming command"};
         
-        COPower = COPowerx;
+        setCOPower(COPowerx);
         Victory = Victoryx;
-        Swap = Swapx;
+        setSwap(Swapx);
         
         //No special tags
         String[] TagCOsx = {"Nell"}; //Names of COs with special tags
@@ -64,10 +56,10 @@ public class Blandie extends CO{
         int[] TagStarsx = {0}; //Number of stars for each special tag.
         int[] TagPercentx = {100}; //Percent for each special tag.
         
-        TagCOs = TagCOsx;
-        TagNames = TagNamesx;
-        TagStars = TagStarsx;
-        TagPercent = TagPercentx;
+        setTagCOs(TagCOsx);
+        setTagNames(TagNamesx);
+        setTagStars(TagStarsx);
+        setTagPercent(TagPercentx);
         
         COPName = "Rally!";
         SCOPName = "Moment of Glory";

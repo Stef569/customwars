@@ -1,22 +1,14 @@
 package com.customwars.officer;
 
 import com.customwars.Battle;
-import com.customwars.CO;
-import com.customwars.Unit;
-/*
- *Andy.java
- *Author: Adam Dziuk
- *Contributors: Kosheh
- *Creation: July 4, 2006, 10:17 PM
- *The Adder class is used to create an instance of the Black Hole CO Adder (copyright Intelligent Systems).
- */
+import com.customwars.unit.Unit;
 
 public class Adder extends CO{
     
 //Constructor
 public Adder(Battle bat) {
         name = "Adder";
-        id = 21;
+        setId(21);
 
         String CObiox = "A self-absorbed commander who believes his skills are matchless. Second to Hawke in rank.";             //Holds the condensed CO bio'
         String titlex = "Snake Eyes";
@@ -44,10 +36,10 @@ public Adder(Battle bat) {
         int[] TagStarsx = {0,1,0,0}; //Number of stars for each special tag.
         int[] TagPercentx = {105,110,105,105}; //Percent for each special tag.
 
-        TagCOs = TagCOsx;
-        TagNames = TagNamesx;
-        TagStars = TagStarsx;
-        TagPercent = TagPercentx;
+        setTagCOs(TagCOsx);
+        setTagNames(TagNamesx);
+        setTagStars(TagStarsx);
+        setTagPercent(TagPercentx);
         
         String[] COPowerx =
         {"Heh heh heh... kneel before Adder!",
@@ -71,8 +63,8 @@ public Adder(Battle bat) {
         {"Hssss! Today was... unlucky. A bad day. Nothing more.",
          "It's the blasted weather! That was the problem! Hssss!"} ;
         
-        Swap = Swapx;       
-        COPower = COPowerx;
+        setSwap(Swapx);       
+        setCOPower(COPowerx);
         Victory = Victoryx;
         defeat = defeatx;
         

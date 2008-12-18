@@ -1,22 +1,14 @@
 package com.customwars.officer;
 
-import com.customwars.CO;
 import com.customwars.Property;
-import com.customwars.Unit;
-/*
- *Blandie.java
- *Author: Urusan
- *Contributors:
- *Creation: December 11, 2006
- *A bland CO, perhaps a generic commanding officer?
- */
+import com.customwars.unit.Unit;
 
 public class Sanjuro extends CO{
     int atk; //attack bonus or penalty
     //constructor
     public Sanjuro() {
         name = "Sanjuro";
-        id = 61;
+        setId(61);
         
         String CObiox = "A respected mercenary from Yellow Comet. Once he accepts a job, he sees it through to the end no matter how difficult or dangerous it becomes. ";
         //This is seperated into blocks 40 characters long!
@@ -61,9 +53,9 @@ public class Sanjuro extends CO{
         {"Time to earn my pay...",
 "Let's get down to business." };
         
-        COPower = COPowerx;
+        setCOPower(COPowerx);
         Victory = Victoryx;
-        Swap = Swapx;
+        setSwap(Swapx);
         
         //No special tags
         String[] TagCOsx = {"Hachi", "Javier", "Kanbei", "Sasha", "Varlot", "Graves", "Yukio", "Eric", "Edward", "Carmen", "Mary"}; //Names of COs with special tags
@@ -71,10 +63,10 @@ public class Sanjuro extends CO{
         int[] TagStarsx = {02,2,1,1,0,0,0,0,0,0,0}; //Number of stars for each special tag.
         int[] TagPercentx = {120,115, 110,110,80,85,90,90,90,90,90}; //Percent for each special tag.
         
-        TagCOs = TagCOsx;
-        TagNames = TagNamesx;
-        TagStars = TagStarsx;
-        TagPercent = TagPercentx;
+        setTagCOs(TagCOsx);
+        setTagNames(TagNamesx);
+        setTagStars(TagStarsx);
+        setTagPercent(TagPercentx);
         
         COPName = "Heart of Gold";
         SCOPName = "Buying Power";

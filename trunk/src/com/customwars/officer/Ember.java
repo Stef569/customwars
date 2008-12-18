@@ -1,23 +1,14 @@
 package com.customwars.officer;
 
-import com.customwars.Army;
-import com.customwars.CO;
-import com.customwars.Unit;
-/*
- *Ember.java (Version 1.1)
- *Author: Paul Whan
- *Contributors: Adam Dziuk
- *Creation: Tronn Bonne
- *The Ember class is used to create an instance of the Bolt Guard CO Ember.
- *Xen would like to note that the Always delete skill of Ember's will have to wait until the delete function itself is implemented.
- */
+import com.customwars.unit.Army;
+import com.customwars.unit.Unit;
 
 public class Ember extends CO{
    
 //constructor
     public Ember() {
         name = "Ember";
-        id = 28;
+        setId(28);
         
         String CObiox = "An extremely belligerent member of the Bolt Guard that is notorious for her ruthlessness. She fights purely for the thrill of battle and is feared by both enemies and allies.";             //Holds the condensed CO bio'
         String titlex = "Ruthless Flame";
@@ -48,10 +39,10 @@ public class Ember extends CO{
         int[] TagStarsx = {1,2,0,0,0,0,0}; //Number of stars for each special tag.
         int[] TagPercentx = {110,110,105,105,105,85,80}; //Percent for each special tag.
        
-        TagCOs = TagCOsx;
-        TagNames = TagNamesx;
-        TagStars = TagStarsx;
-        TagPercent = TagPercentx;
+        setTagCOs(TagCOsx);
+        setTagNames(TagNamesx);
+        setTagStars(TagStarsx);
+        setTagPercent(TagPercentx);
        
         String[] COPowerx =
         {"Take no prisoners!",
@@ -70,9 +61,9 @@ public class Ember extends CO{
         {"I'm going to enjoy this...",
          "Time to die!"};
        
-        COPower = COPowerx;
+        setCOPower(COPowerx);
         Victory = Victoryx;
-        Swap = Swapx;
+        setSwap(Swapx);
        
         COPName = "Rampage";
         SCOPName = "Scorched Earth";

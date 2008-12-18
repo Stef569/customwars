@@ -12,17 +12,16 @@ package com.customwars.officer;
 import java.util.Random;
 import java.util.ArrayList;
 
-import com.customwars.CO;
 import com.customwars.Terrain;
 import com.customwars.Tile;
-import com.customwars.Unit;
+import com.customwars.unit.Unit;
 
 public class Eric extends CO{
     ArrayList<Terrain> destroyed;
 //constructor
     public Eric() {
         name = "Eric";
-        id = 42; //placeholder
+        setId(42); //placeholder
         
         String CObiox = "Yukio's enforcer. Strong and loves to muscle people into doing what he wants. Very determined and will run over anything and anyone that stands in his way.";             //Holds the condensed CO bio'
         String titlex = "All Out of Bubble Gum";
@@ -53,10 +52,10 @@ public class Eric extends CO{
         int[] TagStarsx = {1,1,1,0,0,0}; //Number of stars for each special tag.
         int[] TagPercentx = {110,105,105,90,90,90}; //Percent for each special tag.
         
-        TagCOs = TagCOsx;
-        TagNames = TagNamesx;
-        TagStars = TagStarsx;
-        TagPercent = TagPercentx;
+        setTagCOs(TagCOsx);
+        setTagNames(TagNamesx);
+        setTagStars(TagStarsx);
+        setTagPercent(TagPercentx);
         
         
         String[] COPowerx =
@@ -77,8 +76,8 @@ public class Eric extends CO{
         {"You guys are pushovers!",
          "You think you can block me?" };
         
-        Swap = Swapx;
-        COPower = COPowerx;
+        setSwap(Swapx);
+        setCOPower(COPowerx);
         Victory = Victoryx;
         
         COPName = "Bombardment";

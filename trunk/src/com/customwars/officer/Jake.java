@@ -1,22 +1,14 @@
 package com.customwars.officer;
 
-import com.customwars.CO;
-import com.customwars.Unit;
-import com.customwars.UnitID;
-/*
- *Jake.java
- *Author: Paul Whan
- *Contributors: Adam Dziuk, Kosheh, Urusan
- *Creation: 6 August 2006, 1:55 am
- *The Jake class is used to create an instance of the Orange Star CO Jake (copyright Intelligent Systems).
- */
+import com.customwars.unit.Unit;
+import com.customwars.unit.UnitID;
 
 public class Jake extends CO{
     
 //Constructor
     public Jake() {
         name = "Jake";
-        id = 5;
+        setId(5);
         
         String CObiox = "A young, energetic Orange Star CO who is a top-notch tank commander.";             //Holds the condensed CO bio'
         String titlex = "Just Plain Hip";
@@ -47,10 +39,10 @@ public class Jake extends CO{
         int[] TagStarsx = {2,1,0,0,0}; //Number of stars for each special tag.
         int[] TagPercentx = {120,110,105,90,90}; //Percent for each special tag.
         
-        TagCOs = TagCOsx;
-        TagNames = TagNamesx;
-        TagStars = TagStarsx;
-        TagPercent = TagPercentx;
+        setTagCOs(TagCOsx);
+        setTagNames(TagNamesx);
+        setTagStars(TagStarsx);
+        setTagPercent(TagPercentx);
         
         String[] COPowerx =
         {"Give it up, fool!",
@@ -73,8 +65,8 @@ public class Jake extends CO{
         {"I got spanked out there! This combat is the real deal...",
          "Dude, we so don't have time for this."} ;
         
-        Swap = Swapx;
-        COPower = COPowerx;
+        setSwap(Swapx);
+        setCOPower(COPowerx);
         Victory = Victoryx;
         defeat = defeatx;
         

@@ -1,21 +1,13 @@
 package com.customwars.officer;
 
-import com.customwars.CO;
-import com.customwars.Unit;
-/*
- *Eagle.java
- *Author: Adam Dziuk and Kosheh
- *Contributors: 
- *Creation:
- *The Eagle class is used to create an instance of the Green Earth CO Eagle (copyright Intelligent Systems).
- */
+import com.customwars.unit.Unit;
 
 public class Eagle extends CO{
    
     //constructor
     public Eagle() {
         name = "Eagle";
-        id = 11;
+        setId(11);
         
         String CObiox = "Green Earth's daring pilot hero. Joined the air force to honor his father's legacy.";             //Holds the condensed CO bio'
         String titlex = "Prince of the Skies";
@@ -46,10 +38,10 @@ public class Eagle extends CO{
         int[] TagStarsx = {2,3,2,0,0,0,0}; //Number of stars for each special tag.
         int[] TagPercentx = {115,120,115,105,90,70,90}; //Percent for each special tag.
         
-        TagCOs = TagCOsx;
-        TagNames = TagNamesx;
-        TagStars = TagStarsx;
-        TagPercent = TagPercentx;
+        setTagCOs(TagCOsx);
+        setTagNames(TagNamesx);
+        setTagStars(TagStarsx);
+        setTagPercent(TagPercentx);
 
         String[] COPowerx =
         {"Checkmate!",
@@ -72,8 +64,8 @@ public class Eagle extends CO{
         {"This is what happens when you lose focus!",
          "Impossible! I'm getting angrier by the moment!"} ;
         
-        Swap = Swapx;       
-        COPower = COPowerx;
+        setSwap(Swapx);       
+        setCOPower(COPowerx);
         Victory = Victoryx;
         defeat = defeatx;           
        

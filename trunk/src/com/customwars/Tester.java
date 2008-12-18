@@ -9,12 +9,15 @@ package com.customwars;
 
 import java.util.Random;
 
+import com.customwars.officer.CO;
+import com.customwars.unit.Unit;
+
 public class Tester extends CO{
     
     //constructor
     public Tester() {
         name = "Blandie";
-        id = 34;
+        setId(34);
         
         String[] COPowerx =
         {"Move Out!",
@@ -33,9 +36,9 @@ public class Tester extends CO{
         {"I won't let you down",
          "I am assuming command"};
         
-        COPower = COPowerx;
+        setCOPower(COPowerx);
         Victory = Victoryx;
-        Swap = Swapx;
+        setSwap(Swapx);
         
         //No special tags
         String[] TagCOsx = {"Nell"}; //Names of COs with special tags
@@ -43,10 +46,10 @@ public class Tester extends CO{
         int[] TagStarsx = {0}; //Number of stars for each special tag.
         int[] TagPercentx = {100}; //Percent for each special tag.
         
-        TagCOs = TagCOsx;
-        TagNames = TagNamesx;
-        TagStars = TagStarsx;
-        TagPercent = TagPercentx;
+        setTagCOs(TagCOsx);
+        setTagNames(TagNamesx);
+        setTagStars(TagStarsx);
+        setTagPercent(TagPercentx);
         
         COPName = "Rally!";
         SCOPName = "Moment of Glory";

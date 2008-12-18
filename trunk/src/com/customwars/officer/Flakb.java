@@ -1,7 +1,6 @@
 package com.customwars.officer;
 
-import com.customwars.CO;
-import com.customwars.Unit;
+import com.customwars.unit.Unit;
 
 /*
  *Flakb.java
@@ -16,17 +15,17 @@ public class Flakb extends CO{
     //constructor
     public Flakb() {
         name = "Flak";
-        id = 19;
+        setId(19);
         
         String[] TagCOsx = {"Adder","Lash"}; //Names of COs with special tags
         String[] TagNamesx = {"Totally Flaked","Bruise Cruise"}; //Names of the corresponding Tags
         int[] TagStarsx = {0,0}; //Number of stars for each special tag.
         int[] TagPercentx = {105,110}; //Percent for each special tag. 
         
-        TagCOs = TagCOsx;
-        TagNames = TagNamesx;
-        TagStars = TagStarsx;
-        TagPercent = TagPercentx;
+        setTagCOs(TagCOsx);
+        setTagNames(TagNamesx);
+        setTagStars(TagStarsx);
+        setTagPercent(TagPercentx);
        
         String[] COPowerx =
         {"You can't hide from me! I'll hunt you down like a dog!",
@@ -45,8 +44,8 @@ public class Flakb extends CO{
         {"I'll crush you all!",
         "Let me at 'em!"}  ;
         
-        Swap = Swapx;
-        COPower = COPowerx;
+        setSwap(Swapx);
+        setCOPower(COPowerx);
         Victory = Victoryx;
        
         COPName = "Brute Force";

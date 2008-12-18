@@ -1,18 +1,9 @@
 package com.customwars.officer;
 
-import com.customwars.CO;
 import com.customwars.Location;
 import com.customwars.Map;
 import com.customwars.Terrain;
-import com.customwars.Unit;
-/*
- *Minamoto.java
- *Author: Fugue
- *Contributors:
- *Creation: 5/09/07
- *Last Update: 7/19/07
- *The Minamoto class makes an instance of CO Minamoto from Yellow Comet.
- */
+import com.customwars.unit.Unit;
 
 /** Minamoto: A proud, vain CO and a master swordsman who grew
  * up in the mountains of Yellow Comet.
@@ -29,7 +20,7 @@ public class Minamoto extends CO{
    //constructor
    public Minamoto() {
       name = "Minamoto";
-      id = 68;
+      setId(68);
 
       String CObiox =
          "A skilled but arrogant CO and a master  " +
@@ -70,10 +61,10 @@ public class Minamoto extends CO{
       int[] TagStarsx = {2, 1, 1, 0, 0, 0, 0, 0, 0, 0}; //Number of stars for each special tag.
       int[] TagPercentx = {120, 115, 110, 80, 90, 90, 90, 90, 90, 90, 90}; //Percent for each special tag.
 
-      TagCOs = TagCOsx;
-      TagNames = TagNamesx;
-      TagStars = TagStarsx;
-      TagPercent = TagPercentx;
+      setTagCOs(TagCOsx);
+      setTagNames(TagNamesx);
+      setTagStars(TagStarsx);
+      setTagPercent(TagPercentx);
 
       String[] COPowerx = {
             "Clear a path! We shall not stop for any man!",
@@ -115,9 +106,9 @@ public class Minamoto extends CO{
       };
        */
 
-      COPower = COPowerx;
+      setCOPower(COPowerx);
       Victory = Victoryx;
-      Swap = Swapx;
+      setSwap(Swapx);
 
       COPName = "Wind Blade";
       SCOPName = "Storm Blades";

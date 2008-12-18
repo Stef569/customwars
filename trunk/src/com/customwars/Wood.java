@@ -13,7 +13,7 @@ public class Wood extends Terrain{
     public Wood(){
         //Statistics
         name = "Wood";
-        move = new double[] {1,1,2,3,1,-1,-1,1,-1,4};
+        setMove(new double[] {1,1,2,3,1,-1,-1,1,-1,4});
         basemove = new double[] {1,1,2,3,1,-1,-1,1,-1,4};
         def  = 2;
         index = 1;

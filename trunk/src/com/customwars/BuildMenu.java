@@ -15,6 +15,9 @@ import java.awt.GradientPaint.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.customwars.officer.CO;
+import com.customwars.unit.UnitGraphics;
+
 public class BuildMenu extends ScrollMenu{
     private boolean[] canBuy = new boolean[BaseDMG.NUM_UNITS];
     private boolean[] canBuyDisplay = new boolean[BaseDMG.NUM_UNITS];

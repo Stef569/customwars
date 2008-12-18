@@ -1,16 +1,8 @@
 package com.customwars.officer;
 
 import com.customwars.Battle;
-import com.customwars.CO;
 import com.customwars.Property;
-import com.customwars.Unit;
- /*
-  *Colin.java
-  *Author: Adam Dziuk
-  *Contributors: Kosheh
-  *Creation:
-  *The Colin class is used to create an instance of the Blue Moon CO Colin (copyright Intelligent Systems).
-  */
+import com.customwars.unit.Unit;
 
 public class Colin extends CO{
     
@@ -19,7 +11,7 @@ public class Colin extends CO{
     //constructor
     public Colin(Battle bat) {
         name = "Colin";
-        id = 9;
+        setId(9);
         
         String CObiox = "Blue Moon's rich boy CO and Sasha's little brother. A gifted CO with a sharp, if insecure, mind.";             //Holds the condensed CO bio'
         String titlex = "Richie-Rich";
@@ -50,10 +42,10 @@ public class Colin extends CO{
         int[] TagStarsx = {3,0,0,0,0}; //Number of stars for each special tag.
         int[] TagPercentx = {130,105,105,90,90}; //Percent for each special tag.
         
-        TagCOs = TagCOsx;
-        TagNames = TagNamesx;
-        TagStars = TagStarsx;
-        TagPercent = TagPercentx;
+        setTagCOs(TagCOsx);
+        setTagNames(TagNamesx);
+        setTagStars(TagStarsx);
+        setTagPercent(TagPercentx);
         
         String[] COPowerx =
         {"Let me show you the power of money!",
@@ -76,8 +68,8 @@ public class Colin extends CO{
         {"If only Commander Olaf were here...",
          "Wait till I tell my sis! Then you'll be sorry!"} ;
         
-        Swap = Swapx;
-        COPower = COPowerx;
+        setSwap(Swapx);
+        setCOPower(COPowerx);
         Victory = Victoryx;
         defeat = defeatx;
         

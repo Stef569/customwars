@@ -10,12 +10,11 @@ package com.customwars.officer;
 import java.util.Random;
 import java.util.ArrayList;
 
-import com.customwars.Army;
-import com.customwars.CO;
 import com.customwars.Mission;
 import com.customwars.Property;
 import com.customwars.Tile;
-import com.customwars.Unit;
+import com.customwars.unit.Army;
+import com.customwars.unit.Unit;
 
 public class Mary extends CO {
     private ArrayList<Tile> bonusTiles;
@@ -24,7 +23,7 @@ public class Mary extends CO {
     //constructor
     public Mary() {
         name = "Mary";
-        id = 52;
+        setId(52);
         
         String CObiox = "A ruthless commander recruited into the Amber Corona Mercenaries by Eric. ";             //Holds the condensed CO bio'
         String titlex = "Bloody Mary";
@@ -66,9 +65,9 @@ public class Mary extends CO {
         {"*sigh* I have no regrets. Good job defeating me",
          "Oh well...back to intensive training, boys. And try not to call for mommy this time."};
         
-        COPower = COPowerx;
+        setCOPower(COPowerx);
         Victory = Victoryx;
-        Swap = Swapx;
+        setSwap(Swapx);
         
         //No special tags
         String[] TagCOsx = {"Koal", "Eric", "Yukio", "Sabaki", "Ozzy", "Carmen", "Edward", "Nell", "Andy"}; //Names of COs with special tags
@@ -76,10 +75,10 @@ public class Mary extends CO {
         int[] TagStarsx = {2, 1, 0, 0, 0, 0, 0, 0, 0, 0}; //Number of stars for each special tag.
         int[] TagPercentx = {115, 110, 105, 105, 105, 105, 105, 105, 90, 80}; //Percent for each special tag.
         
-        TagCOs = TagCOsx;
-        TagNames = TagNamesx;
-        TagStars = TagStarsx;
-        TagPercent = TagPercentx;
+        setTagCOs(TagCOsx);
+        setTagNames(TagNamesx);
+        setTagStars(TagStarsx);
+        setTagPercent(TagPercentx);
         
         COPName = "Highway of Pain";
         SCOPName = "Bloody Mary";
@@ -90,8 +89,8 @@ public class Mary extends CO {
         
         bonusTiles = new ArrayList<Tile>();
         afflictedUnits = new ArrayList<Unit>();
-        cleanEnemyStoreBegin = false;
-        cleanEnemyStoreEnd = true;
+        setCleanEnemyStoreBegin(false);
+        setCleanEnemyStoreEnd(true);
         
     }
     
@@ -151,12 +150,12 @@ public class Mary extends CO {
                         u[s].setDefensePenalty(u[s]
 								.getDefensePenalty()
 								+ (army.getBattle().getMap().find(u[s]).getTerrain().getDef() * u[s].getDisplayHP()* 2));
-                        u[s].getEnemyCOstore()[statIndex][0] = army.getBattle().getMap().find(u[s]).getTerrain().getDef() * u[s].getDisplayHP()* 2;
+                        u[s].getEnemyCOstore()[getStatIndex()][0] = army.getBattle().getMap().find(u[s]).getTerrain().getDef() * u[s].getDisplayHP()* 2;
                         if(army.getBattle().getMap().find(u[s]).getTerrain().isUrban() && ((Property)army.getBattle().getMap().find(u[s]).getTerrain()).getCp() != ((Property)army.getBattle().getMap().find(u[s]).getTerrain()).getTotalcp()) {
                             u[s].setDefensePenalty(u[s]
 									.getDefensePenalty()
 									+ (army.getBattle().getMap().find(u[s]).getTerrain().getDef() * u[s].getDisplayHP()* 1));
-                            u[s].getEnemyCOstore()[statIndex][0] += army.getBattle().getMap().find(u[s]).getTerrain().getDef() * u[s].getDisplayHP()* 1;
+                            u[s].getEnemyCOstore()[getStatIndex()][0] += army.getBattle().getMap().find(u[s]).getTerrain().getDef() * u[s].getDisplayHP()* 1;
                         }
                     }
                 }
@@ -180,7 +179,7 @@ public class Mary extends CO {
                 for(int s = 0; s<u.length; s++) {
                     u[s].setDefensePenalty(u[s]
 							.getDefensePenalty()
-							- u[s].getEnemyCOstore()[statIndex][0]);
+							- u[s].getEnemyCOstore()[getStatIndex()][0]);
                 }
             }
         }

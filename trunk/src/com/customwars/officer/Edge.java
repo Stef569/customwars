@@ -1,23 +1,13 @@
 package com.customwars.officer;
 
-import com.customwars.CO;
-import com.customwars.Unit;
-/*
-  * Edge.java
-  *
-  * Created on November 16, 2006, 8:42 PM
-  *
-  * To change this template, choose Tools | Template Manager
-  * Edge's abilities ignore day to day price reductions for both he and the enemy(s)
-  * His SCOP, however, factors in his 80% reduction in price only, and not that of mines he may control. (via a variable instead of Cost Multiplier)
-  */
+import com.customwars.unit.Unit;
 
 public class Edge extends CO{
     
 //Constructor
     public Edge() {
         name = "Edge";
-        id = 33;
+        setId(33);
         
         String CObiox = "Loves to live and fight on the edge. He prefers risks and gambles over safety.";             //Holds the condensed CO bio'
         String titlex = "Dared to Fly...And Fell";
@@ -49,10 +39,10 @@ public class Edge extends CO{
         int[] TagStarsx = {2,1,2,0}; //Number of stars for each special tag.
         int[] TagPercentx = {115,105,110,90}; //Percent for each special tag.
         
-        TagCOs = TagCOsx;
-        TagNames = TagNamesx;
-        TagStars = TagStarsx;
-        TagPercent = TagPercentx;
+        setTagCOs(TagCOsx);
+        setTagNames(TagNamesx);
+        setTagStars(TagStarsx);
+        setTagPercent(TagPercentx);
         
         String[] COPowerx =
         {"I feel a bit dirty for doing this...",
@@ -76,8 +66,8 @@ public class Edge extends CO{
         //He doesn't have swap codes, so I made some up.
         //Whoops, overlooked that. >_>
         
-        Swap = Swapx;
-        COPower = COPowerx;
+        setSwap(Swapx);
+        setCOPower(COPowerx);
         Victory = Victoryx;
         
         COPName = "Eccentricity";
@@ -205,7 +195,7 @@ public class Edge extends CO{
                     firstStrike = true;}
                 if(COP) //if the SCOP is active
                     if(((owned.getPrice()*100.0/owned.getArmy().getCO().getCostMultiplier())) < ((enemy.getPrice()*100.0/enemy.getArmy().getCO().getCostMultiplier()))) {
-                    counterAttack = 130;}
+                    setCounterAttack(130);}
                 //Edge counterattacks first if his units are cheaper than those of his opponenet
                 //Currently, beforeAttack is positioned before counterattacks are computed.
             }
@@ -219,6 +209,6 @@ public class Edge extends CO{
         {firstStrike = false;}//Feh, we dun need check. }
         
         if(COP) //if the SCOP is active
-        {counterAttack = 100;}
+        {setCounterAttack(100);}
     }
 }

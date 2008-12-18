@@ -1,22 +1,14 @@
 package com.customwars.officer;
 
 import com.customwars.Battle;
-import com.customwars.CO;
-import com.customwars.Unit;
-/*
- *Lash.java
- *Author: Uru
- *Contributors: Kosheh
- *Creation: October 4, 2006, 12:23 PM
- *The Lash class is used to create an instance of the Black Hole CO Lash (copyright Intelligent Systems).
- */
+import com.customwars.unit.Unit;
 
 public class Lash extends CO{
     
     //constructor
     public Lash(Battle bat){
         name = "Lash";
-        id = 20;
+        setId(20);
 
         String CObiox = "The wunderkind of the Black Hole forces. She's small but fierce. Designed most of Black Hole's recent weaponry.";             //Holds the condensed CO bio'
         String titlex = "Feisty Genius";
@@ -46,10 +38,10 @@ public class Lash extends CO{
         int[] TagStarsx = {1,1,0,0,0,0,0}; //Number of stars for each special tag.
         int[] TagPercentx = {110,110,105,80,90,90,90}; //Percent for each special tag.
         
-        TagCOs = TagCOsx;
-        TagNames = TagNamesx;
-        TagStars = TagStarsx;
-        TagPercent = TagPercentx;
+        setTagCOs(TagCOsx);
+        setTagNames(TagNamesx);
+        setTagStars(TagStarsx);
+        setTagPercent(TagPercentx);
         
         String[] COPowerx =
         {"Ooh!  You're so annoying!  I'm gonna have to get rid of you now!",
@@ -72,8 +64,8 @@ public class Lash extends CO{
         {"Boo! Nothing's going right! That's enough. I'm going home!",
          "Oh, well. I guess I'll have to find someplace new to play. Toodles!"} ;
         
-        Swap = Swapx;       
-        COPower = COPowerx;
+        setSwap(Swapx);       
+        setCOPower(COPowerx);
         Victory = Victoryx;
         defeat = defeatx;
         

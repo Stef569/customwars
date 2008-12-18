@@ -1,24 +1,16 @@
 package com.customwars.officer;
 
-import com.customwars.Army;
-import com.customwars.CO;
 import com.customwars.Location;
 import com.customwars.Tile;
-import com.customwars.Unit;
-/*
- *Blandie.java
- *Author: Urusan
- *Contributors:
- *Creation: December 11, 2006
- *A bland CO, perhaps a generic commanding officer?
- */
+import com.customwars.unit.Army;
+import com.customwars.unit.Unit;
 
 public class Eniac extends CO{
     boolean sustain = false; 
     //constructor
     public Eniac() {
         name = "Eniac";
-        id = 67;
+        setId(67);
         
         String CObiox = "A computer hardware genius that was rescued by Jared from Black Hole. He now fights for the army that saved him.";
         //This is seperated into blocks 40 characters long!
@@ -63,9 +55,9 @@ public class Eniac extends CO{
         {"So that's what alt+tab does...",
          "It comes down to me and you now!"};
         
-        COPower = COPowerx;
+        setCOPower(COPowerx);
         Victory = Victoryx;
-        Swap = Swapx;
+        setSwap(Swapx);
         
         //No special tags
         String[] TagCOsx = {"Jared"," Koshi"}; //Names of COs with special tags
@@ -73,10 +65,10 @@ public class Eniac extends CO{
         int[] TagStarsx = {1,1}; //Number of stars for each special tag.
         int[] TagPercentx = {110,110}; //Percent for each special tag.
         
-        TagCOs = TagCOsx;
-        TagNames = TagNamesx;
-        TagStars = TagStarsx;
-        TagPercent = TagPercentx;
+        setTagCOs(TagCOsx);
+        setTagNames(TagNamesx);
+        setTagStars(TagStarsx);
+        setTagPercent(TagPercentx);
         
         COPName = "Reverse Surge";
         SCOPName = "Server Crash";
@@ -183,25 +175,25 @@ public class Eniac extends CO{
                         u[s].setDefensePenalty(u[s]
 								.getDefensePenalty()
 								+ (north.getTerrain().getDef()*5));
-                        u[s].getEnemyCOstore()[statIndex][0] += north.getTerrain().getDef()*5;
+                        u[s].getEnemyCOstore()[getStatIndex()][0] += north.getTerrain().getDef()*5;
                     }
                     if(army.getBattle().getMap().onMap(south.getLocation())) {
                         u[s].setDefensePenalty(u[s]
 								.getDefensePenalty()
 								+ (south.getTerrain().getDef()*5));
-                        u[s].getEnemyCOstore()[statIndex][0] += south.getTerrain().getDef()*5;
+                        u[s].getEnemyCOstore()[getStatIndex()][0] += south.getTerrain().getDef()*5;
                     }
                     if(army.getBattle().getMap().onMap(east.getLocation())) {
                         u[s].setDefensePenalty(u[s]
 								.getDefensePenalty()
 								+ (east.getTerrain().getDef()*5));
-                        u[s].getEnemyCOstore()[statIndex][0] += east.getTerrain().getDef()*5;
+                        u[s].getEnemyCOstore()[getStatIndex()][0] += east.getTerrain().getDef()*5;
                     }
                     if(army.getBattle().getMap().onMap(west.getLocation())) {
                         u[s].setDefensePenalty(u[s]
 								.getDefensePenalty()
 								+ (west.getTerrain().getDef()*5));
-                        u[s].getEnemyCOstore()[statIndex][0] += west.getTerrain().getDef()*5;
+                        u[s].getEnemyCOstore()[getStatIndex()][0] += west.getTerrain().getDef()*5;
                     }
                 }
             }
@@ -226,7 +218,7 @@ public class Eniac extends CO{
                 for(int s = 0; s<u.length; s++) {
                     u[s].setDefensePenalty(u[s]
 							.getDefensePenalty()
-							- u[s].getEnemyCOstore()[statIndex][0]);
+							- u[s].getEnemyCOstore()[getStatIndex()][0]);
                 }
             }
         }

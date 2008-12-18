@@ -1,22 +1,14 @@
 package com.customwars.officer;
 
 import com.customwars.Battle;
-import com.customwars.CO;
-import com.customwars.Unit;
-/*
- *Sonja.java
- *Author: Uru
- *Contributors: Bolt Storm, Kosheh
- *Creation: October 4, 2006, 12:27 PM
- *The Sonja class is used to create an instance of the Yellow Comet CO Sonja (copyright Intelligent Systems).
- */
+import com.customwars.unit.Unit;
 
 public class Sonja extends CO{
     
     //constructor
     public Sonja(Battle bat){
         name = "Sonja";
-        id = 16;
+        setId(16);
         
         String CObiox = "Kanbei's cool and collected daughter who likes to plan before acting. She excels in gathering information.";             //Holds the condensed CO bio'
         String titlex = "Sees All, Knows All";
@@ -47,10 +39,10 @@ public class Sonja extends CO{
         int[] TagStarsx = {3,1,1,1,1,0,0}; //Number of stars for each special tag.
         int[] TagPercentx = {130,105,110,110,110,105,90}; //Percent for each special tag.
         
-        TagCOs = TagCOsx;
-        TagNames = TagNamesx;
-        TagStars = TagStarsx;
-        TagPercent = TagPercentx;
+        setTagCOs(TagCOsx);
+        setTagNames(TagNamesx);
+        setTagStars(TagStarsx);
+        setTagPercent(TagPercentx);
         
         String[] COPowerx =
         {"I see right through your plans!",
@@ -73,8 +65,8 @@ public class Sonja extends CO{
         {"... I'm sorry, Father... I've broken my promise...",
          "I have learned much from this..."} ;
         
-        Swap = Swapx;
-        COPower = COPowerx;
+        setSwap(Swapx);
+        setCOPower(COPowerx);
         Victory = Victoryx;
         defeat = defeatx;
         
@@ -84,7 +76,7 @@ public class Sonja extends CO{
         maxStars = 5.0;
         
         //hidden hp
-        hiddenHP = true;
+        setHiddenHP(true);
         
         //-5% luck
         setPositiveLuck(10);
@@ -92,7 +84,7 @@ public class Sonja extends CO{
         
         //enemy terrain star reduction
         setEnemyTerrainPenalty(1);
-        counterAttack = 100;
+        setCounterAttack(100);
         
         this.army = army;
         style = YELLOW_COMET;
@@ -103,7 +95,7 @@ public class Sonja extends CO{
             setNegativeLuck(10);
             //enemy terrain star reduction
             setEnemyTerrainPenalty(0);
-            counterAttack = 150;
+            setCounterAttack(150);
         }
     }
     
@@ -177,7 +169,7 @@ public class Sonja extends CO{
         if (army.getBattle().getBattleOptions().isBalance() == true){
             firstStrike = true;
             setEnemyTerrainPenalty(3);
-            counterAttack = 100;
+            setCounterAttack(100);
         }else{
             piercingVision = true;
             setEnemyTerrainPenalty(3);
@@ -226,7 +218,7 @@ public class Sonja extends CO{
         SCOP = false;
         if(army.getBattle().getBattleOptions().isBalance() == true){
             firstStrike = false;
-            counterAttack = 150;
+            setCounterAttack(150);
             setEnemyTerrainPenalty(0);
             setNegativeLuck(10);
         }else{

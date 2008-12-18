@@ -16,9 +16,45 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.customwars.officer.Andy;
+import com.customwars.officer.CO;
+import com.customwars.officer.COList;
 import com.customwars.officer.Fighter;
 import com.customwars.officer.Max;
 import com.customwars.state.ResourceLoader;
+import com.customwars.unit.APC;
+import com.customwars.unit.AntiAir;
+import com.customwars.unit.Army;
+import com.customwars.unit.Artillery;
+import com.customwars.unit.Artillerycraft;
+import com.customwars.unit.BCopter;
+import com.customwars.unit.Battlecraft;
+import com.customwars.unit.Battleship;
+import com.customwars.unit.BlackBoat;
+import com.customwars.unit.BlackBomb;
+import com.customwars.unit.Bomber;
+import com.customwars.unit.Carrier;
+import com.customwars.unit.Cruiser;
+import com.customwars.unit.Destroyer;
+import com.customwars.unit.Infantry;
+import com.customwars.unit.Lander;
+import com.customwars.unit.MDTank;
+import com.customwars.unit.Mech;
+import com.customwars.unit.MegaTank;
+import com.customwars.unit.Missiles;
+import com.customwars.unit.Neotank;
+import com.customwars.unit.Oozium;
+import com.customwars.unit.Piperunner;
+import com.customwars.unit.Recon;
+import com.customwars.unit.Rockets;
+import com.customwars.unit.Shuttlerunner;
+import com.customwars.unit.Spyplane;
+import com.customwars.unit.Stealth;
+import com.customwars.unit.Submarine;
+import com.customwars.unit.TCopter;
+import com.customwars.unit.Tank;
+import com.customwars.unit.Transport;
+import com.customwars.unit.Unit;
+import com.customwars.unit.Zeppelin;
 
 import java.net.*;
 //import javax.media.bean.playerbean.MediaPlayer;
@@ -749,14 +785,14 @@ public void updateFoW() {
             }
             //deal with CO store check
             Unit[] COstorecheck = armies[turn].getUnits();
-            if(turn >= 0 && armies[turn].getCO().cleanEnemyStoreEnd) {
+            if(turn >= 0 && armies[turn].getCO().isCleanEnemyStoreEnd()) {
                 for(int i = 0; i<numArmies; i++) {
                     if(armies[i].getSide() != armies[turn].getSide()) {
                         COstorecheck = armies[i].getUnits();
                         if(COstorecheck != null)
                             for(int t = 0; t<COstorecheck.length; t++)
                                 for(int s = 0; s < 10; s++)
-                                    COstorecheck[t].getEnemyCOstore()[armies[i].getCO().statIndex][s] = 0;
+                                    COstorecheck[t].getEnemyCOstore()[armies[i].getCO().getStatIndex()][s] = 0;
                     }
                 }
             }
@@ -825,19 +861,19 @@ public void updateFoW() {
         
         Unit[] COstorecheck = armies[turn].getUnits();
         if(COstorecheck != null)
-            if(armies[turn].getCO().cleanStore)
+            if(armies[turn].getCO().isCleanStore())
                 for(int i = 0; i < COstorecheck.length; i++)
                     for(int s = 0; s<COstorecheck[i].getCOstore().length; s++)
                         COstorecheck[i].getCOstore()[s] = 0;
         //This sets all COstore counters of the current CO to zero at the beginning of their day.
-        if(turn >= 0 && armies[turn].getCO().cleanEnemyStoreBegin) {
+        if(turn >= 0 && armies[turn].getCO().isCleanEnemyStoreBegin()) {
             for(int i = 0; i<numArmies; i++) {
                 if(armies[i].getSide() != armies[turn].getSide()) {
                     COstorecheck = armies[i].getUnits();
                     if(COstorecheck != null)
                         for(int t = 0; t<COstorecheck.length; t++)
                             for(int s = 0; s < 10; s++)
-                                COstorecheck[t].getEnemyCOstore()[armies[i].getCO().statIndex][s] = 0;
+                                COstorecheck[t].getEnemyCOstore()[armies[i].getCO().getStatIndex()][s] = 0;
                 }
             }
         }
@@ -926,7 +962,7 @@ public void updateFoW() {
         if(u!=null){
             for(int i = 0; i < u.length; i++){
                 //clear animations.
-                u[i].direction = -1;
+                u[i].setDirection(-1);
                 //resupply adjacent if an APC
                 if(u[i].getUnitType() == 9)((APC)u[i]).resupplyAdjacent();
                 //Repair transported units if a carrier
@@ -1699,11 +1735,11 @@ public void updateFoW() {
         CO a,b;
         int x = coSelect[2*i];
         a = getCO(x);
-        a.altCostume = alts[2*i];
+        a.setAltCostume(alts[2*i]);
         x=coSelect[2*i+1];
         b = getCO(x);
         if(b!=null)
-            b.altCostume = alts[2*i+1];
+            b.setAltCostume(alts[2*i+1]);
         armies[i] = new Army(i,a, b, sideSelect[i], color, this);
     }
     

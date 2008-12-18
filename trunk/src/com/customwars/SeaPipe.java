@@ -14,7 +14,7 @@ public class SeaPipe extends Terrain
     {
         //Statistics
         name = "Sea Pipe";
-        move = new double[] {-1,-1,-1,-1,-1,-1,-1,-1,1,-1};
+        setMove(new double[] {-1,-1,-1,-1,-1,-1,-1,-1,1,-1});
         basemove = new double[] {-1,-1,-1,-1,-1,-1,-1,-1,1,-1};;
         def  = 0;
         index = TerrType.SEA_PIPE;

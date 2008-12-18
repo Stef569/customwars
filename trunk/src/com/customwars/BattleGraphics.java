@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.customwars.state.ResourceLoader;
+import com.customwars.unit.Unit;
 
 import java.util.Random;
 

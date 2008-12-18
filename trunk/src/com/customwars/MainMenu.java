@@ -20,8 +20,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.customwars.lobbyclient.*;
+import com.customwars.officer.CO;
+import com.customwars.officer.COList;
 import com.customwars.state.FileSystemManager;
 import com.customwars.state.ResourceLoader;
+import com.customwars.unit.UnitGraphics;
 
 
 import java.awt.color.*;
@@ -282,7 +285,7 @@ public class MainMenu extends JComponent{
         g.setColor(Color.gray);*/
         g.setFont(new Font("SansSerif", Font.PLAIN, 10));
         g.drawString("CO: " + COList.getListing()[infono].getName(), 10,20);
-        g.drawString(COList.getListing()[infono].title, (COList.getListing()[infono].getName().length() + 9)*6 + 10,20);
+        g.drawString(COList.getListing()[infono].getTitle(), (COList.getListing()[infono].getName().length() + 9)*6 + 10,20);
         //CO Bio
         //This is a 'word wrap' thing, used multiple times. Listen up, I'm only going to document this once. >_>
         for(i = 0; i<((COList.getListing()[infono].getBio().length()/40)+1); i++) {//As long as i is shorter than the length, in characters, of the bio divided by 40, incremented by one.
@@ -354,12 +357,12 @@ public class MainMenu extends JComponent{
         }
         store += 2;
         //This draws the Power
-        if(COList.getListing()[infono].COPStars != -1) {
+        if(COList.getListing()[infono].getCOPStars() != -1) {
             if(((store+1) * 15- skip*96*scale+ adjust)<25 && ((store+1) * 15- skip*96*scale+ adjust)>0)
                 adjust += 25;
             
             g.drawImage(MiscGraphics.getPowerIcon(), 10, (store+1) * 15- skip*96*scale + adjust, this);
-            g.drawString(COList.getListing()[infono].COPName, 26, (store+2) * 15 - 2- skip*96*scale + adjust);
+            g.drawString(COList.getListing()[infono].getCOPName(), 26, (store+2) * 15 - 2- skip*96*scale + adjust);
             
             for(i = 0; i<((COList.getListing()[infono].getCOPString().length()/40)+1); i++) //As long as i is shorter than the length, in characters, of this divided by 40 +1
             {
@@ -383,7 +386,7 @@ public class MainMenu extends JComponent{
         if(((store+1) * 15- skip*96*scale+ adjust)<25 && ((store+1) * 15- skip*96*scale+ adjust)>0)
             adjust += 25;
         g.drawImage(MiscGraphics.getSuperIcon(), 10, (store+1) * 15- skip*96*scale + adjust, this);
-        g.drawString(COList.getListing()[infono].SCOPName, 26, (store+2) * 15 - 2- skip*96*scale + adjust);
+        g.drawString(COList.getListing()[infono].getSCOPName(), 26, (store+2) * 15 - 2- skip*96*scale + adjust);
         for(i = 0; i<((COList.getListing()[infono].getSCOPString().length()/40)+1); i++) //As long as i is shorter than the length, in characters, of this divided by 40 +1
         {
             if(COList.getListing()[infono].getSCOPString().length() - (i+1)*40 >= 0) { //Is there more than 40 characters left?
@@ -400,15 +403,15 @@ public class MainMenu extends JComponent{
         }
         //Draws tags
         store += 2;
-        for(i = 0; i< COList.getListing()[infono].TagStars.length; i++) {
-            if(COList.getListing()[infono].TagStars[i] > 0) {
+        for(i = 0; i< COList.getListing()[infono].getTagStars().length; i++) {
+            if(COList.getListing()[infono].getTagStars()[i] > 0) {
                 if(i*15 + (store+2) * 15 - 2- skip*96*scale+ adjust<25 && i*15 + (store+2) * 15 - 2- skip*96*scale+ adjust>0)
                     adjust += 25;
-                g.drawString(COList.getListing()[infono].TagCOs[i], 10, i*15 + (store+2) * 15 - 2- skip*96*scale + adjust);
-                for(int t =0; t<COList.getListing()[infono].TagStars[i]; t++) {
-                    g.drawImage(MiscGraphics.getBigStar(5), COList.getListing()[infono].TagCOs[i].length()*5 + 15 + t*8,(store+2) * 15 - 2- skip*96*scale + adjust+ i*15 -10, this);
+                g.drawString(COList.getListing()[infono].getTagCOs()[i], 10, i*15 + (store+2) * 15 - 2- skip*96*scale + adjust);
+                for(int t =0; t<COList.getListing()[infono].getTagStars()[i]; t++) {
+                    g.drawImage(MiscGraphics.getBigStar(5), COList.getListing()[infono].getTagCOs()[i].length()*5 + 15 + t*8,(store+2) * 15 - 2- skip*96*scale + adjust+ i*15 -10, this);
                 }
-                if(i+1 == COList.getListing()[infono].TagStars.length)
+                if(i+1 == COList.getListing()[infono].getTagStars().length)
                     store +=i;
             }
         }
@@ -624,16 +627,16 @@ public class MainMenu extends JComponent{
         {
             glide++;
             g.drawImage(MiscGraphics.getCOSheet(COList.getIndex(current)),339+(int)(100*Math.pow(0.89,glide)),44,339+225+(int)(100*Math.pow(0.89,glide)),44+350,offset,0,offset+225,350,this);
-            g.drawImage(MainMenuGraphics.getCOName(),170,70,170+50,70+15,0,current.id*15,50,current.id*15+15,this);
+            g.drawImage(MainMenuGraphics.getCOName(),170,70,170+50,70+15,0,current.getId()*15,50,current.getId()*15+15,this);
             /*g.setColor(Color.black);
             g.setFont(new Font("SansSerif", Font.BOLD, 12));
             g.drawString(current.getBio(),170,100);*/
             if(numCOs%2==1){
                 g.drawImage(MiscGraphics.getCOSheet(COList.getIndex(current)),166,226,166+32,226+12,144+offset,350,144+offset+32,350+12,this);
-                g.drawImage(MainMenuGraphics.getCOName(),199,226,199+50,226+15,0,current.id*15,50,current.id*15+15,this);
+                g.drawImage(MainMenuGraphics.getCOName(),199,226,199+50,226+15,0,current.getId()*15,50,current.getId()*15+15,this);
             }else{
                 g.drawImage(MiscGraphics.getCOSheet(COList.getIndex(current)),166,210,166+32,210+12,144+offset,350,144+offset+32,350+12,this);
-                g.drawImage(MainMenuGraphics.getCOName(),199,210,199+50,210+15,0,current.id*15,50,current.id*15+15,this);
+                g.drawImage(MainMenuGraphics.getCOName(),199,210,199+50,210+15,0,current.getId()*15,50,current.getId()*15+15,this);
             }
         }
         
@@ -753,7 +756,7 @@ public class MainMenu extends JComponent{
         g.drawString("Default Bans: " + bans,10,220);
         g.setColor(Color.black);
         if(item == 11)g.setColor(Color.red);
-        g.drawString("Main Screen CO: " + COList.getListing()[Options.getMainCOID()].name,10,240);
+        g.drawString("Main Screen CO: " + COList.getListing()[Options.getMainCOID()].getName(),10,240);
         g.setColor(Color.black);
         
         if(item == 12)g.setColor(Color.red);

@@ -1,8 +1,7 @@
 package com.customwars.officer;
 
 import com.customwars.Battle;
-import com.customwars.CO;
-import com.customwars.Unit;
+import com.customwars.unit.Unit;
 
 /*
  *Flak.java
@@ -17,7 +16,7 @@ public class Flak extends CO{
     //constructor
     public Flak(Battle bat) {
         name = "Flak";
-        id = 19;
+        setId(19);
 
         String CObiox = "The strongman of the Black Hole army. Promoted form private by Hawke, who was impressed by his natural ability.";             //Holds the condensed CO bio'
         String titlex = "Berzerker";
@@ -47,10 +46,10 @@ public class Flak extends CO{
         int[] TagStarsx = {0,1}; //Number of stars for each special tag.
         int[] TagPercentx = {105,110}; //Percent for each special tag. 
         
-        TagCOs = TagCOsx;
-        TagNames = TagNamesx;
-        TagStars = TagStarsx;
-        TagPercent = TagPercentx;
+        setTagCOs(TagCOsx);
+        setTagNames(TagNamesx);
+        setTagStars(TagStarsx);
+        setTagPercent(TagPercentx);
        
         String[] COPowerx =
         {"Stay outta my way!",
@@ -73,8 +72,8 @@ public class Flak extends CO{
         {"I-I don't believe it... They were... stronger than me?",
          "Grrr... I wanna smash your face in!!!"} ;
         
-        Swap = Swapx;       
-        COPower = COPowerx;
+        setSwap(Swapx);       
+        setCOPower(COPowerx);
         Victory = Victoryx;
         defeat = defeatx;
        

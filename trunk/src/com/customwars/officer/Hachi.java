@@ -1,23 +1,15 @@
 package com.customwars.officer;
 
 import com.customwars.Battle;
-import com.customwars.CO;
 import com.customwars.Property;
-import com.customwars.Unit;
-    /*
-     *Hachi.java
-     *Author: Adam Dziuk, Kosheh
-     *Contributors:
-     *Creation:
-     *The Hachi class is used to create an instance of the Orange Star CO Hachi (copyright Intelligent Systems).
-     */
+import com.customwars.unit.Unit;
 
 public class Hachi extends CO{
     
     //constructor
     public Hachi(Battle bat) {
         name = "Hachi";
-        id = 4;
+        setId(4);
         
         String CObiox = "Owner of the Battle Maps shop. Rumored to be Orange Star's former commander-in-chief.";             //Holds the condensed CO bio'
         String titlex = "Industrialist Extraordinaire";
@@ -48,10 +40,10 @@ public class Hachi extends CO{
         int[] TagStarsx = {2,0}; //Number of stars for each special tag.
         int[] TagPercentx = {100,90}; //Percent for each special tag.
         
-        TagCOs = TagCOsx;
-        TagNames = TagNamesx;
-        TagStars = TagStarsx;
-        TagPercent = TagPercentx;
+        setTagCOs(TagCOsx);
+        setTagNames(TagNamesx);
+        setTagStars(TagStarsx);
+        setTagPercent(TagPercentx);
         
         String[] COPowerx =
         {"This brings back memories!",
@@ -74,8 +66,8 @@ public class Hachi extends CO{
         {"I'm getting too old for this.",
          "Shop's closing for today..."} ;
         
-        Swap = Swapx;       
-        COPower = COPowerx;
+        setSwap(Swapx);       
+        setCOPower(COPowerx);
         Victory = Victoryx;
         defeat = defeatx;
         if (bat.getBattleOptions().isBalance()== true){

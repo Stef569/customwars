@@ -1,16 +1,7 @@
 package com.customwars.officer;
 
-import com.customwars.Army;
-import com.customwars.CO;
-import com.customwars.Unit;
-/*
- *Rattigan.java
- *Author: Fugue
- *Contributors: 
- *Creation: 6/19/07
- *The Rattigan class makes an instance of CO Rattigan from Yellow Comet.
- *It's taking a lot of willpower not to give this guy an actual Japanese-y name.
- */
+import com.customwars.unit.Army;
+import com.customwars.unit.Unit;
 
 /** Rattigan: A dutiful CO of the Yellow Comet army addled by a
  * childhood phobia. Blames Sensei for Yellow Comet’s lack of
@@ -20,7 +11,7 @@ public class Rattigan extends CO{
    //constructor
    public Rattigan() {
       name = "Rattigan";
-      id = 59;
+      setId(59);
 
       String CObiox =
          "A dutiful CO of the Yellow Comet army   " +
@@ -66,10 +57,10 @@ public class Rattigan extends CO{
       int[] TagStarsx = {1, 1, 0, 0, 0}; //Number of stars for each special tag.
       int[] TagPercentx = {110, 105, 105, 90, 90}; //Percent for each special tag.
 
-      TagCOs = TagCOsx;
-      TagNames = TagNamesx;
-      TagStars = TagStarsx;
-      TagPercent = TagPercentx;
+      setTagCOs(TagCOsx);
+      setTagNames(TagNamesx);
+      setTagStars(TagStarsx);
+      setTagPercent(TagPercentx);
 
       String[] COPowerx = {
             "All those enemy men... heh, perfect!",
@@ -98,9 +89,9 @@ public class Rattigan extends CO{
       };
        */
 
-      COPower = COPowerx;
+      setCOPower(COPowerx);
       Victory = Victoryx;
-      Swap = Swapx;
+      setSwap(Swapx);
 
       COPName = "Raid";
       SCOPName = "The Sweep";

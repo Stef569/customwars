@@ -2,6 +2,10 @@ package com.customwars;
 
 import java.awt.*;
 
+import com.customwars.unit.Transport;
+import com.customwars.unit.Unit;
+import com.customwars.unit.UnitGraphics;
+
 public class CWArtist 
 {
 	public static final void drawUnitAtXY(Graphics2D g, CWScreen obs, int utype, int color, int x, int y) 
@@ -112,11 +116,11 @@ public class CWArtist
 		if(obs instanceof BattleScreen)
 			hideTheHP = ((BattleScreen)obs).assessHideTheHP();
 		
-		if(!hideTheHP && thisUnit.getDisplayHP()!=10 && (!thisUnit.getArmy().getCO().hiddenHP || obs.getBattle().getArmy(obs.getBattle().getTurn()) == thisUnit.getArmy()))
+		if(!hideTheHP && thisUnit.getDisplayHP()!=10 && (!thisUnit.getArmy().getCO().isHiddenHP() || obs.getBattle().getArmy(obs.getBattle().getTurn()) == thisUnit.getArmy()))
 		{
 			g.drawImage(MiscGraphics.getHpDisplay(thisUnit.getDisplayHP()),x+8,y+9,obs);
 		} 
-		else if(hideTheHP || thisUnit.getArmy().getCO().hiddenHP && (thisUnit.getDisplayHP()!=10 || obs.getBattle().getArmy(obs.getBattle().getTurn()).getSide() != thisUnit.getArmy().getSide()))
+		else if(hideTheHP || thisUnit.getArmy().getCO().isHiddenHP() && (thisUnit.getDisplayHP()!=10 || obs.getBattle().getArmy(obs.getBattle().getTurn()).getSide() != thisUnit.getArmy().getSide()))
 		{
 		    g.drawImage(MiscGraphics.getHiddenHP(),x+8,y+9,obs);
 		}
@@ -178,7 +182,7 @@ public class CWArtist
 		
 		g.setColor(Color.white);
 		
-		if(tileUnit.getArmy().getCO().hiddenUnitInfo && (obs.getBattle().getArmy(obs.getBattle().getTurn()).getSide() != tileUnit.getArmy().getSide())) 
+		if(tileUnit.getArmy().getCO().isHiddenUnitInfo() && (obs.getBattle().getArmy(obs.getBattle().getTurn()).getSide() != tileUnit.getArmy().getSide())) 
 		{
 			g.drawString("?????", x, y + 10); 
 		} 
@@ -195,13 +199,13 @@ public class CWArtist
 		//This is when the unit's HP is drawn
 		g.drawImage(MiscGraphics.getSmallHeart(), x + 2, y + 30, obs);
 		
-		if(hideTheHP || tileUnit.getArmy().getCO().hiddenHP && obs.getBattle().getArmy(obs.getBattle().getTurn()).getSide() != tileUnit.getArmy().getSide()) 
+		if(hideTheHP || tileUnit.getArmy().getCO().isHiddenHP() && obs.getBattle().getArmy(obs.getBattle().getTurn()).getSide() != tileUnit.getArmy().getSide()) 
 		{
 			g.drawString("?", x + 10, y + 36);
 		} 
 		else 
 		{
-			if(obs.getBattle().getArmy(obs.getBattle().getTurn()).getCO().seeFullHP)
+			if(obs.getBattle().getArmy(obs.getBattle().getTurn()).getCO().isSeeFullHP())
 			{
 				String onesDigit = "" + (tileUnit.getHP() % 10);
 				String tensDigit = "" + (tileUnit.getHP() / 10);
@@ -217,7 +221,7 @@ public class CWArtist
 		//This is when the unit's fuel is drawn
 		g.drawImage(MiscGraphics.getLowFuelIcon(), x, y + 38,obs);
 		
-		if(tileUnit.getArmy().getCO().hiddenUnitInfo && (obs.getBattle().getArmy(obs.getBattle().getTurn()).getSide() != tileUnit.getArmy().getSide())) 
+		if(tileUnit.getArmy().getCO().isHiddenUnitInfo() && (obs.getBattle().getArmy(obs.getBattle().getTurn()).getSide() != tileUnit.getArmy().getSide())) 
 		{
 			g.drawString("?", x + 10, y + 46);
 		} 
@@ -227,11 +231,11 @@ public class CWArtist
 		}
 		
 		//This is when the unit's ammo is drawn
-		if(tileUnit.getAmmo() != -1 || (tileUnit.getArmy().getCO().hiddenUnitInfo && (obs.getBattle().getArmy(obs.getBattle().getTurn()).getSide() != tileUnit.getArmy().getSide()))) 
+		if(tileUnit.getAmmo() != -1 || (tileUnit.getArmy().getCO().isHiddenUnitInfo() && (obs.getBattle().getArmy(obs.getBattle().getTurn()).getSide() != tileUnit.getArmy().getSide()))) 
 		{
 			g.drawImage(MiscGraphics.getLowAmmoIcon(), x, y + 48, obs);
 		    
-		    if(tileUnit.getArmy().getCO().hiddenUnitInfo && (obs.getBattle().getArmy(obs.getBattle().getTurn()).getSide() != tileUnit.getArmy().getSide())) 
+		    if(tileUnit.getArmy().getCO().isHiddenUnitInfo() && (obs.getBattle().getArmy(obs.getBattle().getTurn()).getSide() != tileUnit.getArmy().getSide())) 
 		    {
 		    	g.drawString("?", x + 10, y + 56);
 		    } 
@@ -254,7 +258,7 @@ public class CWArtist
 			    g.setFont(new Font("SansSerif", Font.BOLD, 16));
 			    
 			    //Koshi can get LOL readouts!
-			    if(tileUnit.getArmy().getCO().hiddenUnitInfo && (obs.getBattle().getArmy(obs.getBattle().getTurn()).getSide() != tileUnit.getArmy().getSide())) 
+			    if(tileUnit.getArmy().getCO().isHiddenUnitInfo() && (obs.getBattle().getArmy(obs.getBattle().getTurn()).getSide() != tileUnit.getArmy().getSide())) 
 			    {
 			    	g.drawString("LOL", x, y);
 			    } 
@@ -278,7 +282,7 @@ public class CWArtist
 		{
 		    Transport trans = (Transport) tileUnit;
 			
-		    if((trans.getUnitsCarried()>0) && !trans.getArmy().getCO().hiddenUnitInfo && (obs.getBattle().getArmy(obs.getBattle().getTurn()).getSide() == tileUnit.getArmy().getSide())) 
+		    if((trans.getUnitsCarried()>0) && !trans.getArmy().getCO().isHiddenUnitInfo() && (obs.getBattle().getArmy(obs.getBattle().getTurn()).getSide() == tileUnit.getArmy().getSide())) 
 		    {
 		        g.setColor(Color.black);
 		        g.fillRect(x, y, 32, 56);

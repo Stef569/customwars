@@ -1,8 +1,7 @@
 package com.customwars.officer;
 
-import com.customwars.Army;
-import com.customwars.CO;
-import com.customwars.Unit;
+import com.customwars.unit.Army;
+import com.customwars.unit.Unit;
 
 /*
  *Hawke.java
@@ -17,7 +16,7 @@ public class Hawke extends CO{
     //constructor
     public Hawke() {
         name = "Hawke";
-        id = 22;
+        setId(22);
         
         String CObiox = "A commander of the Black Hole army who will stop at nothing to achieve his goals.";             //Holds the condensed CO bio'
         String titlex = "Predator";
@@ -47,10 +46,10 @@ public class Hawke extends CO{
         int[] TagStarsx = {1,0,0,0,1,0}; //Number of stars for each special tag.
         int[] TagPercentx = {105,70,90,90,110,80}; //Percent for each special tag.
         
-        TagCOs = TagCOsx;
-        TagNames = TagNamesx;
-        TagStars = TagStarsx;
-        TagPercent = TagPercentx;
+        setTagCOs(TagCOsx);
+        setTagNames(TagNamesx);
+        setTagStars(TagStarsx);
+        setTagPercent(TagPercentx);
         
         
         String[] COPowerx =
@@ -74,8 +73,8 @@ public class Hawke extends CO{
         {"That's it then. We shall withdraw.",
          "... This is one situation I never expected myself to be in."} ;
         
-        Swap = Swapx;       
-        COPower = COPowerx;
+        setSwap(Swapx);       
+        setCOPower(COPowerx);
         Victory = Victoryx;
         defeat = defeatx;
         

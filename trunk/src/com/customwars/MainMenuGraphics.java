@@ -13,6 +13,7 @@ import java.awt.image.*;
 import java.io.*;
 import javax.swing.*;
 
+import com.customwars.officer.COSelectFilter;
 import com.customwars.state.ResourceLoader;
 
 public class MainMenuGraphics {

@@ -11,6 +11,8 @@ import java.io.*;
 import java.util.LinkedList;
 import javax.naming.LinkException;
 
+import com.customwars.unit.Unit;
+
 public class Path implements Serializable{
     
 
@@ -428,7 +430,7 @@ public class Path implements Serializable{
 				//Check if the current unit is 'dived' or if the unit has been 
     			//detected. If it is not dived, or it has been detected, it is
     			//thus occupying the square and it is not open
-    			else if(movingUnit.getArmy().getBattle().isMist() && (!thisUnit.isDived() || thisUnit.detected))
+    			else if(movingUnit.getArmy().getBattle().isMist() && (!thisUnit.isDived() || thisUnit.isDetected()))
     			{
     				return false;
     			}

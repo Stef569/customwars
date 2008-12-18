@@ -1,21 +1,13 @@
 package com.customwars.officer;
 
-import com.customwars.CO;
-import com.customwars.Unit;
-/*
- *Jess.java
- *Author: Adam Dziuk, Paul Whan
- *Contributors: Kosheh
- *Creation: July 4, 2006, 10:17 PM
- *The Andy class is used to create an instance of the Green Earth CO Jess (copyright Intelligent Systems).
- */
+import com.customwars.unit.Unit;
 
 public class Jess extends CO{
     
 //constructor
     public Jess() {
         name = "Jess";
-        id = 13;
+        setId(13);
         
         String CObiox = "A gallant tank-driving commander who excels at analyzing information. Often argues with Eagle.";             //Holds the condensed CO bio'
         String titlex = "Jeanne D’Tank";
@@ -46,10 +38,10 @@ public class Jess extends CO{
         int[] TagStarsx = {1,1,0,0,0,0}; //Number of stars for each special tag.
         int[] TagPercentx = {110,110,105,105,90,90}; //Percent for each special tag.
         
-        TagCOs = TagCOsx;
-        TagNames = TagNamesx;
-        TagStars = TagStarsx;
-        TagPercent = TagPercentx;
+        setTagCOs(TagCOsx);
+        setTagNames(TagNamesx);
+        setTagStars(TagStarsx);
+        setTagPercent(TagPercentx);
         
         String[] COPowerx =
         {"Battle should never be taken lightly. I always give 100%! Always!!!",
@@ -72,8 +64,8 @@ public class Jess extends CO{
         {"This is looking grim...",
          "It was inevitable under these conditions."} ;
         
-        Swap = Swapx;       
-        COPower = COPowerx;
+        setSwap(Swapx);       
+        setCOPower(COPowerx);
         Victory = Victoryx;
         defeat = defeatx;
         

@@ -1,16 +1,9 @@
 package com.customwars.officer;
 
-import com.customwars.Army;
 import com.customwars.Location;
 import com.customwars.Map;
-import com.customwars.Unit;
-/*
- *Fighter.java
- *Author: Eskimoconvntion
- *Contributors:
- *Creation: 17/7/06
- *The Fighter class is used to create an instance of the Fighter Unit
- */
+import com.customwars.unit.Army;
+import com.customwars.unit.Unit;
 
 public class Fighter extends Unit{
    

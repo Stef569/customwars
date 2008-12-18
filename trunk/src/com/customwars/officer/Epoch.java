@@ -1,21 +1,13 @@
 package com.customwars.officer;
 
-import com.customwars.CO;
-import com.customwars.Unit;
-/*
- *Epoch.java
- *Author:Adam Dziuk
- *Contributors:Justin Gregory, All the little people.
- *Creation: Xenesis
- *The Epoch class is used to create an instance of the PG CO Epoch (Made by Xenesis)
- */
+import com.customwars.unit.Unit;
 
 public class Epoch extends CO{
     
 //constructor
     public Epoch() {
         name = "Epoch";
-        id = 30;
+        setId(30);
         
         String CObiox = "The first prototype unit of Jugger. Crude in design and technology, the power systems of Epoch are extremely prone to short circuiting, resulting in bursts of energy and instability.";             //Holds the condensed CO bio'
         String titlex = "Whars Beta";
@@ -45,10 +37,10 @@ public class Epoch extends CO{
         int[] TagStarsx = {0,0,0,0,1}; //Number of stars for each special tag.
         int[] TagPercentx = {70,90,105,105,110}; //Percent for each special tag.
         
-        TagCOs = TagCOsx;
-        TagNames = TagNamesx;
-        TagStars = TagStarsx;
-        TagPercent = TagPercentx;
+        setTagCOs(TagCOsx);
+        setTagNames(TagNamesx);
+        setTagStars(TagStarsx);
+        setTagPercent(TagPercentx);
         
         String[] COPowerx =
         {"Error: Overcharged. initiate saftey mode.",
@@ -67,8 +59,8 @@ public class Epoch extends CO{
         {"Compiling database for a shocking performance",
          "Tactics upgraded, only time remains."};
         
-        Swap = Swapx;
-        COPower = COPowerx;
+        setSwap(Swapx);
+        setCOPower(COPowerx);
         Victory = Victoryx;
         
         COPName = "Short Circuit";
@@ -101,13 +93,13 @@ public class Epoch extends CO{
     //carries out Andy's CO Power, called by CO.activateCOP()
     public void COPower(){
         COP = true;
-        hiddenHP = true;
+        setHiddenHP(true);
     }
     
     //carries out Andy's Super CO Power, called by CO.activateSCOP()
     public void superCOPower(){
         SCOP = true;
-        hiddenHP = true;
+        setHiddenHP(true);
         Unit[] u = army.getUnits();
         if(u != null)
             for(int i = 0; i < u.length; i++){
@@ -129,7 +121,7 @@ public class Epoch extends CO{
     //used to deactivate Andy's CO Power the next day
     public void deactivateCOP(){
         COP = false;
-        hiddenHP = false;
+        setHiddenHP(false);
     }
     
     public void setChange(Unit u){};
@@ -139,7 +131,7 @@ public class Epoch extends CO{
     //used to deactivate Andy's Super CO Power the next day
     public void deactivateSCOP(){
         SCOP = false;
-        hiddenHP = false;
+        setHiddenHP(false);
         Unit[] u = army.getUnits();
         for(int i = 0; i < u.length; i++){
             if(u[i].getClass() != null && u[i].isChanged()){

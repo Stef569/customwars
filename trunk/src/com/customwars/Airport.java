@@ -1,4 +1,6 @@
 package com.customwars;
+
+import com.customwars.unit.Army;
 /*
  *Airport.java
  *Author: veggiehunter
@@ -38,7 +40,7 @@ public class Airport extends Property{
     private void initStatistics(){
         //Statistics
         name = "Airport";
-        move = new double[] {1,1,1,1,1,-1,-1,1,-1,1};
+        setMove(new double[] {1,1,1,1,1,-1,-1,1,-1,1});
         basemove = new double[] {1,1,1,1,1,-1,-1,1,-1,1};
         def  = 3;
         index = 12;

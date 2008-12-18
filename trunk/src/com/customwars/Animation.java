@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 import javax.swing.Timer;
 
 import com.customwars.state.ResourceLoader;
+import com.customwars.unit.Unit;
 
 import java.awt.image.*;
 import java.io.*;
@@ -255,10 +256,10 @@ public class Animation{
     }
     //Same as above, but does not flush.
     public void setupMove(boolean lock, Unit u, int dir){
-        u.moving = true;
+        u.setMoving(true);
         moveAnimation = true;
         movedUnit = u;
-        u.direction = dir;
+        u.setDirection(dir);
         lockpos = lock;
         Listener animationTerminator = new Listener(this);
         timer = new Timer(20, animationTerminator);
@@ -386,7 +387,7 @@ public class Animation{
                     b.getLayerFour().remove(animation);
                 timer.setRepeats(false); //Timer, you're no longer needed.
                 if(moveAnimation && !linked)
-                    movedUnit.moving = false;
+                    movedUnit.setMoving(false);
             }
             
         }

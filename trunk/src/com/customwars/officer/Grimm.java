@@ -1,21 +1,13 @@
 package com.customwars.officer;
 
-import com.customwars.CO;
-import com.customwars.Unit;
-/*
- *Grimm.java
- *Author: Adam Dziuk, Kosheh, Paul Whan
- *Contributors:
- *Creation:
- *The Grimm class is used to create an instance of the Yellow Comet CO Grimm (copyright Intelligent Systems).
- */
+import com.customwars.unit.Unit;
 
 public class Grimm extends CO{
     
 //constructor
     public Grimm() {
         name = "Grimm";
-        id = 18;
+        setId(18);
         
         String CObiox = "A Yellow Comet commander with a dynamic personality. Could care less about the details. Nicknamed \"Lightning Grimm.\"";             //Holds the condensed CO bio'
         String titlex = "Lightning Grimm";
@@ -44,10 +36,10 @@ public class Grimm extends CO{
         int[] TagStarsx = {1,0,0,0}; //Number of stars for each special tag.
         int[] TagPercentx = {110,105,105,90}; //Percent for each special tag.
         
-        TagCOs = TagCOsx;
-        TagNames = TagNamesx;
-        TagStars = TagStarsx;
-        TagPercent = TagPercentx;
+        setTagCOs(TagCOsx);
+        setTagNames(TagNamesx);
+        setTagStars(TagStarsx);
+        setTagPercent(TagPercentx);
         
         
         String[] COPowerx =
@@ -71,8 +63,8 @@ public class Grimm extends CO{
         {"I'm tellin' you, this is awful!",
          "I'll get you next time! Oooh yeah!"} ;
         
-        Swap = Swapx;       
-        COPower = COPowerx;
+        setSwap(Swapx);       
+        setCOPower(COPowerx);
         Victory = Victoryx;
         defeat = defeatx;
         

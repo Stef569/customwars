@@ -33,8 +33,8 @@ public class DamageTrigger extends Trigger{
     
     
     public void trigger() {
-        if(b.getMap().find(new Location(x,y)).hasUnit()) {
-           b.getMap().find(new Location(x,y)).getUnit().damage(damage, destroy); 
+        if(getB().getMap().find(new Location(x,y)).hasUnit()) {
+           getB().getMap().find(new Location(x,y)).getUnit().damage(damage, destroy); 
         }
     }
 }

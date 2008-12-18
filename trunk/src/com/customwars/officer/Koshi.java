@@ -1,16 +1,8 @@
 package com.customwars.officer;
 
-import com.customwars.Army;
 import com.customwars.BaseDMG;
-import com.customwars.CO;
-import com.customwars.Unit;
-/*
- *Koshi.java
- *Author: -
- *Contributors: -
- *Creation: -
- *The Koshi class is used to create an instance of the CO Koshi
- */
+import com.customwars.unit.Army;
+import com.customwars.unit.Unit;
 
 public class Koshi extends CO
 {
@@ -23,7 +15,7 @@ public class Koshi extends CO
     public Koshi()
     {
         name = "Koshi";
-        id = 56;
+        setId(56);
 
         String CObiox = "Jade Cosmos' lead intel-anaylst. Has a long history with strategy games, which his peers believe is what helped him to achieve his position. Specializes in communications sabotage.";             //Holds the condensed CO bio'
         String titlex = "Blinding Tactics";
@@ -54,10 +46,10 @@ public class Koshi extends CO
         int[] TagStarsx = {2,1,1}; //Number of stars for each special tag.
         int[] TagPercentx = {110,110,110}; //Percent for each special tag.
 
-        TagCOs = TagCOsx;
-        TagNames = TagNamesx;
-        TagStars = TagStarsx;
-        TagPercent = TagPercentx;
+        setTagCOs(TagCOsx);
+        setTagNames(TagNamesx);
+        setTagStars(TagStarsx);
+        setTagPercent(TagPercentx);
 
         String[] COPowerx =
         {"Anonymous does not forgive, and neither will I!",
@@ -76,9 +68,9 @@ public class Koshi extends CO
         {"My turn already?! But I haven't --",
               "And we're off! Squadellah!"};
 
-        COPower = COPowerx;
+        setCOPower(COPowerx);
         Victory = Victoryx;
-        Swap = Swapx;
+        setSwap(Swapx);
         //Used to be quirky beserky / chicken kick
         COPName = "Memory Lapse";
         SCOPName = "Blinding Tactics";
@@ -88,8 +80,8 @@ public class Koshi extends CO
         this.army = army;
         style = JADE_COSMOS;
 
-        hiddenIntel = true;
-        hiddenPower = true;
+        setHiddenIntel(true);
+        setHiddenPower(true);
         didNegateLuck = false;
 
         posLuck = 0;
@@ -129,9 +121,9 @@ public class Koshi extends CO
     public void COPower()
     {
         COP = true;
-        hiddenUnitInfo = true;
-        disruptFireDisplay = true;
-        hiddenUnitType = true;
+        setHiddenUnitInfo(true);
+        setDisruptFireDisplay(true);
+        setHiddenUnitType(true);
         
         setPositiveLuck(getPositiveLuck() + 30);
 
@@ -193,7 +185,7 @@ public class Koshi extends CO
                     {
                        Unit testUnit = allUnits[j];
 
-                       testUnit.getEnemyCOstore()[statIndex][0] = testUnit.getVision() - 1;
+                       testUnit.getEnemyCOstore()[getStatIndex()][0] = testUnit.getVision() - 1;
                        testUnit.setVision(1);
                        testUnit.setChanged(true);
                     }
@@ -220,9 +212,9 @@ public class Koshi extends CO
     public void deactivateCOP()
     {
         COP = false;
-        hiddenUnitInfo = false;
-        disruptFireDisplay = false;
-        hiddenUnitType = false;
+        setHiddenUnitInfo(false);
+        setDisruptFireDisplay(false);
+        setHiddenUnitType(false);
         
         setPositiveLuck(getPositiveLuck() - 30);
 
@@ -286,14 +278,14 @@ public class Koshi extends CO
                        //If Koshi is still the CO in front
                        if(army.getCO() == this)
                        {
-                          testUnit.setVision(1 + testUnit.getEnemyCOstore()[statIndex][0]);
-                          testUnit.getEnemyCOstore()[statIndex][0] = 0;
+                          testUnit.setVision(1 + testUnit.getEnemyCOstore()[getStatIndex()][0]);
+                          testUnit.getEnemyCOstore()[getStatIndex()][0] = 0;
                           testUnit.setChanged(false);
                        }
                        else
                        {
-                          testUnit.setVision(1 + testUnit.getAltEnemyCOstore()[statIndex][0]);
-                          testUnit.getAltEnemyCOstore()[statIndex][0] = 0;
+                          testUnit.setVision(1 + testUnit.getAltEnemyCOstore()[getStatIndex()][0]);
+                          testUnit.getAltEnemyCOstore()[getStatIndex()][0] = 0;
                           testUnit.setChanged(false);
                        }
                     }

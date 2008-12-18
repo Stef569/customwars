@@ -1,15 +1,6 @@
 package com.customwars.officer;
 
-import com.customwars.CO;
-import com.customwars.Unit;
-/*
- *Ozzy.java
- *Author: Albert Lai
- *Contributors:
- *Creation: November 13, 2006
- *This creates a "Ozzy McOzzenheimer" class, etc.
- *
- */
+import com.customwars.unit.Unit;
 
 public class Ozzy extends CO{
     int cityStore;
@@ -18,7 +9,7 @@ public class Ozzy extends CO{
 //Constructor
 public Ozzy() {
         name = "Ozzy";
-        id = 39; //placeholder
+        setId(39); //placeholder
        
         String CObiox = "A psychoanalyist who specializes in defensive tactics when he's not playing his guitar. A habitual womanizer.";             //Holds the condensed CO bio'
         String titlex = "Hard ROCK!";
@@ -49,10 +40,10 @@ public Ozzy() {
         int[] TagStarsx = {1,2,1,0,0,0,0}; //Number of stars for each special tag.
         int[] TagPercentx = {110,110,105,110,90,90,80}; //Percent for each special tag.
 
-        TagCOs = TagCOsx;
-        TagNames = TagNamesx;
-        TagStars = TagStarsx;
-        TagPercent = TagPercentx;
+        setTagCOs(TagCOsx);
+        setTagNames(TagNamesx);
+        setTagStars(TagStarsx);
+        setTagPercent(TagPercentx);
        
         String[] COPowerx =
         {"IT'S BEEN A LONG TIME SINCE I ROCK 'N ROLLED, MMM-HMM!",
@@ -74,8 +65,8 @@ public Ozzy() {
         {"..All in my brain...Lately thin-Huh? Wait, it's my turn?",
         "Gunna getcha...Gunna shootchya...Gunna, gunna...gunna pull the trigger!" };
        
-        Swap = Swapx;       
-        COPower = COPowerx;
+        setSwap(Swapx);       
+        setCOPower(COPowerx);
         Victory = Victoryx;
        
         COPName = "Hammer On";
@@ -129,7 +120,7 @@ public Ozzy() {
     //carries out Adder's Super CO Power, called by CO.activateSCOP()
     public void superCOPower(){   
         SCOP = true;
-        counterAttack = 200;
+        setCounterAttack(200);
     }
    
     //used to deactivate Adder's CO Power the next day
@@ -157,7 +148,7 @@ public Ozzy() {
         {
             if(SCOP)
                 if(owned.getCOstore()[0] == 1) //If the unit had attacked
-                    counterAttack = 200;
+                    setCounterAttack(200);
         }
     }
     public void afterAttackAction(Unit owned, Unit enemy, boolean attack)
@@ -167,6 +158,6 @@ public Ozzy() {
         {
           store = false;
         }
-      counterAttack = 100;
+      setCounterAttack(100);
     }
 }

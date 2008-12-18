@@ -14,16 +14,15 @@ package com.customwars.officer;
 import java.util.ArrayList;
 
 import com.customwars.BaseDMG;
-import com.customwars.CO;
 import com.customwars.Location;
-import com.customwars.Unit;
+import com.customwars.unit.Unit;
 
 public class Nana extends CO{
     
     //constructor
     public Nana() {
         name = "Nana";
-        id = 43;
+        setId(43);
 
 String CObiox = "The lovable, cute, and amazingly        " +
                 "talented granddaughter of Hachi. Known  " +
@@ -76,9 +75,9 @@ String CObiox = "The lovable, cute, and amazingly        " +
         "This will be so easy!" };
         
         
-        COPower = COPowerx;
+        setCOPower(COPowerx);
         Victory = Victoryx;
-        Swap = Swapx;
+        setSwap(Swapx);
         
         //No special tags
         String[] TagCOsx = {"Jake", "Hachi", "Koal","Adder","Rachel"}; //Names of COs with special tags
@@ -86,10 +85,10 @@ String CObiox = "The lovable, cute, and amazingly        " +
         int[] TagStarsx = {1,1,0,0,0}; //Number of stars for each special tag.
         int[] TagPercentx = {110,110,90,90,80}; //Percent for each special tag.
         
-        TagCOs = TagCOsx;
-        TagNames = TagNamesx;
-        TagStars = TagStarsx;
-        TagPercent = TagPercentx;
+        setTagCOs(TagCOsx);
+        setTagNames(TagNamesx);
+        setTagStars(TagStarsx);
+        setTagPercent(TagPercentx);
         
         COPName = "Chain Reaction";
         SCOPName = "Explosive Tantrum";
@@ -225,10 +224,10 @@ String CObiox = "The lovable, cute, and amazingly        " +
     
     public void specialDamage(Unit u, int times)
     {
-        for(int i = 0; u.getEnemyCOstore()[statIndex][0]<5 && i<times; i++)
+        for(int i = 0; u.getEnemyCOstore()[getStatIndex()][0]<5 && i<times; i++)
         {
             u.damage(10, false);
-            u.getEnemyCOstore()[statIndex][0]++;
+            u.getEnemyCOstore()[getStatIndex()][0]++;
         }
     }
 }
