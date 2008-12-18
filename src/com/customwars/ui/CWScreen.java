@@ -14,7 +14,7 @@ import java.awt.image.BufferedImage;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 
-import com.customwars.Battle;
+import com.customwars.ai.Battle;
 import com.customwars.map.Map;
 import com.customwars.map.Tile;
 import com.customwars.map.location.Location;

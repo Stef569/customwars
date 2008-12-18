@@ -2,7 +2,7 @@ package com.customwars.map.location;
 
 import java.awt.Image;
 
-import com.customwars.Battle;
+import com.customwars.ai.Battle;
 import com.customwars.map.Tile;
 import com.customwars.ui.TerrainGraphics;
 

@@ -9,7 +9,7 @@ package com.customwars.officer;
 
 import java.util.Random;
 
-import com.customwars.BaseDMG;
+import com.customwars.ai.BaseDMG;
 import com.customwars.unit.Stealth;
 import com.customwars.unit.Submarine;
 import com.customwars.unit.Unit;

@@ -13,11 +13,11 @@ import javax.swing.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.customwars.Battle;
-import com.customwars.CWEvent;
-import com.customwars.Options;
-import com.customwars.SFX;
+import com.customwars.ai.Battle;
+import com.customwars.ai.CWEvent;
+import com.customwars.ai.Options;
 import com.customwars.officer.COList;
+import com.customwars.sfx.SFX;
 import com.customwars.state.ResourceLoader;
 import com.customwars.ui.Animation;
 import com.customwars.ui.DialogueBox;

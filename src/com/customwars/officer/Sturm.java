@@ -1,6 +1,6 @@
 package com.customwars.officer;
 
-import com.customwars.Battle;
+import com.customwars.ai.Battle;
 import com.customwars.unit.Unit;
 /*
  *Sturm.java

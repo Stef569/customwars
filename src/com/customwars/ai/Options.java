@@ -1,4 +1,4 @@
-package com.customwars;
+package com.customwars.ai;
 /*
  *Options.java
  *Author: Adam Dziuk
@@ -13,6 +13,8 @@ import javax.swing.JOptionPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.customwars.sfx.Music;
+import com.customwars.sfx.SFX;
 import com.customwars.state.ResourceLoader;
 
 import java.awt.event.*;

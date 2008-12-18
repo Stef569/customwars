@@ -13,7 +13,7 @@ package com.customwars.officer;
 
 import java.util.ArrayList;
 
-import com.customwars.BaseDMG;
+import com.customwars.ai.BaseDMG;
 import com.customwars.map.location.Location;
 import com.customwars.unit.Unit;
 

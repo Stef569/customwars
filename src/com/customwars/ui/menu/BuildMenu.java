@@ -15,14 +15,14 @@ import java.awt.GradientPaint.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.customwars.BaseDMG;
-import com.customwars.Battle;
-import com.customwars.Options;
-import com.customwars.SwitchGradient;
+import com.customwars.ai.BaseDMG;
+import com.customwars.ai.Battle;
+import com.customwars.ai.Options;
 import com.customwars.map.location.Property;
 import com.customwars.officer.CO;
 import com.customwars.ui.BattleScreen;
 import com.customwars.ui.MiscGraphics;
+import com.customwars.ui.SwitchGradient;
 import com.customwars.unit.UnitGraphics;
 
 public class BuildMenu extends ScrollMenu{

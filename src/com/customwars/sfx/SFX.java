@@ -6,7 +6,7 @@
  * Makes sound effects easy!
  */
 
-package com.customwars;
+package com.customwars.sfx;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
@@ -17,6 +17,8 @@ import javax.sound.sampled.LineEvent;
 import javax.sound.sampled.LineListener;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
+
+import com.customwars.ai.Options;
 
 import java.io.File;
 import java.io.IOException;

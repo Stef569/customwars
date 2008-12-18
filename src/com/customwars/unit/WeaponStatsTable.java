@@ -1,14 +1,6 @@
 package com.customwars.unit;
 
-import com.customwars.StatTable;
-/*
- *TerrStatsTable.java
- *Author: Ting Chow
- *Contributors: -
- *Creation: 2/7/2008
- *  The TerrStatsTable class holds a large array of base stat values for use in 
- *  creating bland terrain.
- */
+import com.customwars.ai.StatTable;
 
 
 public class WeaponStatsTable extends StatTable

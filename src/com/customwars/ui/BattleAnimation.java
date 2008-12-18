@@ -5,8 +5,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.Timer;
 
-import com.customwars.BaseDMG;
-import com.customwars.Mission;
+import com.customwars.ai.BaseDMG;
+import com.customwars.ai.Mission;
 import com.customwars.map.location.Terrain;
 import com.customwars.unit.Unit;
 

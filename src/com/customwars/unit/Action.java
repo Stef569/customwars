@@ -9,7 +9,7 @@ package com.customwars.unit;
 
 import java.io.*;
 
-import com.customwars.CWEvent;
+import com.customwars.ai.CWEvent;
 import com.customwars.map.location.Path;
 
 public class Action extends CWEvent implements Serializable{

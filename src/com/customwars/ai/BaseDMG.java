@@ -1,4 +1,4 @@
-package com.customwars;
+package com.customwars.ai;
 /*
  *BaseDMG.java
  *Author: Adam Dziuk

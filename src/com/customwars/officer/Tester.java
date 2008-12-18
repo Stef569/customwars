@@ -1,4 +1,4 @@
-package com.customwars;
+package com.customwars.officer;
 /*
  *Blandie.java
  *Author: Urusan
@@ -9,7 +9,6 @@ package com.customwars;
 
 import java.util.Random;
 
-import com.customwars.officer.CO;
 import com.customwars.unit.Unit;
 
 public class Tester extends CO{

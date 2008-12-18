@@ -1,6 +1,6 @@
 package com.customwars.map.location;
 
-import com.customwars.StatTable;
+import com.customwars.ai.StatTable;
 import com.customwars.unit.MoveType;
 /*
  *TerrStatsTable.java

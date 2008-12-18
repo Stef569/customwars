@@ -1,4 +1,4 @@
-package com.customwars;
+package com.customwars.ui;
 /*
  *SwitchGradient.java
  *Author: CoconutTank

@@ -18,7 +18,7 @@ package com.customwars.lobbyclient;
 import java.util.LinkedList;
 import java.net.*;
 
-import com.customwars.Options;
+import com.customwars.ai.Options;
 
 public class parser {
     boolean debug = true;

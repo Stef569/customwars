@@ -1,6 +1,6 @@
 package com.customwars.officer;
 
-import com.customwars.BaseDMG;
+import com.customwars.ai.BaseDMG;
 import com.customwars.unit.Unit;
 
 public class Smitan extends CO {

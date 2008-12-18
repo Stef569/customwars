@@ -12,11 +12,11 @@ import java.awt.color.*;
 import java.awt.GradientPaint;
 import java.awt.image.*;
 
-import com.customwars.SFX;
-import com.customwars.SwitchGradient;
+import com.customwars.sfx.SFX;
 import com.customwars.state.ResourceLoader;
 import com.customwars.ui.BattleScreen;
 import com.customwars.ui.MiscGraphics;
+import com.customwars.ui.SwitchGradient;
 
 public abstract class InGameMenu {
     protected String[] displayItems;

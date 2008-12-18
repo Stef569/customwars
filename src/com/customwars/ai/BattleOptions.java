@@ -1,4 +1,4 @@
-package com.customwars;
+package com.customwars.ai;
 /*
  *BattleOptions.java
  *Author: Urusan

@@ -1,14 +1,6 @@
 package com.customwars.unit;
 
-import com.customwars.StatTable;
-/*
- *UnitStatTable.java
- *Author: Ting Chow
- *Contributors: -
- *Creation: 2/7/2008
- *  The UnitStatTable class holds a large array of base stat values for use in 
- *  creating bland units.
- */
+import com.customwars.ai.StatTable;
 
 public class UnitStatsTable extends StatTable
 {

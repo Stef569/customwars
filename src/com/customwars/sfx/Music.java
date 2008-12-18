@@ -1,4 +1,4 @@
-package com.customwars;
+package com.customwars.sfx;
 /*
  *Music.java
  *Author: Adam Dziuk
@@ -10,6 +10,7 @@ import java.io.FileInputStream;
 
 import org.newdawn.easyogg.OggClip;
 
+import com.customwars.ai.Options;
 import com.customwars.state.ResourceLoader;
 
 

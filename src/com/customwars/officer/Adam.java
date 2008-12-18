@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
  *A not very bland CO, perhaps the furthest thing from a generic commanding officer?
  */
 
-import com.customwars.BaseDMG;
+import com.customwars.ai.BaseDMG;
 import com.customwars.map.Tile;
 import com.customwars.unit.Stealth;
 import com.customwars.unit.Submarine;

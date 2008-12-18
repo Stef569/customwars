@@ -1,4 +1,4 @@
-package com.customwars;
+package com.customwars.ai;
 //Name: Bloody Venus
 //Motto: The City Awakens from a Dream...
 

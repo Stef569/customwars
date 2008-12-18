@@ -14,15 +14,15 @@ import java.awt.Color;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.customwars.AI;
-import com.customwars.Battle;
-import com.customwars.Music;
-import com.customwars.Options;
+import com.customwars.ai.AI;
+import com.customwars.ai.Battle;
+import com.customwars.ai.Options;
 import com.customwars.map.location.ComTower;
 import com.customwars.map.location.Location;
 import com.customwars.map.location.Property;
 import com.customwars.map.location.PropertyList;
 import com.customwars.officer.CO;
+import com.customwars.sfx.Music;
 
 public class Army implements Serializable{
     //private final int unitLimit = 50;           //The Unit Limit
