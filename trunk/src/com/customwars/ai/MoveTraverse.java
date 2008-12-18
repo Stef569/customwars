@@ -1,4 +1,4 @@
-package com.customwars.unit;
+package com.customwars.ai;
 /*
  *MoveTraverse.java
  *Author: Urusan
@@ -11,6 +11,7 @@ import java.io.*;
 
 import com.customwars.map.Map;
 import com.customwars.map.location.Location;
+import com.customwars.unit.Unit;
 
 public class MoveTraverse implements Serializable{
     /**
@@ -36,7 +37,7 @@ public class MoveTraverse implements Serializable{
         //start the paths
         u.startPath();
         
-        if(u.name.equals("Oozium")){
+        if(u.getName().equals("Oozium")){
             int x = u.getLocation().getCol();
             int y = u.getLocation().getRow();
             Map map = u.getMap();
@@ -245,7 +246,7 @@ public class MoveTraverse implements Serializable{
 				//Check if the current unit is 'dived' or if the unit has been 
     			//detected. If it is not dived, or it has been detected, it is
     			//thus occupying the square and it is not open.
-    			else if(movingUnit.getArmy().getBattle().isMist() && (!thisUnit.isDived() || thisUnit.detected))
+    			else if(movingUnit.getArmy().getBattle().isMist() && (!thisUnit.isDived() || thisUnit.isDetected()))
     			{
     				return false;
     			}

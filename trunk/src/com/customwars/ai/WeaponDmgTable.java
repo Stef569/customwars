@@ -1,6 +1,7 @@
-package com.customwars.unit;
+package com.customwars.ai;
 
-import com.customwars.ai.StatTable;
+import com.customwars.unit.UnitType;
+import com.customwars.unit.WeaponType;
 
 public class WeaponDmgTable extends StatTable
 {   

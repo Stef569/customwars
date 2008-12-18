@@ -1,15 +1,7 @@
 package com.customwars.map.location;
 
+import com.customwars.ai.MoveType;
 import com.customwars.ai.StatTable;
-import com.customwars.unit.MoveType;
-/*
- *TerrStatsTable.java
- *Author: Ting Chow
- *Contributors: -
- *Creation: 2/7/2008
- *  The TerrStatsTable class holds a large array of base stat values for use in 
- *  creating bland terrain.
- */
 
 
 public class TerrStatsTable extends StatTable

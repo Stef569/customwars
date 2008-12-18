@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.customwars.ai.BaseDMG;
+import com.customwars.ai.MoveTraverse;
 import com.customwars.ai.Options;
 import com.customwars.map.Map;
 import com.customwars.map.location.Invention;
@@ -22,6 +23,7 @@ import com.customwars.map.location.Location;
 import com.customwars.map.location.Path;
 import com.customwars.map.location.Property;
 import com.customwars.ui.Animation;
+import com.customwars.ui.UnitGraphics;
 
 public abstract class Unit implements Locatable, Serializable{
     //moveType 0=infantry, 1=mech, 2=tread, 3=tires, 4=air, 5=sea, 6=transport, 7=oozium, 8=pipe, 9=hover

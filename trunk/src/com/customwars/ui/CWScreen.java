@@ -21,7 +21,6 @@ import com.customwars.map.location.Location;
 import com.customwars.map.location.Property;
 import com.customwars.map.location.TerrType;
 import com.customwars.unit.Unit;
-import com.customwars.unit.UnitGraphics;
 
 public abstract class CWScreen extends JComponent implements ComponentListener
 {

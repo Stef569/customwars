@@ -1,4 +1,4 @@
-package com.customwars.unit;
+package com.customwars.ui;
 /*
  *UnitGraphics.java
  *Author: Urusan
@@ -14,6 +14,7 @@ import java.io.*;
 import javax.swing.*;
 
 import com.customwars.state.ResourceLoader;
+import com.customwars.unit.Unit;
 
 public class UnitGraphics 
 {

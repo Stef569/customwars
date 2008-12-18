@@ -11,7 +11,7 @@ import java.awt.*;
 import java.awt.image.*;
 
 import com.customwars.ui.MiscGraphics;
-import com.customwars.unit.UnitGraphics;
+import com.customwars.ui.UnitGraphics;
 
 public class UnitMenu extends ScrollMenu{
     

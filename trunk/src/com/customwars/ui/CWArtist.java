@@ -11,7 +11,6 @@ import com.customwars.map.location.TerrType;
 import com.customwars.map.location.Terrain;
 import com.customwars.unit.Transport;
 import com.customwars.unit.Unit;
-import com.customwars.unit.UnitGraphics;
 
 public class CWArtist 
 {

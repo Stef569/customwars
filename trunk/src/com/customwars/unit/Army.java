@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import com.customwars.ai.AI;
 import com.customwars.ai.Battle;
+import com.customwars.ai.MoveID;
 import com.customwars.ai.Options;
 import com.customwars.map.location.ComTower;
 import com.customwars.map.location.Location;

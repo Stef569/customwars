@@ -1,6 +1,6 @@
-package com.customwars.unit;
+package com.customwars.ai;
 
-public final class MoveType 
+public final class MoveID 
 {
 	public static final int MAX_MOVE_TYPES = 10;
 	
