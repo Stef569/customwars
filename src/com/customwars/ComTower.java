@@ -1,4 +1,6 @@
 package com.customwars;
+
+import com.customwars.unit.Army;
 /*
  *ComTower.java
  *Author: Jon Christensen
@@ -38,7 +40,7 @@ public class ComTower extends Property{
     private void initStatistics(){
         //Statistics
         name = "Com Tower";
-        move = new double[] {1,1,1,1,1,-1,-1,1,-1,1};
+        setMove(new double[] {1,1,1,1,1,-1,-1,1,-1,1});
         basemove = new double[] {1,1,1,1,1,-1,-1,1,-1,1};
         def = 3;
         index = 14;

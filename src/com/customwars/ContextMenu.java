@@ -16,6 +16,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.customwars.state.ResourceLoader;
+import com.customwars.unit.Carrier;
+import com.customwars.unit.Stealth;
+import com.customwars.unit.Submarine;
+import com.customwars.unit.Transport;
+import com.customwars.unit.UNIT_COMMANDS;
+import com.customwars.unit.Unit;
+import com.customwars.unit.UnitID;
 
 public class ContextMenu extends InGameMenu {
     Unit u;
@@ -32,7 +39,7 @@ public class ContextMenu extends InGameMenu {
         int i = 0;
         u = temp;
         if((temp.getArmy().getBattle().getMap().find(temp).getTerrain().getName().equals("Wall"))
-            || (temp.getUType() == UnitID.CARRIER && ((Carrier)temp).launched) && temp.getMoved()) {
+            || (temp.getUType() == UnitID.CARRIER && ((Carrier)temp).isLaunched()) && temp.getMoved()) {
             s[0] = "No.";
             i++;
         }else{
@@ -54,7 +61,7 @@ public class ContextMenu extends InGameMenu {
                 if(takeoff){s[i]="Takeoff";i++;}
                 if(takeoff2){s[i]="Takeoff";i++;}
                 if(build){s[i]="Build";i++;}
-                if(!u.isNoWait() && (!temp.getArmy().getBattle().getMap().find(temp).getTerrain().getName().equals("Wall")) && !(temp.getUType() == UnitID.CARRIER && ((Carrier)temp).launched)){s[i] = "Wait"; i++;}
+                if(!u.isNoWait() && (!temp.getArmy().getBattle().getMap().find(temp).getTerrain().getName().equals("Wall")) && !(temp.getUType() == UnitID.CARRIER && ((Carrier)temp).isLaunched())){s[i] = "Wait"; i++;}
             }else if(join == true){
                 s[0] = "Join";i++;
             }else{
@@ -204,7 +211,7 @@ public class ContextMenu extends InGameMenu {
                         capture = true;
                     }
                 }else{
-                    if(!((Silo)p).isLaunched() && !u.noLaunch)launch = true;
+                    if(!((Silo)p).isLaunched() && !u.isNoLaunch())launch = true;
                 }
             }
         }
@@ -251,9 +258,9 @@ public class ContextMenu extends InGameMenu {
         //DIVE/RISE
         //Is the unit a Submarine? And if so, are its abilities disabled?
         if(u.getUType()==12) {
-            if(((Submarine)u).isDived() && !u.noRise) {
+            if(((Submarine)u).isDived() && !u.isNoRise()) {
                 rise = true;
-            } else if(!u.noDive) {
+            } else if(!u.isNoDive()) {
                 dive = true;
             }
         }
@@ -261,17 +268,17 @@ public class ContextMenu extends InGameMenu {
         //HIDE/APPEAR
         //Is the unit a Stealth? And if so, are its abilities disabled?
         if(u.getUType()==23) {
-            if(((Stealth)u).isDived() && !u.noAppear) {
+            if(((Stealth)u).isDived() && !u.isNoAppear()) {
                 appear = true;
-            } else if(!u.noHide) {
+            } else if(!u.isNoHide()) {
                 hide = true;
             }
         }
         //Special 1
-        if(u.getArmy().getCO().canUseSpecial1(u) && !u.noSpecial1)
+        if(u.getArmy().getCO().canUseSpecial1(u) && !u.isNoSpecial1())
             special1 = true;
         //special 2
-        if(u.getArmy().getCO().canUseSpecial2(u) && !u.noSpecial2)
+        if(u.getArmy().getCO().canUseSpecial2(u) && !u.isNoSpecial2())
             special2 = true;
         
         if(u.getUType()==UnitID.CARRIER && ((Transport)u).getUnitsCarried() > 0 && !u.getMoved()) {
@@ -368,7 +375,7 @@ public class ContextMenu extends InGameMenu {
             fire = false;
             build = false;
         }
-        if(u.getUnitType() == UnitID.CARRIER && ((Carrier)u).builtUnit)
+        if(u.getUnitType() == UnitID.CARRIER && ((Carrier)u).isBuiltUnit())
         {
             //don't disable takeoff unless the carrier has built a unit
             //it has been checked for moving however.

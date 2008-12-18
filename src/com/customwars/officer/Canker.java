@@ -1,16 +1,8 @@
 package com.customwars.officer;
 
-import com.customwars.Army;
-import com.customwars.CO;
 import com.customwars.DialogueBox;
-import com.customwars.Unit;
-/*
- *Grimm.java
- *Author: Adam Dziuk, Kosheh, Paul Whan
- *Contributors:
- *Creation:
- *The Grimm class is used to create an instance of the Yellow Comet CO Grimm (copyright Intelligent Systems).
- */
+import com.customwars.unit.Army;
+import com.customwars.unit.Unit;
 
 public class Canker extends CO{
     boolean activeSuper;
@@ -19,7 +11,7 @@ public class Canker extends CO{
 //constructor
     public Canker() {
         name = "Grimm";
-        id = 18;
+        setId(18);
         
         String CObiox = "A Yellow Comet commander with a dynamic personality. Could care less about the details. Nicknamed \"Lightning Grimm.\"";             //Holds the condensed CO bio'
         String titlex = "Kamikaze!";
@@ -48,10 +40,10 @@ public class Canker extends CO{
         int[] TagStarsx = {1,0,0,0}; //Number of stars for each special tag.
         int[] TagPercentx = {110,105,105,90}; //Percent for each special tag.
         
-        TagCOs = TagCOsx;
-        TagNames = TagNamesx;
-        TagStars = TagStarsx;
-        TagPercent = TagPercentx;
+        setTagCOs(TagCOsx);
+        setTagNames(TagNamesx);
+        setTagStars(TagStarsx);
+        setTagPercent(TagPercentx);
         
         
         String[] COPowerx =
@@ -71,8 +63,8 @@ public class Canker extends CO{
         {"Oooh yeah!! Now, I mean business!!",
          "I'll deal with these losers!!"};
         
-        Swap = Swapx;
-        COPower = COPowerx;
+        setSwap(Swapx);
+        setCOPower(COPowerx);
         Victory = Victoryx;
         
         COPName = "Knuckleduster";
@@ -81,7 +73,7 @@ public class Canker extends CO{
         maxStars = 6.0;
         this.army = army;
         style = YELLOW_COMET;
-        cleanStore = false;
+        setCleanStore(false);
         repairHp = 0;
         
     }

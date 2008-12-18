@@ -9,10 +9,12 @@ package com.customwars;
 
 import java.io.*;
 
+import com.customwars.unit.MoveType;
+
 public abstract class Terrain implements Serializable
 {    
     //move[] 0=infantry, 1=mech, 2=tread, 3=tires, 4=air, 5=sea, 6=transport, 7=oozium, 8=pipe, 9=hover
-    protected double[] move = new double[MoveType.MAX_MOVE_TYPES];  //holds the mp values for every movement type
+    private double[] move = new double[MoveType.MAX_MOVE_TYPES];  //holds the mp values for every movement type
     protected double[] basemove = new double[MoveType.MAX_MOVE_TYPES];
     protected int def;                  //the Terrain's defense bonus
     protected String name;              //the Terrain's name
@@ -28,7 +30,7 @@ public abstract class Terrain implements Serializable
     protected Terrain(int terrStats[], double terrCosts[], String name, boolean isUrban)
     {
     	System.arraycopy(terrCosts, 0, this.basemove, 0, MoveType.MAX_MOVE_TYPES);
-    	System.arraycopy(terrCosts, 0, this.move, 0, MoveType.MAX_MOVE_TYPES);
+    	System.arraycopy(terrCosts, 0, this.getMove(), 0, MoveType.MAX_MOVE_TYPES);
     	
     	this.def = terrStats[TerrStats.DEF_STARS];
     	this.name = name;
@@ -47,7 +49,7 @@ public abstract class Terrain implements Serializable
     {
         if(newMove.length == 10)
         {
-            move = newMove;
+            setMove(newMove);
         }
     }
     /**
@@ -57,7 +59,7 @@ public abstract class Terrain implements Serializable
      */
     public void changeCost(int type, double alter)
     {
-        move[type] = alter;
+        getMove()[type] = alter;
     }
     /**
      * This adds newMove to the current moveset.
@@ -69,7 +71,7 @@ public abstract class Terrain implements Serializable
         {
             for(int i = 0; i<10; i++)
             {
-            move[i]+= newMove[i];
+            getMove()[i]+= newMove[i];
             }
         }
     }
@@ -80,16 +82,16 @@ public abstract class Terrain implements Serializable
      */
     public void addCost(int type, double alter)
     {
-        move[type] += alter;
+        getMove()[type] += alter;
     }
     //Retore move costs.
     public void restoreCost()
     {
-        move = basemove;
+        setMove(basemove);
     }
     //returns the mp cost for a given movement type, used by MoveTraverse
     public double moveCost(int type){
-        return move[type];
+        return getMove()[type];
     }
     public double baseMoveCost(int type){
         return basemove[type];
@@ -140,8 +142,16 @@ public abstract class Terrain implements Serializable
     
     //returns a string containing all of movement costs and defense bonus
     public String toString(){
-        return (name + ": inf: " + move[0] + " mech: " + move[1] + " tread: " + move[2] + " tires: "
-                + move[3] + " air: " + move[4] + " sea: " + move[5] + " transport: " + move[6] + " oozium: " + move[7]
-                + " pipe: " + move[8] + "Hover" + move[9] + " Defense: " + def);
+        return (name + ": inf: " + getMove()[0] + " mech: " + getMove()[1] + " tread: " + getMove()[2] + " tires: "
+                + getMove()[3] + " air: " + getMove()[4] + " sea: " + getMove()[5] + " transport: " + getMove()[6] + " oozium: " + getMove()[7]
+                + " pipe: " + getMove()[8] + "Hover" + getMove()[9] + " Defense: " + def);
     }
+
+	public void setMove(double[] move) {
+		this.move = move;
+	}
+
+	public double[] getMove() {
+		return move;
+	}
 }

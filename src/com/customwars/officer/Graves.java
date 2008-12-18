@@ -1,22 +1,14 @@
 package com.customwars.officer;
 
-import com.customwars.Army;
-import com.customwars.CO;
-import com.customwars.Unit;
-/*
- *Graves.java
- *Author: Albert Lai
- *Contributors:
- *You're in grave danger! Ho ho ho!
- *You're digging your own grave! Hee hee hee!
- */
+import com.customwars.unit.Army;
+import com.customwars.unit.Unit;
 
 public class Graves extends CO{
    
     //constructor
     public Graves() {
         name = "Graves";
-        id = 36;
+        setId(36);
        
         String CObiox = "A former assassin dissatisfied with where Wars World is headed. Secretly aids Hawke's cause and overtly aids Parallel Galaxy. No one knows where his true loyalties lie.";             //Holds the condensed CO bio'
         String titlex = "Stoic Slayer";
@@ -59,9 +51,9 @@ public class Graves extends CO{
         {"Fear the shadow that rises to meet you.",
         "I will show you fear in a handful of dust."};
        
-        COPower = COPowerx;
+        setCOPower(COPowerx);
         Victory = Victoryx;
-        Swap = Swapx;
+        setSwap(Swapx);
        
         //No special tags
         String[] TagCOsx = {"Ain", "Hawke", "Thanatos", "Falcone", "Eagle", "Adder", "Ember", "Rachel", "Nell"}; //Names of COs with special tags
@@ -70,10 +62,10 @@ public class Graves extends CO{
         int[] TagPercentx = {120, 120,115,110,90,85,85,85,80}; //Percent for each special tag.
         //Here's to you, Mr. Massive-amounts-of-tags (chorus: he has a million different tag partners!)
        
-        TagCOs = TagCOsx;
-        TagNames = TagNamesx;
-        TagStars = TagStarsx;
-        TagPercent = TagPercentx;
+        setTagCOs(TagCOsx);
+        setTagNames(TagNamesx);
+        setTagStars(TagStarsx);
+        setTagPercent(TagPercentx);
        
         COPName = "Plague";
         SCOPName = "Perdition";

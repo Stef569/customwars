@@ -24,7 +24,7 @@ public class SeaPipeSeam extends Invention
     private void initStatistics(){
         //Statistics
         name = "Sea Pipe Seam";
-        move = new double[] {-1,-1,-1,-1,-1,-1,-1,-1,1,-1};
+        setMove(new double[] {-1,-1,-1,-1,-1,-1,-1,-1,1,-1});
         basemove = new double[] {-1,-1,-1,-1,-1,-1,-1,-1,1,-1};;
         def  = 0;
         index = TerrType.SP_SEAM;

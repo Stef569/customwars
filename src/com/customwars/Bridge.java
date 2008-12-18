@@ -13,7 +13,7 @@ public class Bridge extends Terrain{
     public Bridge(){
         //Statistics
         name = "Bridge";
-        move = new double[] {1,1,1,1,1,-1,-1,1,-1,1};
+        setMove(new double[] {1,1,1,1,1,-1,-1,1,-1,1});
         basemove = new double[] {1,1,1,1,1,-1,-1,1,-1,1};
         def  = 0;
         index = 4;

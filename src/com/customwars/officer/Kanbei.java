@@ -1,21 +1,13 @@
 package com.customwars.officer;
 
-import com.customwars.CO;
-import com.customwars.Unit;
-/*
- *Kanbei.java
- *Author: Adam Dziuk, Xaif
- *Contributors:
- *Creation:
- *The Kanbei class is used to create an instance of the Yellow Comet CO Kanbei (copyright Intelligent Systems).
- */
+import com.customwars.unit.Unit;
 
 public class Kanbei extends CO{
    
 //constructor
     public Kanbei() {
         name = "Kanbei";
-        id = 15;
+        setId(15);
        
         String CObiox = "The emperor of Yellow Comet. A skilled commander who has a soft spot for his daughter.";             //Holds the condensed CO bio'
         String titlex = "Vigilant Samurai";
@@ -47,10 +39,10 @@ public class Kanbei extends CO{
         int[] TagStarsx = {3,1,0,0}; //Number of stars for each special tag.
         int[] TagPercentx = {130,110,105,90}; //Percent for each special tag.
        
-        TagCOs = TagCOsx;
-        TagNames = TagNamesx;
-        TagStars = TagStarsx;
-        TagPercent = TagPercentx;
+        setTagCOs(TagCOsx);
+        setTagNames(TagNamesx);
+        setTagStars(TagStarsx);
+        setTagPercent(TagPercentx);
        
        
         String[] COPowerx =
@@ -74,8 +66,8 @@ public class Kanbei extends CO{
         {"Preposterous! So many of Kanbei's forces defeated in such a short time? Withdraw!",
          "Regardless of the odds, Kanbei should never lose this many units! Withdraw!"} ;
         
-        Swap = Swapx;       
-        COPower = COPowerx;
+        setSwap(Swapx);       
+        setCOPower(COPowerx);
         Victory = Victoryx;
         defeat = defeatx;
         
@@ -139,7 +131,7 @@ public class Kanbei extends CO{
 //carries out Kanbei's Super CO Power, called by CO.activateSCOP()
     public void superCOPower(){
         SCOP = true;
-        counterAttack = 200;
+        setCounterAttack(200);
     }
    
 //used to deactivate Kanbei's CO Power the next day
@@ -150,6 +142,6 @@ public class Kanbei extends CO{
 //used to deactivate Kanbei's Super CO Power the next day
     public void deactivateSCOP(){
         SCOP = false;
-        counterAttack = 100;
+        setCounterAttack(100);
     }
 }

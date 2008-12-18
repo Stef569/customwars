@@ -10,9 +10,8 @@ package com.customwars.officer;
 
 import java.util.Random;
 
-import com.customwars.Army;
-import com.customwars.CO;
-import com.customwars.Unit;
+import com.customwars.unit.Army;
+import com.customwars.unit.Unit;
 
 public class Falcone extends CO{
     int storepos = 0;
@@ -21,7 +20,7 @@ public class Falcone extends CO{
 //constructor
     public Falcone() {
         name = "Falcone";
-        id = 45; //placeholder
+        setId(45); //placeholder
 
         String CObiox = "A lone rebel on Wars World whom suffers from bipolar disorder and is subject to \"visions\". Rose in the shadow of his older brother, Hawke.";          //Holds the condensed CO bio'
         String titlex = "Dark Seer";
@@ -51,10 +50,10 @@ public class Falcone extends CO{
         int[] TagStarsx = {3,2,1,0,0,0}; //Number of stars for each special tag.
         int[] TagPercentx = {120, 120, 110,105,90,90}; //Percent for each special tag.
         
-        TagCOs = TagCOsx;
-        TagNames = TagNamesx;
-        TagStars = TagStarsx;
-        TagPercent = TagPercentx;
+        setTagCOs(TagCOsx);
+        setTagNames(TagNamesx);
+        setTagStars(TagStarsx);
+        setTagPercent(TagPercentx);
         
         
         String[] COPowerx =
@@ -76,8 +75,8 @@ public class Falcone extends CO{
         {"It's our turn..." ,
         "The visions are never gone..." };
         
-        Swap = Swapx;
-        COPower = COPowerx;
+        setSwap(Swapx);
+        setCOPower(COPowerx);
         Victory = Victoryx;
         
         COPName = "Visionary Calamity";
@@ -114,7 +113,7 @@ public class Falcone extends CO{
                     if(u[s].getClass() != null){
                         u[s].setRepairMod(u[s]
 								.getRepairMod()
-								- u[s].getEnemyCOstore()[statIndex][0]);
+								- u[s].getEnemyCOstore()[getStatIndex()][0]);
                     } else
                         return;
                 }
@@ -149,7 +148,7 @@ public class Falcone extends CO{
                     if(u[s].getClass() != null){
                         if(!u[s].isInTransport())u[s].damage(20, false);
                         {
-                            u[s].getEnemyCOstore()[statIndex][0] += 2f;
+                            u[s].getEnemyCOstore()[getStatIndex()][0] += 2f;
                         u[s].setRepairMod(u[s]
 								.getRepairMod() + 2f);
                         }

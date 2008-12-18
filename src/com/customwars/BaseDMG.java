@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.customwars.state.ResourceLoader;
+import com.customwars.unit.Unit;
 
 public class BaseDMG {
     public final static int NUM_UNITS = 32;

@@ -17,6 +17,41 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.customwars.officer.Fighter;
+import com.customwars.unit.APC;
+import com.customwars.unit.AntiAir;
+import com.customwars.unit.Army;
+import com.customwars.unit.Artillery;
+import com.customwars.unit.Artillerycraft;
+import com.customwars.unit.BCopter;
+import com.customwars.unit.Battlecraft;
+import com.customwars.unit.Battleship;
+import com.customwars.unit.BlackBoat;
+import com.customwars.unit.BlackBomb;
+import com.customwars.unit.Bomber;
+import com.customwars.unit.Carrier;
+import com.customwars.unit.Cruiser;
+import com.customwars.unit.Destroyer;
+import com.customwars.unit.Infantry;
+import com.customwars.unit.Lander;
+import com.customwars.unit.MDTank;
+import com.customwars.unit.Mech;
+import com.customwars.unit.MegaTank;
+import com.customwars.unit.Missiles;
+import com.customwars.unit.Neotank;
+import com.customwars.unit.Oozium;
+import com.customwars.unit.Piperunner;
+import com.customwars.unit.Recon;
+import com.customwars.unit.Rockets;
+import com.customwars.unit.Shuttlerunner;
+import com.customwars.unit.Spyplane;
+import com.customwars.unit.Stealth;
+import com.customwars.unit.Submarine;
+import com.customwars.unit.TCopter;
+import com.customwars.unit.Tank;
+import com.customwars.unit.Unit;
+import com.customwars.unit.UnitGraphics;
+import com.customwars.unit.UnitTrigger;
+import com.customwars.unit.Zeppelin;
 //import javax.swing.filechooser.FileNameExtensionFilter;
 import java.util.Random;
 
@@ -967,13 +1002,13 @@ public class MapEditor extends CWScreen
                 {
                     case 0:
                         //unit trigger
-                        write.writeInt(((UnitTrigger)map.getTriggers().get(i)).unitType);
-                        write.writeInt(((UnitTrigger)map.getTriggers().get(i)).x);
-                        write.writeInt(((UnitTrigger)map.getTriggers().get(i)).y);
-                        write.writeInt(((UnitTrigger)map.getTriggers().get(i)).army);
-                        write.writeInt(((UnitTrigger)map.getTriggers().get(i)).UnitHP);
-                        write.writeInt(((UnitTrigger)map.getTriggers().get(i)).UnitFuel);
-                        write.writeInt(((UnitTrigger)map.getTriggers().get(i)).UnitAmmo);
+                        write.writeInt(((UnitTrigger)map.getTriggers().get(i)).getUnitType());
+                        write.writeInt(((UnitTrigger)map.getTriggers().get(i)).getX());
+                        write.writeInt(((UnitTrigger)map.getTriggers().get(i)).getY());
+                        write.writeInt(((UnitTrigger)map.getTriggers().get(i)).getArmy());
+                        write.writeInt(((UnitTrigger)map.getTriggers().get(i)).getUnitHP());
+                        write.writeInt(((UnitTrigger)map.getTriggers().get(i)).getUnitFuel());
+                        write.writeInt(((UnitTrigger)map.getTriggers().get(i)).getUnitAmmo());
                         break;
                     case 1:
                         //damage trigger

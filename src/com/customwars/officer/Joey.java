@@ -8,16 +8,15 @@ package com.customwars.officer;
  */
 import java.util.ArrayList;
 
-import com.customwars.APC;
-import com.customwars.CO;
-import com.customwars.Infantry;
 import com.customwars.Location;
 import com.customwars.Mission;
 import com.customwars.Property;
 import com.customwars.Terrain;
 import com.customwars.Tile;
-import com.customwars.Transport;
-import com.customwars.Unit;
+import com.customwars.unit.APC;
+import com.customwars.unit.Infantry;
+import com.customwars.unit.Transport;
+import com.customwars.unit.Unit;
 
 public class Joey extends CO {
     boolean sustainCOP;
@@ -72,7 +71,7 @@ public class Joey extends CO {
     //constructor
     public Joey() {
         name = "Joey";
-        id = 65;
+        setId(65);
         
         String CObiox = "The owner of a large transportation" +
                 "company at Green Earth. Joined the army" +
@@ -124,9 +123,9 @@ public class Joey extends CO {
         {"I said to deliver it 2 hours ago!!...oh, its my turn?" ,
          "Sorry, I can't assure the safety of your units"};
         
-        COPower = COPowerx;
+        setCOPower(COPowerx);
         Victory = Victoryx;
-        Swap = Swapx;
+        setSwap(Swapx);
         
         //No special tags
         String[] TagCOsx = {"Sensei", "Jess", "Sasha", "Drake"}; //Names of COs with special tags
@@ -134,10 +133,10 @@ public class Joey extends CO {
         int[] TagStarsx = {1, 1, 0, 0}; //Number of stars for each special tag.
         int[] TagPercentx = {110, 110, 105, 90}; //Percent for each special tag.
         
-        TagCOs = TagCOsx;
-        TagNames = TagNamesx;
-        TagStars = TagStarsx;
-        TagPercent = TagPercentx;
+        setTagCOs(TagCOsx);
+        setTagNames(TagNamesx);
+        setTagStars(TagStarsx);
+        setTagPercent(TagPercentx);
         
         COPName = "Risky Investments";
         SCOPName = "Hermes' Spear";
@@ -153,7 +152,7 @@ public class Joey extends CO {
         special1 = "Subjugate";
         special2 = "Boost";
         
-        cleanStore = false;
+        setCleanStore(false);
         
         boosted = new ArrayList<ArrayList<Unit>>();
         boostCounter = 1;

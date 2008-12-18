@@ -13,7 +13,7 @@ public class Pipe extends Terrain{
     public Pipe(){
         //Statistics
         name = "Pipe";
-        move = new double[] {-1,-1,-1,-1,-1,-1,-1,-1,1,-1};
+        setMove(new double[] {-1,-1,-1,-1,-1,-1,-1,-1,1,-1});
         basemove = new double[] {-1,-1,-1,-1,-1,-1,-1,-1,1,-1};;
         def  = 0;
         index = 15;

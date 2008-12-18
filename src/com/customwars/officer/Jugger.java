@@ -1,8 +1,7 @@
 package com.customwars.officer;
 
 import com.customwars.Battle;
-import com.customwars.CO;
-import com.customwars.Unit;
+import com.customwars.unit.Unit;
 
 /*
  *Jugger.java
@@ -19,7 +18,7 @@ public class Jugger extends CO{
 //constructor
     public Jugger(Battle bat) {
         name = "Jugger";
-        id = 24;
+        setId(24);
         
         String CObiox = "A robot-like commander with the Black Hole army. No one knows his true identity!";             //Holds the condensed CO bio'
         String titlex = "I, Robot";
@@ -48,10 +47,10 @@ public class Jugger extends CO{
         int[] TagStarsx = {2,1}; //Number of stars for each special tag.
         int[] TagPercentx = {110,105}; //Percent for each special tag.
         
-        TagCOs = TagCOsx;
-        TagNames = TagNamesx;
-        TagStars = TagStarsx;
-        TagPercent = TagPercentx;
+        setTagCOs(TagCOsx);
+        setTagNames(TagNamesx);
+        setTagStars(TagStarsx);
+        setTagPercent(TagPercentx);
         
         String[] COPowerx =
         {"Enemy: Prepare for mega hurtz.",
@@ -74,8 +73,8 @@ public class Jugger extends CO{
         {"Critical Error: Does not compute.",
          "Victory impossible! Units overwhelmed. Jugger must... Control-Alt-Delete."} ;
         
-        Swap = Swapx;       
-        COPower = COPowerx;
+        setSwap(Swapx);       
+        setCOPower(COPowerx);
         Victory = Victoryx;
         defeat = defeatx;
         

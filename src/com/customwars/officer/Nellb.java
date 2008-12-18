@@ -1,7 +1,6 @@
 package com.customwars.officer;
 
-import com.customwars.CO;
-import com.customwars.Unit;
+import com.customwars.unit.Unit;
 
 
 /*
@@ -17,17 +16,17 @@ public class Nellb extends CO{
 //constructor
     public Nellb() {
         name = "Nell";
-        id = 3;
+        setId(3);
         
         String[] TagCOsx = {"Rachel","Andy","Max","Sami","Von Bolt"}; //Names of COs with special tags
         String[] TagNamesx = {"Windfall","Dual Strike","Dual Strike","Dual Strike","Dual Strike"}; //Names of the corresponding Tags
         int[] TagStarsx = {0,0,0,0,0}; //Number of stars for each special tag.
         int[] TagPercentx = {110,105,105,105,90}; //Percent for each special tag.
         
-        TagCOs = TagCOsx;
-        TagNames = TagNamesx;
-        TagStars = TagStarsx;
-        TagPercent = TagPercentx;
+        setTagCOs(TagCOsx);
+        setTagNames(TagNamesx);
+        setTagStars(TagStarsx);
+        setTagPercent(TagPercentx);
         
         String[] COPowerx =
         {"This will bring me luck!",
@@ -46,8 +45,8 @@ public class Nellb extends CO{
         {"I hope I get lucky...",
          "Let's get down to business!"};
         
-        Swap = Swapx;
-        COPower = COPowerx;
+        setSwap(Swapx);
+        setCOPower(COPowerx);
         Victory = Victoryx;
         
         COPName = "Lucky Star";

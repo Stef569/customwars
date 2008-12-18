@@ -1,4 +1,6 @@
 package com.customwars;
+
+import com.customwars.unit.MoveType;
 /*
  *TerrStatsTable.java
  *Author: Ting Chow

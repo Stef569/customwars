@@ -1,4 +1,8 @@
 package com.customwars;
+
+import com.customwars.officer.CO;
+import com.customwars.unit.Army;
+import com.customwars.unit.Unit;
 /*
  *Tempest.java
  *Author: Fugue
@@ -11,7 +15,7 @@ public class Tempest extends CO{
     //constructor
     public Tempest() {
         name = "Tempest";
-        id = 58;
+        setId(58);
         
         String CObiox = "An old friend of Olaf's who rejoined the military in their time of need. A survivalist and has mastered fighting in even the most extreme weather conditions.";             //Holds the condensed CO bio'
         String titlex = "Fearsome Forecast";
@@ -55,19 +59,19 @@ public class Tempest extends CO{
         {"Time to press forward.",
          "I think I see a storm brewing."};
         
-        COPower = COPowerx;
+        setCOPower(COPowerx);
         Victory = Victoryx;
-        Swap = Swapx;
+        setSwap(Swapx);
         
         String[] TagCOsx = {"Olaf","Drake","Lash","Von Bolt"}; //Names of COs with special tags
         String[] TagNamesx = {"Snowball Effect","Hailstorm","Dual Strike","Dual Strike"}; //Names of the corresponding Tags
         int[] TagStarsx = {1,0,0,0}; //Number of stars for each special tag.
         int[] TagPercentx = {110,105,80,90}; //Percent for each special tag.
         
-        TagCOs = TagCOsx;
-        TagNames = TagNamesx;
-        TagStars = TagStarsx;
-        TagPercent = TagPercentx;
+        setTagCOs(TagCOsx);
+        setTagNames(TagNamesx);
+        setTagStars(TagStarsx);
+        setTagPercent(TagPercentx);
         
         COPName = "Harmattan";
         SCOPName = "Katabatic Storm";
@@ -79,8 +83,8 @@ public class Tempest extends CO{
         snowImmunity = true;
         rainImmunity = true;
         sandImmunity = true;
-        cleanEnemyStoreBegin = false;
-        cleanEnemyStoreEnd = false;
+        setCleanEnemyStoreBegin(false);
+        setCleanEnemyStoreEnd(false);
     }
     
     //used to get the attack bonus for damage calculation
@@ -115,7 +119,7 @@ public class Tempest extends CO{
                     if(u[i].getMinRange() > 1 && !a[s].getCO().isSandImmune()){
                         u[i].setMaxRange(u[i]
 								.getMaxRange() - 1);
-                        u[i].getEnemyCOstore()[statIndex][1] = 1;
+                        u[i].getEnemyCOstore()[getStatIndex()][1] = 1;
                     }
                 } else
                     return;
@@ -145,9 +149,9 @@ public class Tempest extends CO{
                 for(int s = 0; s < e.length; s++){
                     if(e[s].getClass() != null){
                         if((e[s].getMType() != e[s].MOVE_AIR) || army.getBattle().getMap().find(e[s].getLocation()).getTerrain().getName() == "Airport"){
-                            e[s].getEnemyCOstore()[statIndex][0] = army.getBattle().getMap().find(e[s].getLocation()).getTerrain().def;
+                            e[s].getEnemyCOstore()[getStatIndex()][0] = army.getBattle().getMap().find(e[s].getLocation()).getTerrain().def;
                             e[s].setMove(e[s].getMove()
-									- e[s].getEnemyCOstore()[statIndex][0]);
+									- e[s].getEnemyCOstore()[getStatIndex()][0]);
                         }
                     } else
                         return;
@@ -163,7 +167,7 @@ public class Tempest extends CO{
             Unit[] u = army.getUnits();
             for(int i = 0; i < u.length; i++){
                 if(u[i].getClass() != null){
-                    if(u[i].getMinRange() > 1 && u[i].getEnemyCOstore()[statIndex][1]==1){
+                    if(u[i].getMinRange() > 1 && u[i].getEnemyCOstore()[getStatIndex()][1]==1){
                         u[i].setMaxRange(u[i]
 								.getMaxRange() + 1);
                     }
@@ -187,12 +191,12 @@ public class Tempest extends CO{
                     if(u[s].getClass() != null){
                         if(isFront){
                             u[s].setMove(u[s].getMove()
-									+ u[s].getEnemyCOstore()[statIndex][0]);
-                            u[s].getEnemyCOstore()[statIndex][0] = 0;
+									+ u[s].getEnemyCOstore()[getStatIndex()][0]);
+                            u[s].getEnemyCOstore()[getStatIndex()][0] = 0;
                         } else{
                             u[s].setMove(u[s].getMove()
-									+ u[s].getAltEnemyCOstore()[statIndex][0]);
-                            u[s].getAltEnemyCOstore()[statIndex][0] = 0;
+									+ u[s].getAltEnemyCOstore()[getStatIndex()][0]);
+                            u[s].getAltEnemyCOstore()[getStatIndex()][0] = 0;
                         }
                     } else
                         return;

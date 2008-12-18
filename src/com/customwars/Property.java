@@ -9,6 +9,9 @@ package com.customwars;
 
 import javax.swing.JOptionPane;
 
+import com.customwars.unit.Army;
+import com.customwars.unit.Unit;
+
 public class Property extends Terrain{
     protected int color = -1;       //the color of the army that owns this property (-1 for neutral)
     protected Army owner;           //the owning army

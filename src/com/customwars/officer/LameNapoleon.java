@@ -10,17 +10,16 @@ package com.customwars.officer;
 import java.util.Random;
 
 import com.customwars.BaseDMG;
-import com.customwars.CO;
-import com.customwars.Stealth;
-import com.customwars.Submarine;
-import com.customwars.Unit;
+import com.customwars.unit.Stealth;
+import com.customwars.unit.Submarine;
+import com.customwars.unit.Unit;
 
 public class LameNapoleon extends CO{
     boolean prevent; //Damage prevention
     //constructor
     public LameNapoleon() {
         name = "Napoleon";
-        id = 54;
+        setId(54);
         
         String CObiox = "The current commander of the Black Hole army. Believes Black Hole's ingenuity gives it a right to control the world.";             //Holds the condensed CO bio'
         String titlex = "Snake Eyes";
@@ -66,9 +65,9 @@ public class LameNapoleon extends CO{
          "Stand aside; I will deal with them.",};
         //Our losses are unacceptable!
         
-        COPower = COPowerx;
+        setCOPower(COPowerx);
         Victory = Victoryx;
-        Swap = Swapx;
+        setSwap(Swapx);
         
         //No special tags
         String[] TagCOsx = {"Flak", "Adder", "Lash", "Graves", "Kindle"}; //Names of COs with special tags
@@ -76,10 +75,10 @@ public class LameNapoleon extends CO{
         int[] TagStarsx = {2,1,0,0,0}; //Number of stars for each special tag.
         int[] TagPercentx = {110,105,105,105,80}; //Percent for each special tag.
         
-        TagCOs = TagCOsx;
-        TagNames = TagNamesx;
-        TagStars = TagStarsx;
-        TagPercent = TagPercentx;
+        setTagCOs(TagCOsx);
+        setTagNames(TagNamesx);
+        setTagStars(TagStarsx);
+        setTagPercent(TagPercentx);
         
         COPName = "Survival Tactics";
         SCOPName = "Last Stand"; //moar liek, first stand

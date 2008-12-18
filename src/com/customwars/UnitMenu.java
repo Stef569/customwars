@@ -10,6 +10,8 @@ package com.customwars;
 import java.awt.*;
 import java.awt.image.*;
 
+import com.customwars.unit.UnitGraphics;
+
 public class UnitMenu extends ScrollMenu{
     
     private int side = 0;

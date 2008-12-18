@@ -1,4 +1,6 @@
 package com.customwars;
+
+import com.customwars.unit.Army;
 /*
  *Pipestation.java
  *Author: Xaif
@@ -37,7 +39,7 @@ public class Pipestation extends Property{
     private void initStatistics(){
         //Statistics
         name = "Pipestation";
-        move = new double[] {1,1,1,1,1,-1,-1,1,1,1};
+        setMove(new double[] {1,1,1,1,1,-1,-1,1,1,1});
         basemove = new double[] {1,1,1,1,1,-1,-1,1,1,1};
         def  = 3;
         index = 17;

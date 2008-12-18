@@ -1,22 +1,14 @@
 package com.customwars.officer;
 
-import com.customwars.Army;
-import com.customwars.CO;
-import com.customwars.Unit;
-/*
- *Olaf.java
- *Author: Kosheh
- *Contributors: Urusan
- *Creation:
- *The Olaf class is used to create an instance of the Blue Moon CO Olaf (copyright Intelligent Systems).
- */
+import com.customwars.unit.Army;
+import com.customwars.unit.Unit;
 
 public class Olaf extends CO{
    
     //constructor
     public Olaf() {
         name = "Olaf";
-        id = 7;
+        setId(7);
        
         String CObiox = "He may be a pompous braggart, but his tactical prowess has earned him the respect of his peers and the admiration of his people.";             //Holds the condensed CO bio'
         String titlex = "Old Man Winter";
@@ -63,8 +55,8 @@ public class Olaf extends CO{
         {"Unbelievable! We've been forced to withdraw? What's going on?",
          "Next time, I will give them a display of true might! Mark my words!"} ;
         
-        Swap = Swapx;       
-        COPower = COPowerx;
+        setSwap(Swapx);       
+        setCOPower(COPowerx);
         Victory = Victoryx;
         defeat = defeatx;
         
@@ -73,10 +65,10 @@ public class Olaf extends CO{
         int[] TagStarsx = {1,0,0,0}; //Number of stars for each special tag.
         int[] TagPercentx = {115,105,80,90}; //Percent for each special tag.
         
-        TagCOs = TagCOsx;
-        TagNames = TagNamesx;
-        TagStars = TagStarsx;
-        TagPercent = TagPercentx;
+        setTagCOs(TagCOsx);
+        setTagNames(TagNamesx);
+        setTagStars(TagStarsx);
+        setTagPercent(TagPercentx);
        
         COPName = "Blizzard";
         SCOPName = "Winter Fury";

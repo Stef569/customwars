@@ -1,8 +1,7 @@
 package com.customwars.officer;
 
-import com.customwars.Army;
-import com.customwars.CO;
-import com.customwars.Unit;
+import com.customwars.unit.Army;
+import com.customwars.unit.Unit;
 
 /*
  *Drake.java
@@ -17,7 +16,7 @@ public class Drake extends CO{
     //constructor
     public Drake() {
         name = "Drake";
-        id = 12;
+        setId(12);
         
         String CObiox = "A bighearted former pirate who hates fighting. Also a great surfer.";             //Holds the condensed CO bio'
         String titlex = "Nautical Nightmare";
@@ -64,8 +63,8 @@ public class Drake extends CO{
         {"A job well done! You've beaten me.",
          "Curses! I've been defeated. Time to hoist sail and flee!"} ;
         
-        Swap = Swapx;
-        COPower = COPowerx;
+        setSwap(Swapx);
+        setCOPower(COPowerx);
         Victory = Victoryx;
         defeat = defeatx;
         
@@ -74,10 +73,10 @@ public class Drake extends CO{
         int[] TagStarsx = {2,0,0,0}; //Number of stars for each special tag.
         int[] TagPercentx = {115,105,90,90}; //Percent for each special tag.
         
-        TagCOs = TagCOsx;
-        TagNames = TagNamesx;
-        TagStars = TagStarsx;
-        TagPercent = TagPercentx;
+        setTagCOs(TagCOsx);
+        setTagNames(TagNamesx);
+        setTagStars(TagStarsx);
+        setTagPercent(TagPercentx);
         
         COPName = "Tsunami";
         SCOPName = "Typhoon";

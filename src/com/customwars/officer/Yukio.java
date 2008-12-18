@@ -9,10 +9,9 @@ package com.customwars.officer;
  */
 import java.util.ArrayList;
 
-import com.customwars.Army;
-import com.customwars.CO;
 import com.customwars.Property;
-import com.customwars.Unit;
+import com.customwars.unit.Army;
+import com.customwars.unit.Unit;
 
 public class Yukio extends CO{
     boolean sustain = false;
@@ -24,7 +23,7 @@ public class Yukio extends CO{
     boolean swap = false;
     public Yukio() {
         name = "Yukio";
-        id = 38;
+        setId(38);
         
         String CObiox = "A master of the black market who joins Amber Corona for reasons of his own. Has little trust in anyone.";             //Holds the condensed CO bio'
         String titlex = "Godfather";
@@ -66,9 +65,9 @@ public class Yukio extends CO{
         {"It's nothing personal. Strictly business.",
          "It's time to see what my associates can do." };
         
-        COPower = COPowerx;
+        setCOPower(COPowerx);
         Victory = Victoryx;
-        Swap = Swapx;
+        setSwap(Swapx);
         
         //No special tags
         String[] TagCOsx = {"Eric","Edward","Carmen","Sonja","Kanbei", "Sabaki"}; //Names of COs with special tags
@@ -76,10 +75,10 @@ public class Yukio extends CO{
         int[] TagStarsx = {1,1,1,0,0,0}; //Number of stars for each special tag.
         int[] TagPercentx = {110,110,110, 90, 90, 105}; //Percent for each special tag.
         
-        TagCOs = TagCOsx;
-        TagNames = TagNamesx;
-        TagStars = TagStarsx;
-        TagPercent = TagPercentx;
+        setTagCOs(TagCOsx);
+        setTagNames(TagNamesx);
+        setTagStars(TagStarsx);
+        setTagPercent(TagPercentx);
         
         COPName = "Criminal Connections";
         SCOPName = "Underworld Assault";
@@ -88,8 +87,8 @@ public class Yukio extends CO{
         this.army = army;
         style = AMBER_CORONA;
         
-        cleanEnemyStoreBegin = false;
-        cleanEnemyStoreEnd = false;
+        setCleanEnemyStoreBegin(false);
+        setCleanEnemyStoreEnd(false);
     }
     
 //used to get the attack bonus for damage calculation
@@ -130,7 +129,7 @@ public class Yukio extends CO{
             Unit[] u = armies[i].getUnits();
             if(armies[i].getSide()!=army.getSide()) {
                 for(int s = 0; s<u.length; s++) {
-                    if(u[s].getEnemyCOstore()[statIndex][0]%10 == 1) {
+                    if(u[s].getEnemyCOstore()[getStatIndex()][0]%10 == 1) {
                         u[s].damage(40, false);
                         u[s].setParalyzed(true);
                     }
@@ -173,7 +172,7 @@ public class Yukio extends CO{
         if(index == 15) {
             if(COP || (sustain && !main))
                 u.damage(20,false);
-            u.getEnemyCOstore()[statIndex][0] = 11; //Used for SCOP calculation.
+            u.getEnemyCOstore()[getStatIndex()][0] = 11; //Used for SCOP calculation.
             u.setRepairMod((float)(u.getRepairMod() + 0.5));
         }
     }
@@ -193,9 +192,9 @@ public class Yukio extends CO{
                 Unit[] u = armies[i].getUnits();
                 if(armies[i].getSide()!=army.getSide()) {
                     for(int s = 0; s<u.length; s++) {
-                        if(u[s].getEnemyCOstore()[statIndex][0]%10 == 1)
+                        if(u[s].getEnemyCOstore()[getStatIndex()][0]%10 == 1)
                         {
-                        u[s].getEnemyCOstore()[statIndex][0]--;
+                        u[s].getEnemyCOstore()[getStatIndex()][0]--;
                         }
                     }
                 }
@@ -212,11 +211,11 @@ public class Yukio extends CO{
                 Unit[] u = armies[i].getUnits();
                 if(armies[i].getSide()!=army.getSide()) {
                     for(int s = 0; s<u.length; s++) {
-                        if(u[s].getEnemyCOstore()[statIndex][0] < 10)
+                        if(u[s].getEnemyCOstore()[getStatIndex()][0] < 10)
                         {
                         u[s].setRepairMod((float) (u[s]
 								.getRepairMod() + .5));
-                        u[s].getEnemyCOstore()[statIndex][0] +=10;
+                        u[s].getEnemyCOstore()[getStatIndex()][0] +=10;
                         }
                     }
                 }
@@ -228,10 +227,10 @@ public class Yukio extends CO{
                     Unit[] u = armies[i].getUnits();
                     if(armies[i].getSide()!=army.getSide()) {
                         for(int s = 0; s<u.length; s++) {
-                            if(u[s].getEnemyCOstore()[statIndex][0] >= 10)
+                            if(u[s].getEnemyCOstore()[getStatIndex()][0] >= 10)
                             u[s].setRepairMod((float) (u[s]
 									.getRepairMod() - .5));
-                            u[s].getEnemyCOstore()[statIndex][0] -=10;
+                            u[s].getEnemyCOstore()[getStatIndex()][0] -=10;
                         }
                     }
                 }

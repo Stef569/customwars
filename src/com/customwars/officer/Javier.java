@@ -1,15 +1,7 @@
 package com.customwars.officer;
 
 import com.customwars.Battle;
-import com.customwars.CO;
-import com.customwars.Unit;
-/*
- *Javier.java
- *Author: Raymond Wynn
- *Contributors;
- *Creation:
- *The Javier class is used to create an instance of the Green Earth CO Javier (copyright Intelligent Systems).
- */
+import com.customwars.unit.Unit;
 
 public class Javier extends CO{
     
@@ -18,7 +10,7 @@ public class Javier extends CO{
     //Constructor
     public Javier(Battle bat) {
         name = "Javier";
-        id = 14;
+        setId(14);
         
         String CObiox = "A Green Earth commander who values chivalry and honor above all else. Often orders his units to charge.";             //Holds the condensed CO bio'
         String titlex = "Quixote Incarnate";
@@ -47,10 +39,10 @@ public class Javier extends CO{
         int[] TagStarsx = {1 ,1, 0, 0 ,0 ,0};           //Number of stars for each special tag.
         int[] TagPercentx = {110, 110, 105, 105, 105, 90};       //Percent for each special tag.
         
-        TagCOs = TagCOsx;
-        TagNames = TagNamesx;
-        TagStars = TagStarsx;
-        TagPercent = TagPercentx;
+        setTagCOs(TagCOsx);
+        setTagNames(TagNamesx);
+        setTagStars(TagStarsx);
+        setTagPercent(TagPercentx);
         
         String[] COPowerx =
         {"Away put your weapons! You shall not be needing them where you are going!",
@@ -74,8 +66,8 @@ public class Javier extends CO{
         {"Well done! Your reputation is well deserved.",
          "I am honored to have served with the noblest knights history has ever seen."} ;
         
-        Swap = Swapx;       
-        COPower = COPowerx;
+        setSwap(Swapx);       
+        setCOPower(COPowerx);
         Victory = Victoryx;
         defeat = defeatx;
         if (bat.getBattleOptions().isBalance()== true){

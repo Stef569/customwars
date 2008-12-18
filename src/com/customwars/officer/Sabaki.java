@@ -1,15 +1,6 @@
 package com.customwars.officer;
 
-import com.customwars.CO;
-import com.customwars.Unit;
-/*
-/*
- *Sabaki.java
- *Author: Albert Lai
- *Contributors:
- *Creation: ThrawnFett
- *The Sabaki class summons Commander Sabaki for 5GB, requires player to discard a card.
- */
+import com.customwars.unit.Unit;
 
 public class Sabaki extends CO{
 //------------------
@@ -19,7 +10,7 @@ public class Sabaki extends CO{
 //constructor
     public Sabaki() {
         name = "Sabaki";
-        id = 32;
+        setId(32);
         
         String CObiox = "A former Yellow Comet CO that started a rebellion when she saw the state of Amber Corona. An expert at salvaging parts and field repairs. ";             //Holds the condensed CO bio'
         String titlex = "Waste Not, Want Not";
@@ -47,10 +38,10 @@ public class Sabaki extends CO{
         int[] TagStarsx = {1,1,0}; //Number of stars for each special tag.
         int[] TagPercentx = {110,105,90}; //Percent for each special tag.
         
-        TagCOs = TagCOsx;
-        TagNames = TagNamesx;
-        TagStars = TagStarsx;
-        TagPercent = TagPercentx;
+        setTagCOs(TagCOsx);
+        setTagNames(TagNamesx);
+        setTagStars(TagStarsx);
+        setTagPercent(TagPercentx);
         
         String[] COPowerx =
         {"Grab those parts! There's a tank that needs fixing!",
@@ -69,9 +60,9 @@ public class Sabaki extends CO{
         {"Looks like we need a quick fix.",
          "Is our plan breaking down?"};
         
-        COPower = COPowerx;
+        setCOPower(COPowerx);
         Victory = Victoryx;
-        Swap = Swapx;
+        setSwap(Swapx);
         
         COPName = "Speed Salvage";
         SCOPName = "Rejuvination Raid";

@@ -1,18 +1,10 @@
 package com.customwars.officer;
 
-import com.customwars.CO;
 import com.customwars.Location;
 import com.customwars.Map;
 import com.customwars.Mission;
 import com.customwars.Tile;
-import com.customwars.Unit;
-/*
- *Xavier.java
- *Author: -
- *Contributors: -
- *Creation: -
- *The Xavier class is used to create an instance of the CO Xavier
- */
+import com.customwars.unit.Unit;
 
 public class Xavier extends CO
 {
@@ -61,7 +53,7 @@ public class Xavier extends CO
     public Xavier()
     {
         name = "Xavier";
-        id = 62;
+        setId(62);
         String CObiox = "Fulfills his duties without second thought or consideration of the after-effects of his actions. Wears a pair of fake claws.";             //Holds the condensed CO bio'
         String titlex = "Reality Virtual";
         String hitx = "Uncertainty"; //Holds the hit
@@ -90,10 +82,10 @@ public class Xavier extends CO
         int[] TagStarsx = {1,1,0,0}; //Number of stars for each special tag.
         int[] TagPercentx = {105,110,105,85}; //Percent for each special tag.
 
-        TagCOs = TagCOsx;
-        TagNames = TagNamesx;
-        TagStars = TagStarsx;
-        TagPercent = TagPercentx;
+        setTagCOs(TagCOsx);
+        setTagNames(TagNamesx);
+        setTagStars(TagStarsx);
+        setTagPercent(TagPercentx);
        
         String[] COPowerx =
         {"You know, the laws of physics are made to be broken. Observe.",
@@ -113,8 +105,8 @@ public class Xavier extends CO
               "Couldn't handle them, eh?"
         };
        
-        Swap = Swapx;
-        COPower = COPowerx;
+        setSwap(Swapx);
+        setCOPower(COPowerx);
         Victory = Victoryx;
        
         COPName = "Phasing Charge";
@@ -124,7 +116,7 @@ public class Xavier extends CO
         this.army = army;
         style = PARALLEL_GALAXY;
        
-        cleanStore = false;
+        setCleanStore(false);
     }
    
     //used to get the attack bonus for damage calculation
@@ -143,9 +135,9 @@ public class Xavier extends CO
             atk += 10;
         }
         if(attacker.getDisplayHP() < 5)
-            minPosLuck = 10;
+            setMinPosLuck(10);
         else
-            minPosLuck = -1;
+            setMinPosLuck(-1);
         return atk;
     }
    
@@ -233,10 +225,10 @@ public class Xavier extends CO
        //Guaranteed 20 luck damage for non-Infantry units
        if(COP && attack && owned.getUnitType() != 0 && owned.getUnitType() != 1)
        {
-          baseMinPosLuck_self = minPosLuck;
-          baseMaxPosLuck_self = maxPosLuck;
-          minPosLuck = 20;
-          maxPosLuck = 20;
+          baseMinPosLuck_self = getMinPosLuck();
+          baseMaxPosLuck_self = getMaxPosLuck();
+          setMinPosLuck(20);
+          setMaxPosLuck(20);
           selfAdjusted = true;
        }
     }
@@ -290,8 +282,8 @@ public class Xavier extends CO
     {
        if(selfAdjusted)
        {
-          maxPosLuck = baseMaxPosLuck_self;
-          minPosLuck = baseMinPosLuck_self;
+          setMaxPosLuck(baseMaxPosLuck_self);
+          setMinPosLuck(baseMinPosLuck_self);
           baseMinPosLuck_self = 0;
           baseMaxPosLuck_self = 0;
           selfAdjusted = false;

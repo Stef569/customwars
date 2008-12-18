@@ -1,4 +1,8 @@
 package com.customwars;
+
+import com.customwars.officer.CO;
+import com.customwars.unit.Army;
+import com.customwars.unit.Unit;
 /*
  *Blandie.java
  *Author: Urusan
@@ -13,7 +17,7 @@ public class Aira extends CO{
     //constructor
     public Aira() {
         name = "Aira";
-        id = 55;
+        setId(55);
         
         String CObiox = "A reserved commander who is often found daydreaming. Likes to walk in the wind.";
         //This is seperated into blocks 40 characters long!
@@ -58,9 +62,9 @@ public class Aira extends CO{
         {"I won't do anything worse than you...I hope.",
          "I guess it's time for a second wind." };
         
-        COPower = COPowerx;
+        setCOPower(COPowerx);
         Victory = Victoryx;
-        Swap = Swapx;
+        setSwap(Swapx);
         
         //No special tags
         String[] TagCOsx = {"Olaf", "Andy", "Colin", "Sasha", "Grimm", "Drake"}; //Names of COs with special tags
@@ -68,10 +72,10 @@ public class Aira extends CO{
         int[] TagStarsx = {1,1,0,0,0,0}; //Number of stars for each special tag.
         int[] TagPercentx = {110, 110, 105,105,90,70}; //Percent for each special tag.
         
-        TagCOs = TagCOsx;
-        TagNames = TagNamesx;
-        TagStars = TagStarsx;
-        TagPercent = TagPercentx;
+        setTagCOs(TagCOsx);
+        setTagNames(TagNamesx);
+        setTagStars(TagStarsx);
+        setTagPercent(TagPercentx);
         
         COPName = "Gust Storm";
         SCOPName = "Hurricannon";
@@ -79,8 +83,8 @@ public class Aira extends CO{
         maxStars = 7.0;
         this.army = army;
         style = BLUE_MOON;
-        cleanEnemyStoreBegin = false; //cleans enemyCOstore at the beginning of every day - used to store persistent enemy problems.
-        cleanEnemyStoreEnd = false;
+        setCleanEnemyStoreBegin(false); //cleans enemyCOstore at the beginning of every day - used to store persistent enemy problems.
+        setCleanEnemyStoreEnd(false);
     }
     
 //used to get the attack bonus for damage calculation
@@ -109,10 +113,10 @@ public class Aira extends CO{
                 if(armies[i].getSide() != army.getSide())
                     if(u!= null)
                         for(int t = 0; t<u.length; t++) {
-                        u[t].fuelMult = 1;
-                        if(u[t].getEnemyCOstore()[statIndex][0]%10 != 1)
+                        u[t].setFuelMult(1);
+                        if(u[t].getEnemyCOstore()[getStatIndex()][0]%10 != 1)
                             u[t].setNoRepaired(false);
-                        if(u[t].getEnemyCOstore()[statIndex][0]<10 )
+                        if(u[t].getEnemyCOstore()[getStatIndex()][0]<10 )
                             u[t].setNoResupplied(false);
                         }
             }
@@ -124,7 +128,7 @@ public class Aira extends CO{
                     if(armies[i].getSide() != army.getSide())
                         for(int t = 0; t<u.length; t++) {
                         u[t].setMove(u[t].getMove()
-								+ u[t].getEnemyCOstore()[statIndex][0]);
+								+ u[t].getEnemyCOstore()[getStatIndex()][0]);
                         }
                 }
             }
@@ -147,13 +151,13 @@ public class Aira extends CO{
             Unit[] u = armies[i].getUnits();
             if(armies[i].getSide() != army.getSide()) {
                 for(int t = 0; t<u.length; t++) {
-                    u[t].fuelMult = 5;
+                    u[t].setFuelMult(5);
                     //The following if statements are to store the knowledge if the CO inherently cannot repair or resupply his or her own units
                     if(u[t].isNoRepaired())
-                        u[t].getEnemyCOstore()[statIndex][0] = 1;
+                        u[t].getEnemyCOstore()[getStatIndex()][0] = 1;
                     u[t].setNoRepaired(true);
                     if(u[t].isNoResupplied())
-                        u[t].getEnemyCOstore()[statIndex][0] += 10;
+                        u[t].getEnemyCOstore()[getStatIndex()][0] += 10;
                     u[t].setNoResupplied(true);
                 }
             }
@@ -170,11 +174,11 @@ public class Aira extends CO{
             Unit[] u = armies[i].getUnits();
             if(armies[i].getSide() != army.getSide())
                 for(int t = 0; t<u.length; t++) {
-                u[t].getEnemyCOstore()[statIndex][0]= 0;
-                if(u[t].getMoveType() == u[t].MOVE_AIR || u[t].price<16000)
+                u[t].getEnemyCOstore()[getStatIndex()][0]= 0;
+                if(u[t].getMoveType() == u[t].MOVE_AIR || u[t].getPrice()<16000)
                     if(!u[t].isInTransport())u[t].damage(30, false);
-                if(u[t].price>=16000 && u[t].getMoveType() != u[t].MOVE_AIR) {
-                    u[t].getEnemyCOstore()[statIndex][0] = ((int)(u[t].getMove()/2.0+.5));
+                if(u[t].getPrice()>=16000 && u[t].getMoveType() != u[t].MOVE_AIR) {
+                    u[t].getEnemyCOstore()[getStatIndex()][0] = ((int)(u[t].getMove()/2.0+.5));
                     u[t].setMove(u[t].getMove()
 							- ((int)(u[t].getMove()/2.0+.5)));
                 }

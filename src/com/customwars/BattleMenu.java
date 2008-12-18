@@ -13,6 +13,7 @@ import javax.swing.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.customwars.officer.COList;
 import com.customwars.state.ResourceLoader;
 
 import java.io.*;
@@ -87,9 +88,9 @@ public class BattleMenu extends InGameMenu{
                     int[] green = {255};
                             int[] blue = {255};
                     int offset = 0;
-                    if(b.getArmy(b.getTurn()).getCO().altCostume)offset = 225;
+                    if(b.getArmy(b.getTurn()).getCO().isAltCostume())offset = 225;
                     
-                    DialogueBox taunt = new DialogueBox(b,b.getArmy(b.getTurn()).getCO().COPower[b.getRNG().nextInt(6)]);
+                    DialogueBox taunt = new DialogueBox(b,b.getArmy(b.getTurn()).getCO().getCOPower()[b.getRNG().nextInt(6)]);
                   
                     /*Animation boxUp = new RectangleBox(b,4, red, green, blue, 0,480,0,255,480,300,100,100,50,0,0);
                     Animation box = new RectangleBox(b,4, red, green, blue, 0,255,0,255,480,300,100,100,80,0,0);*/
@@ -100,7 +101,7 @@ public class BattleMenu extends InGameMenu{
                     Animation background = new Animation(b,MiscGraphics.getPowerBackground(b.getTurn()),3,0,0,0,0,480,320,0,0,0,0, 100,100,100,0,0);//1 second
                     Animation fadeoutbackground = new Animation(b,MiscGraphics.getPowerBackground(b.getTurn()),3,0,0,0,0,480,320,0,0,0,0,100,0,25,0,0);//.25 second fade out
                     
-                    if(!b.getArmy(b.getTurn()).getCO().altCostume) {
+                    if(!b.getArmy(b.getTurn()).getCO().isAltCostume()) {
                         COmovein = new Animation(b,MiscGraphics.getCOSheet(COList.getIndex(b.getArmy(b.getTurn()).getCO())),2,0,0,0, 0, 225, 350,480,0,320,0,100,100,60,25,-8);//.25 second move in
                         COfadeout = new Animation(b,MiscGraphics.getCOSheet(COList.getIndex(b.getArmy(b.getTurn()).getCO())),2,0,0,0, 0, 225, 350,320,0,-100,0,100,100,30,0,8);//.25 second move out
                     } else {
@@ -131,12 +132,12 @@ public class BattleMenu extends InGameMenu{
                     taunt.linkTo(fadeinbackground);
                     taunt.linkTo(COmovein);
                     Character c = new Character(' ');
-                    for(int i = 0; i<b.getArmy(b.getTurn()).getCO().COPName.length(); i++) {
+                    for(int i = 0; i<b.getArmy(b.getTurn()).getCO().getCOPName().length(); i++) {
                         //Each letter lasts for a second.
-                        if(!c.isWhitespace(b.getArmy(b.getTurn()).getCO().COPName.charAt(i))) {
-                            Animation intemp = new Animation(b,MiscGraphics.getPowerFONT(b.getArmy(b.getTurn()).getCO().COPName.charAt(i)),1,0,0,0,0,16,32,30+i*16,160,30+i*16,160, 0,100,5,50+i*10,0);
-                            Animation temp = new Animation(b,MiscGraphics.getPowerFONT(b.getArmy(b.getTurn()).getCO().COPName.charAt(i)),1,0,0,0,0,16,32,30+i*16,160,30+i*16,160, 100,100,50,0,0);
-                            Animation outtemp = new Animation(b,MiscGraphics.getPowerFONT(b.getArmy(b.getTurn()).getCO().COPName.charAt(i)),1,0,0,0,0,16,32,30+i*16,160,30+i*16,160, 100,0,5,0,0);
+                        if(!c.isWhitespace(b.getArmy(b.getTurn()).getCO().getCOPName().charAt(i))) {
+                            Animation intemp = new Animation(b,MiscGraphics.getPowerFONT(b.getArmy(b.getTurn()).getCO().getCOPName().charAt(i)),1,0,0,0,0,16,32,30+i*16,160,30+i*16,160, 0,100,5,50+i*10,0);
+                            Animation temp = new Animation(b,MiscGraphics.getPowerFONT(b.getArmy(b.getTurn()).getCO().getCOPName().charAt(i)),1,0,0,0,0,16,32,30+i*16,160,30+i*16,160, 100,100,50,0,0);
+                            Animation outtemp = new Animation(b,MiscGraphics.getPowerFONT(b.getArmy(b.getTurn()).getCO().getCOPName().charAt(i)),1,0,0,0,0,16,32,30+i*16,160,30+i*16,160, 100,0,5,0,0);
                             
                             intemp.setup(true,false);
                             temp.setup(true,false);
@@ -155,27 +156,27 @@ public class BattleMenu extends InGameMenu{
                     b.getArmy(b.getTurn()).getCO().activateCOP();
                     if(b.getBattleOptions().isRecording())b.getReplay().push(new CWEvent(2,b.getDay(),b.getTurn()));
                 }else if(displayItems[item].equals("SCOP")){
-                    DialogueBox taunt = new DialogueBox(b,b.getArmy(b.getTurn()).getCO().COPower[b.getRNG().nextInt(6)]);
+                    DialogueBox taunt = new DialogueBox(b,b.getArmy(b.getTurn()).getCO().getCOPower()[b.getRNG().nextInt(6)]);
                     
                     Animation COmovein;
                     Animation CO;
                     Animation COfadeout;
                     
                     Animation fadeinbackground = new Animation(b,MiscGraphics.getPowerBackground(b.getTurn()),3,0,0,0,0,480,320,0,0,0,0, 0,100,50,0,-8);//1 second fade in
-                    Animation background = new Animation(b,MiscGraphics.getPowerBackground(b.getTurn()),3,0,0,0,0,480,320,0,0,0,0, 100,100,b.getArmy(b.getTurn()).getCO().SCOPName.length()*9,0,0);//1 second
+                    Animation background = new Animation(b,MiscGraphics.getPowerBackground(b.getTurn()),3,0,0,0,0,480,320,0,0,0,0, 100,100,b.getArmy(b.getTurn()).getCO().getSCOPName().length()*9,0,0);//1 second
                     Animation fadeoutbackground = new Animation(b,MiscGraphics.getPowerBackground(b.getTurn()),3,0,0,0,0,480,320,0,0,0,0,100,0,25,0,0);//.25 second fade out
                     //(1+1+0.25)
                     Animation fallPower = new Animation(b,MiscGraphics.getSuperPowerIcon(b.getTurn()),2,0,0,0,0,480,180,0,-165,0,77, 100,100,30,30,-5);//half-second delay, .5 sec fade in
                     Animation sustainPower = new Animation(b,MiscGraphics.getSuperPowerIcon(b.getTurn()),2,0,0,0,0,480,180,0,77,0,77, 100,100,15,0,0);//0.5 second
                     Animation fadePower = new Animation(b,MiscGraphics.getSuperPowerIcon(b.getTurn()),2,0,0,0,0,480,180,0,77,0,77,100,0,15,0,0);//.25 second fade out
                     
-                    if(!b.getArmy(b.getTurn()).getCO().altCostume) {
+                    if(!b.getArmy(b.getTurn()).getCO().isAltCostume()) {
                         COmovein = new Animation(b,MiscGraphics.getCOSheet(COList.getIndex(b.getArmy(b.getTurn()).getCO())),1,0,0,0, 0, 225, 350,480,0,320,0,100,100,60,75,-8);//.25 second move in
-                        CO = new Animation(b,MiscGraphics.getCOSheet(COList.getIndex(b.getArmy(b.getTurn()).getCO())),1,0,0,0, 0, 225, 350,320,0,320,0,100,100,b.getArmy(b.getTurn()).getCO().SCOPName.length()*5,0,0);//1.5 second stay put
+                        CO = new Animation(b,MiscGraphics.getCOSheet(COList.getIndex(b.getArmy(b.getTurn()).getCO())),1,0,0,0, 0, 225, 350,320,0,320,0,100,100,b.getArmy(b.getTurn()).getCO().getSCOPName().length()*5,0,0);//1.5 second stay put
                         COfadeout = new Animation(b,MiscGraphics.getCOSheet(COList.getIndex(b.getArmy(b.getTurn()).getCO())),1,0,0,0, 0, 225, 350,320,0,320,0,100,0,30,0,8);//.25 second move out
                     } else {
                         COmovein = new Animation(b,MiscGraphics.getCOSheet(COList.getIndex(b.getArmy(b.getTurn()).getCO())),1,0,0,0,225, 0, 450, 350,0,320,0,100,100,60,75,-8);//.25 second move in
-                        CO = new Animation(b,MiscGraphics.getCOSheet(COList.getIndex(b.getArmy(b.getTurn()).getCO())),1,0,0,0, 225, 0, 450, 350,0,320,0,100,100,b.getArmy(b.getTurn()).getCO().SCOPName.length()*5,0,0);//1.5 second stay put
+                        CO = new Animation(b,MiscGraphics.getCOSheet(COList.getIndex(b.getArmy(b.getTurn()).getCO())),1,0,0,0, 225, 0, 450, 350,0,320,0,100,100,b.getArmy(b.getTurn()).getCO().getSCOPName().length()*5,0,0);//1.5 second stay put
                         COfadeout = new Animation(b,MiscGraphics.getCOSheet(COList.getIndex(b.getArmy(b.getTurn()).getCO())),1,0,0,225, 0, 450, 350,320,0,320,0,100,0,30,0,8);//.25 second move out
                     }
                     taunt.setup();
@@ -209,12 +210,12 @@ public class BattleMenu extends InGameMenu{
                     fadeinbackground.linkTo(background);
                     
                     Character c = new Character(' ');
-                    for(int i = 0; i<b.getArmy(b.getTurn()).getCO().SCOPName.length(); i++) {
+                    for(int i = 0; i<b.getArmy(b.getTurn()).getCO().getSCOPName().length(); i++) {
                         //Each letter lasts for a second.
-                        if(!c.isWhitespace(b.getArmy(b.getTurn()).getCO().SCOPName.charAt(i))) {
-                            Animation intemp = new Animation(b,MiscGraphics.getPowerFONT(b.getArmy(b.getTurn()).getCO().SCOPName.charAt(i)),1,0,0,0,0,16,32,30+i*16,160,30+i*16,160, 0,100,5,125+i*9,0);
-                            Animation temp = new Animation(b,MiscGraphics.getPowerFONT(b.getArmy(b.getTurn()).getCO().SCOPName.charAt(i)),1,0,0,0,0,16,32,30+i*16,160,30+i*16,160, 100,100,50,0,0);
-                            Animation outtemp = new Animation(b,MiscGraphics.getPowerFONT(b.getArmy(b.getTurn()).getCO().SCOPName.charAt(i)),1,0,0,0,0,16,32,30+i*16,160,30+i*16,160, 100,0,5,0,0);
+                        if(!c.isWhitespace(b.getArmy(b.getTurn()).getCO().getSCOPName().charAt(i))) {
+                            Animation intemp = new Animation(b,MiscGraphics.getPowerFONT(b.getArmy(b.getTurn()).getCO().getSCOPName().charAt(i)),1,0,0,0,0,16,32,30+i*16,160,30+i*16,160, 0,100,5,125+i*9,0);
+                            Animation temp = new Animation(b,MiscGraphics.getPowerFONT(b.getArmy(b.getTurn()).getCO().getSCOPName().charAt(i)),1,0,0,0,0,16,32,30+i*16,160,30+i*16,160, 100,100,50,0,0);
+                            Animation outtemp = new Animation(b,MiscGraphics.getPowerFONT(b.getArmy(b.getTurn()).getCO().getSCOPName().charAt(i)),1,0,0,0,0,16,32,30+i*16,160,30+i*16,160, 100,0,5,0,0);
                             
                             intemp.setup(true, false);
                             temp.setup(true, false);
@@ -260,7 +261,7 @@ public class BattleMenu extends InGameMenu{
     
     public static BattleMenu generateContext(Battle battle, ImageObserver screen){
         boolean COP = false, SCOP = false, tag = false, swap = false, end = false;
-        if(battle.getArmy(battle.getTurn()).getCO().canCOP() && !battle.getArmy(battle.getTurn()).getCO().COP && !battle.getArmy(battle.getTurn()).getCO().SCOP && battle.getArmy(battle.getTurn()).getCO().COPStars != -1)
+        if(battle.getArmy(battle.getTurn()).getCO().canCOP() && !battle.getArmy(battle.getTurn()).getCO().isCOP() && !battle.getArmy(battle.getTurn()).getCO().isSCOP() && battle.getArmy(battle.getTurn()).getCO().getCOPStars() != -1)
             COP = true;
         if(battle.getArmy(battle.getTurn()).getTag() > 0 ){
             if(battle.getArmy(battle.getTurn()).canTagSwap())
@@ -278,11 +279,11 @@ public class BattleMenu extends InGameMenu{
             //COP = true;
             SCOP = true;
             end = true;
-        }else if(battle.getArmy(battle.getTurn()).getCO().canCOP() && !battle.getArmy(battle.getTurn()).getCO().COP &&!battle.getArmy(battle.getTurn()).getCO().SCOP){
+        }else if(battle.getArmy(battle.getTurn()).getCO().canCOP() && !battle.getArmy(battle.getTurn()).getCO().isCOP() &&!battle.getArmy(battle.getTurn()).getCO().isSCOP()){
             if(battle.getArmy(battle.getTurn()).getAltCO()!= null)swap = true;
             //COP = true;
             end = true;
-        }else if(battle.getArmy(battle.getTurn()).getAltCO()!= null && !battle.getArmy(battle.getTurn()).getCO().COP&&!battle.getArmy(battle.getTurn()).getCO().SCOP){
+        }else if(battle.getArmy(battle.getTurn()).getAltCO()!= null && !battle.getArmy(battle.getTurn()).getCO().isCOP()&&!battle.getArmy(battle.getTurn()).getCO().isSCOP()){
             swap = true;
             end = true;
         }else{

@@ -1,14 +1,6 @@
 package com.customwars.officer;
 
-import com.customwars.CO;
-import com.customwars.Unit;
-/*
- *Zandra.java
- *Author: -
- *Contributors: -
- *Creation:
- *The Zandra class is used to create an instance of the Orange Star CO Zandra.
- */
+import com.customwars.unit.Unit;
 
 public class Zandra extends CO
 {
@@ -19,7 +11,7 @@ public class Zandra extends CO
     public Zandra()
     {
         name = "Zandra";
-        id = 47;
+        setId(47);
        
         String CObiox = "A youthful Co that will protect her village at all cost. She is skilled at terrain management and always tends to have the winds blow her way.";             //Holds the condensed CO bio'
         String titlex = "Sand Queen";
@@ -61,19 +53,19 @@ public class Zandra extends CO
         {"The sands are shifting...",
          "Let me see if I can blow their defenses wide open..."};
        
-        COPower = COPowerx;
+        setCOPower(COPowerx);
         Victory = Victoryx;
-        Swap = Swapx;
+        setSwap(Swapx);
        
         String[] TagCOsx = {"Hachi", "Carrie", "Varlot"}; //Names of COs with special tags
         String[] TagNamesx = {"Trade Partners", "Rust and Dust", "Dual Strike"}; //Names of the corresponding Tags
         int[] TagStarsx = {1, 2, 0}; //Number of stars for each special tag.
         int[] TagPercentx = {110, 115, 80}; //Percent for each special tag.
        
-        TagCOs = TagCOsx;
-        TagNames = TagNamesx;
-        TagStars = TagStarsx;
-        TagPercent = TagPercentx;
+        setTagCOs(TagCOsx);
+        setTagNames(TagNamesx);
+        setTagStars(TagStarsx);
+        setTagPercent(TagPercentx);
        
         COPName = "Sand Shift";
         SCOPName = "Desert Gale";

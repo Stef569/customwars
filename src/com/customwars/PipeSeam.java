@@ -24,7 +24,7 @@ public class PipeSeam extends Invention{
     private void initStatistics(){
         //Statistics
         name = "Pipe Seam";
-        move = new double[] {-1,-1,-1,-1,-1,-1,-1,-1,1,-1};
+        setMove(new double[] {-1,-1,-1,-1,-1,-1,-1,-1,1,-1});
         basemove = new double[] {-1,-1,-1,-1,-1,-1,-1,-1,1,-1};;
         def  = 0;
         index = 18;

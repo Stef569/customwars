@@ -13,14 +13,20 @@ public class Trigger implements Serializable{
     int type; //holds type of trigger
     int day;  //holds the day the trigger goes off
     int turn; //the turn the trigger goes off.
-    Battle b; //holds the battle this affects.
+    private Battle b; //holds the battle this affects.
     //A unit trigger
     public Trigger(Battle b, int day, int turn, int type){
-        this.b = b;
+        this.setB(b);
         this.day = day;
         this.type = type;
     }
     public void setTrigger(){};
-    public void trigger(){};
+    public void trigger(){}
+	public void setB(Battle b) {
+		this.b = b;
+	}
+	public Battle getB() {
+		return b;
+	};
 }
 

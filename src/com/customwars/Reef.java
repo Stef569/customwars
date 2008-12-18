@@ -13,7 +13,7 @@ public class Reef extends Terrain{
     public Reef(){
         //Statistics
         name = "Reef";
-        move = new double[] {-1,-1,-1,-1,1,2,2,-1,-1,1};
+        setMove(new double[] {-1,-1,-1,-1,1,2,2,-1,-1,1});
         basemove = new double[] {-1,-1,-1,-1,1,2,2,-1,-1,1};
         def  = 1;
         index = 7;

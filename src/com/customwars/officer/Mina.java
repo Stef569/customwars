@@ -10,16 +10,15 @@ package com.customwars.officer;
 
 import java.util.Vector;
 
-import com.customwars.Army;
-import com.customwars.CO;
-import com.customwars.Unit;
+import com.customwars.unit.Army;
+import com.customwars.unit.Unit;
 
 public class Mina extends CO{
     
     //constructor
     public Mina() {
         name = "Mina";
-        id = 29;
+        setId(29);
         
         String CObiox = "A young enigmatic girl who serves Parallel Galaxy. Deceptively dangerous.";             //Holds the condensed CO bio'
         String titlex = "Pale Moon";
@@ -49,10 +48,10 @@ public class Mina extends CO{
         int[] TagStarsx = {2,1,1,0,0,0,0}; //Number of stars for each special tag.
         int[] TagPercentx = {115,110,105,105,90,85,85}; //Percent for each special tag.
         
-        TagCOs = TagCOsx;
-        TagNames = TagNamesx;
-        TagStars = TagStarsx;
-        TagPercent = TagPercentx;
+        setTagCOs(TagCOsx);
+        setTagNames(TagNamesx);
+        setTagStars(TagStarsx);
+        setTagPercent(TagPercentx);
         
         
         String[] COPowerx =
@@ -72,9 +71,9 @@ public class Mina extends CO{
         {"Very well.",
          "I will take over, now." };
         
-        COPower = COPowerx;
+        setCOPower(COPowerx);
         Victory = Victoryx;
-        Swap = Swapx;
+        setSwap(Swapx);
         
         COPName = "Potent of Misfortune";
         SCOPName = "Dark Lightning";

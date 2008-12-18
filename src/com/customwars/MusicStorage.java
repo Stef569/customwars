@@ -17,6 +17,8 @@ import java.io.*;
 //import javax.media.bean.playerbean.*;
 import java.net.*;
 
+import com.customwars.officer.COList;
+
 public class MusicStorage{
     
      public static String music[] = new String[COList.getListing().length+1];

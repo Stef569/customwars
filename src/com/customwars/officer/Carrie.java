@@ -8,17 +8,16 @@ package com.customwars.officer;
  */
 import java.util.Vector;
 
-import com.customwars.Army;
-import com.customwars.CO;
 import com.customwars.Tile;
-import com.customwars.Unit;
+import com.customwars.unit.Army;
+import com.customwars.unit.Unit;
 public class Carrie extends CO{
     int units; //stores enemy units
     int selected;
     //constructor
     public Carrie() {
         name = "Carrie";
-        id = 49;
+        setId(49);
         
         String CObiox =
                 "A stubborn young woman from Orange Star." +
@@ -70,9 +69,9 @@ public class Carrie extends CO{
         {"Time to get to work..",
          "But I was just about to beat the boss!"};
         
-        COPower = COPowerx;
+        setCOPower(COPowerx);
         Victory = Victoryx;
-        Swap = Swapx;
+        setSwap(Swapx);
         
         //No special tags
         String[] TagCOsx = {"Koshi", "Jared", "Amy", "Nell"}; //Names of COs with special tags
@@ -80,10 +79,10 @@ public class Carrie extends CO{
         int[] TagStarsx = {2,1,0,0}; //Number of stars for each special tag.
         int[] TagPercentx = {110,105, 105, 90}; //Percent for each special tag.
         
-        TagCOs = TagCOsx;
-        TagNames = TagNamesx;
-        TagStars = TagStarsx;
-        TagPercent = TagPercentx;
+        setTagCOs(TagCOsx);
+        setTagNames(TagNamesx);
+        setTagStars(TagStarsx);
+        setTagPercent(TagPercentx);
         
         COPName = "Reboot";
         SCOPName = "Critical Malfunction";

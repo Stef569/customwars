@@ -8,6 +8,8 @@ import javax.swing.Timer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.customwars.unit.Unit;
+
 import java.awt.image.*;
 /*
  *Battle Animation.java
@@ -128,15 +130,15 @@ public class BattleAnimation_1 extends Animation{
         //Draws the CO portraits
         int emotiona = 0;
         int emotionb = 0;
-        if(attacker.getArmy().getCO().altCostume) {
-            g.drawImage(MiscGraphics.getCOSheet(attacker.getArmy().getCO().id),110,30,110+48,78,273,302+emotiona*48,320,302+(emotiona+1)*48,bs);
+        if(attacker.getArmy().getCO().isAltCostume()) {
+            g.drawImage(MiscGraphics.getCOSheet(attacker.getArmy().getCO().getId()),110,30,110+48,78,273,302+emotiona*48,320,302+(emotiona+1)*48,bs);
         } else {
-            g.drawImage(MiscGraphics.getCOSheet(attacker.getArmy().getCO().id),110,30,110+48,78,emotiona*48,350,(emotiona+1)*48,398,bs);
+            g.drawImage(MiscGraphics.getCOSheet(attacker.getArmy().getCO().getId()),110,30,110+48,78,emotiona*48,350,(emotiona+1)*48,398,bs);
         }
-        if(defender.getArmy().getCO().altCostume) {
-            g.drawImage(MiscGraphics.getCOSheet(defender.getArmy().getCO().id),110+127*2+4,30,110+127*2-48+4,78,273,302+emotionb*48,320,302+(emotionb+1)*48,bs);
+        if(defender.getArmy().getCO().isAltCostume()) {
+            g.drawImage(MiscGraphics.getCOSheet(defender.getArmy().getCO().getId()),110+127*2+4,30,110+127*2-48+4,78,273,302+emotionb*48,320,302+(emotionb+1)*48,bs);
         } else {
-            g.drawImage(MiscGraphics.getCOSheet(defender.getArmy().getCO().id),110+127*2+4,30,110+127*2-48+4,78,emotionb*48,350,(emotionb+1)*48,398,bs);
+            g.drawImage(MiscGraphics.getCOSheet(defender.getArmy().getCO().getId()),110+127*2+4,30,110+127*2-48+4,78,emotionb*48,350,(emotionb+1)*48,398,bs);
         }
         
         //Draws the terrain stars for the attacker

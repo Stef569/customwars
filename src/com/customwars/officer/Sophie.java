@@ -1,14 +1,6 @@
 package com.customwars.officer;
 
-import com.customwars.CO;
-import com.customwars.Unit;
-/*
- *Blandie.java
- *Author: Urusan
- *Contributors:
- *Creation: December 11, 2006
- *A bland CO, perhaps a generic commanding officer?
- */
+import com.customwars.unit.Unit;
 
 public class Sophie extends CO{
     
@@ -18,7 +10,7 @@ public class Sophie extends CO{
     //constructor
     public Sophie() {
         name = "Sophie";
-        id = 51;
+        setId(51);
         
         String CObiox = 
                 "A skilled veteran that demands          " +
@@ -71,9 +63,9 @@ public class Sophie extends CO{
         {"I won't let you down!",
          "I am assuming command"};
         
-        COPower = COPowerx;
+        setCOPower(COPowerx);
         Victory = Victoryx;
-        Swap = Swapx;
+        setSwap(Swapx);
         
         //No special tags
         String[] TagCOsx = {"Max", "Kanbei", "Sami", "Artemis", "Colin", "Adder"}; //Names of COs with special tags
@@ -81,10 +73,10 @@ public class Sophie extends CO{
         int[] TagStarsx = {1,1,0,0,0,0}; //Number of stars for each special tag.
         int[] TagPercentx = {110,110,105,105,90,80}; //Percent for each special tag.
         
-        TagCOs = TagCOsx;
-        TagNames = TagNamesx;
-        TagStars = TagStarsx;
-        TagPercent = TagPercentx;
+        setTagCOs(TagCOsx);
+        setTagNames(TagNamesx);
+        setTagStars(TagStarsx);
+        setTagPercent(TagPercentx);
         
         COPName = "Sudden Strike";
         SCOPName = "Total War";

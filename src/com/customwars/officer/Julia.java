@@ -12,10 +12,9 @@ import java.util.ArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.customwars.Army;
-import com.customwars.CO;
 import com.customwars.Location;
-import com.customwars.Unit;
+import com.customwars.unit.Army;
+import com.customwars.unit.Unit;
 
 public class Julia extends CO{
     ArrayList location;
@@ -29,7 +28,7 @@ public class Julia extends CO{
 //Constructor
     public Julia() {
         name = "Julia";
-        id = 46; //placeholder for Sturm
+        setId(46); //placeholder for Sturm
         
         String CObiox =
                 "A devoted CO who embraces Parallel      " +
@@ -68,10 +67,10 @@ public class Julia extends CO{
         int[] TagStarsx = {2,1,1,1,0,0,0}; //Number of stars for each special tag.
         int[] TagPercentx = {110,110,105,105,90,90,80}; //Percent for each special tag.
         
-        TagCOs = TagCOsx;
-        TagNames = TagNamesx;
-        TagStars = TagStarsx;
-        TagPercent = TagPercentx;
+        setTagCOs(TagCOsx);
+        setTagNames(TagNamesx);
+        setTagStars(TagStarsx);
+        setTagPercent(TagPercentx);
         
         String[] COPowerx =
         {"Your defeat is tomorrow's headline.",
@@ -91,8 +90,8 @@ public class Julia extends CO{
         {"Our cause is a just one.",
          "I advise you to yield." };
         
-        Swap = Swapx;
-        COPower = COPowerx;
+        setSwap(Swapx);
+        setCOPower(COPowerx);
         Victory = Victoryx;
         
         COPName = "Rallying Cry";
@@ -151,7 +150,7 @@ public class Julia extends CO{
             if(u != null)
                 if(enemyArmy[s].getSide() != army.getSide())
                     for(t = 0; t<u.length; t++) {
-                u[t].getEnemyCOstore()[statIndex][0] = i + t;
+                u[t].getEnemyCOstore()[getStatIndex()][0] = i + t;
                 location.add(u[i + t].getLocation());
                 fuel[i+t] = u[i+t].getGas();
                     }
@@ -204,7 +203,7 @@ public class Julia extends CO{
     //carries out Adder's Super CO Power, called by CO.activateSCOP()
     public void superCOPower(){
         SCOP = true;
-        mayhem = true;
+        setMayhem(true);
         
         Army[] armies = army.getBattle().getArmies();
         Unit[] u, alliedUnit;
@@ -239,7 +238,7 @@ public class Julia extends CO{
     //used to deactivate Adder's Super CO Power the next day
     public void deactivateSCOP(){
         SCOP = false;
-        mayhem = false;
+        setMayhem(false);
         
         Army[] armies = army.getBattle().getArmies();
         Unit[] u, alliedUnit;
@@ -298,9 +297,9 @@ public class Julia extends CO{
     {
     	//[CHANGED]
         if(turn && index != 1 && index != 20) {
-            army.getBattle().getMap().move(u, (Location)(location.get(u.getEnemyCOstore()[statIndex][0])));
-            u.setLocation((Location)(location.get(u.getEnemyCOstore()[statIndex][0])));
-            u.setGas((fuel[u.getEnemyCOstore()[statIndex][0]]));
+            army.getBattle().getMap().move(u, (Location)(location.get(u.getEnemyCOstore()[getStatIndex()][0])));
+            u.setLocation((Location)(location.get(u.getEnemyCOstore()[getStatIndex()][0])));
+            u.setGas((fuel[u.getEnemyCOstore()[getStatIndex()][0]]));
             u.setActive(true);
             logger.info("Tried to move!");
         }

@@ -5,10 +5,9 @@ This 'broken' version is cool because it has code for real '+4 max HP'
 
 import java.util.Random;
 
-import com.customwars.CO;
 import com.customwars.Mission;
 import com.customwars.Property;
-import com.customwars.Unit;
+import com.customwars.unit.Unit;
 
 public class Napoleon extends CO{
     boolean prevent; //Damage prevention
@@ -16,7 +15,7 @@ public class Napoleon extends CO{
     //constructor
     public Napoleon() {
         name = "Napoleon";
-        id = 54;
+        setId(54);
         
         String CObiox = "The current commander of the Black Hole army. Believes Black Hole's ingenuity gives it a right to control the world.";             //Holds the condensed CO bio'
         String titlex = "Eagle Scout";
@@ -70,9 +69,9 @@ public class Napoleon extends CO{
          "Stand aside; I will deal with them.",};
         //Our losses are unacceptable!
         
-        COPower = COPowerx;
+        setCOPower(COPowerx);
         Victory = Victoryx;
-        Swap = Swapx;
+        setSwap(Swapx);
         
         //No special tags
         String[] TagCOsx = {"Flak", "Adder", "Lash", "Graves", "Kindle"}; //Names of COs with special tags
@@ -80,10 +79,10 @@ public class Napoleon extends CO{
         int[] TagStarsx = {2,1,0,0,0}; //Number of stars for each special tag.
         int[] TagPercentx = {110,105,105,105,80}; //Percent for each special tag.
         
-        TagCOs = TagCOsx;
-        TagNames = TagNamesx;
-        TagStars = TagStarsx;
-        TagPercent = TagPercentx;
+        setTagCOs(TagCOsx);
+        setTagNames(TagNamesx);
+        setTagStars(TagStarsx);
+        setTagPercent(TagPercentx);
         
         COPName = "Blast Shield";
         SCOPName = "Last Stand"; //moar liek, first stand

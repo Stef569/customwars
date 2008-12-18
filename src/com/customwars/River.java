@@ -13,7 +13,7 @@ public class River extends Terrain{
     public River(){
         //Statistics
         name = "River";
-        move = new double[] {2,1,-1,-1,1,-1,-1,1,-1,1};
+        setMove(new double[] {2,1,-1,-1,1,-1,-1,1,-1,1});
         basemove = new double[] {2,1,-1,-1,1,-1,-1,1,-1,1};
         def  = 0;
         index = 5;

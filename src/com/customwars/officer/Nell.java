@@ -1,7 +1,6 @@
 package com.customwars.officer;
 
-import com.customwars.CO;
-import com.customwars.Unit;
+import com.customwars.unit.Unit;
 
 
 /*
@@ -17,7 +16,7 @@ public class Nell extends CO{
 //constructor
     public Nell() {
         name = "Nell";
-        id = 3;
+        setId(3);
 
         String CObiox = "Rachel's older sister and supreme commander of the Orange Star army, Nell is an able commanding officer with a superb sense of fashion.";             //Holds the condensed CO bio'
         String titlex = "Lady Luck";
@@ -48,10 +47,10 @@ public class Nell extends CO{
         int[] TagStarsx = {3,0,0,0,0}; //Number of stars for each special tag.
         int[] TagPercentx = {130,105,105,105,90}; //Percent for each special tag.
         
-        TagCOs = TagCOsx;
-        TagNames = TagNamesx;
-        TagStars = TagStarsx;
-        TagPercent = TagPercentx;
+        setTagCOs(TagCOsx);
+        setTagNames(TagNamesx);
+        setTagStars(TagStarsx);
+        setTagPercent(TagPercentx);
         
         String[] COPowerx =
         {"Luck IS a skill!",
@@ -74,8 +73,8 @@ public class Nell extends CO{
         {"Seems like I just wasn't lucky enough...",
          "Congratulations! You've beaten me!"} ;
         
-        Swap = Swapx;       
-        COPower = COPowerx;
+        setSwap(Swapx);       
+        setCOPower(COPowerx);
         Victory = Victoryx;
         defeat = defeatx;
         

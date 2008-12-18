@@ -1,21 +1,13 @@
 package com.customwars.officer;
 
-import com.customwars.CO;
-import com.customwars.Unit;
-/*
- *Andy.java
- *Author: Adam Dziuk
- *Contributors: 
- *Creation: July 4, 2006, 10:17 PM
- *The Koal class is used to create an instance of the Bolt Guard CO Koal (copyright Intelligent Systems).
- */
+import com.customwars.unit.Unit;
 
 public class Koal extends CO{
     
 //Constructor
 public Koal() {
         name = "Koal";
-        id = 25;
+        setId(25);
 
         String CObiox = "A commander of the Black Hole army who is always planning his next destructive act.";             //Holds the condensed CO bio'
         String titlex = "Endless March";
@@ -45,10 +37,10 @@ public Koal() {
         int[] TagStarsx = {0,1,1,2}; //Number of stars for each special tag.
         int[] TagPercentx = {65,110,105,110}; //Percent for each special tag.
 
-        TagCOs = TagCOsx;
-        TagNames = TagNamesx;
-        TagStars = TagStarsx;
-        TagPercent = TagPercentx;
+        setTagCOs(TagCOsx);
+        setTagNames(TagNamesx);
+        setTagStars(TagStarsx);
+        setTagPercent(TagPercentx);
         
         String[] COPowerx =
         {"I will crush your units, one by one!",
@@ -72,8 +64,8 @@ public Koal() {
         {"How? How could I lose to a miserable band of misfits such as this?",
          "The shame...it burns like a brand."} ;
         
-        Swap = Swapx;       
-        COPower = COPowerx;
+        setSwap(Swapx);       
+        setCOPower(COPowerx);
         Victory = Victoryx;
         defeat = defeatx;
         

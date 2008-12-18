@@ -1,21 +1,13 @@
 package com.customwars.officer;
 
 import com.customwars.BaseDMG;
-import com.customwars.CO;
-import com.customwars.Unit;
-/*
- *Smitan.java
- *Author: -
- *Contributors: -
- *Creation:
- *The Smitan class is used to create an instance of the Green Earth CO Smitan
- */
+import com.customwars.unit.Unit;
 
 public class Smitan extends CO {
     //constructor
     public Smitan() {
         name = "Smitan";
-        id = 69;
+        setId(69);
         
         String CObiox = "A violent old commander of the Green Earth army who hates limitations.";             //Holds the condensed CO bio'
         String titlex = "FIRE! FIRE! FIRE!";
@@ -46,10 +38,10 @@ public class Smitan extends CO {
         int[] TagStarsx = {2, 1, 0, 0, 0};           //Number of stars for each special tag.
         int[] TagPercentx = {110, 110, 105, 105, 90};       //Percent for each special tag.
         
-        TagCOs = TagCOsx;
-        TagNames = TagNamesx;
-        TagStars = TagStarsx;
-        TagPercent = TagPercentx;
+        setTagCOs(TagCOsx);
+        setTagNames(TagNamesx);
+        setTagStars(TagStarsx);
+        setTagPercent(TagPercentx);
         
         String[] COPowerx =
         {"Whites of their eyes? Pahaha!" ,
@@ -67,9 +59,9 @@ public class Smitan extends CO {
         {"Get out of the way before you kill yourself, child!",
          "STEP BACK. This will take but a second."};
         
-        COPower = COPowerx;
+        setCOPower(COPowerx);
         Victory = Victoryx;
-        Swap = Swapx;
+        setSwap(Swapx);
         
         COPName = "Scramble Tactics";
         SCOPName = "Flare Drive";

@@ -9,17 +9,16 @@ package com.customwars.officer;
 
 import java.util.Random;
 
-import com.customwars.Army;
-import com.customwars.CO;
 import com.customwars.Property;
-import com.customwars.Unit;
+import com.customwars.unit.Army;
+import com.customwars.unit.Unit;
 
 public class Edward extends CO{
    
     //constructor
     public Edward() {
         name = "Edward";
-        id = 40;
+        setId(40);
        
         String CObiox = "A smuggler and mercenary from Green Earth, but was later forced to flee to Amber Corona.";             //Holds the condensed CO bio'
         String titlex = "It Fell Off a Truck";
@@ -65,9 +64,9 @@ public class Edward extends CO{
         "All ready to go." };
         //"We require additional gold!"
        
-        COPower = COPowerx;
+        setCOPower(COPowerx);
         Victory = Victoryx;
-        Swap = Swapx;
+        setSwap(Swapx);
        
         //No special tags
         String[] TagCOsx = {"Colin", "Yukio", "Varlot", "Eagle", "Hachi"}; //Names of COs with special tags
@@ -75,10 +74,10 @@ public class Edward extends CO{
         int[] TagStarsx = {1,1,1,0,0}; //Number of stars for each special tag.
         int[] TagPercentx = {110,110, 100, 85, 80}; //Percent for each special tag.
        
-        TagCOs = TagCOsx;
-        TagNames = TagNamesx;
-        TagStars = TagStarsx;
-        TagPercent = TagPercentx;
+        setTagCOs(TagCOsx);
+        setTagNames(TagNamesx);
+        setTagStars(TagStarsx);
+        setTagPercent(TagPercentx);
        
         COPName = "Smuggled Goods";
         SCOPName = "Diverted Funds";

@@ -8,18 +8,17 @@ package com.customwars.officer;
  */
 import java.util.ArrayList;
 
-import com.customwars.Army;
 import com.customwars.BaseDMG;
-import com.customwars.CO;
 import com.customwars.Location;
-import com.customwars.MoveID;
-import com.customwars.Unit;
+import com.customwars.unit.Army;
+import com.customwars.unit.MoveID;
+import com.customwars.unit.Unit;
 public class Jared extends CO{
     boolean sustain;
 //constructor
     public Jared() {
         name = "Jared";
-        id = 70;
+        setId(70);
         
         String CObiox = "A young hacker from Blue Moon who is loyal to people rather than ideas or nations.";             //Holds the condensed CO bio'
         String titlex = "Pathfinder";
@@ -50,10 +49,10 @@ public class Jared extends CO{
         int[] TagStarsx = {1,0,0,0}; //Number of stars for each special tag.
         int[] TagPercentx = {110,105,105,90}; //Percent for each special tag.
         
-        TagCOs = TagCOsx;
-        TagNames = TagNamesx;
-        TagStars = TagStarsx;
-        TagPercent = TagPercentx;
+        setTagCOs(TagCOsx);
+        setTagNames(TagNamesx);
+        setTagStars(TagStarsx);
+        setTagPercent(TagPercentx);
         
         
         String[] COPowerx =
@@ -73,8 +72,8 @@ public class Jared extends CO{
         {"Things are starting to heat up now.",
          "Wait a second; the system's still booting." };
         
-        Swap = Swapx;
-        COPower = COPowerx;
+        setSwap(Swapx);
+        setCOPower(COPowerx);
         Victory = Victoryx;
         
         COPName = "Firewall";

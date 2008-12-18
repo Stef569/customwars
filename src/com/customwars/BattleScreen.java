@@ -20,8 +20,48 @@ import javax.swing.event.MouseInputListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.customwars.officer.CO;
+import com.customwars.officer.COList;
 import com.customwars.officer.Fighter;
 import com.customwars.state.ResourceLoader;
+import com.customwars.unit.APC;
+import com.customwars.unit.Action;
+import com.customwars.unit.AntiAir;
+import com.customwars.unit.Army;
+import com.customwars.unit.Artillery;
+import com.customwars.unit.Artillerycraft;
+import com.customwars.unit.BCopter;
+import com.customwars.unit.Battlecraft;
+import com.customwars.unit.Battleship;
+import com.customwars.unit.BlackBoat;
+import com.customwars.unit.BlackBomb;
+import com.customwars.unit.Bomber;
+import com.customwars.unit.Carrier;
+import com.customwars.unit.Cruiser;
+import com.customwars.unit.Destroyer;
+import com.customwars.unit.Infantry;
+import com.customwars.unit.Lander;
+import com.customwars.unit.MDTank;
+import com.customwars.unit.Mech;
+import com.customwars.unit.MegaTank;
+import com.customwars.unit.Missiles;
+import com.customwars.unit.MoveTraverse;
+import com.customwars.unit.Neotank;
+import com.customwars.unit.Oozium;
+import com.customwars.unit.Piperunner;
+import com.customwars.unit.Recon;
+import com.customwars.unit.Rockets;
+import com.customwars.unit.Shuttlerunner;
+import com.customwars.unit.Spyplane;
+import com.customwars.unit.Stealth;
+import com.customwars.unit.Submarine;
+import com.customwars.unit.TCopter;
+import com.customwars.unit.Tank;
+import com.customwars.unit.Transport;
+import com.customwars.unit.UNIT_COMMANDS;
+import com.customwars.unit.Unit;
+import com.customwars.unit.UnitGraphics;
+import com.customwars.unit.Zeppelin;
 
 //public class BattleScreen extends JComponent implements ComponentListener
 public class BattleScreen extends CWScreen 
@@ -251,7 +291,7 @@ public class BattleScreen extends CWScreen
 					
 					if(currCO != null)
 					{
-						if(currCO.hideAllHP)
+						if(currCO.isHideAllHP())
 						{
 							/*
 							hideTheHP = true;
@@ -351,7 +391,7 @@ public class BattleScreen extends CWScreen
     public void drawCOBar(Graphics2D g){
         if(cursorXpos < (MAX_TILEW/2)+(sx/16)){
             g.drawImage(MiscGraphics.getReverseCOBar(b.getArmy(b.getTurn()).getColor()),16*MAX_TILEW-71,0,this);
-            if(!b.getArmy(b.getTurn()).getCO().altCostume){
+            if(!b.getArmy(b.getTurn()).getCO().isAltCostume()){
                 g.drawImage(MiscGraphics.getCOSheet(COList.getIndex(b.getArmy(b.getTurn()).getCO())),16*MAX_TILEW-1,0,16*MAX_TILEW-33,12,144,350,176,362,this);
             } else {
                 g.drawImage(MiscGraphics.getCOSheet(COList.getIndex(b.getArmy(b.getTurn()).getCO())),16*MAX_TILEW-1,0,16*MAX_TILEW-33,12,369,350,401,362,this);
@@ -406,7 +446,7 @@ public class BattleScreen extends CWScreen
             }
         }else{
             g.drawImage(MiscGraphics.getCOBar(b.getArmy(b.getTurn()).getColor()),0,0,this);
-            if(!b.getArmy(b.getTurn()).getCO().altCostume){
+            if(!b.getArmy(b.getTurn()).getCO().isAltCostume()){
                 g.drawImage(MiscGraphics.getCOSheet(COList.getIndex(b.getArmy(b.getTurn()).getCO())),0,0,32,12,144,350,176,362,this);
             } else {
                 g.drawImage(MiscGraphics.getCOSheet(COList.getIndex(b.getArmy(b.getTurn()).getCO())),0,0,32,12,369,350,401,362,this);
@@ -466,7 +506,7 @@ public class BattleScreen extends CWScreen
     public void drawAltCOBar(Graphics2D g){
         if(cursorXpos < (MAX_TILEW/2)+(sx/16)){
             g.drawImage(MiscGraphics.getAltReverseCOBar(b.getArmy(b.getTurn()).getColor()),16*MAX_TILEW-71,0,this);
-            if(!b.getArmy(b.getTurn()).getAltCO().altCostume){
+            if(!b.getArmy(b.getTurn()).getAltCO().isAltCostume()){
                 g.drawImage(MiscGraphics.getCOSheet(COList.getIndex(b.getArmy(b.getTurn()).getAltCO())),16*MAX_TILEW-1,21,16*MAX_TILEW-33,33,144,350,176,362,this);
             } else {
                 g.drawImage(MiscGraphics.getCOSheet(COList.getIndex(b.getArmy(b.getTurn()).getAltCO())),16*MAX_TILEW-1,21,16*MAX_TILEW-33,33,369,350,401,362,this);
@@ -507,7 +547,7 @@ public class BattleScreen extends CWScreen
             }
         }else{
             g.drawImage(MiscGraphics.getAltCOBar(b.getArmy(b.getTurn()).getColor()),0,0,this);
-            if(!b.getArmy(b.getTurn()).getAltCO().altCostume){
+            if(!b.getArmy(b.getTurn()).getAltCO().isAltCostume()){
                 g.drawImage(MiscGraphics.getCOSheet(COList.getIndex(b.getArmy(b.getTurn()).getAltCO())),0,21,32,33,144,350,176,362,this);
             } else {
                 g.drawImage(MiscGraphics.getCOSheet(COList.getIndex(b.getArmy(b.getTurn()).getAltCO())),0,21,32,33,369,350,401,362,this);
@@ -846,9 +886,9 @@ public class BattleScreen extends CWScreen
                 int rowOffset = Math.abs(j - selected.getLocation().getRow());
                 int distance = colOffset + rowOffset;
                 
-                if(selected.checkDisplayFireRange(new Location(i,j)) && (!selected.getArmy().getCO().disruptFireDisplay || b.getArmy(b.getTurn()).getSide() == selected.getArmy().getSide())) {
+                if(selected.checkDisplayFireRange(new Location(i,j)) && (!selected.getArmy().getCO().isDisruptFireDisplay() || b.getArmy(b.getTurn()).getSide() == selected.getArmy().getSide())) {
                     g.drawImage(MiscGraphics.getAttackTile(),i*16-sx,j*16-sy,this);
-                } else if(selected.getArmy().getCO().disruptFireDisplay && (distance <= 1) && b.getArmy(b.getTurn()).getSide() != selected.getArmy().getSide()) {
+                } else if(selected.getArmy().getCO().isDisruptFireDisplay() && (distance <= 1) && b.getArmy(b.getTurn()).getSide() != selected.getArmy().getSide()) {
                     g.drawImage(MiscGraphics.getAttackTile(),i*16-sx,j*16-sy,this);
                 }
             }
@@ -905,12 +945,12 @@ public class BattleScreen extends CWScreen
         int coh = (MAX_TILEH*16-350)/2;
         if(coh < 0)coh = 0;
         if(b.getArmy(b.getTurn()).getAltCO()!=null){
-            if(!b.getArmy(b.getTurn()).getAltCO().altCostume){
+            if(!b.getArmy(b.getTurn()).getAltCO().isAltCostume()){
                 g.drawImage(MiscGraphics.getCOSheet(COList.getIndex(b.getArmy(b.getTurn()).getAltCO())),MAX_TILEW*16*2/3+20,coh,(MAX_TILEW*16*2/3+20)+225,coh+350,0,0,225,350,this);
             } else {
                 g.drawImage(MiscGraphics.getCOSheet(COList.getIndex(b.getArmy(b.getTurn()).getAltCO())),MAX_TILEW*16*2/3+20,coh,(MAX_TILEW*16*2/3+20)+225,coh+350,225,0,450,350,this);
             }       }
-        if(!b.getArmy(b.getTurn()).getCO().altCostume){
+        if(!b.getArmy(b.getTurn()).getCO().isAltCostume()){
             g.drawImage(MiscGraphics.getCOSheet(COList.getIndex(b.getArmy(b.getTurn()).getCO())),MAX_TILEW*16*2/3,coh,(MAX_TILEW*16*2/3)+225,coh+350,0,0,225,350,this);
         } else {
             g.drawImage(MiscGraphics.getCOSheet(COList.getIndex(b.getArmy(b.getTurn()).getCO())),MAX_TILEW*16*2/3,coh,(MAX_TILEW*16*2/3)+225,coh+350,225,0,450,350,this);
@@ -924,7 +964,7 @@ public class BattleScreen extends CWScreen
     //draws the CO Bar
     public void drawArmyCOBar(Army a, int x, int y, boolean displayMoney, Graphics2D g){
         g.drawImage(MiscGraphics.getCOBar(a.getColor()),x,y,this);
-        if(!a.getCO().altCostume){
+        if(!a.getCO().isAltCostume()){
             g.drawImage(MiscGraphics.getCOSheet(COList.getIndex(a.getCO())),x,y,x+32,y+12,144,350,176,362,this);
         } else {
             g.drawImage(MiscGraphics.getCOSheet(COList.getIndex(a.getCO())),x,y,x+32,y+12,369,350,401,362,this);
@@ -997,7 +1037,7 @@ public class BattleScreen extends CWScreen
         int currSide = b.getArmy(b.getTurn()).getSide();
         int aSide = thisCO.getArmy().getSide();
         
-        if(thisCO.hiddenPower && currSide != aSide) {
+        if(thisCO.isHiddenPower() && currSide != aSide) {
             hideInfo = true;
         }
         
@@ -1009,7 +1049,7 @@ public class BattleScreen extends CWScreen
         int currSide = b.getArmy(b.getTurn()).getSide();
         int aSide = thisCO.getArmy().getSide();
         
-        if(thisCO.hiddenGold && currSide != aSide) {
+        if(thisCO.isHiddenGold() && currSide != aSide) {
             hideInfo = true;
         }
         
@@ -1021,7 +1061,7 @@ public class BattleScreen extends CWScreen
         int currSide = b.getArmy(b.getTurn()).getSide();
         int aSide = thisCO.getArmy().getSide();
         
-        if(thisCO.hiddenIntel && currSide != aSide) {
+        if(thisCO.isHiddenIntel() && currSide != aSide) {
             hideInfo = true;
         }
         
@@ -1032,7 +1072,7 @@ public class BattleScreen extends CWScreen
     public void drawArmyAltCOBar(Army a, int x, int y, Graphics2D g){
         //if(a.getAltCO() != null){
         g.drawImage(MiscGraphics.getAltCOBar(a.getColor()),x,y,this);
-        if(!a.getAltCO().altCostume){
+        if(!a.getAltCO().isAltCostume()){
             g.drawImage(MiscGraphics.getCOSheet(COList.getIndex(a.getAltCO())),x,y+21,x+32,y+33,144,350,176,362,this);
         } else {
             g.drawImage(MiscGraphics.getCOSheet(COList.getIndex(a.getAltCO())),x,y+21,x+32,y+33,369,350,401,362,this);
@@ -1095,7 +1135,7 @@ public class BattleScreen extends CWScreen
         int s;
         if(!alt) {
             //Draw the main CO
-            if(!b.getArmy(infono).getCO().altCostume)
+            if(!b.getArmy(infono).getCO().isAltCostume())
                 g.drawImage(MiscGraphics.getCOSheet(COList.getIndex(b.getArmy(infono).getCO())),300,40,300 + 225, 40 + 350, 0, 0, 225, 350, this);
             else
                 g.drawImage(MiscGraphics.getCOSheet(COList.getIndex(b.getArmy(infono).getCO())),300,40,300 + 225, 40 + 350, 225, 0, 450, 350, this);
@@ -1106,7 +1146,7 @@ public class BattleScreen extends CWScreen
             
             g.drawString("Side: " + (infono+1), 8,20);
             g.drawString("Main CO: " + b.getArmy(infono).getCO().getName(), 45,20);
-            g.drawString(b.getArmy(infono).getCO().title, (b.getArmy(infono).getCO().getName().length() + 9)*6 + 45,20);
+            g.drawString(b.getArmy(infono).getCO().getTitle(), (b.getArmy(infono).getCO().getName().length() + 9)*6 + 45,20);
             
             //CO Bio
             //This is a 'word wrap' thing, used multiple times. Listen up, I'm only going to document this once. >_>
@@ -1198,12 +1238,12 @@ public class BattleScreen extends CWScreen
             }
             store += 2;
             //This draws the Power
-            if(b.getArmy(infono).getCO().COPStars != -1) {
+            if(b.getArmy(infono).getCO().getCOPStars() != -1) {
                 if(((store+1) * 15- skip*MAX_TILEH*8+ adjust)<25 && ((store+1) * 15- skip*MAX_TILEH*8+ adjust)>0)
                     adjust += 25;
                 
                 g.drawImage(MiscGraphics.getPowerIcon(), 10, (store+1) * 15- skip*MAX_TILEH*8 + adjust, this);
-                g.drawString(b.getArmy(infono).getCO().COPName, 26, (store+2) * 15 - 2- skip*MAX_TILEH*8 + adjust);
+                g.drawString(b.getArmy(infono).getCO().getCOPName(), 26, (store+2) * 15 - 2- skip*MAX_TILEH*8 + adjust);
                 
                 for(i = 0; i<((b.getArmy(infono).getCO().getCOPString().length()/40)+1); i++) //As long as i is shorter than the length, in characters, of this divided by 40 +1
                 {
@@ -1227,7 +1267,7 @@ public class BattleScreen extends CWScreen
             if(((store+1) * 15- skip*MAX_TILEH*8+ adjust)<25 && ((store+1) * 15- skip*MAX_TILEH*8+ adjust)>0)
                 adjust += 25;
             g.drawImage(MiscGraphics.getSuperIcon(), 10, (store+1) * 15- skip*MAX_TILEH*8 + adjust, this);
-            g.drawString(b.getArmy(infono).getCO().SCOPName, 26, (store+2) * 15 - 2- skip*MAX_TILEH*8 + adjust);
+            g.drawString(b.getArmy(infono).getCO().getSCOPName(), 26, (store+2) * 15 - 2- skip*MAX_TILEH*8 + adjust);
             for(i = 0; i<((b.getArmy(infono).getCO().getSCOPString().length()/40)+1); i++) //As long as i is shorter than the length, in characters, of this divided by 40 +1
             {
                 if(b.getArmy(infono).getCO().getSCOPString().length() - (i+1)*40 >= 0) { //Is there more than 40 characters left?
@@ -1244,22 +1284,22 @@ public class BattleScreen extends CWScreen
             }
             //Draws tags
             store += 2;
-            for(i = 0; i< b.getArmy(infono).getCO().TagStars.length; i++) {
-                if(b.getArmy(infono).getCO().TagStars[i] > 0) {
+            for(i = 0; i< b.getArmy(infono).getCO().getTagStars().length; i++) {
+                if(b.getArmy(infono).getCO().getTagStars()[i] > 0) {
                     if(i*15 + (store+2) * 15 - 2- skip*MAX_TILEH*8+ adjust<25 && i*15 + (store+2) * 15 - 2- skip*MAX_TILEH*8+ adjust>0)
                         adjust += 25;
-                    g.drawString(b.getArmy(infono).getCO().TagCOs[i], 10, i*15 + (store+2) * 15 - 2- skip*MAX_TILEH*8 + adjust);
-                    for(int t =0; t<b.getArmy(infono).getCO().TagStars[i]; t++) {
-                        g.drawImage(MiscGraphics.getBigStar(5), b.getArmy(infono).getCO().TagCOs[i].length()*25 + 15 + t*8,(store+2) * 15 - 2- skip*MAX_TILEH*8 + adjust+ i*15 -10, this);
+                    g.drawString(b.getArmy(infono).getCO().getTagCOs()[i], 10, i*15 + (store+2) * 15 - 2- skip*MAX_TILEH*8 + adjust);
+                    for(int t =0; t<b.getArmy(infono).getCO().getTagStars()[i]; t++) {
+                        g.drawImage(MiscGraphics.getBigStar(5), b.getArmy(infono).getCO().getTagCOs()[i].length()*25 + 15 + t*8,(store+2) * 15 - 2- skip*MAX_TILEH*8 + adjust+ i*15 -10, this);
                     }
-                    if(i+1 == b.getArmy(infono).getCO().TagStars.length)
+                    if(i+1 == b.getArmy(infono).getCO().getTagStars().length)
                         store +=i;
                 }
             }
             skipMax = ((store * 15)/(MAX_TILEH*8));
         } else {
             //Draw the main CO
-            if(!b.getArmy(infono).getAltCO().altCostume)
+            if(!b.getArmy(infono).getAltCO().isAltCostume())
                 g.drawImage(MiscGraphics.getCOSheet(COList.getIndex(b.getArmy(infono).getAltCO())),175,40,175 + 225, 40 + 350, 0, 0, 225, 350, this);
             else
                 g.drawImage(MiscGraphics.getCOSheet(COList.getIndex(b.getArmy(infono).getAltCO())),175,40,175 + 225, 40 + 350, 225, 0, 450, 350, this);
@@ -1269,7 +1309,7 @@ public class BattleScreen extends CWScreen
             
             g.drawString("Side: " + (infono+1), 8,20);
             g.drawString("Main CO: " + b.getArmy(infono).getAltCO().getName(), 45,20);
-            g.drawString(b.getArmy(infono).getAltCO().title, (b.getArmy(infono).getAltCO().getName().length() + 9)*6 + 45,20);
+            g.drawString(b.getArmy(infono).getAltCO().getTitle(), (b.getArmy(infono).getAltCO().getName().length() + 9)*6 + 45,20);
             
             //CO Bio
             //This is a 'word wrap' thing, used multiple times. Listen up, I'm only going to document this once. >_>
@@ -1346,12 +1386,12 @@ public class BattleScreen extends CWScreen
             }
             store += 2;
             //This draws the Power
-            if(b.getArmy(infono).getAltCO().COPStars != -1) {
+            if(b.getArmy(infono).getAltCO().getCOPStars() != -1) {
                 if(((store+1) * 15- skip*MAX_TILEH*8+ adjust)<25 && ((store+1) * 15- skip*MAX_TILEH*8+ adjust)>0)
                     adjust += 25;
                 
                 g.drawImage(MiscGraphics.getPowerIcon(), 10, (store+1) * 15- skip*MAX_TILEH*8 + adjust, this);
-                g.drawString(b.getArmy(infono).getAltCO().COPName, 26, (store+2) * 15 - 2- skip*MAX_TILEH*8 + adjust);
+                g.drawString(b.getArmy(infono).getAltCO().getCOPName(), 26, (store+2) * 15 - 2- skip*MAX_TILEH*8 + adjust);
                 
                 for(i = 0; i<((b.getArmy(infono).getAltCO().getCOPString().length()/40)+1); i++) //As long as i is shorter than the length, in characters, of this divided by 40 +1
                 {
@@ -1375,7 +1415,7 @@ public class BattleScreen extends CWScreen
             if(((store+1) * 15- skip*MAX_TILEH*8+ adjust)<25 && ((store+1) * 15- skip*MAX_TILEH*8+ adjust)>0)
                 adjust += 25;
             g.drawImage(MiscGraphics.getSuperIcon(), 10, (store+1) * 15- skip*MAX_TILEH*8 + adjust, this);
-            g.drawString(b.getArmy(infono).getAltCO().SCOPName, 26, (store+2) * 15 - 2- skip*MAX_TILEH*8 + adjust);
+            g.drawString(b.getArmy(infono).getAltCO().getSCOPName(), 26, (store+2) * 15 - 2- skip*MAX_TILEH*8 + adjust);
             for(i = 0; i<((b.getArmy(infono).getAltCO().getSCOPString().length()/40)+1); i++) //As long as i is shorter than the length, in characters, of this divided by 40 +1
             {
                 if(b.getArmy(infono).getAltCO().getSCOPString().length() - (i+1)*40 >= 0) { //Is there more than 40 characters left?
@@ -1392,15 +1432,15 @@ public class BattleScreen extends CWScreen
             }
             //Draws tags
             store += 2;
-            for(i = 0; i< b.getArmy(infono).getAltCO().TagStars.length; i++) {
-                if(b.getArmy(infono).getAltCO().TagStars[i] > 0) {
+            for(i = 0; i< b.getArmy(infono).getAltCO().getTagStars().length; i++) {
+                if(b.getArmy(infono).getAltCO().getTagStars()[i] > 0) {
                     if(i*15 + (store+2) * 15 - 2- skip*MAX_TILEH*8+ adjust<25 && i*15 + (store+2) * 15 - 2- skip*MAX_TILEH*8+ adjust>0)
                         adjust += 25;
-                    g.drawString(b.getArmy(infono).getAltCO().TagCOs[i], 10, i*15 + (store+2) * 15 - 2- skip*MAX_TILEH*8 + adjust);
-                    for(int t =0; t<b.getArmy(infono).getAltCO().TagStars[i]; t++) {
-                        g.drawImage(MiscGraphics.getBigStar(5), b.getArmy(infono).getAltCO().TagCOs[i].length()*5 + 15 + t*8,(store+2) * 15 - 2- skip*MAX_TILEH*8 + adjust+ i*15 -10, this);
+                    g.drawString(b.getArmy(infono).getAltCO().getTagCOs()[i], 10, i*15 + (store+2) * 15 - 2- skip*MAX_TILEH*8 + adjust);
+                    for(int t =0; t<b.getArmy(infono).getAltCO().getTagStars()[i]; t++) {
+                        g.drawImage(MiscGraphics.getBigStar(5), b.getArmy(infono).getAltCO().getTagCOs()[i].length()*5 + 15 + t*8,(store+2) * 15 - 2- skip*MAX_TILEH*8 + adjust+ i*15 -10, this);
                     }
-                    if(i+1 == b.getArmy(infono).getAltCO().TagStars.length)
+                    if(i+1 == b.getArmy(infono).getAltCO().getTagStars().length)
                         store +=i;
                 }
             }
@@ -1544,12 +1584,12 @@ public class BattleScreen extends CWScreen
         for(int i=numArmies-1; i >= 0; i--){
             varmies[i] = b.getArmy(i);
             if(varmies[i].getAltCO()!=null){
-                if(!varmies[i].getAltCO().altCostume)
+                if(!varmies[i].getAltCO().isAltCostume())
                     g.drawImage(MiscGraphics.getCOSheet(COList.getIndex(varmies[i].getAltCO())),24+i*48,0,(24+i*48)+48,48,48,350,96,398,this);
                 else
                     g.drawImage(MiscGraphics.getCOSheet(COList.getIndex(varmies[i].getAltCO())),24+i*48,0,(24+i*48)+48,48,273,350,320,398,this);
             }
-            if(!varmies[i].getCO().altCostume)
+            if(!varmies[i].getCO().isAltCostume())
                 g.drawImage(MiscGraphics.getCOSheet(COList.getIndex(varmies[i].getCO())),0+i*48,0,(0+i*48)+48,48,48,350,96,398,this);
             else
                 g.drawImage(MiscGraphics.getCOSheet(COList.getIndex(varmies[i].getCO())),0+i*48,0,(0+i*48)+48,48,273,350,320,398,this);
@@ -1566,12 +1606,12 @@ public class BattleScreen extends CWScreen
             }
             if(isLoser){
                 if(statArmy.getAltCO()!=null){
-                    if(!statArmy.getAltCO().altCostume)
+                    if(!statArmy.getAltCO().isAltCostume())
                         g.drawImage(MiscGraphics.getCOSheet(COList.getIndex(statArmy.getAltCO())),94+lpos*48,144,(94+lpos*48)+48,192,96,350,143,398,this);
                     else
                         g.drawImage(MiscGraphics.getCOSheet(COList.getIndex(statArmy.getAltCO())),94+lpos*48,144,(94+lpos*48)+48,192,321,350,368,398,this);
                 }
-                if(!statArmy.getCO().altCostume)
+                if(!statArmy.getCO().isAltCostume())
                     g.drawImage(MiscGraphics.getCOSheet(COList.getIndex(statArmy.getCO())),70+lpos*48,144,(70+lpos*48)+48,192,96,350,143,398,this);
                 else
                     g.drawImage(MiscGraphics.getCOSheet(COList.getIndex(statArmy.getCO())),70+lpos*48,144,(70+lpos*48)+48,192,321,350,368,398,this);
@@ -1600,7 +1640,7 @@ public class BattleScreen extends CWScreen
         
         //draw CO faces and names
         if(statArmy!=null){
-            if(!statArmy.getCO().altCostume)
+            if(!statArmy.getCO().isAltCostume())
                 g.drawImage(MiscGraphics.getCOSheet(COList.getIndex(statArmy.getCO())),51,41,51 + 32, 41 + 12, 144, 350, 175, 362, this);
             else
                 g.drawImage(MiscGraphics.getCOSheet(COList.getIndex(statArmy.getCO())),51,41,51 + 32, 41 + 12, 369, 350, 400, 362, this);
@@ -1608,7 +1648,7 @@ public class BattleScreen extends CWScreen
             g.setFont(new Font("SansSerif", Font.PLAIN, 10));
             g.drawString(statArmy.getCO().getName(),90,49);
             if(statArmy.getAltCO()!=null){
-                if(!statArmy.getAltCO().altCostume)
+                if(!statArmy.getAltCO().isAltCostume())
                     g.drawImage(MiscGraphics.getCOSheet(COList.getIndex(statArmy.getAltCO())),148,41,148 + 32, 41 + 12, 144, 350, 175, 362, this);
                 else
                     g.drawImage(MiscGraphics.getCOSheet(COList.getIndex(statArmy.getAltCO())),148,41,148 + 32, 41 + 12, 369, 350, 400, 362, this);
@@ -1891,7 +1931,7 @@ public class BattleScreen extends CWScreen
                 BlackBomb newbomb = new BlackBomb(x,y,a,m);
                 //Bypasses price modifications
                 if(b.getBattleOptions().isBalance())
-                    newbomb.price = 15000;
+                    newbomb.setPrice(15000);
                 break;
             case 25:
                 new Battlecraft(x,y,a,m);
@@ -1999,7 +2039,7 @@ public class BattleScreen extends CWScreen
                 BlackBomb newbomb = new BlackBomb(x,y,a,m);
                 //Bypasses price modifications
                 if(b.getBattleOptions().isBalance())
-                    newbomb.price = 15000;
+                    newbomb.setPrice(15000);
                 break;
             case 25:
                 new Battlecraft(x,y,a,m);
@@ -2101,7 +2141,7 @@ public class BattleScreen extends CWScreen
             //else if(move)
             else if(move && 
             		selected.isActive() && 
-            		(selected.getArmy().getID() == b.getArmy(b.getTurn()).getID() || b.getArmy(b.getTurn()).getCO().mayhem))
+            		(selected.getArmy().getID() == b.getArmy(b.getTurn()).getID() || b.getArmy(b.getTurn()).getCO().isMayhem()))
             {
             	logger.info("Do Move Command");
                 //if(!moveCommand())
@@ -2117,7 +2157,7 @@ public class BattleScreen extends CWScreen
             
                 //Really ugly hack...
                 if(!map.find(selected).equals(moveToTile))     {
-                    selected.moved = true; 
+                    selected.setMoved(true); 
                 }
             	//Determine correct context menu
             	setContextMenu(selected, moveToTile);
@@ -2534,7 +2574,7 @@ public class BattleScreen extends CWScreen
                         map.addUnit(tempCarrier);
                         
                         beingLaunched=false;
-                        tempCarrier.launched = false;
+                        tempCarrier.setLaunched(false);
                         move = false;
                     }
                 }
@@ -2560,7 +2600,7 @@ public class BattleScreen extends CWScreen
 		Location nextLoc = moveToTile.getLocation();
 	    
     	move = false;
-		selected.moved = false;
+		selected.setMoved(false);
 		if(map.find(originalLocation).getTerrain() instanceof Property) 
 		{
 		    originalcp = ((Property)map.find(originalLocation).getTerrain()).getCapturePoints();
@@ -2580,9 +2620,9 @@ public class BattleScreen extends CWScreen
             map.addUnit(tempCarrier);
             
             beingLaunched=false;
-            tempCarrier.launched = false;
+            tempCarrier.setLaunched(false);
             move = false;
-            selected.moved = false;
+            selected.setMoved(false);
             //selected = null;
         } 
         else if(!map.find(nextLoc).hasUnit() ||
@@ -2667,9 +2707,9 @@ public class BattleScreen extends CWScreen
             map.addUnit(tempCarrier);
             
             beingLaunched=false;
-                        tempCarrier.launched = false;
+                        tempCarrier.setLaunched(false);
             move = false;
-            selected.moved = false;
+            selected.setMoved(false);
             selected = null;
         } 
         else if(!map.find(new Location(cursorXpos,cursorYpos)).hasUnit() ||
@@ -2728,7 +2768,7 @@ public class BattleScreen extends CWScreen
 		//It also means that the unit will be given a chance to utilize its context
 		//menu
 		move = false;
-                selected.moved = false;
+                selected.setMoved(false);
 		currentMenu = ContextMenu.generateContext(user,false,false,false,false, this);
 		//currentMenu = ContextMenu.generateContext(user,user.getLocation(),false,false,false,false, this);
 		targetTilesWithinRange = ContextMenu.getContextTargs();
@@ -2740,7 +2780,7 @@ public class BattleScreen extends CWScreen
 	private void ambushedMoveEffect(Unit user) 
 	{
 		move = false;
-		selected.moved = false;
+		selected.setMoved(false);
 		Army[] armies = b.getArmies();
 		
 		for(int i = 0; i < armies.length; i++) 
@@ -2768,7 +2808,7 @@ public class BattleScreen extends CWScreen
 		{
 		    originalLocation = selected.getLocation();
 		    move = false;
-                    selected.moved = false;
+                    selected.setMoved(false);
 		    //boolean gameEnd = selected.move(new Location(cx,cy));
 		    Unit lastUnit = selected.move(new Location(cursorXpos,cursorYpos));
 		    endUnitTurn(19,user,lastUnit);
@@ -2777,7 +2817,7 @@ public class BattleScreen extends CWScreen
 		else if(map.find(new Location(cursorXpos,cursorYpos)).hasUnit() && map.find(new Location(cursorXpos,cursorYpos)).getUnit() == selected)
 		{
 		    move = false;
-                    selected.moved = false;
+                    selected.setMoved(false);
 		    endUnitTurn(19,user,null);
 		}
 	}
@@ -2902,7 +2942,7 @@ public class BattleScreen extends CWScreen
 		switch(action){
 		
 			case UNIT_COMMANDS.UNDO:	
-										user.direction = -1;
+										user.setDirection(-1);
 										logger.debug("UNIT_COMMAND: Undoing action");
 										break;
 										
@@ -3006,14 +3046,14 @@ public class BattleScreen extends CWScreen
 										
 			case UNIT_COMMANDS.LAUNCH:	
 							            takeoff = 1;
-							            launching = ((Transport)selected).slot1;
+							            launching = ((Transport)selected).getSlot1();
 							            launching.calcMoveTraverse();
 							            logger.debug("UNIT_COMMAND: Launching");
 							            break;
 			
 			case UNIT_COMMANDS.LAUNCH2:							
 										takeoff = 2;
-										launching = ((Transport)selected).slot2;
+										launching = ((Transport)selected).getSlot2();
 										launching.calcMoveTraverse();
 										logger.debug("UNIT_COMMAND: Launching 2");
 										break;
@@ -3089,7 +3129,7 @@ public class BattleScreen extends CWScreen
         }
         private void launchEffect(Carrier user, int slot)
         {
-            user.launched = true;
+            user.setLaunched(true);
             tempCarrier = user;
             logger.info("we got this far man");
             map.remove(tempCarrier);
@@ -3237,7 +3277,7 @@ public class BattleScreen extends CWScreen
 		target.addGas(user.getGas());
 		target.addAmmo(user.getAmmo());
 		//make the dived state of the unit being moved onto the same as the one moving
-		target.dived = user.isDived();
+		target.setDived(user.isDived());
 		//Remove Unit being moved
 		map.remove(user);
 		user.getArmy().removeUnit(user);
@@ -3562,7 +3602,7 @@ public class BattleScreen extends CWScreen
 		if(canLoad(user, target))
 		{
 		    move = false;
-                    selected.moved = false;
+                    selected.setMoved(false);
 		    currentMenu = ContextMenu.generateContext(selected,false,true,false,false,this);
 		    //currentMenu = ContextMenu.generateContext(selected,selected.getLocation(),false,true,false,false,this);
 		    cmenu = true;
@@ -3592,7 +3632,7 @@ public class BattleScreen extends CWScreen
 		if(canJoin(user, target))
 		{
 	        move = false;
-                selected.moved = false;
+                selected.setMoved(false);
 	        currentMenu = ContextMenu.generateContext(selected,true,false,false,false,this);
 	        //currentMenu = ContextMenu.generateContext(selected,selected.getLocation(),true,false,false,false,this);
 	        cmenu = true;
@@ -3710,7 +3750,7 @@ public class BattleScreen extends CWScreen
                         map.addUnit(tempCarrier);
                         
                         beingLaunched=false;
-                                    tempCarrier.launched = false;
+                                    tempCarrier.setLaunched(false);
                     }
                     if(cmenu){
                         cmenu = false;
@@ -3745,13 +3785,13 @@ public class BattleScreen extends CWScreen
                         map.addUnit(tempCarrier);
                         
                         beingLaunched=false;
-            tempCarrier.launched = false;
+            tempCarrier.setLaunched(false);
                     }
                     
                     
                     move = false;
-                    selected.moved = false;
-                    selected.direction = -1;
+                    selected.setMoved(false);
+                    selected.setDirection(-1);
                     selected = null;
                     SFX.playClip(ResourceLoader.properties.getProperty("soundLocation") + "/cancel.wav");
                 }
@@ -3819,7 +3859,7 @@ public class BattleScreen extends CWScreen
                         targetUnit.addGas(selected.getGas());
                         targetUnit.addAmmo(selected.getAmmo());
                         //make the dived state of the unit being moved onto the same as the one moving
-                        targetUnit.dived = selected.isDived();
+                        targetUnit.setDived(selected.isDived());
                         //Remove Unit being moved
                         map.remove(selected);
                         selected.getArmy().removeUnit(selected);

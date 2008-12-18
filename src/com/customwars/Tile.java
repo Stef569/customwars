@@ -11,6 +11,8 @@ import java.io.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.customwars.unit.Unit;
+
 public class Tile implements Locatable,Serializable{
     
     private Location loc;   //This tile's location

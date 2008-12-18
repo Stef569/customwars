@@ -10,11 +10,10 @@ import org.slf4j.LoggerFactory;
  *The Carmen class is used to create an instance of the Amber Corona CO Carmen.
  */
 
-import com.customwars.CO;
 import com.customwars.Location;
 import com.customwars.Property;
 import com.customwars.Tile;
-import com.customwars.Unit;
+import com.customwars.unit.Unit;
 
 public class Carmen extends CO {
     private boolean itsWarpinTime;
@@ -24,7 +23,7 @@ public class Carmen extends CO {
     //constructor
     public Carmen() {
         name = "Carmen";
-        id = 48;
+        setId(48);
         
         String CObiox = "A CO at home in the cities.";             //Holds the condensed CO bio'
         String titlex = "Haute Stuff";
@@ -54,10 +53,10 @@ public class Carmen extends CO {
         int[] TagStarsx = {2,0,0,0,0}; //Number of stars for each special tag.
         int[] TagPercentx = {120,105,105,85,85}; //Percent for each special tag.
         
-        TagCOs = TagCOsx;
-        TagNames = TagNamesx;
-        TagStars = TagStarsx;
-        TagPercent = TagPercentx;
+        setTagCOs(TagCOsx);
+        setTagNames(TagNamesx);
+        setTagStars(TagStarsx);
+        setTagPercent(TagPercentx);
         
         String[] COPowerx =
         {"Where in the world is your ability to command?",
@@ -76,9 +75,9 @@ public class Carmen extends CO {
         {"I'll just quietly slip in...",
          "Surely this battle is not worthy of my attention?"};
         
-        COPower = COPowerx;
+        setCOPower(COPowerx);
         Victory = Victoryx;
-        Swap = Swapx;
+        setSwap(Swapx);
         
         COPName = "Metropolition";
         SCOPName = "Callous Conquer";

@@ -1,22 +1,14 @@
 package com.customwars.officer;
 
-import com.customwars.Army;
-import com.customwars.CO;
-import com.customwars.Unit;
-/*
- *Peter.java
- *Author: Paul Whan
- *Contributors:
- *Creation: ChessRules
- *The Max class is used to create an instance of the Orange Star CO Max (copyright Intelligent Systems).
- */
+import com.customwars.unit.Army;
+import com.customwars.unit.Unit;
 
 public class Peter extends CO{
     
     //constructor
     public Peter() {
         name = "Peter";
-        id = 31;
+        setId(31);
         
         String CObiox = "A veteran CO with over 30 years of experience, mostly from the plains of Cosmo Land. Cautious but decisive.";             //Holds the condensed CO bio'
         String titlex = "Careful Calculation";
@@ -46,10 +38,10 @@ public class Peter extends CO{
         int[] TagStarsx = {1 ,2, 0, 0 ,0};           //Number of stars for each special tag.
         int[] TagPercentx = {110, 110, 105, 105, 90};       //Percent for each special tag.
         
-        TagCOs = TagCOsx;
-        TagNames = TagNamesx;
-        TagStars = TagStarsx;
-        TagPercent = TagPercentx;
+        setTagCOs(TagCOsx);
+        setTagNames(TagNamesx);
+        setTagStars(TagStarsx);
+        setTagPercent(TagPercentx);
         
         
         String[] COPowerx =
@@ -70,8 +62,8 @@ public class Peter extends CO{
         {"No, that won't work. Here, let me do this.",
          "Got it. We're going right down the middle." } ;
         
-        Swap = Swapx;
-        COPower = COPowerx;
+        setSwap(Swapx);
+        setCOPower(COPowerx);
         Victory = Victoryx;
         
         COPName = "General Offensive";

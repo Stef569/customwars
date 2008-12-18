@@ -11,11 +11,10 @@ import org.slf4j.LoggerFactory;
  */
 
 import com.customwars.BaseDMG;
-import com.customwars.CO;
-import com.customwars.Stealth;
-import com.customwars.Submarine;
 import com.customwars.Tile;
-import com.customwars.Unit;
+import com.customwars.unit.Stealth;
+import com.customwars.unit.Submarine;
+import com.customwars.unit.Unit;
 
 public class Adam extends CO{
 	final static Logger logger = LoggerFactory.getLogger(Adam.class); 
@@ -24,7 +23,7 @@ public class Adam extends CO{
     //constructor
     public Adam() {
         name = "Adam";
-        id = 63;
+        setId(63);
         
         String CObiox = "A researcher-turned-commander of Jade" +
                 "Cosmos, Adam Deckster is a reclusive" +
@@ -72,9 +71,9 @@ public class Adam extends CO{
         {"Vector 32 degrees into the wind, velocity at...",
          "Clean up your shirt! Brush your hair! Let me take care of things!"};
         
-        COPower = COPowerx;
+        setCOPower(COPowerx);
         Victory = Victoryx;
-        Swap = Swapx;
+        setSwap(Swapx);
         
         //No special tags
         String[] TagCOsx = {"Koshi"}; //Names of COs with special tags
@@ -82,10 +81,10 @@ public class Adam extends CO{
         int[] TagStarsx = {2}; //Number of stars for each special tag.
         int[] TagPercentx = {110}; //Percent for each special tag.
         
-        TagCOs = TagCOsx;
-        TagNames = TagNamesx;
-        TagStars = TagStarsx;
-        TagPercent = TagPercentx;
+        setTagCOs(TagCOsx);
+        setTagNames(TagNamesx);
+        setTagStars(TagStarsx);
+        setTagPercent(TagPercentx);
         logger.info("go go go");
         
         
@@ -95,7 +94,7 @@ public class Adam extends CO{
         maxStars = 8.0;
         this.army = army;
         style = JADE_COSMOS;
-        cleanStore = false; //Can't be true, SCOP/COP deactivation relies on this
+        setCleanStore(false); //Can't be true, SCOP/COP deactivation relies on this
         logger.info("kevin");
         
     }
@@ -150,9 +149,9 @@ public class Adam extends CO{
             store = (int)Math.floor((attacker.getDisplayHP()/10.0 * ((baseDamage*(atk/100.0) + (attacker.getArmy().getComTowers()*10) + attacker.getArmy().getAtkPercent())) * ((200.0-(defender.getArmy().getCO().getDef(attacker,defender) + defender.getDisplayHP()*tdef))/100.0)));
             //Store is calculated after terrain effects and before luck
             if(store>0 && defender.getHP()-store <= ((getPositiveLuck()*attacker.getDisplayHP())/10) && defender.getHP()-store >= 0) {
-                minPosLuck = (getPositiveLuck()*attacker.getDisplayHP())/10;
+                setMinPosLuck((getPositiveLuck()*attacker.getDisplayHP())/10);
             } else {
-                minPosLuck = -1;
+                setMinPosLuck(-1);
             }
             
         }

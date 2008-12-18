@@ -3,17 +3,9 @@ package com.customwars.officer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.customwars.Army;
-import com.customwars.CO;
 import com.customwars.Property;
-import com.customwars.Unit;
-/*
- *Blandie.java
- *Author: Urusan
- *Contributors:
- *Creation: December 11, 2006
- *A bland CO, perhaps a generic commanding officer?
- */
+import com.customwars.unit.Army;
+import com.customwars.unit.Unit;
 
 public class Varlot extends CO{
     int[] incomePenalties = {0};
@@ -26,7 +18,7 @@ public class Varlot extends CO{
     //constructor
     public Varlot() {
         name = "Varlot";
-        id = 66;
+        setId(66);
         
         String CObiox = "This CO joined the military and rose    " +
                 "through the ranks. But not quickly      " +
@@ -73,9 +65,9 @@ public class Varlot extends CO{
         {"I won't let you down!",
          "I am assuming command"};
         
-        COPower = COPowerx;
+        setCOPower(COPowerx);
         Victory = Victoryx;
-        Swap = Swapx;
+        setSwap(Swapx);
         
         //No special tags
         String[] TagCOsx = {"Nell"}; //Names of COs with special tags
@@ -83,10 +75,10 @@ public class Varlot extends CO{
         int[] TagStarsx = {0}; //Number of stars for each special tag.
         int[] TagPercentx = {100}; //Percent for each special tag.
         
-        TagCOs = TagCOsx;
-        TagNames = TagNamesx;
-        TagStars = TagStarsx;
-        TagPercent = TagPercentx;
+        setTagCOs(TagCOsx);
+        setTagNames(TagNamesx);
+        setTagStars(TagStarsx);
+        setTagPercent(TagPercentx);
         
         COPName = "Aquisition";
         SCOPName = "Hostile Takeover";
@@ -161,13 +153,13 @@ public class Varlot extends CO{
                 Unit[] u = armies[i].getUnits();
                 for(int s = 0; s<armies.length; s++) {
                     if(u[s].isNoRepair())
-                        u[s].getEnemyCOstore()[statIndex][0]+=1;
+                        u[s].getEnemyCOstore()[getStatIndex()][0]+=1;
                     if(u[s].isNoResupply())
-                        u[s].getEnemyCOstore()[statIndex][0]+=2;
+                        u[s].getEnemyCOstore()[getStatIndex()][0]+=2;
                     if(u[s].isNoCityRepair())
-                        u[s].getEnemyCOstore()[statIndex][0]+=4;
+                        u[s].getEnemyCOstore()[getStatIndex()][0]+=4;
                     if(u[s].isNoCityResupply())
-                        u[s].getEnemyCOstore()[statIndex][0]+=8;
+                        u[s].getEnemyCOstore()[getStatIndex()][0]+=8;
                     u[s].setNoRepair(true);
                     u[s].setNoResupply(true);
                     u[s].setNoCityRepair(true);
@@ -289,13 +281,13 @@ public class Varlot extends CO{
                     Unit[] u = armies[i].getUnits();
                     for(int s = 0; s<armies.length; s++) {
                         //wat teh BOOLEAN ARRAY
-                        if(u[s].getEnemyCOstore()[statIndex][0]%2 == 1)
+                        if(u[s].getEnemyCOstore()[getStatIndex()][0]%2 == 1)
                             u[s].setNoRepair(false);
-                        if(u[s].getEnemyCOstore()[statIndex][0]/2%2 == 1)
+                        if(u[s].getEnemyCOstore()[getStatIndex()][0]/2%2 == 1)
                             u[s].setNoResupply(false);
-                        if(u[s].getEnemyCOstore()[statIndex][0]/4%2 == 1)
+                        if(u[s].getEnemyCOstore()[getStatIndex()][0]/4%2 == 1)
                             u[s].setNoCityRepair(false);
-                        if(u[s].getEnemyCOstore()[statIndex][0]/8%2 == 1)
+                        if(u[s].getEnemyCOstore()[getStatIndex()][0]/8%2 == 1)
                             u[s].setNoCityResupply(true);
                     }
                 }

@@ -8,11 +8,10 @@ package com.customwars.officer;
 
 import javax.swing.JOptionPane;
 
-import com.customwars.Army;
-import com.customwars.CO;
 import com.customwars.Location;
 import com.customwars.Property;
-import com.customwars.Unit;
+import com.customwars.unit.Army;
+import com.customwars.unit.Unit;
 
 public class Alexis extends CO{
 
@@ -23,7 +22,7 @@ public class Alexis extends CO{
 //constructor
     public Alexis() {
         name = "Alexis";
-        id = 34; //Testing purposes
+        setId(34); //Testing purposes
 
         String CObiox = "Talyx's crystal-obsessed older sister. Blindly follows orders to please her brother.";             //Holds the condensed CO bio'
         String titlex = "Crystal Heart";
@@ -63,10 +62,10 @@ public class Alexis extends CO{
         int[] TagStarsx = {2,1,0,0}; //Number of stars for each special tag.
         int[] TagPercentx = {120,110,105,90}; //Percent for each special tag.
        
-        TagCOs = TagCOsx;
-        TagNames = TagNamesx;
-        TagStars = TagStarsx;
-        TagPercent = TagPercentx;
+        setTagCOs(TagCOsx);
+        setTagNames(TagNamesx);
+        setTagStars(TagStarsx);
+        setTagPercent(TagPercentx);
        
        
         String[] COPowerx =
@@ -86,8 +85,8 @@ public class Alexis extends CO{
         {"I'll take it for now. You go have a rest.",
         "Guess it's my time to shine!" };
        
-        Swap = Swapx;
-        COPower = COPowerx;
+        setSwap(Swapx);
+        setCOPower(COPowerx);
         Victory = Victoryx;
        
         COPName = "Crystal Brace"; //This is the one that heals/ increases defense
