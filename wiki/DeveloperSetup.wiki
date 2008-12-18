@@ -1,26 +1,93 @@
 #labels Featured,Phase-Implementation,help,faq,setup
-A guide on how to run the latest code on your local computer.
+There is a lot written here just to keep you right. It's really easy though.
 
-= Custom wars code =
+*Checking out the code Win, Linux, Mac*
+
+*Your Dev environment*
+ * Eclipse: (Win, Linux, Mac)
+ * - Downloading 
+ * - Workspace
+ * - Plugins
+ * - Importing
+ * - Running
+ * - Building
+
+
 Custom wars is a Java swing application, kept under SVN version control, hosted by google hosting. In order to check out the latest version of the code you will need the following:
 
- * Java Dev Kit 1.6.0 or higher 
+ * [http://download.java.net/jdk6/ Java Dev Kit 1.6.0 or higher] 
  * An IDE: [http://www.eclipse.org/downloads/ eclipse(plain java edition)], [http://www.netbeans.org/downloads/ netbeans(plain java edition)], [http://www.jetbrains.com/idea/download/ intelliJ(paid)]
  * An SVN client: [http://tortoisesvn.net/downloads tortoiseSVN], [http://www.versionsapp.com/ versions(paid)], [http://www.rapidsvn.org/download/release/ rapidSVN]
-
+I'll help walk you through how to get these apart form java as you most likely have it already.
 
 = Checking out the code =
+
+=== Windows ===
+
+If you are on windows, download and install [http://tortoisesvn.net/downloads tortoisesvn] . It will require a restart.
 
 Using an svn client, anyone can get the code anonymously(no login required) via http. Alternatively commiters can checkout via the https address with their gmail account login and their google code password.
 
 http://customwars.googlecode.com/svn/trunk/
 
-Check out the code to somewhere on your local disc. If you are on windows be sure to check out the code to somewhere on C:/ as opposed to "Program Files" since this will have hidden space characters (%20) and just creates bother.
+Check out the code to somewhere on your local disc. If you are on windows be sure to check out the code to somewhere on C:/ as opposed to "Program Files" since this will have hidden space characters (%20) and just creates bother. I'd choose 'C:\repos\customwars\trunk'
+
+
+=== Linux: Umbuntu ===
+
+If you are on Linux, type:
+{{{
+ sudo apt-get install subversion
+}}}
+Into the terminal. Once that is down:
+{{{
+sudo apt- get install rapidsvn
+}}}
+into the terminal.
+
+Now select:
+Applications > Programming > Rapid SVN
+
+In rapid SVN:
+ * Right click on Bookmarks
+ * Checkout new working copy:
+ _Anonomously_: http://customwars.googlecode.com/svn/trunk/ or
+ _as commiter_: https://customwars.googlecode.com/svn/trunk/
+ * Choose a destination Directory of: /home/(username)/Documents/repos/customwars/trunk
+
+Now click ok on the dialog. If you are checking out as a commiter you will now have to enter your login details. Your login details are your gmail account name and your special generated google code password available here. If you are checking out anonymously then just sit back.
+
+
+=== Mac OSX ===
+You're on a mac, as you are used to paying for good stuff. I recommend you use 'Versions'
+Download and install versions: 
+ * Click 'Repository'
+You can check it out anonomously by just adding:
+ * Name: customwars
+ * Location:  http://customwars.googlecode.com/svn/trunk/
+ * Choose a destination Directory of: /home/(username)/Documents/repos/customwars/trunk
+
+Or if you have commit rights
+ * Username: (your gmail username)
+ * Pass: (generated on google code)
+ * Location: https://customwars.googlecode.com/svn/trunk/
+ * Choose a destination Directory of: /home/(username)/Documents/repos/customwars/trunk
+
+Now select the repo in the left hand bar and right click on the trunk that appears in the main window and choose 'checkout'.
 
 
 = Your Dev environment =
 
-= Eclipse =
+= Eclipse (Windows, Mac, Linux) =
+
+== 1. Eclipse: Installation ==
+
+[http://www.eclipse.org/downloads/ Download Eclipse IDE for Java Developers from here]
+ * Windows: Put it in 'C:\IDE\eclipse'
+ * Linux: Put it in 'Documents\IDEs'
+ * Mac: Put it in 'Documents\IDEs'
+
+Double click the starter icon regardless of what platform you are on to start it.
 
 == 1. Eclipse: Workspace ==
 
@@ -28,6 +95,7 @@ When loading into eclipse you will be asked to choose a workspace, create a work
 
 == 2. Eclipse: Plugins ==
 {{{
+
 Help > Software updates
 }}}
 Click the avialable software tab and then "Add Site..." add the following URL with the name SVN plugins.
@@ -75,4 +143,13 @@ If you have followed the steps to the letter you should see the application runn
 ----
 
 == Eclipse FAQ ==
+
 It is also not recommended that you import the code directly from the repository into your workspace from within eclipse.
+
+_I don't get names appearing next to my files_
+
+Make sure you have installed the 'core' subverison 1.0.2 plugins plus the optionals in  1.0.4.
+
+_Where do I get Java 6?_
+
+It's java 1.0.6 and you can get it from: http://www.eclipse.org/downloads/
