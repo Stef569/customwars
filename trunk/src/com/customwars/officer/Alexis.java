@@ -8,8 +8,8 @@ package com.customwars.officer;
 
 import javax.swing.JOptionPane;
 
-import com.customwars.Location;
-import com.customwars.Property;
+import com.customwars.map.location.Location;
+import com.customwars.map.location.Property;
 import com.customwars.unit.Army;
 import com.customwars.unit.Unit;
 

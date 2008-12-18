@@ -9,7 +9,7 @@ package com.customwars.officer;
 import java.util.ArrayList;
 
 import com.customwars.BaseDMG;
-import com.customwars.Location;
+import com.customwars.map.location.Location;
 import com.customwars.unit.Army;
 import com.customwars.unit.MoveID;
 import com.customwars.unit.Unit;

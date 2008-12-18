@@ -11,7 +11,7 @@ package com.customwars.officer;
 
 import java.util.Random;
 
-import com.customwars.Wood;
+import com.customwars.map.location.Wood;
 import com.customwars.unit.Army;
 import com.customwars.unit.Unit;
 

@@ -1,6 +1,6 @@
 package com.customwars.officer;
 
-import com.customwars.Property;
+import com.customwars.map.location.Property;
 import com.customwars.unit.Unit;
 
 public class Sanjuro extends CO{

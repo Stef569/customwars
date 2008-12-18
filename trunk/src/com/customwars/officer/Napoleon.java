@@ -6,7 +6,7 @@ This 'broken' version is cool because it has code for real '+4 max HP'
 import java.util.Random;
 
 import com.customwars.Mission;
-import com.customwars.Property;
+import com.customwars.map.location.Property;
 import com.customwars.unit.Unit;
 
 public class Napoleon extends CO{

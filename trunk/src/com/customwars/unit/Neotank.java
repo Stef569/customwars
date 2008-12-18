@@ -1,7 +1,5 @@
 package com.customwars.unit;
 
-import com.customwars.Location;
-import com.customwars.Map;
 /*
  *Neotank.java
  *Author: Eskimoconvntion
@@ -9,6 +7,8 @@ import com.customwars.Map;
  *Creation: 17/7/06
  *The Neotank class is used to create an instance of the Neotank Unit
  */
+import com.customwars.map.Map;
+import com.customwars.map.location.Location;
 
 public class Neotank extends Unit{
    

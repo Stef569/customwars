@@ -12,8 +12,8 @@ package com.customwars.officer;
 import java.util.Random;
 import java.util.ArrayList;
 
-import com.customwars.Terrain;
-import com.customwars.Tile;
+import com.customwars.map.Tile;
+import com.customwars.map.location.Terrain;
 import com.customwars.unit.Unit;
 
 public class Eric extends CO{

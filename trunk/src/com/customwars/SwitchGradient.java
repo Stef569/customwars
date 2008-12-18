@@ -10,7 +10,7 @@ package com.customwars;
 import java.awt.Color;
 import java.awt.GradientPaint;
 
-    class SwitchGradient
+    public class SwitchGradient
 {
     public static GradientPaint getGradient(int gradient)
     {

@@ -1,7 +1,5 @@
 package com.customwars.unit;
 
-import com.customwars.Location;
-import com.customwars.Map;
 /*
  *Zeppelin.java
  *Author: Xaif
@@ -9,6 +7,8 @@ import com.customwars.Map;
  *Creation: 29/7/06
  *The Zeppelin class is used to create an instance of the Zeppelin Unit
  */
+import com.customwars.map.Map;
+import com.customwars.map.location.Location;
 
 public class Zeppelin extends Unit{
    

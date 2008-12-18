@@ -1,7 +1,5 @@
 package com.customwars.unit;
 
-import com.customwars.Location;
-import com.customwars.Map;
 /*
  *Infantry.java
  *Author: Adam Dziuk
@@ -9,6 +7,8 @@ import com.customwars.Map;
  *Creation: June 24, 2006, 11:51 PM
  *The Infantry class is used to create an instance of the Infantry Unit
  */
+import com.customwars.map.Map;
+import com.customwars.map.location.Location;
 
 public class Infantry extends Unit{
     

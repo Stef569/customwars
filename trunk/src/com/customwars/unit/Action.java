@@ -10,7 +10,7 @@ package com.customwars.unit;
 import java.io.*;
 
 import com.customwars.CWEvent;
-import com.customwars.Path;
+import com.customwars.map.location.Path;
 
 public class Action extends CWEvent implements Serializable{
     private int id; //the action's ID, see the master index list for a list

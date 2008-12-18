@@ -1,7 +1,5 @@
 package com.customwars.unit;
 
-import com.customwars.Location;
-import com.customwars.Map;
 /*
  *Artillerycraft.java
  *Author: Xaif
@@ -9,6 +7,8 @@ import com.customwars.Map;
  *Creation: 23/7/06
  *The Artillerycraft class is used to create an instance of the Artillerycraft Unit
  */
+import com.customwars.map.Map;
+import com.customwars.map.location.Location;
 
 public class Artillerycraft extends Unit{
    

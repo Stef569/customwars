@@ -8,11 +8,11 @@ package com.customwars.officer;
  */
 import java.util.ArrayList;
 
-import com.customwars.Location;
 import com.customwars.Mission;
-import com.customwars.Property;
-import com.customwars.Terrain;
-import com.customwars.Tile;
+import com.customwars.map.Tile;
+import com.customwars.map.location.Location;
+import com.customwars.map.location.Property;
+import com.customwars.map.location.Terrain;
 import com.customwars.unit.APC;
 import com.customwars.unit.Infantry;
 import com.customwars.unit.Transport;

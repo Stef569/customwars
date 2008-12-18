@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.customwars.Location;
+import com.customwars.map.location.Location;
 import com.customwars.unit.Army;
 import com.customwars.unit.Unit;
 

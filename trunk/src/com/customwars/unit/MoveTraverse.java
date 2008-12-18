@@ -9,8 +9,8 @@ package com.customwars.unit;
 
 import java.io.*;
 
-import com.customwars.Location;
-import com.customwars.Map;
+import com.customwars.map.Map;
+import com.customwars.map.location.Location;
 
 public class MoveTraverse implements Serializable{
     /**

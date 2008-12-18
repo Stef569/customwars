@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import com.customwars.officer.COList;
 import com.customwars.state.ResourceLoader;
+import com.customwars.ui.BattleScreen;
 
 import java.util.zip.CRC32;
 //import java.util.*;

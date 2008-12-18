@@ -15,12 +15,47 @@ import javax.swing.JOptionPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.customwars.map.Map;
+import com.customwars.map.Tile;
+import com.customwars.map.location.Airport;
+import com.customwars.map.location.Base;
+import com.customwars.map.location.Bridge;
+import com.customwars.map.location.City;
+import com.customwars.map.location.ComTower;
+import com.customwars.map.location.DestroyedPipeSeam;
+import com.customwars.map.location.DestroyedSeaPipeSeam;
+import com.customwars.map.location.DestroyedWall;
+import com.customwars.map.location.HQ;
+import com.customwars.map.location.Invention;
+import com.customwars.map.location.Location;
+import com.customwars.map.location.Mountain;
+import com.customwars.map.location.Pipe;
+import com.customwars.map.location.PipeSeam;
+import com.customwars.map.location.Pipestation;
+import com.customwars.map.location.Plain;
+import com.customwars.map.location.Port;
+import com.customwars.map.location.Property;
+import com.customwars.map.location.Reef;
+import com.customwars.map.location.River;
+import com.customwars.map.location.Road;
+import com.customwars.map.location.Sea;
+import com.customwars.map.location.SeaPipe;
+import com.customwars.map.location.SeaPipeSeam;
+import com.customwars.map.location.Shoal;
+import com.customwars.map.location.Silo;
+import com.customwars.map.location.SuspensionBridge;
+import com.customwars.map.location.TerrType;
+import com.customwars.map.location.Terrain;
+import com.customwars.map.location.Wall;
+import com.customwars.map.location.Wood;
 import com.customwars.officer.Andy;
 import com.customwars.officer.CO;
 import com.customwars.officer.COList;
 import com.customwars.officer.Fighter;
 import com.customwars.officer.Max;
 import com.customwars.state.ResourceLoader;
+import com.customwars.ui.Animation;
+import com.customwars.ui.DialogueBox;
 import com.customwars.unit.APC;
 import com.customwars.unit.AntiAir;
 import com.customwars.unit.Army;
@@ -555,7 +590,7 @@ public class Battle implements Serializable{
                             
                             int x = loc.getCol();
                             int y = loc.getRow();
-                            int radius = prop.vision;
+                            int radius = prop.getVision();
                             int offset = 0;
                             
                             for(int k=-1*radius; k <= radius; k++) {
@@ -677,7 +712,7 @@ public void updateFoW() {
                             
                             int x = loc.getCol();
                             int y = loc.getRow();
-                            int radius = prop.vision;
+                            int radius = prop.getVision();
                             int offset = 0;
                             
                             for(int k=-1*radius; k <= radius; k++) {

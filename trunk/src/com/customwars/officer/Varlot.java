@@ -3,7 +3,7 @@ package com.customwars.officer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.customwars.Property;
+import com.customwars.map.location.Property;
 import com.customwars.unit.Army;
 import com.customwars.unit.Unit;
 

@@ -11,8 +11,8 @@ import java.util.Random;
 import java.util.ArrayList;
 
 import com.customwars.Mission;
-import com.customwars.Property;
-import com.customwars.Tile;
+import com.customwars.map.Tile;
+import com.customwars.map.location.Property;
 import com.customwars.unit.Army;
 import com.customwars.unit.Unit;
 

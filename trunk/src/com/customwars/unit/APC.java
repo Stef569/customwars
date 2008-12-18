@@ -1,8 +1,5 @@
 package com.customwars.unit;
 
-import com.customwars.Location;
-import com.customwars.Map;
-import com.customwars.Tile;
 /*
  *APC.java
  *Author: Limbo the Monkey
@@ -10,6 +7,9 @@ import com.customwars.Tile;
  *Creation: 18/7/06
  *The APC class is used to create an instance of the APC Unit
  */
+import com.customwars.map.Map;
+import com.customwars.map.Tile;
+import com.customwars.map.location.Location;
 
 public class APC extends Transport{
     

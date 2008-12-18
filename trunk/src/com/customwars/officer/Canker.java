@@ -1,6 +1,6 @@
 package com.customwars.officer;
 
-import com.customwars.DialogueBox;
+import com.customwars.ui.DialogueBox;
 import com.customwars.unit.Army;
 import com.customwars.unit.Unit;
 

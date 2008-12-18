@@ -1,15 +1,8 @@
 package com.customwars.unit;
 
-import com.customwars.Location;
-import com.customwars.Map;
-import com.customwars.Property;
- /*
-  *Oozium.java
-  *Author: Adam Dziuk
-  *Contributors:
-  *Creation: December 10, 2006, 12:28 PM
-  *The Mech class is used to create an instance of the Oozium238 Unit
-  */
+import com.customwars.map.Map;
+import com.customwars.map.location.Location;
+import com.customwars.map.location.Property;
 
 public class Oozium extends Unit{
     
