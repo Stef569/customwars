@@ -1,6 +1,6 @@
 package com.customwars.unit;
 
-import com.customwars.StatTable;
+import com.customwars.ai.StatTable;
 import com.customwars.map.location.TerrType;
 
 public class MoveCostTable extends StatTable

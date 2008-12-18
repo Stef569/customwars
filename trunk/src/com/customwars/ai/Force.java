@@ -1,4 +1,4 @@
-package com.customwars;
+package com.customwars.ai;
 /*
  * Force.java
  *

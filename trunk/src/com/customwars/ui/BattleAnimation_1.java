@@ -8,8 +8,8 @@ import javax.swing.Timer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.customwars.BaseDMG;
-import com.customwars.Mission;
+import com.customwars.ai.BaseDMG;
+import com.customwars.ai.Mission;
 import com.customwars.map.location.Terrain;
 import com.customwars.unit.Unit;
 

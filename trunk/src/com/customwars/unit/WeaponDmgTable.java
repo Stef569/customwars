@@ -1,14 +1,6 @@
 package com.customwars.unit;
 
-import com.customwars.StatTable;
-/*
- *WeaponDmgTable.java
- *Author: Ting Chow
- *Contributors: -
- *Creation: 2/9/2008
- *  The WeaponDmgTable class holds a large array of base stat values for use in 
- *  dealing damage to units.
- */
+import com.customwars.ai.StatTable;
 
 public class WeaponDmgTable extends StatTable
 {   

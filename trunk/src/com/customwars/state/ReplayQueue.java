@@ -1,4 +1,4 @@
-package com.customwars;
+package com.customwars.state;
 /*
  *ReplayQueue.java
  *Author: Uru
@@ -9,6 +9,8 @@ package com.customwars;
 
 import java.io.*;
 import java.util.LinkedList;
+
+import com.customwars.ai.CWEvent;
 
 public class ReplayQueue implements Serializable{
     

@@ -1,4 +1,4 @@
-package com.customwars;
+package com.customwars.ai;
 /*
  *Mission.java
  *Author: Urusan
@@ -21,6 +21,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.customwars.officer.COList;
+import com.customwars.sfx.Music;
+import com.customwars.state.ReplayQueue;
 import com.customwars.state.ResourceLoader;
 import com.customwars.ui.BattleScreen;
 

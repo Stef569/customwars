@@ -5,7 +5,7 @@ import javax.swing.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.customwars.Battle;
+import com.customwars.ai.Battle;
 
 
 import java.awt.Dimension;

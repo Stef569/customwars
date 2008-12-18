@@ -1,4 +1,4 @@
-package com.customwars;
+package com.customwars.ai;
 /*FCUS
  *BuildEvent.java
  *Author: Uru

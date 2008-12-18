@@ -1,4 +1,4 @@
-package com.customwars;
+package com.customwars.ai;
 /*
  *CWEvent.java
  *Author: Uru

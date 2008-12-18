@@ -13,12 +13,12 @@ import java.io.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.customwars.Music;
-import com.customwars.Options;
+import com.customwars.ai.Options;
 import com.customwars.map.Tile;
 import com.customwars.map.location.Invention;
 import com.customwars.map.location.Location;
 import com.customwars.map.location.Property;
+import com.customwars.sfx.Music;
 import com.customwars.unit.Army;
 import com.customwars.unit.Unit;
 

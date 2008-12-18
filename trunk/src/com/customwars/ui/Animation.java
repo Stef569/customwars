@@ -4,9 +4,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.Timer;
 
-import com.customwars.Battle;
-import com.customwars.SFX;
+import com.customwars.ai.Battle;
 import com.customwars.map.location.Location;
+import com.customwars.sfx.SFX;
 import com.customwars.state.ResourceLoader;
 import com.customwars.unit.Unit;
 

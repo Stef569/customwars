@@ -1,4 +1,4 @@
-package com.customwars;
+package com.customwars.ai;
 /*
  *RNG.java
  *Author: Adam Dziuk 

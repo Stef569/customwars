@@ -11,7 +11,7 @@ import java.awt.Toolkit;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 
-import com.customwars.Options;
+import com.customwars.ai.Options;
 public class InitFrame extends JFrame implements ActionListener
 {
 	protected JPanel panel;

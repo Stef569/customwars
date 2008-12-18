@@ -4,7 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.Timer;
 
-import com.customwars.Battle;
+import com.customwars.ai.Battle;
 
 import java.awt.image.*;
 

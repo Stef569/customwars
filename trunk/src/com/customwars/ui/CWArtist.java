@@ -2,7 +2,7 @@ package com.customwars.ui;
 
 import java.awt.*;
 
-import com.customwars.Battle;
+import com.customwars.ai.Battle;
 import com.customwars.map.Tile;
 import com.customwars.map.location.HQ;
 import com.customwars.map.location.Invention;

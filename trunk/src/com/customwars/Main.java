@@ -18,6 +18,9 @@ package com.customwars;
 import java.io.*;
 import javax.swing.*;
 
+import com.customwars.ai.BaseDMG;
+import com.customwars.ai.Mission;
+import com.customwars.ai.Options;
 import com.customwars.lobbyclient.FobbahLauncher;
 import com.customwars.state.ResourceLoader;
 import com.customwars.ui.BattleGraphics;

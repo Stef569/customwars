@@ -13,7 +13,7 @@ import java.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.customwars.Trigger;
+import com.customwars.ai.Trigger;
 import com.customwars.map.location.Location;
 import com.customwars.map.location.Plain;
 import com.customwars.map.location.Property;

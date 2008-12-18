@@ -7,7 +7,7 @@
  * and open the template in the editor.
  */
 
-package com.customwars;
+package com.customwars.ai;
 import java.io.*;
 
 import com.customwars.map.location.Location;

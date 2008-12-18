@@ -1,4 +1,4 @@
-package com.customwars;
+package com.customwars.ai;
 /*
  *Battle.java
  *Author: Adam Dziuk
@@ -53,6 +53,8 @@ import com.customwars.officer.CO;
 import com.customwars.officer.COList;
 import com.customwars.officer.Fighter;
 import com.customwars.officer.Max;
+import com.customwars.sfx.Music;
+import com.customwars.state.ReplayQueue;
 import com.customwars.state.ResourceLoader;
 import com.customwars.ui.Animation;
 import com.customwars.ui.DialogueBox;

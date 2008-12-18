@@ -13,8 +13,8 @@ import org.omg.CORBA.BAD_CONTEXT;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.customwars.BaseDMG;
-import com.customwars.Options;
+import com.customwars.ai.BaseDMG;
+import com.customwars.ai.Options;
 import com.customwars.map.Map;
 import com.customwars.map.location.Invention;
 import com.customwars.map.location.Locatable;

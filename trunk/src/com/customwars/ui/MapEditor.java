@@ -16,10 +16,10 @@ import javax.swing.event.MouseInputListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.customwars.Battle;
-import com.customwars.DamageTrigger;
-import com.customwars.Mission;
-import com.customwars.Options;
+import com.customwars.ai.Battle;
+import com.customwars.ai.DamageTrigger;
+import com.customwars.ai.Mission;
+import com.customwars.ai.Options;
 import com.customwars.map.Map;
 import com.customwars.map.Tile;
 import com.customwars.map.location.Airport;

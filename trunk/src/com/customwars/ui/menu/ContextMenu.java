@@ -15,12 +15,12 @@ import java.util.ArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.customwars.SFX;
 import com.customwars.map.Map;
 import com.customwars.map.location.Invention;
 import com.customwars.map.location.Location;
 import com.customwars.map.location.Property;
 import com.customwars.map.location.Silo;
+import com.customwars.sfx.SFX;
 import com.customwars.state.ResourceLoader;
 import com.customwars.unit.Carrier;
 import com.customwars.unit.Stealth;

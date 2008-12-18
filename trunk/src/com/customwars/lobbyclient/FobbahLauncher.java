@@ -17,9 +17,9 @@ package com.customwars.lobbyclient;
 import java.io.*;
 import javax.swing.*;
 
-import com.customwars.BaseDMG;
-import com.customwars.Mission;
-import com.customwars.Options;
+import com.customwars.ai.BaseDMG;
+import com.customwars.ai.Mission;
+import com.customwars.ai.Options;
 import com.customwars.state.ResourceLoader;
 import com.customwars.ui.MainMenuGraphics;
 import com.customwars.ui.MiscGraphics;
