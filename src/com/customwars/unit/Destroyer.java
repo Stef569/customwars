@@ -1,7 +1,5 @@
 package com.customwars.unit;
 
-import com.customwars.Location;
-import com.customwars.Map;
 /*
  *Destroyer.java
  *Author: Xaif
@@ -9,6 +7,8 @@ import com.customwars.Map;
  *Creation: 29/7/06
  *The Destroyer class is used to create an instance of the Destroyer Unit
  */
+import com.customwars.map.Map;
+import com.customwars.map.location.Location;
 
 public class Destroyer extends Unit{
    

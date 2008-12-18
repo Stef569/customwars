@@ -1,8 +1,8 @@
 package com.customwars.officer;
 
-import com.customwars.Location;
-import com.customwars.Map;
-import com.customwars.Terrain;
+import com.customwars.map.Map;
+import com.customwars.map.location.Location;
+import com.customwars.map.location.Terrain;
 import com.customwars.unit.Unit;
 
 /** Minamoto: A proud, vain CO and a master swordsman who grew

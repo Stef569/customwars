@@ -1,7 +1,5 @@
 package com.customwars.unit;
 
-import com.customwars.Location;
-import com.customwars.Map;
 /*
  *Piperunner.java
  *Author: Limbo the Monkey
@@ -9,6 +7,8 @@ import com.customwars.Map;
  *Creation: 18/7/06
  *The Piperunner class is used to create an instance of the Piperunner Unit
  */
+import com.customwars.map.Map;
+import com.customwars.map.location.Location;
 
 public class Piperunner extends Unit{
    

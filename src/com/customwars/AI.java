@@ -13,6 +13,11 @@ import java.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.customwars.map.Tile;
+import com.customwars.map.location.Location;
+import com.customwars.map.location.Path;
+import com.customwars.map.location.Property;
+import com.customwars.ui.BattleScreen;
 import com.customwars.unit.Action;
 import com.customwars.unit.Army;
 import com.customwars.unit.MoveTraverse;

@@ -1,8 +1,5 @@
 package com.customwars.unit;
 
-import com.customwars.Location;
-import com.customwars.Map;
-import com.customwars.Tile;
 /*
  *Carrier.java
  *Author: Xaif
@@ -10,6 +7,9 @@ import com.customwars.Tile;
  *Creation: 17/7/06
  *The Carrier class is used to create an instance of the Carrier Unit
  */
+import com.customwars.map.Map;
+import com.customwars.map.Tile;
+import com.customwars.map.location.Location;
 
 public class Carrier extends Transport{
         private boolean launched;

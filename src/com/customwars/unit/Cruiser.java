@@ -1,7 +1,5 @@
 package com.customwars.unit;
 
-import com.customwars.Location;
-import com.customwars.Map;
 /*
  *Cruiser.java
  *Author: Xaif
@@ -9,6 +7,8 @@ import com.customwars.Map;
  *Creation: 17/7/06
  *The Cruiser class is used to create an instance of the Cruiser Unit
  */
+import com.customwars.map.Map;
+import com.customwars.map.location.Location;
 
 public class Cruiser extends Transport{
    

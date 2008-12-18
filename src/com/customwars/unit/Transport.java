@@ -1,8 +1,5 @@
 package com.customwars.unit;
 
-import com.customwars.Location;
-import com.customwars.Map;
-import com.customwars.Tile;
 /*
  *Transport.java
  *Author: Urusan
@@ -10,6 +7,9 @@ import com.customwars.Tile;
  *Creation: July 27, 2006, 9:09 PM
  *Transports are a class of Units that can carry other units
  */
+import com.customwars.map.Map;
+import com.customwars.map.Tile;
+import com.customwars.map.location.Location;
 
 public abstract class Transport extends Unit{
     private Unit slot1;               //Holds the first unit being carried

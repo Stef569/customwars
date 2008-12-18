@@ -9,9 +9,9 @@ package com.customwars.officer;
  */
 import java.util.ArrayList;
 
-import com.customwars.Location;
-import com.customwars.Property;
-import com.customwars.Wood;
+import com.customwars.map.location.Location;
+import com.customwars.map.location.Property;
+import com.customwars.map.location.Wood;
 import com.customwars.unit.Army;
 import com.customwars.unit.Unit;
 

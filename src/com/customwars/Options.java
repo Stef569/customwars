@@ -50,7 +50,7 @@ public class Options {
     /** Index of the set of default unit bans to use. */
     static int defaultBans; //Default Bans 0=CW 1=AWDS 2=AW2 3=AW1 4=None
     /** True if battle animations are on. */
-    static boolean battleBackground;
+    public static boolean battleBackground;
     /** Index of the CO to use on menu screens. */
     static int mainCOID;
     /** True if the default username and password should be used. */
@@ -66,37 +66,37 @@ public class Options {
     
     //Server Mode Scratch Variables
     /** Name of the game being joined. */
-    static String gamename = null;
+    public static String gamename = null;
     /** Master password of the game being joined. */
-    static String masterpass = null;
+    public static String masterpass = null;
     /** Username to use in the game being joined. */
-    static String username = null;
+    public static String username = null;
     /** User's password for the game being joined. */
-    static String password = null;
+    public static String password = null;
     /** ? */
-    static boolean snailGame = false;
+    public static boolean snailGame = false;
     static boolean sound = true;
     //Keys
-    static int up = KeyEvent.VK_UP;
-    static int down = KeyEvent.VK_DOWN;
-    static int left = KeyEvent.VK_LEFT;
-    static int right = KeyEvent.VK_RIGHT;
-    static int akey = KeyEvent.VK_Z;
-    static int bkey = KeyEvent.VK_X;
-    static int pgup = KeyEvent.VK_PAGE_UP;
-    static int pgdn = KeyEvent.VK_PAGE_DOWN;
-    static int altleft = KeyEvent.VK_COMMA;
-    static int altright = KeyEvent.VK_PERIOD;
-    static int menu = KeyEvent.VK_M;
-    static int minimap = KeyEvent.VK_N;
-    static int nextunit = KeyEvent.VK_C;
-    static int constmode = KeyEvent.VK_A;
-    static int delete = KeyEvent.VK_D;
-    static int tkey = KeyEvent.VK_C;
-    static int skey = KeyEvent.VK_S;
-    static int ukey = KeyEvent.VK_V;
-    static int fogkey = KeyEvent.VK_F;
-    static int intelkey = KeyEvent.VK_I;
+    public static int up = KeyEvent.VK_UP;
+    public static int down = KeyEvent.VK_DOWN;
+    public static int left = KeyEvent.VK_LEFT;
+    public static int right = KeyEvent.VK_RIGHT;
+    public static int akey = KeyEvent.VK_Z;
+    public static int bkey = KeyEvent.VK_X;
+    public static int pgup = KeyEvent.VK_PAGE_UP;
+    public static int pgdn = KeyEvent.VK_PAGE_DOWN;
+    public static int altleft = KeyEvent.VK_COMMA;
+    public static int altright = KeyEvent.VK_PERIOD;
+    public static int menu = KeyEvent.VK_M;
+    public static int minimap = KeyEvent.VK_N;
+    public static int nextunit = KeyEvent.VK_C;
+    public static int constmode = KeyEvent.VK_A;
+    public static int delete = KeyEvent.VK_D;
+    public static int tkey = KeyEvent.VK_C;
+    public static int skey = KeyEvent.VK_S;
+    public static int ukey = KeyEvent.VK_V;
+    public static int fogkey = KeyEvent.VK_F;
+    public static int intelkey = KeyEvent.VK_I;
     static int fat_editor_menu = KeyEvent.VK_T;
     //static int altcostkey = KeyEvent.VK_A;
     //static int cointelkey = KeyEvent.VK_C;
@@ -110,7 +110,7 @@ public class Options {
     static String customTerrain = "Press Z To Set";
     static String customUrban = "Press Z To Set";
     static String customHQ = "Press Z To Set";
-    static boolean refresh = false;
+    public static boolean refresh = false;
     
     public Options() {
         String imagesLocation = ResourceLoader.properties.getProperty("imagesLocation");

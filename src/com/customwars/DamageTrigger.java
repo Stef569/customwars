@@ -10,10 +10,13 @@
 package com.customwars;
 import java.io.*;
 
+import com.customwars.map.location.Location;
+
 public class DamageTrigger extends Trigger{
-    int x,y;
-    int damage;
-    boolean destroy;
+    private int x;
+	private int y;
+    private int damage;
+    private boolean destroy;
     /**
      * This sets up the Trigger type and 'primes' it.
      * <p>
@@ -24,17 +27,65 @@ public class DamageTrigger extends Trigger{
      */
     public DamageTrigger(Battle b, int day, int turn, int x, int y, int damage, boolean destroy){
         super(b, day, turn, 1);
-        this.x = x;
-        this.y = y;
-        this.damage = damage;
-        this.destroy = destroy;
+        this.setX(x);
+        this.setY(y);
+        this.setDamage(damage);
+        this.setDestroy(destroy);
     }
     
     
     
     public void trigger() {
-        if(getB().getMap().find(new Location(x,y)).hasUnit()) {
-           getB().getMap().find(new Location(x,y)).getUnit().damage(damage, destroy); 
+        if(getB().getMap().find(new Location(getX(),getY())).hasUnit()) {
+           getB().getMap().find(new Location(getX(),getY())).getUnit().damage(getDamage(), isDestroy()); 
         }
     }
+
+
+
+	public void setDamage(int damage) {
+		this.damage = damage;
+	}
+
+
+
+	public int getDamage() {
+		return damage;
+	}
+
+
+
+	public void setDestroy(boolean destroy) {
+		this.destroy = destroy;
+	}
+
+
+
+	public boolean isDestroy() {
+		return destroy;
+	}
+
+
+
+	public void setY(int y) {
+		this.y = y;
+	}
+
+
+
+	public int getY() {
+		return y;
+	}
+
+
+
+	public void setX(int x) {
+		this.x = x;
+	}
+
+
+
+	public int getX() {
+		return x;
+	}
 }

@@ -1,7 +1,5 @@
 package com.customwars.unit;
 
-import com.customwars.Location;
-import com.customwars.Map;
 /*
  *Tank.java
  *Author: Killian Hanlon
@@ -9,6 +7,8 @@ import com.customwars.Map;
  *Creation: 17/7/06
  *The Tank class is used to create an instance of theTank Unit
  */
+import com.customwars.map.Map;
+import com.customwars.map.location.Location;
 
 public class Tank extends Unit{
    

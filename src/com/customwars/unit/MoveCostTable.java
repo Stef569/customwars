@@ -1,15 +1,7 @@
 package com.customwars.unit;
 
 import com.customwars.StatTable;
-import com.customwars.TerrType;
-/*
- *MoveCostTable.java
- *Author: Ting Chow
- *Contributors: -
- *Creation: 2/7/2008
- *  The MoveCostTable class holds a large array of base stat values for use in 
- *  determining move costs.
- */
+import com.customwars.map.location.TerrType;
 
 public class MoveCostTable extends StatTable
 {

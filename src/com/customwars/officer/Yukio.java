@@ -9,7 +9,7 @@ package com.customwars.officer;
  */
 import java.util.ArrayList;
 
-import com.customwars.Property;
+import com.customwars.map.location.Property;
 import com.customwars.unit.Army;
 import com.customwars.unit.Unit;
 

@@ -1,7 +1,5 @@
 package com.customwars.unit;
 
-import com.customwars.Location;
-import com.customwars.Map;
 /*
  *Bomber.java
  *Author: veggiehunter
@@ -9,6 +7,8 @@ import com.customwars.Map;
  *Creation:
  *The Bomber class is used to create an instance of the Bomber Unit
  */
+import com.customwars.map.Map;
+import com.customwars.map.location.Location;
 
 public class Bomber extends Unit{
    

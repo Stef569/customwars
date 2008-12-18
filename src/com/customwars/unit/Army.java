@@ -16,12 +16,12 @@ import org.slf4j.LoggerFactory;
 
 import com.customwars.AI;
 import com.customwars.Battle;
-import com.customwars.ComTower;
-import com.customwars.Location;
 import com.customwars.Music;
 import com.customwars.Options;
-import com.customwars.Property;
-import com.customwars.PropertyList;
+import com.customwars.map.location.ComTower;
+import com.customwars.map.location.Location;
+import com.customwars.map.location.Property;
+import com.customwars.map.location.PropertyList;
 import com.customwars.officer.CO;
 
 public class Army implements Serializable{

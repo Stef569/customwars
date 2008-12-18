@@ -1,7 +1,5 @@
 package com.customwars.unit;
 
-import com.customwars.Location;
-import com.customwars.Map;
 /*
  *MD Tank.java
  *Author: Limbo the Monkey
@@ -9,6 +7,8 @@ import com.customwars.Map;
  *Creation: 18/7/06
  *The MDTank class is used to create an instance of the MDTank Unit
  */
+import com.customwars.map.Map;
+import com.customwars.map.location.Location;
 
 public class MDTank extends Unit{
    

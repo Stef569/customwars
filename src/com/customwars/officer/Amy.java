@@ -1,6 +1,6 @@
 package com.customwars.officer;
 
-import com.customwars.Location;
+import com.customwars.map.location.Location;
 import com.customwars.unit.Army;
 import com.customwars.unit.Unit;
 

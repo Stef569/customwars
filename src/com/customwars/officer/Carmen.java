@@ -10,9 +10,9 @@ import org.slf4j.LoggerFactory;
  *The Carmen class is used to create an instance of the Amber Corona CO Carmen.
  */
 
-import com.customwars.Location;
-import com.customwars.Property;
-import com.customwars.Tile;
+import com.customwars.map.Tile;
+import com.customwars.map.location.Location;
+import com.customwars.map.location.Property;
 import com.customwars.unit.Unit;
 
 public class Carmen extends CO {

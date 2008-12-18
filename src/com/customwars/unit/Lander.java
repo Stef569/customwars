@@ -1,7 +1,7 @@
 package com.customwars.unit;
 
-import com.customwars.Location;
-import com.customwars.Map;
+import com.customwars.map.Map;
+import com.customwars.map.location.Location;
 
 
 public class Lander extends Transport{

@@ -1,7 +1,5 @@
 package com.customwars.unit;
 
-import com.customwars.Location;
-import com.customwars.Map;
 /*
  *Mech.java
  *Author: Adam Dziuk
@@ -9,6 +7,8 @@ import com.customwars.Map;
  *Creation: July 14, 2006, 5:46 PM
  *The Mech class is used to create an instance of the Mech Unit
  */
+import com.customwars.map.Map;
+import com.customwars.map.location.Location;
 
 public class Mech extends Unit{
     

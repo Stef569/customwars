@@ -8,7 +8,7 @@ package com.customwars.officer;
  */
 import java.util.Vector;
 
-import com.customwars.Tile;
+import com.customwars.map.Tile;
 import com.customwars.unit.Army;
 import com.customwars.unit.Unit;
 public class Carrie extends CO{

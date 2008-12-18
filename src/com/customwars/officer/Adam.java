@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
  */
 
 import com.customwars.BaseDMG;
-import com.customwars.Tile;
+import com.customwars.map.Tile;
 import com.customwars.unit.Stealth;
 import com.customwars.unit.Submarine;
 import com.customwars.unit.Unit;

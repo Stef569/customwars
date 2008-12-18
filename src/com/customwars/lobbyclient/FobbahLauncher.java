@@ -18,13 +18,13 @@ import java.io.*;
 import javax.swing.*;
 
 import com.customwars.BaseDMG;
-import com.customwars.MainMenu;
-import com.customwars.MainMenuGraphics;
-import com.customwars.MiscGraphics;
 import com.customwars.Mission;
 import com.customwars.Options;
-import com.customwars.TerrainGraphics;
 import com.customwars.state.ResourceLoader;
+import com.customwars.ui.MainMenuGraphics;
+import com.customwars.ui.MiscGraphics;
+import com.customwars.ui.TerrainGraphics;
+import com.customwars.ui.menu.MainMenu;
 import com.customwars.unit.UnitGraphics;
 
 

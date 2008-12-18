@@ -11,8 +11,8 @@ package com.customwars.unit;
 import java.io.*;
 
 import com.customwars.Battle;
-import com.customwars.Location;
 import com.customwars.Trigger;
+import com.customwars.map.location.Location;
 
 public class UnitTrigger extends Trigger{
     private int unitType;

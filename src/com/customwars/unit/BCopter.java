@@ -1,7 +1,5 @@
 package com.customwars.unit;
 
-import com.customwars.Location;
-import com.customwars.Map;
 /*
  *BCopter.java
  *Author: Xenesis
@@ -9,6 +7,8 @@ import com.customwars.Map;
  *Creation: July 17, 2006
  *The BCopter class is used to create an instance of the BCopter Unit
  */
+import com.customwars.map.Map;
+import com.customwars.map.location.Location;
 
 public class BCopter extends Unit{
     

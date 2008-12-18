@@ -1,8 +1,7 @@
 package com.customwars.officer;
 
 import com.customwars.Battle;
-import com.customwars.Map;
-import com.customwars.Tempest;
+import com.customwars.map.Map;
 
 public class COList {
     static Battle tempbat = new Battle(new Map(30,20));
