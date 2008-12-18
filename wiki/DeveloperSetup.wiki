@@ -33,7 +33,7 @@ http://customwars.googlecode.com/svn/trunk/
 Check out the code to somewhere on your local disc. If you are on windows be sure to check out the code to somewhere on C:/ as opposed to "Program Files" since this will have hidden space characters (%20) and just creates bother. I'd choose 'C:\repos\customwars\trunk'
 
 
-=== Linux: Umbuntu ===
+=== Linux: Ubuntu ===
 
 If you are on Linux, type:
 {{{
