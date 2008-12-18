@@ -82,7 +82,7 @@ Now select the repo in the left hand bar and right click on the trunk that appea
 
 == 1. Eclipse: Installation ==
 
-[http://www.eclipse.org/downloads/ Download Eclipse IDE for Java Developers from here]
+[http://www.eclipse.org/downloads/ Download the 'Eclipse IDE for Java Developers' from here]
  * Windows: Put it in 'C:\IDE\eclipse'
  * Linux: Put it in 'Documents\IDEs'
  * Mac: Put it in 'Documents\IDEs'
