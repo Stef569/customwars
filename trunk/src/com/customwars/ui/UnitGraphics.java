@@ -62,8 +62,8 @@ public class UnitGraphics
 
                 
         //This stuff is new!
-        SFWiSheet = new ImageIcon(imagesLocation + "images/units/SFW_Inf.gif").getImage();
-        SFWriSheet = new ImageIcon(imagesLocation + "images/units/SFW_Infr.gif").getImage();
+        SFWiSheet = new ImageIcon(imagesLocation + "/units/SFW_Inf.gif").getImage();
+        SFWriSheet = new ImageIcon(imagesLocation + "/units/SFW_Infr.gif").getImage();
         
         //TEMPORARY, later only generate what you need
         for(int i = 0; i < MAX_ARMIES; i++)
