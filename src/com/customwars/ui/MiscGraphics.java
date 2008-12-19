@@ -125,7 +125,7 @@ public class MiscGraphics {
         }
         
         for(int i = 1; i < 10; i++){
-            hpDisplay[i-1] = new ImageIcon("images/misc/"+ i + ".gif").getImage();
+            hpDisplay[i-1] = new ImageIcon(imagesLocation + "/misc/"+ i + ".gif").getImage();
         }
         
         for(int i = 0; i < 10; i++){
