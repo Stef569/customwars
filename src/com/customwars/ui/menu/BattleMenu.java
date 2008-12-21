@@ -72,19 +72,19 @@ public class BattleMenu extends InGameMenu{
         SFX.playClip(soundLocation + "/ok.wav");
         switch(item){
             case 0:
-            	logger.info("CO Dossier");
+            	logger.info("Entering into CO Dossier");
                 return 12;
             case 1:
-            	logger.info("Intel");
+            	logger.info("Entering into Intel");
                 return 1;
             case 2:
-            	logger.info("Options");
+            	logger.info("Entering into Options");
                 return 2;
             case 3:
                 return 13;
             default:
                 if(displayItems[item].equals("End")){
-                	logger.info("End");
+                	logger.info("Ending Day=["+b.getDay()+"]");
                     boolean endGame = b.endTurn();
                     if(b.getBattleOptions().isRecording())b.getReplay().push(new CWEvent(6,b.getDay(),b.getTurn()));
                     if(endGame)return -10;

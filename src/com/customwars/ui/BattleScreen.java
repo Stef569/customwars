@@ -2117,26 +2117,19 @@ public class BattleScreen extends CWScreen
         {
             if(menu)
             {
-            	logger.info("Do Menu Action");
-            	
                 menuActions();
             }
             else if(cmenu)
             {
-            	logger.info("Do Context Action");
-            	
             	//Don't forget to move the unit first!
                 contextMenuActions(selected);
             }
             else if(bmenu)
             {
-            	logger.info("Do Deploy Effect");
-            	
                 deployEffect();
             }
             else if(carbmenu)
             {
-                logger.info("Do Carrier Build");
                 buildEffect(selected);
             }
             else if(fireRange)
@@ -2379,7 +2372,6 @@ public class BattleScreen extends CWScreen
 				user.setLocation(origLoc);
 	        	return;
 	        }
-        	logger.info("What?");
         	
 	        //return;
 	    }
@@ -2388,8 +2380,6 @@ public class BattleScreen extends CWScreen
 	    		targetUnit != user)
 	    {
 	    */
-        	logger.info("ANYTHING ELSE-based context menu");
-        	
 	        //safeMoveEffect(user);
         	Location origLoc = user.getLocation();
         	user.setLocation(moveToTile.getLocation());
@@ -2958,13 +2948,12 @@ public class BattleScreen extends CWScreen
 		cmenu=false;
 		move=false;
 		int action = currentMenu.doMenuItem();
-		logger.info("Selected Action=["+action+"]");
 		
 		switch(action){
 		
 			case UNIT_COMMANDS.UNDO:	
 										user.setDirection(-1);
-										logger.debug("UNIT_COMMAND: Undoing action");
+										logger.debug("Selected Action=["+UNIT_COMMANDS.UNDO+"] UNIT_COMMAND: Undo previous action");
 										break;
 										
 			case UNIT_COMMANDS.FIRE:	
@@ -2974,109 +2963,109 @@ public class BattleScreen extends CWScreen
 									    	cursorYTilePos = targetTilesWithinRange.get(currContextTarg).getCol();
 									    	cursorXTilePos = targetTilesWithinRange.get(currContextTarg).getRow();
 									    }
-									    logger.debug("UNIT_COMMAND: Firing at TileCol=[" + cursorXTilePos +"] TileRow=[" + cursorYTilePos +"] co-ords: X=["+cursorXPixelPos +"], Y=["+cursorXPixelPos +"]");
+									    logger.debug("Selected Action=["+UNIT_COMMANDS.UNDO+"] UNIT_COMMAND: Firing at TileCol=[" + cursorXTilePos +"] TileRow=[" + cursorYTilePos +"] co-ords: X=["+cursorXPixelPos +"], Y=["+cursorXPixelPos +"]");
 									    break;
 			
 			case UNIT_COMMANDS.CAPTURE:	
 										if(autoMove(user)){
 											captureEffect(user);
 										}
-										logger.debug("UNIT_COMMAND: Capturing");
+										logger.debug("Selected Action=["+UNIT_COMMANDS.UNDO+"] UNIT_COMMAND: Capturing");
 										break;
 										
 			case UNIT_COMMANDS.RESUPPLY:	
 										if(autoMove(user)){
 											resupplyEffect(user);
 										}
-										logger.debug("UNIT_COMMAND: Resupplying");
+										logger.debug("Selected Action=["+UNIT_COMMANDS.UNDO+"] UNIT_COMMAND: Resupplying");
 										break;
 			
 			case UNIT_COMMANDS.JOIN: 	
 										autoMove(user);
-										logger.debug("UNIT_COMMAND: Joining");
+										logger.debug("Selected Action=["+UNIT_COMMANDS.UNDO+"] UNIT_COMMAND: Joining");
 										break;
 										
 			
 			case UNIT_COMMANDS.LOAD: 	
 										autoMove(user);
-										logger.debug("UNIT_COMMAND: Loading");
+										logger.debug("Selected Action=["+UNIT_COMMANDS.UNDO+"] UNIT_COMMAND: Loading");
 										break;
 			
 			case UNIT_COMMANDS.UNLOAD_1: 
 			    						unload = 1;
-			    						logger.debug("UNIT_COMMAND: Unloading 1");
+			    						logger.debug("Selected Action=["+UNIT_COMMANDS.UNDO+"] UNIT_COMMAND: Unloading 1");
 			    						break;
 			
 			case UNIT_COMMANDS.UNLOAD_2:
 										unload = 2;
-										logger.debug("UNIT_COMMAND: Unloading 2");
+										logger.debug("Selected Action=["+UNIT_COMMANDS.UNDO+"] UNIT_COMMAND: Unloading 2");
 										break;
 										
 			case UNIT_COMMANDS.LAUNCH_SILO:
 										silo = true;
-										logger.debug("UNIT_COMMAND: Launching Silo");
+										logger.debug("Selected Action=["+UNIT_COMMANDS.UNDO+"] UNIT_COMMAND: Launching Silo");
 										break;
 			
 			case UNIT_COMMANDS.EXPLODE:
 										explodeEffect(user);
-										logger.debug("UNIT_COMMAND: Exploding");
+										logger.debug("Selected Action=["+UNIT_COMMANDS.UNDO+"] UNIT_COMMAND: Exploding");
 										break;
 										
 			case UNIT_COMMANDS.REPAIR:
 										repair = true;
-										logger.debug("UNIT_COMMAND: Repairing");
+										logger.debug("Selected Action=["+UNIT_COMMANDS.UNDO+"] UNIT_COMMAND: Repairing");
 										break;
 			
 			case UNIT_COMMANDS.DIVE: 	
 										if(autoMove(user)){
 											diveEffect(user);
 										}
-										logger.debug("UNIT_COMMAND: Diving");
+										logger.debug("Selected Action=["+UNIT_COMMANDS.UNDO+"] UNIT_COMMAND: Diving");
 										break;
 										
 			case UNIT_COMMANDS.RISE:			
 										if(autoMove(user)){
 											riseEffect(user);
 										}
-										logger.debug("UNIT_COMMAND: rising");
+										logger.debug("Selected Action=["+UNIT_COMMANDS.UNDO+"] UNIT_COMMAND: rising");
 										break;
 										
 			case UNIT_COMMANDS.HIDE:	
 										if(autoMove(user)){
 											hideEffect(user);
 										}
-										logger.debug("UNIT_COMMAND: Hiding");
+										logger.debug("Selected Action=["+UNIT_COMMANDS.UNDO+"] UNIT_COMMAND: Hiding");
 										break;
 										
 			case UNIT_COMMANDS.APPEAR:	
 										if(autoMove(user)){
 											appearEffect(user); 
 										}
-										logger.debug("UNIT_COMMAND: Appearing");
+										logger.debug("Selected Action=["+UNIT_COMMANDS.UNDO+"] UNIT_COMMAND: Appearing");
 										break;
 										
 			case UNIT_COMMANDS.SPECIAL1:
 										special1 = true;
-										logger.debug("UNIT_COMMAND: Special 1");
+										logger.debug("Selected Action=["+UNIT_COMMANDS.UNDO+"] UNIT_COMMAND: Special 1");
 										break;
 										
 			case UNIT_COMMANDS.SPECIAL2:							
 										special2 = true;
-										logger.debug("UNIT_COMMAND: Special 2");
+										logger.debug("Selected Action=["+UNIT_COMMANDS.UNDO+"] UNIT_COMMAND: Special 2");
 										break;
 										
 			case UNIT_COMMANDS.LAUNCH:	
 							            takeoff = 1;
 							            launching = ((Transport)selected).getSlot1();
 							            launching.calcMoveTraverse();
-							            logger.debug("UNIT_COMMAND: Launching");
+							            logger.debug("Selected Action=["+UNIT_COMMANDS.UNDO+"] UNIT_COMMAND: Launching");
 							            break;
 			
 			case UNIT_COMMANDS.LAUNCH2:							
 										takeoff = 2;
 										launching = ((Transport)selected).getSlot2();
 										launching.calcMoveTraverse();
-										logger.debug("UNIT_COMMAND: Launching 2");
+										logger.debug("Selected Action=["+UNIT_COMMANDS.UNDO+"] UNIT_COMMAND: Launching 2");
 										break;
 										
 			case UNIT_COMMANDS.BUILD: 
@@ -3084,13 +3073,13 @@ public class BattleScreen extends CWScreen
 										currentMenu = BuildMenu.generateCarrierMenu(selected.getArmy().getFunds(),selected.getArmy().getCO(),b,this);
 										carbmenu = true;
 										cmenu = false;
-										logger.debug("UNIT_COMMAND: Building");
+										logger.debug("Selected Action=["+UNIT_COMMANDS.UNDO+"] UNIT_COMMAND: Building");
 										break;
 			default:							
 										if(autoMove(user)) {	
 											waitEffect(user);
 										}
-										logger.debug("UNIT_COMMAND: Move");
+										logger.debug("Selected Action=["+UNIT_COMMANDS.UNDO+"] UNIT_COMMAND: Move");
 										break;
 										
 		}
@@ -4186,7 +4175,7 @@ public class BattleScreen extends CWScreen
             }
             if(replayAction >= 0){
                 CWEvent tempev= new Action(replayAction,originalLocation.getCol(),originalLocation.getRow(),selected.getPath(),cursorYTilePos,cursorXTilePos,b.getDay(),b.getTurn());
-                logger.info("tempev="+tempev);
+                logger.info(""+tempev);
                 b.getReplay().push(tempev);
             }
         }
@@ -4717,7 +4706,6 @@ public class BattleScreen extends CWScreen
                 }else if(bmenu || carbmenu){
                     int mitem = currentMenu.getMenuItemAt(xCoOrdinates,yCoOrdinates,scale);
                     if(mitem != -1){
-                        logger.info(""+mitem);
                         if(mitem == -2)currentMenu.goUp();
                         else if(mitem == -3)currentMenu.goDown();
                         else{

@@ -87,73 +87,73 @@ public class ContextMenu extends InGameMenu {
        	String soundLocation = ResourceLoader.properties.getProperty("soundLocation");
         SFX.playClip(soundLocation + "/ok.wav");
         if(displayItems[item].equals("Wait")){
-            logger.info("Wait");
+            logger.info("Unit selected to wait");
             return 0;
         }else if(displayItems[item].equals("Fire")){
-            logger.info("Fire");
+            logger.info("Unit selected to Fire");
             return 1;
         }else if(displayItems[item].equals("Capture")){
-            logger.info("Capture");
+            logger.info("Unit selected to Capture");
             return 2;
         }else if(displayItems[item].equals("Resupply")){
-            logger.info("Resupply");
+            logger.info("Unit selected to Resupply");
             return 3;
         }else if(displayItems[item].equals("Unload")){
             if(item-1>=0){
                 if(displayItems[item-1].equals("Unload")){
-                    logger.info("Unload #2");
+                    logger.info("Unit selected to Unload #2");
                     return 7;
                 }
             }
             logger.info("Unload #1");
             return 6;
         }else if(displayItems[item].equals("Repair")){
-            logger.info("Repair");
+            logger.info("Unit selected to Repair");
             return 10;
         }else if(displayItems[item].equals("Launch")){
-            logger.info("Launch");
+            logger.info("Unit selected to Launch");
             return 8;
         }else if(displayItems[item].equals("Explode")){
-            logger.info("Explode");
+            logger.info("Unit selected to Explode");
             return 9;
         }else if(displayItems[item].equals("Join")){
-            logger.info("Join");
+            logger.info("Unit selected to Join");
             return 4;
         }else if(displayItems[item].equals("Load")){
-            logger.info("Load");
+            logger.info("Unit selected to Load");
             return 5;
         }else if(displayItems[item].equals("Dive")){
-            logger.info("Dive");
+            logger.info("Unit selected to Dive");
             return 11;
         }else if(displayItems[item].equals("Rise")){
-            logger.info("Rise");
+            logger.info("Unit selected to Rise");
             return 12;
         }else if(displayItems[item].equals("Hide")){
-            logger.info("Hide");
+            logger.info("Unit selected to Hide");
             return 13;
         }else if(displayItems[item].equals("Appear")){
-            logger.info("Appear");
+            logger.info("Unit selected to Appear");
             return 14;
         }else if(displayItems[item].equals(u.getArmy().getCO().special1)){
             logger.info(u.getArmy().getCO().special1);
             return 22;
         }else if(displayItems[item].equals(u.getArmy().getCO().special2)){
-            logger.info(""+displayItems[item].equals(u.getArmy().getCO().special2));
+            logger.info("Unit selected to "+displayItems[item].equals(u.getArmy().getCO().special2));
             return 23;
         }else if(displayItems[item].equals("Takeoff")){
             if(item-1>=0){
                 if(displayItems[item-1].equals("Takeoff")){
-                    logger.info("Takeoff #2");
+                    logger.info("Unit selected to Takeoff #2");
                     return UNIT_COMMANDS.LAUNCH2;
                 }
             }
             logger.info("Takeoff #1");
             return UNIT_COMMANDS.LAUNCH;
         }else if(displayItems[item].equals("Build")){
-            logger.info("Build");
+            logger.info("Unit selected to Build");
             return UNIT_COMMANDS.BUILD;
         }else if(displayItems[item].equals("No.")){
-            logger.info("Invalid move");
+            logger.info("Unit selected Invalid move");
         }else{
             System.err.println("ERROR, INVALID CONTEXT MENU ITEM");
         }

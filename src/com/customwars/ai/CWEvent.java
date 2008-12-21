@@ -35,6 +35,6 @@ public class CWEvent implements Serializable{
     }
     
     public String toString(){
-        return "Type: " + type + " Day: " + day + " Turn: " + turn;
+        return "Event Type=[" + type + "] on Day=[" + day + "] Turn=[" + turn +"]";
     }
 }
