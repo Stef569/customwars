@@ -322,7 +322,7 @@ public class MapEditor extends CWScreen
 		{
 			Unit thisUnit = map.find(new Location(x,y)).getUnit();
 
-			CWArtist.drawUnitAtXY(g, this, thisUnit.getUType(), thisUnit.getArmy().getColor(), x*16-sx, y*16-sy);
+			CWArtist.drawUnitAtXY(g, this, thisUnit.getUType(), thisUnit.getArmy().getColor(), x*16-cursorXPixelPos, y*16-cursorYPixelPos);
 		}
 	}
     
@@ -341,20 +341,20 @@ public class MapEditor extends CWScreen
     	
         //g.setColor(Color.red);
         //g.drawRect(cx*16-sx,cy*16-sy,16,16);
-        g.drawImage(MiscGraphics.getCursor(), cursorXpos*16-sx-7, cursorYpos*16-sy-7,this);
+        g.drawImage(MiscGraphics.getCursor(), cursorYTilePos*16-cursorXPixelPos-7, cursorXTilePos*16-cursorYPixelPos-7,this);
         
         if(constantMode)
         {
-        	g.drawImage(MiscGraphics.getBigStar(5), cursorXpos*16-sx-7, cursorYpos*16-sy-7, this);
-        	g.drawImage(MiscGraphics.getBigStar(5), cursorXpos*16-sx-7, cursorYpos*16-sy+11, this);
-        	g.drawImage(MiscGraphics.getBigStar(5), cursorXpos*16-sx+12, cursorYpos*16-sy-7, this);
+        	g.drawImage(MiscGraphics.getBigStar(5), cursorYTilePos*16-cursorXPixelPos-7, cursorXTilePos*16-cursorYPixelPos-7, this);
+        	g.drawImage(MiscGraphics.getBigStar(5), cursorYTilePos*16-cursorXPixelPos-7, cursorXTilePos*16-cursorYPixelPos+11, this);
+        	g.drawImage(MiscGraphics.getBigStar(5), cursorYTilePos*16-cursorXPixelPos+12, cursorXTilePos*16-cursorYPixelPos-7, this);
         }
     }
 
 	private void drawCursorUnit(Graphics2D g)
 	{
     	g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f));
-		g.drawImage(UnitGraphics.getUnitImage(unitType, selectedArmy.getID()),cursorXpos*16-sx,cursorYpos*16-sy,cursorXpos*16-sx+16,cursorYpos*16-sy+16,0,UnitGraphics.findYPosition(unitType, selectedArmy.getID()),16,UnitGraphics.findYPosition(unitType, selectedArmy.getID())+16,this);
+		g.drawImage(UnitGraphics.getUnitImage(unitType, selectedArmy.getID()),cursorYTilePos*16-cursorXPixelPos,cursorXTilePos*16-cursorYPixelPos,cursorYTilePos*16-cursorXPixelPos+16,cursorXTilePos*16-cursorYPixelPos+16,0,UnitGraphics.findYPosition(unitType, selectedArmy.getID()),16,UnitGraphics.findYPosition(unitType, selectedArmy.getID())+16,this);
         g.setComposite(AlphaComposite.SrcOver);
 	}
 	
@@ -381,7 +381,7 @@ public class MapEditor extends CWScreen
 		    temp = TerrainGraphics.getSpriteSheet();
 		}
 		
-		g.drawImage(temp, cursorXpos*16-sx, cursorYpos*16-sy-16, (cursorXpos+1)*16-sx, cursorYpos*16-sy+16, spriteX1, 0, spriteX2, 32, this);
+		g.drawImage(temp, cursorYTilePos*16-cursorXPixelPos, cursorXTilePos*16-cursorYPixelPos-16, (cursorYTilePos+1)*16-cursorXPixelPos, cursorXTilePos*16-cursorYPixelPos+16, spriteX1, 0, spriteX2, 32, this);
 		
         g.setComposite(AlphaComposite.SrcOver);
 	}
@@ -563,16 +563,16 @@ public class MapEditor extends CWScreen
         //finalize copy
         selectedArmy = null;
         selected = null;
-        cursorXpos = 0;
-        cursorYpos = 0;
-        sx = 0;
-        sy = 0;
+        cursorYTilePos = 0;
+        cursorXTilePos = 0;
+        cursorXPixelPos = 0;
+        cursorYPixelPos = 0;
         //center small maps
         if(map.getMaxCol() < 30){
-            sx = -((30 - map.getMaxCol())/2)*16;
+            cursorXPixelPos = -((30 - map.getMaxCol())/2)*16;
         }
         if(map.getMaxRow() < 20){
-            sy = -((20 - map.getMaxRow())/2)*16;
+            cursorYPixelPos = -((20 - map.getMaxRow())/2)*16;
         }
         item = 0;
         unitType = 0;
@@ -613,16 +613,16 @@ public class MapEditor extends CWScreen
         //finalize copy
         selectedArmy = null;
         selected = null;
-        cursorXpos = 0;
-        cursorYpos = 0;
-        sx = 0;
-        sy = 0;
+        cursorYTilePos = 0;
+        cursorXTilePos = 0;
+        cursorXPixelPos = 0;
+        cursorYPixelPos = 0;
         //center small maps
         if(map.getMaxCol() < 30){
-            sx = -((30 - map.getMaxCol())/2)*16;
+            cursorXPixelPos = -((30 - map.getMaxCol())/2)*16;
         }
         if(map.getMaxRow() < 20){
-            sy = -((20 - map.getMaxRow())/2)*16;
+            cursorYPixelPos = -((20 - map.getMaxRow())/2)*16;
         }
         item = 0;
         unitType = 0;
@@ -683,7 +683,7 @@ public class MapEditor extends CWScreen
                 }
             }
         }
-        map.find(new Location(cursorXpos,cursorYpos)).setTerrain(selectedTerrain);
+        map.find(new Location(cursorYTilePos,cursorXTilePos)).setTerrain(selectedTerrain);
         selectTerrain(selectedTerrain.getIndex());
         map.initStyle();
     }
@@ -1392,7 +1392,7 @@ public class MapEditor extends CWScreen
         }
         else if(unit)
         {
-            placeUnit(map,map.find(new Location(cursorXpos,cursorYpos)),unitType);
+            placeUnit(map,map.find(new Location(cursorYTilePos,cursorXTilePos)),unitType);
         }
     }
 
@@ -1497,16 +1497,16 @@ public class MapEditor extends CWScreen
 		            selectedArmy = null;
 		            selectedTerrain = new Plain();
 		            selected = null;
-		            cursorXpos = 0;
-		            cursorYpos = 0;
-		            sx = 0;
-		            sy = 0;
+		            cursorYTilePos = 0;
+		            cursorXTilePos = 0;
+		            cursorXPixelPos = 0;
+		            cursorYPixelPos = 0;
 		            //center small maps
 		            if(map.getMaxCol() < 30){
-		                sx = -((30 - map.getMaxCol())/2)*16;
+		                cursorXPixelPos = -((30 - map.getMaxCol())/2)*16;
 		            }
 		            if(map.getMaxRow() < 20){
-		                sy = -((20 - map.getMaxRow())/2)*16;
+		                cursorYPixelPos = -((20 - map.getMaxRow())/2)*16;
 		            }
 		            item = 0;
 		            unitType = 0;
@@ -1530,16 +1530,16 @@ public class MapEditor extends CWScreen
 		    selectedArmy = null;
 		    selectedTerrain = new Plain();
 		    selected = null;
-		    cursorXpos = 0;
-		    cursorYpos = 0;
-		    sx = 0;
-		    sy = 0;
+		    cursorYTilePos = 0;
+		    cursorXTilePos = 0;
+		    cursorXPixelPos = 0;
+		    cursorYPixelPos = 0;
 //center small maps
 		    if(map.getMaxCol() < 30){
-		        sx = -((30 - map.getMaxCol())/2)*16;
+		        cursorXPixelPos = -((30 - map.getMaxCol())/2)*16;
 		    }
 		    if(map.getMaxRow() < 20){
-		        sy = -((20 - map.getMaxRow())/2)*16;
+		        cursorYPixelPos = -((20 - map.getMaxRow())/2)*16;
 		    }
 		    item = 0;
 		    unitType = 0;
@@ -1569,16 +1569,16 @@ public class MapEditor extends CWScreen
 		    selectedArmy = null;
 		    selectedTerrain = new Plain();
 		    selected = null;
-		    cursorXpos = 0;
-		    cursorYpos = 0;
-		    sx = 0;
-		    sy = 0;
+		    cursorYTilePos = 0;
+		    cursorXTilePos = 0;
+		    cursorXPixelPos = 0;
+		    cursorYPixelPos = 0;
 		    //center small maps
 		    if(map.getMaxCol() < 30){
-		        sx = -((30 - map.getMaxCol())/2)*16;
+		        cursorXPixelPos = -((30 - map.getMaxCol())/2)*16;
 		    }
 		    if(map.getMaxRow() < 20){
-		        sy = -((20 - map.getMaxRow())/2)*16;
+		        cursorYPixelPos = -((20 - map.getMaxRow())/2)*16;
 		    }
 		    item = 0;
 		    unitType = 0;
@@ -1621,13 +1621,13 @@ public class MapEditor extends CWScreen
             smenu = false;
             currentMenu = null;
         }else{
-            if(map.find(new Location(cursorXpos,cursorYpos)).getTerrain() instanceof Property){
-                if(((Property)map.find(new Location(cursorXpos,cursorYpos)).getTerrain()).getOwner()!=null)
-                    selectedArmy = b.getArmy(((Property)map.find(new Location(cursorXpos,cursorYpos)).getTerrain()).getOwner().getID());
+            if(map.find(new Location(cursorYTilePos,cursorXTilePos)).getTerrain() instanceof Property){
+                if(((Property)map.find(new Location(cursorYTilePos,cursorXTilePos)).getTerrain()).getOwner()!=null)
+                    selectedArmy = b.getArmy(((Property)map.find(new Location(cursorYTilePos,cursorXTilePos)).getTerrain()).getOwner().getID());
                 else
                     selectedArmy = null;
             }
-            selectTerrain(map.find(new Location(cursorXpos,cursorYpos)).getTerrain().getIndex());
+            selectTerrain(map.find(new Location(cursorYTilePos,cursorXTilePos)).getTerrain().getIndex());
             terrain = true;
             unit = false;
         }
@@ -1829,7 +1829,7 @@ public class MapEditor extends CWScreen
 
 		private void deleteActions() 
 		{
-			Unit temp = map.find(new Location(cursorXpos,cursorYpos)).getUnit();
+			Unit temp = map.find(new Location(cursorYTilePos,cursorXTilePos)).getUnit();
 			if(temp != null){
 			    map.remove(temp);
 			    temp.getArmy().removeUnit(temp);
@@ -1874,9 +1874,9 @@ public class MapEditor extends CWScreen
 			        currentMenu = new TerrainMenu(selectedArmy.getColor()+1,parentScreen);
 			    else
 			        currentMenu = new TerrainMenu(0,parentScreen);
-			}else if(map.onMap(cursorXpos+1,cursorYpos)){
-			    cursorXpos++;
-			    if(cursorXpos >= sx/16+MAX_TILEW-2 && cursorXpos < map.getMaxCol()-2)sx += 16;
+			}else if(map.onMap(cursorYTilePos+1,cursorXTilePos)){
+			    cursorYTilePos++;
+			    if(cursorYTilePos >= cursorXPixelPos/16+MAX_TILEW-2 && cursorYTilePos < map.getMaxCol()-2)cursorXPixelPos += 16;
 			}
 			if(constantMode == true){
 			    constantModeAction();
@@ -1912,9 +1912,9 @@ public class MapEditor extends CWScreen
 			        currentMenu = new UnitMenu(selectedArmy.getColor(),parentScreen);
 			    else
 			        currentMenu = new UnitMenu(0,parentScreen);
-			}else if(map.onMap(cursorXpos-1,cursorYpos)){
-			    cursorXpos--;
-			    if(cursorXpos < sx/16+2 && sx > 0)sx -= 16;
+			}else if(map.onMap(cursorYTilePos-1,cursorXTilePos)){
+			    cursorYTilePos--;
+			    if(cursorYTilePos < cursorXPixelPos/16+2 && cursorXPixelPos > 0)cursorXPixelPos -= 16;
 			}
 			if(constantMode == true){
 			    constantModeAction();
@@ -1925,9 +1925,9 @@ public class MapEditor extends CWScreen
 			setInfoBoxXYs();
 			if(menu || tmenu || umenu || smenu){
 			    currentMenu.goDown();
-			}else if(map.onMap(cursorXpos,cursorYpos+1)){
-			    cursorYpos++;
-			    if(cursorYpos >= sy/16+MAX_TILEH-2 && cursorYpos < map.getMaxRow()-2)sy += 16;
+			}else if(map.onMap(cursorYTilePos,cursorXTilePos+1)){
+			    cursorXTilePos++;
+			    if(cursorXTilePos >= cursorYPixelPos/16+MAX_TILEH-2 && cursorXTilePos < map.getMaxRow()-2)cursorYPixelPos += 16;
 			}
 			if(constantMode == true){
 			    constantModeAction();
@@ -1938,9 +1938,9 @@ public class MapEditor extends CWScreen
 			setInfoBoxXYs();
 			if(menu || tmenu || umenu || smenu){
 			    currentMenu.goUp();
-			}else if(map.onMap(cursorXpos,cursorYpos-1)){
-			    cursorYpos--;
-			    if(cursorYpos < sy/16+2 && sy > 0)sy -= 16;
+			}else if(map.onMap(cursorYTilePos,cursorXTilePos-1)){
+			    cursorXTilePos--;
+			    if(cursorXTilePos < cursorYPixelPos/16+2 && cursorYPixelPos > 0)cursorYPixelPos -= 16;
 			}
 			if(constantMode == true)
 			{
@@ -1952,7 +1952,7 @@ public class MapEditor extends CWScreen
 		{
 			if(unit && selectedArmy != null)
 			{
-                placeUnit(map,map.find(new Location(cursorXpos,cursorYpos)),unitType);
+                placeUnit(map,map.find(new Location(cursorYTilePos,cursorXTilePos)),unitType);
 			}
 			if(terrain)
 			{
@@ -1996,34 +1996,34 @@ public class MapEditor extends CWScreen
                 if(!menu && !umenu && !tmenu && !smenu){
                     if(x < 32*scale){
                         if(map.getMaxCol() > DEF_TILEW){
-                            sx -= 16;
-                            if(sx < 0)sx=0;
+                            cursorXPixelPos -= 16;
+                            if(cursorXPixelPos < 0)cursorXPixelPos=0;
                         }
                     }else if(x > MAX_TILEW*16*scale-32*scale){
                         if(map.getMaxCol() > DEF_TILEW){
-                            sx += 16;
-                            if(sx > (map.getMaxCol()-MAX_TILEW)*16)sx-=16;
+                            cursorXPixelPos += 16;
+                            if(cursorXPixelPos > (map.getMaxCol()-MAX_TILEW)*16)cursorXPixelPos-=16;
                         }
                     }
                     
                     if(y < 32*scale){
                         if(map.getMaxRow() > DEF_TILEH){
-                            sy -= 16;
-                            if(sy < 0)sy=0;
+                            cursorYPixelPos -= 16;
+                            if(cursorYPixelPos < 0)cursorYPixelPos=0;
                         }
                     }else if(y > MAX_TILEH*16*scale-32*scale){
                         if(map.getMaxRow() > DEF_TILEH){
-                            sy += 16;
-                            if(sy > (map.getMaxRow()-MAX_TILEH)*16)sy-=16;
+                            cursorYPixelPos += 16;
+                            if(cursorYPixelPos > (map.getMaxRow()-MAX_TILEH)*16)cursorYPixelPos-=16;
                         }
                     }
                     
-                    cursorXpos = sx/16 + x/(16*scale);
-                    if(cursorXpos < 0)cursorXpos=0;
-                    else if(cursorXpos >= map.getMaxCol())cursorXpos=map.getMaxCol()-1;
-                    cursorYpos = sy/16 + y/(16*scale);
-                    if(cursorYpos < 0)cursorYpos=0;
-                    else if(cursorYpos >= map.getMaxRow())cursorYpos=map.getMaxRow()-1;
+                    cursorYTilePos = cursorXPixelPos/16 + x/(16*scale);
+                    if(cursorYTilePos < 0)cursorYTilePos=0;
+                    else if(cursorYTilePos >= map.getMaxCol())cursorYTilePos=map.getMaxCol()-1;
+                    cursorXTilePos = cursorYPixelPos/16 + y/(16*scale);
+                    if(cursorXTilePos < 0)cursorXTilePos=0;
+                    else if(cursorXTilePos >= map.getMaxRow())cursorXTilePos=map.getMaxRow()-1;
                     pressedB();
                 }
             }
@@ -2042,34 +2042,34 @@ public class MapEditor extends CWScreen
                 if(!menu && !umenu && !tmenu && !smenu){
                     if(x < 32*scale){
                         if(map.getMaxCol() > DEF_TILEW){
-                            sx -= 16;
-                            if(sx < 0)sx=0;
+                            cursorXPixelPos -= 16;
+                            if(cursorXPixelPos < 0)cursorXPixelPos=0;
                         }
                     }else if(x > MAX_TILEW*16*scale-32*scale){
                         if(map.getMaxCol() > DEF_TILEW){
-                            sx += 16;
-                            if(sx > (map.getMaxCol()-MAX_TILEW)*16)sx-=16;
+                            cursorXPixelPos += 16;
+                            if(cursorXPixelPos > (map.getMaxCol()-MAX_TILEW)*16)cursorXPixelPos-=16;
                         }
                     }
                     
                     if(y < 32*scale){
                         if(map.getMaxRow() > DEF_TILEH){
-                            sy -= 16;
-                            if(sy < 0)sy=0;
+                            cursorYPixelPos -= 16;
+                            if(cursorYPixelPos < 0)cursorYPixelPos=0;
                         }
                     }else if(y > MAX_TILEH*16*scale-32*scale){
                         if(map.getMaxRow() > DEF_TILEH){
-                            sy += 16;
-                            if(sy > (map.getMaxRow()-MAX_TILEH)*16)sy-=16;
+                            cursorYPixelPos += 16;
+                            if(cursorYPixelPos > (map.getMaxRow()-MAX_TILEH)*16)cursorYPixelPos-=16;
                         }
                     }
                     
-                    cursorXpos = sx/16 + x/(16*scale);
-                    if(cursorXpos < 0)cursorXpos=0;
-                    else if(cursorXpos >= map.getMaxCol())cursorXpos=map.getMaxCol()-1;
-                    cursorYpos = sy/16 + y/(16*scale);
-                    if(cursorYpos < 0)cursorYpos=0;
-                    else if(cursorYpos >= map.getMaxRow())cursorYpos=map.getMaxRow()-1;
+                    cursorYTilePos = cursorXPixelPos/16 + x/(16*scale);
+                    if(cursorYTilePos < 0)cursorYTilePos=0;
+                    else if(cursorYTilePos >= map.getMaxCol())cursorYTilePos=map.getMaxCol()-1;
+                    cursorXTilePos = cursorYPixelPos/16 + y/(16*scale);
+                    if(cursorXTilePos < 0)cursorXTilePos=0;
+                    else if(cursorXTilePos >= map.getMaxRow())cursorXTilePos=map.getMaxRow()-1;
                     pressedA();
                 }
             }
@@ -2084,36 +2084,36 @@ public class MapEditor extends CWScreen
                 if(noScroll == 0){
                     if(x < 32*scale){
                         if(map.getMaxCol() > DEF_TILEW){
-                            sx -= 16;
-                            if(sx < 0)sx=0;
+                            cursorXPixelPos -= 16;
+                            if(cursorXPixelPos < 0)cursorXPixelPos=0;
                         }
                     }else if(x > MAX_TILEW*16*scale-32*scale){
                         if(map.getMaxCol() > DEF_TILEW){
-                            sx += 16;
-                            if(sx > (map.getMaxCol()-MAX_TILEW)*16)sx-=16;
+                            cursorXPixelPos += 16;
+                            if(cursorXPixelPos > (map.getMaxCol()-MAX_TILEW)*16)cursorXPixelPos-=16;
                         }
                     }
                     
                     if(y < 32*scale){
                         if(map.getMaxRow() > DEF_TILEH){
-                            sy -= 16;
-                            if(sy < 0)sy=0;
+                            cursorYPixelPos -= 16;
+                            if(cursorYPixelPos < 0)cursorYPixelPos=0;
                         }
                     }else if(y > MAX_TILEH*16*scale-32*scale){
                         if(map.getMaxRow() > DEF_TILEH){
-                            sy += 16;
-                            if(sy > (map.getMaxRow()-MAX_TILEH)*16)sy-=16;
+                            cursorYPixelPos += 16;
+                            if(cursorYPixelPos > (map.getMaxRow()-MAX_TILEH)*16)cursorYPixelPos-=16;
                         }
                     }
                     noScroll = 3;
                 }else noScroll--;
                 
-                cursorXpos = sx/16 + x/(16*scale);
-                if(cursorXpos < 0)cursorXpos=0;
-                else if(cursorXpos >= map.getMaxCol())cursorXpos=map.getMaxCol()-1;
-                cursorYpos = sy/16 + y/(16*scale);
-                if(cursorYpos < 0)cursorYpos=0;
-                else if(cursorYpos >= map.getMaxRow())cursorYpos=map.getMaxRow()-1;
+                cursorYTilePos = cursorXPixelPos/16 + x/(16*scale);
+                if(cursorYTilePos < 0)cursorYTilePos=0;
+                else if(cursorYTilePos >= map.getMaxCol())cursorYTilePos=map.getMaxCol()-1;
+                cursorXTilePos = cursorYPixelPos/16 + y/(16*scale);
+                if(cursorXTilePos < 0)cursorXTilePos=0;
+                else if(cursorXTilePos >= map.getMaxRow())cursorXTilePos=map.getMaxRow()-1;
                 pressedA();
             }
         }
@@ -2128,36 +2128,36 @@ public class MapEditor extends CWScreen
                 if(noScroll == 0){
                     if(x < 32*scale){
                         if(map.getMaxCol() > DEF_TILEW){
-                            sx -= 16;
-                            if(sx < 0)sx=0;
+                            cursorXPixelPos -= 16;
+                            if(cursorXPixelPos < 0)cursorXPixelPos=0;
                         }
                     }else if(x > MAX_TILEW*16*scale-32*scale){
                         if(map.getMaxCol() > DEF_TILEW){
-                            sx += 16;
-                            if(sx > (map.getMaxCol()-MAX_TILEW)*16)sx-=16;
+                            cursorXPixelPos += 16;
+                            if(cursorXPixelPos > (map.getMaxCol()-MAX_TILEW)*16)cursorXPixelPos-=16;
                         }
                     }
                     
                     if(y < 32*scale){
                         if(map.getMaxRow() > DEF_TILEH){
-                            sy -= 16;
-                            if(sy < 0)sy=0;
+                            cursorYPixelPos -= 16;
+                            if(cursorYPixelPos < 0)cursorYPixelPos=0;
                         }
                     }else if(y > MAX_TILEH*16*scale-32*scale){
                         if(map.getMaxRow() > DEF_TILEH){
-                            sy += 16;
-                            if(sy > (map.getMaxRow()-MAX_TILEH)*16)sy-=16;
+                            cursorYPixelPos += 16;
+                            if(cursorYPixelPos > (map.getMaxRow()-MAX_TILEH)*16)cursorYPixelPos-=16;
                         }
                     }
                     noScroll = 3;
                 }else noScroll--;
                 
-                cursorXpos = sx/16 + x/(16*scale);
-                if(cursorXpos < 0)cursorXpos=0;
-                else if(cursorXpos >= map.getMaxCol())cursorXpos=map.getMaxCol()-1;
-                cursorYpos = sy/16 + y/(16*scale);
-                if(cursorYpos < 0)cursorYpos=0;
-                else if(cursorYpos >= map.getMaxRow())cursorYpos=map.getMaxRow()-1;
+                cursorYTilePos = cursorXPixelPos/16 + x/(16*scale);
+                if(cursorYTilePos < 0)cursorYTilePos=0;
+                else if(cursorYTilePos >= map.getMaxCol())cursorYTilePos=map.getMaxCol()-1;
+                cursorXTilePos = cursorYPixelPos/16 + y/(16*scale);
+                if(cursorXTilePos < 0)cursorXTilePos=0;
+                else if(cursorXTilePos >= map.getMaxRow())cursorXTilePos=map.getMaxRow()-1;
             }
         }
     }

@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import com.customwars.ai.Battle;
 import com.customwars.ai.CWEvent;
 import com.customwars.ai.Options;
+import com.customwars.officer.CO;
 import com.customwars.officer.COList;
 import com.customwars.sfx.SFX;
 import com.customwars.state.ResourceLoader;
@@ -267,35 +268,54 @@ public class BattleMenu extends InGameMenu{
     }
     
     public static BattleMenu generateContext(Battle battle, ImageObserver screen){
-        boolean COP = false, SCOP = false, tag = false, swap = false, end = false;
-        if(battle.getArmy(battle.getTurn()).getCO().canCOP() && !battle.getArmy(battle.getTurn()).getCO().isCOP() && !battle.getArmy(battle.getTurn()).getCO().isSCOP() && battle.getArmy(battle.getTurn()).getCO().getCOPStars() != -1)
+        
+    	boolean COP = false, SCOP = false, tag = false, swap = false, end = false;
+        
+    	boolean canSwap = battle.getArmy(battle.getTurn()).canTag();
+        boolean canCOP = battle.getArmy(battle.getTurn()).getCO().canCOP();
+        boolean canSCOP = battle.getArmy(battle.getTurn()).getCO().canSCOP();
+		boolean isNotCOP = !battle.getArmy(battle.getTurn()).getCO().isCOP();
+		boolean isNotSCOP = !battle.getArmy(battle.getTurn()).getCO().isSCOP();
+		boolean hasMoreThanMinusCOPStars = battle.getArmy(battle.getTurn()).getCO().getCOPStars() != -1;
+		CO altCO = battle.getArmy(battle.getTurn()).getAltCO();
+		int isTagging = battle.getArmy(battle.getTurn()).getTag();
+		boolean canTagSwap = battle.getArmy(battle.getTurn()).canTagSwap();
+		
+		if(canCOP && isNotCOP && isNotSCOP && hasMoreThanMinusCOPStars){
             COP = true;
-        if(battle.getArmy(battle.getTurn()).getTag() > 0 ){
-            if(battle.getArmy(battle.getTurn()).canTagSwap())
+		}
+		
+		if(isTagging > 0 ){
+			if(canTagSwap){
                 swap = true;
-            else
+            }else{
                 end = true;
-        }else if(battle.getArmy(battle.getTurn()).canTag()){
-            swap = true;
-            //COP = true;
-            SCOP = true;
-            tag = true;
-            end = true;
-        }else if(battle.getArmy(battle.getTurn()).getCO().canSCOP()){
-            if(battle.getArmy(battle.getTurn()).getAltCO()!= null)swap = true;
-            //COP = true;
-            SCOP = true;
-            end = true;
-        }else if(battle.getArmy(battle.getTurn()).getCO().canCOP() && !battle.getArmy(battle.getTurn()).getCO().isCOP() &&!battle.getArmy(battle.getTurn()).getCO().isSCOP()){
-            if(battle.getArmy(battle.getTurn()).getAltCO()!= null)swap = true;
-            //COP = true;
-            end = true;
-        }else if(battle.getArmy(battle.getTurn()).getAltCO()!= null && !battle.getArmy(battle.getTurn()).getCO().isCOP()&&!battle.getArmy(battle.getTurn()).getCO().isSCOP()){
-            swap = true;
-            end = true;
-        }else{
-            end = true;
-        }
+            }
+        } else {
+			if(canSwap){
+			    swap = true;
+			    //COP = true;
+			    SCOP = true;
+			    tag = true;
+			    end = true;
+			} else {
+				if(canSCOP){
+				    if(altCO!= null)swap = true;
+				    //COP = true;
+				    SCOP = true;
+				    end = true;
+				}else if(canCOP && isNotCOP &&isNotSCOP){
+				    if(altCO!= null)swap = true;
+				    //COP = true;
+				    end = true;
+				}else if(altCO!= null && isNotCOP&&isNotSCOP){
+				    swap = true;
+				    end = true;
+				}else{
+				    end = true;
+				}
+			}
+		}
         
         return new BattleMenu(battle,COP,SCOP,tag,swap,end,screen);
     }

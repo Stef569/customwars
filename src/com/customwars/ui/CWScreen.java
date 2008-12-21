@@ -33,10 +33,10 @@ public abstract class CWScreen extends JComponent implements ComponentListener
 	protected Battle b;
 	protected Map map;
 	protected Unit selected;      //holds the currently selected unit
-	protected int cursorXpos;             //holds the cursor's x position on the map (in map tiles)
-	protected int cursorYpos;             //holds the cursor's y position on the map (in map tiles)
-	protected int sx;             //holds the battle screen's x position over the map (in pixels)
-	protected int sy;             //holds the battle screen's y position over the map (in pixels)
+	protected int cursorYTilePos;             //holds the cursor's x position on the map (in map tiles)
+	protected int cursorXTilePos;             //holds the cursor's y position on the map (in map tiles)
+	protected int cursorXPixelPos;             //holds the battle screen's x position over the map (in pixels)
+	protected int cursorYPixelPos;             //holds the battle screen's y position over the map (in pixels)
 
 	//protected BSKeyControl keycontroller;   //the KeyControl, used to remove the component
 	//protected BSMouseControl mousecontroller;//the MouseControl, used to remove the component
@@ -62,20 +62,20 @@ public abstract class CWScreen extends JComponent implements ComponentListener
         this.b = b;
         this.map = b.getMap();
         selected = null;
-        cursorXpos = 0;
-        cursorYpos = 0;
-        sx = 0;
-        sy = 0;
+        cursorYTilePos = 0;
+        cursorXTilePos = 0;
+        cursorXPixelPos = 0;
+        cursorYPixelPos = 0;
         
         //center small maps
         if(map.getMaxCol() < 30)
         {
-            sx = -((30 - map.getMaxCol())/2)*16;
+            cursorXPixelPos = -((30 - map.getMaxCol())/2)*16;
         }
         
         if(map.getMaxRow() < 20)
         {
-            sy = -((20 - map.getMaxRow())/2)*16;
+            cursorYPixelPos = -((20 - map.getMaxRow())/2)*16;
         }
 
         scale = 1;
@@ -136,9 +136,9 @@ public abstract class CWScreen extends JComponent implements ComponentListener
     //Draws the map and the units
     public  void drawMap(Graphics2D g)
     {
-        for(int x = sx / 16; x < map.getMaxCol(); x++)
+        for(int x = cursorXPixelPos / 16; x < map.getMaxCol(); x++)
         {
-            for(int y = sy / 16; y < map.getMaxRow(); y++)
+            for(int y = cursorYPixelPos / 16; y < map.getMaxRow(); y++)
             {
                 drawTerrainOnMap(g, x, y);
                 drawUnitOnMap(g, x, y);
@@ -149,7 +149,7 @@ public abstract class CWScreen extends JComponent implements ComponentListener
 	public final void drawTerrainOnMap(Graphics2D g, int x, int y) 
 	{
 		Tile currTile = map.find(new Location(x,y));
-		CWArtist.drawTerrainAtXY(g, this, currTile, x*16-sx, y*16-sy);
+		CWArtist.drawTerrainAtXY(g, this, currTile, x*16-cursorXPixelPos, y*16-cursorYPixelPos);
 	}
 
 	public void drawUnitOnMap(Graphics2D g, int x, int y) 
@@ -166,35 +166,35 @@ public abstract class CWScreen extends JComponent implements ComponentListener
 		        {
 		            case 0: //north
 		                
-		                g.drawImage(UnitGraphics.getNorthImage(thisUnit),x*16-sx-4,y*16-sy-6, x*16-sx+16-4+8,y*16-sy+16+8-6,  0,UnitGraphics.findYPosition(thisUnit)/16*24,24,UnitGraphics.findYPosition(thisUnit)/16*24+24,this);
+		                g.drawImage(UnitGraphics.getNorthImage(thisUnit),x*16-cursorXPixelPos-4,y*16-cursorYPixelPos-6, x*16-cursorXPixelPos+16-4+8,y*16-cursorYPixelPos+16+8-6,  0,UnitGraphics.findYPosition(thisUnit)/16*24,24,UnitGraphics.findYPosition(thisUnit)/16*24+24,this);
 		                
 		                break;
 		            case 1: //east
-		                g.drawImage(UnitGraphics.getEastImage(thisUnit),x*16-sx-4,y*16-sy-2,x*16-sx+16+8-4,y*16-sy+16-2+8,0,UnitGraphics.findYPosition(thisUnit)/16*24,24,UnitGraphics.findYPosition(thisUnit)/16*24+24,this);
+		                g.drawImage(UnitGraphics.getEastImage(thisUnit),x*16-cursorXPixelPos-4,y*16-cursorYPixelPos-2,x*16-cursorXPixelPos+16+8-4,y*16-cursorYPixelPos+16-2+8,0,UnitGraphics.findYPosition(thisUnit)/16*24,24,UnitGraphics.findYPosition(thisUnit)/16*24+24,this);
 		                
 		                break;
 		            case 2: //south
-		                g.drawImage(UnitGraphics.getSouthImage(thisUnit),x*16-sx-4, y*16-sy-6,  x*16-sx+16+8-4,  y*16-sy+16+8-6,  0,UnitGraphics.findYPosition(thisUnit)/16*24,24,UnitGraphics.findYPosition(thisUnit)/16*24+24,this);
+		                g.drawImage(UnitGraphics.getSouthImage(thisUnit),x*16-cursorXPixelPos-4, y*16-cursorYPixelPos-6,  x*16-cursorXPixelPos+16+8-4,  y*16-cursorYPixelPos+16+8-6,  0,UnitGraphics.findYPosition(thisUnit)/16*24,24,UnitGraphics.findYPosition(thisUnit)/16*24+24,this);
 		                
 		                break;
 		            case 3: //west
-		                g.drawImage(UnitGraphics.getWestImage(thisUnit),x*16-sx-4,y*16-sy-2,x*16-sx+16+8-4,y*16-sy+16-2+8,0,UnitGraphics.findYPosition(thisUnit)/16*24,24,UnitGraphics.findYPosition(thisUnit)/16*24+24,this);
+		                g.drawImage(UnitGraphics.getWestImage(thisUnit),x*16-cursorXPixelPos-4,y*16-cursorYPixelPos-2,x*16-cursorXPixelPos+16+8-4,y*16-cursorYPixelPos+16-2+8,0,UnitGraphics.findYPosition(thisUnit)/16*24,24,UnitGraphics.findYPosition(thisUnit)/16*24+24,this);
 		                
 		                break;
 		        }
 		    }
 		    else 
 		    {
-		    	CWArtist.drawUnitAtXY(g, this, thisUnit.getUType(), thisUnit.getArmy().getColor(), x*16-sx, y*16-sy);
+		    	CWArtist.drawUnitAtXY(g, this, thisUnit.getUType(), thisUnit.getArmy().getColor(), x*16-cursorXPixelPos, y*16-cursorYPixelPos);
 		    }
 		    
-		    CWArtist.drawUnitStatus(g, this, thisUnit, x*16-sx,y*16-sy);
+		    CWArtist.drawUnitStatus(g, this, thisUnit, x*16-cursorXPixelPos,y*16-cursorYPixelPos);
 		}
 	}
     
     public final void drawInfoBox(Graphics2D g) 
     {
-        Tile currTile = map.find(new Location(cursorXpos,cursorYpos));
+        Tile currTile = map.find(new Location(cursorYTilePos,cursorXTilePos));
         
         drawTerrainInfoBox(g, currTile);
         drawUnitInfoBox(g, currTile);
@@ -204,7 +204,7 @@ public abstract class CWScreen extends JComponent implements ComponentListener
 	{
 		//Unit box
         //The following visibility evaluation method be working
-        if(visibleAtXY(cursorXpos, cursorYpos))
+        if(visibleAtXY(cursorYTilePos, cursorXTilePos))
         {
             CWArtist.drawUnitInfo(g, this, currTile, unitBox_x, unitBox_y);
             CWArtist.drawTransInfoBox(g, this, currTile.getUnit(), trnsBox_x, trnsBox_y);
@@ -254,7 +254,7 @@ public abstract class CWScreen extends JComponent implements ComponentListener
 	
 	public final Location getCursorLoc()
 	{
-		return new Location(cursorXpos, cursorYpos);
+		return new Location(cursorYTilePos, cursorXTilePos);
 	}
 	
 	public final Unit getSelectedUnit()
@@ -325,7 +325,7 @@ public abstract class CWScreen extends JComponent implements ComponentListener
 	{
 		//So if the cursor's x coordinate is far enough to the right,
 		//print the boxes to the left side.
-		if(cursorXpos > (MAX_TILEW/2)+(sx/16))
+		if(cursorYTilePos > (MAX_TILEW/2)+(cursorXPixelPos/16))
 		{
 			//Define the top left-most corner of the terrain box
 			terrBox_x = 0;
@@ -419,17 +419,17 @@ public abstract class CWScreen extends JComponent implements ComponentListener
         //Rounds up the screen size itself to whole tiles
         int sizex = MAX_TILEW * (16 * scale);
         int sizey = MAX_TILEH * (16 * scale);
-        if(sx/16+MAX_TILEW > map.getMaxCol() || sy/16+MAX_TILEH > map.getMaxRow()){
-            sx = 0;
-            sy = 0;
-            cursorXpos = 0;
-            cursorYpos = 0;
+        if(cursorXPixelPos/16+MAX_TILEW > map.getMaxCol() || cursorYPixelPos/16+MAX_TILEH > map.getMaxRow()){
+            cursorXPixelPos = 0;
+            cursorYPixelPos = 0;
+            cursorYTilePos = 0;
+            cursorXTilePos = 0;
             //center small maps
             if(map.getMaxCol() < 30){
-                sx = -((30 - map.getMaxCol())/2)*16;
+                cursorXPixelPos = -((30 - map.getMaxCol())/2)*16;
             }
             if(map.getMaxRow() < 20){
-                sy = -((20 - map.getMaxRow())/2)*16;
+                cursorYPixelPos = -((20 - map.getMaxRow())/2)*16;
             }
         }
         setPreferredSize(new Dimension(sizex, sizey));
