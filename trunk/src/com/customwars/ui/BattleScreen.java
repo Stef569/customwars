@@ -334,23 +334,23 @@ public class BattleScreen extends CWScreen
     //draws the cursor
     public void drawCursor(Graphics2D g){
        //update the cursor's graphical location
-       cx_p = (cx_p + (cursorXpos*16)) / 2;
-       cy_p = (cy_p + (cursorYpos*16)) / 2;
+       cx_p = (cx_p + (cursorYTilePos*16)) / 2;
+       cy_p = (cy_p + (cursorXTilePos*16)) / 2;
        
         //Check to see if the aiming cursor should be drawn
         if(b.getArmy(b.getTurn()).getCO().isSelecting()) {
-           g.drawImage(MiscGraphics.getAimCursor(),cx_p-sx-7,cy_p-sy-7,this);
+           g.drawImage(MiscGraphics.getAimCursor(),cx_p-cursorXPixelPos-7,cy_p-cursorYPixelPos-7,this);
         } else {
             //Makes sure that the aiming cursor is set to its normal cursor
             MiscGraphics.restoreAimCursor();
-            g.drawImage(MiscGraphics.getCursor(),cx_p-sx-7,cy_p-sy-7,this);
+            g.drawImage(MiscGraphics.getCursor(),cx_p-cursorXPixelPos-7,cy_p-cursorYPixelPos-7,this);
         }
         //g.drawImage(MiscGraphics.getCursor(),cx*16-sx-16,cy*16-sy-16,this);
     } 
     
     //draws the cursor
     public void drawSiloCursor(Graphics2D g){
-        g.drawImage(MiscGraphics.getSiloCursor(),cursorXpos*16-sx-32,cursorYpos*16-sy-32,this);
+        g.drawImage(MiscGraphics.getSiloCursor(),cursorYTilePos*16-cursorXPixelPos-32,cursorXTilePos*16-cursorYPixelPos-32,this);
     }
     
     public void drawPath(Graphics2D g){
@@ -391,7 +391,7 @@ public class BattleScreen extends CWScreen
                         if(path[i]==3)index = 0;
                     }
                     
-                    g.drawImage(MiscGraphics.getArrow(index),x*16-sx,y*16-sy,this);
+                    g.drawImage(MiscGraphics.getArrow(index),x*16-cursorXPixelPos,y*16-cursorYPixelPos,this);
                     if(path[i] == 0)y--;
                     else if(path[i] == 1)x++;
                     else if(path[i] == 2)y++;
@@ -400,10 +400,10 @@ public class BattleScreen extends CWScreen
                 }
                 
                 //end
-                if(olddir == 0)g.drawImage(MiscGraphics.getArrow(6),x*16-sx,y*16-sy,this);
-                else if(olddir == 1)g.drawImage(MiscGraphics.getArrow(7),x*16-sx,y*16-sy,this);
-                else if(olddir == 2)g.drawImage(MiscGraphics.getArrow(8),x*16-sx,y*16-sy,this);
-                else if(olddir == 3)g.drawImage(MiscGraphics.getArrow(9),x*16-sx,y*16-sy,this);
+                if(olddir == 0)g.drawImage(MiscGraphics.getArrow(6),x*16-cursorXPixelPos,y*16-cursorYPixelPos,this);
+                else if(olddir == 1)g.drawImage(MiscGraphics.getArrow(7),x*16-cursorXPixelPos,y*16-cursorYPixelPos,this);
+                else if(olddir == 2)g.drawImage(MiscGraphics.getArrow(8),x*16-cursorXPixelPos,y*16-cursorYPixelPos,this);
+                else if(olddir == 3)g.drawImage(MiscGraphics.getArrow(9),x*16-cursorXPixelPos,y*16-cursorYPixelPos,this);
                 
             }
         }
@@ -411,7 +411,7 @@ public class BattleScreen extends CWScreen
     
     //draws the CO Bar
     public void drawCOBar(Graphics2D g){
-        if(cursorXpos < (MAX_TILEW/2)+(sx/16)){
+        if(cursorYTilePos < (MAX_TILEW/2)+(cursorXPixelPos/16)){
             g.drawImage(MiscGraphics.getReverseCOBar(b.getArmy(b.getTurn()).getColor()),16*MAX_TILEW-71,0,this);
             if(!b.getArmy(b.getTurn()).getCO().isAltCostume()){
                 g.drawImage(MiscGraphics.getCOSheet(COList.getIndex(b.getArmy(b.getTurn()).getCO())),16*MAX_TILEW-1,0,16*MAX_TILEW-33,12,144,350,176,362,this);
@@ -526,7 +526,7 @@ public class BattleScreen extends CWScreen
     
     //draws the Alt CO Bar
     public void drawAltCOBar(Graphics2D g){
-        if(cursorXpos < (MAX_TILEW/2)+(sx/16)){
+        if(cursorYTilePos < (MAX_TILEW/2)+(cursorXPixelPos/16)){
             g.drawImage(MiscGraphics.getAltReverseCOBar(b.getArmy(b.getTurn()).getColor()),16*MAX_TILEW-71,0,this);
             if(!b.getArmy(b.getTurn()).getAltCO().isAltCostume()){
                 g.drawImage(MiscGraphics.getCOSheet(COList.getIndex(b.getArmy(b.getTurn()).getAltCO())),16*MAX_TILEW-1,21,16*MAX_TILEW-33,33,144,350,176,362,this);
@@ -619,13 +619,13 @@ public class BattleScreen extends CWScreen
         //makes the tiles translucent
         g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.6f));
         //g.setColor(Color.blue);
-        for(int i=sx/16;i<map.getMaxCol();i++){
-            if(i>=sx/16+MAX_TILEW)break;
-            for(int j=sy/16;j<map.getMaxRow();j++){
-                if(j>=sy/16+MAX_TILEH)break;
+        for(int i=cursorXPixelPos/16;i<map.getMaxCol();i++){
+            if(i>=cursorXPixelPos/16+MAX_TILEW)break;
+            for(int j=cursorYPixelPos/16;j<map.getMaxRow();j++){
+                if(j>=cursorYPixelPos/16+MAX_TILEH)break;
                 if(i < 0 || j < 0)continue;
                 //if(mt.checkMove(i,j))g.fillRect(i*16-sx,j*16-sy,16,16);
-                if(mt.checkMove(i,j) && !map.find(new Location(i,j)).getTerrain().getName().equals("Wall"))g.drawImage(MiscGraphics.getMoveTile(),i*16-sx,j*16-sy,this);
+                if(mt.checkMove(i,j) && !map.find(new Location(i,j)).getTerrain().getName().equals("Wall"))g.drawImage(MiscGraphics.getMoveTile(),i*16-cursorXPixelPos,j*16-cursorYPixelPos,this);
             }
         }
         //sets alpha back to normal
@@ -640,13 +640,13 @@ public class BattleScreen extends CWScreen
         //makes the tiles translucent
         g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.6f));
         //g.setColor(Color.blue);
-        for(int i=sx/16;i<map.getMaxCol();i++){
-            if(i>=sx/16+MAX_TILEW)break;
-            for(int j=sy/16;j<map.getMaxRow();j++){
-                if(j>=sy/16+MAX_TILEH)break;
+        for(int i=cursorXPixelPos/16;i<map.getMaxCol();i++){
+            if(i>=cursorXPixelPos/16+MAX_TILEW)break;
+            for(int j=cursorYPixelPos/16;j<map.getMaxRow();j++){
+                if(j>=cursorYPixelPos/16+MAX_TILEH)break;
                 if(i < 0 || j < 0)continue;
                 //if(mt.checkMove(i,j))g.fillRect(i*16-sx,j*16-sy,16,16);
-                if(mt.checkMove(i,j) && !map.find(new Location(i,j)).getTerrain().getName().equals("Wall"))g.drawImage(MiscGraphics.getMoveTile(),i*16-sx,j*16-sy,this);
+                if(mt.checkMove(i,j) && !map.find(new Location(i,j)).getTerrain().getName().equals("Wall"))g.drawImage(MiscGraphics.getMoveTile(),i*16-cursorXPixelPos,j*16-cursorYPixelPos,this);
             }
         }
         //sets alpha back to normal
@@ -693,7 +693,7 @@ public class BattleScreen extends CWScreen
         	Location currLoc = targetTilesWithinRange.get(k);
         	int i = currLoc.getCol();
         	int j = currLoc.getRow();
-        	g.drawImage(MiscGraphics.getAttackTile(),i*16-sx,j*16-sy,this);
+        	g.drawImage(MiscGraphics.getAttackTile(),i*16-cursorXPixelPos,j*16-cursorYPixelPos,this);
         }
         
         //sets alpha back to normal
@@ -718,14 +718,14 @@ public class BattleScreen extends CWScreen
         	g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.6f));
         }
         
-        for(int i=sx/16;i<map.getMaxCol();i++)
+        for(int i=cursorXPixelPos/16;i<map.getMaxCol();i++)
         {
-            if(i>=sx/16+MAX_TILEW)break;
-            for(int j=sy/16;j<map.getMaxRow();j++){
-                if(j>=sy/16+MAX_TILEH)break;
+            if(i>=cursorXPixelPos/16+MAX_TILEW)break;
+            for(int j=cursorYPixelPos/16;j<map.getMaxRow();j++){
+                if(j>=cursorYPixelPos/16+MAX_TILEH)break;
                 if(i < 0 || j < 0)continue;
                 //draw fog tile
-                if(b.getFog(i,j))g.fillRect(i*16-sx,j*16-sy,16,16);
+                if(b.getFog(i,j))g.fillRect(i*16-cursorXPixelPos,j*16-cursorYPixelPos,16,16);
                 
                 //draw detected units
                 if(map.find(new Location(i,j)).hasUnit())
@@ -736,7 +736,7 @@ public class BattleScreen extends CWScreen
                     {
                         //sets alpha back to normal
                         g.setComposite(AlphaComposite.SrcOver);
-                        g.drawImage(MiscGraphics.getDetectIcon(),i*16-sx,j*16-sy,this);
+                        g.drawImage(MiscGraphics.getDetectIcon(),i*16-cursorXPixelPos,j*16-cursorYPixelPos,this);
                         //makes the tiles translucent
                         if(b.isFog())
                         {
@@ -760,37 +760,37 @@ public class BattleScreen extends CWScreen
         if(b.getWeather()!=0){
             if(b.getWeather()==1){
                 //rain
-                for(int i=sx/16;i<map.getMaxCol();i++){
-                    if(i>=sx/16+MAX_TILEW)break;
-                    for(int j=sy/16;j<map.getMaxRow();j++){
-                        if(j>=sy/16+MAX_TILEH)break;
+                for(int i=cursorXPixelPos/16;i<map.getMaxCol();i++){
+                    if(i>=cursorXPixelPos/16+MAX_TILEW)break;
+                    for(int j=cursorYPixelPos/16;j<map.getMaxRow();j++){
+                        if(j>=cursorYPixelPos/16+MAX_TILEH)break;
                         if(i < 0 || j < 0)continue;
-                        g.drawImage(MiscGraphics.getRain(0),i*16-sx,j*16-sy,this);
-                        g.drawImage(MiscGraphics.getRain(1),i*16-sx,j*16-sy,this);
+                        g.drawImage(MiscGraphics.getRain(0),i*16-cursorXPixelPos,j*16-cursorYPixelPos,this);
+                        g.drawImage(MiscGraphics.getRain(1),i*16-cursorXPixelPos,j*16-cursorYPixelPos,this);
                     }
                 }
             }else if(b.getWeather()==2){
                 //rain
-                for(int i=sx/16;i<map.getMaxCol();i++){
-                    if(i>=sx/16+MAX_TILEW)break;
-                    for(int j=sy/16;j<map.getMaxRow();j++){
-                        if(j>=sy/16+MAX_TILEH)break;
+                for(int i=cursorXPixelPos/16;i<map.getMaxCol();i++){
+                    if(i>=cursorXPixelPos/16+MAX_TILEW)break;
+                    for(int j=cursorYPixelPos/16;j<map.getMaxRow();j++){
+                        if(j>=cursorYPixelPos/16+MAX_TILEH)break;
                         if(i < 0 || j < 0)continue;
-                        g.drawImage(MiscGraphics.getSnow(0),i*16-sx,j*16-sy,this);
-                        g.drawImage(MiscGraphics.getSnow(1),i*16-sx,j*16-sy,this);
+                        g.drawImage(MiscGraphics.getSnow(0),i*16-cursorXPixelPos,j*16-cursorYPixelPos,this);
+                        g.drawImage(MiscGraphics.getSnow(1),i*16-cursorXPixelPos,j*16-cursorYPixelPos,this);
                         //g.drawImage(MiscGraphics.getSnow(2),i*16-sx,j*16-sy,this);
                     }
                 }
             }else if(b.getWeather()==3){
                 //rain
-                for(int i=sx/16;i<map.getMaxCol();i++){
-                    if(i>=sx/16+MAX_TILEW)break;
-                    for(int j=sy/16;j<map.getMaxRow();j++){
-                        if(j>=sy/16+MAX_TILEH)break;
+                for(int i=cursorXPixelPos/16;i<map.getMaxCol();i++){
+                    if(i>=cursorXPixelPos/16+MAX_TILEW)break;
+                    for(int j=cursorYPixelPos/16;j<map.getMaxRow();j++){
+                        if(j>=cursorYPixelPos/16+MAX_TILEH)break;
                         if(i < 0 || j < 0)continue;
-                        g.drawImage(MiscGraphics.getSand(0),i*16-sx,j*16-sy,this);
-                        g.drawImage(MiscGraphics.getSand(1),i*16-sx,j*16-sy,this);
-                        g.drawImage(MiscGraphics.getSand(2),i*16-sx,j*16-sy,this);
+                        g.drawImage(MiscGraphics.getSand(0),i*16-cursorXPixelPos,j*16-cursorYPixelPos,this);
+                        g.drawImage(MiscGraphics.getSand(1),i*16-cursorXPixelPos,j*16-cursorYPixelPos,this);
+                        g.drawImage(MiscGraphics.getSand(2),i*16-cursorXPixelPos,j*16-cursorYPixelPos,this);
                     }
                 }
             }
@@ -803,13 +803,13 @@ public class BattleScreen extends CWScreen
         //makes the tiles translucent
         g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.6f));
         
-        for(int i=sx/16;i<map.getMaxCol();i++)
+        for(int i=cursorXPixelPos/16;i<map.getMaxCol();i++)
         {
-            if(i>=sx/16+MAX_TILEW)break;
+            if(i>=cursorXPixelPos/16+MAX_TILEW)break;
             
-            for(int j=sy/16;j<map.getMaxRow();j++)
+            for(int j=cursorYPixelPos/16;j<map.getMaxRow();j++)
             {
-                if(j>=sy/16+MAX_TILEH)break;
+                if(j>=cursorYPixelPos/16+MAX_TILEH)break;
                 
                 if(i < 0 || j < 0)continue;
                 
@@ -821,7 +821,7 @@ public class BattleScreen extends CWScreen
                 if(selected.checkAdjacent(new Location(i,j)))
                 //if(rX + rY == 1)
                 {
-                	g.drawImage(MiscGraphics.getAttackTile(),i*16-sx,j*16-sy,this);
+                	g.drawImage(MiscGraphics.getAttackTile(),i*16-cursorXPixelPos,j*16-cursorYPixelPos,this);
                 }
                 selected.setLocation(origLoc);
             }
@@ -835,13 +835,13 @@ public class BattleScreen extends CWScreen
         //makes the tiles translucent
         g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.6f));
         
-        for(int i=sx/16;i<map.getMaxCol();i++)
+        for(int i=cursorXPixelPos/16;i<map.getMaxCol();i++)
         {
-            if(i>=sx/16+MAX_TILEW)break;
+            if(i>=cursorXPixelPos/16+MAX_TILEW)break;
             
-            for(int j=sy/16;j<map.getMaxRow();j++)
+            for(int j=cursorYPixelPos/16;j<map.getMaxRow();j++)
             {
-                if(j>=sy/16+MAX_TILEH)break;
+                if(j>=cursorYPixelPos/16+MAX_TILEH)break;
                 
                 if(i < 0 || j < 0)continue;
                 //if(selected.checkAdjacent(new Location(i,j)))g.drawImage(MiscGraphics.getAttackTile(),i*16-sx,j*16-sy,this);
@@ -850,7 +850,7 @@ public class BattleScreen extends CWScreen
                 selected.setLocation(moveToTile.getLocation());
                 if(selected.getArmy().getCO().canTargetSpecial1(selected, new Location(i,j)))
                 {
-                    g.drawImage(MiscGraphics.getAttackTile(),i*16-sx,j*16-sy,this);
+                    g.drawImage(MiscGraphics.getAttackTile(),i*16-cursorXPixelPos,j*16-cursorYPixelPos,this);
                 }
                 selected.setLocation(origLoc);
             }
@@ -864,13 +864,13 @@ public class BattleScreen extends CWScreen
         //makes the tiles translucent
         g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.6f));
         
-        for(int i=sx/16;i<map.getMaxCol();i++)
+        for(int i=cursorXPixelPos/16;i<map.getMaxCol();i++)
         {
-            if(i>=sx/16+MAX_TILEW)break;
+            if(i>=cursorXPixelPos/16+MAX_TILEW)break;
             
-            for(int j=sy/16;j<map.getMaxRow();j++)
+            for(int j=cursorYPixelPos/16;j<map.getMaxRow();j++)
             {
-                if(j>=sy/16+MAX_TILEH)break;
+                if(j>=cursorYPixelPos/16+MAX_TILEH)break;
                 
                 if(i < 0 || j < 0)continue;
 
@@ -878,7 +878,7 @@ public class BattleScreen extends CWScreen
                 selected.setLocation(moveToTile.getLocation());
                 if(selected.getArmy().getCO().canTargetSpecial2(selected, new Location(i,j)))
                 {
-                	g.drawImage(MiscGraphics.getAttackTile(),i*16-sx,j*16-sy,this);
+                	g.drawImage(MiscGraphics.getAttackTile(),i*16-cursorXPixelPos,j*16-cursorYPixelPos,this);
                 }
                 selected.setLocation(origLoc);
             }
@@ -892,12 +892,12 @@ public class BattleScreen extends CWScreen
         //makes the tiles translucent
         g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.6f));
         
-        for(int i=sx/16;i<map.getMaxCol();i++) {
-            if(i>=sx/16+MAX_TILEW)
+        for(int i=cursorXPixelPos/16;i<map.getMaxCol();i++) {
+            if(i>=cursorXPixelPos/16+MAX_TILEW)
                 break;
             
-            for(int j=sy/16;j<map.getMaxRow();j++) {
-                if(j>=sy/16+MAX_TILEH) {
+            for(int j=cursorYPixelPos/16;j<map.getMaxRow();j++) {
+                if(j>=cursorYPixelPos/16+MAX_TILEH) {
                     break;
                 }
                 if(i < 0 || j < 0) {
@@ -909,9 +909,9 @@ public class BattleScreen extends CWScreen
                 int distance = colOffset + rowOffset;
                 
                 if(selected.checkDisplayFireRange(new Location(i,j)) && (!selected.getArmy().getCO().isDisruptFireDisplay() || b.getArmy(b.getTurn()).getSide() == selected.getArmy().getSide())) {
-                    g.drawImage(MiscGraphics.getAttackTile(),i*16-sx,j*16-sy,this);
+                    g.drawImage(MiscGraphics.getAttackTile(),i*16-cursorXPixelPos,j*16-cursorYPixelPos,this);
                 } else if(selected.getArmy().getCO().isDisruptFireDisplay() && (distance <= 1) && b.getArmy(b.getTurn()).getSide() != selected.getArmy().getSide()) {
-                    g.drawImage(MiscGraphics.getAttackTile(),i*16-sx,j*16-sy,this);
+                    g.drawImage(MiscGraphics.getAttackTile(),i*16-cursorXPixelPos,j*16-cursorYPixelPos,this);
                 }
             }
         }
@@ -927,13 +927,13 @@ public class BattleScreen extends CWScreen
         
         g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.6f));
         
-        for(int i=sx/16;i<map.getMaxCol();i++)
+        for(int i=cursorXPixelPos/16;i<map.getMaxCol();i++)
         {
-            if(i>=sx/16+MAX_TILEW)break;
+            if(i>=cursorXPixelPos/16+MAX_TILEW)break;
             
-            for(int j=sy/16;j<map.getMaxRow();j++)
+            for(int j=cursorYPixelPos/16;j<map.getMaxRow();j++)
             {
-                if(j>=sy/16+MAX_TILEH)break;
+                if(j>=cursorYPixelPos/16+MAX_TILEH)break;
                 
                 if(i < 0 || j < 0)continue;
                 
@@ -946,7 +946,7 @@ public class BattleScreen extends CWScreen
                 //if(rX + rY == 1 &&
                 //   moveToTile.getTerrain().moveCost(trans.getUnit(unload).getMType()) != -1)
                 {
-                	g.drawImage(MiscGraphics.getAttackTile(),i*16-sx,j*16-sy,this);
+                	g.drawImage(MiscGraphics.getAttackTile(),i*16-cursorXPixelPos,j*16-cursorYPixelPos,this);
                 }
                 selected.setLocation(origLoc);
             }
@@ -1739,26 +1739,26 @@ public class BattleScreen extends CWScreen
         int y = l.getRow();
         
         if(map.onMap(x,y)){
-            cursorXpos = x;
-            cursorYpos = y;
+            cursorYTilePos = x;
+            cursorXTilePos = y;
             
-            if(cursorXpos < sx/16 || cursorXpos >= sx/16+MAX_TILEW || cursorYpos < sy/16 || cursorYpos >= sy/16+MAX_TILEH){
-                sx = (cursorXpos - 8) * 16;
-                sy = (cursorYpos - 6) * 16;
-                if(sx < 0) sx = 0;
-                if(sy < 0) sy = 0;
-                if(sx+MAX_TILEW*16 > map.getMaxCol()*16) sx = map.getMaxCol()*16-MAX_TILEW*16;
-                if(sy+MAX_TILEH*16 > map.getMaxRow()*16) sy = map.getMaxRow()*16-MAX_TILEH*16;
-                if(sx < 0) sx = 0;
-                if(sy < 0) sy = 0;
+            if(cursorYTilePos < cursorXPixelPos/16 || cursorYTilePos >= cursorXPixelPos/16+MAX_TILEW || cursorXTilePos < cursorYPixelPos/16 || cursorXTilePos >= cursorYPixelPos/16+MAX_TILEH){
+                cursorXPixelPos = (cursorYTilePos - 8) * 16;
+                cursorYPixelPos = (cursorXTilePos - 6) * 16;
+                if(cursorXPixelPos < 0) cursorXPixelPos = 0;
+                if(cursorYPixelPos < 0) cursorYPixelPos = 0;
+                if(cursorXPixelPos+MAX_TILEW*16 > map.getMaxCol()*16) cursorXPixelPos = map.getMaxCol()*16-MAX_TILEW*16;
+                if(cursorYPixelPos+MAX_TILEH*16 > map.getMaxRow()*16) cursorYPixelPos = map.getMaxRow()*16-MAX_TILEH*16;
+                if(cursorXPixelPos < 0) cursorXPixelPos = 0;
+                if(cursorYPixelPos < 0) cursorYPixelPos = 0;
             }
             
             //center small maps
             if(map.getMaxCol() < 30){
-                sx = -((30 - map.getMaxCol())/2)*16;
+                cursorXPixelPos = -((30 - map.getMaxCol())/2)*16;
             }
             if(map.getMaxRow() < 20){
-                sy = -((20 - map.getMaxRow())/2)*16;
+                cursorYPixelPos = -((20 - map.getMaxRow())/2)*16;
             }
         }
     }
@@ -1775,16 +1775,16 @@ public class BattleScreen extends CWScreen
         b = newBattle;
         map = b.getMap();
         selected = null;
-        cursorXpos = 0;
-        cursorYpos = 0;
-        sx = 0;
-        sy = 0;
+        cursorYTilePos = 0;
+        cursorXTilePos = 0;
+        cursorXPixelPos = 0;
+        cursorYPixelPos = 0;
         //center small maps
         if(map.getMaxCol() < 30){
-            sx = -((30 - map.getMaxCol())/2)*16;
+            cursorXPixelPos = -((30 - map.getMaxCol())/2)*16;
         }
         if(map.getMaxRow() < 20){
-            sy = -((20 - map.getMaxRow())/2)*16;
+            cursorYPixelPos = -((20 - map.getMaxRow())/2)*16;
         }
         item = 0;
         menu = false;
@@ -2091,8 +2091,8 @@ public class BattleScreen extends CWScreen
     {
         //what is selecting Vimes? (--Urusan)
         //It's used for actions that require selection. <_<
-    	Tile clickedTile = map.find(new Location(cursorXpos,cursorYpos));
-    	
+    	Tile clickedTile = map.find(new Location(cursorYTilePos,cursorXTilePos));
+    	logger.debug("Primary button clicked: TileCol=["+cursorYTilePos+"] TileRow=["+cursorXTilePos+"], X=[" + cursorXPixelPos + "] Y=[" + cursorYPixelPos +"]");
     	
         if(!b.diagQueue.isEmpty())
             b.diagQueue.get(0).pressedA();
@@ -2102,7 +2102,7 @@ public class BattleScreen extends CWScreen
         {
         	logger.info("Do Select Action");
         	
-            selectAction(new Location(cursorXpos, cursorYpos));
+            selectAction(new Location(cursorYTilePos, cursorXTilePos));
 			return;
         }
         
@@ -2110,7 +2110,7 @@ public class BattleScreen extends CWScreen
         {
         	logger.info("Do Delete Command");
         	//If the delete command won't work, don't let anything else work
-            if(!deleteCommand(new Location(cursorXpos,cursorYpos)))
+            if(!deleteCommand(new Location(cursorYTilePos,cursorXTilePos)))
             	return;
         }
         if(!daystart && !intel && !victory && !endStats && !replay)
@@ -2217,7 +2217,7 @@ public class BattleScreen extends CWScreen
             //Targeted abilities
             else if(clickedTile.hasUnit())
             {
-            	logger.info("Display Unit Targeting Options");
+            	logger.debug("Firing at targetted unit on TileRow=["+cursorXTilePos+"] TileCol=["+cursorYTilePos+"] in terrain=["+clickedTile.getTerrain().getName()+"] co-ords: X=["+cursorXPixelPos+"], Y=["+cursorYPixelPos+"]");
             	
             	Unit target = clickedTile.getUnit();
                 
@@ -2239,7 +2239,7 @@ public class BattleScreen extends CWScreen
                     //if(m.find(new Location(cx,cy)).getUnit().isActive())
                 	//if(m.find(new Location(cx,cy)).hasUnit())
                 	//[CHANGE]
-                	if(visibleAtXY(cursorXpos, cursorYpos))
+                	if(visibleAtXY(cursorYTilePos, cursorXTilePos))
                     {
                 		//Selecting a unit at this position
                 		logger.info("Selection of a unit");
@@ -2292,7 +2292,7 @@ public class BattleScreen extends CWScreen
             }
             else
             {
-            	logger.info("Display Battle Menu");
+            	logger.info("Displaying Battle Menu");
                 //Same as hitting m
                 getBattleMenu();
                 return;
@@ -2300,7 +2300,7 @@ public class BattleScreen extends CWScreen
         }
         else if(daystart)
         {
-            logger.info("ending day start screen");
+            logger.info("Ending day start splash screen");
             if(!denyContinue)
             {
             	daystart = false;
@@ -2409,7 +2409,7 @@ public class BattleScreen extends CWScreen
 	private void selectUnitAction() 
 	{
 		//select
-		selected = map.find(new Location(cursorXpos,cursorYpos)).getUnit();
+		selected = map.find(new Location(cursorYTilePos,cursorXTilePos)).getUnit();
 		move = true;
 		outOfMoveRange = false;
 		selected.calcMoveTraverse();
@@ -2420,7 +2420,7 @@ public class BattleScreen extends CWScreen
 
 	private void fireAtInventionEffect(Unit user, Invention target) 
 	{
-		if(user.checkFireRange(new Location(cursorXpos,cursorYpos)))
+		if(user.checkFireRange(new Location(cursorYTilePos,cursorXTilePos)))
 		{
 		    //if(inv.find(selected.getAmmo(),selected.getUnitType()) > -1)
 		    if(canFireAtInvention(user, target))
@@ -2459,7 +2459,7 @@ public class BattleScreen extends CWScreen
 	{		
 		if(user != map.find(target).getUnit())
 		{
-		    if(user.checkAdjacent(new Location(cursorXpos,cursorYpos)))
+		    if(user.checkAdjacent(new Location(cursorYTilePos,cursorXTilePos)))
 		    {
 		        if(user.getArmy() == target.getArmy())
 		        {
@@ -2478,7 +2478,7 @@ public class BattleScreen extends CWScreen
 	{
         if(canFireAtUnit(user, target))
         {
-            boolean gameEnd = selected.fire(map.find(new Location(cursorXpos,cursorYpos)).getUnit());
+            boolean gameEnd = selected.fire(map.find(new Location(cursorYTilePos,cursorXTilePos)).getUnit());
             
             fire = false;
             
@@ -2496,14 +2496,14 @@ public class BattleScreen extends CWScreen
 	
 	public boolean canFireAtUnit(Unit user, Unit target)
 	{		
-		if(selected != map.find(new Location(cursorXpos,cursorYpos)).getUnit() && user.displayDamageCalc(target) > -1)
+		if(selected != map.find(new Location(cursorYTilePos,cursorXTilePos)).getUnit() && user.displayDamageCalc(target) > -1)
 		{
-		    if(selected.getArmy().getSide() != map.find(new Location(cursorXpos,cursorYpos)).getUnit().getArmy().getSide())
+		    if(selected.getArmy().getSide() != map.find(new Location(cursorYTilePos,cursorXTilePos)).getUnit().getArmy().getSide())
 		    {
-		        if(selected.checkFireRange(new Location(cursorXpos,cursorYpos)))
+		        if(selected.checkFireRange(new Location(cursorYTilePos,cursorXTilePos)))
 		        {
 		            //if(!m.find(new Location(cx,cy)).getUnit().isHidden())
-		        	if(visibleAtXY(cursorXpos,cursorYpos))
+		        	if(visibleAtXY(cursorYTilePos,cursorXTilePos))
 		            {
 		            	return true;
 		            }
@@ -2519,7 +2519,7 @@ public class BattleScreen extends CWScreen
 		if(canUseSpecial2(user)) 
 		{
 		    special2 = false;
-		    user.getArmy().getCO().useSpecial2(user, (new Location(cursorXpos,cursorYpos)));
+		    user.getArmy().getCO().useSpecial2(user, (new Location(cursorYTilePos,cursorXTilePos)));
 		    
 		    endUnitTurn(23,user,null);
 		}
@@ -2527,7 +2527,7 @@ public class BattleScreen extends CWScreen
 
 	public boolean canUseSpecial2(Unit user) 
 	{
-		return user.getArmy().getCO().canTargetSpecial2(user, (new Location(cursorXpos,cursorYpos)));
+		return user.getArmy().getCO().canTargetSpecial2(user, (new Location(cursorYTilePos,cursorXTilePos)));
 	}
 
 	private void special1Effect(Unit user) 
@@ -2535,7 +2535,7 @@ public class BattleScreen extends CWScreen
 		if(canUseSpecial1(user)) 
 		{
 		    special1 = false;
-		    user.getArmy().getCO().useSpecial1(user, (new Location(cursorXpos,cursorYpos)));
+		    user.getArmy().getCO().useSpecial1(user, (new Location(cursorYTilePos,cursorXTilePos)));
 		    
 		    endUnitTurn(22,user,null);
 		}
@@ -2543,7 +2543,7 @@ public class BattleScreen extends CWScreen
 
 	public boolean canUseSpecial1(Unit user) 
 	{
-		return user.getArmy().getCO().canTargetSpecial1(user, (new Location(cursorXpos,cursorYpos)));
+		return user.getArmy().getCO().canTargetSpecial1(user, (new Location(cursorYTilePos,cursorXTilePos)));
 	}
 
 	private void siloEffect(Unit user) 
@@ -2552,9 +2552,9 @@ public class BattleScreen extends CWScreen
 		
 		((Silo)map.find(selected.getLocation()).getTerrain()).launch();
 		Animation launchup = new Animation(b, MiscGraphics.getMissileUp(), 1, 0, 0, selected.getLocation().getCol()*16, selected.getLocation().getRow()*16, selected.getLocation().getCol()*16, -40, 100, 100, 25, 0, 0);
-		Animation launchdown = new Animation(b, MiscGraphics.getMissileUp(), 1, 0, 0, cursorXpos*16, 0, cursorXpos*16, cursorYpos*16, 100, 100, 25, 10 , 0);
+		Animation launchdown = new Animation(b, MiscGraphics.getMissileUp(), 1, 0, 0, cursorYTilePos*16, 0, cursorYTilePos*16, cursorXTilePos*16, 100, 100, 25, 10 , 0);
 		Animation temp = new Animation();
-		temp.setSiloExplosion(new Location(cursorXpos,cursorYpos),b,0);
+		temp.setSiloExplosion(new Location(cursorYTilePos,cursorXTilePos),b,0);
 		
 		launchup.setup(false,false);
 		launchdown.setup(false,false);
@@ -2567,13 +2567,13 @@ public class BattleScreen extends CWScreen
 		
 		endUnitTurn(8,user,null);
 		//LAUNCH
-		map.doExplosion(2,3,cursorXpos,cursorYpos, false);
+		map.doExplosion(2,3,cursorYTilePos,cursorXTilePos, false);
 	}
 
 	private void moveCommand(Unit user)
 	{
 		//if(user.getMoveRange().checkMove(cx,cy) || (m.find(new Location(cx,cy)).hasUnit() && m.find(new Location(cx,cy)).getUnit() == selected))
-		if(user.getMoveRange().checkMove(cursorXpos,cursorYpos) || (map.find(new Location(cursorXpos,cursorYpos)).hasUnit() && map.find(new Location(cursorXpos,cursorYpos)).getUnit() == selected))
+		if(user.getMoveRange().checkMove(cursorYTilePos,cursorXTilePos) || (map.find(new Location(cursorYTilePos,cursorXTilePos)).hasUnit() && map.find(new Location(cursorYTilePos,cursorXTilePos)).getUnit() == selected))
 		{
 		    //OOZIUM MOVE OVERIDES EVERYTHING ELSE ^_^
 		    //if(selected.getName().equals("Oozium"))
@@ -2660,8 +2660,7 @@ public class BattleScreen extends CWScreen
 		    } 
 		    else 
 		    {
-                        logger.info("Hurray!");
-                        return true;
+                return true;
 		        //safeMoveEffect(user);
 		    	//move = false;
 		    }
@@ -2718,7 +2717,7 @@ public class BattleScreen extends CWScreen
 		}
 		
         //new code
-        if (beingLaunched && originalLocation.equals(new Location(cursorXpos,cursorYpos))) 
+        if (beingLaunched && originalLocation.equals(new Location(cursorYTilePos,cursorXTilePos))) 
         {
             //return to carrier
             Transport trans;
@@ -2734,11 +2733,11 @@ public class BattleScreen extends CWScreen
             selected.setMoved(false);
             selected = null;
         } 
-        else if(!map.find(new Location(cursorXpos,cursorYpos)).hasUnit() ||
-                (map.find(new Location(cursorXpos,cursorYpos)).getUnit().isHidden() &&
-                (map.find(new Location(cursorXpos,cursorYpos)).getUnit().getArmy().getSide() != user.getArmy().getSide()))) 
+        else if(!map.find(new Location(cursorYTilePos,cursorXTilePos)).hasUnit() ||
+                (map.find(new Location(cursorYTilePos,cursorXTilePos)).getUnit().isHidden() &&
+                (map.find(new Location(cursorYTilePos,cursorXTilePos)).getUnit().getArmy().getSide() != user.getArmy().getSide()))) 
         {
-		    Unit ambusher = user.move(new Location(cursorXpos,cursorYpos));
+		    Unit ambusher = user.move(new Location(cursorYTilePos,cursorXTilePos));
 		    
 		    if(ambusher != null)
 		    {
@@ -2752,7 +2751,7 @@ public class BattleScreen extends CWScreen
 		else
 		{
 		    //currTile = new Location(cx,cy);
-		    targetUnit = map.find(new Location(cursorXpos,cursorYpos)).getUnit();
+		    targetUnit = map.find(new Location(cursorYTilePos,cursorXTilePos)).getUnit();
 		    
 		    if(targetUnit != user)
 		    {
@@ -2826,17 +2825,17 @@ public class BattleScreen extends CWScreen
 
 	private void ooziumMoveCommand(Oozium user) 
 	{
-		if(!map.find(new Location(cursorXpos,cursorYpos)).hasUnit() || map.find(new Location(cursorXpos,cursorYpos)).getUnit().getArmy().getSide() != selected.getArmy().getSide())
+		if(!map.find(new Location(cursorYTilePos,cursorXTilePos)).hasUnit() || map.find(new Location(cursorYTilePos,cursorXTilePos)).getUnit().getArmy().getSide() != selected.getArmy().getSide())
 		{
 		    originalLocation = selected.getLocation();
 		    move = false;
                     selected.setMoved(false);
 		    //boolean gameEnd = selected.move(new Location(cx,cy));
-		    Unit lastUnit = selected.move(new Location(cursorXpos,cursorYpos));
+		    Unit lastUnit = selected.move(new Location(cursorYTilePos,cursorXTilePos));
 		    endUnitTurn(19,user,lastUnit);
 		    if(lastUnit != null)endBattle();
 		}
-		else if(map.find(new Location(cursorXpos,cursorYpos)).hasUnit() && map.find(new Location(cursorXpos,cursorYpos)).getUnit() == selected)
+		else if(map.find(new Location(cursorYTilePos,cursorXTilePos)).hasUnit() && map.find(new Location(cursorYTilePos,cursorXTilePos)).getUnit() == selected)
 		{
 		    move = false;
                     selected.setMoved(false);
@@ -2851,34 +2850,34 @@ public class BattleScreen extends CWScreen
 		if(newUnit != -1)
 		{
 		    bmenu = false;
-		    buildUnit(map,map.find(new Location(cursorXpos,cursorYpos)),newUnit);
+		    buildUnit(map,map.find(new Location(cursorYTilePos,cursorXTilePos)),newUnit);
 	        String soundLocation = ResourceLoader.properties.getProperty("soundLocation");
 		    SFX.playClip(soundLocation + "/ok.wav");
 		    //if(newUnit != -1){
-		    b.getArmy(b.getTurn()).removeFunds(map.find(new Location(cursorXpos,cursorYpos)).getUnit().getPrice());
+		    b.getArmy(b.getTurn()).removeFunds(map.find(new Location(cursorYTilePos,cursorXTilePos)).getUnit().getPrice());
 		    //}
 		    currentMenu = null;
 		    Army[] armies = b.getArmies();
 		    
 		    for(int i = 0; i < armies.length; i++) 
 		    {
-		        if(map.find(new Location(cursorXpos,cursorYpos)).getUnit().getArmy().getSide()!= armies[i].getSide()) 
+		        if(map.find(new Location(cursorYTilePos,cursorXTilePos)).getUnit().getArmy().getSide()!= armies[i].getSide()) 
 		        {
-		            armies[i].getCO().afterEnemyAction(map.find(new Location(cursorXpos,cursorYpos)).getUnit(), 15, null, true);
+		            armies[i].getCO().afterEnemyAction(map.find(new Location(cursorYTilePos,cursorXTilePos)).getUnit(), 15, null, true);
 		            
 		            if(armies[i].getAltCO() != null)
-		                armies[i].getAltCO().afterEnemyAction(map.find(new Location(cursorXpos,cursorYpos)).getUnit(), 15, null, false);
+		                armies[i].getAltCO().afterEnemyAction(map.find(new Location(cursorYTilePos,cursorXTilePos)).getUnit(), 15, null, false);
 		        }
 		    }
-		    map.find(new Location(cursorXpos,cursorYpos)).getUnit().getArmy().getCO().afterAction(map.find(new Location(cursorXpos,cursorYpos)).getUnit(), 15, null, true);
+		    map.find(new Location(cursorYTilePos,cursorXTilePos)).getUnit().getArmy().getCO().afterAction(map.find(new Location(cursorYTilePos,cursorXTilePos)).getUnit(), 15, null, true);
 		    
-		    if(map.find(new Location(cursorXpos,cursorYpos)).getUnit().getArmy().getAltCO() != null)
-		        map.find(new Location(cursorXpos,cursorYpos)).getUnit().getArmy().getAltCO().afterAction(map.find(new Location(cursorXpos,cursorYpos)).getUnit(), 15, null, false);
+		    if(map.find(new Location(cursorYTilePos,cursorXTilePos)).getUnit().getArmy().getAltCO() != null)
+		        map.find(new Location(cursorYTilePos,cursorXTilePos)).getUnit().getArmy().getAltCO().afterAction(map.find(new Location(cursorYTilePos,cursorXTilePos)).getUnit(), 15, null, false);
 		    
 		    b.updateFoW();
 		    
 		    if(b.getBattleOptions().isRecording())
-		    	b.getReplay().push(new BuildEvent(newUnit,cursorXpos,cursorYpos,b.getDay(),b.getTurn()));
+		    	b.getReplay().push(new BuildEvent(newUnit,cursorYTilePos,cursorXTilePos,b.getDay(),b.getTurn()));
 		}
 	}
 
@@ -2886,9 +2885,9 @@ public class BattleScreen extends CWScreen
 	{
 		//Transport trans = (Transport) selected;
 		
-		if(user.checkUnloadRange(new Location(cursorXpos,cursorYpos), slot))
+		if(user.checkUnloadRange(new Location(cursorYTilePos,cursorXTilePos), slot))
 		{
-		    if(map.find(new Location(cursorXpos,cursorYpos)).hasUnit())
+		    if(map.find(new Location(cursorYTilePos,cursorXTilePos)).hasUnit())
 		    {
 		        ambushedUnloadEffect(user);
 		    }
@@ -2896,7 +2895,7 @@ public class BattleScreen extends CWScreen
 		    {
 		        Unit target = user.unload(slot);
 		        
-		        target.forceMove(new Location(cursorXpos,cursorYpos));
+		        target.forceMove(new Location(cursorYTilePos,cursorXTilePos));
 		        target.setActive(false);
 		        
 		        if(user.getUnitsCarried()>0)
@@ -2922,7 +2921,7 @@ public class BattleScreen extends CWScreen
 		            	replayAction = 7;
 		            }
 		            
-		            CWEvent tempev= new Action(replayAction,originalLocation.getCol(),originalLocation.getRow(),selected.getPath(),cursorXpos,cursorYpos,b.getDay(),b.getTurn());
+		            CWEvent tempev= new Action(replayAction,originalLocation.getCol(),originalLocation.getRow(),selected.getPath(),cursorYTilePos,cursorXTilePos,b.getDay(),b.getTurn());
 		            logger.info("temp env ="+tempev);
 		            b.getReplay().push(tempev);
 		        }
@@ -2972,10 +2971,10 @@ public class BattleScreen extends CWScreen
 										fire = true;
 									    if(targetTilesWithinRange.size() > 0) {
 									    	currContextTarg = 0;
-									    	cursorXpos = targetTilesWithinRange.get(currContextTarg).getCol();
-									    	cursorYpos = targetTilesWithinRange.get(currContextTarg).getRow();
+									    	cursorYTilePos = targetTilesWithinRange.get(currContextTarg).getCol();
+									    	cursorXTilePos = targetTilesWithinRange.get(currContextTarg).getRow();
 									    }
-									    logger.debug("UNIT_COMMAND: Firing at X[" + cursorXpos +"] Y[" + cursorYpos +"]");
+									    logger.debug("UNIT_COMMAND: Firing at TileCol=[" + cursorXTilePos +"] TileRow=[" + cursorYTilePos +"] co-ords: X=["+cursorXPixelPos +"], Y=["+cursorXPixelPos +"]");
 									    break;
 			
 			case UNIT_COMMANDS.CAPTURE:	
@@ -3116,10 +3115,10 @@ public class BattleScreen extends CWScreen
 		    
                     Army carrierArmy = selected.getArmy();
                     map.remove(selected);
-		    buildCarrierUnit(carrierArmy, map,map.find(new Location(cursorXpos,cursorYpos)),newUnit);
-                    Unit nooUnit = map.find(new Location(cursorXpos,cursorYpos)).getUnit();
+		    buildCarrierUnit(carrierArmy, map,map.find(new Location(cursorYTilePos,cursorXTilePos)),newUnit);
+                    Unit nooUnit = map.find(new Location(cursorYTilePos,cursorXTilePos)).getUnit();
                     map.remove(nooUnit);
-                    nooUnit.setLoc(new Location(cursorXpos,cursorYpos));
+                    nooUnit.setLoc(new Location(cursorYTilePos,cursorXTilePos));
                     ((Carrier)selected).load(nooUnit);
         	String soundLocation = ResourceLoader.properties.getProperty("soundLocation");
 		    SFX.playClip(soundLocation + "/ok.wav");
@@ -3132,18 +3131,18 @@ public class BattleScreen extends CWScreen
 		    Army[] armies = b.getArmies();
 		    for(int i = 0; i < armies.length; i++) 
 		    {
-		        if(map.find(new Location(cursorXpos,cursorYpos)).getUnit().getArmy().getSide()!= armies[i].getSide()) 
+		        if(map.find(new Location(cursorYTilePos,cursorXTilePos)).getUnit().getArmy().getSide()!= armies[i].getSide()) 
 		        {
-		            armies[i].getCO().afterEnemyAction(map.find(new Location(cursorXpos,cursorYpos)).getUnit(), 15, null, true);
+		            armies[i].getCO().afterEnemyAction(map.find(new Location(cursorYTilePos,cursorXTilePos)).getUnit(), 15, null, true);
 		            
 		            if(armies[i].getAltCO() != null)
-		                armies[i].getAltCO().afterEnemyAction(map.find(new Location(cursorXpos,cursorYpos)).getUnit(), 15, null, false);
+		                armies[i].getAltCO().afterEnemyAction(map.find(new Location(cursorYTilePos,cursorXTilePos)).getUnit(), 15, null, false);
 		        }
 		    }
-		    map.find(new Location(cursorXpos,cursorYpos)).getUnit().getArmy().getCO().afterAction(map.find(new Location(cursorXpos,cursorYpos)).getUnit(), 15, null, true);
+		    map.find(new Location(cursorYTilePos,cursorXTilePos)).getUnit().getArmy().getCO().afterAction(map.find(new Location(cursorYTilePos,cursorXTilePos)).getUnit(), 15, null, true);
 		    
-		    if(map.find(new Location(cursorXpos,cursorYpos)).getUnit().getArmy().getAltCO() != null)
-		        map.find(new Location(cursorXpos,cursorYpos)).getUnit().getArmy().getAltCO().afterAction(map.find(new Location(cursorXpos,cursorYpos)).getUnit(), 15, null, false);
+		    if(map.find(new Location(cursorYTilePos,cursorXTilePos)).getUnit().getArmy().getAltCO() != null)
+		        map.find(new Location(cursorYTilePos,cursorXTilePos)).getUnit().getArmy().getAltCO().afterAction(map.find(new Location(cursorYTilePos,cursorXTilePos)).getUnit(), 15, null, false);
                     //endUnitTurn(UNIT_COMMANDS.BUILD,selected,nooUnit);
                     selected.setActive(false);
                     selected = null;
@@ -3162,7 +3161,7 @@ public class BattleScreen extends CWScreen
             //temporarily transfer the carrier into storage to make room for the launched unit
             beingLaunched = true;
             //launching.setLocation(trans.getLocation());
-            moveToTile = map.find(new Location(cursorXpos, cursorYpos));
+            moveToTile = map.find(new Location(cursorYTilePos, cursorXTilePos));
             this.setContextMenu(selected,moveToTile);
             /*if(autoMove(selected))
             {
@@ -3334,7 +3333,7 @@ public class BattleScreen extends CWScreen
 		    
 		    if(b.getBattleOptions().isRecording())
 		    {
-		    	b.getReplay().push(new SelectionEvent(cursorXpos,cursorYpos,b.getDay(),b.getTurn()));
+		    	b.getReplay().push(new SelectionEvent(cursorYTilePos,cursorXTilePos,b.getDay(),b.getTurn()));
 		    }
 		    
 		    return;
@@ -3349,7 +3348,7 @@ public class BattleScreen extends CWScreen
 	private void menuActions() 
 	{
 		menu=false;
-		b.cursorLocation[b.getTurn()] = new Location(cursorXpos,cursorYpos);
+		b.cursorLocation[b.getTurn()] = new Location(cursorYTilePos,cursorXTilePos);
 		
 		int menuselection = currentMenu.doMenuItem();
 		currentMenu = null;
@@ -3574,7 +3573,7 @@ public class BattleScreen extends CWScreen
             
             if(b.getBattleOptions().isRecording())
             {
-            	b.getReplay().push(new DeleteEvent(cursorXpos,cursorYpos,b.getDay(),b.getTurn()));
+            	b.getReplay().push(new DeleteEvent(cursorYTilePos,cursorXTilePos,b.getDay(),b.getTurn()));
             }
             
             boolean defeat = false;
@@ -3820,12 +3819,12 @@ public class BattleScreen extends CWScreen
                 else
                 {
                     //Nothing is on, turn on firing range mode if possible
-                    if(map.find(new Location(cursorXpos,cursorYpos)).hasUnit())
+                    if(map.find(new Location(cursorYTilePos,cursorXTilePos)).hasUnit())
                     {
-                        selected=map.find(new Location(cursorXpos,cursorYpos)).getUnit();
+                        selected=map.find(new Location(cursorYTilePos,cursorXTilePos)).getUnit();
                         
                         // [CHANGE]
-                        if(visibleAtXY(cursorXpos, cursorYpos))
+                        if(visibleAtXY(cursorYTilePos, cursorXTilePos))
                         {
                             selected.calcMoveTraverse();
                             fireRange = true;
@@ -4049,11 +4048,11 @@ public class BattleScreen extends CWScreen
                                 case 22:
                                 	logger.info("In case 22");
                                     //Special1
-                                    selected.getArmy().getCO().useSpecial1(selected, (new Location(cursorXpos,cursorYpos)));
+                                    selected.getArmy().getCO().useSpecial1(selected, (new Location(cursorYTilePos,cursorXTilePos)));
                                     endUnitTurn(22,selected,null);
                                 case 23:
                                 	logger.info("In case 23");
-                                    selected.getArmy().getCO().useSpecial2(selected, (new Location(cursorXpos,cursorYpos)));
+                                    selected.getArmy().getCO().useSpecial2(selected, (new Location(cursorYTilePos,cursorXTilePos)));
                                     endUnitTurn(23,selected,null);
                             }
                         }
@@ -4065,18 +4064,18 @@ public class BattleScreen extends CWScreen
                     BuildEvent be = (BuildEvent)event;
                     moveCursorTo(new Location(be.getX(),be.getY()));
                     buildUnit(map,map.find(new Location(be.getX(),be.getY())),be.getUnitType());
-                    b.getArmy(b.getTurn()).removeFunds(map.find(new Location(cursorXpos,cursorYpos)).getUnit().getPrice());
+                    b.getArmy(b.getTurn()).removeFunds(map.find(new Location(cursorYTilePos,cursorXTilePos)).getUnit().getPrice());
                     Army[] armies = b.getArmies();
                     for(int i = 0; i < armies.length; i++) {
-                        if(map.find(new Location(cursorXpos,cursorYpos)).getUnit().getArmy().getSide()!= armies[i].getSide()) {
-                            armies[i].getCO().afterEnemyAction(map.find(new Location(cursorXpos,cursorYpos)).getUnit(), 15, null, true);
+                        if(map.find(new Location(cursorYTilePos,cursorXTilePos)).getUnit().getArmy().getSide()!= armies[i].getSide()) {
+                            armies[i].getCO().afterEnemyAction(map.find(new Location(cursorYTilePos,cursorXTilePos)).getUnit(), 15, null, true);
                             if(armies[i].getAltCO()!= null)
-                                armies[i].getAltCO().afterEnemyAction(map.find(new Location(cursorXpos,cursorYpos)).getUnit(), 15, null, false);
+                                armies[i].getAltCO().afterEnemyAction(map.find(new Location(cursorYTilePos,cursorXTilePos)).getUnit(), 15, null, false);
                         }
                     }
-                    map.find(new Location(cursorXpos,cursorYpos)).getUnit().getArmy().getCO().afterAction(map.find(new Location(cursorXpos,cursorYpos)).getUnit(), 15, null, true);
-                    if(map.find(new Location(cursorXpos,cursorYpos)).getUnit().getArmy().getAltCO() != null)
-                        map.find(new Location(cursorXpos,cursorYpos)).getUnit().getArmy().getAltCO().afterAction(map.find(new Location(cursorXpos,cursorYpos)).getUnit(), 15, null, false);
+                    map.find(new Location(cursorYTilePos,cursorXTilePos)).getUnit().getArmy().getCO().afterAction(map.find(new Location(cursorYTilePos,cursorXTilePos)).getUnit(), 15, null, true);
+                    if(map.find(new Location(cursorYTilePos,cursorXTilePos)).getUnit().getArmy().getAltCO() != null)
+                        map.find(new Location(cursorYTilePos,cursorXTilePos)).getUnit().getArmy().getAltCO().afterAction(map.find(new Location(cursorYTilePos,cursorXTilePos)).getUnit(), 15, null, false);
                     
                     b.updateFoW();
                     break;
@@ -4186,7 +4185,7 @@ public class BattleScreen extends CWScreen
                 unload = 0;
             }
             if(replayAction >= 0){
-                CWEvent tempev= new Action(replayAction,originalLocation.getCol(),originalLocation.getRow(),selected.getPath(),cursorXpos,cursorYpos,b.getDay(),b.getTurn());
+                CWEvent tempev= new Action(replayAction,originalLocation.getCol(),originalLocation.getRow(),selected.getPath(),cursorYTilePos,cursorXTilePos,b.getDay(),b.getTurn());
                 logger.info("tempev="+tempev);
                 b.getReplay().push(tempev);
             }
@@ -4231,8 +4230,7 @@ public class BattleScreen extends CWScreen
         }
         else
         {
-        	logger.info("You are still selecting something!");
-                logger.info("And that something is:" + selected);
+            logger.debug("SELECTED:" + selected);
         }
     }
     
@@ -4266,10 +4264,10 @@ public class BattleScreen extends CWScreen
     }
     
     public int getSX() {
-        return sx;
+        return cursorXPixelPos;
     }
     public int getSY() {
-        return sy;
+        return cursorYPixelPos;
     }
     
     //This class deals with keypresses
@@ -4392,24 +4390,24 @@ public class BattleScreen extends CWScreen
 			}else if(keypress == Options.bkey){
 			    pressedB();
 			}else if(keypress == Options.left){
-			    if(map.onMap(cursorXpos-1,cursorYpos)){
-			        cursorXpos--;
-			        if(cursorXpos < sx/16+2 && sx > 0)sx -= 16;
+			    if(map.onMap(cursorYTilePos-1,cursorXTilePos)){
+			        cursorYTilePos--;
+			        if(cursorYTilePos < cursorXPixelPos/16+2 && cursorXPixelPos > 0)cursorXPixelPos -= 16;
 			    }
 			}else if(keypress == Options.right){
-			    if(map.onMap(cursorXpos+1,cursorYpos)){
-			        cursorXpos++;
-			        if(cursorXpos >= sx/16+MAX_TILEW-2 && cursorXpos < map.getMaxCol()-2)sx += 16;
+			    if(map.onMap(cursorYTilePos+1,cursorXTilePos)){
+			        cursorYTilePos++;
+			        if(cursorYTilePos >= cursorXPixelPos/16+MAX_TILEW-2 && cursorYTilePos < map.getMaxCol()-2)cursorXPixelPos += 16;
 			    }
 			}else if(keypress == Options.up){
-			    if(map.onMap(cursorXpos,cursorYpos-1)){
-			        cursorYpos--;
-			        if(cursorYpos < sy/16+2 && sy > 0)sy -= 16;
+			    if(map.onMap(cursorYTilePos,cursorXTilePos-1)){
+			        cursorXTilePos--;
+			        if(cursorXTilePos < cursorYPixelPos/16+2 && cursorYPixelPos > 0)cursorYPixelPos -= 16;
 			    }
 			}else if(keypress == Options.down){
-			    if(map.onMap(cursorXpos,cursorYpos+1)){
-			        cursorYpos++;
-			        if(cursorYpos >= sy/16+MAX_TILEH-2 && cursorYpos < map.getMaxRow()-2)sy += 16;
+			    if(map.onMap(cursorYTilePos,cursorXTilePos+1)){
+			        cursorXTilePos++;
+			        if(cursorXTilePos >= cursorYPixelPos/16+MAX_TILEH-2 && cursorXTilePos < map.getMaxRow()-2)cursorYPixelPos += 16;
 			    }
 			}else if(keypress == Options.fogkey){
 			    if(b.isFog()){
@@ -4492,7 +4490,7 @@ public class BattleScreen extends CWScreen
 			}else if(menu || cmenu || bmenu || carbmenu){
 			    
 			}
-			else if(map.onMap(cursorXpos+1,cursorYpos))
+			else if(map.onMap(cursorYTilePos+1,cursorXTilePos))
 			{
 				//[NEW]
 				if(fire)
@@ -4503,26 +4501,26 @@ public class BattleScreen extends CWScreen
 					if(currContextTarg >= targetTilesWithinRange.size())
 						currContextTarg = 0;
 					
-					cursorXpos = targetTilesWithinRange.get(currContextTarg).getCol();
-					cursorYpos = targetTilesWithinRange.get(currContextTarg).getRow();
+					cursorYTilePos = targetTilesWithinRange.get(currContextTarg).getCol();
+					cursorXTilePos = targetTilesWithinRange.get(currContextTarg).getRow();
 				}
 				else
 				{
-			        cursorXpos++;
+			        cursorYTilePos++;
 			        SFX.playClip(ResourceLoader.properties.getProperty("soundLocation") + "/maptick.wav");
-			            if(cursorXpos >= sx/16+MAX_TILEW-2 && cursorXpos < map.getMaxCol()-2)sx += 16;
+			            if(cursorYTilePos >= cursorXPixelPos/16+MAX_TILEW-2 && cursorYTilePos < map.getMaxCol()-2)cursorXPixelPos += 16;
 			        if(move){
-			            if(selected.getMoveRange().checkMove(cursorXpos,cursorYpos)){
+			            if(selected.getMoveRange().checkMove(cursorYTilePos,cursorXTilePos)){
 			                if(outOfMoveRange){
-			                    selected.getPath().reCalculatePath(cursorXpos,cursorYpos,selected);
+			                    selected.getPath().reCalculatePath(cursorYTilePos,cursorXTilePos,selected);
 			                    outOfMoveRange = false;
 			                }else{
 			                    selected.goDirection(1);
-			                    selected.getPath().truncatePath(cursorXpos,cursorYpos);
-			                    if(!selected.getPath().isLegal(selected))selected.getPath().reCalculatePath(cursorXpos,cursorYpos,selected);
+			                    selected.getPath().truncatePath(cursorYTilePos,cursorXTilePos);
+			                    if(!selected.getPath().isLegal(selected))selected.getPath().reCalculatePath(cursorYTilePos,cursorXTilePos,selected);
 			                }
 			            }else{
-			                if(cursorXpos == selected.getLocation().getCol() && cursorYpos == selected.getLocation().getRow()){
+			                if(cursorYTilePos == selected.getLocation().getCol() && cursorXTilePos == selected.getLocation().getRow()){
 			                    selected.getPath().resetPath();
 			                }else{
 			                    outOfMoveRange = true;
@@ -4555,7 +4553,7 @@ public class BattleScreen extends CWScreen
 			}else if(menu || cmenu || bmenu || carbmenu){
 			    
 			}
-			else if(map.onMap(cursorXpos-1,cursorYpos))
+			else if(map.onMap(cursorYTilePos-1,cursorXTilePos))
 			{
 
 				//[NEW]
@@ -4567,26 +4565,26 @@ public class BattleScreen extends CWScreen
 					if(currContextTarg < 0)
 						currContextTarg = targetTilesWithinRange.size() - 1;
 					
-					cursorXpos = targetTilesWithinRange.get(currContextTarg).getCol();
-					cursorYpos = targetTilesWithinRange.get(currContextTarg).getRow();
+					cursorYTilePos = targetTilesWithinRange.get(currContextTarg).getCol();
+					cursorXTilePos = targetTilesWithinRange.get(currContextTarg).getRow();
 				}
 				else
 				{
-			        cursorXpos--;
+			        cursorYTilePos--;
 			            SFX.playClip(ResourceLoader.properties.getProperty("soundLocation") + "/maptick.wav");
-			        if(cursorXpos < sx/16+2 && sx > 0)sx -= 16;
+			        if(cursorYTilePos < cursorXPixelPos/16+2 && cursorXPixelPos > 0)cursorXPixelPos -= 16;
 			        if(move){
-			            if(selected.getMoveRange().checkMove(cursorXpos,cursorYpos)){
+			            if(selected.getMoveRange().checkMove(cursorYTilePos,cursorXTilePos)){
 			                if(outOfMoveRange){
-			                    selected.getPath().reCalculatePath(cursorXpos,cursorYpos,selected);
+			                    selected.getPath().reCalculatePath(cursorYTilePos,cursorXTilePos,selected);
 			                    outOfMoveRange = false;
 			                }else{
 			                    selected.goDirection(3);
-			                    selected.getPath().truncatePath(cursorXpos,cursorYpos);
-			                    if(!selected.getPath().isLegal(selected))selected.getPath().reCalculatePath(cursorXpos,cursorYpos,selected);
+			                    selected.getPath().truncatePath(cursorYTilePos,cursorXTilePos);
+			                    if(!selected.getPath().isLegal(selected))selected.getPath().reCalculatePath(cursorYTilePos,cursorXTilePos,selected);
 			                }
 			            }else{
-			                if(cursorXpos == selected.getLocation().getCol() && cursorYpos == selected.getLocation().getRow()){
+			                if(cursorYTilePos == selected.getLocation().getCol() && cursorXTilePos == selected.getLocation().getRow()){
 			                    selected.getPath().resetPath();
 			                }else{
 			                    outOfMoveRange = true;
@@ -4608,7 +4606,7 @@ public class BattleScreen extends CWScreen
 			{
 			    currentMenu.goDown();
 			}
-			else if(map.onMap(cursorXpos,cursorYpos+1))
+			else if(map.onMap(cursorYTilePos,cursorXTilePos+1))
 			{
 				//[NEW]
 				if(fire)
@@ -4619,26 +4617,26 @@ public class BattleScreen extends CWScreen
 					if(currContextTarg < 0)
 						currContextTarg = targetTilesWithinRange.size() - 1;
 					
-					cursorXpos = targetTilesWithinRange.get(currContextTarg).getCol();
-					cursorYpos = targetTilesWithinRange.get(currContextTarg).getRow();
+					cursorYTilePos = targetTilesWithinRange.get(currContextTarg).getCol();
+					cursorXTilePos = targetTilesWithinRange.get(currContextTarg).getRow();
 				}
 				else
 				{
-			        cursorYpos++;
+			        cursorXTilePos++;
 			            SFX.playClip(ResourceLoader.properties.getProperty("soundLocation") + "/maptick.wav");
-			        if(cursorYpos >= sy/16+MAX_TILEH-2 && cursorYpos < map.getMaxRow()-2)sy += 16;
+			        if(cursorXTilePos >= cursorYPixelPos/16+MAX_TILEH-2 && cursorXTilePos < map.getMaxRow()-2)cursorYPixelPos += 16;
 			        if(move){
-			            if(selected.getMoveRange().checkMove(cursorXpos,cursorYpos)){
+			            if(selected.getMoveRange().checkMove(cursorYTilePos,cursorXTilePos)){
 			                if(outOfMoveRange){
-			                    selected.getPath().reCalculatePath(cursorXpos,cursorYpos,selected);
+			                    selected.getPath().reCalculatePath(cursorYTilePos,cursorXTilePos,selected);
 			                    outOfMoveRange = false;
 			                }else{
 			                    selected.goDirection(2);
-			                    selected.getPath().truncatePath(cursorXpos,cursorYpos);
-			                    if(!selected.getPath().isLegal(selected))selected.getPath().reCalculatePath(cursorXpos,cursorYpos,selected);
+			                    selected.getPath().truncatePath(cursorYTilePos,cursorXTilePos);
+			                    if(!selected.getPath().isLegal(selected))selected.getPath().reCalculatePath(cursorYTilePos,cursorXTilePos,selected);
 			                }
 			            }else{
-			                if(cursorXpos == selected.getLocation().getCol() && cursorYpos == selected.getLocation().getRow()){
+			                if(cursorYTilePos == selected.getLocation().getCol() && cursorXTilePos == selected.getLocation().getRow()){
 			                    selected.getPath().resetPath();
 			                }else{
 			                    outOfMoveRange = true;
@@ -4657,7 +4655,7 @@ public class BattleScreen extends CWScreen
 			}else if(menu || cmenu || bmenu || carbmenu){
 			    currentMenu.goUp();
 			}
-			else if(map.onMap(cursorXpos,cursorYpos-1))
+			else if(map.onMap(cursorYTilePos,cursorXTilePos-1))
 			{
 				//[NEW]
 				if(fire)
@@ -4668,26 +4666,26 @@ public class BattleScreen extends CWScreen
 					if(currContextTarg >= targetTilesWithinRange.size())
 						currContextTarg = 0;
 					
-					cursorXpos = targetTilesWithinRange.get(currContextTarg).getCol();
-					cursorYpos = targetTilesWithinRange.get(currContextTarg).getRow();
+					cursorYTilePos = targetTilesWithinRange.get(currContextTarg).getCol();
+					cursorXTilePos = targetTilesWithinRange.get(currContextTarg).getRow();
 				}
 				else
 				{
-			        cursorYpos--;
+			        cursorXTilePos--;
 			        SFX.playClip(ResourceLoader.properties.getProperty("soundLocation") + "/maptick.wav");
-			            if(cursorYpos < sy/16+2 && sy > 0)sy -= 16;
+			            if(cursorXTilePos < cursorYPixelPos/16+2 && cursorYPixelPos > 0)cursorYPixelPos -= 16;
 			        if(move){
-			            if(selected.getMoveRange().checkMove(cursorXpos,cursorYpos)){
+			            if(selected.getMoveRange().checkMove(cursorYTilePos,cursorXTilePos)){
 			                if(outOfMoveRange){
-			                    selected.getPath().reCalculatePath(cursorXpos,cursorYpos,selected);
+			                    selected.getPath().reCalculatePath(cursorYTilePos,cursorXTilePos,selected);
 			                    outOfMoveRange = false;
 			                }else{
 			                    selected.goDirection(0);
-			                    selected.getPath().truncatePath(cursorXpos,cursorYpos);
-			                    if(!selected.getPath().isLegal(selected))selected.getPath().reCalculatePath(cursorXpos,cursorYpos,selected);
+			                    selected.getPath().truncatePath(cursorYTilePos,cursorXTilePos);
+			                    if(!selected.getPath().isLegal(selected))selected.getPath().reCalculatePath(cursorYTilePos,cursorXTilePos,selected);
 			                }
 			            }else{
-			                if(cursorXpos == selected.getLocation().getCol() && cursorYpos == selected.getLocation().getRow()){
+			                if(cursorYTilePos == selected.getLocation().getCol() && cursorXTilePos == selected.getLocation().getRow()){
 			                    selected.getPath().resetPath();
 			                }else{
 			                    outOfMoveRange = true;
@@ -4707,7 +4705,7 @@ public class BattleScreen extends CWScreen
         public void mouseClicked(MouseEvent e){
             int xCoOrdinates = e.getX() - parentFrame.getInsets().left;
             int yCoOrdinates = e.getY() - parentFrame.getInsets().top;
-            logger.info("info =" + xCoOrdinates + "," + yCoOrdinates + ":" + e.getButton());
+            logger.debug("Mouse clicked TileCol=["+cursorYTilePos+"] TileRow=["+cursorXTilePos+"] co-ords: X=[" + cursorXPixelPos + "] , Y=[" + cursorYPixelPos + "], button clicked: [" + e.getButton() +"]");
             
             if(e.getButton() == MouseEvent.BUTTON1){
                 if(menu || cmenu){
@@ -4731,50 +4729,41 @@ public class BattleScreen extends CWScreen
                     if(noScroll == 0){
                         if(xCoOrdinates < 32*scale){
                             if(map.getMaxCol() > DEF_TILEW){
-                                sx -= 16;
-                                if(sx < 0)sx=0;
+                                cursorXPixelPos -= 16;
+                                if(cursorXPixelPos < 0)cursorXPixelPos=0;
                             }
                         }else if(xCoOrdinates > MAX_TILEW*16*scale-32*scale){
                             if(map.getMaxCol() > DEF_TILEW){
-                                sx += 16;
-                                if(sx > (map.getMaxCol()-MAX_TILEW)*16)sx-=16;
+                                cursorXPixelPos += 16;
+                                if(cursorXPixelPos > (map.getMaxCol()-MAX_TILEW)*16)cursorXPixelPos-=16;
                             }
                         }
                         
                         if(yCoOrdinates < 32*scale){
                             if(map.getMaxRow() > DEF_TILEH){
-                                sy -= 16;
-                                if(sy < 0)sy=0;
+                                cursorYPixelPos -= 16;
+                                if(cursorYPixelPos < 0)cursorYPixelPos=0;
                             }
                         }else if(yCoOrdinates > MAX_TILEH*16*scale-32*scale){
                             if(map.getMaxRow() > DEF_TILEH){
-                                sy += 16;
-                                if(sy > (map.getMaxRow()-MAX_TILEH)*16)sy-=16;
+                                cursorYPixelPos += 16;
+                                if(cursorYPixelPos > (map.getMaxRow()-MAX_TILEH)*16)cursorYPixelPos-=16;
                             }
                         }
                         noScroll = 3;
                     }else noScroll--;
 
-                    boolean validClick = true;
-                    
-                    if(fire) 
-                    {
-                    	validClick = validFiringTargetSelected(xCoOrdinates, yCoOrdinates, targetTilesWithinRange);
-                    }
-                    
-                    if(validClick)
-                    {
-	                    cursorXpos = sx/16 + xCoOrdinates/(16*scale);
-	                    if(cursorXpos < 0)cursorXpos=0;
-	                    else if(cursorXpos >= map.getMaxCol())cursorXpos=map.getMaxCol()-1;
-	                    cursorYpos = sy/16 + yCoOrdinates/(16*scale);
-	                    if(cursorYpos < 0)cursorYpos=0;
-	                    else if(cursorYpos >= map.getMaxRow())cursorYpos=map.getMaxRow()-1;
+	                    cursorYTilePos = cursorXPixelPos/16 + xCoOrdinates/(16*scale);
+	                    if(cursorYTilePos < 0)cursorYTilePos=0;
+	                    else if(cursorYTilePos >= map.getMaxCol())cursorYTilePos=map.getMaxCol()-1;
+	                    cursorXTilePos = cursorYPixelPos/16 + yCoOrdinates/(16*scale);
+	                    if(cursorXTilePos < 0)cursorXTilePos=0;
+	                    else if(cursorXTilePos >= map.getMaxRow())cursorXTilePos=map.getMaxRow()-1;
 	                    
-	                    if(move)selected.getPath().reCalculatePath(cursorXpos,cursorYpos,selected);
+	                    if(move)selected.getPath().reCalculatePath(cursorYTilePos,cursorXTilePos,selected);
 	                    
                     	pressedA();
-                    }
+                    
                 }
             }
             else
@@ -4823,16 +4812,16 @@ public class BattleScreen extends CWScreen
                     {
                         if(map.getMaxCol() > DEF_TILEW)
                         {
-                            sx -= 16;
-                            if(sx < 0)sx=0;
+                            cursorXPixelPos -= 16;
+                            if(cursorXPixelPos < 0)cursorXPixelPos=0;
                         }
                     }
                     else if(x > MAX_TILEW*16*scale-32*scale)
                     {
                         if(map.getMaxCol() > DEF_TILEW)
                         {
-                            sx += 16;
-                            if(sx > (map.getMaxCol()-MAX_TILEW)*16)sx-=16;
+                            cursorXPixelPos += 16;
+                            if(cursorXPixelPos > (map.getMaxCol()-MAX_TILEW)*16)cursorXPixelPos-=16;
                         }
                     }
                     
@@ -4840,30 +4829,30 @@ public class BattleScreen extends CWScreen
                     {
                         if(map.getMaxRow() > DEF_TILEH)
                         {
-                            sy -= 16;
-                            if(sy < 0)sy=0;
+                            cursorYPixelPos -= 16;
+                            if(cursorYPixelPos < 0)cursorYPixelPos=0;
                         }
                     }
                     else if(y > MAX_TILEH*16*scale-32*scale)
                     {
                         if(map.getMaxRow() > DEF_TILEH)
                         {
-                            sy += 16;
-                            if(sy > (map.getMaxRow()-MAX_TILEH)*16)sy-=16;
+                            cursorYPixelPos += 16;
+                            if(cursorYPixelPos > (map.getMaxRow()-MAX_TILEH)*16)cursorYPixelPos-=16;
                         }
                     }
                     noScroll = 3;
                 }
                 else noScroll--;
                 
-                cursorXpos = sx/16 + x/(16*scale);
-                if(cursorXpos < 0)cursorXpos=0;
-                else if(cursorXpos >= map.getMaxCol())cursorXpos=map.getMaxCol()-1;
-                cursorYpos = sy/16 + y/(16*scale);
-                if(cursorYpos < 0)cursorYpos=0;
-                else if(cursorYpos >= map.getMaxRow())cursorYpos=map.getMaxRow()-1;
+                cursorYTilePos = cursorXPixelPos/16 + x/(16*scale);
+                if(cursorYTilePos < 0)cursorYTilePos=0;
+                else if(cursorYTilePos >= map.getMaxCol())cursorYTilePos=map.getMaxCol()-1;
+                cursorXTilePos = cursorYPixelPos/16 + y/(16*scale);
+                if(cursorXTilePos < 0)cursorXTilePos=0;
+                else if(cursorXTilePos >= map.getMaxRow())cursorXTilePos=map.getMaxRow()-1;
                 
-                if(move)selected.getPath().reCalculatePath(cursorXpos,cursorYpos,selected);
+                if(move)selected.getPath().reCalculatePath(cursorYTilePos,cursorXTilePos,selected);
             }
 
             if(fire)
@@ -4873,7 +4862,7 @@ public class BattleScreen extends CWScreen
             	
                 for(int k = 0; k < targetTilesWithinRange.size() && !onTarg; k++)
                 {
-                	if((new Location(cursorXpos, cursorYpos).equals(targetTilesWithinRange.get(k))))
+                	if((new Location(cursorYTilePos, cursorXTilePos).equals(targetTilesWithinRange.get(k))))
                 	{
                 		currContextTarg = k;
                 		onTarg = true;
@@ -4883,8 +4872,8 @@ public class BattleScreen extends CWScreen
                 //Set the cusor's current coordinates to that of the current target.
                 //If the mouse does not move over any valid targets, this code should
                 //keep locking the coordinates back to that of the target before.
-        		cursorXpos = targetTilesWithinRange.get(currContextTarg).getCol();
-        		cursorYpos = targetTilesWithinRange.get(currContextTarg).getRow();
+        		cursorYTilePos = targetTilesWithinRange.get(currContextTarg).getCol();
+        		cursorXTilePos = targetTilesWithinRange.get(currContextTarg).getRow();
             }
         }
     }
