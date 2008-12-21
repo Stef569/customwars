@@ -15,10 +15,10 @@ import com.customwars.map.location.Path;
 public class Action extends CWEvent implements Serializable{
     private int id; //the action's ID, see the master index list for a list
     private Path movePath;  //the move-path before the action
-    private int cx;         //the x coordinate of the acting unit
-    private int cy;         //the y coordinate of the acting unit
-    private int x;          //the x coordinate of the action
-    private int y;          //the y coordinate of the action
+    private int invokersXtile;         //the x coordinate of the acting unit
+    private int invokersYTile;         //the y coordinate of the acting unit
+    private int targetedXTile;          //the x coordinate of the action
+    private int targetedYTile;          //the y coordinate of the action
     //private int info;       //additional information about the action
     
     //constructor
@@ -26,10 +26,10 @@ public class Action extends CWEvent implements Serializable{
         super(0,d,tr);
         id = i;
         movePath = p;
-        cx = ux;
-        cy = uy;
-        x = xc;
-        y = yc;
+        invokersXtile = ux;
+        invokersYTile = uy;
+        targetedXTile = xc;
+        targetedYTile = yc;
         //info = in;
     }
     
@@ -42,19 +42,19 @@ public class Action extends CWEvent implements Serializable{
     }
     
     public int getUnitX(){
-        return cx;
+        return invokersXtile;
     }
     
     public int getUnitY(){
-        return cy;
+        return invokersYTile;
     }
     
     public int getX(){
-        return x;
+        return targetedXTile;
     }
     
     public int getY(){
-        return y;
+        return targetedYTile;
     }
     
     //public int getInfo(){
@@ -62,6 +62,6 @@ public class Action extends CWEvent implements Serializable{
     //}
     
     public String toString(){
-        return "Type: " + type + " Day: " + day + " Turn: " + turn + " ID: " + id + " UX: " + cx + " UY: " + cy + "\nX: " + x + " Y: " + y + " Path: " + movePath;
+        return "Action Type=[" + type + "] ID=[" + id + " TileCol=[" + invokersYTile + "] TileRow=[" + invokersXtile + "] Targeted RowTile=[" + targetedXTile + "] Targeted ColTile=[" + targetedYTile + "] Movement Path: " + movePath;
     }
 }

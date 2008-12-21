@@ -301,7 +301,7 @@ public class Battle implements Serializable{
             //HEADER
             int header = read.readInt(); //skip version number
             String name = "";
-            String aut = "";
+            String author = "";
             String desc = "";
             char tempbyte;
             //read name
@@ -314,7 +314,7 @@ public class Battle implements Serializable{
             while(true){
                 tempbyte = (char)read.readByte();
                 if(tempbyte==0)break;
-                aut += tempbyte;
+                author += tempbyte;
             }
             //read description
             while(true){
@@ -322,9 +322,7 @@ public class Battle implements Serializable{
                 if(tempbyte==0)break;
                 desc += tempbyte;
             }
-        	logger.info("name= ["+ name + "]");
-        	logger.info("aut= [" +aut+ "]");
-        	logger.info("desc= ["+ desc+ "]");
+        	logger.info("Selecting Map name=["+ name + "] author=["+author +"] description: "+ desc);
             
             //width, height, and number of armies
             width = read.readInt();
@@ -348,7 +346,7 @@ public class Battle implements Serializable{
             
             //assign names to the map
             m.setMapName(name);
-            m.setMapAuthor(aut);
+            m.setMapAuthor(author);
             m.setMapDescription(desc);
             
             //TERRAIN

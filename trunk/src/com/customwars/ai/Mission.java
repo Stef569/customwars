@@ -80,7 +80,7 @@ public class Mission {
     //saves the initial state to memory
     public static void saveInitialState(){
         String saveLocation = ResourceLoader.properties.getProperty("saveLocation");
-        logger.debug("Saving initial state file [" + saveLocation + REPLAY_SAVE_FILENAME+"]");
+        logger.info("Saving initial state file [" + saveLocation + REPLAY_SAVE_FILENAME+"]");
         
         if(battle1 != null){
             try{
@@ -117,7 +117,7 @@ public class Mission {
    
     public static void saveMission(String filename){
     	String saveLocation = ResourceLoader.properties.getProperty("saveLocation");
-    	logger.debug("Saving file ["   + saveLocation +  "/" +  filename +"]");
+    	logger.info("Saving file ["   + saveLocation +  "/" +  filename +"]");
         try{
         	
             ObjectOutputStream write = new ObjectOutputStream(new FileOutputStream(saveLocation + "/" +filename));

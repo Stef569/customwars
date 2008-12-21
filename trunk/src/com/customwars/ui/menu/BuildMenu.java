@@ -518,100 +518,100 @@ public class BuildMenu extends ScrollMenu{
     public int doMenuItem(){
         if(displayItems != null && displayItems.length != 0){
             if(displayItems[item].equals("Infantry")){
-                logger.info("Infantry");
+                logger.info("Selected to create Infantry");
                 if(canBuy[0])return 0;
             }else if(displayItems[item].equals("Mech")){
-                logger.info("Mech");
+                logger.info("Selected to create Mech");
                 if(canBuy[1])return 1;
             }else if(displayItems[item].equals("Tank")){
-                logger.info("Tank");
+                logger.info("Selected to create Tank");
                 if(canBuy[2])return 2;
             }else if(displayItems[item].equals("Md Tank")){
-                logger.info("Md Tank");
+                logger.info("Selected to create Md Tank");
                 if(canBuy[3])return 3;
             }else if(displayItems[item].equals("Recon")){
-                logger.info("Recon");
+                logger.info("Selected to create Recon");
                 if(canBuy[4])return 4;
             }else if(displayItems[item].equals("Anti-Air")){
-                logger.info("Anit-Air");
+                logger.info("Selected to create Anit-Air");
                 if(canBuy[5])return 5;
             }else if(displayItems[item].equals("Missiles")){
-                logger.info("Missiles");
+                logger.info("Selected to create Missiles");
                 if(canBuy[6])return 6;
             }else if(displayItems[item].equals("Artillery")){
-                logger.info("Artillery");
+                logger.info("Selected to create Artillery");
                 if(canBuy[7])return 7;
             }else if(displayItems[item].equals("Rockets")){
-                logger.info("Rockets");
+                logger.info("Selected to create Rockets");
                 if(canBuy[8])return 8;
             }else if(displayItems[item].equals("APC")){
-                logger.info("APC");
+                logger.info("Selected to create APC");
                 if(canBuy[9])return 9;
             }else if(displayItems[item].equals("Lander")){
-                logger.info("Lander");
+                logger.info("Selected to create Lander");
                 if(canBuy[10])return 10;
             }else if(displayItems[item].equals("Cruiser")){
-                logger.info("Cruiser");
+                logger.info("Selected to create Cruiser");
                 if(canBuy[11])return 11;
             }else if(displayItems[item].equals("Sub")){
-                logger.info("Sub");
+                logger.info("Selected to create Sub");
                 if(canBuy[12])return 12;
             }else if(displayItems[item].equals("Battleship")){
-                logger.info("Battleship");
+                logger.info("Selected to create Battleship");
                 if(canBuy[13])return 13;
             }else if(displayItems[item].equals("T Copter")){
-                logger.info("T Copter");
+                logger.info("Selected to create T Copter");
                 if(canBuy[14])return 14;
             }else if(displayItems[item].equals("B Copter")){
-                logger.info("B Copter");
+                logger.info("Selected to create B Copter");
                 if(canBuy[15])return 15;
             }else if(displayItems[item].equals("Fighter")){
-                logger.info("Fighter");
+                logger.info("Selected to create Fighter");
                 if(canBuy[16])return 16;
             }else if(displayItems[item].equals("Bomber")){
-                logger.info("Bomber");
+                logger.info("Selected to create Bomber");
                 if(canBuy[17])return 17;
             }else if(displayItems[item].equals("Neotank")){
-                logger.info("Neotank");
+                logger.info("Selected to create Neotank");
                 if(canBuy[18])return 18;
             }else if(displayItems[item].equals("Megatank")){
-                logger.info("Megatank");
+                logger.info("Selected to create Megatank");
                 if(canBuy[19])return 19;
             }else if(displayItems[item].equals("Piperunner")){
-                logger.info("Piperunner");
+                logger.info("Selected to create Piperunner");
                 if(canBuy[20])return 20;
             }else if(displayItems[item].equals("Black Boat")){
-                logger.info("Black Boat");
+                logger.info("Selected to create Black Boat");
                 if(canBuy[21])return 21;
             }else if(displayItems[item].equals("Carrier")){
-                logger.info("Carrier");
+                logger.info("Selected to create Carrier");
                 if(canBuy[22])return 22;
             }else if(displayItems[item].equals("Stealth")){
-                logger.info("Stealth");
+                logger.info("Selected to create Stealth");
                 if(canBuy[23])return 23;
             }else if(displayItems[item].equals("Black Bomb")){
-                logger.info("Black Bomb");
+                logger.info("Selected to create Black Bomb");
                 if(canBuy[24])return 24;
             }else if(displayItems[item].equals("Bcraft")){
-                logger.info("Bcraft");
+                logger.info("Selected to create Bcraft");
                 if(canBuy[25])return 25;
             }else if(displayItems[item].equals("Acraft")){
-                logger.info("Acraft");
+                logger.info("Selected to create Acraft");
                 if(canBuy[26])return 26;
             }else if(displayItems[item].equals("SRunner")){
-                logger.info("Shuttlerunner");
+                logger.info("Selected to create Shuttlerunner");
                 if(canBuy[27])return 27;
             }else if(displayItems[item].equals("Zeppelin")){
-                logger.info("Zeppelin");
+                logger.info("Selected to create Zeppelin");
                 if(canBuy[28])return 28;
             }else if(displayItems[item].equals("Spyplane")){
-                logger.info("Spyplane");
+                logger.info("Selected to create Spyplane");
                 if(canBuy[29])return 29;
             }else if(displayItems[item].equals("Destroyer")){
-                logger.info("Destroyer");
+                logger.info("Selected to create Destroyer");
                 if(canBuy[30])return 30;
             }else if(displayItems[item].equals("Oozium")){
-                logger.info("Oozium");
+                logger.info("Selected to create Oozium");
                 if(canBuy[31])return 31;
             }else{
                 System.err.println("ERROR, INVALID CONTEXT MENU ITEM");

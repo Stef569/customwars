@@ -130,7 +130,7 @@ public class MainMenu extends JComponent{
         cy = 0;
         item = 0;
         item2 = 0;
-        logger.info("This one is fine though");
+        logger.info("Started through Main menu");
         
         scale = 1;
         
@@ -2022,9 +2022,6 @@ public void drawNewLoadScreen(Graphics2D g){
 		    cx = 0;
 		    cy = 0;
 		    
-		    logger.info("Number of COs: "+numCOs);
-		    logger.info("Number of Armies: "+numArmies);
-		    
 		    if(Options.snailGame && numCOs == 2){
 		        logger.info("Stop for snail game");
 		        if(insertNewCO){
@@ -2072,9 +2069,7 @@ public void drawNewLoadScreen(Graphics2D g){
 		    if(numCOs == numArmies*2){
 		        //coSelections[numCOs] = cx+cy*4;
 		        //numCOs++;
-		        
-		        for(int i = 0; i < coSelections.length; i++)logger.info(""+coSelections[i]);
-		        logger.info("Number of COs: "+numCOs);
+			    logger.info("Total No of competing COs=["+numCOs+"]  Armies=["+numArmies+"]");
 		        
 		        //int[] sideSelect = {0,0};
 		        if(numCOs > 4){
@@ -3208,12 +3203,15 @@ public void drawNewLoadScreen(Graphics2D g){
                 if(title){
                     if(x > 160 && x < 332 && y > 60 && y < 87){
                         item = 0;
+                        logger.info("Moving into the New Game Menu");
                         pressedA();
                     }else if(x > 143 && x < 350 && y > 156 && y < 183){
                         item = 1;
+                        logger.info("Moving into the Design Maps Area");
                         pressedA();
                     }else if(x > 175 && x < 320 && y > 247 && y < 279){
                         item = 2;
+                        logger.info("Moving into the Options Menu");
                         pressedA();
                     }
                 }else if(newload){
