@@ -57,7 +57,7 @@ public class MainMenu extends JComponent{
     private int cy;             //holds the cursor's y position on the co select screen
     private int item;           //holds the menu's current item (both menus use this)
     private int item2;          //holds the second menu's current item (only used by server info screen)
-    private boolean title;      //title mode
+    private boolean inTitleScreen;      //title mode
     private boolean options;    //options mode
     private boolean newload;    //new/load/network mode
     private boolean mapSelect;        //map select mode
@@ -112,6 +112,20 @@ public class MainMenu extends JComponent{
     private int skipMax = 0;
     public boolean altcostume;
     public boolean mainaltcostume;
+    
+	private int TITLE_startPixels_newGameBtn = 160;
+	private int TITLE_endPixels_newGameBtnWidth = 332;
+	private int TITLE_topPixels_newGameBtnHeight = 87;
+	private int TITLE_btmPixels_newGameBtnHeight = 60;
+	private int TITLE_startPixels_mapsEditorBtn = 143;
+	private int TITLE_endPixels_mapsEditorBtn = 350;
+	private int TITLE_btmPixels_mapsEditorBtn = 156;
+	private int TITLE_topPixels_mapsEditorBtn = 183;
+	private int TITLE_startPixels_optionsButton = 175;
+	private int TITLE_btmPixels_optionsBtn = 247;
+	private int TITLE_topPixels_optionsBtn = 279;
+	private int TITLE_endPixels_optionsBtn = 320;
+    
 	final static Logger logger = LoggerFactory.getLogger(MainMenu.class); 
     
     private CO[][] armyArray = new CO[8][14];
@@ -134,7 +148,7 @@ public class MainMenu extends JComponent{
         
         scale = 1;
         
-        title = true;
+        inTitleScreen = true;
         options = false;
         newload = false;
         mapSelect = false;
@@ -224,7 +238,7 @@ public class MainMenu extends JComponent{
         //g.fillRect(0,0,256,192);
         
         drawBackground(g);
-        if(title)drawTitleScreen(g);
+        if(inTitleScreen)drawTitleScreen(g);
         if(mapSelect)drawMapSelectScreen(g);
         
         if(COselect)drawCOSelectScreen(g);
@@ -1415,7 +1429,7 @@ public void drawNewLoadScreen(Graphics2D g){
     
     public void pressedA()
     {
-        if(title)
+        if(inTitleScreen)
         {
             titleScreenActions();
         }
@@ -1608,7 +1622,7 @@ public void drawNewLoadScreen(Graphics2D g){
 		            if (t == null){
 		                Options.snailGame = false;
 		                mapSelect = false;
-		                title = true;
+		                inTitleScreen = true;
 		                return;
 		            }
 		            joinnum = Integer.parseInt(t);
@@ -1627,7 +1641,7 @@ public void drawNewLoadScreen(Graphics2D g){
 		            }else{
 		                Options.snailGame = false;
 		                mapSelect = false;
-		                title = true;
+		                inTitleScreen = true;
 		                return;
 		            }
 		        }
@@ -1821,7 +1835,7 @@ public void drawNewLoadScreen(Graphics2D g){
 		    }
 		    String slot = JOptionPane.showInputDialog("Type in the number of the army you will command");
 		    if(slot == null){
-		        title = true;
+		        inTitleScreen = true;
 		        snailinfo = false;
 		        return;
 		    }
@@ -1834,13 +1848,13 @@ public void drawNewLoadScreen(Graphics2D g){
 		            logger.info("Game does not exist");
 		            Options.gamename = JOptionPane.showInputDialog("Type in the name of the game you want to join");
 		            if(Options.gamename == null){
-		                title = true;
+		                inTitleScreen = true;
 		                snailinfo = false;
 		                return;
 		            }
 		            Options.masterpass = JOptionPane.showInputDialog("Type in the master password of the game");
 		            if(Options.masterpass == null){
-		                title = true;
+		                inTitleScreen = true;
 		                snailinfo = false;
 		                return;
 		            }
@@ -1848,13 +1862,13 @@ public void drawNewLoadScreen(Graphics2D g){
 		            logger.info("Incorrect Password");
 		            Options.gamename = JOptionPane.showInputDialog("Type in the name of the game you want to join");
 		            if(Options.gamename == null){
-		                title = true;
+		                inTitleScreen = true;
 		                snailinfo = false;
 		                return;
 		            }
 		            Options.masterpass = JOptionPane.showInputDialog("Type in the master password of the game");
 		            if(Options.masterpass == null){
-		                title = true;
+		                inTitleScreen = true;
 		                snailinfo = false;
 		                return;
 		            }
@@ -1862,7 +1876,7 @@ public void drawNewLoadScreen(Graphics2D g){
 		            logger.info("Army choice out of range or invalid");
 		            slot = JOptionPane.showInputDialog("Type in the number of the army you will command");
 		            if(slot == null){
-		                title = true;
+		                inTitleScreen = true;
 		                snailinfo = false;
 		                return;
 		            }
@@ -1870,7 +1884,7 @@ public void drawNewLoadScreen(Graphics2D g){
 		            logger.info("Army choice already taken");
 		            slot = JOptionPane.showInputDialog("Type in the number of the army you will command");
 		            if(slot == null){
-		                title = true;
+		                inTitleScreen = true;
 		                snailinfo = false;
 		                return;
 		            }
@@ -1879,7 +1893,7 @@ public void drawNewLoadScreen(Graphics2D g){
 		            JOptionPane.showMessageDialog(this,"Version Mismatch");
 		            Options.snailGame = false;
 		            snailinfo = false;
-		            title = true;
+		            inTitleScreen = true;
 		            return;
 		        }
 		        refreshInfo();
@@ -2198,7 +2212,7 @@ public void drawNewLoadScreen(Graphics2D g){
 	private void titleScreenActions() {
 		if(item==0)
 		{
-		    title = false;
+		    inTitleScreen = false;
 		    newload = true;
 		}
 		else if(item==1)
@@ -2219,7 +2233,7 @@ public void drawNewLoadScreen(Graphics2D g){
 		else if(item==2)
 		{
 		    //Goto the option menu
-		    title = false;
+		    inTitleScreen = false;
 		    options = true;
 		    item = 0;
 		}
@@ -2419,7 +2433,7 @@ public void drawNewLoadScreen(Graphics2D g){
                 if(Options.isNetworkGame())Options.stopNetwork();
                 if(Options.snailGame){
                     mapSelect = false;
-                    title = true;
+                    inTitleScreen = true;
                     Options.snailGame = false;
                 }
             }else{
@@ -2429,12 +2443,12 @@ public void drawNewLoadScreen(Graphics2D g){
                 cy = 0;
             }
         }else if(options){
-            title = true;
+            inTitleScreen = true;
             options = false;
             item = 0;
             if(Options.isNetworkGame())Options.stopNetwork();
         }else if(newload){
-            title = true;
+            inTitleScreen = true;
             newload = false;
             item = 0;
             if(Options.isNetworkGame())Options.stopNetwork();
@@ -2603,7 +2617,7 @@ public void drawNewLoadScreen(Graphics2D g){
     
     public void returnToServerInfo(){
         snailinfo = true;
-        title = false;
+        inTitleScreen = false;
         Options.snailGame = true;
         refreshInfo();
     }
@@ -2704,7 +2718,7 @@ public void drawNewLoadScreen(Graphics2D g){
                 chooseKey = false;
                 Options.saveOptions();
             }else if(keypress == Options.up){
-                if(title){
+                if(inTitleScreen){
                     String soundLocation = ResourceLoader.properties.getProperty("soundLocation");
                     SFX.playClip(soundLocation +"/menutick.wav");
                     item--;
@@ -2757,7 +2771,7 @@ public void drawNewLoadScreen(Graphics2D g){
                     if(item<0)item=1;
                 }
             }else if(keypress == Options.down){
-                if(title){
+                if(inTitleScreen){
                 	String soundLocation = ResourceLoader.properties.getProperty("soundLocation");
                     SFX.playClip(soundLocation + "/menutick.wav");
                     item++;
@@ -3194,37 +3208,54 @@ public void drawNewLoadScreen(Graphics2D g){
     
     class MouseControl implements MouseInputListener{
         public void mouseClicked(MouseEvent e){
-            int x = e.getX() - parentFrame.getInsets().left;
-            int y = e.getY() - parentFrame.getInsets().top;
-            //logger.info(x + "," + y + ":" + e.getButton());
+            int clickedXCoOrds = e.getX() - parentFrame.getInsets().left;
+            int clickedYCoOrds = e.getY() - parentFrame.getInsets().top;
             
             if(e.getButton() == e.BUTTON1){
                 //first mouse button
-                if(title){
-                    if(x > 160 && x < 332 && y > 60 && y < 87){
+
+
+            	menuLoop: if(inTitleScreen){
+
+					boolean startNewGameButtonClicked = clickedXCoOrds > TITLE_startPixels_newGameBtn && clickedXCoOrds < TITLE_endPixels_newGameBtnWidth && clickedYCoOrds > TITLE_btmPixels_newGameBtnHeight && clickedYCoOrds < TITLE_topPixels_newGameBtnHeight;
+					boolean mapEditorButtonClicked = clickedXCoOrds > TITLE_startPixels_mapsEditorBtn && clickedXCoOrds < TITLE_endPixels_mapsEditorBtn && clickedYCoOrds > TITLE_btmPixels_mapsEditorBtn && clickedYCoOrds < TITLE_topPixels_mapsEditorBtn;
+					boolean optionsButtonClicked = clickedXCoOrds > TITLE_startPixels_optionsButton && clickedXCoOrds < TITLE_endPixels_optionsBtn && clickedYCoOrds > TITLE_btmPixels_optionsBtn && clickedYCoOrds < TITLE_topPixels_optionsBtn;
+
+					if(startNewGameButtonClicked){
                         item = 0;
                         logger.info("Moving into the New Game Menu");
                         pressedA();
-                    }else if(x > 143 && x < 350 && y > 156 && y < 183){
-                        item = 1;
-                        logger.info("Moving into the Design Maps Area");
-                        pressedA();
-                    }else if(x > 175 && x < 320 && y > 247 && y < 279){
-                        item = 2;
-                        logger.info("Moving into the Options Menu");
-                        pressedA();
-                    }
+                        break menuLoop;
+                        
+                    } 
+					
+					if(mapEditorButtonClicked){
+						item = 1;
+						logger.info("Moving into the Design Maps Area");
+						pressedA();
+						break menuLoop;
+					}
+
+					
+					if(optionsButtonClicked){
+						item = 2;
+						logger.info("Moving into the Options Menu");
+						pressedA();
+						break menuLoop;
+					}
+					
                 }else if(newload){
-                    if(x < 130){
-                        int i = y/30;
+                    if(clickedXCoOrds < 130){
+                        int i = clickedYCoOrds/30;
                         if(i < 8){
                             item = i;
+                            logger.info("Moving into Load replay from Menu");
                             pressedA();
                         }
                     }
                 }else if(options){
-                    if(x < 220){
-                        int i = y/20;
+                    if(clickedXCoOrds < 220){
+                        int i = clickedYCoOrds/20;
                         if((i < 6 || i >6) && i < 11){
                             item = i;
                             pressedA();
@@ -3234,8 +3265,8 @@ public void drawNewLoadScreen(Graphics2D g){
                         }
                     }
                 }else if(mapSelect){
-                    if(y < 30){
-                        if(x < 180){
+                    if(clickedYCoOrds < 30){
+                        if(clickedXCoOrds < 180){
                             //change category
                             cat++;
                             if(cat > cats.length-1)cat = 0;
@@ -3251,55 +3282,55 @@ public void drawNewLoadScreen(Graphics2D g){
                             loadMapDisplayNames();
                         }
                     }
-                    if(y < 40 && x > 180){
+                    if(clickedYCoOrds < 40 && clickedXCoOrds > 180){
                         //change subcategory
-                        if(x < 240)subcat = 0;
-                        else if(x < 260)subcat = 1;
-                        else if(x < 280)subcat = 2;
-                        else if(x < 300)subcat = 3;
-                        else if(x < 320)subcat = 4;
-                        else if(x < 340)subcat = 5;
-                        else if(x < 360)subcat = 6;
-                        else if(x < 380)subcat = 7;
-                        else if(x < 400)subcat = 8;
-                        else if(x < 480)subcat = 9;
+                        if(clickedXCoOrds < 240)subcat = 0;
+                        else if(clickedXCoOrds < 260)subcat = 1;
+                        else if(clickedXCoOrds < 280)subcat = 2;
+                        else if(clickedXCoOrds < 300)subcat = 3;
+                        else if(clickedXCoOrds < TITLE_endPixels_optionsBtn)subcat = 4;
+                        else if(clickedXCoOrds < 340)subcat = 5;
+                        else if(clickedXCoOrds < 360)subcat = 6;
+                        else if(clickedXCoOrds < 380)subcat = 7;
+                        else if(clickedXCoOrds < 400)subcat = 8;
+                        else if(clickedXCoOrds < 480)subcat = 9;
                         
                         item=0;
                         mapPage=0;
                         
                         //load maps in new directory
                         loadMapDisplayNames();
-                    }else if(y > 30 && y < 38){
-                        if(x > 84 && x < 98)
+                    }else if(clickedYCoOrds > 30 && clickedYCoOrds < 38){
+                        if(clickedXCoOrds > 84 && clickedXCoOrds < 98)
                             pressedPGUP();
-                    }else if(y > 50 && y < 302){
-                        if(x < 160){
-                            int i = (y-50)/21;
+                    }else if(clickedYCoOrds > 50 && clickedYCoOrds < 302){
+                        if(clickedXCoOrds < 160){
+                            int i = (clickedYCoOrds-50)/21;
                             if(i < 12 && mapPage*12+i < numMaps){
                                 item = i;
                                 pressedA();
                             }
                         }
-                    }else if(y > 312 && y < 320){
-                        if(x > 84 && x < 98)
+                    }else if(clickedYCoOrds > 312 && clickedYCoOrds < TITLE_endPixels_optionsBtn){
+                        if(clickedXCoOrds > 84 && clickedXCoOrds < 98)
                             pressedPGDN();
                     }
                 }else if(COselect){
-                    if(y > 61 && y < 321 && x > 2 && x < 158){
-                        cx = (x-2)/52;
-                        cy = (y-61)/52;
+                    if(clickedYCoOrds > 61 && clickedYCoOrds < 321 && clickedXCoOrds > 2 && clickedXCoOrds < 158){
+                        cx = (clickedXCoOrds-2)/52;
+                        cy = (clickedYCoOrds-61)/52;
                         pressedA();
-                    }else if(x >= 3 && x <= 155 && y <= 53){
-                        selectedArmy = (x - 3)/19;
+                    }else if(clickedXCoOrds >= 3 && clickedXCoOrds <= 155 && clickedYCoOrds <= 53){
+                        selectedArmy = (clickedXCoOrds - 3)/19;
                         if(cx != 0 || cy != 0){
                             CO temp = armyArray[selectedArmy][cx+cy*3-1];
                             if(temp != null)infono = COList.getIndex(temp);;
                         }
                     }
                 }else if(sideSelect){
-                    if(x < 130){
-                        if(y/20 < numArmies){
-                            item = y/20;
+                    if(clickedXCoOrds < 130){
+                        if(clickedYCoOrds/20 < numArmies){
+                            item = clickedYCoOrds/20;
                             if(sideSelections[item] == numArmies-1)sideSelections[item] = 0;
                             else sideSelections[item]+=1;
                         }
@@ -3307,40 +3338,40 @@ public void drawNewLoadScreen(Graphics2D g){
                         pressedA();
                     }
                 }else if(battleOptions){
-                    if(x > 10 && x < 10+BaseDMG.NUM_UNITS/2*16 && y > 184 && y < 220){
-                        cy = (y-184)/20;
-                        cx = (x-10)/16+cy*BaseDMG.NUM_UNITS/2;
+                    if(clickedXCoOrds > 10 && clickedXCoOrds < 10+BaseDMG.NUM_UNITS/2*16 && clickedYCoOrds > 184 && clickedYCoOrds < 220){
+                        cy = (clickedYCoOrds-184)/20;
+                        cx = (clickedXCoOrds-10)/16+cy*BaseDMG.NUM_UNITS/2;
                         item = 9;
                         pressedA();
-                    }else if(x < 210){
-                        if(y/20 < 9){
-                            item = y/20;
+                    }else if(clickedXCoOrds < 210){
+                        if(clickedYCoOrds/20 < 9){
+                            item = clickedYCoOrds/20;
                             processRightKeyBattleOptions();
                         }
                     }else{
                         pressedA();
                     }
                 }else if(snailinfo){
-                    if(x > 240 && x < 480 && y > 280 && y < 300){
+                    if(clickedXCoOrds > 240 && clickedXCoOrds < 480 && clickedYCoOrds > 280 && clickedYCoOrds < 300){
                         item = 0;
                         pressedA();
-                    }else if(x > 240 && x < 480 && y > 300 && y < 320){
+                    }else if(clickedXCoOrds > 240 && clickedXCoOrds < 480 && clickedYCoOrds > 300 && clickedYCoOrds < TITLE_endPixels_optionsBtn){
                         item = 1;
                         pressedA();
-                    }else if(x > 0 && x < 160 && y > 100 && y < 120){
+                    }else if(clickedXCoOrds > 0 && clickedXCoOrds < 160 && clickedYCoOrds > 100 && clickedYCoOrds < 120){
                         item2 = 0;
-                    }else if(x > 160 && x < 320 && y > 100 && y < 120){
+                    }else if(clickedXCoOrds > 160 && clickedXCoOrds < TITLE_endPixels_optionsBtn && clickedYCoOrds > 100 && clickedYCoOrds < 120){
                         item2 = 1;
-                    }else if(x > 320 && x < 480 && y > 100 && y < 120){
+                    }else if(clickedXCoOrds > TITLE_endPixels_optionsBtn && clickedXCoOrds < 480 && clickedYCoOrds > 100 && clickedYCoOrds < 120){
                         //send chat message
                         String message = JOptionPane.showInputDialog("Type in your chat message");
                         if(message == null)return;
                         String reply = sendCommandToMain("sendchat",Options.gamename+"\n"+Options.username+"\n"+message);
                         logger.info(reply);
                         refreshInfo();
-                    }else if(x >460  && x <480  && y > 0 && y < 20){
+                    }else if(clickedXCoOrds >460  && clickedXCoOrds <480  && clickedYCoOrds > 0 && clickedYCoOrds < 20){
                         pressedPGUP();
-                    }else if(x > 460 && x < 480 && y > 80 && y < 100){
+                    }else if(clickedXCoOrds > 460 && clickedXCoOrds < 480 && clickedYCoOrds > 80 && clickedYCoOrds < 100){
                         pressedPGDN();
                     }
                 }
@@ -3628,13 +3659,13 @@ public void drawNewLoadScreen(Graphics2D g){
                 logger.info("Game does not exist");
                 Options.gamename = JOptionPane.showInputDialog("Type in the name of the game you want to join");
                 if(Options.gamename == null){
-                    title = true;
+                    inTitleScreen = true;
                     snailinfo = false;
                     return;
                 }
                 Options.masterpass = JOptionPane.showInputDialog("Type in the master password of the game");
                 if(Options.masterpass == null){
-                    title = true;
+                    inTitleScreen = true;
                     snailinfo = false;
                     return;
                 }
@@ -3642,13 +3673,13 @@ public void drawNewLoadScreen(Graphics2D g){
                 logger.info("Incorrect Password");
                 Options.gamename = JOptionPane.showInputDialog("Type in the name of the game you want to join");
                 if(Options.gamename == null){
-                    title = true;
+                    inTitleScreen = true;
                     snailinfo = false;
                     return;
                 }
                 Options.masterpass = JOptionPane.showInputDialog("Type in the master password of the game");
                 if(Options.masterpass == null){
-                    title = true;
+                    inTitleScreen = true;
                     snailinfo = false;
                     return;
                 }
@@ -3656,7 +3687,7 @@ public void drawNewLoadScreen(Graphics2D g){
                 logger.info("Army choice out of range or invalid");
                 slot = JOptionPane.showInputDialog("Type in the number of the army you will command");
                 if(slot == null){
-                    title = true;
+                    inTitleScreen = true;
                     snailinfo = false;
                     return;
                 }
@@ -3664,7 +3695,7 @@ public void drawNewLoadScreen(Graphics2D g){
                 logger.info("Army choice already taken");
                 slot = JOptionPane.showInputDialog("Type in the number of the army you will command");
                 if(slot == null){
-                    title = true;
+                    inTitleScreen = true;
                     snailinfo = false;
                     return;
                 }
@@ -3673,7 +3704,7 @@ public void drawNewLoadScreen(Graphics2D g){
                 JOptionPane.showMessageDialog(this,"Version Mismatch");
                 Options.snailGame = false;
                 snailinfo = false;
-                title = true;
+                inTitleScreen = true;
                 return;
             }
             refreshInfo();
@@ -3694,7 +3725,7 @@ public void drawNewLoadScreen(Graphics2D g){
     }
     public void setNewLoad()
     {
-    	title = false;
+    	inTitleScreen = false;
     	newload = true;
     	this.repaint();
     }
