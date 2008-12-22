@@ -58,13 +58,13 @@ public class MainMenu extends JComponent{
     private int item;           //holds the menu's current item (both menus use this)
     private int item2;          //holds the second menu's current item (only used by server info screen)
     private boolean inTitleScreen;      //title mode
-    private boolean options;    //options mode
-    private boolean newload;    //new/load/network mode
-    private boolean mapSelect;        //map select mode
-    private boolean COselect;         //CO select mode
+    private boolean inOptionsScreen;    //options mode
+    private boolean inStartANewGameScreen;    //new/load/network mode
+    private boolean inMapSelectScreen;        //map select mode
+    private boolean inCOselectScreen;         //CO select mode
     private boolean load;       //save select mode
     private boolean sideSelect; //Side Select mode
-    private boolean battleOptions;  //battle options mode
+    private boolean inBattleOptionsScreen;  //battle options mode
     private boolean keymap;     //key mapping mode
     private boolean snailinfo;  //the snail-mode information screen
     private BufferedImage bimg; //the screen, used for double buffering and scaling
@@ -149,13 +149,13 @@ public class MainMenu extends JComponent{
         scale = 1;
         
         inTitleScreen = true;
-        options = false;
-        newload = false;
-        mapSelect = false;
-        COselect = false;
+        inOptionsScreen = false;
+        inStartANewGameScreen = false;
+        inMapSelectScreen = false;
+        inCOselectScreen = false;
         load = false;
         info = false;
-        battleOptions = false;
+        inBattleOptionsScreen = false;
         keymap = false;
         Options.snailGame = false;
         snailinfo = false;
@@ -239,14 +239,14 @@ public class MainMenu extends JComponent{
         
         drawBackground(g);
         if(inTitleScreen)drawTitleScreen(g);
-        if(mapSelect)drawMapSelectScreen(g);
+        if(inMapSelectScreen)drawMapSelectScreen(g);
         
-        if(COselect)drawCOSelectScreen(g);
-        if(info && COselect)drawInfoScreen(g);
-        if(options)drawOptionsScreen(g);
-        if(newload)drawNewLoadScreen(g);
+        if(inCOselectScreen)drawCOSelectScreen(g);
+        if(info && inCOselectScreen)drawInfoScreen(g);
+        if(inOptionsScreen)drawOptionsScreen(g);
+        if(inStartANewGameScreen)drawNewLoadScreen(g);
         if(sideSelect)drawSideSelectScreen(g);
-        if(battleOptions)drawBattleOptionsScreen(g);
+        if(inBattleOptionsScreen)drawBattleOptionsScreen(g);
         if(keymap)drawKeymapScreen(g);
         if(snailinfo)drawServerInfoScreen(g);
         
@@ -1437,29 +1437,29 @@ public void drawNewLoadScreen(Graphics2D g){
         {
             info = false;
         }
-        else if(COselect && !info)
+        else if(inCOselectScreen && !info)
         {
             coSelectScreenActions();
         }
-        else if(options)
+        else if(inOptionsScreen)
         {
             optionsScreenActions();
         }
-        else if(newload)
+        else if(inStartANewGameScreen)
         {
             newLoadOrNetworkBranch();
         }
         else if(sideSelect)
         {
             sideSelect = false;
-            battleOptions = true;
+            inBattleOptionsScreen = true;
             item = 0;
         }
-        else if(battleOptions)
+        else if(inBattleOptionsScreen)
         {
             startBattle();
         }
-        else if(mapSelect)
+        else if(inMapSelectScreen)
         {
             mapSelectScreenActions();
         }
@@ -1524,8 +1524,8 @@ public void drawNewLoadScreen(Graphics2D g){
 		            filename = TEMPORARYMAP_MAP_FILENAME;
 		            
 		            //goto co select
-		            mapSelect = false;
-		            COselect = true;
+		            inMapSelectScreen = false;
+		            inCOselectScreen = true;
 		            snailinfo = false;
 		            
 		            //find number of armies, and thus COs
@@ -1579,8 +1579,8 @@ public void drawNewLoadScreen(Graphics2D g){
 	private void mapSelectScreenActions() {
 		if(numMaps != 0){
 		    //New Game
-		    mapSelect = false;
-		    COselect = true;
+		    inMapSelectScreen = false;
+		    inCOselectScreen = true;
 		    
 		    //File[] tempFile = mapDir.listFiles();
 		    filename = filenames[mapPage*12 + item];
@@ -1608,7 +1608,7 @@ public void drawNewLoadScreen(Graphics2D g){
 		    
 		    //New Snail Mode Game
 		    if(Options.snailGame){
-		        COselect = false;
+		        inCOselectScreen = false;
 		        snailinfo = true;
 		        item = 0;
 		        item2 = 0;
@@ -1621,7 +1621,7 @@ public void drawNewLoadScreen(Graphics2D g){
 		            String t = JOptionPane.showInputDialog("What side do you want to join? Pick from 1-" + numArmies);
 		            if (t == null){
 		                Options.snailGame = false;
-		                mapSelect = false;
+		                inMapSelectScreen = false;
 		                inTitleScreen = true;
 		                return;
 		            }
@@ -1640,7 +1640,7 @@ public void drawNewLoadScreen(Graphics2D g){
 		                reply = sendCommandToMain("newgame",Options.gamename+"\n"+Options.masterpass+"\n"+numArmies+"\n"+Options.version+"\n"+comment+"\n"+mapName+"\n"+Options.username);
 		            }else{
 		                Options.snailGame = false;
-		                mapSelect = false;
+		                inMapSelectScreen = false;
 		                inTitleScreen = true;
 		                return;
 		            }
@@ -1826,7 +1826,7 @@ public void drawNewLoadScreen(Graphics2D g){
 		    	Options.password = JOptionPane.showInputDialog("Type in your password for this game");
 		    	if(Options.password == null)return;
 		    }
-		    newload = false;
+		    inStartANewGameScreen = false;
 		    snailinfo = true;
 		    refreshInfo();
 		    if(!snailinfo){
@@ -1903,7 +1903,7 @@ public void drawNewLoadScreen(Graphics2D g){
 		    //go to information screen
 		    Options.snailGame = true;
 		    snailinfo = true;
-		    newload = false;
+		    inStartANewGameScreen = false;
 		    item = 0;
 		    item2 = 0;
 		    
@@ -1946,7 +1946,7 @@ public void drawNewLoadScreen(Graphics2D g){
 		    //go to information screen
 		    Options.snailGame = true;
 		    snailinfo = true;
-		    newload = false;
+		    inStartANewGameScreen = false;
 		    item = 0;
 		    item2 = 0;
 		    
@@ -1962,8 +1962,8 @@ public void drawNewLoadScreen(Graphics2D g){
 		
 		if(startCOSelect){
 		    //New Game
-		    newload = false;
-		    mapSelect = true;
+		    inStartANewGameScreen = false;
+		    inMapSelectScreen = true;
 		    item = 0;
 		    mapPage = 0;
 		    
@@ -2066,7 +2066,7 @@ public void drawNewLoadScreen(Graphics2D g){
 		        for(int i = 0; i < coSelections.length; i++)logger.info(""+coSelections[i]);
 		        logger.info("Number of COs: "+numCOs);
 		        if(numArmies > 2){
-		            COselect = false;
+		            inCOselectScreen = false;
 		            sideSelect = true;
 		            item = 0;
 		            sideSelections = new int[numArmies];
@@ -2074,8 +2074,8 @@ public void drawNewLoadScreen(Graphics2D g){
 		        }else{
 		            //no alliances allowed for 2 players
 		            sideSelections = new int[] {0,1};
-		            COselect = false;
-		            battleOptions = true;
+		            inCOselectScreen = false;
+		            inBattleOptionsScreen = true;
 		            item = 0;
 		        }
 		    }
@@ -2087,7 +2087,7 @@ public void drawNewLoadScreen(Graphics2D g){
 		        
 		        //int[] sideSelect = {0,0};
 		        if(numCOs > 4){
-		            COselect = false;
+		            inCOselectScreen = false;
 		            sideSelect = true;
 		            item = 0;
 		            sideSelections = new int[numCOs/2];
@@ -2096,8 +2096,8 @@ public void drawNewLoadScreen(Graphics2D g){
 		            //no alliances allowed for 2 players
 		            sideSelections = new int[] {0,1};
 		            
-		            COselect = false;
-		            battleOptions = true;
+		            inCOselectScreen = false;
+		            inBattleOptionsScreen = true;
 		            item = 0;
 		        }
 		    }
@@ -2165,7 +2165,7 @@ public void drawNewLoadScreen(Graphics2D g){
 		else if(item==7)
 		{
 		    //remap keys
-		    options = false;
+		    inOptionsScreen = false;
 		    keymap = true;
 		    item = 0;
 		}
@@ -2213,7 +2213,7 @@ public void drawNewLoadScreen(Graphics2D g){
 		if(item==0)
 		{
 		    inTitleScreen = false;
-		    newload = true;
+		    inStartANewGameScreen = true;
 		}
 		else if(item==1)
 		{
@@ -2234,7 +2234,7 @@ public void drawNewLoadScreen(Graphics2D g){
 		{
 		    //Goto the option menu
 		    inTitleScreen = false;
-		    options = true;
+		    inOptionsScreen = true;
 		    item = 0;
 		}
 	}
@@ -2423,16 +2423,16 @@ public void drawNewLoadScreen(Graphics2D g){
     public void pressedB(){
         if(info){
             info = false;
-        }else if(COselect&&!info){
+        }else if(inCOselectScreen&&!info){
             if(numCOs == 0){
                 //title = true;
-                mapSelect = true;
-                COselect = false;
+                inMapSelectScreen = true;
+                inCOselectScreen = false;
                 item = 0;
                 selectedArmy = 0;
                 if(Options.isNetworkGame())Options.stopNetwork();
                 if(Options.snailGame){
-                    mapSelect = false;
+                    inMapSelectScreen = false;
                     inTitleScreen = true;
                     Options.snailGame = false;
                 }
@@ -2442,57 +2442,57 @@ public void drawNewLoadScreen(Graphics2D g){
                 cx = 0;
                 cy = 0;
             }
-        }else if(options){
+        }else if(inOptionsScreen){
             inTitleScreen = true;
-            options = false;
+            inOptionsScreen = false;
             item = 0;
             if(Options.isNetworkGame())Options.stopNetwork();
-        }else if(newload){
+        }else if(inStartANewGameScreen){
             inTitleScreen = true;
-            newload = false;
+            inStartANewGameScreen = false;
             item = 0;
             if(Options.isNetworkGame())Options.stopNetwork();
         }else if(sideSelect){
             //title = true;
-            COselect = true;
+            inCOselectScreen = true;
             numCOs--;
             sideSelect = false;
             Options.snailGame = false; //not always needed, but doesn't hurt
             item = 0;
             if(Options.isNetworkGame())Options.stopNetwork();
-        }else if(battleOptions){
+        }else if(inBattleOptionsScreen){
             //title = true;
             if(numCOs > 4)sideSelect = true;
             else{
                 numCOs--;
-                COselect = true;
+                inCOselectScreen = true;
             }
-            battleOptions = false;
+            inBattleOptionsScreen = false;
             Options.snailGame = false; //not always needed, but doesn't hurt
             item = 0;
             cx = 0;
             cy = 0;
             if(Options.isNetworkGame())Options.stopNetwork();
-        }else if(mapSelect){
-            newload = true;
-            mapSelect = false;
+        }else if(inMapSelectScreen){
+            inStartANewGameScreen = true;
+            inMapSelectScreen = false;
             Options.snailGame = false; //not always needed, but doesn't hurt
             item = 0;
             if(Options.isNetworkGame())Options.stopNetwork();
         }else if(keymap){
             keymap=false;
-            options = true;
+            inOptionsScreen = true;
             item = 0;
         }else if(snailinfo){
             Options.snailGame = false;
             snailinfo = false;
-            newload = true;
+            inStartANewGameScreen = true;
             item = 0;
         }
     }
     
     public void pressedPGDN(){
-        if(mapSelect){
+        if(inMapSelectScreen){
             mapPage++;
             if(mapPage>numMaps/12 || (mapPage==numMaps/12 && numMaps%12==0)){
                 mapPage--;
@@ -2514,7 +2514,7 @@ public void drawNewLoadScreen(Graphics2D g){
     }
     
     public void pressedPGUP(){
-        if(mapSelect){
+        if(inMapSelectScreen){
             mapPage--;
             if(mapPage<0){
                 mapPage++;
@@ -2627,7 +2627,7 @@ public void drawNewLoadScreen(Graphics2D g){
         logger.info(reply);
         if(reply.equals("no")){
             snailinfo = false;
-            newload = true;
+            inStartANewGameScreen = true;
             Options.snailGame = false;
             item = 0;
             return;
@@ -2723,7 +2723,7 @@ public void drawNewLoadScreen(Graphics2D g){
                     SFX.playClip(soundLocation +"/menutick.wav");
                     item--;
                     if(item<0)item=2;
-                }else if(COselect && !info){
+                }else if(inCOselectScreen && !info){
                 	String soundLocation = ResourceLoader.properties.getProperty("soundLocation");
                     SFX.playClip(soundLocation + "/menutick.wav");
                     cy--;
@@ -2738,19 +2738,19 @@ public void drawNewLoadScreen(Graphics2D g){
                     skip--;
                     if(skip<0)
                         skip = 0;
-                }else if(options){
+                }else if(inOptionsScreen){
                     item--;
                     if(item<0)item=18;
-                }else if(battleOptions){
+                }else if(inBattleOptionsScreen){
                     item--;
                     if(item<0)item=15;
-                }else if(newload){
+                }else if(inStartANewGameScreen){
                     item--;
                     if(item<0)item=7;
                 }else if(sideSelect){
                     item--;
                     if(item<0)item=numArmies-1;
-                }else if(mapSelect){
+                }else if(inMapSelectScreen){
                 	String soundLocation = ResourceLoader.properties.getProperty("soundLocation");
                     item--;
                     SFX.playClip(soundLocation + "/menutick.wav");
@@ -2776,7 +2776,7 @@ public void drawNewLoadScreen(Graphics2D g){
                     SFX.playClip(soundLocation + "/menutick.wav");
                     item++;
                     if(item>2)item=0;
-                }else if(COselect&&!info){
+                }else if(inCOselectScreen&&!info){
                 	String soundLocation = ResourceLoader.properties.getProperty("soundLocation");
                     SFX.playClip(soundLocation = "/menutick.wav");
                     cy++;
@@ -2789,19 +2789,19 @@ public void drawNewLoadScreen(Graphics2D g){
                     skip ++;
                     if(skip>skipMax)
                         skip = skipMax;
-                }else if(options){
+                }else if(inOptionsScreen){
                     item++;
                     if(item>18)item=0;
-                }else if(battleOptions){
+                }else if(inBattleOptionsScreen){
                     item++;
                     if(item>15)item=0;
-                }else if(newload){
+                }else if(inStartANewGameScreen){
                     item++;
                     if(item>7)item=0;
                 }else if(sideSelect){
                     item++;
                     if(item>numArmies-1)item=0;
-                }else if(mapSelect){
+                }else if(inMapSelectScreen){
                 	String soundLocation = ResourceLoader.properties.getProperty("soundLocation");
                     item++;
                     SFX.playClip(soundLocation + "/menutick.wav");
@@ -2829,7 +2829,7 @@ public void drawNewLoadScreen(Graphics2D g){
                 }
             }else if(keypress == Options.altright || (keypress == Options.right && e.isControlDown())){
             	String soundLocation = ResourceLoader.properties.getProperty("soundLocation");
-                if(mapSelect){
+                if(inMapSelectScreen){
                     subcat++;
                     SFX.playClip(soundLocation + "/minimap.wav");
                     if(subcat > 9)subcat = 0;
@@ -2839,7 +2839,7 @@ public void drawNewLoadScreen(Graphics2D g){
                     
                     //load maps in new directory
                     loadMapDisplayNames();
-                }else if(COselect) {
+                }else if(inCOselectScreen) {
                     SFX.playClip(soundLocation + "/minimap.wav");
                     selectedArmy++;
                     if(selectedArmy > 7)selectedArmy = 7;
@@ -2853,7 +2853,7 @@ public void drawNewLoadScreen(Graphics2D g){
             }else if(keypress == Options.altleft || (keypress == Options.left && e.isControlDown())){
             	String soundLocation = ResourceLoader.properties.getProperty("soundLocation");
                 
-            	if(mapSelect){
+            	if(inMapSelectScreen){
                     subcat--;
                     SFX.playClip(soundLocation + "/minimap.wav");
                     if(subcat < 0)subcat = 9;
@@ -2863,7 +2863,7 @@ public void drawNewLoadScreen(Graphics2D g){
                     
                     //load maps in new directory
                     loadMapDisplayNames();
-                }else if(COselect){
+                }else if(inCOselectScreen){
                     SFX.playClip(soundLocation + "/minimap.wav");
                     selectedArmy--;
                     if(selectedArmy < 0)selectedArmy = 0;
@@ -2876,7 +2876,7 @@ public void drawNewLoadScreen(Graphics2D g){
                 }
             }else if(keypress == Options.left){
             	String soundLocation = ResourceLoader.properties.getProperty("soundLocation");
-                if(COselect && !info){
+                if(inCOselectScreen && !info){
                     SFX.playClip(soundLocation + "/menutick.wav");
                     cx--;
                     if(cx<0){
@@ -2895,20 +2895,20 @@ public void drawNewLoadScreen(Graphics2D g){
                 }else if(sideSelect){
                     if(sideSelections[item] == 0)sideSelections[item] = numArmies-1;
                     else sideSelections[item]-=1;
-                }else if(options && item == 6){
+                }else if(inOptionsScreen && item == 6){
                     Options.decrementCursor();
-                }else if (options && item == 11){
+                }else if (inOptionsScreen && item == 11){
                     Options.decrementCO();
                     glide = 0;
-                }else if (options && item == 12){
+                }else if (inOptionsScreen && item == 12){
                     SFX.toggleMute();
-                }else if(options && item == 13){
+                }else if(inOptionsScreen && item == 13){
                     Options.decrementTerrain();
-                }else if (options && item == 14){
+                }else if (inOptionsScreen && item == 14){
                     Options.decrementUrban();
-                }else if (options && item == 15){
+                }else if (inOptionsScreen && item == 15){
                     Options.decrementHQ();
-                }else if(mapSelect){
+                }else if(inMapSelectScreen){
                 
                     cat--;
                     if(cat < 0)cat = cats.length-1;
@@ -2923,7 +2923,7 @@ public void drawNewLoadScreen(Graphics2D g){
                     mapDir = new File(mapsLocation + "/" + cats[cat]);
                     loadMapDisplayNames();
                 }
-                else if(battleOptions)
+                else if(inBattleOptionsScreen)
                 {
                     if(item == 0)
                     {
@@ -3014,7 +3014,7 @@ public void drawNewLoadScreen(Graphics2D g){
             }else if(keypress == Options.right){
                 String soundLocation = ResourceLoader.properties.getProperty("soundLocation");
             	
-                if(COselect && !info){
+                if(inCOselectScreen && !info){
                     SFX.playClip(soundLocation + "/menutick.wav");
                     cx++;
                     if(cx>2){
@@ -3031,20 +3031,20 @@ public void drawNewLoadScreen(Graphics2D g){
                 }else if(sideSelect){
                     if(sideSelections[item] == numArmies-1)sideSelections[item] = 0;
                     else sideSelections[item]+=1;
-                }else if(options && item == 6){
+                }else if(inOptionsScreen && item == 6){
                     Options.incrementCursor();
-                }else if (options && item == 11){
+                }else if (inOptionsScreen && item == 11){
                     Options.incrementCO();
                     glide = 0;
-                }else if (options && item == 12){
+                }else if (inOptionsScreen && item == 12){
                     SFX.toggleMute();
-                }else if(options && item == 13){
+                }else if(inOptionsScreen && item == 13){
                     Options.incrementTerrain();
-                }else if (options && item == 14){
+                }else if (inOptionsScreen && item == 14){
                     Options.incrementUrban();
-                }else if (options && item == 15){
+                }else if (inOptionsScreen && item == 15){
                     Options.incrementHQ();
-                }if(mapSelect){
+                }if(inMapSelectScreen){
                 
                     cat++;
                     if(cat > cats.length-1)cat = 0;
@@ -3058,7 +3058,7 @@ public void drawNewLoadScreen(Graphics2D g){
                     mapDir = new File(mapsLocation + "/" + cats[cat]);
                     loadMapDisplayNames();
                     
-                }else if(battleOptions){
+                }else if(inBattleOptionsScreen){
                     processRightKeyBattleOptions();
                 }else if(snailinfo){
                     item2++;
@@ -3077,7 +3077,7 @@ public void drawNewLoadScreen(Graphics2D g){
                 String soundLocation = ResourceLoader.properties.getProperty("soundLocation");
                 SFX.playClip(soundLocation + "/cancel.wav");
             }else if(keypress == KeyEvent.VK_1){
-                if(mapSelect){
+                if(inMapSelectScreen){
                     subcat = 0;
                     item=0;
                     mapPage=0;
@@ -3086,7 +3086,7 @@ public void drawNewLoadScreen(Graphics2D g){
                     loadMapDisplayNames();
                 }
             }else if(keypress == KeyEvent.VK_2){
-                if(mapSelect){
+                if(inMapSelectScreen){
                     subcat = 1;
                     item=0;
                     mapPage=0;
@@ -3095,7 +3095,7 @@ public void drawNewLoadScreen(Graphics2D g){
                     loadMapDisplayNames();
                 }
             }else if(keypress == KeyEvent.VK_3){
-                if(mapSelect){
+                if(inMapSelectScreen){
                     subcat = 2;
                     item=0;
                     mapPage=0;
@@ -3104,7 +3104,7 @@ public void drawNewLoadScreen(Graphics2D g){
                     loadMapDisplayNames();
                 }
             }else if(keypress == KeyEvent.VK_4){
-                if(mapSelect){
+                if(inMapSelectScreen){
                     subcat = 3;
                     item=0;
                     mapPage=0;
@@ -3113,7 +3113,7 @@ public void drawNewLoadScreen(Graphics2D g){
                     loadMapDisplayNames();
                 }
             }else if(keypress == KeyEvent.VK_5){
-                if(mapSelect){
+                if(inMapSelectScreen){
                     subcat = 4;
                     item=0;
                     mapPage=0;
@@ -3122,7 +3122,7 @@ public void drawNewLoadScreen(Graphics2D g){
                     loadMapDisplayNames();
                 }
             }else if(keypress == KeyEvent.VK_6){
-                if(mapSelect){
+                if(inMapSelectScreen){
                     subcat = 5;
                     item=0;
                     mapPage=0;
@@ -3131,7 +3131,7 @@ public void drawNewLoadScreen(Graphics2D g){
                     loadMapDisplayNames();
                 }
             }else if(keypress == KeyEvent.VK_7){
-                if(mapSelect){
+                if(inMapSelectScreen){
                     subcat = 6;
                     item=0;
                     mapPage=0;
@@ -3140,7 +3140,7 @@ public void drawNewLoadScreen(Graphics2D g){
                     loadMapDisplayNames();
                 }
             }else if(keypress == KeyEvent.VK_8){
-                if(mapSelect){
+                if(inMapSelectScreen){
                     subcat = 7;
                     item=0;
                     mapPage=0;
@@ -3149,7 +3149,7 @@ public void drawNewLoadScreen(Graphics2D g){
                     loadMapDisplayNames();
                 }
             }else if(keypress == KeyEvent.VK_9){
-                if(mapSelect){
+                if(inMapSelectScreen){
                     subcat = 8;
                     item=0;
                     mapPage=0;
@@ -3158,7 +3158,7 @@ public void drawNewLoadScreen(Graphics2D g){
                     loadMapDisplayNames();
                 }
             }else if(keypress == KeyEvent.VK_0){
-                if(mapSelect){
+                if(inMapSelectScreen){
                     subcat = 9;
                     item=0;
                     mapPage=0;
@@ -3173,7 +3173,7 @@ public void drawNewLoadScreen(Graphics2D g){
                 else
                     altcostume = true;
             }else if(keypress == Options.nextunit){
-                if(COselect){
+                if(inCOselectScreen){
                     if(info){
                         info = false;
                     }else{
@@ -3211,11 +3211,11 @@ public void drawNewLoadScreen(Graphics2D g){
             int clickedXCoOrds = e.getX() - parentFrame.getInsets().left;
             int clickedYCoOrds = e.getY() - parentFrame.getInsets().top;
             
-            if(e.getButton() == e.BUTTON1){
+            uiMenuLoop: if(e.getButton() == e.BUTTON1){
                 //first mouse button
 
 
-            	menuLoop: if(inTitleScreen){
+            	if(inTitleScreen){
 
 					boolean startNewGameButtonClicked = clickedXCoOrds > TITLE_startPixels_newGameBtn && clickedXCoOrds < TITLE_endPixels_newGameBtnWidth && clickedYCoOrds > TITLE_btmPixels_newGameBtnHeight && clickedYCoOrds < TITLE_topPixels_newGameBtnHeight;
 					boolean mapEditorButtonClicked = clickedXCoOrds > TITLE_startPixels_mapsEditorBtn && clickedXCoOrds < TITLE_endPixels_mapsEditorBtn && clickedYCoOrds > TITLE_btmPixels_mapsEditorBtn && clickedYCoOrds < TITLE_topPixels_mapsEditorBtn;
@@ -3225,7 +3225,7 @@ public void drawNewLoadScreen(Graphics2D g){
                         item = 0;
                         logger.info("Moving into the New Game Menu");
                         pressedA();
-                        break menuLoop;
+                        break uiMenuLoop;
                         
                     } 
 					
@@ -3233,7 +3233,7 @@ public void drawNewLoadScreen(Graphics2D g){
 						item = 1;
 						logger.info("Moving into the Design Maps Area");
 						pressedA();
-						break menuLoop;
+						break uiMenuLoop;
 					}
 
 					
@@ -3241,81 +3241,116 @@ public void drawNewLoadScreen(Graphics2D g){
 						item = 2;
 						logger.info("Moving into the Options Menu");
 						pressedA();
-						break menuLoop;
+						break uiMenuLoop;
 					}
 					
-                }else if(newload){
+                }
+            	
+            	if(inStartANewGameScreen){
                     if(clickedXCoOrds < 130){
                         int i = clickedYCoOrds/30;
                         if(i < 8){
                             item = i;
                             logger.info("Moving into Load replay from Menu");
                             pressedA();
+                            break uiMenuLoop;
                         }
                     }
-                }else if(options){
-                    if(clickedXCoOrds < 220){
-                        int i = clickedYCoOrds/20;
-                        if((i < 6 || i >6) && i < 11){
-                            item = i;
-                            pressedA();
-                        }else if(i == 6){
-                            item = i;
-                            Options.incrementCursor();
-                        }
-                    }
-                }else if(mapSelect){
-                    if(clickedYCoOrds < 30){
-                        if(clickedXCoOrds < 180){
-                            //change category
-                            cat++;
-                            if(cat > cats.length-1)cat = 0;
-                            subcat = 0;
-                            
-                            item=0;
-                            mapPage=0;
-                            
-                            //load maps in new directory
-                            String mapsLocation = ResourceLoader.properties.getProperty("mapsLocation");
-                            
-                            mapDir = new File(mapsLocation + "/" + cats[cat]);
-                            loadMapDisplayNames();
-                        }
-                    }
-                    if(clickedYCoOrds < 40 && clickedXCoOrds > 180){
-                        //change subcategory
-                        if(clickedXCoOrds < 240)subcat = 0;
-                        else if(clickedXCoOrds < 260)subcat = 1;
-                        else if(clickedXCoOrds < 280)subcat = 2;
-                        else if(clickedXCoOrds < 300)subcat = 3;
-                        else if(clickedXCoOrds < TITLE_endPixels_optionsBtn)subcat = 4;
-                        else if(clickedXCoOrds < 340)subcat = 5;
-                        else if(clickedXCoOrds < 360)subcat = 6;
-                        else if(clickedXCoOrds < 380)subcat = 7;
-                        else if(clickedXCoOrds < 400)subcat = 8;
-                        else if(clickedXCoOrds < 480)subcat = 9;
-                        
-                        item=0;
-                        mapPage=0;
-                        
-                        //load maps in new directory
-                        loadMapDisplayNames();
-                    }else if(clickedYCoOrds > 30 && clickedYCoOrds < 38){
-                        if(clickedXCoOrds > 84 && clickedXCoOrds < 98)
-                            pressedPGUP();
-                    }else if(clickedYCoOrds > 50 && clickedYCoOrds < 302){
-                        if(clickedXCoOrds < 160){
-                            int i = (clickedYCoOrds-50)/21;
-                            if(i < 12 && mapPage*12+i < numMaps){
-                                item = i;
-                                pressedA();
-                            }
-                        }
-                    }else if(clickedYCoOrds > 312 && clickedYCoOrds < TITLE_endPixels_optionsBtn){
-                        if(clickedXCoOrds > 84 && clickedXCoOrds < 98)
-                            pressedPGDN();
-                    }
-                }else if(COselect){
+                
+                    
+                    
+                    
+	                if(inOptionsScreen){
+	                    if(clickedXCoOrds < 220){
+	                        int i = clickedYCoOrds/20;
+	                        if((i < 6 || i >6) && i < 11){
+	                            item = i;
+	                            pressedA();
+	                            break uiMenuLoop;
+	                        }else if(i == 6){
+	                            item = i;
+	                            Options.incrementCursor();
+	                        }
+	                    }
+	                }
+                
+                
+                    }else if(inMapSelectScreen){
+	                    if(clickedYCoOrds < 30){
+	                        if(clickedXCoOrds < 180){
+	                            //change category
+	                            cat++;
+	                            if(cat > cats.length-1)cat = 0;
+	                            subcat = 0;
+	                            
+	                            item=0;
+	                            mapPage=0;
+	                            
+	                            //load maps in new directory
+	                            String mapsLocation = ResourceLoader.properties.getProperty("mapsLocation");
+	                            
+	                            mapDir = new File(mapsLocation + "/" + cats[cat]);
+	                            loadMapDisplayNames();
+	                        }
+	                    }
+	                    if(clickedYCoOrds < 40 && clickedXCoOrds > 180){
+	                        //change subcategory
+	                        if(clickedXCoOrds < 240){
+	                        	subcat = 0;
+	                        }else if(clickedXCoOrds < 260){
+	                        	subcat = 1;
+	                        }
+	                        else if(clickedXCoOrds < 280){
+	                        	subcat = 2;
+	                        }
+	                        else if(clickedXCoOrds < 300){
+	                        	subcat = 3;
+	                        }
+	                        else if(clickedXCoOrds < TITLE_endPixels_optionsBtn){
+	                        	subcat = 4;
+	                        }
+	                        else if(clickedXCoOrds < 340){
+	                        	subcat = 5;
+	                        }
+	                        else if(clickedXCoOrds < 360){
+	                        	subcat = 6;
+	                        }
+	                        else if(clickedXCoOrds < 380){
+	                        	subcat = 7;
+	                        }
+	                        else if(clickedXCoOrds < 400){
+	                        	subcat = 8;
+	                        }
+	                        else if(clickedXCoOrds < 480){
+	                        	subcat = 9;
+	                        }
+	                        
+	                        item=0;
+	                        mapPage=0;
+	                        
+	                        //load maps in new directory
+	                        loadMapDisplayNames();
+	                    }else if(clickedYCoOrds > 30 && clickedYCoOrds < 38){
+	                        if(clickedXCoOrds > 84 && clickedXCoOrds < 98){
+	                        	pressedPGUP();
+	                        }
+	                    }else if(clickedYCoOrds > 50 && clickedYCoOrds < 302){
+	                        if(clickedXCoOrds < 160){
+	                            int i = (clickedYCoOrds-50)/21;
+	                            if(i < 12 && mapPage*12+i < numMaps){
+	                                item = i;
+	                                pressedA();
+	                                break uiMenuLoop;                                
+	                            }
+	                        }
+	                    }else if(clickedYCoOrds > 312 && clickedYCoOrds < TITLE_endPixels_optionsBtn){
+	                        if(clickedXCoOrds > 84 && clickedXCoOrds < 98){
+	                        	pressedPGDN();
+	                        }
+	                    }
+	                }
+
+            	if(inCOselectScreen){
                     if(clickedYCoOrds > 61 && clickedYCoOrds < 321 && clickedXCoOrds > 2 && clickedXCoOrds < 158){
                         cx = (clickedXCoOrds-2)/52;
                         cy = (clickedYCoOrds-61)/52;
@@ -3327,7 +3362,7 @@ public void drawNewLoadScreen(Graphics2D g){
                             if(temp != null)infono = COList.getIndex(temp);;
                         }
                     }
-                }else if(sideSelect){
+            	}else if(sideSelect){
                     if(clickedXCoOrds < 130){
                         if(clickedYCoOrds/20 < numArmies){
                             item = clickedYCoOrds/20;
@@ -3337,7 +3372,9 @@ public void drawNewLoadScreen(Graphics2D g){
                     }else{
                         pressedA();
                     }
-                }else if(battleOptions){
+                
+                
+                }else if(inBattleOptionsScreen){
                     if(clickedXCoOrds > 10 && clickedXCoOrds < 10+BaseDMG.NUM_UNITS/2*16 && clickedYCoOrds > 184 && clickedYCoOrds < 220){
                         cy = (clickedYCoOrds-184)/20;
                         cx = (clickedXCoOrds-10)/16+cy*BaseDMG.NUM_UNITS/2;
@@ -3380,15 +3417,17 @@ public void drawNewLoadScreen(Graphics2D g){
                 pressedB();
             }
         }
+        
         public void mouseEntered(MouseEvent e) {}
         public void mouseExited(MouseEvent e) {}
         public void mousePressed(MouseEvent e) {}
         public void mouseReleased(MouseEvent e) {}
         public void mouseDragged(MouseEvent e) {}
+        
         public void mouseMoved(MouseEvent e){
             int x = e.getX() - parentFrame.getInsets().left;
             int y = e.getY() - parentFrame.getInsets().top;
-            if(mapSelect){
+            if(inMapSelectScreen){
                 if(y > 50 && y < 302 && x < 160){
                     int i = (y-50)/21;
                     if(i < 12 && mapPage*12+i < numMaps){
@@ -3398,7 +3437,7 @@ public void drawNewLoadScreen(Graphics2D g){
                         }
                     }
                 }
-            }else if(COselect){
+            }else if(inCOselectScreen){
                 if(y > 61 && y < 321 && x > 2 && x < 158){
                     cx = (x-2)/52;
                     cy = (y-61)/52;
@@ -3465,8 +3504,8 @@ public void drawNewLoadScreen(Graphics2D g){
         
         if(startCOSelect){
             //New Game
-            newload = false;
-            mapSelect = true;
+            inStartANewGameScreen = false;
+            inMapSelectScreen = true;
             item = 0;
             mapPage = 0;
             
@@ -3554,8 +3593,8 @@ public void drawNewLoadScreen(Graphics2D g){
         
         if(startCOSelect){
             //New Game
-            newload = false;
-            mapSelect = true;
+            inStartANewGameScreen = false;
+            inMapSelectScreen = true;
             item = 0;
             mapPage = 0;
             
@@ -3620,7 +3659,7 @@ public void drawNewLoadScreen(Graphics2D g){
         //go to information screen
         Options.snailGame = true;
         snailinfo = true;
-        newload = false;
+        inStartANewGameScreen = false;
         item = 0;
         item2 = 0;
         
@@ -3714,7 +3753,7 @@ public void drawNewLoadScreen(Graphics2D g){
         //go to information screen
         Options.snailGame = true;
         snailinfo = true;
-        newload = false;
+        inStartANewGameScreen = false;
         item = 0;
         item2 = 0;
         
@@ -3726,7 +3765,7 @@ public void drawNewLoadScreen(Graphics2D g){
     public void setNewLoad()
     {
     	inTitleScreen = false;
-    	newload = true;
+    	inStartANewGameScreen = true;
     	this.repaint();
     }
     
