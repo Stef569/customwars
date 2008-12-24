@@ -16,7 +16,6 @@ import java.io.Serializable;
 import java.util.*;
 
 public class Map implements Serializable {
-
   private Tile[][] map;    //Contains the tile list
   private int maxRow;      //The map's maximum number of rows
   private int maxCol;      //The map's maximum number of columns
@@ -24,6 +23,7 @@ public class Map implements Serializable {
   private String name = "";        //The map's name
   private String author = "";      //The author's name
   private String description = ""; //The map's description
+  private int playerCount;
   private Vector commands;
   final static Logger logger = LoggerFactory.getLogger(Map.class);
 
@@ -37,11 +37,12 @@ public class Map implements Serializable {
     commands = new Vector<Trigger>();
   }
 
-  public Map(String name, String author, String description, int cols, int rows) {
+  public Map(String mapName, String author, String description, int playersCount, int cols, int rows) {
     this(cols, rows);
-    this.name = name;
+    this.name = mapName;
     this.author = author;
     this.description = description;
+    this.playerCount = playersCount;
   }
 
   //Removes a Unit from the Map
@@ -409,6 +410,10 @@ public class Map implements Serializable {
 
   public String getDescription() {
     return description;
+  }
+
+  public int getPlayerCount() {
+    return playerCount;
   }
 }
 
