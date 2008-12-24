@@ -3,11 +3,17 @@ package com.customwars.util;
 import java.io.*;
 
 /**
+ * Contains reusable functions to handle common IO tasks
+ *
  * @author stefan
  */
 public final class IOUtil {
 
-  private IOUtil() {}
+  /**
+   * This is a static utility class. It cannot be constructed.
+   */
+  private IOUtil() {
+  }
 
   /**
    * @param closeable The source or destination of data that should be closed.
