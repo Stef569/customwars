@@ -1,18 +1,13 @@
 package com.customwars.loader;
 
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.slf4j.Logger;
-
 import com.customwars.map.Map;
 import com.customwars.state.FileSystemManager;
 import com.customwars.util.IOUtil;
+import org.slf4j.Logger;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Loads one Map or multiple maps from disk, they are not cached
@@ -80,6 +75,7 @@ public class MapLoader {
 
   /**
    * load a map from a file, when no map name is provided default to the fileName
+   *
    * @throws MapFormatException When the map does not end with .map
    */
   public Map loadMap(File mapFile) throws IOException, MapFormatException {
@@ -114,16 +110,23 @@ public class MapLoader {
    */
   private Map readMap(DataInputStream mapReader) throws IOException, MapFormatException {
     String mapName = "", author = "", description = "";
+    int cols, rows, playersCount;
+    Map map;
 
     byte version = (byte) mapReader.readInt();
     if (validVersion(version)) {
       mapName = readString(mapReader, MAP_FILE_DEILIMTER, defaultMapName);
       author = readString(mapReader, MAP_FILE_DEILIMTER, DEFAULT_AUTHOR_NAME);
       description = readString(mapReader, MAP_FILE_DEILIMTER, DEFAULT_DESCRIPTION);
+      cols = mapReader.readInt();
+      rows = mapReader.readInt();
+      playersCount = (int) mapReader.readByte();
+
+      map = new Map(mapName, author, description, playersCount, cols, rows);
     } else {
       throw new MapFormatException("version " + version + " does not equal to " + VERSION);
     }
-    return new Map(mapName, author, description, 0, 0);
+    return map ;
   }
 
   /**
