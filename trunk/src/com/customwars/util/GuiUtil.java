@@ -8,7 +8,7 @@ import java.awt.geom.Rectangle2D;
  *
  * @author stefan
  */
-public class GuiUtil {
+public final class GuiUtil {
 
   /**
    * This is a static utility class. It cannot be constructed.
@@ -22,7 +22,6 @@ public class GuiUtil {
    * @see #convertToMultiLine
    */
   public static String[] convertToMultiLineArray(String text, int maxPixelWidth, Graphics g) {
-    FontMetrics metrics = g.getFontMetrics();
     String adjustedTxt = convertToMultiLine(text, maxPixelWidth, g);
     String[] strings = adjustedTxt.split("\n");
     return strings;
@@ -34,9 +33,9 @@ public class GuiUtil {
    */
   public static String convertToMultiLine(String text, int maxPixelWidth, Graphics g) {
     StringBuffer sb = new StringBuffer();
-    int charPos = 0;
-    int startPos = 0;  // Start of the last line found
-    int totalCharWidth = 0; // total width of the chars read in the for loop, reset when a line is found
+    int charPos = 0;        // Current position within the string
+    int startPos = 0;       // Start of the last line found
+    int lineCharWidth = 0; // Total width of the chars read in the for loop, reset when a line is found
     int totalWidth = getStringWidth(text, g);
 
     // The text is smaller then the maxPixelWidth, return it!
@@ -46,18 +45,18 @@ public class GuiUtil {
 
     // For each char in the string
     // Get the width of the char
-    // Always read 1 ahead, Example: When charPos=0, totalCharWidth = 10
+    // Always read 1 ahead, Example: When charPos=0, lineCharWidth = 10
     // Because we always read 1 char ahead we have to move 1 char position back when a line has been found
     for (; charPos < text.length(); charPos++) {
       String oneChar = text.substring(charPos, charPos + 1);
-      totalCharWidth += getStringWidth(oneChar, g);
+      lineCharWidth += getStringWidth(oneChar, g);
 
       // If the total chars width has gone over the max width
       // extract one line from the text
-      if (totalCharWidth > maxPixelWidth) {
+      if (lineCharWidth > maxPixelWidth) {
         String oneLine = text.substring(startPos, charPos);
         startPos = charPos;
-        totalCharWidth = 0;
+        lineCharWidth = 0;
         charPos--;
 
         sb.append(oneLine);
@@ -97,21 +96,21 @@ public class GuiUtil {
   }
 
   /**
-   * @param text       The text to get a substring from that is maxPxWidth pixels width
+   * @param text       The source text
    * @param maxPxWidth The width the text should fit in (in pixels)
    * @param offSet     If the text fits the maxPxWidth, where should we start to grab the substring
    * @param g          graphical context containing the current Font
-   * @return the string that is a substring of text with a width of maxPxWidth pixels starting at offSet
+   * @return the substring of text with a width of maxPxWidth pixels starting at offSet
    *         if text is smaller then maxPxWidth then text is returned
    */
   private static String getSubStringByPixelWidth(String text, int maxPxWidth, int offSet, Graphics g) {
     // Loop through each char
     for (int charPos = 0; charPos < text.length(); charPos++) {
       // Get char size in pixels
-      int charsWidth = getStringWidth(text, 0, charPos + 1, g);
+      int charsPxWidth = getStringWidth(text, 0, charPos + 1, g);
 
       // See if it goes over the maxPxWidth
-      if (charsWidth >= maxPxWidth) {
+      if (charsPxWidth >= maxPxWidth) {
         return text.substring(offSet, offSet + charPos);
       }
     }
