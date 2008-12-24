@@ -1,12 +1,18 @@
 package com.customwars.loader;
 
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.slf4j.Logger;
+
 import com.customwars.map.Map;
 import com.customwars.state.FileSystemManager;
 import com.customwars.util.IOUtil;
-import org.slf4j.Logger;
-
-import java.io.*;
-import java.util.*;
 
 /**
  * Loads one Map or multiple maps from disk, they are not cached

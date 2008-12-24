@@ -18,6 +18,8 @@ import com.customwars.state.*;
 import com.customwars.ui.*;
 import org.slf4j.*;
 
+import sun.net.www.content.image.jpeg;
+
 import javax.swing.*;
 import javax.swing.Timer;
 import javax.swing.event.MouseInputListener;
@@ -28,6 +30,7 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 import java.util.List;
+
 
 public class MainMenu extends JComponent {
   private static final String TEMPORARYMAP_MAP_FILENAME = "temporarymap.map";
@@ -1694,11 +1697,20 @@ public class MainMenu extends JComponent {
     } else if (item == 4) {
       logger.info("Create Server Game");
       //try to connect to the server first to see that the user's URL is correct
-      if (!tryToConnect()) return;
+      if (!tryToConnect()) {
+    	  return;
+      }
+      
+      
+      
+	   //find an unused name
+      Options.gamename = (String)JOptionPane.showInputDialog(null, "Type in a name for your game:", "Network Game: Name", JOptionPane.PLAIN_MESSAGE); 
+      
 
-      //find an unused name
-      Options.gamename = JOptionPane.showInputDialog("Type in a name for your game");
-      if (Options.gamename == null) return;
+      if (Options.gamename == null) {
+    	  return;
+      }
+      
       String reply = sendCommandToMain("qname", Options.gamename);
       while (!reply.equals("yes")) {
         logger.info(reply);
@@ -1706,13 +1718,13 @@ public class MainMenu extends JComponent {
           logger.info("Game name already taken");
           JOptionPane.showMessageDialog(this, "Game name already taken");
         }
-        Options.gamename = JOptionPane.showInputDialog("Type in a name for your game");
+        Options.gamename = (String)JOptionPane.showInputDialog(null, "Type in a name for your game:", "Network Game: Name?", JOptionPane.PLAIN_MESSAGE); 
         if (Options.gamename == null) return;
         reply = sendCommandToMain("qname", Options.gamename);
       }
 
       //set the master password and join
-      Options.masterpass = JOptionPane.showInputDialog("Type in a master password for your game");
+      Options.masterpass = (String)JOptionPane.showInputDialog(null, "Master Password for your game:", "Network Game: Master Pass?", JOptionPane.PLAIN_MESSAGE); 
       if (Options.masterpass == null) return;
       if (Options.isDefaultLoginOn()) {
         Options.username = Options.getDefaultUsername();
@@ -1722,13 +1734,13 @@ public class MainMenu extends JComponent {
           return;
       } else {
         while (true) {
-          Options.username = JOptionPane.showInputDialog("Type in your username for this game (12 characters max)");
+        	Options.username = (String)JOptionPane.showInputDialog(null, "Username for your game:", "Network Game: User(12char)?", JOptionPane.PLAIN_MESSAGE); 
           if (Options.username == null) return;
           if (Options.username.length() < 1) continue;
           if (Options.username.length() > 12) continue;
           break;
         }
-        Options.password = JOptionPane.showInputDialog("Type in your password for this game");
+        Options.password = (String)JOptionPane.showInputDialog(null, "Password for your game:", "Network Game: Password?", JOptionPane.PLAIN_MESSAGE); 
         if (Options.password == null) return;
       }
 
@@ -1745,11 +1757,11 @@ public class MainMenu extends JComponent {
       if (!tryToConnect()) return;
 
       //connect to the game
-      Options.gamename = JOptionPane.showInputDialog("Type in the name of the game you want to join");
+      Options.gamename = (String)JOptionPane.showInputDialog(null, "Name of game:", "Join Game: Name", JOptionPane.PLAIN_MESSAGE); 
       if (Options.gamename == null) return;
 
       //check the master password and get number of players and available slots
-      Options.masterpass = JOptionPane.showInputDialog("Type in the master password of the game");
+      Options.masterpass = (String)JOptionPane.showInputDialog(null, "Enter Password for game:", "Join Game: Master Pass", JOptionPane.PLAIN_MESSAGE); 
       if (Options.masterpass == null) return;
 
       //Get user's name, password, and slot
@@ -1761,13 +1773,13 @@ public class MainMenu extends JComponent {
           return;
       } else {
         while (true) {
-          Options.username = JOptionPane.showInputDialog("Type in your username for this game (12 characters max)");
+        	Options.username = (String)JOptionPane.showInputDialog(null, "Username for your game:", "Network Game: User(12char)", JOptionPane.PLAIN_MESSAGE); 
           if (Options.username == null) return;
           if (Options.username.length() < 1) continue;
           if (Options.username.length() > 12) continue;
           break;
         }
-        Options.password = JOptionPane.showInputDialog("Type in your password for this game");
+        Options.password = (String)JOptionPane.showInputDialog(null, "Password for your game:", "Network Game: Password", JOptionPane.PLAIN_MESSAGE); 
         if (Options.password == null) return;
       }
       newload = false;
@@ -1777,7 +1789,7 @@ public class MainMenu extends JComponent {
         JOptionPane.showMessageDialog(this, "The game " + Options.gamename + " has ended");
         return;
       }
-      String slot = JOptionPane.showInputDialog("Type in the number of the army you will command");
+      String slot  = (String)JOptionPane.showInputDialog(null, "Type in the number of the army you will command:", "Network Game: Army No.?", JOptionPane.PLAIN_MESSAGE);
       if (slot == null) {
         title = true;
         snailinfo = false;
@@ -1790,13 +1802,13 @@ public class MainMenu extends JComponent {
         logger.info(reply);
         if (reply.equals("no")) {
           logger.info("Game does not exist");
-          Options.gamename = JOptionPane.showInputDialog("Type in the name of the game you want to join");
+          Options.gamename = (String)JOptionPane.showInputDialog(null, "Type in a name for your game:", "Network Game: Name?", JOptionPane.PLAIN_MESSAGE); 
           if (Options.gamename == null) {
             title = true;
             snailinfo = false;
             return;
           }
-          Options.masterpass = JOptionPane.showInputDialog("Type in the master password of the game");
+          Options.masterpass = (String)JOptionPane.showInputDialog(null, "Enter Password for game:", "Join Game: Master Pass", JOptionPane.PLAIN_MESSAGE); 
           if (Options.masterpass == null) {
             title = true;
             snailinfo = false;
@@ -1804,13 +1816,13 @@ public class MainMenu extends JComponent {
           }
         } else if (reply.equals("wrong password")) {
           logger.info("Incorrect Password");
-          Options.gamename = JOptionPane.showInputDialog("Type in the name of the game you want to join");
+          Options.gamename = (String)JOptionPane.showInputDialog(null, "Name of game:", "Join Game: Name", JOptionPane.PLAIN_MESSAGE); 
           if (Options.gamename == null) {
             title = true;
             snailinfo = false;
             return;
           }
-          Options.masterpass = JOptionPane.showInputDialog("Type in the master password of the game");
+          Options.masterpass = (String)JOptionPane.showInputDialog(null, "Enter Password for game:", "Join Game: Master Pass", JOptionPane.PLAIN_MESSAGE); 
           if (Options.masterpass == null) {
             title = true;
             snailinfo = false;
@@ -1818,7 +1830,7 @@ public class MainMenu extends JComponent {
           }
         } else if (reply.equals("out of range")) {
           logger.info("Army choice out of range or invalid");
-          slot = JOptionPane.showInputDialog("Type in the number of the army you will command");
+          slot  = (String)JOptionPane.showInputDialog(null, "Type in the number of the army you will command:", "Network Game: Army No.?", JOptionPane.PLAIN_MESSAGE);
           if (slot == null) {
             title = true;
             snailinfo = false;
@@ -1826,7 +1838,7 @@ public class MainMenu extends JComponent {
           }
         } else if (reply.equals("slot taken")) {
           logger.info("Army choice already taken");
-          slot = JOptionPane.showInputDialog("Type in the number of the army you will command");
+          slot  = (String)JOptionPane.showInputDialog(null, "Type in the number of the army you will command:", "Network Game: Army No.?", JOptionPane.PLAIN_MESSAGE);
           if (slot == null) {
             title = true;
             snailinfo = false;
@@ -1861,7 +1873,7 @@ public class MainMenu extends JComponent {
       if (!tryToConnect()) return;
 
       //connect to the game
-      Options.gamename = JOptionPane.showInputDialog("Type in the name of the game you want to login to");
+      Options.gamename = (String)JOptionPane.showInputDialog(null, "Type in a name for your game:", "Network Game: Name?", JOptionPane.PLAIN_MESSAGE); 
       if (Options.gamename == null) return;
 
       //Get user's name and password
@@ -1872,9 +1884,9 @@ public class MainMenu extends JComponent {
         if (Options.username == null || Options.username.length() < 1 || Options.username.length() > 12)
           return;
       } else {
-        Options.username = JOptionPane.showInputDialog("Type in your username for this game");
+    	Options.username = (String)JOptionPane.showInputDialog(null, "Username for your game:", "Network Game: User(12char)", JOptionPane.PLAIN_MESSAGE); 
         if (Options.username == null) return;
-        Options.password = JOptionPane.showInputDialog("Type in your password for this game");
+        Options.password = (String)JOptionPane.showInputDialog(null, "Password for your game:", "Network Game: Password?", JOptionPane.PLAIN_MESSAGE); 
         if (Options.password == null) return;
       }
 

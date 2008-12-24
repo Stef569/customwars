@@ -68,7 +68,7 @@ public class Options {
     
     //Server Mode Scratch Variables
     /** Name of the game being joined. */
-    public static String gamename = null;
+    public static String gamename = "";
     /** Master password of the game being joined. */
     public static String masterpass = null;
     /** Username to use in the game being joined. */
