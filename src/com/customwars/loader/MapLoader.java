@@ -16,7 +16,7 @@ public class MapLoader {
   private static final Logger logger = org.slf4j.LoggerFactory.getLogger(MapLoader.class);
   private static final char MAP_FILE_DEILIMTER = Character.MIN_VALUE;
   private static final byte VERSION = -1;
-  private static final String DEFAULT_MAP_NAME = "Unnamed Map";
+  private static String defaultMapName;   // Defaults to the fileName
   private static final String DEFAULT_AUTHOR_NAME = "unnamed";
   private static final String DEFAULT_DESCRIPTION = "No information is available for this map";
 
@@ -73,14 +73,16 @@ public class MapLoader {
   }
 
   /**
-   * When the map does not end with .map then a null map is returned
+   * load a map from a file, when no map name is provided default to the fileName
+   * @throws MapFormatException When the map does not end with .map
    */
   public Map loadMap(File mapFile) throws IOException, MapFormatException {
+    defaultMapName = mapFile.getName();
     DataInputStream mapReader = null;
     Map map;
 
     try {
-      isMapFile(mapFile);
+      validateMapFile(mapFile);
       mapReader = new DataInputStream(new FileInputStream(mapFile));
       map = readMap(mapReader);
     } finally {
@@ -92,7 +94,7 @@ public class MapLoader {
   /**
    * @throws MapFormatException if the file is not a valid cw Map file
    */
-  private void isMapFile(File file) throws MapFormatException {
+  private void validateMapFile(File file) throws MapFormatException {
     if (file != null && !file.getName().endsWith(".map")) {
       throw new MapFormatException("file " + file + " doesn't end with .map");
     }
@@ -101,15 +103,15 @@ public class MapLoader {
   /**
    * Read a map from a Binary file
    *
-   * @throws IllegalArgumentException If the version number is not the first value in the file
-   *                                  or when the version is not equal to the VERSION cst
+   * @throws MapFormatException If the version number is not the first value in the file
+   *                            or when the version is not equal to the VERSION cst
    */
   private Map readMap(DataInputStream mapReader) throws IOException, MapFormatException {
     String mapName = "", author = "", description = "";
 
     byte version = (byte) mapReader.readInt();
-    if (validateVersion(version)) {
-      mapName = readString(mapReader, MAP_FILE_DEILIMTER, DEFAULT_MAP_NAME);
+    if (validVersion(version)) {
+      mapName = readString(mapReader, MAP_FILE_DEILIMTER, defaultMapName);
       author = readString(mapReader, MAP_FILE_DEILIMTER, DEFAULT_AUTHOR_NAME);
       description = readString(mapReader, MAP_FILE_DEILIMTER, DEFAULT_DESCRIPTION);
     } else {
@@ -122,17 +124,17 @@ public class MapLoader {
    * A valid version is a version that has a value of VERSION
    * todo it would be better if the version of the app was put here, so we can see if this map is supported.
    */
-  private boolean validateVersion(byte version) {
+  private boolean validVersion(byte version) {
     return version == VERSION;
   }
 
-  private String readString(DataInputStream mapReader, char mapFileDeilimter, String defaultValue) throws IOException {
-    String rawData = readString(mapReader, mapFileDeilimter);
+  private String readString(DataInputStream mapReader, char mapFileDelimiter, String defaultValue) throws IOException {
+    String rawData = readString(mapReader, mapFileDelimiter);
     return containsValue(rawData) ? rawData : defaultValue;
   }
 
   /**
-   * Read bytes until endChar is found
+   * Read characters until endChar is found
    * todo move to loaderUtil class
    */
   private String readString(InputStream is, char endChar) throws IOException {
@@ -153,28 +155,5 @@ public class MapLoader {
    */
   private boolean containsValue(String s) {
     return !(s == null || s.trim().length() == 0);
-  }
-
-  /**
-   * if name is "" then do magic
-   * unnused, todo why/what is this doing?
-   */
-  private String cleanName(String name, String fileName) {
-    if (name.equals("")) {
-      int lastslash = fileName.indexOf('\\');
-      if (lastslash == -1) {
-        lastslash = fileName.indexOf('/');
-        while (fileName.indexOf('/', lastslash + 1) != -1) {
-          lastslash = fileName.indexOf('/', lastslash + 1);
-        }
-      } else {
-        while (fileName.indexOf('\\', lastslash + 1) != -1) {
-          lastslash = fileName.indexOf('\\', lastslash + 1);
-        }
-      }
-      return fileName.substring(lastslash + 1, fileName.length() - 4);
-    } else {
-      return name;
-    }
   }
 }
