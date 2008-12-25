@@ -4,7 +4,8 @@ import com.customwars.sfx.SFX;
 import com.customwars.state.ResourceLoader;
 import com.customwars.ui.BattleScreen;
 import com.customwars.ui.MiscGraphics;
-import com.customwars.ui.SwitchGradient;import com.customwars.util.GuiUtil;
+import com.customwars.ui.SwitchGradient;
+import com.customwars.util.GuiUtil;
 
 import java.awt.*;
 import java.awt.image.ImageObserver;
@@ -17,9 +18,10 @@ import java.awt.image.ImageObserver;
  *An abstract in-game menu. Used to make the battle menu and context menus.
  */
 public abstract class InGameMenu {
-    private static final Font MENU_ITEM_FONT = new Font(Font.SANS_SERIF, Font.BOLD, 16);
-    private static final int FONT_HEIGHT = 16;
+    private static final int FONT_HEIGHT = 20;
+    private static final Font MENU_ITEM_FONT = new Font(Font.SANS_SERIF, Font.BOLD, FONT_HEIGHT);
     private static final int LEFT_OFFSET = 16;
+
     protected String[] displayItems;
     protected Image[] icons;
     protected int numItems = 0;
@@ -50,7 +52,6 @@ public abstract class InGameMenu {
         icons = i;
     }
 
-    //Draws the Menu
     public void drawMenu(Graphics2D g){
       if (icons == null) {
         //Makes the gradient
@@ -69,7 +70,7 @@ public abstract class InGameMenu {
         g.setFont(MENU_ITEM_FONT);
         for (int i = 0; i < numItems; i++) {
           String fullMenuItem = displayItems[i];
-          String wrappedMenuItem = GuiUtil.fitLine(fullMenuItem, width, g);
+          String wrappedMenuItem = GuiUtil.fitLine(fullMenuItem, width - LEFT_OFFSET, g);
           g.drawString(wrappedMenuItem, mx + LEFT_OFFSET, my + (i * FONT_HEIGHT) + FONT_HEIGHT);
         }
 
