@@ -9,16 +9,19 @@ package com.customwars.ui.menu;
 
 import com.customwars.ai.*;
 import com.customwars.loader.MapLoader;
-import com.customwars.lobbyclient.*;
+import com.customwars.lobbyclient.FobbahLauncher;
 import com.customwars.map.Map;
-import com.customwars.map.location.*;
-import com.customwars.officer.*;
+import com.customwars.map.location.Location;
+import com.customwars.map.location.Property;
+import com.customwars.map.location.TerrType;
+import com.customwars.officer.CO;
+import com.customwars.officer.COList;
 import com.customwars.sfx.SFX;
-import com.customwars.state.*;
+import com.customwars.state.ResourceLoader;
 import com.customwars.ui.*;
-import org.slf4j.*;
-
-import sun.net.www.content.image.jpeg;
+import com.customwars.util.GuiUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import javax.swing.Timer;
@@ -27,81 +30,90 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.net.*;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.*;
 import java.util.List;
-
 
 public class MainMenu extends JComponent {
   private static final String TEMPORARYMAP_MAP_FILENAME = "temporarymap.map";
   private static final String TEMPORARYSAVE_SAVE_FILENAME = "temporarysave.save";
-  private static String ABSOLUTE_TEMP_FILENAME = "";
 
-  private int cx;             //holds the cursor's x position on the co select screen
-  private int cy;             //holds the cursor's y position on the co select screen
-  private int item;           //holds the menu's current item (both menus use this)
-  private int item2;          //holds the second menu's current item (only used by server info screen)
+  private static String ABSOLUTE_TEMP_FILENAME = "";
+  private final static Logger logger = LoggerFactory.getLogger(MainMenu.class);
+
+  // Modes
   private boolean title;      //title mode
   private boolean options;    //options mode
   private boolean newload;    //new/load/network mode
-  private boolean mapSelect;        //map select mode
-  private boolean COselect;         //CO select mode
-  private boolean load;       //save select mode
+  private boolean mapSelect;  //map select mode
+  private boolean COselect;   //CO select mode
   private boolean sideSelect; //Side Select mode
   private boolean battleOptions;  //battle options mode
   private boolean keymap;     //key mapping mode
   private boolean snailinfo;  //the snail-mode information screen
-  private BufferedImage bimg; //the screen, used for double buffering and scaling
-  private int scale;          //what scale multiplier is being used
-  private JFrame parentFrame;  //the frame that contains the window
-  private Location originalLocation;  //the pre-move position of the unit
-  private KeyControl keycontroller;   //the KeyControl, used to remove the component
-  private MouseControl mousecontroller;   //the MouseControl, used to remove the component
-  private int[] coSelections; //the selected COs
-  private int[] sideSelections; //the selected sides
-  private boolean[] altSelections; //alt costumes for sides.
-  private String filename;            //the map filename
-  private int numArmies;              //the number of armies on the map
-  private int numCOs;                 //the current number of COs selected
-  private int selectedArmy = 0;       //the selected army (0 = OS, 1 = BM, etc.)
-  private String[] displayNames;  //the names of the maps to be displayed
-  private String[] filenames;     //the filenames of the maps in displayNames
-  private String[] authors;       //the author of each map
-  private String[] descriptions;  //the description of each map
-  private int ptypes[] = {0, 0, 0, 0, 0, 0};//the number of properties on this map
-  private int numMaps;            //the number of maps
+
+  private static final int MAP_EDITOR = 1;
+  private static final int OPTION_MENU = 2;
+
+  // GUI
+  private static final int NUM_VISIBLE_ROWS = 12;
+  private static final Font DEFAULT_FONT = new Font(Font.SANS_SERIF, Font.PLAIN, 10);
+  public boolean altcostume;
+  public boolean mainaltcostume;
+  private int cx;             //holds the cursor's x position on the co select screen
+  private int cy;             //holds the cursor's y position on the co select screen
+  private int item;           //holds the menu's current item (both menus use this)
+  private int item2;          //holds the second menu's current item (only used by server info screen)
+  private BufferedImage bimg;           //the screen, used for double buffering and scaling
+  private int scale;                    //what scale multiplier is being used
+  private JFrame parentFrame;           //the frame that contains the window
+  private KeyControl keycontroller;     //the KeyControl, used to remove the component
+  private MouseControl mousecontroller; //the MouseControl, used to remove the component
+  private int[] coSelections;       //the selected COs
+  private int[] sideSelections;     //the selected sides
+  private boolean[] altSelections;  //alt costumes for sides.
+  private String filename;          //the map filename
+  private int numArmies;            //the number of armies on the map
+  private int numCOs;               //the current number of COs selected
+  private int selectedArmy = 0;     //the selected army (0 = OS, 1 = BM, etc.)
+  private int ptypes[] = {0, 0, 0, 0, 0, 0};  //the number of properties on this map
   private int mapPage;        //the page in the map list
-  private int NUM_COS = 71;   //the number of selectable COs
   private int cat = 0;        //the map directory category
   private int subcat = 0;     //the map directory subcategory
   private String[] cats;      //the categories
   private Battle preview;     //the minimap preview
-  private BattleOptions bopt = new BattleOptions();  //the battle options to start the game with
   private boolean chooseKey = false;      //if true, the user is choosing a key
-  private int day = 1;
-  private int turn = 1;
   private boolean insertNewCO = false;    //used to select new COs in snail mode
   private String[] usernames = {"Unknown"};     //the usernames of the players in snail mode
-  private String[] syslog = {"System Log"};     //system log messages
-  private String[] chatlog = {"Chat Log"};     //chat log messages
-  int syspos = 0;
-  int chatpos = 0;
-  int glide = -1; //A simple thing to make stuff prettier.
-  int backGlide = -1;
-  private boolean info;
+  private int glide = -1; //A simple thing to make stuff prettier.
   private int infono;
   private int skip = 0;
   private int skipMax = 0;
-  public boolean altcostume;
-  public boolean mainaltcostume;
-  final static Logger logger = LoggerFactory.getLogger(MainMenu.class);
+  private boolean info;
+  private int backGlide = -1;
+
+  // MODEL
+  private BattleOptions bopt = new BattleOptions();  //the battle options to start the game with
+  private int day = 1;
+  private int turn = 1;
 
   private MapLoader mapLoader = new MapLoader();
   private List<Map> maps = mapLoader.loadAllValidMaps();
+  private List<Map> filteredMaps;                           //the maps to be displayed
+  private String[] filenames= mapLoader.getFileNames();     //the filenames of all the maps
 
   private CO[][] armyArray = new CO[8][14];
-
   private int visibility = 0; //0=Full 1=Fog 2=Mist
+
+  private String[] syslog = {"System Log"};    //system log messages
+  private String[] chatlog = {"Chat Log"};     //chat log messages
+  private int syspos = 0;
+  private int chatpos = 0;
+
+  // NETWORK
+  private static final int MAX_USERNAME_LENGTH = 12;
 
   /**
    * Creates a new instance of BattleScreen
@@ -126,17 +138,14 @@ public class MainMenu extends JComponent {
     newload = false;
     mapSelect = false;
     COselect = false;
-    load = false;
     info = false;
     battleOptions = false;
     keymap = false;
     Options.snailGame = false;
     snailinfo = false;
 
-    //KeyControl is registered with the parent frame
     keycontroller = new KeyControl();
     f.addKeyListener(keycontroller);
-    //MouseControl is registered with the parent frame
     mousecontroller = new MouseControl();
     f.addMouseListener(mousecontroller);
     f.addMouseMotionListener(mousecontroller);
@@ -157,16 +166,14 @@ public class MainMenu extends JComponent {
       Timer timer = new Timer(10000, refresh);
       timer.start();
     }
+
+    filteredMaps = new ArrayList<Map>();
   }
 
   //called in response to this.repaint();
   public void paintComponent(Graphics g) {
-    //clears the background
     super.paintComponent(g);
-
-    //converts to Graphics2D
-    Dimension d = getSize();
-    Graphics2D g2 = createGraphics2D(d.width, d.height);
+    Graphics2D g2 = createGraphics2D(getSize().width, getSize().height);
     g2.scale(scale, scale);
 
     drawScreen(g2);
@@ -174,15 +181,13 @@ public class MainMenu extends JComponent {
     g.drawImage(bimg, 0, 0, this);
   }
 
-  //tells the GUI what size the window is
   public Dimension getPreferredSize() {
-    //return new Dimension(256*scale,192*scale);
     return new Dimension(480 * scale, 320 * scale);
   }
 
   //makes a Graphics2D object of the given size
   public Graphics2D createGraphics2D(int w, int h) {
-    Graphics2D g2 = null;
+    Graphics2D g2;
     if (bimg == null || bimg.getWidth() != w || bimg.getHeight() != h) {
       bimg = (BufferedImage) createImage(w, h);
     }
@@ -198,17 +203,7 @@ public class MainMenu extends JComponent {
     return g2;
   }
 
-  //Draws the screen
   public void drawScreen(Graphics2D g) {
-    //draws an animated gif in the background
-    //this triggers repaint automatically
-    //using repaint normally ruins animations
-    //g.drawImage(MiscGraphics.getMoveTile(),0,0,this);
-
-    //draw a white background (if the map is smaller than the screen)
-    //g.setColor(Color.white);
-    //g.fillRect(0,0,256,192);
-
     drawBackground(g);
     if (title) drawTitleScreen(g);
     if (mapSelect) drawMapSelectScreen(g);
@@ -226,21 +221,13 @@ public class MainMenu extends JComponent {
     this.repaint();
   }
 
-  //draws the background
   public void drawBackground(Graphics2D g) {
     g.drawImage(MainMenuGraphics.getBackground(), 0, 0, this);
   }
 
-  //Draws the title screen
   public void drawTitleScreen(Graphics2D g) {
-    //Draw the title
-    //g.setColor(Color.black);
-    //g.setFont(new Font("Serif", Font.BOLD, 40));
-    //g.drawString("Custom Wars",10,50);
-
     //draw title background
     g.drawImage(MainMenuGraphics.getTitleBackground(), 0, 0, this);
-    //g.drawImage(MainMenuGraphics.getLogo(),0,0,this);
 
     //draw the three menu choices
     if (item == 0) g.drawImage(MainMenuGraphics.getNewGame(true), 0, 0, this);
@@ -257,20 +244,12 @@ public class MainMenu extends JComponent {
   }
 
   public void drawInfoScreen(Graphics2D g) {
-
-    String[] bio;
     int i, store, adjust;
     int starStore = 0;
     g.setColor(Color.white);
-    //(256*scale,192*scale)
     g.drawImage(MainMenuGraphics.getBackground(), 0, 0, this);
-/*
-        g.drawImage(MainMenuGraphics.getBaseOne(selectedArmy),0,0,this);
-        g.drawImage(MainMenuGraphics.getHQBG(),233,35,233+244,35+279,244*selectedArmy,0,244*selectedArmy+244,279,this);
-        g.drawImage(MainMenuGraphics.getEmblem(),250,20,250+36,20+36,36*selectedArmy,0,36*selectedArmy+36,36,this);
-*/
+
     //Draws the COs
-    String sidestring, costring;
     store = 0;
     adjust = 0;
 
@@ -281,10 +260,7 @@ public class MainMenu extends JComponent {
       g.drawImage(MiscGraphics.getCOSheet(infono), 300, 40, 300 + 225, 40 + 350, 225, 0, 450, 350, this);
     //Draw the 'basic information'
     g.setColor(Color.black);
-    /*g.setFont(new Font("Impact", Font.BOLD, 38));
-    g.drawString(COList.getListing()[infono].getName(), 15,53);
-    g.setColor(Color.gray);*/
-    g.setFont(new Font("SansSerif", Font.PLAIN, 10));
+    g.setFont(DEFAULT_FONT);
     g.drawString("CO: " + COList.getListing()[infono].getName(), 10, 20);
     g.drawString(COList.getListing()[infono].getTitle(), (COList.getListing()[infono].getName().length() + 9) * 6 + 10, 20);
     //CO Bio
@@ -419,11 +395,9 @@ public class MainMenu extends JComponent {
     }
 
     skipMax = ((store * 15) / (96 * scale));
-
   }
 
   public void drawMapSelectScreen(Graphics2D g) {
-
     g.drawImage(MainMenuGraphics.getMapLayout(), 4, 40, this);
     g.drawImage(MainMenuGraphics.getPageUp(), 84, 30, this);
     g.drawImage(MainMenuGraphics.getPageDown(), 84, 312, this);
@@ -432,22 +406,24 @@ public class MainMenu extends JComponent {
     g.setFont(new Font("SansSerif", Font.BOLD, 16));
 
     g.drawString(cats[cat], 4, 20);
-    //+": "+subcats[subcat]
 
-    for (int i = 0; i < 12; i++)
-      if (mapPage * 12 + i < numMaps)
-        g.drawString(displayNames[mapPage * 12 + i], 10, 68 + i * 21);
+    for (int item = 0; item < NUM_VISIBLE_ROWS; item++)
+      if (isMapVisible(item)) {
+        String fullMapName = getMap(item).getName();
+        String fixedMapName = GuiUtil.fitLine(fullMapName,148,g);
+        g.drawString(fixedMapName, 10, 68 + item * 21);       
+      }
 
     g.setColor(Color.red);
-    g.drawRect(10, 50 + item * 21, 148, 19);
+    g.drawRect(10, 50 + this.item * 21, 148, 19);
 
-    if (numMaps != 0) {
+    if (filteredMaps.size() != 0) {
       g.setColor(Color.black);
-      g.drawString(displayNames[mapPage * 12 + item], 180, 60);
+      g.drawString(getMap(this.item).getName(), 180, 60);
       g.setFont(new Font("SansSerif", Font.PLAIN, 16));
-      g.drawString("Mapmaker: " + authors[mapPage * 12 + item], 180, 245);
-      g.setFont(new Font("SansSerif", Font.PLAIN, 10));
-      g.drawString(descriptions[mapPage * 12 + item], 180, 265);
+      g.drawString("Mapmaker: " + getMap(this.item).getName(), 180, 245);
+      g.setFont(DEFAULT_FONT);
+      g.drawString(getMap(this.item).getDescription(), 180, 265);
     }
 
     g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.85f));
@@ -507,9 +483,8 @@ public class MainMenu extends JComponent {
   }
 
   public void drawMiniMap(Graphics2D g, int x, int y) {
-    if (numMaps != 0) {
+    if (filteredMaps.size() != 0) {
       Image minimap = MiscGraphics.getMinimap();
-
       Map map = preview.getMap();
 
       for (int i = 0; i < map.getMaxCol(); i++) {
@@ -517,7 +492,7 @@ public class MainMenu extends JComponent {
           //draw terrain
           int terraintype = map.find(new Location(i, j)).getTerrain().getIndex();
           if (terraintype < 9) {
-            g.drawImage(minimap, x + (i * 4), y + (j * 4), x + (i * 4) + 4, y + (j * 4) + 4, 0 + (terraintype * 4), 0, 4 + (terraintype * 4), 4, this);
+            g.drawImage(minimap, x + (i * 4), y + (j * 4), x + (i * 4) + 4, y + (j * 4) + 4, (terraintype * 4), 0, 4 + (terraintype * 4), 4, this);
           } else if (terraintype == 9) {
             int armycolor = ((Property) map.find(new Location(i, j)).getTerrain()).getOwner().getColor();
             g.drawImage(minimap, x + (i * 4), y + (j * 4), x + (i * 4) + 4, y + (j * 4) + 4, 36 + (armycolor * 4), 0, 40 + (armycolor * 4), 4, this);
@@ -581,7 +556,7 @@ public class MainMenu extends JComponent {
       CO current = armyArray[selectedArmy][i - 1];
       if (current != null) {
 
-        g.drawImage(MiscGraphics.getCOSheet(COList.getIndex(current)), 2 + i % 3 * 52, 61 + i / 3 * 52, 2 + i % 3 * 52 + 48, 61 + i / 3 * 52 + 48, 0 + offset, 350, 48 + offset, 398, this);
+        g.drawImage(MiscGraphics.getCOSheet(COList.getIndex(current)), 2 + i % 3 * 52, 61 + i / 3 * 52, 2 + i % 3 * 52 + 48, 61 + i / 3 * 52 + 48, offset, 350, 48 + offset, 398, this);
       } else {
         break;
       }
@@ -594,8 +569,6 @@ public class MainMenu extends JComponent {
 
     //Draw first CO if selecting second CO
     if (numCOs % 2 == 1) {
-      //g.drawImage(MiscGraphics.getCOSheet(coSelections[numCOs-1]-1),166,210,166+32,210+12,144+offset2,350,144+offset2+32,350+12,this);
-      //g.drawImage(MainMenuGraphics.getCOName(),199,210,199+50,210+15,0,(coSelections[numCOs-1]-1)*15,50,(coSelections[numCOs-1]-1)*15+15,this);
       g.drawImage(MiscGraphics.getCOSheet(coSelections[numCOs - 1]), 166, 210, 166 + 32, 210 + 12, 144 + offset2, 350, 144 + offset2 + 32, 350 + 12, this);
       g.drawImage(MainMenuGraphics.getCOName(), 199, 210, 199 + 50, 210 + 15, 0, (coSelections[numCOs - 1]) * 15, 50, (coSelections[numCOs - 1]) * 15 + 15, this);
     }
@@ -609,9 +582,6 @@ public class MainMenu extends JComponent {
       glide++;
       g.drawImage(MiscGraphics.getCOSheet(COList.getIndex(current)), 339 + (int) (100 * Math.pow(0.89, glide)), 44, 339 + 225 + (int) (100 * Math.pow(0.89, glide)), 44 + 350, offset, 0, offset + 225, 350, this);
       g.drawImage(MainMenuGraphics.getCOName(), 170, 70, 170 + 50, 70 + 15, 0, current.getId() * 15, 50, current.getId() * 15 + 15, this);
-      /*g.setColor(Color.black);
-      g.setFont(new Font("SansSerif", Font.BOLD, 12));
-      g.drawString(current.getBio(),170,100);*/
       if (numCOs % 2 == 1) {
         g.drawImage(MiscGraphics.getCOSheet(COList.getIndex(current)), 166, 226, 166 + 32, 226 + 12, 144 + offset, 350, 144 + offset + 32, 350 + 12, this);
         g.drawImage(MainMenuGraphics.getCOName(), 199, 226, 199 + 50, 226 + 15, 0, current.getId() * 15, 50, current.getId() * 15 + 15, this);
@@ -627,10 +597,9 @@ public class MainMenu extends JComponent {
       g.drawImage(MainMenuGraphics.getPlayerNumber(selectedArmy), 293, 195, 293 + 30, 195 + 10, numCOs / 2 * 15, 0, numCOs / 2 * 15 + 30, 10, this);
 
     g.setColor(Color.black);
-    g.setFont(new Font("SansSerif", Font.PLAIN, 10));
+    g.setFont(DEFAULT_FONT);
 
     if (current != null) {
-      int store = 0;
       int k;
 
       for (k = 0; k < ((COList.getListing()[COList.getIndex(current)].getIntel().length() / 36) + 1); k++)
@@ -802,34 +771,6 @@ public class MainMenu extends JComponent {
 
   public void drawBattleOptionsScreen(Graphics2D g) {
     int textCol = 20;
-
-    /*
-    //Fog of War
-    g.setColor(Color.black);
-    g.setFont(new Font("SansSerif", Font.BOLD, 16));
-    if(item == 0)g.setColor(Color.red);
-    g.drawString("Fog Of War",10,textCol);
-    g.setColor(Color.black);
-    if(bopt.isFog())
-        g.drawString("On",120,textCol);
-    else
-        g.drawString("Off",120,textCol);
-
-    textCol += 20;
-
-    //Mist of War
-    g.setColor(Color.black);
-    g.setFont(new Font("SansSerif", Font.BOLD, 16));
-    if(item == 1)g.setColor(Color.red);
-    g.drawString("Mist Of War",10,textCol);
-    g.setColor(Color.black);
-    if(bopt.isMist())
-        g.drawString("On",120,textCol);
-    else
-        g.drawString("Off",120,textCol);
-
-    textCol += 20;
-    */
 
     //Visibility
     g.setColor(Color.black);
@@ -1008,8 +949,6 @@ public class MainMenu extends JComponent {
     g.setColor(Color.black);
     g.drawString("Day: " + String.valueOf(bopt.getMinWDay()), 380, textCol);
     textCol += 20;
-
-
   }
 
   public void drawKeymapScreen(Graphics2D g) {
@@ -1225,7 +1164,6 @@ public class MainMenu extends JComponent {
     g.setColor(Color.BLACK);
     g.drawString("Game Name: " + Options.gamename, 0, 140);
     g.drawString("Login Name: " + Options.username, 0, 160);
-    //g.drawString("Password: " + Options.password,10,80);
     g.drawString("Current day/turn: " + day + "/" + turn, 0, 180);
     for (int i = 0; i < usernames.length; i++) {
       g.drawString(usernames[i], (i < 5) ? 0 : 120, 200 + (i % 5) * 20);
@@ -1244,7 +1182,6 @@ public class MainMenu extends JComponent {
     g.drawString("Play", 350, 320);
   }
 
-  //remove the component from the frame
   public void removeFromFrame() {
     parentFrame.getContentPane().remove(this);
     parentFrame.removeKeyListener(keycontroller);
@@ -1252,16 +1189,15 @@ public class MainMenu extends JComponent {
     parentFrame.removeMouseMotionListener(mousecontroller);
   }
 
-  //loads a new minimap preview
-  public void loadPreview() {
+  public void loadMiniMapPreview() {
     ptypes[0] = 0;
     ptypes[1] = 0;
     ptypes[2] = 0;
     ptypes[3] = 0;
     ptypes[4] = 0;
     ptypes[5] = 0;
-    if (numMaps != 0) {
-      filename = filenames[mapPage * 12 + item];
+    if (filteredMaps.size() != 0) {
+      filename = getFileName(item);
       preview = new Battle(filename);
 
       Map m = preview.getMap();
@@ -1281,25 +1217,17 @@ public class MainMenu extends JComponent {
     }
   }
 
-  //loads the display names
+  //loads the display names, filter on subCat, aka the playerCount
   private void loadMapDisplayNames() {
     if (maps == null) logger.warn("No maps loaded");
-    List<String> displayNames = new ArrayList<String>();
-    List<String> authors = new ArrayList<String>(maps.size());
-    List<String> descriptions = new ArrayList<String>(maps.size());
+    filteredMaps.clear();
 
     for (Map map : maps) {
-      displayNames.add(map.getName());
-      authors.add(map.getAuthor());
-      descriptions.add(map.getDescription());
+      if (subcat == 0 || subcat == map.getPlayerCount() - 1) {
+        filteredMaps.add(map);
+      }
     }
-
-    this.displayNames = displayNames.toArray(new String[]{});
-    this.filenames = mapLoader.getFileNames();
-    this.authors = authors.toArray(new String[]{});
-    this.descriptions = descriptions.toArray(new String[]{});
-    this.numMaps = maps.size();
-    loadPreview();
+    loadMiniMapPreview();
   }
 
   public void pressedA() {
@@ -1384,9 +1312,9 @@ public class MainMenu extends JComponent {
             DataInputStream read = new DataInputStream(new FileInputStream(ResourceLoader.properties.getProperty("saveLocation") + "/" + filename));
             int maptype = read.readInt();
             if (maptype == -1) {
-              while (read.readByte() != 0) ; //skip name
-              while (read.readByte() != 0) ; //skip author
-              while (read.readByte() != 0) ; //skip description
+              read.readByte(); //skip name
+              read.readByte(); //skip author
+              read.readByte(); //skip description
               read.readInt();
               read.readInt();
               numArmies = read.readByte();
@@ -1428,34 +1356,13 @@ public class MainMenu extends JComponent {
   }
 
   private void mapSelectScreenActions() {
-    if (numMaps != 0) {
+    if (filteredMaps.size() != 0) {
       //New Game
       mapSelect = false;
       COselect = true;
-
-      //File[] tempFile = mapDir.listFiles();
-      filename = filenames[mapPage * 12 + item];
-      String mapName = displayNames[mapPage * 12 + item];
-
-      //find number of armies, and thus COs
-      try {
-        DataInputStream read = new DataInputStream(new FileInputStream(filename));
-        int maptype = read.readInt();
-        if (maptype == -1) {
-          while (read.readByte() != 0) ; //skip name
-          while (read.readByte() != 0) ; //skip author
-          while (read.readByte() != 0) ; //skip description
-          read.readInt();
-          read.readInt();
-          numArmies = read.readByte();
-        } else {
-          read.readInt();
-          numArmies = read.readInt();
-        }
-      } catch (IOException exc) {
-        logger.error("Could not read Map file [" + filename + "]", exc);
-        System.exit(1);
-      }
+      filename = getFileName(item);
+      String mapName = getMap(item).getName() ;
+      this.numArmies = getMap(item).getPlayerCount();
 
       //New Snail Mode Game
       if (Options.snailGame) {
@@ -1531,9 +1438,6 @@ public class MainMenu extends JComponent {
       fc.setDialogTitle("Load Game");
       fc.setCurrentDirectory(new File("./"));
       fc.setApproveButtonText("Load");
-      //FileNameExtensionFilter filter = new FileNameExtensionFilter(
-      //        "CW Save Files", "save");
-      //fc.setFileFilter(filter);
       int returnVal = fc.showOpenDialog(this);
 
       if (returnVal != 1) {
@@ -1567,9 +1471,6 @@ public class MainMenu extends JComponent {
       fc.setDialogTitle("Load Replay");
       fc.setCurrentDirectory(new File("./"));
       fc.setApproveButtonText("Load");
-      //FileNameExtensionFilter filter = new FileNameExtensionFilter(
-      //        "CW Replay Files", "replay");
-      //fc.setFileFilter(filter);
       int returnVal = fc.showOpenDialog(this);
 
       if (returnVal != 1) {
@@ -1597,12 +1498,9 @@ public class MainMenu extends JComponent {
       if (!tryToConnect()) {
     	  return;
       }
-      
-      
-      
+
 	   //find an unused name
-      Options.gamename = (String)JOptionPane.showInputDialog(null, "Type in a name for your game:", "Network Game: Name", JOptionPane.PLAIN_MESSAGE); 
-      
+      Options.gamename = JOptionPane.showInputDialog(null, "Type in a name for your game:", "Network Game: Name", JOptionPane.PLAIN_MESSAGE);
 
       if (Options.gamename == null) {
     	  return;
@@ -1615,29 +1513,29 @@ public class MainMenu extends JComponent {
           logger.info("Game name already taken");
           JOptionPane.showMessageDialog(this, "Game name already taken");
         }
-        Options.gamename = (String)JOptionPane.showInputDialog(null, "Type in a name for your game:", "Network Game: Name?", JOptionPane.PLAIN_MESSAGE); 
+        Options.gamename = JOptionPane.showInputDialog(null, "Type in a name for your game:", "Network Game: Name?", JOptionPane.PLAIN_MESSAGE);
         if (Options.gamename == null) return;
         reply = sendCommandToMain("qname", Options.gamename);
       }
 
       //set the master password and join
-      Options.masterpass = (String)JOptionPane.showInputDialog(null, "Master Password for your game:", "Network Game: Master Pass?", JOptionPane.PLAIN_MESSAGE); 
+      Options.masterpass = JOptionPane.showInputDialog(null, "Master Password for your game:", "Network Game: Master Pass?", JOptionPane.PLAIN_MESSAGE);
       if (Options.masterpass == null) return;
       if (Options.isDefaultLoginOn()) {
         Options.username = Options.getDefaultUsername();
         Options.password = Options.getDefaultPassword();
 
-        if (Options.username == null || Options.username.length() < 1 || Options.username.length() > 12)
+        if (Options.username == null || Options.username.length() < 1 || Options.username.length() > MAX_USERNAME_LENGTH)
           return;
       } else {
         while (true) {
-        	Options.username = (String)JOptionPane.showInputDialog(null, "Username for your game:", "Network Game: User(12char)?", JOptionPane.PLAIN_MESSAGE); 
+        	Options.username = JOptionPane.showInputDialog(null, "Username for your game:", "Network Game: User(12char)?", JOptionPane.PLAIN_MESSAGE);
           if (Options.username == null) return;
           if (Options.username.length() < 1) continue;
-          if (Options.username.length() > 12) continue;
+          if (Options.username.length() > MAX_USERNAME_LENGTH) continue;
           break;
         }
-        Options.password = (String)JOptionPane.showInputDialog(null, "Password for your game:", "Network Game: Password?", JOptionPane.PLAIN_MESSAGE); 
+        Options.password = JOptionPane.showInputDialog(null, "Password for your game:", "Network Game: Password?", JOptionPane.PLAIN_MESSAGE);
         if (Options.password == null) return;
       }
 
@@ -1654,11 +1552,11 @@ public class MainMenu extends JComponent {
       if (!tryToConnect()) return;
 
       //connect to the game
-      Options.gamename = (String)JOptionPane.showInputDialog(null, "Name of game:", "Join Game: Name", JOptionPane.PLAIN_MESSAGE); 
+      Options.gamename = JOptionPane.showInputDialog(null, "Name of game:", "Join Game: Name", JOptionPane.PLAIN_MESSAGE);
       if (Options.gamename == null) return;
 
       //check the master password and get number of players and available slots
-      Options.masterpass = (String)JOptionPane.showInputDialog(null, "Enter Password for game:", "Join Game: Master Pass", JOptionPane.PLAIN_MESSAGE); 
+      Options.masterpass = JOptionPane.showInputDialog(null, "Enter Password for game:", "Join Game: Master Pass", JOptionPane.PLAIN_MESSAGE);
       if (Options.masterpass == null) return;
 
       //Get user's name, password, and slot
@@ -1666,17 +1564,17 @@ public class MainMenu extends JComponent {
         Options.username = Options.getDefaultUsername();
         Options.password = Options.getDefaultPassword();
 
-        if (Options.username == null || Options.username.length() < 1 || Options.username.length() > 12)
+        if (Options.username == null || Options.username.length() < 1 || Options.username.length() > MAX_USERNAME_LENGTH)
           return;
       } else {
         while (true) {
-        	Options.username = (String)JOptionPane.showInputDialog(null, "Username for your game:", "Network Game: User(12char)", JOptionPane.PLAIN_MESSAGE); 
+        	Options.username = JOptionPane.showInputDialog(null, "Username for your game:", "Network Game: User(12char)", JOptionPane.PLAIN_MESSAGE);
           if (Options.username == null) return;
           if (Options.username.length() < 1) continue;
-          if (Options.username.length() > 12) continue;
+          if (Options.username.length() > MAX_USERNAME_LENGTH) continue;
           break;
         }
-        Options.password = (String)JOptionPane.showInputDialog(null, "Password for your game:", "Network Game: Password", JOptionPane.PLAIN_MESSAGE); 
+        Options.password = JOptionPane.showInputDialog(null, "Password for your game:", "Network Game: Password", JOptionPane.PLAIN_MESSAGE);
         if (Options.password == null) return;
       }
       newload = false;
@@ -1686,7 +1584,7 @@ public class MainMenu extends JComponent {
         JOptionPane.showMessageDialog(this, "The game " + Options.gamename + " has ended");
         return;
       }
-      String slot  = (String)JOptionPane.showInputDialog(null, "Type in the number of the army you will command:", "Network Game: Army No.?", JOptionPane.PLAIN_MESSAGE);
+      String slot  = JOptionPane.showInputDialog(null, "Type in the number of the army you will command:", "Network Game: Army No.?", JOptionPane.PLAIN_MESSAGE);
       if (slot == null) {
         title = true;
         snailinfo = false;
@@ -1699,13 +1597,13 @@ public class MainMenu extends JComponent {
         logger.info(reply);
         if (reply.equals("no")) {
           logger.info("Game does not exist");
-          Options.gamename = (String)JOptionPane.showInputDialog(null, "Type in a name for your game:", "Network Game: Name?", JOptionPane.PLAIN_MESSAGE); 
+          Options.gamename = JOptionPane.showInputDialog(null, "Type in a name for your game:", "Network Game: Name?", JOptionPane.PLAIN_MESSAGE);
           if (Options.gamename == null) {
             title = true;
             snailinfo = false;
             return;
           }
-          Options.masterpass = (String)JOptionPane.showInputDialog(null, "Enter Password for game:", "Join Game: Master Pass", JOptionPane.PLAIN_MESSAGE); 
+          Options.masterpass = JOptionPane.showInputDialog(null, "Enter Password for game:", "Join Game: Master Pass", JOptionPane.PLAIN_MESSAGE);
           if (Options.masterpass == null) {
             title = true;
             snailinfo = false;
@@ -1713,13 +1611,13 @@ public class MainMenu extends JComponent {
           }
         } else if (reply.equals("wrong password")) {
           logger.info("Incorrect Password");
-          Options.gamename = (String)JOptionPane.showInputDialog(null, "Name of game:", "Join Game: Name", JOptionPane.PLAIN_MESSAGE); 
+          Options.gamename = JOptionPane.showInputDialog(null, "Name of game:", "Join Game: Name", JOptionPane.PLAIN_MESSAGE);
           if (Options.gamename == null) {
             title = true;
             snailinfo = false;
             return;
           }
-          Options.masterpass = (String)JOptionPane.showInputDialog(null, "Enter Password for game:", "Join Game: Master Pass", JOptionPane.PLAIN_MESSAGE); 
+          Options.masterpass = JOptionPane.showInputDialog(null, "Enter Password for game:", "Join Game: Master Pass", JOptionPane.PLAIN_MESSAGE);
           if (Options.masterpass == null) {
             title = true;
             snailinfo = false;
@@ -1727,7 +1625,7 @@ public class MainMenu extends JComponent {
           }
         } else if (reply.equals("out of range")) {
           logger.info("Army choice out of range or invalid");
-          slot  = (String)JOptionPane.showInputDialog(null, "Type in the number of the army you will command:", "Network Game: Army No.?", JOptionPane.PLAIN_MESSAGE);
+          slot  = JOptionPane.showInputDialog(null, "Type in the number of the army you will command:", "Network Game: Army No.?", JOptionPane.PLAIN_MESSAGE);
           if (slot == null) {
             title = true;
             snailinfo = false;
@@ -1735,7 +1633,7 @@ public class MainMenu extends JComponent {
           }
         } else if (reply.equals("slot taken")) {
           logger.info("Army choice already taken");
-          slot  = (String)JOptionPane.showInputDialog(null, "Type in the number of the army you will command:", "Network Game: Army No.?", JOptionPane.PLAIN_MESSAGE);
+          slot  = JOptionPane.showInputDialog(null, "Type in the number of the army you will command:", "Network Game: Army No.?", JOptionPane.PLAIN_MESSAGE);
           if (slot == null) {
             title = true;
             snailinfo = false;
@@ -1770,7 +1668,7 @@ public class MainMenu extends JComponent {
       if (!tryToConnect()) return;
 
       //connect to the game
-      Options.gamename = (String)JOptionPane.showInputDialog(null, "Type in a name for your game:", "Network Game: Name?", JOptionPane.PLAIN_MESSAGE); 
+      Options.gamename = JOptionPane.showInputDialog(null, "Type in a name for your game:", "Network Game: Name?", JOptionPane.PLAIN_MESSAGE);
       if (Options.gamename == null) return;
 
       //Get user's name and password
@@ -1778,12 +1676,12 @@ public class MainMenu extends JComponent {
         Options.username = Options.getDefaultUsername();
         Options.password = Options.getDefaultPassword();
 
-        if (Options.username == null || Options.username.length() < 1 || Options.username.length() > 12)
+        if (Options.username == null || Options.username.length() < 1 || Options.username.length() > MAX_USERNAME_LENGTH)
           return;
       } else {
-    	Options.username = (String)JOptionPane.showInputDialog(null, "Username for your game:", "Network Game: User(12char)", JOptionPane.PLAIN_MESSAGE); 
+    	Options.username = JOptionPane.showInputDialog(null, "Username for your game:", "Network Game: User(12char)", JOptionPane.PLAIN_MESSAGE);
         if (Options.username == null) return;
-        Options.password = (String)JOptionPane.showInputDialog(null, "Password for your game:", "Network Game: Password?", JOptionPane.PLAIN_MESSAGE); 
+        Options.password = JOptionPane.showInputDialog(null, "Password for your game:", "Network Game: Password?", JOptionPane.PLAIN_MESSAGE);
         if (Options.password == null) return;
       }
 
@@ -1809,7 +1707,6 @@ public class MainMenu extends JComponent {
     } else if (item == 7) {
       parentFrame.setVisible(false);
       FobbahLauncher.init(parentFrame, this);
-      BigFrame frame = new BigFrame();
     }
 
     if (startCOSelect) {
@@ -1834,9 +1731,9 @@ public class MainMenu extends JComponent {
 
       Vector<String> v = new Vector<String>();
       int numcats = 0;
-      for (int i = 0; i < dirs.length; i++) {
-        if (dirs[i].isDirectory()) {
-          v.add(dirs[i].getName());
+      for (File dir : dirs) {
+        if (dir.isDirectory()) {
+          v.add(dir.getName());
           numcats++;
         }
       }
@@ -1869,7 +1766,6 @@ public class MainMenu extends JComponent {
 
     if (nosecco || temp != null && !(numCOs % 2 == 1 && COList.getIndex(temp) == coSelections[numCOs - 1])) {
       if (!nosecco) {
-        //coSelections[numCOs] = COList.getIndex(temp);
         coSelections[numCOs] = COList.getIndex(temp);
       }
 
@@ -1907,7 +1803,7 @@ public class MainMenu extends JComponent {
           if (i % 2 == 0) coSelections[i] = 1;
           else coSelections[i] = 0;
         }
-        for (int i = 0; i < coSelections.length; i++) logger.info("" + coSelections[i]);
+        for (int coSelection : coSelections) logger.info("" + coSelection);
         logger.info("Number of COs: " + numCOs);
         if (numArmies > 2) {
           COselect = false;
@@ -1925,11 +1821,8 @@ public class MainMenu extends JComponent {
       }
 
       if (numCOs == numArmies * 2) {
-        //coSelections[numCOs] = cx+cy*4;
-        //numCOs++;
         logger.info("Total No of competing COs=[" + numCOs + "]  Armies=[" + numArmies + "]");
 
-        //int[] sideSelect = {0,0};
         if (numCOs > 4) {
           COselect = false;
           sideSelect = true;
@@ -1954,23 +1847,6 @@ public class MainMenu extends JComponent {
       if (Options.isMusicOn()) Options.turnMusicOff();
       else Options.turnMusicOn();
     } else if (item == 1) {
-      //RNG
-      /*int l = 0;
-                       boolean valid = false;
-                       while(!valid){
-                           String x = JOptionPane.showInputDialog("input a positive int for the seeding of the RNG, 0 or lower for random");
-                           if(x.length() > 0){
-                               try{
-                                   l = Integer.parseInt(x);
-                                   valid = true;
-                               }catch(NumberFormatException exc){
-                                   valid = false;
-                               }
-                           }else{
-                               valid = true;
-                           }
-                       }
-                       Options.setRNG(l);*/
     } else if (item == 2) {
       //Balance Mode On/Off
       if (Options.isBalance()) {
@@ -2023,25 +1899,28 @@ public class MainMenu extends JComponent {
     if (item == 0) {
       title = false;
       newload = true;
-    } else if (item == 1) {
-      //Start the map editor
-      logger.info("Map Editor");
-      Map m = new Map(30, 20);
-      //Map m = new Map(16,12);
-      Battle bat = new Battle(m);
-
-      parentFrame.setSize(400, 400);
-      MapEditor me = new MapEditor(bat, parentFrame);
-      removeFromFrame();
-      parentFrame.getContentPane().add(me);
-      parentFrame.validate();
-      parentFrame.pack();
-    } else if (item == 2) {
-      //Goto the option menu
+    } else if (item == MAP_EDITOR) {
+      startMapEditor();
+    } else if (item == OPTION_MENU) {
       title = false;
       options = true;
       item = 0;
     }
+  }
+
+  private void startMapEditor() {
+    final int MAP_EDITOR_STARTUP_COLS = 30;
+    final int MAP_EDITOR_STARTUP_ROWS= 20;
+    logger.info("Map Editor");
+    Map m = new Map(MAP_EDITOR_STARTUP_COLS, MAP_EDITOR_STARTUP_ROWS);
+    Battle bat = new Battle(m);
+
+    parentFrame.setSize(400, 400);
+    MapEditor me = new MapEditor(bat, parentFrame);
+    removeFromFrame();
+    parentFrame.getContentPane().add(me);
+    parentFrame.validate();
+    parentFrame.pack();
   }
 
   //try to connect to the server to see that the user's URL is correct
@@ -2230,7 +2109,6 @@ public class MainMenu extends JComponent {
       info = false;
     } else if (COselect && !info) {
       if (numCOs == 0) {
-        //title = true;
         mapSelect = true;
         COselect = false;
         item = 0;
@@ -2258,7 +2136,6 @@ public class MainMenu extends JComponent {
       item = 0;
       if (Options.isNetworkGame()) Options.stopNetwork();
     } else if (sideSelect) {
-      //title = true;
       COselect = true;
       numCOs--;
       sideSelect = false;
@@ -2266,7 +2143,6 @@ public class MainMenu extends JComponent {
       item = 0;
       if (Options.isNetworkGame()) Options.stopNetwork();
     } else if (battleOptions) {
-      //title = true;
       if (numCOs > 4) sideSelect = true;
       else {
         numCOs--;
@@ -2298,13 +2174,12 @@ public class MainMenu extends JComponent {
 
   public void pressedPGDN() {
     if (mapSelect) {
-      mapPage++;
-      if (mapPage > numMaps / 12 || (mapPage == numMaps / 12 && numMaps % 12 == 0)) {
+      if (isOverLastPage(++mapPage)) {
         mapPage--;
       } else
         item = 0;
 
-      loadPreview();
+      loadMiniMapPreview();
     } else if (snailinfo) {
       if (item2 == 0) {
         syspos++;
@@ -2326,7 +2201,7 @@ public class MainMenu extends JComponent {
       } else
         item = 0;
 
-      loadPreview();
+      loadMiniMapPreview();
     } else if (snailinfo) {
       if (item2 == 0) {
         syspos--;
@@ -2434,7 +2309,7 @@ public class MainMenu extends JComponent {
     turn = Integer.parseInt(nums[1]);
     int numplay = Integer.parseInt(nums[2]);
     usernames = new String[numplay];
-    for (int i = 0; i < numplay; i++) usernames[i] = nums[3 + i];
+    System.arraycopy(nums, 3, usernames, 0, numplay);
 
     reply = sendCommandToMain("getsys", Options.gamename);
     syslog = reply.split("\n");
@@ -2560,7 +2435,7 @@ public class MainMenu extends JComponent {
               item = 0;
             }
           }
-          loadPreview();
+          loadMiniMapPreview();
         } else if (keymap) {
           item--;
           if (item < 0) item = 17;
@@ -2604,20 +2479,19 @@ public class MainMenu extends JComponent {
           item++;
           SFX.playClip(soundLocation + "/menutick.wav");
 
-          if (mapPage * 12 + item >= numMaps) {
+          if (isMapVisible(item)) {
             item--;
           }
 
           if (item > 11) {
             item = 0;
-            mapPage++;
-            if (mapPage > numMaps / 12 || (mapPage == numMaps / 12 && numMaps % 12 == 0)) {
+            if (isOverLastPage(++mapPage)) {
               mapPage--;
               SFX.playClip(soundLocation + "/menutick.wav");
               item = 11;
             }
           }
-          loadPreview();
+          loadMiniMapPreview();
         } else if (keymap) {
           item++;
           if (item > 17) item = 0;
@@ -2716,7 +2590,6 @@ public class MainMenu extends JComponent {
           mapPage = 0;
 
           //load maps in new directory
-          String mapsLocation = ResourceLoader.properties.getProperty("mapsLocation");
           loadMapDisplayNames();
         } else if (battleOptions) {
           if (item == 0) {
@@ -2839,11 +2712,8 @@ public class MainMenu extends JComponent {
 
           item = 0;
           mapPage = 0;
-          String mapsLocation = ResourceLoader.properties.getProperty("mapsLocation");
-
           //load maps in new directory
           loadMapDisplayNames();
-
         } else if (battleOptions) {
           processRightKeyBattleOptions();
         } else if (snailinfo) {
@@ -2954,10 +2824,7 @@ public class MainMenu extends JComponent {
         }
       } else if (keypress == Options.constmode) {
         logger.info("Alternating Costumes");
-        if (altcostume)
-          altcostume = false;
-        else
-          altcostume = true;
+        altcostume = !altcostume;
       } else if (keypress == Options.nextunit) {
         if (COselect) {
           if (info) {
@@ -2997,7 +2864,6 @@ public class MainMenu extends JComponent {
     public void mouseClicked(MouseEvent e) {
       int x = e.getX() - parentFrame.getInsets().left;
       int y = e.getY() - parentFrame.getInsets().top;
-      //logger.info(x + "," + y + ":" + e.getButton());
 
       if (e.getButton() == MouseEvent.BUTTON1) {
         //first mouse button
@@ -3074,7 +2940,7 @@ public class MainMenu extends JComponent {
           } else if (y > 50 && y < 302) {
             if (x < 160) {
               int i = (y - 50) / 21;
-              if (i < 12 && mapPage * 12 + i < numMaps) {
+              if (i < NUM_VISIBLE_ROWS && isMapVisible(i)) {
                 item = i;
                 pressedA();
               }
@@ -3093,7 +2959,6 @@ public class MainMenu extends JComponent {
             if (cx != 0 || cy != 0) {
               CO temp = armyArray[selectedArmy][cx + cy * 3 - 1];
               if (temp != null) infono = COList.getIndex(temp);
-              ;
             }
           }
         } else if (sideSelect) {
@@ -3171,10 +3036,10 @@ public class MainMenu extends JComponent {
       if (mapSelect) {
         if (y > 50 && y < 302 && x < 160) {
           int i = (y - 50) / 21;
-          if (i < 12 && mapPage * 12 + i < numMaps) {
+          if (i < NUM_VISIBLE_ROWS && isMapVisible(i)) {
             if (i != item) {
               item = i;
-              loadPreview();
+              loadMiniMapPreview();
             }
           }
         }
@@ -3195,8 +3060,6 @@ public class MainMenu extends JComponent {
 
   /////////YES, This is a hack :).
   public void LaunchCreateServerGame() {
-
-    boolean startCOSelect = false;
     logger.info("Create Server Game");
     //try to connect to the server first to see that the user's URL is correct
     if (!tryToConnect()) return;
@@ -3223,14 +3086,14 @@ public class MainMenu extends JComponent {
       Options.username = Options.getDefaultUsername();
       Options.password = Options.getDefaultPassword();
 
-      if (Options.username == null || Options.username.length() < 1 || Options.username.length() > 12)
+      if (Options.username == null || Options.username.length() < 1 || Options.username.length() > MAX_USERNAME_LENGTH)
         return;
     } else {
       while (true) {
-        Options.username = JOptionPane.showInputDialog("Type in your username for this game (12 characters max)");
+        Options.username = JOptionPane.showInputDialog("Type in your username for this game (" + MAX_USERNAME_LENGTH + " characters max)");
         if (Options.username == null) return;
         if (Options.username.length() < 1) continue;
-        if (Options.username.length() > 12) continue;
+        if (Options.username.length() > MAX_USERNAME_LENGTH) continue;
         break;
       }
       Options.password = JOptionPane.showInputDialog("Type in your password for this game");
@@ -3240,10 +3103,8 @@ public class MainMenu extends JComponent {
     //start game
     logger.info("starting game");
     Options.snailGame = true;
-    startCOSelect = true;
     item = 0;
 
-    if (startCOSelect) {
       //New Game
       newload = false;
       mapSelect = true;
@@ -3255,9 +3116,9 @@ public class MainMenu extends JComponent {
       File[] dirs = new File(mapsLocation + "/").listFiles();
       Vector<String> v = new Vector<String>();
       int numcats = 0;
-      for (int i = 0; i < dirs.length; i++) {
-        if (dirs[i].isDirectory()) {
-          v.add(dirs[i].getName());
+      for (File dir : dirs) {
+        if (dir.isDirectory()) {
+          v.add(dir.getName());
           numcats++;
         }
       }
@@ -3274,9 +3135,6 @@ public class MainMenu extends JComponent {
       subcat = 0;
       loadMapDisplayNames();
       mapPage = 0;
-    }
-
-
   }
 
   public void LaunchCreateServerGame(String username, String password, String gamename, String gamepass) {
@@ -3303,16 +3161,15 @@ public class MainMenu extends JComponent {
 
     //set the master password and join
     Options.masterpass = gamepass;
-    //Options.masterpass = JOptionPane.showInputDialog("Type in a master password for your game");
     if (Options.masterpass == null) return;
     Options.username = username;
     while (true) {
 
       if (Options.username == null) {
-        Options.username = JOptionPane.showInputDialog("Type in your username for this game (12 characters max)");
+        Options.username = JOptionPane.showInputDialog("Type in your username for this game (" + MAX_USERNAME_LENGTH + " characters max)");
       }
       if (Options.username.length() < 1) continue;
-      if (Options.username.length() > 12) continue;
+      if (Options.username.length() > MAX_USERNAME_LENGTH) continue;
 
       break;
     }
@@ -3335,9 +3192,9 @@ public class MainMenu extends JComponent {
     File[] dirs = new File("maps/").listFiles();
     Vector<String> v = new Vector<String>();
     int numcats = 0;
-    for (int i = 0; i < dirs.length; i++) {
-      if (dirs[i].isDirectory()) {
-        v.add(dirs[i].getName());
+    for (File dir : dirs) {
+      if (dir.isDirectory()) {
+        v.add(dir.getName());
         numcats++;
       }
     }
@@ -3352,11 +3209,8 @@ public class MainMenu extends JComponent {
 
     cat = 0;
     subcat = 0;
-    String mapsLocation = ResourceLoader.properties.getProperty("mapsLocation");
     loadMapDisplayNames();
     mapPage = 0;
-
-
   }
 
   public void LaunchLoginGame(String gamename, String username, String password) {
@@ -3393,7 +3247,6 @@ public class MainMenu extends JComponent {
     item2 = 0;
 
     refreshInfo();
-    return;
   }
 
   public void LaunchJoinGame(String gamename, String masterpassword, String username, String password, int slotnumber) {
@@ -3486,9 +3339,6 @@ public class MainMenu extends JComponent {
     item2 = 0;
 
     refreshInfo();
-    return;
-
-
   }
 
   public void setNewLoad() {
@@ -3501,6 +3351,23 @@ public class MainMenu extends JComponent {
     public void actionPerformed(ActionEvent evt) {
       refreshInfo();
     }
+  }
+
+  private Map getMap(int item) {
+    return filteredMaps.get(mapPage * NUM_VISIBLE_ROWS + item);
+  }
+
+  private boolean isMapVisible(int item) {
+    return mapPage * NUM_VISIBLE_ROWS + item < filteredMaps.size();
+  }
+
+  private String getFileName(int item) {
+    return filenames[mapPage * NUM_VISIBLE_ROWS + item];
+  }
+
+  private boolean isOverLastPage(int mapPage) {
+    return mapPage > filteredMaps.size() / NUM_VISIBLE_ROWS ||
+            (mapPage == filteredMaps.size() / NUM_VISIBLE_ROWS && filteredMaps.size() % NUM_VISIBLE_ROWS == 0);
   }
 }
 
