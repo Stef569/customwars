@@ -92,7 +92,7 @@ public final class GuiUtil {
       stringPixelWidth = maxPixelWidth;
     }
 
-    return getSubStringByPixelWidth(text, stringPixelWidth, 0, g);
+    return getSubStringByPixelWidth(text, maxPixelWidth, 0, g);
   }
 
   /**
