@@ -153,9 +153,7 @@ public class BattleScreen extends CWScreen
     
     int cx_p = 0;
     int cy_p = 0;
-    //private boolean hideAllHP = false;
     
-    /** Creates a new instance of BattleScreen */
     public BattleScreen(Battle b, JFrame f)
     {
     	super(b, f);
@@ -216,7 +214,6 @@ public class BattleScreen extends CWScreen
         setInfoBoxXYs();
     }
     
-    //Draws the screen
     public void drawScreen(Graphics2D g){
         //draws an animated gif in the background
         //this triggers repaint automatically
