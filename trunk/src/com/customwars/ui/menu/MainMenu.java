@@ -66,7 +66,7 @@ public class MainMenu extends JComponent {
   private int cy;             //holds the cursor's y position on the co select screen
   private int item;           //holds the menu's current item (both menus use this)
   private int item2;          //holds the second menu's current item (only used by server info screen)
-  private BufferedImage bimg;           //the screen, used for double buffering and scaling
+  private BufferedImage bufferedImg;           //the screen, used for double buffering and scaling
   private int scale;                    //what scale multiplier is being used
   private JFrame parentFrame;           //the frame that contains the window
   private KeyControl keycontroller;     //the KeyControl, used to remove the component
@@ -178,7 +178,7 @@ public class MainMenu extends JComponent {
 
     drawScreen(g2);
     g2.dispose();
-    g.drawImage(bimg, 0, 0, this);
+    g.drawImage(bufferedImg, 0, 0, this);
   }
 
   public Dimension getPreferredSize() {
@@ -186,36 +186,37 @@ public class MainMenu extends JComponent {
   }
 
   //makes a Graphics2D object of the given size
-  public Graphics2D createGraphics2D(int w, int h) {
-    Graphics2D g2;
-    if (bimg == null || bimg.getWidth() != w || bimg.getHeight() != h) {
-      bimg = (BufferedImage) createImage(w, h);
+  public Graphics2D createGraphics2D(int width, int height) {
+    Graphics2D graphics2D;
+    boolean imgNotInitialized = bufferedImg == null || bufferedImg.getWidth() != width || bufferedImg.getHeight() != height;
+	
+    if (imgNotInitialized) {
+      bufferedImg = (BufferedImage) createImage(width, height);
     }
-    g2 = bimg.createGraphics();
-    g2.setBackground(getBackground());
-    g2.clearRect(0, 0, w, h);
-    g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-            RenderingHints.VALUE_ANTIALIAS_ON);
-    g2.setRenderingHint(RenderingHints.KEY_RENDERING,
-            RenderingHints.VALUE_RENDER_QUALITY);
-    g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-            RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-    return g2;
+    
+    graphics2D = bufferedImg.createGraphics();
+    graphics2D.setBackground(getBackground());
+    graphics2D.clearRect(0, 0, width, height);
+    graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+    graphics2D.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+    graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+    
+    return graphics2D;
   }
 
-  public void drawScreen(Graphics2D g) {
-    drawBackground(g);
-    if (title) drawTitleScreen(g);
-    if (mapSelect) drawMapSelectScreen(g);
+  public void drawScreen(Graphics2D graphics2D) {
+    drawBackground(graphics2D);
+    if (title) drawTitleScreen(graphics2D);
+    if (mapSelect) drawMapSelectScreen(graphics2D);
 
-    if (COselect) drawCOSelectScreen(g);
-    if (info && COselect) drawInfoScreen(g);
-    if (options) drawOptionsScreen(g);
-    if (newload) drawNewLoadScreen(g);
-    if (sideSelect) drawSideSelectScreen(g);
-    if (battleOptions) drawBattleOptionsScreen(g);
-    if (keymap) drawKeymapScreen(g);
-    if (snailinfo) drawServerInfoScreen(g);
+    if (COselect) drawCOSelectScreen(graphics2D);
+    if (info && COselect) drawInfoScreen(graphics2D);
+    if (options) drawOptionsScreen(graphics2D);
+    if (newload) drawNewLoadScreen(graphics2D);
+    if (sideSelect) drawSideSelectScreen(graphics2D);
+    if (battleOptions) drawBattleOptionsScreen(graphics2D);
+    if (keymap) drawKeymapScreen(graphics2D);
+    if (snailinfo) drawServerInfoScreen(graphics2D);
 
     //causes problems with animated gifs
     this.repaint();
@@ -225,22 +226,30 @@ public class MainMenu extends JComponent {
     g.drawImage(MainMenuGraphics.getBackground(), 0, 0, this);
   }
 
-  public void drawTitleScreen(Graphics2D g) {
-    //draw title background
-    g.drawImage(MainMenuGraphics.getTitleBackground(), 0, 0, this);
+  public void drawTitleScreen(Graphics2D graphics2D) {
+    graphics2D.drawImage(MainMenuGraphics.getTitleBackground(), 0, 0, this);
 
-    //draw the three menu choices
-    if (item == 0) g.drawImage(MainMenuGraphics.getNewGame(true), 0, 0, this);
-    else g.drawImage(MainMenuGraphics.getNewGame(false), 0, 0, this);
-    if (item == 1) g.drawImage(MainMenuGraphics.getMaps(true), 0, 0, this);
-    else g.drawImage(MainMenuGraphics.getMaps(false), 0, 0, this);
-    if (item == 2) g.drawImage(MainMenuGraphics.getOptions(true), 0, 0, this);
-    else g.drawImage(MainMenuGraphics.getOptions(false), 0, 0, this);
-
-    //write the copyright notice
-    g.setColor(Color.white);
-    g.setFont(new Font("SansSerif", Font.PLAIN, 14));
-    g.drawString("Advance Wars is � Nintendo/Intelligent Systems", 100, 310);
+	switch(item){
+	  case 0:	graphics2D.drawImage(MainMenuGraphics.getNewGame(true), 0, 0, this);
+	    		graphics2D.drawImage(MainMenuGraphics.getMaps(false), 0, 0, this);
+	    		graphics2D.drawImage(MainMenuGraphics.getOptions(false), 0, 0, this);
+		    	break;
+		    		
+	  case 1:	graphics2D.drawImage(MainMenuGraphics.getNewGame(false), 0, 0, this);
+	    		graphics2D.drawImage(MainMenuGraphics.getMaps(true), 0, 0, this);
+	    		graphics2D.drawImage(MainMenuGraphics.getOptions(false), 0, 0, this);
+	    		break;
+	    			
+	  case 2:	graphics2D.drawImage(MainMenuGraphics.getNewGame(false), 0, 0, this);
+	    		graphics2D.drawImage(MainMenuGraphics.getMaps(false), 0, 0, this);
+	    		graphics2D.drawImage(MainMenuGraphics.getOptions(true), 0, 0, this);
+	    		break;
+	 }
+	    
+	//write the copyright notice
+    graphics2D.setColor(Color.white);
+	graphics2D.setFont(new Font("SansSerif", Font.PLAIN, 14));
+	graphics2D.drawString("Advance Wars is � Nintendo/Intelligent Systems", 100, 310);
   }
 
   public void drawInfoScreen(Graphics2D g) {
