@@ -58,6 +58,17 @@ public class MainMenuGraphics {
     private static Image tagstar;
     private static Image mainmenuCO;
     //private static Image copyright;     //The copyright notice
+	public static final int MAP_CATEGORY_ALL_X = 210;
+	public static final int MAP_CATEGORY_Y = 30;
+	public static final int MAP_CATEGORY_2_X = 250;
+	public static final int MAP_CATEGORY_3_X = 270;
+	public static final int MAP_CATEGORY_5_X = 310;
+	public static final int MAP_CATEGORY_4_X = 290;
+	public static final int MAP_CATEGORY_6_X = 330;
+	public static final int MAP_CATEGORY_7_X = 350;
+	public static final int MAP_CATEGORY_8_X = 370;
+	public static final int MAP_CATEGORY_9_X = 390;
+	public static final int MAP_CATEGORY_10_X = 410;
     
     
     
@@ -218,6 +229,165 @@ public class MainMenuGraphics {
 
 	public static Color getH1Color() {
 		return Color.black;
+	}
+	
+	public static void drawCategories_allSelected(Graphics2D graphic2D) {
+		graphic2D.setColor(Color.red);
+		graphic2D.drawString("ALL", MainMenuGraphics.MAP_CATEGORY_ALL_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.setColor(Color.white);
+		graphic2D.drawString("2", MainMenuGraphics.MAP_CATEGORY_2_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.drawString("3", MainMenuGraphics.MAP_CATEGORY_3_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.drawString("4", MainMenuGraphics.MAP_CATEGORY_4_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.drawString("5", MainMenuGraphics.MAP_CATEGORY_5_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.drawString("6", MainMenuGraphics.MAP_CATEGORY_6_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.drawString("7", MainMenuGraphics.MAP_CATEGORY_7_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.drawString("8", MainMenuGraphics.MAP_CATEGORY_8_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.drawString("9", MainMenuGraphics.MAP_CATEGORY_9_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.drawString("10", MainMenuGraphics.MAP_CATEGORY_10_X, MainMenuGraphics.MAP_CATEGORY_Y);
+	}
+
+	public static void drawCategories_2playerSelected(Graphics2D graphic2D) {
+		graphic2D.setColor(Color.white);
+		graphic2D.drawString("ALL", MainMenuGraphics.MAP_CATEGORY_ALL_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.setColor(Color.red);
+		graphic2D.drawString("2", MainMenuGraphics.MAP_CATEGORY_2_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.setColor(Color.white);
+		graphic2D.drawString("3", MainMenuGraphics.MAP_CATEGORY_3_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.drawString("4", MainMenuGraphics.MAP_CATEGORY_4_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.drawString("5", MainMenuGraphics.MAP_CATEGORY_5_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.drawString("6", MainMenuGraphics.MAP_CATEGORY_6_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.drawString("7", MainMenuGraphics.MAP_CATEGORY_7_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.drawString("8", MainMenuGraphics.MAP_CATEGORY_8_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.drawString("9", MainMenuGraphics.MAP_CATEGORY_9_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.drawString("10", MainMenuGraphics.MAP_CATEGORY_10_X, MainMenuGraphics.MAP_CATEGORY_Y);
+	}
+
+	public static void drawCategories_3playerSelected(Graphics2D graphic2D) {
+		graphic2D.setColor(Color.white);
+		graphic2D.drawString("ALL", MainMenuGraphics.MAP_CATEGORY_ALL_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.drawString("2", MainMenuGraphics.MAP_CATEGORY_2_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.setColor(Color.red);
+		graphic2D.drawString("3", MainMenuGraphics.MAP_CATEGORY_3_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.setColor(Color.white);
+		graphic2D.drawString("4", MainMenuGraphics.MAP_CATEGORY_4_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.drawString("5", MainMenuGraphics.MAP_CATEGORY_5_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.drawString("6", MainMenuGraphics.MAP_CATEGORY_6_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.drawString("7", MainMenuGraphics.MAP_CATEGORY_7_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.drawString("8", MainMenuGraphics.MAP_CATEGORY_8_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.drawString("9", MainMenuGraphics.MAP_CATEGORY_9_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.drawString("10", MainMenuGraphics.MAP_CATEGORY_10_X, MainMenuGraphics.MAP_CATEGORY_Y);
+	}
+
+	public static void drawCategories_4playerSelected(Graphics2D graphic2D) {
+		graphic2D.setColor(Color.white);
+		graphic2D.drawString("ALL", MainMenuGraphics.MAP_CATEGORY_ALL_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.drawString("2", MainMenuGraphics.MAP_CATEGORY_2_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.drawString("3", MainMenuGraphics.MAP_CATEGORY_3_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.setColor(Color.red);
+		graphic2D.drawString("4", MainMenuGraphics.MAP_CATEGORY_4_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.setColor(Color.white);
+		graphic2D.drawString("5", MainMenuGraphics.MAP_CATEGORY_5_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.drawString("6", MainMenuGraphics.MAP_CATEGORY_6_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.drawString("7", MainMenuGraphics.MAP_CATEGORY_7_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.drawString("8", MainMenuGraphics.MAP_CATEGORY_8_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.drawString("9", MainMenuGraphics.MAP_CATEGORY_9_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.drawString("10", MainMenuGraphics.MAP_CATEGORY_10_X, MainMenuGraphics.MAP_CATEGORY_Y);
+	}
+
+	public static void drawCategories_5playerSelected(Graphics2D graphic2D) {
+		graphic2D.setColor(Color.white);
+		graphic2D.drawString("ALL", MainMenuGraphics.MAP_CATEGORY_ALL_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.drawString("2", MainMenuGraphics.MAP_CATEGORY_2_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.drawString("3", MainMenuGraphics.MAP_CATEGORY_3_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.drawString("4", MainMenuGraphics.MAP_CATEGORY_4_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.setColor(Color.red);
+		graphic2D.drawString("5", MainMenuGraphics.MAP_CATEGORY_5_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.setColor(Color.white);
+		graphic2D.drawString("6", MainMenuGraphics.MAP_CATEGORY_6_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.drawString("7", MainMenuGraphics.MAP_CATEGORY_7_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.drawString("8", MainMenuGraphics.MAP_CATEGORY_8_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.drawString("9", MainMenuGraphics.MAP_CATEGORY_9_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.drawString("10", MainMenuGraphics.MAP_CATEGORY_10_X, MainMenuGraphics.MAP_CATEGORY_Y);
+	}
+
+	public static void drawCategories_6playersSelected(Graphics2D graphic2D) {
+		graphic2D.setColor(Color.white);
+		graphic2D.drawString("ALL", MainMenuGraphics.MAP_CATEGORY_ALL_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.drawString("2", MainMenuGraphics.MAP_CATEGORY_2_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.drawString("3", MainMenuGraphics.MAP_CATEGORY_3_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.drawString("4", MainMenuGraphics.MAP_CATEGORY_4_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.drawString("5", MainMenuGraphics.MAP_CATEGORY_5_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.setColor(Color.red);
+		graphic2D.drawString("6", MainMenuGraphics.MAP_CATEGORY_6_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.setColor(Color.white);
+		graphic2D.drawString("7", MainMenuGraphics.MAP_CATEGORY_7_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.drawString("8", MainMenuGraphics.MAP_CATEGORY_8_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.drawString("9", MainMenuGraphics.MAP_CATEGORY_9_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.drawString("10", MainMenuGraphics.MAP_CATEGORY_10_X, MainMenuGraphics.MAP_CATEGORY_Y);
+	}
+
+	public static void drawCategories_7playerSelected(Graphics2D graphic2D) {
+		graphic2D.setColor(Color.white);
+		graphic2D.drawString("ALL", MainMenuGraphics.MAP_CATEGORY_ALL_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.drawString("2", MainMenuGraphics.MAP_CATEGORY_2_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.drawString("3", MainMenuGraphics.MAP_CATEGORY_3_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.drawString("4", MainMenuGraphics.MAP_CATEGORY_4_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.drawString("5", MainMenuGraphics.MAP_CATEGORY_5_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.drawString("6", MainMenuGraphics.MAP_CATEGORY_6_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.setColor(Color.red);
+		graphic2D.drawString("7", MainMenuGraphics.MAP_CATEGORY_7_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.setColor(Color.white);
+		graphic2D.drawString("8", MainMenuGraphics.MAP_CATEGORY_8_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.drawString("9", MainMenuGraphics.MAP_CATEGORY_9_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.drawString("10", MainMenuGraphics.MAP_CATEGORY_10_X, MainMenuGraphics.MAP_CATEGORY_Y);
+	}
+
+	public static void drawCategories_8PlayerSelected(Graphics2D graphic2D) {
+		graphic2D.setColor(Color.white);
+		graphic2D.drawString("ALL", MainMenuGraphics.MAP_CATEGORY_ALL_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.drawString("2", MainMenuGraphics.MAP_CATEGORY_2_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.drawString("3", MainMenuGraphics.MAP_CATEGORY_3_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.drawString("4", MainMenuGraphics.MAP_CATEGORY_4_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.drawString("5", MainMenuGraphics.MAP_CATEGORY_5_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.drawString("6", MainMenuGraphics.MAP_CATEGORY_6_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.drawString("7", MainMenuGraphics.MAP_CATEGORY_7_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.setColor(Color.red);
+		graphic2D.drawString("8", MainMenuGraphics.MAP_CATEGORY_8_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.setColor(Color.white);
+		graphic2D.drawString("9", MainMenuGraphics.MAP_CATEGORY_9_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.drawString("10", MainMenuGraphics.MAP_CATEGORY_10_X, MainMenuGraphics.MAP_CATEGORY_Y);
+	}
+
+	public static void drawCategories_9playerSelected(Graphics2D graphic2D) {
+		graphic2D.setColor(Color.white);
+		graphic2D.drawString("ALL", MainMenuGraphics.MAP_CATEGORY_ALL_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.drawString("2", MainMenuGraphics.MAP_CATEGORY_2_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.drawString("3", MainMenuGraphics.MAP_CATEGORY_3_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.drawString("4", MainMenuGraphics.MAP_CATEGORY_4_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.drawString("5", MainMenuGraphics.MAP_CATEGORY_5_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.drawString("6", MainMenuGraphics.MAP_CATEGORY_6_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.drawString("7", MainMenuGraphics.MAP_CATEGORY_7_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.drawString("8", MainMenuGraphics.MAP_CATEGORY_8_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.setColor(Color.red);
+		graphic2D.drawString("9", MainMenuGraphics.MAP_CATEGORY_9_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.setColor(Color.white);
+		graphic2D.drawString("10", MainMenuGraphics.MAP_CATEGORY_10_X, MainMenuGraphics.MAP_CATEGORY_Y);
+	}
+
+	public static void drawCategories_10playerSelected(Graphics2D graphic2D) {
+		graphic2D.setColor(Color.white);
+		graphic2D.drawString("ALL", MainMenuGraphics.MAP_CATEGORY_ALL_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.drawString("2", MainMenuGraphics.MAP_CATEGORY_2_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.drawString("3", MainMenuGraphics.MAP_CATEGORY_3_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.drawString("4", MainMenuGraphics.MAP_CATEGORY_4_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.drawString("5", MainMenuGraphics.MAP_CATEGORY_5_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.drawString("6", MainMenuGraphics.MAP_CATEGORY_6_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.drawString("7", MainMenuGraphics.MAP_CATEGORY_7_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.drawString("8", MainMenuGraphics.MAP_CATEGORY_8_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.drawString("9", MainMenuGraphics.MAP_CATEGORY_9_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.setColor(Color.red);
+		graphic2D.drawString("10", MainMenuGraphics.MAP_CATEGORY_10_X, MainMenuGraphics.MAP_CATEGORY_Y);
+		graphic2D.setColor(Color.white);
 	}
     
 }
