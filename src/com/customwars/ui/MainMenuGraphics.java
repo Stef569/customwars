@@ -8,6 +8,7 @@ package com.customwars.ui;
  */
 
 import java.awt.*;
+
 import javax.imageio.*;
 import java.awt.image.*;
 import java.io.*;
@@ -17,7 +18,15 @@ import com.customwars.officer.COSelectFilter;
 import com.customwars.state.ResourceLoader;
 
 public class MainMenuGraphics {
-    private static Image background;        //the background image
+    public static final int MAPNAME_BG_X = 4;
+	public static final int MAPNAME_BG_Y = 40;
+	public static final int MAPSELECT_UPARROW_X = 84;
+	public static final int MAPSELECT_UPARROW_Y = 30;
+	public static final int MAPSELECT_DOWNARROW_X = 84;
+	public static final int MAPSELECT_DOWNARROW_Y = 312;
+	public static final int MAPSELECT_CATEGORY_X = 4;
+	public static final int MAPSELECT_CATEGORY_Y = 24;
+	private static Image background;        //the background image
     private static Image newGame;           //the new game icon
     private static Image newGameSelected;   //the new game icon when selected
     private static Image maps;           //the design maps icon
@@ -49,6 +58,9 @@ public class MainMenuGraphics {
     private static Image tagstar;
     private static Image mainmenuCO;
     //private static Image copyright;     //The copyright notice
+    
+    
+    
     
     //constructor
     public MainMenuGraphics() {
@@ -96,6 +108,11 @@ public class MainMenuGraphics {
         }
     }
     
+    public static Font getH1Font(){
+		return new Font("SansSerif", Font.BOLD, 16);
+    } 
+    
+    
     //returns the background
     public static Image getBackground(){
         return background;
@@ -107,7 +124,7 @@ public class MainMenuGraphics {
     }
     
     //returns the Map Layout
-    public static Image getMapLayout(){
+    public static Image getMapBG(){
         return mapLayout;
     }
     
@@ -151,11 +168,11 @@ public class MainMenuGraphics {
         return logo;
     }
     
-    public static Image getPageUp(){
+    public static Image getMapSelectUpArrow(){
         return pgup;
     }
     
-    public static Image getPageDown(){
+    public static Image getMapSelectDownArrow(){
         return pgdn;
     }
     
@@ -198,5 +215,9 @@ public class MainMenuGraphics {
     public static Image getTagStar(){
         return tagstar;
     }
+
+	public static Color getH1Color() {
+		return Color.black;
+	}
     
 }
