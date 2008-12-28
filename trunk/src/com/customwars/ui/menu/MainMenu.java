@@ -80,9 +80,9 @@ public class MainMenu extends JComponent {
   private int selectedArmy = 0;     //the selected army (0 = OS, 1 = BM, etc.)
   private int ptypes[] = {0, 0, 0, 0, 0, 0};  //the number of properties on this map
   private int mapPage;        //the page in the map list
-  private int cat = 0;        //the map directory category
-  private int subcat = 0;     //the map directory subcategory
-  private String[] cats;      //the categories
+  private int currentMapCategory = 0;        //the map directory category
+  private int currentlySelectedSubCategory = 0;     //the map directory subcategory
+  private String[] mapCategories;      //the categories
   private Battle preview;     //the minimap preview
   private boolean chooseKey = false;      //if true, the user is choosing a key
   private boolean insertNewCO = false;    //used to select new COs in snail mode
@@ -260,15 +260,16 @@ public class MainMenu extends JComponent {
     graphic2D.setColor(MainMenuGraphics.getH1Color());
     graphic2D.setFont(MainMenuGraphics.getH1Font());
 
-    graphic2D.drawString(cats[cat], MainMenuGraphics.MAPSELECT_CATEGORY_X, MainMenuGraphics.MAPSELECT_CATEGORY_Y);
+    graphic2D.drawString(mapCategories[currentMapCategory], MainMenuGraphics.MAPSELECT_CATEGORY_X, MainMenuGraphics.MAPSELECT_CATEGORY_Y);
 
-    for (int item = 0; item < NUM_VISIBLE_ROWS; item++)
+    for (int item = 0; item < NUM_VISIBLE_ROWS; item++){
       if (isMapVisible(item)) {
         String fullMapName = getMap(item).getName();
         String fixedMapName = GuiUtil.fitLine(fullMapName,148,graphic2D);
         graphic2D.drawString(fixedMapName, 10, 68 + item * 21);       
       }
-
+    }
+    
     graphic2D.setColor(Color.red);
     graphic2D.drawRect(10, 50 + eventListener.item * 21, 148, 19);
 
@@ -304,36 +305,29 @@ public class MainMenu extends JComponent {
     graphic2D.setColor(Color.white);
     graphic2D.setFont(MainMenuGraphics.getH1Font());
 
-    if (subcat == 0) graphic2D.setColor(Color.red);
-    graphic2D.drawString("ALL", 210, 30);
-    graphic2D.setColor(Color.white);
-    if (subcat == 1) graphic2D.setColor(Color.red);
-    graphic2D.drawString("2", 250, 30);
-    graphic2D.setColor(Color.white);
-    if (subcat == 2) graphic2D.setColor(Color.red);
-    graphic2D.drawString("3", 270, 30);
-    graphic2D.setColor(Color.white);
-    if (subcat == 3) graphic2D.setColor(Color.red);
-    graphic2D.drawString("4", 290, 30);
-    graphic2D.setColor(Color.white);
-    if (subcat == 4) graphic2D.setColor(Color.red);
-    graphic2D.drawString("5", 310, 30);
-    graphic2D.setColor(Color.white);
-    if (subcat == 5) graphic2D.setColor(Color.red);
-    graphic2D.drawString("6", 330, 30);
-    graphic2D.setColor(Color.white);
-    if (subcat == 6) graphic2D.setColor(Color.red);
-    graphic2D.drawString("7", 350, 30);
-    graphic2D.setColor(Color.white);
-    if (subcat == 7) graphic2D.setColor(Color.red);
-    graphic2D.drawString("8", 370, 30);
-    graphic2D.setColor(Color.white);
-    if (subcat == 8) graphic2D.setColor(Color.red);
-    graphic2D.drawString("9", 390, 30);
-    graphic2D.setColor(Color.white);
-    if (subcat == 9) graphic2D.setColor(Color.red);
-    graphic2D.drawString("10", 410, 30);
-
+	switch(currentlySelectedSubCategory){
+	    case 0:	MainMenuGraphics.drawCategories_allSelected(graphic2D);
+	    		break;
+	    case 1:	MainMenuGraphics.drawCategories_2playerSelected(graphic2D);
+	    		break;
+	    case 2:	MainMenuGraphics.drawCategories_3playerSelected(graphic2D);
+    			break;
+	    case 3:	MainMenuGraphics.drawCategories_4playerSelected(graphic2D);
+    			break;
+	    case 4:	MainMenuGraphics.drawCategories_5playerSelected(graphic2D);
+    			break;
+	    case 5:	MainMenuGraphics.drawCategories_6playersSelected(graphic2D);
+    			break;
+	    case 6:	MainMenuGraphics.drawCategories_7playerSelected(graphic2D);
+    			break;
+	    case 7:	MainMenuGraphics.drawCategories_8PlayerSelected(graphic2D);
+    			break;
+	    case 8:	MainMenuGraphics.drawCategories_9playerSelected(graphic2D);
+    			break;
+	    case 9:	MainMenuGraphics.drawCategories_10playerSelected(graphic2D);
+    			break;
+    }
+    
     drawMiniMap(graphic2D, 180, 65);
   }
 
@@ -1078,7 +1072,7 @@ public class MainMenu extends JComponent {
     filteredMaps.clear();
 
     for (Map map : maps) {
-      if (subcat == 0 || subcat == map.getPlayerCount() - 1) {
+      if (currentlySelectedSubCategory == 0 || currentlySelectedSubCategory == map.getPlayerCount() - 1) {
         filteredMaps.add(map);
       }
     }
@@ -1596,13 +1590,13 @@ public class MainMenu extends JComponent {
         logger.info("NO MAP DIRECTORIES! QUITTING!");
         System.exit(1);
       }
-      cats = new String[numcats];
+      mapCategories = new String[numcats];
       for (int i = 0; i < numcats; i++) {
-        cats[i] = v.get(i);
+        mapCategories[i] = v.get(i);
       }
 
-      cat = 0;
-      subcat = 0;
+      currentMapCategory = 0;
+      currentlySelectedSubCategory = 0;
       loadMapDisplayNames();
       mapPage = 0;
     }
@@ -2357,9 +2351,9 @@ public class MainMenu extends JComponent {
       } else if (keypress == Options.altright || (keypress == Options.right && e.isControlDown())) {
         String soundLocation = ResourceLoader.properties.getProperty("soundLocation");
         if (mapSelect) {
-          subcat++;
+          currentlySelectedSubCategory++;
           SFX.playClip(soundLocation + "/minimap.wav");
-          if (subcat > 9) subcat = 0;
+          if (currentlySelectedSubCategory > 9) currentlySelectedSubCategory = 0;
 
           item = 0;
           mapPage = 0;
@@ -2381,9 +2375,9 @@ public class MainMenu extends JComponent {
         String soundLocation = ResourceLoader.properties.getProperty("soundLocation");
 
         if (mapSelect) {
-          subcat--;
+          currentlySelectedSubCategory--;
           SFX.playClip(soundLocation + "/minimap.wav");
-          if (subcat < 0) subcat = 9;
+          if (currentlySelectedSubCategory < 0) currentlySelectedSubCategory = 9;
 
           item = 0;
           mapPage = 0;
@@ -2437,9 +2431,9 @@ public class MainMenu extends JComponent {
           Options.decrementHQ();
         } else if (mapSelect) {
 
-          cat--;
-          if (cat < 0) cat = cats.length - 1;
-          subcat = 0;
+          currentMapCategory--;
+          if (currentMapCategory < 0) currentMapCategory = mapCategories.length - 1;
+          currentlySelectedSubCategory = 0;
 
           item = 0;
           mapPage = 0;
@@ -2561,9 +2555,9 @@ public class MainMenu extends JComponent {
         }
         if (mapSelect) {
 
-          cat++;
-          if (cat > cats.length - 1) cat = 0;
-          subcat = 0;
+          currentMapCategory++;
+          if (currentMapCategory > mapCategories.length - 1) currentMapCategory = 0;
+          currentlySelectedSubCategory = 0;
 
           item = 0;
           mapPage = 0;
@@ -2589,7 +2583,7 @@ public class MainMenu extends JComponent {
         SFX.playClip(soundLocation + "/cancel.wav");
       } else if (keypress == KeyEvent.VK_1) {
         if (mapSelect) {
-          subcat = 0;
+          currentlySelectedSubCategory = 0;
           item = 0;
           mapPage = 0;
 
@@ -2598,7 +2592,7 @@ public class MainMenu extends JComponent {
         }
       } else if (keypress == KeyEvent.VK_2) {
         if (mapSelect) {
-          subcat = 1;
+          currentlySelectedSubCategory = 1;
           item = 0;
           mapPage = 0;
 
@@ -2607,7 +2601,7 @@ public class MainMenu extends JComponent {
         }
       } else if (keypress == KeyEvent.VK_3) {
         if (mapSelect) {
-          subcat = 2;
+          currentlySelectedSubCategory = 2;
           item = 0;
           mapPage = 0;
 
@@ -2616,7 +2610,7 @@ public class MainMenu extends JComponent {
         }
       } else if (keypress == KeyEvent.VK_4) {
         if (mapSelect) {
-          subcat = 3;
+          currentlySelectedSubCategory = 3;
           item = 0;
           mapPage = 0;
 
@@ -2625,7 +2619,7 @@ public class MainMenu extends JComponent {
         }
       } else if (keypress == KeyEvent.VK_5) {
         if (mapSelect) {
-          subcat = 4;
+          currentlySelectedSubCategory = 4;
           item = 0;
           mapPage = 0;
 
@@ -2634,7 +2628,7 @@ public class MainMenu extends JComponent {
         }
       } else if (keypress == KeyEvent.VK_6) {
         if (mapSelect) {
-          subcat = 5;
+          currentlySelectedSubCategory = 5;
           item = 0;
           mapPage = 0;
 
@@ -2643,7 +2637,7 @@ public class MainMenu extends JComponent {
         }
       } else if (keypress == KeyEvent.VK_7) {
         if (mapSelect) {
-          subcat = 6;
+          currentlySelectedSubCategory = 6;
           item = 0;
           mapPage = 0;
 
@@ -2652,7 +2646,7 @@ public class MainMenu extends JComponent {
         }
       } else if (keypress == KeyEvent.VK_8) {
         if (mapSelect) {
-          subcat = 7;
+          currentlySelectedSubCategory = 7;
           item = 0;
           mapPage = 0;
 
@@ -2661,7 +2655,7 @@ public class MainMenu extends JComponent {
         }
       } else if (keypress == KeyEvent.VK_9) {
         if (mapSelect) {
-          subcat = 8;
+          currentlySelectedSubCategory = 8;
           item = 0;
           mapPage = 0;
 
@@ -2670,7 +2664,7 @@ public class MainMenu extends JComponent {
         }
       } else if (keypress == KeyEvent.VK_0) {
         if (mapSelect) {
-          subcat = 9;
+          currentlySelectedSubCategory = 9;
           item = 0;
           mapPage = 0;
 
@@ -2759,9 +2753,9 @@ public class MainMenu extends JComponent {
           if (y < 30) {
             if (x < 180) {
               //change category
-              cat++;
-              if (cat > cats.length - 1) cat = 0;
-              subcat = 0;
+              currentMapCategory++;
+              if (currentMapCategory > mapCategories.length - 1) currentMapCategory = 0;
+              currentlySelectedSubCategory = 0;
 
               item = 0;
               mapPage = 0;
@@ -2773,16 +2767,16 @@ public class MainMenu extends JComponent {
           }
           if (y < 40 && x > 180) {
             //change subcategory
-            if (x < 240) subcat = 0;
-            else if (x < 260) subcat = 1;
-            else if (x < 280) subcat = 2;
-            else if (x < 300) subcat = 3;
-            else if (x < 320) subcat = 4;
-            else if (x < 340) subcat = 5;
-            else if (x < 360) subcat = 6;
-            else if (x < 380) subcat = 7;
-            else if (x < 400) subcat = 8;
-            else if (x < 480) subcat = 9;
+            if (x < 240) currentlySelectedSubCategory = 0;
+            else if (x < 260) currentlySelectedSubCategory = 1;
+            else if (x < 280) currentlySelectedSubCategory = 2;
+            else if (x < 300) currentlySelectedSubCategory = 3;
+            else if (x < 320) currentlySelectedSubCategory = 4;
+            else if (x < 340) currentlySelectedSubCategory = 5;
+            else if (x < 360) currentlySelectedSubCategory = 6;
+            else if (x < 380) currentlySelectedSubCategory = 7;
+            else if (x < 400) currentlySelectedSubCategory = 8;
+            else if (x < 480) currentlySelectedSubCategory = 9;
 
             item = 0;
             mapPage = 0;
@@ -2981,13 +2975,13 @@ public class MainMenu extends JComponent {
         logger.info("NO MAP DIRECTORIES! QUITTING!");
         System.exit(1);
       }
-      cats = new String[numcats];
+      mapCategories = new String[numcats];
       for (int i = 0; i < numcats; i++) {
-        cats[i] = v.get(i);
+        mapCategories[i] = v.get(i);
       }
 
-      cat = 0;
-      subcat = 0;
+      currentMapCategory = 0;
+      currentlySelectedSubCategory = 0;
       loadMapDisplayNames();
       mapPage = 0;
   }
@@ -3057,13 +3051,13 @@ public class MainMenu extends JComponent {
       logger.info("NO MAP DIRECTORIES! QUITTING!");
       System.exit(1);
     }
-    cats = new String[numcats];
+    mapCategories = new String[numcats];
     for (int i = 0; i < numcats; i++) {
-      cats[i] = v.get(i);
+      mapCategories[i] = v.get(i);
     }
 
-    cat = 0;
-    subcat = 0;
+    currentMapCategory = 0;
+    currentlySelectedSubCategory = 0;
     loadMapDisplayNames();
     mapPage = 0;
   }
