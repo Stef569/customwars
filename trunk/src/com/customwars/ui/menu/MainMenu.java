@@ -250,89 +250,91 @@ public class MainMenu extends JComponent {
 	graphics2D.drawString("Advance Wars is " + COPYRIGHT + " Nintendo/Intelligent Systems", 100, 310);
   }
 
-  public void drawMapSelectScreen(Graphics2D g) {
-    g.drawImage(MainMenuGraphics.getMapLayout(), 4, 40, this);
-    g.drawImage(MainMenuGraphics.getPageUp(), 84, 30, this);
-    g.drawImage(MainMenuGraphics.getPageDown(), 84, 312, this);
+  public void drawMapSelectScreen(Graphics2D graphic2D) {
+    MainMenu eventListener = this;
+    
+	graphic2D.drawImage(MainMenuGraphics.getMapBG(), MainMenuGraphics.MAPNAME_BG_X, MainMenuGraphics.MAPNAME_BG_Y, eventListener);
+    graphic2D.drawImage(MainMenuGraphics.getMapSelectUpArrow(), MainMenuGraphics.MAPSELECT_UPARROW_X, MainMenuGraphics.MAPSELECT_UPARROW_Y, eventListener);
+    graphic2D.drawImage(MainMenuGraphics.getMapSelectDownArrow(), MainMenuGraphics.MAPSELECT_DOWNARROW_X, MainMenuGraphics.MAPSELECT_DOWNARROW_Y, eventListener);
 
-    g.setColor(Color.black);
-    g.setFont(new Font("SansSerif", Font.BOLD, 16));
+    graphic2D.setColor(MainMenuGraphics.getH1Color());
+    graphic2D.setFont(MainMenuGraphics.getH1Font());
 
-    g.drawString(cats[cat], 4, 20);
+    graphic2D.drawString(cats[cat], MainMenuGraphics.MAPSELECT_CATEGORY_X, MainMenuGraphics.MAPSELECT_CATEGORY_Y);
 
     for (int item = 0; item < NUM_VISIBLE_ROWS; item++)
       if (isMapVisible(item)) {
         String fullMapName = getMap(item).getName();
-        String fixedMapName = GuiUtil.fitLine(fullMapName,148,g);
-        g.drawString(fixedMapName, 10, 68 + item * 21);       
+        String fixedMapName = GuiUtil.fitLine(fullMapName,148,graphic2D);
+        graphic2D.drawString(fixedMapName, 10, 68 + item * 21);       
       }
 
-    g.setColor(Color.red);
-    g.drawRect(10, 50 + this.item * 21, 148, 19);
+    graphic2D.setColor(Color.red);
+    graphic2D.drawRect(10, 50 + eventListener.item * 21, 148, 19);
 
     if (filteredMaps.size() != 0) {
-      g.setColor(Color.black);
-      g.drawString(getMap(this.item).getName(), 180, 60);
-      g.setFont(new Font("SansSerif", Font.PLAIN, 16));
-      g.drawString("Mapmaker: " + getMap(this.item).getName(), 180, 245);
-      g.setFont(DEFAULT_FONT);
-      g.drawString(getMap(this.item).getDescription(), 180, 265);
+      graphic2D.setColor(Color.black);
+      graphic2D.drawString(getMap(eventListener.item).getName(), 180, 60);
+      graphic2D.setFont(MainMenuGraphics.getH1Font());
+      graphic2D.drawString("Mapmaker: " + getMap(eventListener.item).getName(), 180, 245);
+      graphic2D.setFont(DEFAULT_FONT);
+      graphic2D.drawString(getMap(eventListener.item).getDescription(), 180, 265);
     }
 
-    g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.85f));
-    g.setColor(new Color(7, 66, 97));
-    g.fillRoundRect(180, 275, 280, 40, 20, 20);
-    g.setColor(Color.WHITE);
-    g.setFont(new Font("SansSerif", Font.BOLD, 16));
-    g.drawImage(TerrainGraphics.getColoredSheet(0), 205 + 16, 284, 221 + 16, 316, 0, TerrType.getYIndex(TerrType.CITY), 16, TerrType.getYIndex(TerrType.CITY) + 32, this);
-    g.drawString("" + ptypes[0], 205, 300);
-    g.drawImage(TerrainGraphics.getColoredSheet(0), 247 + 16, 284, 263 + 16, 316, 0, TerrType.getYIndex(TerrType.BASE), 16, TerrType.getYIndex(TerrType.BASE) + 32, this);
-    g.drawString("" + ptypes[1], 247, 300);
-    g.drawImage(TerrainGraphics.getColoredSheet(0), 289 + 16, 284, 305 + 16, 316, 0, TerrType.getYIndex(TerrType.PORT), 16, TerrType.getYIndex(TerrType.PORT) + 32, this);
-    g.drawString("" + ptypes[2], 289, 300);
-    g.drawImage(TerrainGraphics.getColoredSheet(0), 331 + 16, 284, 347 + 16, 316, 0, TerrType.getYIndex(TerrType.AIRPORT), 16, TerrType.getYIndex(TerrType.AIRPORT) + 32, this);
-    g.drawString("" + ptypes[3], 331, 300);
-    g.drawImage(TerrainGraphics.getColoredSheet(0), 373 + 16, 284, 389 + 16, 316, 0, TerrType.getYIndex(TerrType.COM_TOWER), 16, TerrType.getYIndex(TerrType.COM_TOWER) + 32, this);
-    g.drawString("" + ptypes[4], 373, 300);
-    g.drawImage(TerrainGraphics.getColoredSheet(0), 415 + 16, 284, 431 + 16, 316, 0, TerrType.getYIndex(TerrType.PIPE_STATION), 16, TerrType.getYIndex(TerrType.PIPE_STATION) + 32, this);
-    g.drawString("" + ptypes[5], 415, 300);
+    graphic2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.85f));
+    graphic2D.setColor(new Color(7, 66, 97));
+    graphic2D.fillRoundRect(180, 275, 280, 40, 20, 20);
+    graphic2D.setColor(Color.WHITE);
+    graphic2D.setFont(MainMenuGraphics.getH1Font());
+    graphic2D.drawImage(TerrainGraphics.getColoredSheet(0), 205 + 16, 284, 221 + 16, 316, 0, TerrType.getYIndex(TerrType.CITY), 16, TerrType.getYIndex(TerrType.CITY) + 32, eventListener);
+    graphic2D.drawString("" + ptypes[0], 205, 300);
+    graphic2D.drawImage(TerrainGraphics.getColoredSheet(0), 247 + 16, 284, 263 + 16, 316, 0, TerrType.getYIndex(TerrType.BASE), 16, TerrType.getYIndex(TerrType.BASE) + 32, eventListener);
+    graphic2D.drawString("" + ptypes[1], 247, 300);
+    graphic2D.drawImage(TerrainGraphics.getColoredSheet(0), 289 + 16, 284, 305 + 16, 316, 0, TerrType.getYIndex(TerrType.PORT), 16, TerrType.getYIndex(TerrType.PORT) + 32, eventListener);
+    graphic2D.drawString("" + ptypes[2], 289, 300);
+    graphic2D.drawImage(TerrainGraphics.getColoredSheet(0), 331 + 16, 284, 347 + 16, 316, 0, TerrType.getYIndex(TerrType.AIRPORT), 16, TerrType.getYIndex(TerrType.AIRPORT) + 32, eventListener);
+    graphic2D.drawString("" + ptypes[3], 331, 300);
+    graphic2D.drawImage(TerrainGraphics.getColoredSheet(0), 373 + 16, 284, 389 + 16, 316, 0, TerrType.getYIndex(TerrType.COM_TOWER), 16, TerrType.getYIndex(TerrType.COM_TOWER) + 32, eventListener);
+    graphic2D.drawString("" + ptypes[4], 373, 300);
+    graphic2D.drawImage(TerrainGraphics.getColoredSheet(0), 415 + 16, 284, 431 + 16, 316, 0, TerrType.getYIndex(TerrType.PIPE_STATION), 16, TerrType.getYIndex(TerrType.PIPE_STATION) + 32, eventListener);
+    graphic2D.drawString("" + ptypes[5], 415, 300);
 
-    g.setColor(new Color(7, 66, 97));
-    g.fillRoundRect(180, 5, 280, 40, 20, 20);
-    g.setColor(Color.white);
-    g.setFont(new Font("SansSerif", Font.BOLD, 16));
+    graphic2D.setColor(new Color(7, 66, 97));
+    graphic2D.fillRoundRect(180, 5, 280, 40, 20, 20);
+    graphic2D.setColor(Color.white);
+    graphic2D.setFont(MainMenuGraphics.getH1Font());
 
-    if (subcat == 0) g.setColor(Color.red);
-    g.drawString("ALL", 210, 30);
-    g.setColor(Color.white);
-    if (subcat == 1) g.setColor(Color.red);
-    g.drawString("2", 250, 30);
-    g.setColor(Color.white);
-    if (subcat == 2) g.setColor(Color.red);
-    g.drawString("3", 270, 30);
-    g.setColor(Color.white);
-    if (subcat == 3) g.setColor(Color.red);
-    g.drawString("4", 290, 30);
-    g.setColor(Color.white);
-    if (subcat == 4) g.setColor(Color.red);
-    g.drawString("5", 310, 30);
-    g.setColor(Color.white);
-    if (subcat == 5) g.setColor(Color.red);
-    g.drawString("6", 330, 30);
-    g.setColor(Color.white);
-    if (subcat == 6) g.setColor(Color.red);
-    g.drawString("7", 350, 30);
-    g.setColor(Color.white);
-    if (subcat == 7) g.setColor(Color.red);
-    g.drawString("8", 370, 30);
-    g.setColor(Color.white);
-    if (subcat == 8) g.setColor(Color.red);
-    g.drawString("9", 390, 30);
-    g.setColor(Color.white);
-    if (subcat == 9) g.setColor(Color.red);
-    g.drawString("10", 410, 30);
+    if (subcat == 0) graphic2D.setColor(Color.red);
+    graphic2D.drawString("ALL", 210, 30);
+    graphic2D.setColor(Color.white);
+    if (subcat == 1) graphic2D.setColor(Color.red);
+    graphic2D.drawString("2", 250, 30);
+    graphic2D.setColor(Color.white);
+    if (subcat == 2) graphic2D.setColor(Color.red);
+    graphic2D.drawString("3", 270, 30);
+    graphic2D.setColor(Color.white);
+    if (subcat == 3) graphic2D.setColor(Color.red);
+    graphic2D.drawString("4", 290, 30);
+    graphic2D.setColor(Color.white);
+    if (subcat == 4) graphic2D.setColor(Color.red);
+    graphic2D.drawString("5", 310, 30);
+    graphic2D.setColor(Color.white);
+    if (subcat == 5) graphic2D.setColor(Color.red);
+    graphic2D.drawString("6", 330, 30);
+    graphic2D.setColor(Color.white);
+    if (subcat == 6) graphic2D.setColor(Color.red);
+    graphic2D.drawString("7", 350, 30);
+    graphic2D.setColor(Color.white);
+    if (subcat == 7) graphic2D.setColor(Color.red);
+    graphic2D.drawString("8", 370, 30);
+    graphic2D.setColor(Color.white);
+    if (subcat == 8) graphic2D.setColor(Color.red);
+    graphic2D.drawString("9", 390, 30);
+    graphic2D.setColor(Color.white);
+    if (subcat == 9) graphic2D.setColor(Color.red);
+    graphic2D.drawString("10", 410, 30);
 
-    drawMiniMap(g, 180, 65);
+    drawMiniMap(graphic2D, 180, 65);
   }
 
   public void drawMiniMap(Graphics2D g, int x, int y) {
@@ -479,7 +481,7 @@ public class MainMenu extends JComponent {
 
   public void drawOptionsScreen(Graphics2D g) {
     g.setColor(Color.black);
-    g.setFont(new Font("SansSerif", Font.BOLD, 16));
+    g.setFont(MainMenuGraphics.getH1Font());
     if (item == 0) g.setColor(Color.red);
     g.drawString("Music", 10, 20);
     g.setColor(Color.black);
@@ -627,7 +629,7 @@ public class MainMenu extends JComponent {
 
     //Visibility
     g.setColor(Color.black);
-    g.setFont(new Font("SansSerif", Font.BOLD, 16));
+    g.setFont(MainMenuGraphics.getH1Font());
     if (item == 0) g.setColor(Color.red);
     g.drawString("Visibility", 10, textCol);
     g.setColor(Color.black);
@@ -969,7 +971,7 @@ public class MainMenu extends JComponent {
 
   public void drawSideSelectScreen(Graphics2D g) {
     g.setColor(Color.black);
-    g.setFont(new Font("SansSerif", Font.BOLD, 16));
+    g.setFont(MainMenuGraphics.getH1Font());
 
     for (int i = 0; i < numArmies; i++) {
       if (item == i) g.setColor(Color.red);
@@ -980,7 +982,7 @@ public class MainMenu extends JComponent {
   }
 
   public void drawServerInfoScreen(Graphics2D g) {
-    g.setFont(new Font("SansSerif", Font.BOLD, 16));
+    g.setFont(MainMenuGraphics.getH1Font());
     //chat screen
     g.setColor(Color.black);
     g.fillRect(0, 0, 480, 100);
