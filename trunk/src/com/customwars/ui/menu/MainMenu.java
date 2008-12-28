@@ -206,7 +206,7 @@ public class MainMenu extends JComponent {
 
   public void drawScreen(Graphics2D graphics2D) {
     drawBackground(graphics2D);
-    if (title) drawTitleScreen(graphics2D);
+    if (title) drawTitleScreen(graphics2D, item);
     if (mapSelect) drawMapSelectScreen(graphics2D);
     if (COselect) drawCOSelectScreen(graphics2D);
     if (options) drawOptionsScreen(graphics2D);
@@ -224,10 +224,10 @@ public class MainMenu extends JComponent {
     g.drawImage(MainMenuGraphics.getBackground(), 0, 0, this);
   }
 
-  public void drawTitleScreen(Graphics2D graphics2D) {
+  public void drawTitleScreen(Graphics2D graphics2D, int highlightedItem) {
     graphics2D.drawImage(MainMenuGraphics.getTitleBackground(), 0, 0, this);
 
-	switch(item){
+	switch(highlightedItem){
 	  case 0:	graphics2D.drawImage(MainMenuGraphics.getNewGame(true), 0, 0, this);
 	    		graphics2D.drawImage(MainMenuGraphics.getMaps(false), 0, 0, this);
 	    		graphics2D.drawImage(MainMenuGraphics.getOptions(false), 0, 0, this);
@@ -244,10 +244,10 @@ public class MainMenu extends JComponent {
 	    		break;
 	 }
 	    
-	//write the copyright notice
     graphics2D.setColor(Color.white);
 	graphics2D.setFont(new Font("SansSerif", Font.PLAIN, 14));
-	graphics2D.drawString("Advance Wars is � Nintendo/Intelligent Systems", 100, 310);
+	final String COPYRIGHT = "\u00a9";
+	graphics2D.drawString("Advance Wars is " + COPYRIGHT + " Nintendo/Intelligent Systems", 100, 310);
   }
 
   public void drawMapSelectScreen(Graphics2D g) {
