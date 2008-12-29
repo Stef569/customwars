@@ -186,8 +186,7 @@ public class Options {
             listenThread = new Thread(listen);
             listenThread.start();
         }catch(Exception e){
-            logger.error("error:", e); 
-            System.exit(1);
+            logger.error("Network Error thrown.", e); 
         }
     }
     

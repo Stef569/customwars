@@ -1173,7 +1173,6 @@ public class MainMenu extends JComponent {
             }
           } catch (IOException exc) {
             logger.error("Couldn't read MAP file [" + filename + "]", exc);
-            System.exit(1);
           }
           numCOs = 0;
           coSelections = new int[numArmies * 2];
@@ -1588,7 +1587,6 @@ public class MainMenu extends JComponent {
       }
       if (numcats == 0) {
         logger.info("NO MAP DIRECTORIES! QUITTING!");
-        System.exit(1);
       }
       mapCategories = new String[numcats];
       for (int i = 0; i < numcats; i++) {
@@ -2973,7 +2971,6 @@ public class MainMenu extends JComponent {
       }
       if (numcats == 0) {
         logger.info("NO MAP DIRECTORIES! QUITTING!");
-        System.exit(1);
       }
       mapCategories = new String[numcats];
       for (int i = 0; i < numcats; i++) {
@@ -3049,7 +3046,6 @@ public class MainMenu extends JComponent {
     }
     if (numcats == 0) {
       logger.info("NO MAP DIRECTORIES! QUITTING!");
-      System.exit(1);
     }
     mapCategories = new String[numcats];
     for (int i = 0; i < numcats; i++) {

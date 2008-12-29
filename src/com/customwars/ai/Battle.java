@@ -268,7 +268,6 @@ public class Battle implements Serializable{
             read.close();
         }catch(IOException e){
         	logger.error("Couldn't read map file [" + filename + "]", e);
-            System.exit(1);
         }
         
         //read correct map type
@@ -398,7 +397,6 @@ public class Battle implements Serializable{
             }*/
         }catch(IOException e){
         	logger.error("Couldn't read NEW map file [" +filename +"]" , e);
-            System.exit(1);
         }
     }
     
@@ -453,7 +451,6 @@ public class Battle implements Serializable{
             }
         }catch(IOException e){
         	logger.error("Couldn't read old map file [" + filename +"]", e);
-            System.exit(1);
         }
     }
     
@@ -498,7 +495,6 @@ public class Battle implements Serializable{
             }
         }catch(IOException e){
         	logger.error("Couldn't read AWD file [" + filename +"]", e);
-            System.exit(1);
         }
     }
     
