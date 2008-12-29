@@ -89,11 +89,9 @@ public class Mission {
                 ObjectInputStream read = new ObjectInputStream(new FileInputStream(saveLocation + REPLAY_SAVE_FILENAME));
                 initialState = (Battle)read.readObject();
             }catch(IOException e){
-                logger.error("error", e);
-                System.exit(1);
+                logger.error("Error in Reading / Writing state", e);
             }catch(ClassNotFoundException e){
-            	logger.error("error", e);
-                System.exit(1);
+            	logger.error("Error in Reading / Writing state", e);
             }
         }
     }
@@ -144,8 +142,7 @@ public class Mission {
                 }
             }
         }catch(IOException e){
-        	logger.error("e",e);
-            System.exit(1);
+        	logger.error("Error saving Mission",e);
         }
     }
    
@@ -186,8 +183,7 @@ public class Mission {
             //replay queue
             write.writeObject(battle1.getReplay());
         }catch(IOException e){
-            logger.error("error",e);
-            System.exit(1);
+            logger.error("Error saving Replay= [" + filename + "] to location=[" + saveLocation +"]" ,e);
         }
     }
    
@@ -205,12 +201,11 @@ public class Mission {
             //read replay queue
             rq = (ReplayQueue) read.readObject();
         }catch(IOException e){
-        	logger.error("Problem with file ["+filename + "] throwing stack trace: "+ e );
-            logger.error("error",e);
-            System.exit(1);
+        	logger.error("Problem with file throwing stack trace: "+ e );
+            logger.error("Error loading Replay["+filename + "] from location=["+saveLocation +"]",e);
         }catch(ClassNotFoundException e){
             logger.error("error",e);
-            System.exit(1);
+            logger.error("Error loading Replay["+filename + "] from location=["+saveLocation +"]",e);
         }
        
         battle1.setReplay(rq);
@@ -274,11 +269,9 @@ public class Mission {
             battle1 = (Battle) read.readObject();
             initialState = (Battle) read.readObject();
         }catch(IOException e){
-            logger.error("error:",e);
-            System.exit(1);
+            logger.error("Error recieving mission",e);
         }catch(ClassNotFoundException e){
-            logger.error("error:",e);
-            System.exit(1);
+        	logger.error("Error recieving mission",e);
         }
        
         screen1.resetBattle(battle1);
@@ -313,11 +306,9 @@ public class Mission {
                 initialState = (Battle) read.readObject();
             }
         }catch(IOException e){
-            logger.error("Problem reading the mission file: ["+filename+ "]",e);
-            System.exit(1);
+            logger.error("Problem loading the mission file: ["+filename+ "]",e);
         }catch(ClassNotFoundException e){
-            logger.error("error:",e);
-            System.exit(1);
+            logger.error("Problem loading the mission file: ["+filename+ "]",e);
         }
        
         screen1.resetBattle(battle1);
@@ -360,8 +351,7 @@ public class Mission {
             
             checksum.update(out.toByteArray());
         }catch(IOException e){
-            logger.error("error:",e);
-            System.exit(1);
+            logger.error("Problem with CheckSum on file=[" +file+"]",e);
         }
         return checksum.getValue();
         
