@@ -1115,7 +1115,7 @@ public class MainMenu extends JComponent {
       return;
     }
     //Creates new instances of critical objects for the battle
-    Battle b = new Battle(ResourceLoader.properties.getProperty("saveLocation") + "/" + filename, coSelections, sideSelections, altSelections, bopt);
+    Battle b = new Battle(filename, coSelections, sideSelections, altSelections, bopt);
 
     //Initialize a swing frame and put a BattleScreen inside
     parentFrame.setSize(400, 400);
