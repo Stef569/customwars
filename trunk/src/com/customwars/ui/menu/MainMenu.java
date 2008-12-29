@@ -1873,7 +1873,7 @@ public class MainMenu extends JComponent {
       PrintStream out1 = new PrintStream(con.getOutputStream());
       out1.print(input);
       out1.print("\n");
-      FileInputStream src = new FileInputStream(ResourceLoader.properties.getProperty("saveLocation") + "/" + file);
+      FileInputStream src = new FileInputStream(file);
       logger.debug("Sending file [" + src + "]");
       OutputStream out = con.getOutputStream();
       while (true) {
