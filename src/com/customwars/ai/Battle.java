@@ -271,8 +271,12 @@ public class Battle implements Serializable{
         }
         
         //read correct map type
-        if(initial <= -1)readNewMAPFile(filename,coSelect,sideSelect,mapEditorMode);
-        else readOldMAPFile(filename,coSelect,sideSelect,mapEditorMode);
+        if(initial <= -1){
+        	readNewMAPFile(filename,coSelect,sideSelect,mapEditorMode);
+        }
+        else {
+        	readOldMAPFile(filename,coSelect,sideSelect,mapEditorMode);
+        }
         
         if(m.getMapName().equals("")){
             //Clean up name
@@ -366,35 +370,7 @@ public class Battle implements Serializable{
                 int y = read.readInt();
                 placeUnit(m, m.find(new Location(x,y)), type, getColorArmy(side));
             }
-            //CAMPAIGN TRIGGERS
-            /*
-            while(header == -2){
-                int type = read.readByte();
-                if(type == -11)break;
-                switch(type) {
-                    case 0:
-                        int day = read.readInt();
-                        int turn = read.readInt();
-                        int uType = read.readInt();
-                        int x = read.readInt();
-                        int y = read.readInt();
-                        int army = read.readInt();
-                        int HP = read.readInt();
-                        int fuel = read.readInt();
-                        int ammo = read.readInt();
-                        getMap().getTriggers().add(new UnitTrigger(this, day, turn, x, y, uType,army, HP, fuel, ammo));
-                        break;
-                    case 1:
-                        day = read.readInt();
-                        turn = read.readInt();
-                         x = read.readInt();
-                         y = read.readInt();
-                        int damage = read.readInt();
-                        boolean deadly = read.readBoolean();
-                        getMap().getTriggers().add(new DamageTrigger(this, day, turn, x, y, damage, deadly));
-                        break;
-                }
-            }*/
+
         }catch(IOException e){
         	logger.error("Couldn't read NEW map file [" +filename +"]" , e);
         }
