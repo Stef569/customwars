@@ -133,16 +133,16 @@ public class MainMenu extends JComponent {
 
     scale = 1;
 
-    title = true;
-    options = false;
-    newload = false;
-    mapSelect = false;
-    COselect = false;
-    info = false;
-    battleOptions = false;
-    keymap = false;
+    setIsTitleScreen(true);
+    setisOptionsScreen(false);
+    setisNewload(false);
+    setisMapSelectScreen(false);
+    setisCOselectScreen(false);
+    setIsInfoScreen(false);
+    setisBattleOptionsScreen(battleOptions);
+    setKeymap(false);
     Options.snailGame = false;
-    snailinfo = false;
+    setisSnailInfoScreen(false);
 
     keycontroller = new KeyControl();
     f.addKeyListener(keycontroller);
@@ -2756,26 +2756,51 @@ private void loadGame() {
   }
 
   class MouseControl implements MouseInputListener {
-    public void mouseClicked(MouseEvent e) {
+    private static final int OPTIONS_HEIGHT_TOP = 279;
+	private static final int OPTIONS_HEIGHT_BOTTOM = 247;
+	private static final int OPTIONS_WIDTH_END = 320;
+	private static final int OPTIONS_WIDTH_START = 175;
+	private static final int MAP_DESIGN_HEIGHT_TOP = 183;
+	private static final int MAP_DESIGN_HEIGHT_BOTTOM = 156;
+	private static final int MAP_DESIGN_WIDTH_END = 350;
+	private static final int MAP_DESIGN_WIDTH_START = 143;
+	private static final int NEW_GAME_HEIGHT_TOP = 87;
+	private static final int NEW_GAME_HEIGHT_BOTTOM = 60;
+	private static final int NEW_GAME_WIDTH_START = 160;
+	private static final int NEW_GAME_WIDTH_END = 332;
+
+	public void mouseClicked(MouseEvent e) {
       int x = e.getX() - parentFrame.getInsets().left;
       int y = e.getY() - parentFrame.getInsets().top;
+
 
       if (e.getButton() == MouseEvent.BUTTON1) {
         //first mouse button
         if (title) {
-          if (x > 160 && x < 332 && y > 60 && y < 87) {
-            item = 0;
-            logger.info("Moving into the New Game Menu");
-            pressedA();
-          } else if (x > 143 && x < 350 && y > 156 && y < 183) {
-            item = 1;
-            logger.info("Moving into the Design Maps Area");
-            pressedA();
-          } else if (x > 175 && x < 320 && y > 247 && y < 279) {
-            item = 2;
-            logger.info("Moving into the Options Menu");
-            pressedA();
-          }
+        	boolean newGame = x > NEW_GAME_WIDTH_START && x < NEW_GAME_WIDTH_END && y > NEW_GAME_HEIGHT_BOTTOM && y < NEW_GAME_HEIGHT_TOP;
+        	boolean designMaps = x > MAP_DESIGN_WIDTH_START && x < MAP_DESIGN_WIDTH_END && y > MAP_DESIGN_HEIGHT_BOTTOM && y < MAP_DESIGN_HEIGHT_TOP;
+        	boolean optionsScreen = x > OPTIONS_WIDTH_START && x < OPTIONS_WIDTH_END && y > OPTIONS_HEIGHT_BOTTOM && y < OPTIONS_HEIGHT_TOP;
+
+        	if (newGame) {
+        		logger.info("Moving into the New Game Menu");
+	            item = 0;
+	            title = false;
+	            newload = true;
+	          } else {
+				if (designMaps) {
+				    item = 1;
+				    logger.info("Moving into the Design Maps Area");
+				    startMapEditor();
+				  } else {
+					if (optionsScreen) {
+					    logger.info("Moving into the Options Menu");
+					    title = false;
+					    options = true;
+					    item = 0;
+					  }
+				}
+			}
+        	
         } else if (newload) {
           if (x < 130) {
             int i = y / 30;
@@ -3239,7 +3264,7 @@ private void loadGame() {
     newload = true;
     this.repaint();
   }
-
+  
   private class refreshListener implements ActionListener {
     public void actionPerformed(ActionEvent evt) {
       refreshInfo();
@@ -3261,6 +3286,78 @@ private void loadGame() {
   private boolean isOverLastPage(int mapPage) {
     return mapPage > filteredMaps.size() / NUM_VISIBLE_ROWS ||
             (mapPage == filteredMaps.size() / NUM_VISIBLE_ROWS && filteredMaps.size() % NUM_VISIBLE_ROWS == 0);
+  }
+
+public boolean isOptionsScreen() {
+	return options;
+  }
+
+public void setisOptionsScreen(boolean options) {
+	  this.options = options;
+  }
+
+public boolean isNewload() {
+	  return newload;
+  }
+
+public void setisNewload(boolean newload) {
+	this.newload = newload;
+  }
+
+public boolean isMapSelectScreen() {
+	return mapSelect;
+  }
+
+public void setisMapSelectScreen(boolean mapSelect) {
+	this.mapSelect = mapSelect;
+  }
+
+public boolean isCOselectScreen() {
+	return COselect;
+  }
+
+public void setisCOselectScreen(boolean oselect) {
+	COselect = oselect;
+  }
+
+public boolean isBattleOptionsScreen() {
+	return battleOptions;
+  }
+
+public void setisBattleOptionsScreen(boolean battleOptions) {
+	this.battleOptions = battleOptions;
+  }
+
+public boolean isKeymap() {
+	return keymap;
+  }
+
+public void setKeymap(boolean keymap) {
+	this.keymap = keymap;
+  }
+
+public boolean isSnailInfoScreen() {
+	return snailinfo;
+  }
+
+public void setisSnailInfoScreen(boolean snailinfo) {
+	this.snailinfo = snailinfo;
+  }
+
+public boolean isInfoScreen() {
+	  return info;
+  }
+
+public void setIsInfoScreen(boolean info) {
+	this.info = info;
+  }
+
+public boolean isTitleScreen() {
+	  return title;
+  }
+
+public void setIsTitleScreen(boolean title) {
+	  this.title = title;
   }
 }
 
