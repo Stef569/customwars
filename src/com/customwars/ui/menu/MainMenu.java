@@ -1275,294 +1275,55 @@ public class MainMenu extends JComponent {
 
   private void newLoadOrNetworkBranch() {
     boolean startCOSelect = false;
-    String tempSaveLocation = ResourceLoader.properties.getProperty("tempSaveLocation");
 
-    String loadFilename = tempSaveLocation + "/temporarysave.save";
-
-    if (item == 0) {
-      startCOSelect = true;
-    } else if (item == 1) {
-      JFileChooser fc = new JFileChooser();
-      fc.setDialogTitle("Load Game");
-      fc.setCurrentDirectory(new File("./"));
-      fc.setApproveButtonText("Load");
-      int returnVal = fc.showOpenDialog(this);
-
-      if (returnVal != 1) {
-        loadFilename = fc.getSelectedFile().getPath();
-        File saveFile = new File(loadFilename);
-        if (saveFile.exists()) {
-          Battle b = new Battle(new Map(30, 20));
-          //Initialize a swing frame and put a BattleScreen inside
-          parentFrame.setSize(400, 400);
-          removeFromFrame();
-          BattleScreen bs = new BattleScreen(b, parentFrame);
-          parentFrame.getContentPane().add(bs);
-          parentFrame.validate();
-          parentFrame.pack();
-
-          //Start the mission
-          Mission.startMission(null, bs);
-          Mission.loadMission(loadFilename);
-        }
-      }
-    } else if (item == 2) {
-      //Network Game
-      startCOSelect = true;
-      Options.startNetwork();
-      item = 0;
-    } else if (item == 3) {
-      //prompt for replay name
-      logger.info("REPLAY MODE");
-      //Load Replay
-      JFileChooser fc = new JFileChooser();
-      fc.setDialogTitle("Load Replay");
-      fc.setCurrentDirectory(new File("./"));
-      fc.setApproveButtonText("Load");
-      int returnVal = fc.showOpenDialog(this);
-
-      if (returnVal != 1) {
-        loadFilename = fc.getSelectedFile().getPath();
-
-        File saveFile = new File(loadFilename);
-        if (saveFile.exists()) {
-          Battle b = new Battle(new Map(30, 20));
-          //Initialize a swing frame and put a BattleScreen inside
-          parentFrame.setSize(400, 400);
-          removeFromFrame();
-          BattleScreen bs = new BattleScreen(b, parentFrame);
-          parentFrame.getContentPane().add(bs);
-          parentFrame.validate();
-          parentFrame.pack();
-
-          //Start the mission
-          Mission.startMission(null, bs);
-          Mission.loadReplay(loadFilename);
-        }
-      }
-    } else if (item == 4) {
-      logger.info("Create Server Game");
-      //try to connect to the server first to see that the user's URL is correct
-      if (!tryToConnect()) {
-    	  return;
-      }
-
-	   //find an unused name
-      Options.gamename = JOptionPane.showInputDialog(null, "Type in a name for your game:", "Network Game: Name", JOptionPane.PLAIN_MESSAGE);
-
-      if (Options.gamename == null) {
-    	  return;
-      }
-      
-      String reply = sendCommandToMain("qname", Options.gamename);
-      while (!reply.equals("yes")) {
-        logger.info(reply);
-        if (reply.equals("no")) {
-          logger.info("Game name already taken");
-          JOptionPane.showMessageDialog(this, "Game name already taken");
-        }
-        Options.gamename = JOptionPane.showInputDialog(null, "Type in a name for your game:", "Network Game: Name?", JOptionPane.PLAIN_MESSAGE);
-        if (Options.gamename == null) return;
-        reply = sendCommandToMain("qname", Options.gamename);
-      }
-
-      //set the master password and join
-      Options.masterpass = JOptionPane.showInputDialog(null, "Master Password for your game:", "Network Game: Master Pass?", JOptionPane.PLAIN_MESSAGE);
-      if (Options.masterpass == null) return;
-      if (Options.isDefaultLoginOn()) {
-        Options.username = Options.getDefaultUsername();
-        Options.password = Options.getDefaultPassword();
-
-        if (Options.username == null || Options.username.length() < 1 || Options.username.length() > MAX_USERNAME_LENGTH)
-          return;
-      } else {
-        while (true) {
-        	Options.username = JOptionPane.showInputDialog(null, "Username for your game:", "Network Game: User(12char)?", JOptionPane.PLAIN_MESSAGE);
-          if (Options.username == null) return;
-          if (Options.username.length() < 1) continue;
-          if (Options.username.length() > MAX_USERNAME_LENGTH) continue;
-          break;
-        }
-        Options.password = JOptionPane.showInputDialog(null, "Password for your game:", "Network Game: Password?", JOptionPane.PLAIN_MESSAGE);
-        if (Options.password == null) return;
-      }
-
-      //start game
-      logger.info("starting game");
-      Options.snailGame = true;
-      startCOSelect = true;
-      item = 0;
-
-    } else if (item == 5) {
-      logger.info("Join Server Game");
-
-      //try to connect to the server first to see that the user's URL is correct
-      if (!tryToConnect()) return;
-
-      //connect to the game
-      Options.gamename = JOptionPane.showInputDialog(null, "Name of game:", "Join Game: Name", JOptionPane.PLAIN_MESSAGE);
-      if (Options.gamename == null) return;
-
-      //check the master password and get number of players and available slots
-      Options.masterpass = JOptionPane.showInputDialog(null, "Enter Password for game:", "Join Game: Master Pass", JOptionPane.PLAIN_MESSAGE);
-      if (Options.masterpass == null) return;
-
-      //Get user's name, password, and slot
-      if (Options.isDefaultLoginOn()) {
-        Options.username = Options.getDefaultUsername();
-        Options.password = Options.getDefaultPassword();
-
-        if (Options.username == null || Options.username.length() < 1 || Options.username.length() > MAX_USERNAME_LENGTH)
-          return;
-      } else {
-        while (true) {
-        	Options.username = JOptionPane.showInputDialog(null, "Username for your game:", "Network Game: User(12char)", JOptionPane.PLAIN_MESSAGE);
-          if (Options.username == null) return;
-          if (Options.username.length() < 1) continue;
-          if (Options.username.length() > MAX_USERNAME_LENGTH) continue;
-          break;
-        }
-        Options.password = JOptionPane.showInputDialog(null, "Password for your game:", "Network Game: Password", JOptionPane.PLAIN_MESSAGE);
-        if (Options.password == null) return;
-      }
-      newload = false;
-      snailinfo = true;
-      refreshInfo();
-      if (!snailinfo) {
-        JOptionPane.showMessageDialog(this, "The game " + Options.gamename + " has ended");
-        return;
-      }
-      String slot  = JOptionPane.showInputDialog(null, "Type in the number of the army you will command:", "Network Game: Army No.?", JOptionPane.PLAIN_MESSAGE);
-      if (slot == null) {
-        title = true;
-        snailinfo = false;
-        return;
-      }
-
-      //Join
-      String reply = sendCommandToMain("join", Options.gamename + "\n" + Options.masterpass + "\n" + Options.username + "\n" + Options.password + "\n" + slot + "\n" + Options.version);
-      while (!reply.equals("join successful")) {
-        logger.info(reply);
-        if (reply.equals("no")) {
-          logger.info("Game does not exist");
-          Options.gamename = JOptionPane.showInputDialog(null, "Type in a name for your game:", "Network Game: Name?", JOptionPane.PLAIN_MESSAGE);
-          if (Options.gamename == null) {
-            title = true;
-            snailinfo = false;
-            return;
-          }
-          Options.masterpass = JOptionPane.showInputDialog(null, "Enter Password for game:", "Join Game: Master Pass", JOptionPane.PLAIN_MESSAGE);
-          if (Options.masterpass == null) {
-            title = true;
-            snailinfo = false;
-            return;
-          }
-        } else if (reply.equals("wrong password")) {
-          logger.info("Incorrect Password");
-          Options.gamename = JOptionPane.showInputDialog(null, "Name of game:", "Join Game: Name", JOptionPane.PLAIN_MESSAGE);
-          if (Options.gamename == null) {
-            title = true;
-            snailinfo = false;
-            return;
-          }
-          Options.masterpass = JOptionPane.showInputDialog(null, "Enter Password for game:", "Join Game: Master Pass", JOptionPane.PLAIN_MESSAGE);
-          if (Options.masterpass == null) {
-            title = true;
-            snailinfo = false;
-            return;
-          }
-        } else if (reply.equals("out of range")) {
-          logger.info("Army choice out of range or invalid");
-          slot  = JOptionPane.showInputDialog(null, "Type in the number of the army you will command:", "Network Game: Army No.?", JOptionPane.PLAIN_MESSAGE);
-          if (slot == null) {
-            title = true;
-            snailinfo = false;
-            return;
-          }
-        } else if (reply.equals("slot taken")) {
-          logger.info("Army choice already taken");
-          slot  = JOptionPane.showInputDialog(null, "Type in the number of the army you will command:", "Network Game: Army No.?", JOptionPane.PLAIN_MESSAGE);
-          if (slot == null) {
-            title = true;
-            snailinfo = false;
-            return;
-          }
-        } else {
-          logger.info("Other problem");
-          JOptionPane.showMessageDialog(this, "Version Mismatch");
-          Options.snailGame = false;
-          snailinfo = false;
-          title = true;
-          return;
-        }
-        refreshInfo();
-        reply = sendCommandToMain("join", Options.gamename + "\n" + Options.masterpass + "\n" + Options.username + "\n" + Options.password + "\n" + slot + "\n" + Options.version);
-      }
-
-      //go to information screen
-      Options.snailGame = true;
-      snailinfo = true;
-      newload = false;
-      item = 0;
-      item2 = 0;
-
-      refreshInfo();
-      return;
-
-    } else if (item == 6) {
-      logger.info("Log in to Server Game");
-
-      //try to connect to the server first to see that the user's URL is correct
-      if (!tryToConnect()) return;
-
-      //connect to the game
-      Options.gamename = JOptionPane.showInputDialog(null, "Type in a name for your game:", "Network Game: Name?", JOptionPane.PLAIN_MESSAGE);
-      if (Options.gamename == null) return;
-
-      //Get user's name and password
-      if (Options.isDefaultLoginOn()) {
-        Options.username = Options.getDefaultUsername();
-        Options.password = Options.getDefaultPassword();
-
-        if (Options.username == null || Options.username.length() < 1 || Options.username.length() > MAX_USERNAME_LENGTH)
-          return;
-      } else {
-    	Options.username = JOptionPane.showInputDialog(null, "Username for your game:", "Network Game: User(12char)", JOptionPane.PLAIN_MESSAGE);
-        if (Options.username == null) return;
-        Options.password = JOptionPane.showInputDialog(null, "Password for your game:", "Network Game: Password?", JOptionPane.PLAIN_MESSAGE);
-        if (Options.password == null) return;
-      }
-
-      //try to connect
-      String reply = sendCommandToMain("validup", Options.gamename + "\n" + Options.username + "\n" + Options.password + "\n" + Options.version);
-      logger.info(reply);
-      if (!reply.equals("login successful")) {
-        if (reply.equals("version mismatch")) JOptionPane.showMessageDialog(this, "Version Mismatch");
-        else
-          JOptionPane.showMessageDialog(this, "Problem logging in, either the username/password is incorrect or the game has ended");
-        return;
-      }
-
-      //go to information screen
-      Options.snailGame = true;
-      snailinfo = true;
-      newload = false;
-      item = 0;
-      item2 = 0;
-
-      refreshInfo();
-      return;
-    } else if (item == 7) {
-      parentFrame.setVisible(false);
-      FobbahLauncher.init(parentFrame, this);
+    final int CO_SELECT = 0;
+    final int LOAD_GAME = 1;
+    final int START_NETWORK_GAME = 2;
+    final int LOAD_REPLAY = 3;
+    final int CREATE_SERVER_GAME = 4;
+    final int JOIN_SERVER_GAME = 5;
+    final int LOGIN_TO_SERVER_GAME = 6;
+    final int JOIN_IRC_LOBBY = 7;
+    
+    switch(item){
+	    case CO_SELECT:
+	    			startCOSelect = true;
+	    			break;
+	    case LOAD_GAME:
+	    			loadGame();
+	    			break;
+	    case START_NETWORK_GAME:
+			  		startCOSelect = true;
+			  		Options.startNetwork();
+			  		item = CO_SELECT;
+	    			break;
+	    case LOAD_REPLAY:
+	    			loadReplay();
+	    			break;
+	    case CREATE_SERVER_GAME:
+					createServerGame();
+					startCOSelect = true;
+					item = CO_SELECT;
+	    			break;
+	    case JOIN_SERVER_GAME:
+			  		joinServerGame();
+	    			break;
+	    case LOGIN_TO_SERVER_GAME:
+	    			loginToServerGame();
+	    			break;
+	    case JOIN_IRC_LOBBY:
+	    			joinIRClobby();
+			    	break;
     }
+    
+    
 
     if (startCOSelect) {
       //New Game
       newload = false;
       mapSelect = true;
-      item = 0;
-      mapPage = 0;
+      item = CO_SELECT;
+      mapPage = CO_SELECT;
 
       //load categories
       String mapsLocation = ResourceLoader.properties.getProperty("mapsLocation");
@@ -1578,27 +1339,312 @@ public class MainMenu extends JComponent {
 
 
       Vector<String> v = new Vector<String>();
-      int numcats = 0;
+      int numcats = CO_SELECT;
       for (File dir : dirs) {
         if (dir.isDirectory()) {
           v.add(dir.getName());
           numcats++;
         }
       }
-      if (numcats == 0) {
+      if (numcats == CO_SELECT) {
         logger.info("NO MAP DIRECTORIES! QUITTING!");
       }
       mapCategories = new String[numcats];
-      for (int i = 0; i < numcats; i++) {
+      for (int i = CO_SELECT; i < numcats; i++) {
         mapCategories[i] = v.get(i);
       }
 
-      currentMapCategory = 0;
-      currentlySelectedSubCategory = 0;
+      currentMapCategory = CO_SELECT;
+      currentlySelectedSubCategory = CO_SELECT;
       loadMapDisplayNames();
-      mapPage = 0;
+      mapPage = CO_SELECT;
     }
   }
+
+private void joinIRClobby() {
+	parentFrame.setVisible(false);
+	  FobbahLauncher.init(parentFrame, this);
+}
+
+private void loginToServerGame() {
+	int CO_SELECT = 0;
+	int LOAD_GAME = 1;
+	
+	logger.info("Log in to Server Game");
+
+	  //try to connect to the server first to see that the user's URL is correct
+	  if (!tryToConnect()) return;
+
+	  //connect to the game
+	  Options.gamename = JOptionPane.showInputDialog(null, "Type in a name for your game:", "Network Game: Name?", JOptionPane.PLAIN_MESSAGE);
+	  if (Options.gamename == null) return;
+
+	  //Get user's name and password
+	  if (Options.isDefaultLoginOn()) {
+	    Options.username = Options.getDefaultUsername();
+	    Options.password = Options.getDefaultPassword();
+
+	    if (Options.username == null || Options.username.length() < LOAD_GAME || Options.username.length() > MAX_USERNAME_LENGTH)
+	      return;
+	  } else {
+		Options.username = JOptionPane.showInputDialog(null, "Username for your game:", "Network Game: User(12char)", JOptionPane.PLAIN_MESSAGE);
+	    if (Options.username == null) return;
+	    Options.password = JOptionPane.showInputDialog(null, "Password for your game:", "Network Game: Password?", JOptionPane.PLAIN_MESSAGE);
+	    if (Options.password == null) return;
+	  }
+
+	  //try to connect
+	  String reply = sendCommandToMain("validup", Options.gamename + "\n" + Options.username + "\n" + Options.password + "\n" + Options.version);
+	  logger.info(reply);
+	  if (!reply.equals("login successful")) {
+	    if (reply.equals("version mismatch")) JOptionPane.showMessageDialog(this, "Version Mismatch");
+	    else
+	      JOptionPane.showMessageDialog(this, "Problem logging in, either the username/password is incorrect or the game has ended");
+	    return;
+	  }
+
+	  //go to information screen
+	  Options.snailGame = true;
+	  snailinfo = true;
+	  newload = false;
+	  item = CO_SELECT;
+	  item2 = CO_SELECT;
+
+	  refreshInfo();
+}
+
+private void joinServerGame() {
+	logger.info("Join Server Game");
+
+	  //try to connect to the server first to see that the user's URL is correct
+	  if (!tryToConnect()) return;
+
+	  //connect to the game
+	  Options.gamename = JOptionPane.showInputDialog(null, "Name of game:", "Join Game: Name", JOptionPane.PLAIN_MESSAGE);
+	  if (Options.gamename == null) return;
+
+	  //check the master password and get number of players and available slots
+	  Options.masterpass = JOptionPane.showInputDialog(null, "Enter Password for game:", "Join Game: Master Pass", JOptionPane.PLAIN_MESSAGE);
+	  if (Options.masterpass == null) return;
+
+	  //Get user's name, password, and slot
+	  if (Options.isDefaultLoginOn()) {
+	    Options.username = Options.getDefaultUsername();
+	    Options.password = Options.getDefaultPassword();
+
+	    if (Options.username == null || Options.username.length() < 1 || Options.username.length() > MAX_USERNAME_LENGTH)
+	      return;
+	  } else {
+	    while (true) {
+	    	Options.username = JOptionPane.showInputDialog(null, "Username for your game:", "Network Game: User(12char)", JOptionPane.PLAIN_MESSAGE);
+	      if (Options.username == null) return;
+	      if (Options.username.length() < 1) continue;
+	      if (Options.username.length() > MAX_USERNAME_LENGTH) continue;
+	      break;
+	    }
+	    Options.password = JOptionPane.showInputDialog(null, "Password for your game:", "Network Game: Password", JOptionPane.PLAIN_MESSAGE);
+	    if (Options.password == null) return;
+	  }
+	  newload = false;
+	  snailinfo = true;
+	  refreshInfo();
+	  if (!snailinfo) {
+	    JOptionPane.showMessageDialog(this, "The game " + Options.gamename + " has ended");
+	    return;
+	  }
+	  String slot  = JOptionPane.showInputDialog(null, "Type in the number of the army you will command:", "Network Game: Army No.?", JOptionPane.PLAIN_MESSAGE);
+	  if (slot == null) {
+	    title = true;
+	    snailinfo = false;
+	    return;
+	  }
+
+	  //Join
+	  String reply = sendCommandToMain("join", Options.gamename + "\n" + Options.masterpass + "\n" + Options.username + "\n" + Options.password + "\n" + slot + "\n" + Options.version);
+	  while (!reply.equals("join successful")) {
+	    logger.info(reply);
+	    if (reply.equals("no")) {
+	      logger.info("Game does not exist");
+	      Options.gamename = JOptionPane.showInputDialog(null, "Type in a name for your game:", "Network Game: Name?", JOptionPane.PLAIN_MESSAGE);
+	      if (Options.gamename == null) {
+	        title = true;
+	        snailinfo = false;
+	        return;
+	      }
+	      Options.masterpass = JOptionPane.showInputDialog(null, "Enter Password for game:", "Join Game: Master Pass", JOptionPane.PLAIN_MESSAGE);
+	      if (Options.masterpass == null) {
+	        title = true;
+	        snailinfo = false;
+	        return;
+	      }
+	    } else if (reply.equals("wrong password")) {
+	      logger.info("Incorrect Password");
+	      Options.gamename = JOptionPane.showInputDialog(null, "Name of game:", "Join Game: Name", JOptionPane.PLAIN_MESSAGE);
+	      if (Options.gamename == null) {
+	        title = true;
+	        snailinfo = false;
+	        return;
+	      }
+	      Options.masterpass = JOptionPane.showInputDialog(null, "Enter Password for game:", "Join Game: Master Pass", JOptionPane.PLAIN_MESSAGE);
+	      if (Options.masterpass == null) {
+	        title = true;
+	        snailinfo = false;
+	        return;
+	      }
+	    } else if (reply.equals("out of range")) {
+	      logger.info("Army choice out of range or invalid");
+	      slot  = JOptionPane.showInputDialog(null, "Type in the number of the army you will command:", "Network Game: Army No.?", JOptionPane.PLAIN_MESSAGE);
+	      if (slot == null) {
+	        title = true;
+	        snailinfo = false;
+	        return;
+	      }
+	    } else if (reply.equals("slot taken")) {
+	      logger.info("Army choice already taken");
+	      slot  = JOptionPane.showInputDialog(null, "Type in the number of the army you will command:", "Network Game: Army No.?", JOptionPane.PLAIN_MESSAGE);
+	      if (slot == null) {
+	        title = true;
+	        snailinfo = false;
+	        return;
+	      }
+	    } else {
+	      logger.info("Other problem");
+	      JOptionPane.showMessageDialog(this, "Version Mismatch");
+	      Options.snailGame = false;
+	      snailinfo = false;
+	      title = true;
+	      return;
+	    }
+	    refreshInfo();
+	    reply = sendCommandToMain("join", Options.gamename + "\n" + Options.masterpass + "\n" + Options.username + "\n" + Options.password + "\n" + slot + "\n" + Options.version);
+	  }
+
+	  //go to information screen
+	  int CO_SELECT = 0;
+	  Options.snailGame = true;
+	  snailinfo = true;
+	  newload = false;
+	  item = CO_SELECT;
+	  item2 = CO_SELECT;
+
+	  refreshInfo();
+}
+
+private void createServerGame() {
+	logger.info("Create Server Game");
+	  //try to connect to the server first to see that the user's URL is correct
+	  if (!tryToConnect()) {
+		  return;
+	  }
+
+	   //find an unused name
+	  Options.gamename = JOptionPane.showInputDialog(null, "Type in a name for your game:", "Network Game: Name", JOptionPane.PLAIN_MESSAGE);
+
+	  if (Options.gamename == null) {
+		  return;
+	  }
+	  
+	  String reply = sendCommandToMain("qname", Options.gamename);
+	  while (!reply.equals("yes")) {
+	    logger.info(reply);
+	    if (reply.equals("no")) {
+	      logger.info("Game name already taken");
+	      JOptionPane.showMessageDialog(this, "Game name already taken");
+	    }
+	    Options.gamename = JOptionPane.showInputDialog(null, "Type in a name for your game:", "Network Game: Name?", JOptionPane.PLAIN_MESSAGE);
+	    if (Options.gamename == null) return;
+	    reply = sendCommandToMain("qname", Options.gamename);
+	  }
+
+	  //set the master password and join
+	  Options.masterpass = JOptionPane.showInputDialog(null, "Master Password for your game:", "Network Game: Master Pass?", JOptionPane.PLAIN_MESSAGE);
+	  if (Options.masterpass == null) return;
+	  if (Options.isDefaultLoginOn()) {
+	    Options.username = Options.getDefaultUsername();
+	    Options.password = Options.getDefaultPassword();
+
+	    if (Options.username == null || Options.username.length() < 1 || Options.username.length() > MAX_USERNAME_LENGTH)
+	      return;
+	  } else {
+	    while (true) {
+	    	Options.username = JOptionPane.showInputDialog(null, "Username for your game:", "Network Game: User(12char)?", JOptionPane.PLAIN_MESSAGE);
+	      if (Options.username == null) return;
+	      if (Options.username.length() < 1) continue;
+	      if (Options.username.length() > MAX_USERNAME_LENGTH) continue;
+	      break;
+	    }
+	    Options.password = JOptionPane.showInputDialog(null, "Password for your game:", "Network Game: Password?", JOptionPane.PLAIN_MESSAGE);
+	    if (Options.password == null) return;
+	  }
+
+	  //start game
+	  logger.info("starting game");
+	  Options.snailGame = true;
+}
+
+private void loadReplay() {
+    String tempSaveLocation = ResourceLoader.properties.getProperty("tempSaveLocation");
+    String loadFilename = tempSaveLocation + "/temporarysave.save";
+    
+	//prompt for replay name
+	  logger.info("REPLAY MODE");
+	  //Load Replay
+	  JFileChooser fc = new JFileChooser();
+	  fc.setDialogTitle("Load Replay");
+	  fc.setCurrentDirectory(new File("./"));
+	  fc.setApproveButtonText("Load");
+	  int returnVal = fc.showOpenDialog(this);
+
+	  if (returnVal != 1) {
+	    loadFilename = fc.getSelectedFile().getPath();
+
+	    File saveFile = new File(loadFilename);
+	    if (saveFile.exists()) {
+	      Battle b = new Battle(new Map(30, 20));
+	      //Initialize a swing frame and put a BattleScreen inside
+	      parentFrame.setSize(400, 400);
+	      removeFromFrame();
+	      BattleScreen bs = new BattleScreen(b, parentFrame);
+	      parentFrame.getContentPane().add(bs);
+	      parentFrame.validate();
+	      parentFrame.pack();
+
+	      //Start the mission
+	      Mission.startMission(null, bs);
+	      Mission.loadReplay(loadFilename);
+	    }
+	  }
+}
+
+private void loadGame() {
+    String tempSaveLocation = ResourceLoader.properties.getProperty("tempSaveLocation");
+    String loadFilename = tempSaveLocation + "/temporarysave.save";
+    
+	JFileChooser fc = new JFileChooser();
+	  fc.setDialogTitle("Load Game");
+	  fc.setCurrentDirectory(new File("./"));
+	  fc.setApproveButtonText("Load");
+	  int returnVal = fc.showOpenDialog(this);
+
+	  if (returnVal != 1) {
+	    loadFilename = fc.getSelectedFile().getPath();
+	    File saveFile = new File(loadFilename);
+	    if (saveFile.exists()) {
+	      Battle b = new Battle(new Map(30, 20));
+	      //Initialize a swing frame and put a BattleScreen inside
+	      parentFrame.setSize(400, 400);
+	      removeFromFrame();
+	      BattleScreen bs = new BattleScreen(b, parentFrame);
+	      parentFrame.getContentPane().add(bs);
+	      parentFrame.validate();
+	      parentFrame.pack();
+
+	      //Start the mission
+	      Mission.startMission(null, bs);
+	      Mission.loadMission(loadFilename);
+	    }
+	  }
+}
 
   private void coSelectScreenActions() {
     boolean nosecco = false;
@@ -2144,6 +2190,7 @@ public class MainMenu extends JComponent {
   public void refreshInfo() {
     String reply = sendCommandToMain("getturn", Options.gamename);
     logger.info(reply);
+    
     if (reply.equals("no")) {
       snailinfo = false;
       newload = true;
@@ -2151,6 +2198,7 @@ public class MainMenu extends JComponent {
       item = 0;
       return;
     }
+    
     String[] nums = reply.split("\n");
     day = Integer.parseInt(nums[0]);
     turn = Integer.parseInt(nums[1]);
