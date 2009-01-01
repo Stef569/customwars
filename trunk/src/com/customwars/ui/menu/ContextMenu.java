@@ -31,7 +31,10 @@ import com.customwars.unit.Unit;
 import com.customwars.unit.UnitID;
 
 public class ContextMenu extends InGameMenu {
-    Unit u;
+    private static final int CONTEXT_MENU_X = 192;
+	private static final int CONTEXT_MENU_Y = 120;
+	private static final int WIDTH_OF_CONTEXT_MENU = 104;
+	Unit u;
 	final static Logger logger = LoggerFactory.getLogger(ContextMenu.class); 
     
     //[NEW]
@@ -39,7 +42,7 @@ public class ContextMenu extends InGameMenu {
     
     //constructor
     public ContextMenu(Unit temp, boolean fire, boolean capture, boolean resupply, boolean unload, boolean unload2, boolean repair, boolean launch, boolean explode, boolean dive, boolean rise, boolean hide, boolean appear, boolean join, boolean load, boolean special1, boolean special2, boolean takeoff, boolean takeoff2, boolean build, ImageObserver screen){
-        super((480-96)/2,(320-80)/2,96,screen);
+        super(CONTEXT_MENU_X,CONTEXT_MENU_Y,WIDTH_OF_CONTEXT_MENU,screen);
         String[] s = new String[6]; //max in one context window is 4 (Black Boat, Cruiser, and Carrier)
         //Expanded for time being.
         int i = 0;
