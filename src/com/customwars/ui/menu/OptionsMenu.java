@@ -12,12 +12,13 @@ import java.awt.image.ImageObserver;
 
 public class OptionsMenu extends InGameMenu{
     
-    //constructor
+    private static final int OPTIONS_MENU_WIDTH = 250;
+    private static final int OPTIONS_MENU_X = 142;
+	private static final int OPTIONS_MENU_Y = 96;
+
+	//constructor
     public OptionsMenu(ImageObserver screen){
-        //super((256-96)/2,(192-80)/2);
-        //super((256-96)/2,(162-96)/2);
-        //super((256-96)/2,(162-112)/2);
-        super((480-96)/2,(320-128)/2,130,screen);
+        super(OPTIONS_MENU_X,OPTIONS_MENU_Y,OPTIONS_MENU_WIDTH,screen);
         
         String[] s = {"Delete","Yield","Music On/Off","Visual Mode","Resize","Scale","Save Replay","Test Replay DEBUG","Exit Map"};
         super.loadStrings(s);
