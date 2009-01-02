@@ -19,7 +19,7 @@ import java.io.*;
 import javax.swing.*;
 
 import com.customwars.ai.BaseDMG;
-import com.customwars.ai.Mission;
+import com.customwars.ai.GameSession;
 import com.customwars.ai.Options;
 import com.customwars.lobbyclient.FobbahLauncher;
 import com.customwars.state.ResourceLoader;
@@ -41,7 +41,7 @@ public class Main {
         frame.setSize(480,320);
         frame.setVisible(true);
         frame.setIconImage(new ImageIcon(ResourceLoader.properties.getProperty("imagesLocation") + "/misc/icon.gif").getImage());
-        Mission.mainFrame = frame;
+        GameSession.mainFrame = frame;
         
         //Initializes the static classes
         Options.InitializeOptions();

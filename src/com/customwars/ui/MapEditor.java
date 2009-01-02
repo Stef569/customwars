@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 
 import com.customwars.ai.Battle;
 import com.customwars.ai.DamageTrigger;
-import com.customwars.ai.Mission;
+import com.customwars.ai.GameSession;
 import com.customwars.ai.Options;
 import com.customwars.ai.UnitTrigger;
 import com.customwars.map.Map;
@@ -658,7 +658,7 @@ public class MapEditor extends CWScreen
     
     private void endBattle(){
         //end the mission
-        Mission.endMission();
+        GameSession.endMission();
         
         //put a Main Menu inside the frame
         parentFrame.setSize(400,400);

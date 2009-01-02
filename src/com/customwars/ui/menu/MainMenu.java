@@ -43,76 +43,29 @@ public class MainMenu extends JComponent {
   private static String ABSOLUTE_TEMP_FILENAME = "";
   private final static Logger logger = LoggerFactory.getLogger(MainMenu.class);
 
-  // Modes
-  private boolean isTitleScreen;
-  private boolean isOptionsScreen;
-  private boolean isChooseNewGameTypeScreen;
-  private boolean isMapSelectScreen;
-  private boolean isCOselectScreen;
-  private boolean isSideSelect;
-  private boolean isBattleOptionsScreen;
-  private boolean isKeyMappingScreen;
-  private boolean isSnailInfoScreen;
-
   private static final int MAP_EDITOR = 1;
   private static final int OPTION_MENU = 2;
 
   // GUI
   private static final int NUM_VISIBLE_ROWS = 12;
   private static final Font DEFAULT_FONT = new Font(Font.SANS_SERIF, Font.PLAIN, 10);
-  public boolean altcostume;
-  public boolean mainaltcostume;
-  private int cx;             //holds the cursor's x position on the co select screen
-  private int cy;             //holds the cursor's y position on the co select screen
-  private int currentlyHighlightedItem;           //holds the menu's current item (both menus use this)
-  private int item2;          //holds the second menu's current item (only used by server info screen)
   private BufferedImage bufferedImg;           //the screen, used for double buffering and scaling
   private int scale;                    //what scale multiplier is being used
   private JFrame parentFrame;           //the frame that contains the window
   private KeyControl keycontroller;     //the KeyControl, used to remove the component
   private MouseControl mousecontroller; //the MouseControl, used to remove the component
-  private int[] coSelections;       //the selected COs
-  private int[] sideSelections;     //the selected sides
-  private boolean[] altSelections;  //alt costumes for sides.
-  private String filename;          //the map filename
-  private int numArmies;            //the number of armies on the map
-  private int numCOs;               //the current number of COs selected
-  private int selectedArmy = 0;     //the selected army (0 = OS, 1 = BM, etc.)
-  private int ptypes[] = {0, 0, 0, 0, 0, 0};  //the number of properties on this map
-  private int mapPage;        //the page in the map list
-  private int currentMapCategory = 0;        //the map directory category
-  private int currentlySelectedSubCategory = 0;     //the map directory subcategory
-  private String[] mapCategories;      //the categories
+  private String[] mapCategories;
   private Battle preview;     //the minimap preview
-  private boolean chooseKey = false;      //if true, the user is choosing a key
-  private boolean insertNewCO = false;    //used to select new COs in snail mode
-  private String[] usernames = {"Unknown"};     //the usernames of the players in snail mode
-  private int glide = -1; //A simple thing to make stuff prettier.
-  private int infono;
-  private int skip = 0;
-  private int skipMax = 0;
-  private boolean isInfoScreen;
-  private int backGlide = -1;
-
-  // MODEL
-  private BattleOptions bopt = new BattleOptions();  //the battle options to start the game with
-  private int day = 1;
-  private int turn = 1;
-
   private MapLoader mapLoader = new MapLoader();
   private List<Map> maps = mapLoader.loadAllValidMaps();
   private List<Map> filteredMaps;                           //the maps to be displayed
   private String[] filenames= mapLoader.getFileNames();     //the filenames of all the maps
 
   private CO[][] armyArray = new CO[8][14];
-  private int visibility = 0; //0=Full 1=Fog 2=Mist
-
-  private String[] syslog = {"System Log"};    //system log messages
-  private String[] chatlog = {"Chat Log"};     //chat log messages
-  private int syspos = 0;
-  private int chatpos = 0;
-
-  // NETWORK
+  public MenuSession sess = new MenuSession(0, new int[] {0, 0, 0, 0, 0, 0}, 0, 0, false, false,
+		new String[] {"Unknown"}, -1, 0, 0, -1, new BattleOptions(), 1, 1, 0,
+		new String[] {"System Log"}, new String[] {"Chat Log"}, 0, 0);
+// NETWORK
   private static final int MAX_USERNAME_LENGTH = 12;
 
   /**
@@ -125,24 +78,26 @@ public class MainMenu extends JComponent {
     String fileSysLocation = ResourceLoader.properties.getProperty("saveLocation");
     ABSOLUTE_TEMP_FILENAME = fileSysLocation + TEMPORARYMAP_MAP_FILENAME;
 
-    cx = 0;
-    cy = 0;
-    setCurrentlyHighlightedItem(0);
-    item2 = 0;
+    sess.setCurrentCursorXposition(0);
+    sess.setCurrentCursorYposition(0);
+    sess.setCurrentlyHighlightedItem(0);
+    sess.setCurrentlyHighlightedItem2(0);
     logger.info("Started through Main menu");
 
     scale = 1;
 
-    setIsTitleScreen(true);
-    setIsOptionsScreen(false);
-    setIsNewload(false);
-    setIsMapSelectScreen(false);
-    setIsCOselectScreen(false);
-    setIsInfoScreen(false);
-    setIsBattleOptionsScreen(false);
-    setIsKeymappingScreen(false);
+    
+    
+    sess.setIsTitleScreen(true);
+    sess.setIsOptionsScreen(false);
+    sess.setIsChooseNewGameTypeScreen(false);
+    sess.setIsMapSelectScreen(false);
+    sess.setIsCOselectScreen(false);
+    sess.setIsInfoScreen(false);
+    sess.setIsBattleOptionsScreen(false);
+    sess.setIsKeymappingScreen(false);
     Options.snailGame = false;
-    setIsSnailInfoScreen(false);
+    sess.setIsSnailInfoScreen(false);
 
     keycontroller = new KeyControl();
     f.addKeyListener(keycontroller);
@@ -206,15 +161,15 @@ public class MainMenu extends JComponent {
 
   public void drawScreen(Graphics2D graphics2D) {
     drawBackground(graphics2D);
-    if (isTitleScreen()) drawTitleScreen(graphics2D, getCurrentlyHighlightedItem());
-    if (isMapSelectScreen()) drawMapSelectScreen(graphics2D);
-    if (isCOselectScreen()) drawCOSelectScreen(graphics2D);
-    if (isOptionsScreen()) drawOptionsScreen(graphics2D);
-    if (isChooseNewGameTypeScreen()) drawNewLoadScreen(graphics2D);
-    if (isSideSelect()) drawSideSelectScreen(graphics2D);
-    if (isBattleOptionsScreen()) drawBattleOptionsScreen(graphics2D);
-    if (isKeyMappingScreen()) drawKeymapScreen(graphics2D);
-    if (isSnailInfoScreen()) drawServerInfoScreen(graphics2D);
+    if (sess.isTitleScreen()) drawTitleScreen(graphics2D, sess.getCurrentlyHighlightedItem());
+    if (sess.isMapSelectScreen()) drawMapSelectScreen(graphics2D);
+    if (sess.isCOselectScreen()) drawCOSelectScreen(graphics2D);
+    if (sess.isOptionsScreen()) drawOptionsScreen(graphics2D);
+    if (sess.isChooseNewGameTypeScreen()) drawNewLoadScreen(graphics2D);
+    if (sess.isSideSelect()) drawSideSelectScreen(graphics2D);
+    if (sess.isBattleOptionsScreen()) drawBattleOptionsScreen(graphics2D);
+    if (sess.isKeyMappingScreen()) drawKeymapScreen(graphics2D);
+    if (sess.isSnailInfoScreen()) drawServerInfoScreen(graphics2D);
 
     //causes problems with animated gifs
     this.repaint();
@@ -260,7 +215,7 @@ public class MainMenu extends JComponent {
     graphic2D.setColor(MainMenuGraphics.getH1Color());
     graphic2D.setFont(MainMenuGraphics.getH1Font());
 
-    graphic2D.drawString(mapCategories[getCurrentMapCategory()], MainMenuGraphics.MAPSELECT_CATEGORY_X, MainMenuGraphics.MAPSELECT_CATEGORY_Y);
+    graphic2D.drawString(mapCategories[sess.getCurrentlySelectedMapCategory()], MainMenuGraphics.MAPSELECT_CATEGORY_X, MainMenuGraphics.MAPSELECT_CATEGORY_Y);
 
     for (int item = 0; item < NUM_VISIBLE_ROWS; item++){
       if (isMapVisible(item)) {
@@ -271,15 +226,15 @@ public class MainMenu extends JComponent {
     }
     
     graphic2D.setColor(Color.red);
-    graphic2D.drawRect(10, 50 + eventListener.getCurrentlyHighlightedItem() * 21, 148, 19);
+    graphic2D.drawRect(10, 50 + sess.getCurrentlyHighlightedItem() * 21, 148, 19);
 
     if (filteredMaps.size() != 0) {
       graphic2D.setColor(Color.black);
-      graphic2D.drawString(getMap(eventListener.getCurrentlyHighlightedItem()).getName(), 180, 60);
+      graphic2D.drawString(getMap(sess.getCurrentlyHighlightedItem()).getName(), 180, 60);
       graphic2D.setFont(MainMenuGraphics.getH1Font());
-      graphic2D.drawString("Mapmaker: " + getMap(eventListener.getCurrentlyHighlightedItem()).getName(), 180, 245);
+      graphic2D.drawString("Mapmaker: " + getMap(sess.getCurrentlyHighlightedItem()).getName(), 180, 245);
       graphic2D.setFont(DEFAULT_FONT);
-      graphic2D.drawString(getMap(eventListener.getCurrentlyHighlightedItem()).getDescription(), 180, 265);
+      graphic2D.drawString(getMap(sess.getCurrentlyHighlightedItem()).getDescription(), 180, 265);
     }
 
     graphic2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.85f));
@@ -288,24 +243,24 @@ public class MainMenu extends JComponent {
     graphic2D.setColor(Color.WHITE);
     graphic2D.setFont(MainMenuGraphics.getH1Font());
     graphic2D.drawImage(TerrainGraphics.getColoredSheet(0), 205 + 16, 284, 221 + 16, 316, 0, TerrType.getYIndex(TerrType.CITY), 16, TerrType.getYIndex(TerrType.CITY) + 32, eventListener);
-    graphic2D.drawString("" + ptypes[0], 205, 300);
+    graphic2D.drawString("" + sess.getPropertyTypesOnSelectedMap()[0], 205, 300);
     graphic2D.drawImage(TerrainGraphics.getColoredSheet(0), 247 + 16, 284, 263 + 16, 316, 0, TerrType.getYIndex(TerrType.BASE), 16, TerrType.getYIndex(TerrType.BASE) + 32, eventListener);
-    graphic2D.drawString("" + ptypes[1], 247, 300);
+    graphic2D.drawString("" + sess.getPropertyTypesOnSelectedMap()[1], 247, 300);
     graphic2D.drawImage(TerrainGraphics.getColoredSheet(0), 289 + 16, 284, 305 + 16, 316, 0, TerrType.getYIndex(TerrType.PORT), 16, TerrType.getYIndex(TerrType.PORT) + 32, eventListener);
-    graphic2D.drawString("" + ptypes[2], 289, 300);
+    graphic2D.drawString("" + sess.getPropertyTypesOnSelectedMap()[2], 289, 300);
     graphic2D.drawImage(TerrainGraphics.getColoredSheet(0), 331 + 16, 284, 347 + 16, 316, 0, TerrType.getYIndex(TerrType.AIRPORT), 16, TerrType.getYIndex(TerrType.AIRPORT) + 32, eventListener);
-    graphic2D.drawString("" + ptypes[3], 331, 300);
+    graphic2D.drawString("" + sess.getPropertyTypesOnSelectedMap()[3], 331, 300);
     graphic2D.drawImage(TerrainGraphics.getColoredSheet(0), 373 + 16, 284, 389 + 16, 316, 0, TerrType.getYIndex(TerrType.COM_TOWER), 16, TerrType.getYIndex(TerrType.COM_TOWER) + 32, eventListener);
-    graphic2D.drawString("" + ptypes[4], 373, 300);
+    graphic2D.drawString("" + sess.getPropertyTypesOnSelectedMap()[4], 373, 300);
     graphic2D.drawImage(TerrainGraphics.getColoredSheet(0), 415 + 16, 284, 431 + 16, 316, 0, TerrType.getYIndex(TerrType.PIPE_STATION), 16, TerrType.getYIndex(TerrType.PIPE_STATION) + 32, eventListener);
-    graphic2D.drawString("" + ptypes[5], 415, 300);
+    graphic2D.drawString("" + sess.getPropertyTypesOnSelectedMap()[5], 415, 300);
 
     graphic2D.setColor(new Color(7, 66, 97));
     graphic2D.fillRoundRect(180, 5, 280, 40, 20, 20);
     graphic2D.setColor(Color.white);
     graphic2D.setFont(MainMenuGraphics.getH1Font());
 
-	switch(getCurrentlySelectedSubCategory()){
+	switch(sess.getCurrentlySelectedSubCategory()){
 	    case 0:	MainMenuGraphics.drawCategories_allSelected(graphic2D);
 	    		break;
 	    case 1:	MainMenuGraphics.drawCategories_2playerSelected(graphic2D);
@@ -371,38 +326,38 @@ public class MainMenu extends JComponent {
   }
 
   public void drawCOSelectScreen(Graphics2D g) {
-    backGlide++;
-    if (backGlide > 640 * 2) {
-      backGlide = 0;
+    sess.setBackGlide(sess.getBackGlide() + 1);
+    if (sess.getBackGlide() > 640 * 2) {
+      sess.setBackGlide(0);
     }
-    g.drawImage(MiscGraphics.getIntelBackground(), 0, -backGlide / 2, this);
-    g.drawImage(MiscGraphics.getIntelBackground(), 0, 640 - backGlide / 2, this);
+    g.drawImage(MiscGraphics.getIntelBackground(), 0, -sess.getBackGlide() / 2, this);
+    g.drawImage(MiscGraphics.getIntelBackground(), 0, 640 - sess.getBackGlide() / 2, this);
 
     int offset = 0;
-    if (altcostume) offset = 225;
+    if (sess.isAltcostume()) offset = 225;
     int offset2 = 0;
-    if (mainaltcostume) offset2 = 225;
+    if (sess.isMainaltcostume()) offset2 = 225;
 
     //Layout
-    g.drawImage(MainMenuGraphics.getCOLayout(selectedArmy), 0, 52, this);
+    g.drawImage(MainMenuGraphics.getCOLayout(sess.getSelectedArmyAllegiance()), 0, 52, this);
     g.drawImage(MainMenuGraphics.getCOBanner(), 0, 1, this);
     for (int i = 0; i < 8; i++) {
-      if (i == selectedArmy) g.drawImage(MainMenuGraphics.getArmyTag(i), 3 + i * 19, 0, this);
+      if (i == sess.getSelectedArmyAllegiance()) g.drawImage(MainMenuGraphics.getArmyTag(i), 3 + i * 19, 0, this);
       else g.drawImage(MainMenuGraphics.getArmyTag(i), 3 + i * 19, -12, this);
     }
-    g.drawImage(MainMenuGraphics.getHQBG(), 2, 61, 2 + 156, 61 + 279, 244 * selectedArmy, 0, 244 * selectedArmy + 244, 279, this);
+    g.drawImage(MainMenuGraphics.getHQBG(), 2, 61, 2 + 156, 61 + 279, 244 * sess.getSelectedArmyAllegiance(), 0, 244 * sess.getSelectedArmyAllegiance() + 244, 279, this);
 
     //Draw CO framework
     for (int j = 0; j < 5; j++) {
       for (int i = 0; i < 3; i++) {
-        g.drawImage(MainMenuGraphics.getCOSlot(selectedArmy), 2 + i * 52, 61 + j * 52, this);
+        g.drawImage(MainMenuGraphics.getCOSlot(sess.getSelectedArmyAllegiance()), 2 + i * 52, 61 + j * 52, this);
       }
     }
     g.drawImage(MainMenuGraphics.getNoCO(), 2, 61, this);
 
     //Draw COs
     for (int i = 1; i < 15; i++) {
-      CO current = armyArray[selectedArmy][i - 1];
+      CO current = armyArray[sess.getSelectedArmyAllegiance()][i - 1];
       if (current != null) {
 
         g.drawImage(MiscGraphics.getCOSheet(COList.getIndex(current)), 2 + i % 3 * 52, 61 + i / 3 * 52, 2 + i % 3 * 52 + 48, 61 + i / 3 * 52 + 48, offset, 350, 48 + offset, 398, this);
@@ -412,26 +367,26 @@ public class MainMenu extends JComponent {
     }
 
     //Draw Cursor
-    if (numCOs % 2 == 0) g.setColor(Color.RED);
+    if (sess.getNumCOs() % 2 == 0) g.setColor(Color.RED);
     else g.setColor(Color.BLUE);
-    g.drawRect(2 + cx * 52, 61 + cy * 52, 48, 48);
+    g.drawRect(2 + sess.getCurrentCursorXposition() * 52, 61 + sess.getCurrentCursorYposition() * 52, 48, 48);
 
     //Draw first CO if selecting second CO
-    if (numCOs % 2 == 1) {
-      g.drawImage(MiscGraphics.getCOSheet(coSelections[numCOs - 1]), 166, 210, 166 + 32, 210 + 12, 144 + offset2, 350, 144 + offset2 + 32, 350 + 12, this);
-      g.drawImage(MainMenuGraphics.getCOName(), 199, 210, 199 + 50, 210 + 15, 0, (coSelections[numCOs - 1]) * 15, 50, (coSelections[numCOs - 1]) * 15 + 15, this);
+    if (sess.getNumCOs() % 2 == 1) {
+      g.drawImage(MiscGraphics.getCOSheet(sess.getCoSelections()[sess.getNumCOs() - 1]), 166, 210, 166 + 32, 210 + 12, 144 + offset2, 350, 144 + offset2 + 32, 350 + 12, this);
+      g.drawImage(MainMenuGraphics.getCOName(), 199, 210, 199 + 50, 210 + 15, 0, (sess.getCoSelections()[sess.getNumCOs() - 1]) * 15, 50, (sess.getCoSelections()[sess.getNumCOs() - 1]) * 15 + 15, this);
     }
 
     //Draw current CO Info
     CO current = null;
 
-    if (cx + cy * 3 - 1 > -1) current = armyArray[selectedArmy][cx + cy * 3 - 1];
+    if (sess.getCurrentCursorXposition() + sess.getCurrentCursorYposition() * 3 - 1 > -1) current = armyArray[sess.getSelectedArmyAllegiance()][sess.getCurrentCursorXposition() + sess.getCurrentCursorYposition() * 3 - 1];
 
     if (current != null) {
-      glide++;
-      g.drawImage(MiscGraphics.getCOSheet(COList.getIndex(current)), 339 + (int) (100 * Math.pow(0.89, glide)), 44, 339 + 225 + (int) (100 * Math.pow(0.89, glide)), 44 + 350, offset, 0, offset + 225, 350, this);
+      sess.setGlide(sess.getGlide() + 1);
+      g.drawImage(MiscGraphics.getCOSheet(COList.getIndex(current)), 339 + (int) (100 * Math.pow(0.89, sess.getGlide())), 44, 339 + 225 + (int) (100 * Math.pow(0.89, sess.getGlide())), 44 + 350, offset, 0, offset + 225, 350, this);
       g.drawImage(MainMenuGraphics.getCOName(), 170, 70, 170 + 50, 70 + 15, 0, current.getId() * 15, 50, current.getId() * 15 + 15, this);
-      if (numCOs % 2 == 1) {
+      if (sess.getNumCOs() % 2 == 1) {
         g.drawImage(MiscGraphics.getCOSheet(COList.getIndex(current)), 166, 226, 166 + 32, 226 + 12, 144 + offset, 350, 144 + offset + 32, 350 + 12, this);
         g.drawImage(MainMenuGraphics.getCOName(), 199, 226, 199 + 50, 226 + 15, 0, current.getId() * 15, 50, current.getId() * 15 + 15, this);
       } else {
@@ -440,10 +395,10 @@ public class MainMenu extends JComponent {
       }
     }
 
-    if (numCOs / 2 < 9)
-      g.drawImage(MainMenuGraphics.getPlayerNumber(selectedArmy), 293, 195, 293 + 15, 195 + 10, numCOs / 2 * 15, 0, numCOs / 2 * 15 + 15, 10, this);
+    if (sess.getNumCOs() / 2 < 9)
+      g.drawImage(MainMenuGraphics.getPlayerNumber(sess.getSelectedArmyAllegiance()), 293, 195, 293 + 15, 195 + 10, sess.getNumCOs() / 2 * 15, 0, sess.getNumCOs() / 2 * 15 + 15, 10, this);
     else
-      g.drawImage(MainMenuGraphics.getPlayerNumber(selectedArmy), 293, 195, 293 + 30, 195 + 10, numCOs / 2 * 15, 0, numCOs / 2 * 15 + 30, 10, this);
+      g.drawImage(MainMenuGraphics.getPlayerNumber(sess.getSelectedArmyAllegiance()), 293, 195, 293 + 30, 195 + 10, sess.getNumCOs() / 2 * 15, 0, sess.getNumCOs() / 2 * 15 + 30, 10, this);
 
     g.setColor(Color.black);
     g.setFont(DEFAULT_FONT);
@@ -476,7 +431,7 @@ public class MainMenu extends JComponent {
   public void drawOptionsScreen(Graphics2D g) {
     g.setColor(Color.black);
     g.setFont(MainMenuGraphics.getH1Font());
-    if (getCurrentlyHighlightedItem() == 0) g.setColor(Color.red);
+    if (sess.getCurrentlyHighlightedItem() == 0) g.setColor(Color.red);
     g.drawString("Music", 10, 20);
     g.setColor(Color.black);
     if (Options.isMusicOn())
@@ -484,11 +439,11 @@ public class MainMenu extends JComponent {
     else
       g.drawString("Off", 80, 20);
 
-    if (getCurrentlyHighlightedItem() == 1) g.setColor(Color.red);
+    if (sess.getCurrentlyHighlightedItem() == 1) g.setColor(Color.red);
     g.drawString("Random Numbers", 10, 40);
     g.setColor(Color.black);
 
-    if (getCurrentlyHighlightedItem() == 2) g.setColor(Color.red);
+    if (sess.getCurrentlyHighlightedItem() == 2) g.setColor(Color.red);
     g.drawString("Balance Mode", 10, 60);
     g.setColor(Color.black);
     if (Options.isBalance())
@@ -496,12 +451,12 @@ public class MainMenu extends JComponent {
     else
       g.drawString("Off", 120, 60);
 
-    if (getCurrentlyHighlightedItem() == 3) g.setColor(Color.red);
+    if (sess.getCurrentlyHighlightedItem() == 3) g.setColor(Color.red);
     g.drawString("Set IP", 10, 80);
     g.setColor(Color.black);
     g.drawString(Options.getDisplayIP(), 60, 80);
 
-    if (getCurrentlyHighlightedItem() == 4) g.setColor(Color.red);
+    if (sess.getCurrentlyHighlightedItem() == 4) g.setColor(Color.red);
     g.drawString("Autosave", 10, 100);
     g.setColor(Color.black);
     if (Options.isAutosaveOn())
@@ -509,7 +464,7 @@ public class MainMenu extends JComponent {
     else
       g.drawString("Off", 120, 100);
 
-    if (getCurrentlyHighlightedItem() == 5) g.setColor(Color.red);
+    if (sess.getCurrentlyHighlightedItem() == 5) g.setColor(Color.red);
     g.drawString("Record Replay", 10, 120);
     g.setColor(Color.black);
     if (Options.isRecording())
@@ -517,26 +472,26 @@ public class MainMenu extends JComponent {
     else
       g.drawString("Off", 130, 120);
 
-    if (getCurrentlyHighlightedItem() == 6) g.setColor(Color.red);
+    if (sess.getCurrentlyHighlightedItem() == 6) g.setColor(Color.red);
     g.drawString("Cursor", 10, 140);
     g.setColor(Color.black);
     g.drawImage(MiscGraphics.getCursor(), 70, 120, this);
 
-    if (getCurrentlyHighlightedItem() == 7) g.setColor(Color.red);
+    if (sess.getCurrentlyHighlightedItem() == 7) g.setColor(Color.red);
     g.drawString("Remap Keys", 10, 160);
     g.setColor(Color.black);
 
-    if (getCurrentlyHighlightedItem() == 8) g.setColor(Color.red);
+    if (sess.getCurrentlyHighlightedItem() == 8) g.setColor(Color.red);
     String bbi = "On";
     if (!Options.battleBackground) bbi = "Off";
     g.drawString("Battle Background Image " + bbi, 10, 180);
     g.setColor(Color.black);
 
-    if (getCurrentlyHighlightedItem() == 9) g.setColor(Color.red);
+    if (sess.getCurrentlyHighlightedItem() == 9) g.setColor(Color.red);
     g.drawString("Snail Mode Server: " + Options.getServerName(), 10, 200);
     g.setColor(Color.black);
 
-    if (getCurrentlyHighlightedItem() == 10) g.setColor(Color.red);
+    if (sess.getCurrentlyHighlightedItem() == 10) g.setColor(Color.red);
     String bans = "";
     if (Options.getDefaultBans() == 0) {
       bans = "CW";
@@ -553,11 +508,11 @@ public class MainMenu extends JComponent {
     }
     g.drawString("Default Bans: " + bans, 10, 220);
     g.setColor(Color.black);
-    if (getCurrentlyHighlightedItem() == 11) g.setColor(Color.red);
+    if (sess.getCurrentlyHighlightedItem() == 11) g.setColor(Color.red);
     g.drawString("Main Screen CO: " + COList.getListing()[Options.getMainCOID()].getName(), 10, 240);
     g.setColor(Color.black);
 
-    if (getCurrentlyHighlightedItem() == 12) g.setColor(Color.red);
+    if (sess.getCurrentlyHighlightedItem() == 12) g.setColor(Color.red);
     g.drawString("Sound Effects: ", 10, 260);
     if (SFX.getMute())
       g.drawString("Off", 130, 260);
@@ -565,7 +520,7 @@ public class MainMenu extends JComponent {
       g.drawString("On", 130, 260);
     g.setColor(Color.black);
     //Shows current terrain tileset
-    if (getCurrentlyHighlightedItem() == 13) g.setColor(Color.red);
+    if (sess.getCurrentlyHighlightedItem() == 13) g.setColor(Color.red);
     g.drawString("Terrain Tileset: ", 10, 280);
     if (Options.getSelectedTerrain() == 0)
       g.drawString("CW", 220, 280);
@@ -576,7 +531,7 @@ public class MainMenu extends JComponent {
     g.setColor(Color.black);
 
     //Shows current Urban tileset
-    if (getCurrentlyHighlightedItem() == 14) g.setColor(Color.red);
+    if (sess.getCurrentlyHighlightedItem() == 14) g.setColor(Color.red);
     g.drawString("Urban Tileset: ", 10, 300);
     if (Options.getSelectedUrban() == 0)
       g.drawString("CW", 220, 300);
@@ -588,7 +543,7 @@ public class MainMenu extends JComponent {
 
     //Shows current HQ tileset
     //Shows current Urban tileset
-    if (getCurrentlyHighlightedItem() == 15) g.setColor(Color.red);
+    if (sess.getCurrentlyHighlightedItem() == 15) g.setColor(Color.red);
     g.drawString("HQ Tileset: ", 10, 320);
     if (Options.getSelectedHQ() == 0)
       g.drawString("CW", 220, 320);
@@ -597,18 +552,18 @@ public class MainMenu extends JComponent {
     else if (Options.getSelectedHQ() == 2)
       g.drawString(Options.getCustomHQString(), 220, 320);
     g.setColor(Color.black);
-    if (getCurrentlyHighlightedItem() == 16) g.setColor(Color.red);
+    if (sess.getCurrentlyHighlightedItem() == 16) g.setColor(Color.red);
     g.drawString("Use Default Login Info: ", 220, 20);
     if (Options.isDefaultLoginOn())
       g.drawString("On", 400, 20);
     else
       g.drawString("Off", 400, 20);
     g.setColor(Color.black);
-    if (getCurrentlyHighlightedItem() == 17) g.setColor(Color.red);
+    if (sess.getCurrentlyHighlightedItem() == 17) g.setColor(Color.red);
     g.drawString("Default Username/Password:", 220, 40);
     g.drawString(Options.getDefaultUsername() + " / " + Options.getDefaultPassword(), 220, 60);
     g.setColor(Color.black);
-    if (getCurrentlyHighlightedItem() == 18) g.setColor(Color.red);
+    if (sess.getCurrentlyHighlightedItem() == 18) g.setColor(Color.red);
     g.drawString("AutoRefresh:", 220, 80);
     if (Options.getRefresh())
       g.drawString("On", 350, 80);
@@ -624,13 +579,13 @@ public class MainMenu extends JComponent {
     //Visibility
     g.setColor(Color.black);
     g.setFont(MainMenuGraphics.getH1Font());
-    if (getCurrentlyHighlightedItem() == 0) g.setColor(Color.red);
+    if (sess.getCurrentlyHighlightedItem() == 0) g.setColor(Color.red);
     g.drawString("Visibility", 10, textCol);
     g.setColor(Color.black);
 
-    if (visibility == 0)
+    if (sess.getVisibility() == 0)
       g.drawString("Full", 120, textCol);
-    else if (visibility == 1)
+    else if (sess.getVisibility() == 1)
       g.drawString("Fog of War", 120, textCol);
     else
       g.drawString("Mist of War", 120, textCol);
@@ -638,65 +593,65 @@ public class MainMenu extends JComponent {
     textCol += 20;
 
     //Weather
-    if (getCurrentlyHighlightedItem() == 1) g.setColor(Color.red);
+    if (sess.getCurrentlyHighlightedItem() == 1) g.setColor(Color.red);
     g.drawString("Weather", 10, textCol);
     g.setColor(Color.black);
-    if (bopt.getWeatherType() == 0)
+    if (sess.getBopt().getWeatherType() == 0)
       g.drawString("Clear", 120, textCol);
-    else if (bopt.getWeatherType() == 1)
+    else if (sess.getBopt().getWeatherType() == 1)
       g.drawString("Rain", 120, textCol);
-    else if (bopt.getWeatherType() == 2)
+    else if (sess.getBopt().getWeatherType() == 2)
       g.drawString("Snow", 120, textCol);
-    else if (bopt.getWeatherType() == 3)
+    else if (sess.getBopt().getWeatherType() == 3)
       g.drawString("Sandstorm", 120, textCol);
-    else if (bopt.getWeatherType() == 4)
+    else if (sess.getBopt().getWeatherType() == 4)
       g.drawString("Random", 120, textCol);
 
     textCol += 20;
 
     //Funds
-    if (getCurrentlyHighlightedItem() == 2) g.setColor(Color.red);
+    if (sess.getCurrentlyHighlightedItem() == 2) g.setColor(Color.red);
     g.drawString("Funds", 10, textCol);
     g.setColor(Color.black);
-    g.drawString(bopt.getFundsLevel() + "", 120, textCol);
+    g.drawString(sess.getBopt().getFundsLevel() + "", 120, textCol);
 
     textCol += 20;
 
     //Starting Funds
-    if (getCurrentlyHighlightedItem() == 3) g.setColor(Color.red);
+    if (sess.getCurrentlyHighlightedItem() == 3) g.setColor(Color.red);
     g.drawString("Start Funds", 10, textCol);
     g.setColor(Color.black);
-    g.drawString(bopt.getStartFunds() + "", 120, textCol);
+    g.drawString(sess.getBopt().getStartFunds() + "", 120, textCol);
 
     textCol += 20;
 
     //Turn Limit
-    if (getCurrentlyHighlightedItem() == 4) g.setColor(Color.red);
+    if (sess.getCurrentlyHighlightedItem() == 4) g.setColor(Color.red);
     g.drawString("Turn Limit", 10, textCol);
     g.setColor(Color.black);
-    if (bopt.getTurnLimit() > 0)
-      g.drawString(bopt.getTurnLimit() + "", 120, textCol);
+    if (sess.getBopt().getTurnLimit() > 0)
+      g.drawString(sess.getBopt().getTurnLimit() + "", 120, textCol);
     else
       g.drawString("Off", 120, textCol);
 
     textCol += 20;
 
     //Cap Limit
-    if (getCurrentlyHighlightedItem() == 5) g.setColor(Color.red);
+    if (sess.getCurrentlyHighlightedItem() == 5) g.setColor(Color.red);
     g.drawString("Capture Limit", 10, textCol);
     g.setColor(Color.black);
-    if (bopt.getCapLimit() > 0)
-      g.drawString(bopt.getCapLimit() + "", 120, textCol);
+    if (sess.getBopt().getCapLimit() > 0)
+      g.drawString(sess.getBopt().getCapLimit() + "", 120, textCol);
     else
       g.drawString("Off", 120, textCol);
 
     textCol += 20;
 
     //CO Powers
-    if (getCurrentlyHighlightedItem() == 6) g.setColor(Color.red);
+    if (sess.getCurrentlyHighlightedItem() == 6) g.setColor(Color.red);
     g.drawString("CO Powers", 10, textCol);
     g.setColor(Color.black);
-    if (bopt.isCOP())
+    if (sess.getBopt().isCOP())
       g.drawString("On", 120, textCol);
     else
       g.drawString("Off", 120, textCol);
@@ -704,10 +659,10 @@ public class MainMenu extends JComponent {
     textCol += 20;
 
     //Balance Mode
-    if (getCurrentlyHighlightedItem() == 7) g.setColor(Color.red);
+    if (sess.getCurrentlyHighlightedItem() == 7) g.setColor(Color.red);
     g.drawString("Balance Mode", 10, textCol);
     g.setColor(Color.black);
-    if (bopt.isBalance())
+    if (sess.getBopt().isBalance())
       g.drawString("On", 120, textCol);
     else
       g.drawString("Off", 120, textCol);
@@ -715,10 +670,10 @@ public class MainMenu extends JComponent {
     textCol += 20;
 
     //Record Replay?
-    if (getCurrentlyHighlightedItem() == 8) g.setColor(Color.red);
+    if (sess.getCurrentlyHighlightedItem() == 8) g.setColor(Color.red);
     g.drawString("Record Replay", 10, textCol);
     g.setColor(Color.black);
-    if (bopt.isRecording())
+    if (sess.getBopt().isRecording())
       g.drawString("On", 130, textCol);
     else
       g.drawString("Off", 130, textCol);
@@ -731,7 +686,7 @@ public class MainMenu extends JComponent {
     Image usheet = UnitGraphics.getUnitImage(2, 0);
     for (int i = 0; i < 2; i++) {
       g.drawImage(isheet, 10 + i * 16, textCol - 16, 26 + i * 16, textCol, 0, UnitGraphics.findYPosition(i, 0), 16, UnitGraphics.findYPosition(i, 0) + 16, this);
-      if (bopt.isUnitBanned(i)) {
+      if (sess.getBopt().isUnitBanned(i)) {
         g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f));
         g.fillRect(10 + i * 16, textCol - 16, 16, 16);
         g.setComposite(AlphaComposite.SrcOver);
@@ -740,63 +695,63 @@ public class MainMenu extends JComponent {
     for (int i = 2; i < BaseDMG.NUM_UNITS; i++) {
       if (i < BaseDMG.NUM_UNITS / 2) {
         g.drawImage(usheet, 10 + i * 16, textCol - 16, 26 + i * 16, textCol, 0, UnitGraphics.findYPosition(i, 0), 16, UnitGraphics.findYPosition(i, 0) + 16, this);
-        if (bopt.isUnitBanned(i)) {
+        if (sess.getBopt().isUnitBanned(i)) {
           g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f));
           g.fillRect(10 + i * 16, textCol - 16, 16, 16);
           g.setComposite(AlphaComposite.SrcOver);
         }
       } else {
         g.drawImage(usheet, 10 + (i - BaseDMG.NUM_UNITS / 2) * 16, textCol + 4, 26 + (i - BaseDMG.NUM_UNITS / 2) * 16, textCol + 20, 0, UnitGraphics.findYPosition(i, 0), 16, UnitGraphics.findYPosition(i, 0) + 16, this);
-        if (bopt.isUnitBanned(i)) {
+        if (sess.getBopt().isUnitBanned(i)) {
           g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f));
           g.fillRect(10 + (i - BaseDMG.NUM_UNITS / 2) * 16, textCol + 4, 16, 16);
           g.setComposite(AlphaComposite.SrcOver);
         }
       }
     }
-    if (getCurrentlyHighlightedItem() == 9) {
+    if (sess.getCurrentlyHighlightedItem() == 9) {
       g.setColor(Color.red);
       g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f));
-      g.fillRect(10 + (cx % (BaseDMG.NUM_UNITS / 2)) * 16, textCol - 16 + 20 * cy, 16, 16);
+      g.fillRect(10 + (sess.getCurrentCursorXposition() % (BaseDMG.NUM_UNITS / 2)) * 16, textCol - 16 + 20 * sess.getCurrentCursorYposition(), 16, 16);
       g.setComposite(AlphaComposite.SrcOver);
       g.setColor(Color.black);
     }
     textCol += 40;
 
-    if (getCurrentlyHighlightedItem() == 10) g.setColor(Color.red);
+    if (sess.getCurrentlyHighlightedItem() == 10) g.setColor(Color.red);
     g.drawString("Snow Chance", 10, textCol);
     g.setColor(Color.black);
-    g.drawString(String.valueOf(bopt.getSnowChance()) + "%", 165, textCol);
+    g.drawString(String.valueOf(sess.getBopt().getSnowChance()) + "%", 165, textCol);
     textCol += 20;
 
-    if (getCurrentlyHighlightedItem() == 11) g.setColor(Color.red);
+    if (sess.getCurrentlyHighlightedItem() == 11) g.setColor(Color.red);
     g.drawString("Rain Chance", 10, textCol);
     g.setColor(Color.black);
-    g.drawString(String.valueOf(bopt.getRainChance()) + "%", 165, textCol);
+    g.drawString(String.valueOf(sess.getBopt().getRainChance()) + "%", 165, textCol);
     textCol += 20;
 
-    if (getCurrentlyHighlightedItem() == 12) g.setColor(Color.red);
+    if (sess.getCurrentlyHighlightedItem() == 12) g.setColor(Color.red);
     g.drawString("Sandstorm Chance", 10, textCol);
     g.setColor(Color.black);
-    g.drawString(String.valueOf(bopt.getSandChance()) + "%", 165, textCol);
+    g.drawString(String.valueOf(sess.getBopt().getSandChance()) + "%", 165, textCol);
     textCol -= 40;
 
-    if (getCurrentlyHighlightedItem() == 13) g.setColor(Color.red);
+    if (sess.getCurrentlyHighlightedItem() == 13) g.setColor(Color.red);
     g.drawString("Min Weather Duration", 210, textCol);
     g.setColor(Color.black);
-    g.drawString(String.valueOf(bopt.getMinWTime()) + " Days", 380, textCol);
+    g.drawString(String.valueOf(sess.getBopt().getMinWTime()) + " Days", 380, textCol);
     textCol += 20;
 
-    if (getCurrentlyHighlightedItem() == 14) g.setColor(Color.red);
+    if (sess.getCurrentlyHighlightedItem() == 14) g.setColor(Color.red);
     g.drawString("Max Weather Duration", 210, textCol);
     g.setColor(Color.black);
-    g.drawString(String.valueOf(bopt.getMaxWTime()) + " Days", 380, textCol);
+    g.drawString(String.valueOf(sess.getBopt().getMaxWTime()) + " Days", 380, textCol);
     textCol += 20;
 
-    if (getCurrentlyHighlightedItem() == 15) g.setColor(Color.red);
+    if (sess.getCurrentlyHighlightedItem() == 15) g.setColor(Color.red);
     g.drawString("Weather Start", 210, textCol);
     g.setColor(Color.black);
-    g.drawString("Day: " + String.valueOf(bopt.getMinWDay()), 380, textCol);
+    g.drawString("Day: " + String.valueOf(sess.getBopt().getMinWDay()), 380, textCol);
     textCol += 20;
   }
 
@@ -804,78 +759,78 @@ public class MainMenu extends JComponent {
     g.setColor(Color.black);
     g.setFont(new Font("SansSerif", Font.BOLD, 12));
 
-    if (getCurrentlyHighlightedItem() == 0) g.setColor(Color.red);
+    if (sess.getCurrentlyHighlightedItem() == 0) g.setColor(Color.red);
 
     g.drawString("Up-" + KeyEvent.getKeyText(Options.up), 10, 14);
     g.setColor(Color.black);
 
-    if (getCurrentlyHighlightedItem() == 1) g.setColor(Color.red);
+    if (sess.getCurrentlyHighlightedItem() == 1) g.setColor(Color.red);
     g.drawString("Down-" + KeyEvent.getKeyText(Options.down), 10, 28);
     g.setColor(Color.black);
 
-    if (getCurrentlyHighlightedItem() == 2) g.setColor(Color.red);
+    if (sess.getCurrentlyHighlightedItem() == 2) g.setColor(Color.red);
     g.drawString("Left-" + KeyEvent.getKeyText(Options.left), 10, 42);
     g.setColor(Color.black);
 
-    if (getCurrentlyHighlightedItem() == 3) g.setColor(Color.red);
+    if (sess.getCurrentlyHighlightedItem() == 3) g.setColor(Color.red);
     g.drawString("Right-" + KeyEvent.getKeyText(Options.right), 10, 56);
     g.setColor(Color.black);
 
-    if (getCurrentlyHighlightedItem() == 4) g.setColor(Color.red);
+    if (sess.getCurrentlyHighlightedItem() == 4) g.setColor(Color.red);
     g.drawString("A Button-" + KeyEvent.getKeyText(Options.akey), 10, 70);
     g.setColor(Color.black);
 
-    if (getCurrentlyHighlightedItem() == 5) g.setColor(Color.red);
+    if (sess.getCurrentlyHighlightedItem() == 5) g.setColor(Color.red);
     g.drawString("B Button-" + KeyEvent.getKeyText(Options.bkey), 10, 84);
     g.setColor(Color.black);
 
-    if (getCurrentlyHighlightedItem() == 6) g.setColor(Color.red);
+    if (sess.getCurrentlyHighlightedItem() == 6) g.setColor(Color.red);
     g.drawString("Page Up-" + KeyEvent.getKeyText(Options.pgup), 10, 98);
     g.setColor(Color.black);
 
-    if (getCurrentlyHighlightedItem() == 7) g.setColor(Color.red);
+    if (sess.getCurrentlyHighlightedItem() == 7) g.setColor(Color.red);
     g.drawString("Page Down-" + KeyEvent.getKeyText(Options.pgdn), 10, 112);
     g.setColor(Color.black);
 
-    if (getCurrentlyHighlightedItem() == 8) g.setColor(Color.red);
+    if (sess.getCurrentlyHighlightedItem() == 8) g.setColor(Color.red);
     g.drawString("<-" + KeyEvent.getKeyText(Options.altleft), 10, 126);
     g.setColor(Color.black);
 
-    if (getCurrentlyHighlightedItem() == 9) g.setColor(Color.red);
+    if (sess.getCurrentlyHighlightedItem() == 9) g.setColor(Color.red);
     g.drawString(">-" + KeyEvent.getKeyText(Options.altright), 10, 140);
     g.setColor(Color.black);
 
-    if (getCurrentlyHighlightedItem() == 10) g.setColor(Color.red);
+    if (sess.getCurrentlyHighlightedItem() == 10) g.setColor(Color.red);
     g.drawString("Menu-" + KeyEvent.getKeyText(Options.menu), 10, 154);
     g.setColor(Color.black);
 
-    if (getCurrentlyHighlightedItem() == 11) g.setColor(Color.red);
+    if (sess.getCurrentlyHighlightedItem() == 11) g.setColor(Color.red);
     g.drawString("Minimap-" + KeyEvent.getKeyText(Options.minimap), 10, 168);
     g.setColor(Color.black);
 
-    if (getCurrentlyHighlightedItem() == 12) g.setColor(Color.red);
+    if (sess.getCurrentlyHighlightedItem() == 12) g.setColor(Color.red);
     g.drawString("Constant Mode-" + KeyEvent.getKeyText(Options.constmode), 10, 182);
     g.setColor(Color.black);
 
     //SECOND ROW
 
-    if (getCurrentlyHighlightedItem() == 13) g.setColor(Color.red);
+    if (sess.getCurrentlyHighlightedItem() == 13) g.setColor(Color.red);
     g.drawString("Delete Unit-" + KeyEvent.getKeyText(Options.delete), 130, 14);
     g.setColor(Color.black);
 
-    if (getCurrentlyHighlightedItem() == 14) g.setColor(Color.red);
+    if (sess.getCurrentlyHighlightedItem() == 14) g.setColor(Color.red);
     g.drawString("Terrain Menu-" + KeyEvent.getKeyText(Options.tkey), 130, 28);
     g.setColor(Color.black);
 
-    if (getCurrentlyHighlightedItem() == 15) g.setColor(Color.red);
+    if (sess.getCurrentlyHighlightedItem() == 15) g.setColor(Color.red);
     g.drawString("Side Menu-" + KeyEvent.getKeyText(Options.skey), 130, 42);
     g.setColor(Color.black);
 
-    if (getCurrentlyHighlightedItem() == 16) g.setColor(Color.red);
+    if (sess.getCurrentlyHighlightedItem() == 16) g.setColor(Color.red);
     g.drawString("Unit Menu-" + KeyEvent.getKeyText(Options.ukey), 130, 56);
     g.setColor(Color.black);
 
-    if (getCurrentlyHighlightedItem() == 17) g.setColor(Color.red);
+    if (sess.getCurrentlyHighlightedItem() == 17) g.setColor(Color.red);
     g.drawString("Next Unit-" + KeyEvent.getKeyText(Options.nextunit), 130, 70);
     g.setColor(Color.black);
 
@@ -889,41 +844,41 @@ public class MainMenu extends JComponent {
     int offset = 0;
     g.setColor(Color.black);
     g.setFont(new Font("SansSerif", Font.BOLD, 24));
-    if (getCurrentlyHighlightedItem() == 0) g.setColor(Color.red);
+    if (sess.getCurrentlyHighlightedItem() == 0) g.setColor(Color.red);
     g.drawString("New", 15, 30);
     g.setColor(Color.black);
 
-    if (getCurrentlyHighlightedItem() == 1) g.setColor(Color.red);
+    if (sess.getCurrentlyHighlightedItem() == 1) g.setColor(Color.red);
     g.drawString("Load", 15, 54);
     g.setColor(Color.black);
 
-    if (getCurrentlyHighlightedItem() == 2) g.setColor(Color.red);
+    if (sess.getCurrentlyHighlightedItem() == 2) g.setColor(Color.red);
     g.drawString("Network Game", 15, 78);
     g.setColor(Color.black);
 
-    if (getCurrentlyHighlightedItem() == 3) g.setColor(Color.red);
+    if (sess.getCurrentlyHighlightedItem() == 3) g.setColor(Color.red);
     g.drawString("Load Replay", 15, 102);
     g.setColor(Color.black);
 
-    if (getCurrentlyHighlightedItem() == 4) g.setColor(Color.red);
+    if (sess.getCurrentlyHighlightedItem() == 4) g.setColor(Color.red);
     g.drawString("Create New Server Game", 15, 126);
     g.setColor(Color.black);
 
-    if (getCurrentlyHighlightedItem() == 5) g.setColor(Color.red);
+    if (sess.getCurrentlyHighlightedItem() == 5) g.setColor(Color.red);
     g.drawString("Join Server Game", 15, 150);
     g.setColor(Color.black);
 
-    if (getCurrentlyHighlightedItem() == 6) g.setColor(Color.red);
+    if (sess.getCurrentlyHighlightedItem() == 6) g.setColor(Color.red);
     g.drawString("Login to Server Game", 15, 174);
     g.setColor(Color.black);
 
-    if (getCurrentlyHighlightedItem() == 7) g.setColor(Color.red);
+    if (sess.getCurrentlyHighlightedItem() == 7) g.setColor(Color.red);
     g.drawString("Open Online Lobby", 15, 198);
     g.setColor(Color.black);
     //Draw CO at the main menu
     //Draw COs
-    glide++;
-    g.drawImage(MainMenuGraphics.getMainMenuCO(Options.getMainCOID()), 329 + (int) (100 * Math.pow(.95, glide)), -5, 329 + 225 + (int) (100 * Math.pow(.95, glide)), -5 + 350, offset, 0, offset + 225, 350, this);
+    sess.setGlide(sess.getGlide() + 1);
+    g.drawImage(MainMenuGraphics.getMainMenuCO(Options.getMainCOID()), 329 + (int) (100 * Math.pow(.95, sess.getGlide())), -5, 329 + 225 + (int) (100 * Math.pow(.95, sess.getGlide())), -5 + 350, offset, 0, offset + 225, 350, this);
 
     //draw description box
     g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.6f));
@@ -933,29 +888,29 @@ public class MainMenu extends JComponent {
     g.setColor(Color.WHITE);
     g.setFont(new Font("Arial", Font.BOLD, 11));
 
-    if (getCurrentlyHighlightedItem() == 0) {
+    if (sess.getCurrentlyHighlightedItem() == 0) {
       g.drawString("Start a new game. This mode is primarily for", 190, 275);
       g.drawString("playing against a friend on the same computer.", 190, 290);
-    } else if (getCurrentlyHighlightedItem() == 1) {
+    } else if (sess.getCurrentlyHighlightedItem() == 1) {
       g.drawString("Continue where you started off from your", 190, 275);
       g.drawString("previous game.", 190, 290);
-    } else if (getCurrentlyHighlightedItem() == 2) {
+    } else if (sess.getCurrentlyHighlightedItem() == 2) {
       g.drawString("Connect via a friend's IP and enjoy an online ", 190, 275);
       g.drawString("hotseat game with him or her! Hamachi is ", 190, 290);
       g.drawString("suggested for the best connectivity results.", 190, 304);
-    } else if (getCurrentlyHighlightedItem() == 3) {
+    } else if (sess.getCurrentlyHighlightedItem() == 3) {
       g.drawString("Already finished a game and feel like reliving ", 190, 275);
       g.drawString("those moments of honour? ", 190, 290);
       g.drawString("Load the replay here!", 190, 304);
-    } else if (getCurrentlyHighlightedItem() == 4) {
+    } else if (sess.getCurrentlyHighlightedItem() == 4) {
       g.drawString("Start a new game on the CW server! If you ", 190, 275);
       g.drawString("don't have a friend to battle, you should make", 190, 290);
       g.drawString("an open game so anyone can join and play!", 190, 304);
-    } else if (getCurrentlyHighlightedItem() == 5) {
+    } else if (sess.getCurrentlyHighlightedItem() == 5) {
       g.drawString("Join a game on the CW server that's open!", 190, 275);
       g.drawString("All you need is the game name, a handle and", 190, 290);
       g.drawString("a password! Then you're all ready to play!", 190, 304);
-    } else if (getCurrentlyHighlightedItem() == 6) {
+    } else if (sess.getCurrentlyHighlightedItem() == 6) {
       g.drawString("Login to one of your current games!", 190, 275);
       g.drawString("Let's hope you're winning, at least.", 190, 290);
       g.drawString("Otherwise, what's the point to logging in?", 190, 304);
@@ -967,10 +922,10 @@ public class MainMenu extends JComponent {
     g.setColor(Color.black);
     g.setFont(MainMenuGraphics.getH1Font());
 
-    for (int i = 0; i < numArmies; i++) {
-      if (getCurrentlyHighlightedItem() == i) g.setColor(Color.red);
+    for (int i = 0; i < sess.getNumOfArmiesOnMap(); i++) {
+      if (sess.getCurrentlyHighlightedItem() == i) g.setColor(Color.red);
       g.drawString("Army " + (i + 1), 10, 20 + 20 * i);
-      g.drawString("Side " + sideSelections[i], 70, 20 + 20 * i);
+      g.drawString("Side " + sess.getSideSelections()[i], 70, 20 + 20 * i);
       g.setColor(Color.black);
     }
   }
@@ -986,12 +941,12 @@ public class MainMenu extends JComponent {
     g.fillRect(460, 0, 20, 20);
     g.fillRect(460, 80, 20, 20);
     g.setColor(Color.gray);
-    if (item2 == 0) g.setColor(Color.DARK_GRAY);
+    if (sess.getCurrentlyHighlightedItem2() == 0) g.setColor(Color.DARK_GRAY);
     g.fillRect(0, 100, 160, 20);
     g.setColor(Color.white);
     g.drawString("Syslog", 0, 120);
     g.setColor(Color.gray);
-    if (item2 == 1) g.setColor(Color.DARK_GRAY);
+    if (sess.getCurrentlyHighlightedItem2() == 1) g.setColor(Color.DARK_GRAY);
     g.fillRect(160, 100, 160, 20);
     g.setColor(Color.white);
     g.drawString("Chat", 160, 120);
@@ -1002,10 +957,10 @@ public class MainMenu extends JComponent {
     //chat messages
     g.setColor(Color.white);
     for (int i = 0; i < 5; i++) {
-      if (item2 == 0) {
-        if (i + syspos < syslog.length && i + syspos >= 0) g.drawString(syslog[i + syspos], 0, 18 + i * 20);
+      if (sess.getCurrentlyHighlightedItem2() == 0) {
+        if (i + sess.getSyspos() < sess.getSyslog().length && i + sess.getSyspos() >= 0) g.drawString(sess.getSyslog()[i + sess.getSyspos()], 0, 18 + i * 20);
       } else {
-        if (i + chatpos < chatlog.length && i + chatpos >= 0) g.drawString(chatlog[i + chatpos], 0, 18 + i * 20);
+        if (i + sess.getChatpos() < sess.getChatlog().length && i + sess.getChatpos() >= 0) g.drawString(sess.getChatlog()[i + sess.getChatpos()], 0, 18 + i * 20);
       }
     }
 
@@ -1013,19 +968,19 @@ public class MainMenu extends JComponent {
     g.setColor(Color.BLACK);
     g.drawString("Game Name: " + Options.gamename, 0, 140);
     g.drawString("Login Name: " + Options.username, 0, 160);
-    g.drawString("Current day/turn: " + day + "/" + turn, 0, 180);
-    for (int i = 0; i < usernames.length; i++) {
-      g.drawString(usernames[i], (i < 5) ? 0 : 120, 200 + (i % 5) * 20);
+    g.drawString("Current day/turn: " + sess.getDay() + "/" + sess.getTurn(), 0, 180);
+    for (int i = 0; i < sess.getUsernames().length; i++) {
+      g.drawString(sess.getUsernames()[i], (i < 5) ? 0 : 120, 200 + (i % 5) * 20);
     }
 
     //actions
     g.setColor(Color.gray);
-    if (getCurrentlyHighlightedItem() == 0) g.setColor(Color.black);
+    if (sess.getCurrentlyHighlightedItem() == 0) g.setColor(Color.black);
     g.fillRect(240, 280, 240, 20);
     g.setColor(Color.white);
     g.drawString("Refresh", 340, 300);
     g.setColor(Color.gray);
-    if (getCurrentlyHighlightedItem() == 1) g.setColor(Color.black);
+    if (sess.getCurrentlyHighlightedItem() == 1) g.setColor(Color.black);
     g.fillRect(240, 300, 240, 20);
     g.setColor(Color.white);
     g.drawString("Play", 350, 320);
@@ -1039,27 +994,27 @@ public class MainMenu extends JComponent {
   }
 
   public void loadMiniMapPreview() {
-    ptypes[0] = 0;
-    ptypes[1] = 0;
-    ptypes[2] = 0;
-    ptypes[3] = 0;
-    ptypes[4] = 0;
-    ptypes[5] = 0;
+    sess.getPropertyTypesOnSelectedMap()[0] = 0;
+    sess.getPropertyTypesOnSelectedMap()[1] = 0;
+    sess.getPropertyTypesOnSelectedMap()[2] = 0;
+    sess.getPropertyTypesOnSelectedMap()[3] = 0;
+    sess.getPropertyTypesOnSelectedMap()[4] = 0;
+    sess.getPropertyTypesOnSelectedMap()[5] = 0;
     if (filteredMaps.size() != 0) {
-      filename = getFileName(getCurrentlyHighlightedItem());
-      preview = new Battle(filename);
+      sess.setFilename(getFileName(sess.getCurrentlyHighlightedItem()));
+      preview = new Battle(sess.getFilename());
 
       Map m = preview.getMap();
       for (int yy = 0; yy < m.getMaxRow(); yy++) {
         for (int xx = 0; xx < m.getMaxCol(); xx++) {
           int number = m.find(new Location(xx, yy)).getTerrain().getIndex();
           if (number > 9) {
-            if (number == 10) ptypes[0]++;
-            else if (number == 11) ptypes[1]++;
-            else if (number == 13) ptypes[2]++;
-            else if (number == 12) ptypes[3]++;
-            else if (number == 14) ptypes[4]++;
-            else if (number == 17) ptypes[5]++;
+            if (number == 10) sess.getPropertyTypesOnSelectedMap()[0]++;
+            else if (number == 11) sess.getPropertyTypesOnSelectedMap()[1]++;
+            else if (number == 13) sess.getPropertyTypesOnSelectedMap()[2]++;
+            else if (number == 12) sess.getPropertyTypesOnSelectedMap()[3]++;
+            else if (number == 14) sess.getPropertyTypesOnSelectedMap()[4]++;
+            else if (number == 17) sess.getPropertyTypesOnSelectedMap()[5]++;
           }
         }
       }
@@ -1072,7 +1027,7 @@ public class MainMenu extends JComponent {
     filteredMaps.clear();
 
     for (Map map : maps) {
-      if (getCurrentlySelectedSubCategory() == 0 || getCurrentlySelectedSubCategory() == map.getPlayerCount() - 1) {
+      if (sess.getCurrentlySelectedSubCategory() == 0 || sess.getCurrentlySelectedSubCategory() == map.getPlayerCount() - 1) {
         filteredMaps.add(map);
       }
     }
@@ -1080,42 +1035,42 @@ public class MainMenu extends JComponent {
   }
 
   public void pressedA() {
-    if (isTitleScreen()) {
+    if (sess.isTitleScreen()) {
       titleScreenActions();
-    } else if (isInfoScreen()) {
-      isInfoScreen = false;
-    } else if (isCOselectScreen() && !isInfoScreen()) {
+    } else if (sess.isInfoScreen()) {
+      sess.setIsInfoScreen(false);
+    } else if (sess.isCOselectScreen() && !sess.isInfoScreen()) {
       coSelectScreenActions();
-    } else if (isOptionsScreen()) {
+    } else if (sess.isOptionsScreen()) {
       optionsScreenActions();
-    } else if (isChooseNewGameTypeScreen()) {
+    } else if (sess.isChooseNewGameTypeScreen()) {
       parseSelectedNewGameTypeInput();
-    } else if (isSideSelect()) {
-      setSideSelect(false);
-      setIsBattleOptionsScreen(true);
-      setCurrentlyHighlightedItem(0);
-    } else if (isBattleOptionsScreen()) {
+    } else if (sess.isSideSelect()) {
+    	sess.setSideSelect(false);
+    	sess.setIsBattleOptionsScreen(true);
+    	sess.setCurrentlyHighlightedItem(0);
+    } else if (sess.isBattleOptionsScreen()) {
       startBattle();
-    } else if (isMapSelectScreen()) {
+    } else if (sess.isMapSelectScreen()) {
       mapSelectScreenActions();
-    } else if (isKeyMappingScreen()) {
-      chooseKey = true;
-    } else if (isSnailInfoScreen()) {
+    } else if (sess.isKeyMappingScreen()) {
+      sess.setChooseKey(true);
+    } else if (sess.isSnailInfoScreen()) {
       networkInfoScreenActions();
     }
   }
 
   private void startBattle() {
-    if (getCurrentlyHighlightedItem() == 9) {
-      if (bopt.isUnitBanned(cx)) {
-        bopt.setUnitBanned(false, cx);
+    if (sess.getCurrentlyHighlightedItem() == 9) {
+      if (sess.getBopt().isUnitBanned(sess.getCurrentCursorXposition())) {
+        sess.getBopt().setUnitBanned(false, sess.getCurrentCursorXposition());
       } else {
-        bopt.setUnitBanned(true, cx);
+        sess.getBopt().setUnitBanned(true, sess.getCurrentCursorXposition());
       }
       return;
     }
     //Creates new instances of critical objects for the battle
-    Battle b = new Battle(filename, coSelections, sideSelections, altSelections, bopt);
+    Battle b = new Battle(sess.getFilename(), sess.getCoSelections(), sess.getSideSelections(), sess.getAltSelections(), sess.getBopt());
 
     //Initialize a swing frame and put a BattleScreen inside
     parentFrame.setSize(400, 400);
@@ -1126,17 +1081,17 @@ public class MainMenu extends JComponent {
     parentFrame.pack();
 
     //Start the mission
-    Mission.startMission(b, bs);
+    GameSession.startMission(b, bs);
     //save the initial state for the replay if applicable
-    if (bopt.isRecording()) Mission.saveInitialState();
+    if (sess.getBopt().isRecording()) GameSession.saveInitialState();
   }
 
   private void networkInfoScreenActions() {
-    if (getCurrentlyHighlightedItem() == 0) {
+    if (sess.getCurrentlyHighlightedItem() == 0) {
       //refresh
       logger.info("Refreshing");
       refreshInfo();
-    } else if (getCurrentlyHighlightedItem() == 1) {
+    } else if (sess.getCurrentlyHighlightedItem() == 1) {
       //play game
       logger.info("Play Game");
       //refresh first
@@ -1145,20 +1100,20 @@ public class MainMenu extends JComponent {
       String reply = sendCommandToMain("canplay", Options.gamename + "\n" + Options.username + "\n" + Options.password);
       logger.info(reply);
       if (reply.equals("permission granted")) {
-        if (day == 1) {
+        if (sess.getDay() == 1) {
           logger.info("Starting Game");
           //load map from server
           getFile("dmap.pl", Options.gamename, TEMPORARYMAP_MAP_FILENAME);
-          filename = TEMPORARYMAP_MAP_FILENAME;
+          sess.setFilename(TEMPORARYMAP_MAP_FILENAME);
 
           //goto co select
-          setIsMapSelectScreen(false);
-          setIsCOselectScreen(true);
-          setIsSnailInfoScreen(false);
+          sess.setIsMapSelectScreen(false);
+          sess.setIsCOselectScreen(true);
+          sess.setIsSnailInfoScreen(false);
 
           //find number of armies, and thus COs
           try {
-            DataInputStream read = new DataInputStream(new FileInputStream(ResourceLoader.properties.getProperty("saveLocation") + "/" + filename));
+            DataInputStream read = new DataInputStream(new FileInputStream(ResourceLoader.properties.getProperty("saveLocation") + "/" + sess.getFilename()));
             int maptype = read.readInt();
             if (maptype == -1) {
               read.readByte(); //skip name
@@ -1166,19 +1121,19 @@ public class MainMenu extends JComponent {
               read.readByte(); //skip description
               read.readInt();
               read.readInt();
-              numArmies = read.readByte();
+              sess.setNumOfArmiesOnMap(read.readByte());
             } else {
               read.readInt();
-              numArmies = read.readInt();
+              sess.setNumOfArmiesOnMap(read.readInt());
             }
           } catch (IOException exc) {
-            logger.error("Couldn't read MAP file [" + filename + "]", exc);
+            logger.error("Couldn't read MAP file [" + sess.getFilename() + "]", exc);
           }
-          numCOs = 0;
-          coSelections = new int[numArmies * 2];
-          altSelections = new boolean[numArmies * 2];
-          if (turn != 1) {
-            insertNewCO = true;
+          sess.setNumCOs(0);
+          sess.setCoSelections(new int[sess.getNumOfArmiesOnMap() * 2]);
+          sess.setAltSelections(new boolean[sess.getNumOfArmiesOnMap() * 2]);
+          if (sess.getTurn() != 1) {
+            sess.setInsertNewCO(true);
           }
           return;
         }
@@ -1197,8 +1152,8 @@ public class MainMenu extends JComponent {
         parentFrame.pack();
 
         //Start the mission
-        Mission.startMission(null, bs);
-        Mission.loadMission(loadFilename);
+        GameSession.startMission(null, bs);
+        GameSession.loadMission(loadFilename);
       }
     }
   }
@@ -1206,36 +1161,36 @@ public class MainMenu extends JComponent {
   private void mapSelectScreenActions() {
     if (filteredMaps.size() != 0) {
       //New Game
-    	setIsMapSelectScreen(false);
-    	setIsCOselectScreen(true);
-      filename = getFileName(getCurrentlyHighlightedItem());
-      String mapName = getMap(getCurrentlyHighlightedItem()).getName() ;
-      this.numArmies = getMap(getCurrentlyHighlightedItem()).getPlayerCount();
+    	sess.setIsMapSelectScreen(false);
+    	sess.setIsCOselectScreen(true);
+      sess.setFilename(getFileName(sess.getCurrentlyHighlightedItem()));
+      String mapName = getMap(sess.getCurrentlyHighlightedItem()).getName() ;
+      this.sess.setNumOfArmiesOnMap(getMap(sess.getCurrentlyHighlightedItem()).getPlayerCount());
 
       //New Snail Mode Game
       if (Options.snailGame) {
-    	setIsCOselectScreen(false);
-    	setIsSnailInfoScreen(true);
-        setCurrentlyHighlightedItem(0);
-        item2 = 0;
+    	  sess.setIsCOselectScreen(false);
+    	  sess.setIsSnailInfoScreen(true);
+    	  sess.setCurrentlyHighlightedItem(0);
+    	  sess.setCurrentlyHighlightedItem2(0);
 
         String comment = JOptionPane.showInputDialog("Type in a comment for your game");
 
         //get army that the player wants to join
         int joinnum = -1;
-        while (joinnum < 1 || joinnum > numArmies) {
-          String t = JOptionPane.showInputDialog("What side do you want to join? Pick from 1-" + numArmies);
+        while (joinnum < 1 || joinnum > sess.getNumOfArmiesOnMap()) {
+          String t = JOptionPane.showInputDialog("What side do you want to join? Pick from 1-" + sess.getNumOfArmiesOnMap());
           if (t == null) {
             Options.snailGame = false;
-            setIsMapSelectScreen(false);
-            setIsTitleScreen(true);
+            sess.setIsMapSelectScreen(false);
+            sess.setIsTitleScreen(true);
             return;
           }
           joinnum = Integer.parseInt(t);
         }
 
         //register new game
-        String reply = sendCommandToMain("newgame", Options.gamename + "\n" + Options.masterpass + "\n" + numArmies + "\n" + Options.version + "\n" + comment + "\n" + mapName + "\n" + Options.username);
+        String reply = sendCommandToMain("newgame", Options.gamename + "\n" + Options.masterpass + "\n" + sess.getNumOfArmiesOnMap() + "\n" + Options.version + "\n" + comment + "\n" + mapName + "\n" + Options.username);
         while (!reply.equals("game created")) {
           logger.info(reply);
           if (reply.equals("no")) {
@@ -1243,17 +1198,17 @@ public class MainMenu extends JComponent {
             JOptionPane.showMessageDialog(this, "Game name taken");
             Options.gamename = JOptionPane.showInputDialog("Type in a new name for your game");
             if (Options.gamename == null) return;
-            reply = sendCommandToMain("newgame", Options.gamename + "\n" + Options.masterpass + "\n" + numArmies + "\n" + Options.version + "\n" + comment + "\n" + mapName + "\n" + Options.username);
+            reply = sendCommandToMain("newgame", Options.gamename + "\n" + Options.masterpass + "\n" + sess.getNumOfArmiesOnMap() + "\n" + Options.version + "\n" + comment + "\n" + mapName + "\n" + Options.username);
           } else {
             Options.snailGame = false;
-            setIsMapSelectScreen(false);
-            setIsTitleScreen(true);
+            sess.setIsMapSelectScreen(false);
+            sess.setIsTitleScreen(true);
             return;
           }
         }
 
         //upload map
-        String temp = sendFile("umap.pl", Options.gamename, filename);
+        String temp = sendFile("umap.pl", Options.gamename, sess.getFilename());
         logger.info(temp);
         //TODO: keep retrying if failed
 
@@ -1267,9 +1222,9 @@ public class MainMenu extends JComponent {
         return;
       }
 
-      numCOs = 0;
-      coSelections = new int[numArmies * 2];
-      altSelections = new boolean[numArmies * 2];
+      sess.setNumCOs(0);
+      sess.setCoSelections(new int[sess.getNumOfArmiesOnMap() * 2]);
+      sess.setAltSelections(new boolean[sess.getNumOfArmiesOnMap() * 2]);
     }
   }
 
@@ -1285,7 +1240,7 @@ public class MainMenu extends JComponent {
     final int LOGIN_TO_SERVER_GAME = 6;
     final int JOIN_IRC_LOBBY = 7;
     
-    switch(getCurrentlyHighlightedItem()){
+    switch(sess.getCurrentlyHighlightedItem()){
 	    case CO_SELECT:
 	    			startCOSelect = true;
 	    			break;
@@ -1295,7 +1250,7 @@ public class MainMenu extends JComponent {
 	    case START_NETWORK_GAME:
 			  		startCOSelect = true;
 			  		Options.startNetwork();
-			  		setCurrentlyHighlightedItem(CO_SELECT);
+			  		sess.setCurrentlyHighlightedItem(CO_SELECT);
 	    			break;
 	    case LOAD_REPLAY:
 	    			loadReplay();
@@ -1303,7 +1258,7 @@ public class MainMenu extends JComponent {
 	    case CREATE_SERVER_GAME:
 					createServerGame();
 					startCOSelect = true;
-					setCurrentlyHighlightedItem(CO_SELECT);
+					sess.setCurrentlyHighlightedItem(CO_SELECT);
 	    			break;
 	    case JOIN_SERVER_GAME:
 			  		joinServerGame();
@@ -1320,10 +1275,10 @@ public class MainMenu extends JComponent {
 
     if (startCOSelect) {
       //New Game
-    	setIsNewload(false);
-    	setIsMapSelectScreen(true);
-      setCurrentlyHighlightedItem(CO_SELECT);
-      mapPage = CO_SELECT;
+    	sess.setIsChooseNewGameTypeScreen(false);
+    	sess.setIsMapSelectScreen(true);
+    	sess.setCurrentlyHighlightedItem(CO_SELECT);
+      sess.setMapPage(CO_SELECT);
 
       //load categories
       String mapsLocation = ResourceLoader.properties.getProperty("mapsLocation");
@@ -1354,10 +1309,10 @@ public class MainMenu extends JComponent {
         mapCategories[i] = v.get(i);
       }
 
-      setCurrentlySelectedMapCategory(CO_SELECT);
-      setCurrentlySelectedSubCategory(CO_SELECT);
+      sess.setCurrentlySelectedMapCategory(CO_SELECT);
+      sess.setCurrentlySelectedSubCategory(CO_SELECT);
       loadMapDisplayNames();
-      mapPage = CO_SELECT;
+      sess.setMapPage(CO_SELECT);
     }
   }
 
@@ -1405,10 +1360,10 @@ private void loginToServerGame() {
 
 	  //go to information screen
 	  Options.snailGame = true;
-	  setIsSnailInfoScreen(true);
-	  setIsNewload(false);
-	  setCurrentlyHighlightedItem(CO_SELECT);
-	  item2 = CO_SELECT;
+	  sess.setIsSnailInfoScreen(true);
+	  sess.setIsChooseNewGameTypeScreen(false);
+	  sess.setCurrentlyHighlightedItem(CO_SELECT);
+	  sess.setCurrentlyHighlightedItem2(CO_SELECT);
 
 	  refreshInfo();
 }
@@ -1445,18 +1400,18 @@ private void joinServerGame() {
 	    Options.password = JOptionPane.showInputDialog(null, "Password for your game:", "Network Game: Password", JOptionPane.PLAIN_MESSAGE);
 	    if (Options.password == null) return;
 	  }
-	  setIsNewload(false);
-	  isChooseNewGameTypeScreen = false;
-	  setIsSnailInfoScreen(true);
+	  sess.setIsChooseNewGameTypeScreen(false);
+	  sess.setIsChooseNewGameTypeScreen(false);
+	  sess.setIsSnailInfoScreen(true);
 	  refreshInfo();
-	  if (!isSnailInfoScreen()) {
+	  if (!sess.isSnailInfoScreen()) {
 	    JOptionPane.showMessageDialog(this, "The game " + Options.gamename + " has ended");
 	    return;
 	  }
 	  String slot  = JOptionPane.showInputDialog(null, "Type in the number of the army you will command:", "Network Game: Army No.?", JOptionPane.PLAIN_MESSAGE);
 	  if (slot == null) {
-		  setIsTitleScreen(true);
-		  setIsSnailInfoScreen(false);
+		  sess.setIsTitleScreen(true);
+		  sess.setIsSnailInfoScreen(false);
 		  return;
 	  }
 
@@ -1468,52 +1423,52 @@ private void joinServerGame() {
 	      logger.info("Game does not exist");
 	      Options.gamename = JOptionPane.showInputDialog(null, "Type in a name for your game:", "Network Game: Name?", JOptionPane.PLAIN_MESSAGE);
 	      if (Options.gamename == null) {
-	    	  setIsTitleScreen(true);
-	    	  setIsSnailInfoScreen(false);
+	    	  sess.setIsTitleScreen(true);
+	    	  sess.setIsSnailInfoScreen(false);
 	        return;
 	      }
 	      Options.masterpass = JOptionPane.showInputDialog(null, "Enter Password for game:", "Join Game: Master Pass", JOptionPane.PLAIN_MESSAGE);
 	      if (Options.masterpass == null) {
-	    	  setIsTitleScreen(true);
-	    	  setIsSnailInfoScreen(false);
+	    	  sess.setIsTitleScreen(true);
+	    	  sess.setIsSnailInfoScreen(false);
 	        return;
 	      }
 	    } else if (reply.equals("wrong password")) {
 	      logger.info("Incorrect Password");
 	      Options.gamename = JOptionPane.showInputDialog(null, "Name of game:", "Join Game: Name", JOptionPane.PLAIN_MESSAGE);
 	      if (Options.gamename == null) {
-	    	  setIsTitleScreen(true);
-	    	  setIsSnailInfoScreen(false);
+	    	  sess.setIsTitleScreen(true);
+	    	  sess.setIsSnailInfoScreen(false);
 	        return;
 	      }
 	      Options.masterpass = JOptionPane.showInputDialog(null, "Enter Password for game:", "Join Game: Master Pass", JOptionPane.PLAIN_MESSAGE);
 	      if (Options.masterpass == null) {
-	    	  setIsTitleScreen(true);
-	    	  setIsSnailInfoScreen(false);
+	    	  sess.setIsTitleScreen(true);
+	    	  sess.setIsSnailInfoScreen(false);
 	        return;
 	      }
 	    } else if (reply.equals("out of range")) {
 	      logger.info("Army choice out of range or invalid");
 	      slot  = JOptionPane.showInputDialog(null, "Type in the number of the army you will command:", "Network Game: Army No.?", JOptionPane.PLAIN_MESSAGE);
 	      if (slot == null) {
-	    	  setIsTitleScreen(true);
-	    	  setIsSnailInfoScreen(false);
+	    	  sess.setIsTitleScreen(true);
+	    	  sess.setIsSnailInfoScreen(false);
 	        return;
 	      }
 	    } else if (reply.equals("slot taken")) {
 	      logger.info("Army choice already taken");
 	      slot  = JOptionPane.showInputDialog(null, "Type in the number of the army you will command:", "Network Game: Army No.?", JOptionPane.PLAIN_MESSAGE);
 	      if (slot == null) {
-	    	  setIsTitleScreen(true);
-	    	  setIsSnailInfoScreen(false);
+	    	  sess.setIsTitleScreen(true);
+	    	  sess.setIsSnailInfoScreen(false);
 	        return;
 	      }
 	    } else {
 	      logger.info("Other problem");
 	      JOptionPane.showMessageDialog(this, "Version Mismatch");
 	      Options.snailGame = false;
-	      setIsTitleScreen(true);
-	      setIsSnailInfoScreen(false);
+	      sess.setIsTitleScreen(true);
+	      sess.setIsSnailInfoScreen(false);
 	      return;
 	    }
 	    refreshInfo();
@@ -1523,10 +1478,10 @@ private void joinServerGame() {
 	  //go to information screen
 	  int CO_SELECT = 0;
 	  Options.snailGame = true;
-	  setIsSnailInfoScreen(true);
-	  setIsNewload(false);
-	  setCurrentlyHighlightedItem(CO_SELECT);
-	  item2 = CO_SELECT;
+	  sess.setIsSnailInfoScreen(true);
+	  sess.setIsChooseNewGameTypeScreen(false);
+	  sess.setCurrentlyHighlightedItem(CO_SELECT);
+	  sess.setCurrentlyHighlightedItem2(CO_SELECT);
 
 	  refreshInfo();
 }
@@ -1611,8 +1566,8 @@ private void loadReplay() {
 	      parentFrame.pack();
 
 	      //Start the mission
-	      Mission.startMission(null, bs);
-	      Mission.loadReplay(loadFilename);
+	      GameSession.startMission(null, bs);
+	      GameSession.loadReplay(loadFilename);
 	    }
 	  }
 }
@@ -1641,8 +1596,8 @@ private void loadGame() {
 	      parentFrame.pack();
 
 	      //Start the mission
-	      Mission.startMission(null, bs);
-	      Mission.loadMission(loadFilename);
+	      GameSession.startMission(null, bs);
+	      GameSession.loadMission(loadFilename);
 	    }
 	  }
 }
@@ -1650,29 +1605,29 @@ private void loadGame() {
   private void coSelectScreenActions() {
     boolean nosecco = false;
     CO temp = null;
-    if (cx == 0 && cy == 0 && numCOs % 2 == 1) {
-      coSelections[numCOs] = -1;
+    if (sess.getCurrentCursorXposition() == 0 && sess.getCurrentCursorYposition() == 0 && sess.getNumCOs() % 2 == 1) {
+      sess.getCoSelections()[sess.getNumCOs()] = -1;
       nosecco = true;
     } else {
-      if (cx == 0 && cy == 0) return;
-      temp = armyArray[selectedArmy][cx + cy * 3 - 1];
+      if (sess.getCurrentCursorXposition() == 0 && sess.getCurrentCursorYposition() == 0) return;
+      temp = armyArray[sess.getSelectedArmyAllegiance()][sess.getCurrentCursorXposition() + sess.getCurrentCursorYposition() * 3 - 1];
     }
 
-    if (nosecco || temp != null && !(numCOs % 2 == 1 && COList.getIndex(temp) == coSelections[numCOs - 1])) {
+    if (nosecco || temp != null && !(sess.getNumCOs() % 2 == 1 && COList.getIndex(temp) == sess.getCoSelections()[sess.getNumCOs() - 1])) {
       if (!nosecco) {
-        coSelections[numCOs] = COList.getIndex(temp);
+        sess.getCoSelections()[sess.getNumCOs()] = COList.getIndex(temp);
       }
 
-      altSelections[numCOs] = altcostume;
-      mainaltcostume = altcostume;
-      altcostume = false;
-      numCOs++;
-      cx = 0;
-      cy = 0;
+      sess.getAltSelections()[sess.getNumCOs()] = sess.isAltcostume();
+      sess.setMainaltcostume(sess.isAltcostume());
+      sess.setAltcostume(false);
+      sess.setNumCOs(sess.getNumCOs() + 1);
+      sess.setCurrentCursorXposition(0);
+      sess.setCurrentCursorYposition(0);
 
-      if (Options.snailGame && numCOs == 2) {
+      if (Options.snailGame && sess.getNumCOs() == 2) {
         logger.info("Stop for snail game");
-        if (insertNewCO) {
+        if (sess.isInsertNewCO()) {
           //load mission
           getFile("dsave.pl", Options.gamename, TEMPORARYSAVE_SAVE_FILENAME);
           String loadFilename = TEMPORARYSAVE_SAVE_FILENAME;
@@ -1687,118 +1642,118 @@ private void loadGame() {
           parentFrame.pack();
 
           //Start the mission
-          Mission.startMission(null, bs);
-          Mission.loadMission(loadFilename);
-          bs.getBattle().getArmy(turn - 1).setCO(bs.getBattle().getCO(coSelections[0]));
-          bs.getBattle().getArmy(turn - 1).setAltCO(bs.getBattle().getCO(coSelections[1]));
+          GameSession.startMission(null, bs);
+          GameSession.loadMission(loadFilename);
+          bs.getBattle().getArmy(sess.getTurn() - 1).setCO(bs.getBattle().getCO(sess.getCoSelections()[0]));
+          bs.getBattle().getArmy(sess.getTurn() - 1).setAltCO(bs.getBattle().getCO(sess.getCoSelections()[1]));
         }
         //fill rest with single andys
-        for (int i = 2; i < coSelections.length; i++) {
-          if (i % 2 == 0) coSelections[i] = 1;
-          else coSelections[i] = 0;
+        for (int i = 2; i < sess.getCoSelections().length; i++) {
+          if (i % 2 == 0) sess.getCoSelections()[i] = 1;
+          else sess.getCoSelections()[i] = 0;
         }
-        for (int coSelection : coSelections) logger.info("" + coSelection);
-        logger.info("Number of COs: " + numCOs);
-        if (numArmies > 2) {
-        	setIsCOselectScreen(false);
-        	setSideSelect(true);
-          setCurrentlyHighlightedItem(0);
-          sideSelections = new int[numArmies];
-          for (int i = 0; i < numArmies; i++) sideSelections[i] = i;
+        for (int coSelection : sess.getCoSelections()) logger.info("" + coSelection);
+        logger.info("Number of COs: " + sess.getNumCOs());
+        if (sess.getNumOfArmiesOnMap() > 2) {
+        	sess.setIsCOselectScreen(false);
+        	sess.setSideSelect(true);
+        	sess.setCurrentlyHighlightedItem(0);
+          sess.setSideSelections(new int[sess.getNumOfArmiesOnMap()]);
+          for (int i = 0; i < sess.getNumOfArmiesOnMap(); i++) sess.getSideSelections()[i] = i;
         } else {
           //no alliances allowed for 2 players
-          sideSelections = new int[]{0, 1};
-          setIsCOselectScreen(false);
-          setIsBattleOptionsScreen(true);
-          setCurrentlyHighlightedItem(0);
+          sess.setSideSelections(new int[]{0, 1});
+          sess.setIsCOselectScreen(false);
+          sess.setIsBattleOptionsScreen(true);
+          sess.setCurrentlyHighlightedItem(0);
         }
       }
 
-      if (numCOs == numArmies * 2) {
-        logger.info("Total No of competing COs=[" + numCOs + "]  Armies=[" + numArmies + "]");
+      if (sess.getNumCOs() == sess.getNumOfArmiesOnMap() * 2) {
+        logger.info("Total No of competing COs=[" + sess.getNumCOs() + "]  Armies=[" + sess.getNumOfArmiesOnMap() + "]");
 
-        if (numCOs > 4) {
-        	setIsCOselectScreen(false);
-          setSideSelect(true);
-          setCurrentlyHighlightedItem(0);
-          sideSelections = new int[numCOs / 2];
-          for (int i = 0; i < numCOs / 2; i++) sideSelections[i] = i;
+        if (sess.getNumCOs() > 4) {
+        	sess.setIsCOselectScreen(false);
+        	sess.setSideSelect(true);
+        	sess.setCurrentlyHighlightedItem(0);
+          sess.setSideSelections(new int[sess.getNumCOs() / 2]);
+          for (int i = 0; i < sess.getNumCOs() / 2; i++) sess.getSideSelections()[i] = i;
         } else {
           //no alliances allowed for 2 players
-          sideSelections = new int[]{0, 1};
+          sess.setSideSelections(new int[]{0, 1});
 
-          setIsCOselectScreen(false);
-          setIsBattleOptionsScreen(true);
-          setCurrentlyHighlightedItem(0);
+          sess.setIsCOselectScreen(false);
+          sess.setIsBattleOptionsScreen(true);
+          sess.setCurrentlyHighlightedItem(0);
         }
       }
     }
   }
 
   private void optionsScreenActions() {
-    if (getCurrentlyHighlightedItem() == 0) {
+    if (sess.getCurrentlyHighlightedItem() == 0) {
       //Music On/Off
       if (Options.isMusicOn()) Options.turnMusicOff();
       else Options.turnMusicOn();
-    } else if (getCurrentlyHighlightedItem() == 1) {
-    } else if (getCurrentlyHighlightedItem() == 2) {
+    } else if (sess.getCurrentlyHighlightedItem() == 1) {
+    } else if (sess.getCurrentlyHighlightedItem() == 2) {
       //Balance Mode On/Off
       if (Options.isBalance()) {
         Options.turnBalanceModeOff();
       } else {
         Options.turnBalanceModeOn();
       }
-      bopt.setBalance(Options.isBalance());
-    } else if (getCurrentlyHighlightedItem() == 3) {
+      sess.getBopt().setBalance(Options.isBalance());
+    } else if (sess.getCurrentlyHighlightedItem() == 3) {
       //Change the IP address
       Options.setIP();
-    } else if (getCurrentlyHighlightedItem() == 4) {
+    } else if (sess.getCurrentlyHighlightedItem() == 4) {
       if (Options.isAutosaveOn())
         Options.setAutosave(false);
 
       else
         Options.setAutosave(true);
-    } else if (getCurrentlyHighlightedItem() == 5) {
+    } else if (sess.getCurrentlyHighlightedItem() == 5) {
       if (Options.isRecording()) Options.setRecord(false);
       else Options.setRecord(true);
-    } else if (getCurrentlyHighlightedItem() == 7) {
+    } else if (sess.getCurrentlyHighlightedItem() == 7) {
       //remap keys
-      setIsOptionsScreen(false);
-      setIsKeymappingScreen(true);
-      setCurrentlyHighlightedItem(0);
-    } else if (getCurrentlyHighlightedItem() == 8) {
+    	sess.setIsOptionsScreen(false);
+    	sess.setIsKeymappingScreen(true);
+    	sess.setCurrentlyHighlightedItem(0);
+    } else if (sess.getCurrentlyHighlightedItem() == 8) {
       Options.toggleBattleBackground();
-    } else if (getCurrentlyHighlightedItem() == 9) {
+    } else if (sess.getCurrentlyHighlightedItem() == 9) {
       //Change the IP address
       Options.setServer();
-    } else if (getCurrentlyHighlightedItem() == 10) {
+    } else if (sess.getCurrentlyHighlightedItem() == 10) {
       Options.incrementDefaultBans();
-      bopt = new BattleOptions();
-    } else if (getCurrentlyHighlightedItem() == 13 && Options.getSelectedTerrain() == 2) {
+      sess.setBopt(new BattleOptions());
+    } else if (sess.getCurrentlyHighlightedItem() == 13 && Options.getSelectedTerrain() == 2) {
       Options.setCustomTerrain();
-    } else if (getCurrentlyHighlightedItem() == 14 && Options.getSelectedUrban() == 2) {
+    } else if (sess.getCurrentlyHighlightedItem() == 14 && Options.getSelectedUrban() == 2) {
       Options.setCustomUrban();
-    } else if (getCurrentlyHighlightedItem() == 15 && Options.getSelectedHQ() == 2) {
+    } else if (sess.getCurrentlyHighlightedItem() == 15 && Options.getSelectedHQ() == 2) {
       Options.setCustomHQ();
-    } else if (getCurrentlyHighlightedItem() == 16) {
+    } else if (sess.getCurrentlyHighlightedItem() == 16) {
       Options.toggleDefaultLogin();
-    } else if (getCurrentlyHighlightedItem() == 17) {
+    } else if (sess.getCurrentlyHighlightedItem() == 17) {
       Options.setDefaultLogin();
-    } else if (getCurrentlyHighlightedItem() == 18) {
+    } else if (sess.getCurrentlyHighlightedItem() == 18) {
       Options.toggleRefresh();
     }
   }
 
   private void titleScreenActions() {
-    if (getCurrentlyHighlightedItem() == 0) {
-      setIsTitleScreen(false);
-      setIsNewload(true);
-    } else if (getCurrentlyHighlightedItem() == MAP_EDITOR) {
+    if (sess.getCurrentlyHighlightedItem() == 0) {
+    	sess.setIsTitleScreen(false);
+    	sess.setIsChooseNewGameTypeScreen(true);
+    } else if (sess.getCurrentlyHighlightedItem() == MAP_EDITOR) {
       startMapEditor();
-    } else if (getCurrentlyHighlightedItem() == OPTION_MENU) {
-    	setIsTitleScreen(false);      
-    	setIsOptionsScreen(true);
-    	setCurrentlyHighlightedItem(0);
+    } else if (sess.getCurrentlyHighlightedItem() == OPTION_MENU) {
+    	sess.setIsTitleScreen(false);      
+    	sess.setIsOptionsScreen(true);
+    	sess.setCurrentlyHighlightedItem(0);
     }
   }
 
@@ -1999,191 +1954,191 @@ private void loadGame() {
   }
 
   public void pressedB() {
-    if (isInfoScreen()) {
-    	setIsInfoScreen(false);
-    } else if (isCOselectScreen() && !isInfoScreen()) {
-      if (numCOs == 0) {
-    	setIsMapSelectScreen(true);
-    	setIsCOselectScreen(false);
-        setCurrentlyHighlightedItem(0);
-        selectedArmy = 0;
+    if (sess.isInfoScreen()) {
+    	sess.setIsInfoScreen(false);
+    } else if (sess.isCOselectScreen() && !sess.isInfoScreen()) {
+      if (sess.getNumCOs() == 0) {
+    	  sess.setIsMapSelectScreen(true);
+    	  sess.setIsCOselectScreen(false);
+    	  sess.setCurrentlyHighlightedItem(0);
+        sess.setSelectedArmyAllegiance(0);
         if (Options.isNetworkGame()) Options.stopNetwork();
         if (Options.snailGame) {
-        	setIsMapSelectScreen(false);
-        	setIsTitleScreen(true);
+        	sess.setIsMapSelectScreen(false);
+        	sess.setIsTitleScreen(true);
           Options.snailGame = false;
         }
       } else {
-        coSelections[numCOs] = -1;
-        numCOs--;
-        cx = 0;
-        cy = 0;
+        sess.getCoSelections()[sess.getNumCOs()] = -1;
+        sess.setNumCOs(sess.getNumCOs() - 1);
+        sess.setCurrentCursorXposition(0);
+        sess.setCurrentCursorYposition(0);
       }
-    } else if (isOptionsScreen()) {
-    	setIsTitleScreen(true);
-    	setIsOptionsScreen(false);
-      setCurrentlyHighlightedItem(0);
+    } else if (sess.isOptionsScreen()) {
+    	sess.setIsTitleScreen(true);
+    	sess.setIsOptionsScreen(false);
+    	sess.setCurrentlyHighlightedItem(0);
       if (Options.isNetworkGame()) Options.stopNetwork();
-    } else if (isChooseNewGameTypeScreen()) {
-    	setIsTitleScreen(true);
-    	setIsNewload(false);
-      setCurrentlyHighlightedItem(0);
+    } else if (sess.isChooseNewGameTypeScreen()) {
+    	sess.setIsTitleScreen(true);
+    	sess.setIsChooseNewGameTypeScreen(false);
+    	sess.setCurrentlyHighlightedItem(0);
       if (Options.isNetworkGame()) Options.stopNetwork();
-    } else if (isSideSelect()) {
-    	setIsCOselectScreen(true);
-      numCOs--;
-      setSideSelect(false);
+    } else if (sess.isSideSelect()) {
+    	sess.setIsCOselectScreen(true);
+      sess.setNumCOs(sess.getNumCOs() - 1);
+      sess.setSideSelect(false);
       Options.snailGame = false; //not always needed, but doesn't hurt
-      setCurrentlyHighlightedItem(0);
+      sess.setCurrentlyHighlightedItem(0);
       if (Options.isNetworkGame()) Options.stopNetwork();
-    } else if (isBattleOptionsScreen()) {
-      if (numCOs > 4) setSideSelect(true);
+    } else if (sess.isBattleOptionsScreen()) {
+      if (sess.getNumCOs() > 4) sess.setSideSelect(true);
       else {
-        numCOs--;
-        setIsCOselectScreen(true);
+        sess.setNumCOs(sess.getNumCOs() - 1);
+        sess.setIsCOselectScreen(true);
       }
-      setIsBattleOptionsScreen(false);
+      sess.setIsBattleOptionsScreen(false);
       Options.snailGame = false; //not always needed, but doesn't hurt
-      setCurrentlyHighlightedItem(0);
-      cx = 0;
-      cy = 0;
+      sess.setCurrentlyHighlightedItem(0);
+      sess.setCurrentCursorXposition(0);
+      sess.setCurrentCursorYposition(0);
       if (Options.isNetworkGame()) Options.stopNetwork();
-    } else if (isMapSelectScreen()) {
-    	setIsNewload(true);
-    	setIsMapSelectScreen(false);
+    } else if (sess.isMapSelectScreen()) {
+    	sess.setIsChooseNewGameTypeScreen(true);
+    	sess.setIsMapSelectScreen(false);
       Options.snailGame = false; //not always needed, but doesn't hurt
-      setCurrentlyHighlightedItem(0);
+      sess.setCurrentlyHighlightedItem(0);
       if (Options.isNetworkGame()) Options.stopNetwork();
-    } else if (isKeyMappingScreen()) {
-    	setIsKeymappingScreen(false);
-    	setIsOptionsScreen(true);
-      setCurrentlyHighlightedItem(0);
-    } else if (isSnailInfoScreen()) {
+    } else if (sess.isKeyMappingScreen()) {
+    	sess.setIsKeymappingScreen(false);
+    	sess.setIsOptionsScreen(true);
+    	sess.setCurrentlyHighlightedItem(0);
+    } else if (sess.isSnailInfoScreen()) {
       Options.snailGame = false;
-      setIsSnailInfoScreen(false);
-      setIsNewload(true);
-      setCurrentlyHighlightedItem(0);
+      sess.setIsSnailInfoScreen(false);
+      sess.setIsChooseNewGameTypeScreen(true);
+      sess.setCurrentlyHighlightedItem(0);
     }
   }
 
   public void pressedPGDN() {
-    if (isMapSelectScreen()) {
-      if (isOverLastPage(++mapPage)) {
-        mapPage--;
+    if (sess.isMapSelectScreen()) {
+      if (isOverLastPage(this.sess.getMapPage() + 1)) {
+        sess.setMapPage(sess.getMapPage() - 1);
       } else
-        setCurrentlyHighlightedItem(0);
+    	  sess.setCurrentlyHighlightedItem(0);
 
       loadMiniMapPreview();
-    } else if (isSnailInfoScreen()) {
-      if (item2 == 0) {
-        syspos++;
-        if (syspos > syslog.length - 5) syspos = syslog.length - 5;
-        if (syspos < 0) syspos = 0;
-      } else if (item2 == 1) {
-        chatpos++;
-        if (chatpos > chatlog.length - 5) chatpos = chatlog.length - 5;
-        if (chatpos < 0) chatpos = 0;
+    } else if (sess.isSnailInfoScreen()) {
+      if (sess.getCurrentlyHighlightedItem2() == 0) {
+        sess.setSyspos(sess.getSyspos() + 1);
+        if (sess.getSyspos() > sess.getSyslog().length - 5) sess.setSyspos(sess.getSyslog().length - 5);
+        if (sess.getSyspos() < 0) sess.setSyspos(0);
+      } else if (sess.getCurrentlyHighlightedItem2() == 1) {
+        sess.setChatpos(sess.getChatpos() + 1);
+        if (sess.getChatpos() > sess.getChatlog().length - 5) sess.setChatpos(sess.getChatlog().length - 5);
+        if (sess.getChatpos() < 0) sess.setChatpos(0);
       }
     }
   }
 
   public void pressedPGUP() {
-    if (isMapSelectScreen()) {
-      mapPage--;
-      if (mapPage < 0) {
-        mapPage++;
+    if (sess.isMapSelectScreen()) {
+      sess.setMapPage(sess.getMapPage() - 1);
+      if (sess.getMapPage() < 0) {
+        sess.setMapPage(sess.getMapPage() + 1);
       } else
-        setCurrentlyHighlightedItem(0);
+    	  sess.setCurrentlyHighlightedItem(0);
 
       loadMiniMapPreview();
-    } else if (isSnailInfoScreen()) {
-      if (item2 == 0) {
-        syspos--;
-        if (syspos < 0) syspos = 0;
-      } else if (item2 == 1) {
-        chatpos--;
-        if (chatpos < 0) chatpos = 0;
+    } else if (sess.isSnailInfoScreen()) {
+      if (sess.getCurrentlyHighlightedItem2() == 0) {
+        sess.setSyspos(sess.getSyspos() - 1);
+        if (sess.getSyspos() < 0) sess.setSyspos(0);
+      } else if (sess.getCurrentlyHighlightedItem2() == 1) {
+        sess.setChatpos(sess.getChatpos() - 1);
+        if (sess.getChatpos() < 0) sess.setChatpos(0);
       }
     }
   }
 
   public void processRightKeyBattleOptions() {
-    if (getCurrentlyHighlightedItem() == 0) {
-      visibility++;
-      if (visibility > 2) visibility = 0;
+    if (sess.getCurrentlyHighlightedItem() == 0) {
+      sess.setVisibility(sess.getVisibility() + 1);
+      if (sess.getVisibility() > 2) sess.setVisibility(0);
 
-      if (visibility == 0) {
-        bopt.setFog(false);
-        bopt.setMist(false);
-      } else if (visibility == 1) {
-        bopt.setFog(true);
-        bopt.setMist(false);
+      if (sess.getVisibility() == 0) {
+        sess.getBopt().setFog(false);
+        sess.getBopt().setMist(false);
+      } else if (sess.getVisibility() == 1) {
+        sess.getBopt().setFog(true);
+        sess.getBopt().setMist(false);
       } else {
-        bopt.setMist(true);
-        bopt.setFog(false);
+        sess.getBopt().setMist(true);
+        sess.getBopt().setFog(false);
       }
-    } else if (getCurrentlyHighlightedItem() == 1) {
-      int wtemp = bopt.getWeatherType();
+    } else if (sess.getCurrentlyHighlightedItem() == 1) {
+      int wtemp = sess.getBopt().getWeatherType();
       wtemp++;
       if (wtemp > 4) wtemp = 0;
-      bopt.setWeatherType(wtemp);
-    } else if (getCurrentlyHighlightedItem() == 2) {
-      int ftemp = bopt.getFundsLevel();
+      sess.getBopt().setWeatherType(wtemp);
+    } else if (sess.getCurrentlyHighlightedItem() == 2) {
+      int ftemp = sess.getBopt().getFundsLevel();
       ftemp += 500;
       if (ftemp > 10000) ftemp = 10000;
-      bopt.setFundsLevel(ftemp);
-    } else if (getCurrentlyHighlightedItem() == 3) {
-      int stemp = bopt.getStartFunds();
+      sess.getBopt().setFundsLevel(ftemp);
+    } else if (sess.getCurrentlyHighlightedItem() == 3) {
+      int stemp = sess.getBopt().getStartFunds();
       stemp += 500;
       if (stemp > 30000) {
         stemp = 30000;
       }
-      bopt.setStartFunds(stemp);
-    } else if (getCurrentlyHighlightedItem() == 4) {
-      int temp = bopt.getTurnLimit();
+      sess.getBopt().setStartFunds(stemp);
+    } else if (sess.getCurrentlyHighlightedItem() == 4) {
+      int temp = sess.getBopt().getTurnLimit();
       temp++;
-      bopt.setTurnLimit(temp);
-    } else if (getCurrentlyHighlightedItem() == 5) {
-      int temp = bopt.getCapLimit();
+      sess.getBopt().setTurnLimit(temp);
+    } else if (sess.getCurrentlyHighlightedItem() == 5) {
+      int temp = sess.getBopt().getCapLimit();
       temp++;
-      bopt.setCapLimit(temp);
-    } else if (getCurrentlyHighlightedItem() == 6) {
-      if (bopt.isCOP()) bopt.setCOP(false);
-      else bopt.setCOP(true);
-    } else if (getCurrentlyHighlightedItem() == 7) {
-      if (bopt.isBalance()) bopt.setBalance(false);
-      else bopt.setBalance(true);
-    } else if (getCurrentlyHighlightedItem() == 8) {
-      if (bopt.isRecording()) bopt.setReplay(false);
-      else bopt.setReplay(true);
-    } else if (getCurrentlyHighlightedItem() == 9) {
-      cx++;
-      if (cx >= BaseDMG.NUM_UNITS / 2) cy = 1;
-      if (cx >= BaseDMG.NUM_UNITS) {
-        cx = 0;
-        cy = 0;
+      sess.getBopt().setCapLimit(temp);
+    } else if (sess.getCurrentlyHighlightedItem() == 6) {
+      if (sess.getBopt().isCOP()) sess.getBopt().setCOP(false);
+      else sess.getBopt().setCOP(true);
+    } else if (sess.getCurrentlyHighlightedItem() == 7) {
+      if (sess.getBopt().isBalance()) sess.getBopt().setBalance(false);
+      else sess.getBopt().setBalance(true);
+    } else if (sess.getCurrentlyHighlightedItem() == 8) {
+      if (sess.getBopt().isRecording()) sess.getBopt().setReplay(false);
+      else sess.getBopt().setReplay(true);
+    } else if (sess.getCurrentlyHighlightedItem() == 9) {
+    	sess.setCurrentCursorXposition(sess.getCurrentCursorXposition() + 1);
+      if (sess.getCurrentCursorXposition() >= BaseDMG.NUM_UNITS / 2) sess.setCurrentCursorYposition(1);
+      if (sess.getCurrentCursorXposition() >= BaseDMG.NUM_UNITS) {
+    	  sess.setCurrentCursorXposition(0);
+    	  sess.setCurrentCursorYposition(0);
       }
-    } else if (getCurrentlyHighlightedItem() == 10) {
-      if (bopt.getSnowChance() < 100)
-        bopt.setSnowChance(bopt.getSnowChance() + 1);
-    } else if (getCurrentlyHighlightedItem() == 11) {
-      if (bopt.getRainChance() < 100)
-        bopt.setRainChance(bopt.getRainChance() + 1);
-    } else if (getCurrentlyHighlightedItem() == 12) {
-      if (bopt.getSandChance() < 100)
-        bopt.setSandChance(bopt.getSandChance() + 1);
-    } else if (getCurrentlyHighlightedItem() == 13) {
-      bopt.setMinWTime(bopt.getMinWTime() + 1);
-    } else if (getCurrentlyHighlightedItem() == 14) {
-      bopt.setMaxWTime(bopt.getMaxWTime() + 1);
-    } else if (getCurrentlyHighlightedItem() == 15) {
-      bopt.setMinWDay(bopt.getMinWDay() + 1);
+    } else if (sess.getCurrentlyHighlightedItem() == 10) {
+      if (sess.getBopt().getSnowChance() < 100)
+        sess.getBopt().setSnowChance(sess.getBopt().getSnowChance() + 1);
+    } else if (sess.getCurrentlyHighlightedItem() == 11) {
+      if (sess.getBopt().getRainChance() < 100)
+        sess.getBopt().setRainChance(sess.getBopt().getRainChance() + 1);
+    } else if (sess.getCurrentlyHighlightedItem() == 12) {
+      if (sess.getBopt().getSandChance() < 100)
+        sess.getBopt().setSandChance(sess.getBopt().getSandChance() + 1);
+    } else if (sess.getCurrentlyHighlightedItem() == 13) {
+      sess.getBopt().setMinWTime(sess.getBopt().getMinWTime() + 1);
+    } else if (sess.getCurrentlyHighlightedItem() == 14) {
+      sess.getBopt().setMaxWTime(sess.getBopt().getMaxWTime() + 1);
+    } else if (sess.getCurrentlyHighlightedItem() == 15) {
+      sess.getBopt().setMinWDay(sess.getBopt().getMinWDay() + 1);
     }
   }
 
   public void returnToServerInfo() {
-	setIsSnailInfoScreen(true);
-	setIsTitleScreen(false);
+	  sess.setIsSnailInfoScreen(true);
+	  sess.setIsTitleScreen(false);
     Options.snailGame = true;
     refreshInfo();
   }
@@ -2193,41 +2148,44 @@ private void loadGame() {
     logger.info(reply);
     
     if (reply.equals("no")) {
-      setIsSnailInfoScreen(false);
-      setIsNewload(true);
+    	sess.setIsSnailInfoScreen(false);
+    	sess.setIsChooseNewGameTypeScreen(true);
       Options.snailGame = false;
-      setCurrentlyHighlightedItem(0);
+      sess.setCurrentlyHighlightedItem(0);
       return;
     }
     
     String[] nums = reply.split("\n");
-    day = Integer.parseInt(nums[0]);
-    turn = Integer.parseInt(nums[1]);
+    sess.setDay(Integer.parseInt(nums[0]));
+    sess.setTurn(Integer.parseInt(nums[1]));
     int numplay = Integer.parseInt(nums[2]);
-    usernames = new String[numplay];
-    System.arraycopy(nums, 3, usernames, 0, numplay);
+    sess.setUsernames(new String[numplay]);
+    System.arraycopy(nums, 3, sess.getUsernames(), 0, numplay);
 
     reply = sendCommandToMain("getsys", Options.gamename);
-    syslog = reply.split("\n");
-    syspos = syslog.length - 5;
-    if (syspos < 0) syspos = 0;
+    sess.setSyslog(reply.split("\n"));
+    sess.setSyspos(sess.getSyslog().length - 5);
+    if (sess.getSyspos() < 0) sess.setSyspos(0);
 
     reply = sendCommandToMain("getchat", Options.gamename);
-    chatlog = reply.split("\n");
-    chatpos = chatlog.length - 5;
-    if (chatpos < 0) chatpos = 0;
+    sess.setChatlog(reply.split("\n"));
+    sess.setChatpos(sess.getChatlog().length - 5);
+    if (sess.getChatpos() < 0) sess.setChatpos(0);
   }
 
   //This class deals with keypresses
   class KeyControl implements KeyListener {
+	
+	  
+	  
     public void keyTyped(KeyEvent e) {
     }
 
     public void keyPressed(KeyEvent e) {
       int keypress = e.getKeyCode();
       //deal with key remapping
-      if (chooseKey) {
-        switch (getCurrentlyHighlightedItem()) {
+      if (sess.isChooseKey()) {
+        switch (sess.getCurrentlyHighlightedItem()) {
           case 0:
             Options.up = keypress;
             break;
@@ -2284,337 +2242,337 @@ private void loadGame() {
             break;
         }
         logger.debug("Key Pressed: " + keypress);
-        chooseKey = false;
+        sess.setChooseKey(false);
         Options.saveOptions();
       } else if (keypress == Options.up) {
-        if (isTitleScreen()) {
+        if (sess.isTitleScreen()) {
           String soundLocation = ResourceLoader.properties.getProperty("soundLocation");
           SFX.playClip(soundLocation + "/menutick.wav");
-          setCurrentlyHighlightedItem(getCurrentlyHighlightedItem() - 1);
-          if (getCurrentlyHighlightedItem() < 0) setCurrentlyHighlightedItem(2);
-        } else if (isCOselectScreen() && !isInfoScreen()) {
+          sess.setCurrentlyHighlightedItem(sess.getCurrentlyHighlightedItem() - 1);
+          if (sess.getCurrentlyHighlightedItem() < 0) sess.setCurrentlyHighlightedItem(2);
+        } else if (sess.isCOselectScreen() && !sess.isInfoScreen()) {
           String soundLocation = ResourceLoader.properties.getProperty("soundLocation");
           SFX.playClip(soundLocation + "/menutick.wav");
-          cy--;
-          if (cy < 0) cy = 0;
-          if (cx != 0 || cy != 0) {
-            CO temp = armyArray[selectedArmy][cx + cy * 3 - 1];
-            if (temp != null) infono = COList.getIndex(temp);
+          sess.setCurrentCursorYposition(sess.getCurrentCursorYposition() - 1);
+          if (sess.getCurrentCursorYposition() < 0) sess.setCurrentCursorYposition(0);
+          if (sess.getCurrentCursorXposition() != 0 || sess.getCurrentCursorYposition() != 0) {
+            CO temp = armyArray[sess.getSelectedArmyAllegiance()][sess.getCurrentCursorXposition() + sess.getCurrentCursorYposition() * 3 - 1];
+            if (temp != null) sess.setInfono(COList.getIndex(temp));
           }
-          skip = 0;
-          glide = 0;
-        } else if (isInfoScreen()) {
-          skip--;
-          if (skip < 0)
-            skip = 0;
-        } else if (isOptionsScreen()) {
-          setCurrentlyHighlightedItem(getCurrentlyHighlightedItem() - 1);
-          if (getCurrentlyHighlightedItem() < 0) setCurrentlyHighlightedItem(18);
-        } else if (isBattleOptionsScreen()) {
-          setCurrentlyHighlightedItem(getCurrentlyHighlightedItem() - 1);
-          if (getCurrentlyHighlightedItem() < 0) setCurrentlyHighlightedItem(15);
-        } else if (isChooseNewGameTypeScreen()) {
-          setCurrentlyHighlightedItem(getCurrentlyHighlightedItem() - 1);
-          if (getCurrentlyHighlightedItem() < 0) setCurrentlyHighlightedItem(7);
-        } else if (isSideSelect()) {
-          setCurrentlyHighlightedItem(getCurrentlyHighlightedItem() - 1);
-          if (getCurrentlyHighlightedItem() < 0) setCurrentlyHighlightedItem(numArmies - 1);
-        } else if (isMapSelectScreen()) {
+          sess.setSkip(0);
+          sess.setGlide(0);
+        } else if (sess.isInfoScreen()) {
+          sess.setSkip(sess.getSkip() - 1);
+          if (sess.getSkip() < 0)
+            sess.setSkip(0);
+        } else if (sess.isOptionsScreen()) {
+        	sess.setCurrentlyHighlightedItem(sess.getCurrentlyHighlightedItem() - 1);
+          if (sess.getCurrentlyHighlightedItem() < 0) sess.setCurrentlyHighlightedItem(18);
+        } else if (sess.isBattleOptionsScreen()) {
+        	sess.setCurrentlyHighlightedItem(sess.getCurrentlyHighlightedItem() - 1);
+          if (sess.getCurrentlyHighlightedItem() < 0) sess.setCurrentlyHighlightedItem(15);
+        } else if (sess.isChooseNewGameTypeScreen()) {
+        	sess.setCurrentlyHighlightedItem(sess.getCurrentlyHighlightedItem() - 1);
+          if (sess.getCurrentlyHighlightedItem() < 0) sess.setCurrentlyHighlightedItem(7);
+        } else if (sess.isSideSelect()) {
+        	sess.setCurrentlyHighlightedItem(sess.getCurrentlyHighlightedItem() - 1);
+          if (sess.getCurrentlyHighlightedItem() < 0) sess.setCurrentlyHighlightedItem(sess.getNumOfArmiesOnMap() - 1);
+        } else if (sess.isMapSelectScreen()) {
           String soundLocation = ResourceLoader.properties.getProperty("soundLocation");
-          setCurrentlyHighlightedItem(getCurrentlyHighlightedItem() - 1);
+          sess.setCurrentlyHighlightedItem(sess.getCurrentlyHighlightedItem() - 1);
           SFX.playClip(soundLocation + "/menutick.wav");
-          if (getCurrentlyHighlightedItem() < 0) {
-            setCurrentlyHighlightedItem(11);
-            mapPage--;
-            if (mapPage < 0) {
-              mapPage = 0;
-              setCurrentlyHighlightedItem(0);
+          if (sess.getCurrentlyHighlightedItem() < 0) {
+        	  sess.setCurrentlyHighlightedItem(11);
+            sess.setMapPage(sess.getMapPage() - 1);
+            if (sess.getMapPage() < 0) {
+              sess.setMapPage(0);
+              sess.setCurrentlyHighlightedItem(0);
             }
           }
           loadMiniMapPreview();
-        } else if (isKeyMappingScreen()) {
-          setCurrentlyHighlightedItem(getCurrentlyHighlightedItem() - 1);
-          if (getCurrentlyHighlightedItem() < 0) setCurrentlyHighlightedItem(17);
-        } else if (isSnailInfoScreen()) {
-          setCurrentlyHighlightedItem(getCurrentlyHighlightedItem() - 1);
-          if (getCurrentlyHighlightedItem() < 0) setCurrentlyHighlightedItem(1);
+        } else if (sess.isKeyMappingScreen()) {
+        	sess.setCurrentlyHighlightedItem(sess.getCurrentlyHighlightedItem() - 1);
+          if (sess.getCurrentlyHighlightedItem() < 0) sess.setCurrentlyHighlightedItem(17);
+        } else if (sess.isSnailInfoScreen()) {
+        	sess.setCurrentlyHighlightedItem(sess.getCurrentlyHighlightedItem() - 1);
+          if (sess.getCurrentlyHighlightedItem() < 0) sess.setCurrentlyHighlightedItem(1);
         }
       } else if (keypress == Options.down) {
-        if (isTitleScreen()) {
+        if (sess.isTitleScreen()) {
           String soundLocation = ResourceLoader.properties.getProperty("soundLocation");
           SFX.playClip(soundLocation + "/menutick.wav");
-          setCurrentlyHighlightedItem(getCurrentlyHighlightedItem() + 1);
-          if (getCurrentlyHighlightedItem() > 2) setCurrentlyHighlightedItem(0);
-        } else if (isCOselectScreen() && !isInfoScreen()) {
+          sess.setCurrentlyHighlightedItem(sess.getCurrentlyHighlightedItem() + 1);
+          if (sess.getCurrentlyHighlightedItem() > 2) sess.setCurrentlyHighlightedItem(0);
+        } else if (sess.isCOselectScreen() && !sess.isInfoScreen()) {
           String soundLocation = ResourceLoader.properties.getProperty("soundLocation");
           SFX.playClip(soundLocation = "/menutick.wav");
-          cy++;
-          if (cy > 4) cy = 4;
-          CO temp = armyArray[selectedArmy][cx + cy * 3 - 1];
-          if (temp != null) infono = COList.getIndex(temp);
-          skip = 0;
-          glide = 0;
-        } else if (isInfoScreen()) {
-          skip++;
-          if (skip > skipMax)
-            skip = skipMax;
-        } else if (isOptionsScreen()) {
-          setCurrentlyHighlightedItem(getCurrentlyHighlightedItem() + 1);
-          if (getCurrentlyHighlightedItem() > 18) setCurrentlyHighlightedItem(0);
-        } else if (isBattleOptionsScreen()) {
-          setCurrentlyHighlightedItem(getCurrentlyHighlightedItem() + 1);
-          if (getCurrentlyHighlightedItem() > 15) setCurrentlyHighlightedItem(0);
-        } else if (isChooseNewGameTypeScreen()) {
-          setCurrentlyHighlightedItem(getCurrentlyHighlightedItem() + 1);
-          if (getCurrentlyHighlightedItem() > 7) setCurrentlyHighlightedItem(0);
-        } else if (isSideSelect()) {
-          setCurrentlyHighlightedItem(getCurrentlyHighlightedItem() + 1);
-          if (getCurrentlyHighlightedItem() > numArmies - 1) setCurrentlyHighlightedItem(0);
-        } else if (isMapSelectScreen()) {
+          sess.setCurrentCursorYposition(sess.getCurrentCursorYposition() + 1);
+          if (sess.getCurrentCursorYposition() > 4) sess.setCurrentCursorYposition(4);
+          CO temp = armyArray[sess.getSelectedArmyAllegiance()][sess.getCurrentCursorXposition() + sess.getCurrentCursorYposition() * 3 - 1];
+          if (temp != null) sess.setInfono(COList.getIndex(temp));
+          sess.setSkip(0);
+          sess.setGlide(0);
+        } else if (sess.isInfoScreen()) {
+          sess.setSkip(sess.getSkip() + 1);
+          if (sess.getSkip() > sess.getSkipMax())
+            sess.setSkip(sess.getSkipMax());
+        } else if (sess.isOptionsScreen()) {
+        	sess.setCurrentlyHighlightedItem(sess.getCurrentlyHighlightedItem() + 1);
+          if (sess.getCurrentlyHighlightedItem() > 18) sess.setCurrentlyHighlightedItem(0);
+        } else if (sess.isBattleOptionsScreen()) {
+        	sess.setCurrentlyHighlightedItem(sess.getCurrentlyHighlightedItem() + 1);
+          if (sess.getCurrentlyHighlightedItem() > 15) sess.setCurrentlyHighlightedItem(0);
+        } else if (sess.isChooseNewGameTypeScreen()) {
+        	sess.setCurrentlyHighlightedItem(sess.getCurrentlyHighlightedItem() + 1);
+          if (sess.getCurrentlyHighlightedItem() > 7) sess.setCurrentlyHighlightedItem(0);
+        } else if (sess.isSideSelect()) {
+        	sess.setCurrentlyHighlightedItem(sess.getCurrentlyHighlightedItem() + 1);
+          if (sess.getCurrentlyHighlightedItem() > sess.getNumOfArmiesOnMap() - 1) sess.setCurrentlyHighlightedItem(0);
+        } else if (sess.isMapSelectScreen()) {
           String soundLocation = ResourceLoader.properties.getProperty("soundLocation");
-          setCurrentlyHighlightedItem(getCurrentlyHighlightedItem() + 1);
+          sess.setCurrentlyHighlightedItem(sess.getCurrentlyHighlightedItem() + 1);
           SFX.playClip(soundLocation + "/menutick.wav");
 
-          if (isMapVisible(getCurrentlyHighlightedItem())) {
-            setCurrentlyHighlightedItem(getCurrentlyHighlightedItem() - 1);
+          if (isMapVisible(sess.getCurrentlyHighlightedItem())) {
+        	  sess.setCurrentlyHighlightedItem(sess.getCurrentlyHighlightedItem() - 1);
           }
 
-          if (getCurrentlyHighlightedItem() > 11) {
-            setCurrentlyHighlightedItem(0);
-            if (isOverLastPage(++mapPage)) {
-              mapPage--;
+          if (sess.getCurrentlyHighlightedItem() > 11) {
+        	  sess.setCurrentlyHighlightedItem(0);
+            if (isOverLastPage(sess.getMapPage() + 1)) {
+              sess.setMapPage(sess.getMapPage() - 1);
               SFX.playClip(soundLocation + "/menutick.wav");
-              setCurrentlyHighlightedItem(11);
+              sess.setCurrentlyHighlightedItem(11);
             }
           }
           loadMiniMapPreview();
-        } else if (isKeyMappingScreen()) {
-          setCurrentlyHighlightedItem(getCurrentlyHighlightedItem() + 1);
-          if (getCurrentlyHighlightedItem() > 17) setCurrentlyHighlightedItem(0);
-        } else if (isSnailInfoScreen()) {
-          setCurrentlyHighlightedItem(getCurrentlyHighlightedItem() + 1);
-          if (getCurrentlyHighlightedItem() > 1) setCurrentlyHighlightedItem(0);
+        } else if (sess.isKeyMappingScreen()) {
+        	sess.setCurrentlyHighlightedItem(sess.getCurrentlyHighlightedItem() + 1);
+          if (sess.getCurrentlyHighlightedItem() > 17) sess.setCurrentlyHighlightedItem(0);
+        } else if (sess.isSnailInfoScreen()) {
+        	sess.setCurrentlyHighlightedItem(sess.getCurrentlyHighlightedItem() + 1);
+          if (sess.getCurrentlyHighlightedItem() > 1) sess.setCurrentlyHighlightedItem(0);
         }
       } else if (keypress == Options.altright || (keypress == Options.right && e.isControlDown())) {
         String soundLocation = ResourceLoader.properties.getProperty("soundLocation");
-        if (isMapSelectScreen()) {
-          setCurrentlySelectedSubCategory(getCurrentlySelectedSubCategory() + 1);
+        if (sess.isMapSelectScreen()) {
+        	sess.setCurrentlySelectedSubCategory(sess.getCurrentlySelectedSubCategory() + 1);
           SFX.playClip(soundLocation + "/minimap.wav");
-          if (getCurrentlySelectedSubCategory() > 9) setCurrentlySelectedSubCategory(0);
+          if (sess.getCurrentlySelectedSubCategory() > 9) sess.setCurrentlySelectedSubCategory(0);
 
-          setCurrentlyHighlightedItem(0);
-          mapPage = 0;
+          sess.setCurrentlyHighlightedItem(0);
+          sess.setMapPage(0);
 
           //load maps in new directory
           loadMapDisplayNames();
-        } else if (isCOselectScreen()) {
+        } else if (sess.isCOselectScreen()) {
           SFX.playClip(soundLocation + "/minimap.wav");
-          selectedArmy++;
-          if (selectedArmy > 7) selectedArmy = 7;
-          if (cx + cy * 3 - 1 > 0) {
-            CO temp = armyArray[selectedArmy][cx + cy * 3 - 1];
-            if (temp != null) infono = COList.getIndex(temp);
+          sess.setSelectedArmyAllegiance(sess.getSelectedArmyAllegiance() + 1);
+          if (sess.getSelectedArmyAllegiance() > 7) sess.setSelectedArmyAllegiance(7);
+          if (sess.getCurrentCursorXposition() + sess.getCurrentCursorYposition() * 3 - 1 > 0) {
+            CO temp = armyArray[sess.getSelectedArmyAllegiance()][sess.getCurrentCursorXposition() + sess.getCurrentCursorYposition() * 3 - 1];
+            if (temp != null) sess.setInfono(COList.getIndex(temp));
           }
-          skip = 0;
-          glide = 0;
+          sess.setSkip(0);
+          sess.setGlide(0);
         }
       } else if (keypress == Options.altleft || (keypress == Options.left && e.isControlDown())) {
         String soundLocation = ResourceLoader.properties.getProperty("soundLocation");
 
-        if (isMapSelectScreen()) {
-          setCurrentlySelectedSubCategory(getCurrentlySelectedSubCategory() - 1);
+        if (sess.isMapSelectScreen()) {
+        	sess.setCurrentlySelectedSubCategory(sess.getCurrentlySelectedSubCategory() - 1);
           SFX.playClip(soundLocation + "/minimap.wav");
-          if (getCurrentlySelectedSubCategory() < 0) setCurrentlySelectedSubCategory(9);
+          if (sess.getCurrentlySelectedSubCategory() < 0) sess.setCurrentlySelectedSubCategory(9);
 
-          setCurrentlyHighlightedItem(0);
-          mapPage = 0;
+          sess.setCurrentlyHighlightedItem(0);
+          sess.setMapPage(0);
 
           //load maps in new directory
           loadMapDisplayNames();
-        } else if (isCOselectScreen()) {
+        } else if (sess.isCOselectScreen()) {
           SFX.playClip(soundLocation + "/minimap.wav");
-          selectedArmy--;
-          if (selectedArmy < 0) selectedArmy = 0;
-          if (cx + cy * 3 - 1 > 0) {
-            CO temp = armyArray[selectedArmy][cx + cy * 3 - 1];
-            if (temp != null) infono = COList.getIndex(temp);
+          sess.setSelectedArmyAllegiance(sess.getSelectedArmyAllegiance() - 1);
+          if (sess.getSelectedArmyAllegiance() < 0) sess.setSelectedArmyAllegiance(0);
+          if (sess.getCurrentCursorXposition() + sess.getCurrentCursorYposition() * 3 - 1 > 0) {
+            CO temp = armyArray[sess.getSelectedArmyAllegiance()][sess.getCurrentCursorXposition() + sess.getCurrentCursorYposition() * 3 - 1];
+            if (temp != null) sess.setInfono(COList.getIndex(temp));
           }
-          skip = 0;
-          glide = 0;
+          sess.setSkip(0);
+          sess.setGlide(0);
         }
       } else if (keypress == Options.left) {
         String soundLocation = ResourceLoader.properties.getProperty("soundLocation");
-        if (isCOselectScreen() && !isInfoScreen()) {
+        if (sess.isCOselectScreen() && !sess.isInfoScreen()) {
           SFX.playClip(soundLocation + "/menutick.wav");
-          cx--;
-          if (cx < 0) {
-            cx = 0;
-            if (cy != 0) {
-              cx = 2;
-              cy--;
+          sess.setCurrentCursorXposition(sess.getCurrentCursorXposition() - 1);
+          if (sess.getCurrentCursorXposition() < 0) {
+        	  sess.setCurrentCursorXposition(0);
+            if (sess.getCurrentCursorYposition() != 0) {
+            	sess.setCurrentCursorXposition(2);
+            	sess.setCurrentCursorYposition(sess.getCurrentCursorYposition() - 1);
             }
           }
-          if (cx != 0 || cy != 0) {
-            CO temp = armyArray[selectedArmy][cx + cy * 3 - 1];
-            if (temp != null) infono = COList.getIndex(temp);
+          if (sess.getCurrentCursorXposition() != 0 || sess.getCurrentCursorYposition() != 0) {
+            CO temp = armyArray[sess.getSelectedArmyAllegiance()][sess.getCurrentCursorXposition() + sess.getCurrentCursorYposition() * 3 - 1];
+            if (temp != null) sess.setInfono(COList.getIndex(temp));
           }
-          skip = 0;
-          glide = 0;
-        } else if (isSideSelect()) {
-          if (sideSelections[getCurrentlyHighlightedItem()] == 0) sideSelections[getCurrentlyHighlightedItem()] = numArmies - 1;
-          else sideSelections[getCurrentlyHighlightedItem()] -= 1;
-        } else if (isOptionsScreen() && getCurrentlyHighlightedItem() == 6) {
+          sess.setSkip(0);
+          sess.setGlide(0);
+        } else if (sess.isSideSelect()) {
+          if (sess.getSideSelections()[sess.getCurrentlyHighlightedItem()] == 0) sess.getSideSelections()[sess.getCurrentlyHighlightedItem()] = sess.getNumOfArmiesOnMap() - 1;
+          else sess.getSideSelections()[sess.getCurrentlyHighlightedItem()] -= 1;
+        } else if (sess.isOptionsScreen() && sess.getCurrentlyHighlightedItem() == 6) {
           Options.decrementCursor();
-        } else if (isOptionsScreen() && getCurrentlyHighlightedItem() == 11) {
+        } else if (sess.isOptionsScreen() && sess.getCurrentlyHighlightedItem() == 11) {
           Options.decrementCO();
-          glide = 0;
-        } else if (isOptionsScreen() && getCurrentlyHighlightedItem() == 12) {
+          sess.setGlide(0);
+        } else if (sess.isOptionsScreen() && sess.getCurrentlyHighlightedItem() == 12) {
           SFX.toggleMute();
-        } else if (isOptionsScreen() && getCurrentlyHighlightedItem() == 13) {
+        } else if (sess.isOptionsScreen() && sess.getCurrentlyHighlightedItem() == 13) {
           Options.decrementTerrain();
-        } else if (isOptionsScreen() && getCurrentlyHighlightedItem() == 14) {
+        } else if (sess.isOptionsScreen() && sess.getCurrentlyHighlightedItem() == 14) {
           Options.decrementUrban();
-        } else if (isOptionsScreen() && getCurrentlyHighlightedItem() == 15) {
+        } else if (sess.isOptionsScreen() && sess.getCurrentlyHighlightedItem() == 15) {
           Options.decrementHQ();
-        } else if (isMapSelectScreen()) {
+        } else if (sess.isMapSelectScreen()) {
 
-          setCurrentlySelectedMapCategory(getCurrentMapCategory() - 1);
-          if (getCurrentMapCategory() < 0) setCurrentlySelectedMapCategory(mapCategories.length - 1);
-          setCurrentlySelectedSubCategory(0);
+        	sess.setCurrentlySelectedMapCategory(sess.getCurrentlySelectedMapCategory() - 1);
+          if (sess.getCurrentlySelectedMapCategory() < 0) sess.setCurrentlySelectedMapCategory(mapCategories.length - 1);
+          sess.setCurrentlySelectedSubCategory(0);
 
-          setCurrentlyHighlightedItem(0);
-          mapPage = 0;
+          sess.setCurrentlyHighlightedItem(0);
+          sess.setMapPage(0);
 
           //load maps in new directory
           loadMapDisplayNames();
-        } else if (isBattleOptionsScreen()) {
-          if (getCurrentlyHighlightedItem() == 0) {
-            visibility--;
-            if (visibility < 0) visibility = 2;
+        } else if (sess.isBattleOptionsScreen()) {
+          if (sess.getCurrentlyHighlightedItem() == 0) {
+            sess.setVisibility(sess.getVisibility() - 1);
+            if (sess.getVisibility() < 0) sess.setVisibility(2);
 
-            if (visibility == 0) {
-              bopt.setFog(false);
-              bopt.setMist(false);
-            } else if (visibility == 1) {
-              bopt.setFog(true);
-              bopt.setMist(false);
+            if (sess.getVisibility() == 0) {
+              sess.getBopt().setFog(false);
+              sess.getBopt().setMist(false);
+            } else if (sess.getVisibility() == 1) {
+              sess.getBopt().setFog(true);
+              sess.getBopt().setMist(false);
             } else {
-              bopt.setMist(true);
-              bopt.setFog(false);
+              sess.getBopt().setMist(true);
+              sess.getBopt().setFog(false);
             }
-          } else if (getCurrentlyHighlightedItem() == 1) {
-            int wtemp = bopt.getWeatherType();
+          } else if (sess.getCurrentlyHighlightedItem() == 1) {
+            int wtemp = sess.getBopt().getWeatherType();
             wtemp--;
             if (wtemp < 0) wtemp = 4;
-            bopt.setWeatherType(wtemp);
-          } else if (getCurrentlyHighlightedItem() == 2) {
-            int ftemp = bopt.getFundsLevel();
+            sess.getBopt().setWeatherType(wtemp);
+          } else if (sess.getCurrentlyHighlightedItem() == 2) {
+            int ftemp = sess.getBopt().getFundsLevel();
             ftemp -= 500;
             if (ftemp <= 0) ftemp = 500;
-            bopt.setFundsLevel(ftemp);
-          } else if (getCurrentlyHighlightedItem() == 3) {
-            int stemp = bopt.getStartFunds();
+            sess.getBopt().setFundsLevel(ftemp);
+          } else if (sess.getCurrentlyHighlightedItem() == 3) {
+            int stemp = sess.getBopt().getStartFunds();
             stemp -= 500;
             if (stemp <= 0) stemp = 0;
-            bopt.setStartFunds(stemp);
-          } else if (getCurrentlyHighlightedItem() == 4) {
-            int temp = bopt.getTurnLimit();
+            sess.getBopt().setStartFunds(stemp);
+          } else if (sess.getCurrentlyHighlightedItem() == 4) {
+            int temp = sess.getBopt().getTurnLimit();
             temp--;
             if (temp < 0) temp = 0;
-            bopt.setTurnLimit(temp);
-          } else if (getCurrentlyHighlightedItem() == 5) {
-            int temp = bopt.getCapLimit();
+            sess.getBopt().setTurnLimit(temp);
+          } else if (sess.getCurrentlyHighlightedItem() == 5) {
+            int temp = sess.getBopt().getCapLimit();
             temp--;
             if (temp < 0) temp = 0;
-            bopt.setCapLimit(temp);
-          } else if (getCurrentlyHighlightedItem() == 6) {
-            if (bopt.isCOP()) bopt.setCOP(false);
-            else bopt.setCOP(true);
-          } else if (getCurrentlyHighlightedItem() == 7) {
-            if (bopt.isBalance()) bopt.setBalance(false);
-            else bopt.setBalance(true);
-          } else if (getCurrentlyHighlightedItem() == 8) {
-            if (bopt.isRecording()) bopt.setReplay(false);
-            else bopt.setReplay(true);
-          } else if (getCurrentlyHighlightedItem() == 9) {
-            cx--;
-            if (cx < BaseDMG.NUM_UNITS / 2) cy = 0;
-            if (cx < 0) {
-              cx = BaseDMG.NUM_UNITS - 1;
-              cy = 1;
+            sess.getBopt().setCapLimit(temp);
+          } else if (sess.getCurrentlyHighlightedItem() == 6) {
+            if (sess.getBopt().isCOP()) sess.getBopt().setCOP(false);
+            else sess.getBopt().setCOP(true);
+          } else if (sess.getCurrentlyHighlightedItem() == 7) {
+            if (sess.getBopt().isBalance()) sess.getBopt().setBalance(false);
+            else sess.getBopt().setBalance(true);
+          } else if (sess.getCurrentlyHighlightedItem() == 8) {
+            if (sess.getBopt().isRecording()) sess.getBopt().setReplay(false);
+            else sess.getBopt().setReplay(true);
+          } else if (sess.getCurrentlyHighlightedItem() == 9) {
+        	  sess.setCurrentCursorXposition(sess.getCurrentCursorXposition() - 1);
+            if (sess.getCurrentCursorXposition() < BaseDMG.NUM_UNITS / 2) sess.setCurrentCursorYposition(0);
+            if (sess.getCurrentCursorXposition() < 0) {
+            	sess.setCurrentCursorXposition(BaseDMG.NUM_UNITS - 1);
+            	sess.setCurrentCursorYposition(1);
             }
-          } else if (getCurrentlyHighlightedItem() == 10) {
-            if (bopt.getSnowChance() > 0)
-              bopt.setSnowChance(bopt.getSnowChance() - 1);
-          } else if (getCurrentlyHighlightedItem() == 11) {
-            if (bopt.getRainChance() > 0)
-              bopt.setRainChance(bopt.getRainChance() - 1);
-          } else if (getCurrentlyHighlightedItem() == 12) {
-            if (bopt.getSandChance() > 0)
-              bopt.setSandChance(bopt.getSandChance() - 1);
-          } else if (getCurrentlyHighlightedItem() == 13) {
-            if (bopt.getMinWTime() > 0)
-              bopt.setMinWTime(bopt.getMinWTime() - 1);
-          } else if (getCurrentlyHighlightedItem() == 14) {
-            if (bopt.getMaxWTime() > 0)
-              bopt.setMaxWTime(bopt.getMaxWTime() - 1);
-          } else if (getCurrentlyHighlightedItem() == 15) {
-            if (bopt.getMinWDay() > 0)
-              bopt.setMinWDay(bopt.getMinWDay() - 1);
+          } else if (sess.getCurrentlyHighlightedItem() == 10) {
+            if (sess.getBopt().getSnowChance() > 0)
+              sess.getBopt().setSnowChance(sess.getBopt().getSnowChance() - 1);
+          } else if (sess.getCurrentlyHighlightedItem() == 11) {
+            if (sess.getBopt().getRainChance() > 0)
+              sess.getBopt().setRainChance(sess.getBopt().getRainChance() - 1);
+          } else if (sess.getCurrentlyHighlightedItem() == 12) {
+            if (sess.getBopt().getSandChance() > 0)
+              sess.getBopt().setSandChance(sess.getBopt().getSandChance() - 1);
+          } else if (sess.getCurrentlyHighlightedItem() == 13) {
+            if (sess.getBopt().getMinWTime() > 0)
+              sess.getBopt().setMinWTime(sess.getBopt().getMinWTime() - 1);
+          } else if (sess.getCurrentlyHighlightedItem() == 14) {
+            if (sess.getBopt().getMaxWTime() > 0)
+              sess.getBopt().setMaxWTime(sess.getBopt().getMaxWTime() - 1);
+          } else if (sess.getCurrentlyHighlightedItem() == 15) {
+            if (sess.getBopt().getMinWDay() > 0)
+              sess.getBopt().setMinWDay(sess.getBopt().getMinWDay() - 1);
           }
-        } else if (isSnailInfoScreen()) {
-          item2--;
-          if (item2 < 0) item2 = 1;
+        } else if (sess.isSnailInfoScreen()) {
+        	sess.setCurrentlyHighlightedItem2(sess.getCurrentlyHighlightedItem2() - 1);
+          if (sess.getCurrentlyHighlightedItem2() < 0) sess.setCurrentlyHighlightedItem2(1);
         }
       } else if (keypress == Options.right) {
         String soundLocation = ResourceLoader.properties.getProperty("soundLocation");
 
-        if (isCOselectScreen() && !isInfoScreen()) {
+        if (sess.isCOselectScreen() && !sess.isInfoScreen()) {
           SFX.playClip(soundLocation + "/menutick.wav");
-          cx++;
-          if (cx > 2) {
-            cx = 2;
-            if (cy != 4) {
-              cx = 0;
-              cy++;
+          sess.setCurrentCursorXposition(sess.getCurrentCursorXposition() + 1);
+          if (sess.getCurrentCursorXposition() > 2) {
+        	  sess.setCurrentCursorXposition(2);
+            if (sess.getCurrentCursorYposition() != 4) {
+            	sess.setCurrentCursorXposition(0);
+            	sess.setCurrentCursorYposition(sess.getCurrentCursorYposition() + 1);
             }
           }
-          CO temp = armyArray[selectedArmy][cx + cy * 3 - 1];
-          if (temp != null) infono = COList.getIndex(temp);
-          skip = 0;
-          glide = 0;
-        } else if (isSideSelect()) {
-          if (sideSelections[getCurrentlyHighlightedItem()] == numArmies - 1) sideSelections[getCurrentlyHighlightedItem()] = 0;
-          else sideSelections[getCurrentlyHighlightedItem()] += 1;
-        } else if (isOptionsScreen() && getCurrentlyHighlightedItem() == 6) {
+          CO temp = armyArray[sess.getSelectedArmyAllegiance()][sess.getCurrentCursorXposition() + sess.getCurrentCursorYposition() * 3 - 1];
+          if (temp != null) sess.setInfono(COList.getIndex(temp));
+          sess.setSkip(0);
+          sess.setGlide(0);
+        } else if (sess.isSideSelect()) {
+          if (sess.getSideSelections()[sess.getCurrentlyHighlightedItem()] == sess.getNumOfArmiesOnMap() - 1) sess.getSideSelections()[sess.getCurrentlyHighlightedItem()] = 0;
+          else sess.getSideSelections()[sess.getCurrentlyHighlightedItem()] += 1;
+        } else if (sess.isOptionsScreen() && sess.getCurrentlyHighlightedItem() == 6) {
           Options.incrementCursor();
-        } else if (isOptionsScreen() && getCurrentlyHighlightedItem() == 11) {
+        } else if (sess.isOptionsScreen() && sess.getCurrentlyHighlightedItem() == 11) {
           Options.incrementCO();
-          glide = 0;
-        } else if (isOptionsScreen() && getCurrentlyHighlightedItem() == 12) {
+          sess.setGlide(0);
+        } else if (sess.isOptionsScreen() && sess.getCurrentlyHighlightedItem() == 12) {
           SFX.toggleMute();
-        } else if (isOptionsScreen() && getCurrentlyHighlightedItem() == 13) {
+        } else if (sess.isOptionsScreen() && sess.getCurrentlyHighlightedItem() == 13) {
           Options.incrementTerrain();
-        } else if (isOptionsScreen() && getCurrentlyHighlightedItem() == 14) {
+        } else if (sess.isOptionsScreen() && sess.getCurrentlyHighlightedItem() == 14) {
           Options.incrementUrban();
-        } else if (isOptionsScreen() && getCurrentlyHighlightedItem() == 15) {
+        } else if (sess.isOptionsScreen() && sess.getCurrentlyHighlightedItem() == 15) {
           Options.incrementHQ();
         }
-        if (isMapSelectScreen()) {
+        if (sess.isMapSelectScreen()) {
 
-          setCurrentlySelectedMapCategory(getCurrentMapCategory() + 1);
-          if (getCurrentMapCategory() > mapCategories.length - 1) setCurrentlySelectedMapCategory(0);
-          setCurrentlySelectedSubCategory(0);
+        	sess.setCurrentlySelectedMapCategory(sess.getCurrentlySelectedMapCategory() + 1);
+          if (sess.getCurrentlySelectedMapCategory() > mapCategories.length - 1) sess.setCurrentlySelectedMapCategory(0);
+          sess.setCurrentlySelectedSubCategory(0);
 
-          setCurrentlyHighlightedItem(0);
-          mapPage = 0;
+          sess.setCurrentlyHighlightedItem(0);
+          sess.setMapPage(0);
           //load maps in new directory
           loadMapDisplayNames();
-        } else if (isBattleOptionsScreen()) {
+        } else if (sess.isBattleOptionsScreen()) {
           processRightKeyBattleOptions();
-        } else if (isSnailInfoScreen()) {
-          item2++;
-          if (item2 > 1) item2 = 0;
+        } else if (sess.isSnailInfoScreen()) {
+        	sess.setCurrentlyHighlightedItem2(sess.getCurrentlyHighlightedItem2() + 1);
+          if (sess.getCurrentlyHighlightedItem2() > 1) sess.setCurrentlyHighlightedItem2(0);
         }
       } else if (keypress == Options.pgdn) {
         pressedPGDN();
@@ -2629,123 +2587,123 @@ private void loadGame() {
         String soundLocation = ResourceLoader.properties.getProperty("soundLocation");
         SFX.playClip(soundLocation + "/cancel.wav");
       } else if (keypress == KeyEvent.VK_1) {
-        if (isMapSelectScreen()) {
-          setCurrentlySelectedSubCategory(0);
-          setCurrentlyHighlightedItem(0);
-          mapPage = 0;
+        if (sess.isMapSelectScreen()) {
+        	sess.setCurrentlySelectedSubCategory(0);
+        	sess.setCurrentlyHighlightedItem(0);
+        	sess.setMapPage(0);
 
           //load maps in new directory
           loadMapDisplayNames();
         }
       } else if (keypress == KeyEvent.VK_2) {
-        if (isMapSelectScreen()) {
-          setCurrentlySelectedSubCategory(1);
-          setCurrentlyHighlightedItem(0);
-          mapPage = 0;
+        if (sess.isMapSelectScreen()) {
+        	sess.setCurrentlySelectedSubCategory(1);
+        	sess.setCurrentlyHighlightedItem(0);
+          sess.setMapPage(0);
 
           //load maps in new directory
           loadMapDisplayNames();
         }
       } else if (keypress == KeyEvent.VK_3) {
-        if (isMapSelectScreen()) {
-          setCurrentlySelectedSubCategory(2);
-          setCurrentlyHighlightedItem(0);
-          mapPage = 0;
+        if (sess.isMapSelectScreen()) {
+        	sess.setCurrentlySelectedSubCategory(2);
+        	sess.setCurrentlyHighlightedItem(0);
+          sess.setMapPage(0);
 
           //load maps in new directory
           loadMapDisplayNames();
         }
       } else if (keypress == KeyEvent.VK_4) {
-        if (isMapSelectScreen()) {
-          setCurrentlySelectedSubCategory(3);
-          setCurrentlyHighlightedItem(0);
-          mapPage = 0;
+        if (sess.isMapSelectScreen()) {
+        	sess.setCurrentlySelectedSubCategory(3);
+        	sess.setCurrentlyHighlightedItem(0);
+          sess.setMapPage(0);
 
           //load maps in new directory
           loadMapDisplayNames();
         }
       } else if (keypress == KeyEvent.VK_5) {
-        if (isMapSelectScreen()) {
-          setCurrentlySelectedSubCategory(4);
-          setCurrentlyHighlightedItem(0);
-          mapPage = 0;
+        if (sess.isMapSelectScreen()) {
+        	sess.setCurrentlySelectedSubCategory(4);
+        	sess.setCurrentlyHighlightedItem(0);
+          sess.setMapPage(0);
 
           //load maps in new directory
           loadMapDisplayNames();
         }
       } else if (keypress == KeyEvent.VK_6) {
-        if (isMapSelectScreen()) {
-          setCurrentlySelectedSubCategory(5);
-          setCurrentlyHighlightedItem(0);
-          mapPage = 0;
+        if (sess.isMapSelectScreen()) {
+        	sess.setCurrentlySelectedSubCategory(5);
+        	sess.setCurrentlyHighlightedItem(0);
+          sess.setMapPage(0);
 
           //load maps in new directory
           loadMapDisplayNames();
         }
       } else if (keypress == KeyEvent.VK_7) {
-        if (isMapSelectScreen()) {
-          setCurrentlySelectedSubCategory(6);
-          setCurrentlyHighlightedItem(0);
-          mapPage = 0;
+        if (sess.isMapSelectScreen()) {
+        	sess.setCurrentlySelectedSubCategory(6);
+        	sess.setCurrentlyHighlightedItem(0);
+          sess.setMapPage(0);
 
           //load maps in new directory
           loadMapDisplayNames();
         }
       } else if (keypress == KeyEvent.VK_8) {
-        if (isMapSelectScreen()) {
-          setCurrentlySelectedSubCategory(7);
-          setCurrentlyHighlightedItem(0);
-          mapPage = 0;
+        if (sess.isMapSelectScreen()) {
+        	sess.setCurrentlySelectedSubCategory(7);
+        	sess.setCurrentlyHighlightedItem(0);
+          sess.setMapPage(0);
 
           //load maps in new directory
           loadMapDisplayNames();
         }
       } else if (keypress == KeyEvent.VK_9) {
-        if (isMapSelectScreen()) {
-          setCurrentlySelectedSubCategory(8);
-          setCurrentlyHighlightedItem(0);
-          mapPage = 0;
+        if (sess.isMapSelectScreen()) {
+        	sess.setCurrentlySelectedSubCategory(8);
+        	sess.setCurrentlyHighlightedItem(0);
+          sess.setMapPage(0);
 
           //load maps in new directory
           loadMapDisplayNames();
         }
       } else if (keypress == KeyEvent.VK_0) {
-        if (isMapSelectScreen()) {
-          setCurrentlySelectedSubCategory(9);
-          setCurrentlyHighlightedItem(0);
-          mapPage = 0;
+        if (sess.isMapSelectScreen()) {
+        	sess.setCurrentlySelectedSubCategory(9);
+        	sess.setCurrentlyHighlightedItem(0);
+          sess.setMapPage(0);
 
           //load maps in new directory
           loadMapDisplayNames();
         }
       } else if (keypress == Options.constmode) {
         logger.info("Alternating Costumes");
-        altcostume = !altcostume;
+        sess.setAltcostume(!sess.isAltcostume());
       } else if (keypress == Options.nextunit) {
-        if (isCOselectScreen()) {
-          if (isInfoScreen()) {
-        	 setIsInfoScreen(false);
+        if (sess.isCOselectScreen()) {
+          if (sess.isInfoScreen()) {
+        	  sess.setIsInfoScreen(false);
           } else {
-            if (cx == 0 && cy == 0) {
+            if (sess.getCurrentCursorXposition() == 0 && sess.getCurrentCursorYposition() == 0) {
               Random r = new Random();
               int sel = r.nextInt(COList.getListing().length);
               CO sc = COList.getListing()[sel];
               logger.info("Selecting " + sc.getName());
-              selectedArmy = sc.getStyle();
-              for (int i = 0; armyArray[selectedArmy][i] != null; i++) {
-                if (armyArray[selectedArmy][i] == sc) {
+              sess.setSelectedArmyAllegiance(sc.getStyle());
+              for (int i = 0; armyArray[sess.getSelectedArmyAllegiance()][i] != null; i++) {
+                if (armyArray[sess.getSelectedArmyAllegiance()][i] == sc) {
                   if (i < 2) {
-                    cx = i + 1;
-                    cy = 0;
+                	  sess.setCurrentCursorXposition(i + 1);
+                	  sess.setCurrentCursorYposition(0);
                   } else {
-                    cx = (i - 2) % 3;
-                    cy = (i - 2) / 3 + 1;
+                	  sess.setCurrentCursorXposition((i - 2) % 3);
+                	  sess.setCurrentCursorYposition((i - 2) / 3 + 1);
                   }
                 }
               }
               pressedA();
             } else {
-            	setIsInfoScreen(true);
+            	sess.setIsInfoScreen(true);
             }
           }
         }
@@ -2777,60 +2735,60 @@ private void loadGame() {
 
       if (e.getButton() == MouseEvent.BUTTON1) {
         //first mouse button
-        if (isTitleScreen()) {
+        if (sess.isTitleScreen()) {
         	boolean newGame = x > NEW_GAME_WIDTH_START && x < NEW_GAME_WIDTH_END && y > NEW_GAME_HEIGHT_BOTTOM && y < NEW_GAME_HEIGHT_TOP;
         	boolean designMaps = x > MAP_DESIGN_WIDTH_START && x < MAP_DESIGN_WIDTH_END && y > MAP_DESIGN_HEIGHT_BOTTOM && y < MAP_DESIGN_HEIGHT_TOP;
         	boolean optionsScreen = x > OPTIONS_WIDTH_START && x < OPTIONS_WIDTH_END && y > OPTIONS_HEIGHT_BOTTOM && y < OPTIONS_HEIGHT_TOP;
 
         	if (newGame) {
         		logger.info("Moving into the New Game Menu");
-	            setCurrentlyHighlightedItem(0);
-	            setIsTitleScreen(false);
-	            setIsNewload(true);
+        		sess.setCurrentlyHighlightedItem(0);
+        		sess.setIsTitleScreen(false);
+        		sess.setIsChooseNewGameTypeScreen(true);
 	          } else {
 				if (designMaps) {
-				    setCurrentlyHighlightedItem(1);
+					sess.setCurrentlyHighlightedItem(1);
 				    logger.info("Moving into the Design Maps Area");
 				    startMapEditor();
 				  } else {
 					if (optionsScreen) {
 					    logger.info("Moving into the Options Menu");
-					    setIsTitleScreen(false);
-					    setIsOptionsScreen(true);
-					    setCurrentlyHighlightedItem(0);
+					    sess.setIsTitleScreen(false);
+					    sess.setIsOptionsScreen(true);
+					    sess.setCurrentlyHighlightedItem(0);
 					  }
 				}
 			}
         	
-        } else if (isChooseNewGameTypeScreen()) {
+        } else if (sess.isChooseNewGameTypeScreen()) {
           if (x < 130) {
             int i = y / 30;
             if (i < 8) {
-              setCurrentlyHighlightedItem(i);
+            	sess.setCurrentlyHighlightedItem(i);
               pressedA();
             }
           }
-        } else if (isOptionsScreen()) {
+        } else if (sess.isOptionsScreen()) {
           if (x < 220) {
             int i = y / 20;
             if ((i < 6 || i > 6) && i < 11) {
-              setCurrentlyHighlightedItem(i);
+            	sess.setCurrentlyHighlightedItem(i);
               pressedA();
             } else if (i == 6) {
-              setCurrentlyHighlightedItem(i);
+            	sess.setCurrentlyHighlightedItem(i);
               Options.incrementCursor();
             }
           }
-        } else if (isMapSelectScreen()) {
+        } else if (sess.isMapSelectScreen()) {
           if (y < 30) {
             if (x < 180) {
               //change category
-              setCurrentlySelectedMapCategory(getCurrentMapCategory() + 1);
-              if (getCurrentMapCategory() > mapCategories.length - 1) setCurrentlySelectedMapCategory(0);
-              setCurrentlySelectedSubCategory(0);
+            	sess.setCurrentlySelectedMapCategory(sess.getCurrentlySelectedMapCategory() + 1);
+              if (sess.getCurrentlySelectedMapCategory() > mapCategories.length - 1) sess.setCurrentlySelectedMapCategory(0);
+              sess.setCurrentlySelectedSubCategory(0);
 
-              setCurrentlyHighlightedItem(0);
-              mapPage = 0;
+              sess.setCurrentlyHighlightedItem(0);
+              sess.setMapPage(0);
 
               //load maps in new directory
               String mapsLocation = ResourceLoader.properties.getProperty("mapsLocation");
@@ -2839,19 +2797,19 @@ private void loadGame() {
           }
           if (y < 40 && x > 180) {
             //change subcategory
-            if (x < 240) setCurrentlySelectedSubCategory(0);
-            else if (x < 260) setCurrentlySelectedSubCategory(1);
-            else if (x < 280) setCurrentlySelectedSubCategory(2);
-            else if (x < 300) setCurrentlySelectedSubCategory(3);
-            else if (x < 320) setCurrentlySelectedSubCategory(4);
-            else if (x < 340) setCurrentlySelectedSubCategory(5);
-            else if (x < 360) setCurrentlySelectedSubCategory(6);
-            else if (x < 380) setCurrentlySelectedSubCategory(7);
-            else if (x < 400) setCurrentlySelectedSubCategory(8);
-            else if (x < 480) setCurrentlySelectedSubCategory(9);
+            if (x < 240) sess.setCurrentlySelectedSubCategory(0);
+            else if (x < 260) sess.setCurrentlySelectedSubCategory(1);
+            else if (x < 280) sess.setCurrentlySelectedSubCategory(2);
+            else if (x < 300) sess.setCurrentlySelectedSubCategory(3);
+            else if (x < 320) sess.setCurrentlySelectedSubCategory(4);
+            else if (x < 340) sess.setCurrentlySelectedSubCategory(5);
+            else if (x < 360) sess.setCurrentlySelectedSubCategory(6);
+            else if (x < 380) sess.setCurrentlySelectedSubCategory(7);
+            else if (x < 400) sess.setCurrentlySelectedSubCategory(8);
+            else if (x < 480) sess.setCurrentlySelectedSubCategory(9);
 
-            setCurrentlyHighlightedItem(0);
-            mapPage = 0;
+            sess.setCurrentlyHighlightedItem(0);
+            sess.setMapPage(0);
 
             //load maps in new directory
             loadMapDisplayNames();
@@ -2862,7 +2820,7 @@ private void loadGame() {
             if (x < 160) {
               int i = (y - 50) / 21;
               if (i < NUM_VISIBLE_ROWS && isMapVisible(i)) {
-                setCurrentlyHighlightedItem(i);
+            	sess.setCurrentlyHighlightedItem(i);
                 pressedA();
               }
             }
@@ -2870,53 +2828,53 @@ private void loadGame() {
             if (x > 84 && x < 98)
               pressedPGDN();
           }
-        } else if (isCOselectScreen()) {
+        } else if (sess.isCOselectScreen()) {
           if (y > 61 && y < 321 && x > 2 && x < 158) {
-            cx = (x - 2) / 52;
-            cy = (y - 61) / 52;
+        	  sess.setCurrentCursorXposition((x - 2) / 52);
+        	  sess.setCurrentCursorYposition((y - 61) / 52);
             pressedA();
           } else if (x >= 3 && x <= 155 && y <= 53) {
-            selectedArmy = (x - 3) / 19;
-            if (cx != 0 || cy != 0) {
-              CO temp = armyArray[selectedArmy][cx + cy * 3 - 1];
-              if (temp != null) infono = COList.getIndex(temp);
+            sess.setSelectedArmyAllegiance((x - 3) / 19);
+            if (sess.getCurrentCursorXposition() != 0 || sess.getCurrentCursorYposition() != 0) {
+              CO temp = armyArray[sess.getSelectedArmyAllegiance()][sess.getCurrentCursorXposition() + sess.getCurrentCursorYposition() * 3 - 1];
+              if (temp != null) sess.setInfono(COList.getIndex(temp));
             }
           }
-        } else if (isSideSelect()) {
+        } else if (sess.isSideSelect()) {
           if (x < 130) {
-            if (y / 20 < numArmies) {
-              setCurrentlyHighlightedItem(y / 20);
-              if (sideSelections[getCurrentlyHighlightedItem()] == numArmies - 1) sideSelections[getCurrentlyHighlightedItem()] = 0;
-              else sideSelections[getCurrentlyHighlightedItem()] += 1;
+            if (y / 20 < sess.getNumOfArmiesOnMap()) {
+            	sess.setCurrentlyHighlightedItem(y / 20);
+              if (sess.getSideSelections()[sess.getCurrentlyHighlightedItem()] == sess.getNumOfArmiesOnMap() - 1) sess.getSideSelections()[sess.getCurrentlyHighlightedItem()] = 0;
+              else sess.getSideSelections()[sess.getCurrentlyHighlightedItem()] += 1;
             }
           } else {
             pressedA();
           }
-        } else if (isBattleOptionsScreen()) {
+        } else if (sess.isBattleOptionsScreen()) {
           if (x > 10 && x < 10 + BaseDMG.NUM_UNITS / 2 * 16 && y > 184 && y < 220) {
-            cy = (y - 184) / 20;
-            cx = (x - 10) / 16 + cy * BaseDMG.NUM_UNITS / 2;
-            setCurrentlyHighlightedItem(9);
+        	  sess.setCurrentCursorYposition((y - 184) / 20);
+        	  sess.setCurrentCursorXposition((x - 10) / 16 + sess.getCurrentCursorYposition() * BaseDMG.NUM_UNITS / 2);
+        	  sess.setCurrentlyHighlightedItem(9);
             pressedA();
           } else if (x < 210) {
             if (y / 20 < 9) {
-              setCurrentlyHighlightedItem(y / 20);
+            	sess.setCurrentlyHighlightedItem(y / 20);
               processRightKeyBattleOptions();
             }
           } else {
             pressedA();
           }
-        } else if (isSnailInfoScreen()) {
+        } else if (sess.isSnailInfoScreen()) {
           if (x > 240 && x < 480 && y > 280 && y < 300) {
-            setCurrentlyHighlightedItem(0);
+        	  sess.setCurrentlyHighlightedItem(0);
             pressedA();
           } else if (x > 240 && x < 480 && y > 300 && y < 320) {
-            setCurrentlyHighlightedItem(1);
+        	  sess.setCurrentlyHighlightedItem(1);
             pressedA();
           } else if (x > 0 && x < 160 && y > 100 && y < 120) {
-            item2 = 0;
+        	  sess.setCurrentlyHighlightedItem2(0);
           } else if (x > 160 && x < 320 && y > 100 && y < 120) {
-            item2 = 1;
+        	  sess.setCurrentlyHighlightedItem2(1);
           } else if (x > 320 && x < 480 && y > 100 && y < 120) {
             //send chat message
             String message = JOptionPane.showInputDialog("Type in your chat message");
@@ -2954,25 +2912,25 @@ private void loadGame() {
     public void mouseMoved(MouseEvent e) {
       int x = e.getX() - parentFrame.getInsets().left;
       int y = e.getY() - parentFrame.getInsets().top;
-      if (isMapSelectScreen()) {
+      if (sess.isMapSelectScreen()) {
         if (y > 50 && y < 302 && x < 160) {
           int i = (y - 50) / 21;
           if (i < NUM_VISIBLE_ROWS && isMapVisible(i)) {
-            if (i != getCurrentlyHighlightedItem()) {
-              setCurrentlyHighlightedItem(i);
+            if (i != sess.getCurrentlyHighlightedItem()) {
+            	sess.setCurrentlyHighlightedItem(i);
               loadMiniMapPreview();
             }
           }
         }
-      } else if (isCOselectScreen()) {
+      } else if (sess.isCOselectScreen()) {
         if (y > 61 && y < 321 && x > 2 && x < 158) {
-          cx = (x - 2) / 52;
-          cy = (y - 61) / 52;
-          if (cx != 0 || cy != 0) {
-            CO temp = armyArray[selectedArmy][cx + cy * 3 - 1];
+        	sess.setCurrentCursorXposition((x - 2) / 52);
+        	sess.setCurrentCursorYposition((y - 61) / 52);
+          if (sess.getCurrentCursorXposition() != 0 || sess.getCurrentCursorYposition() != 0) {
+            CO temp = armyArray[sess.getSelectedArmyAllegiance()][sess.getCurrentCursorXposition() + sess.getCurrentCursorYposition() * 3 - 1];
 
-            if (temp != null && infono != COList.getIndex(temp)) glide = 0;
-            if (temp != null) infono = COList.getIndex(temp);
+            if (temp != null && sess.getInfono() != COList.getIndex(temp)) sess.setGlide(0);
+            if (temp != null) sess.setInfono(COList.getIndex(temp));
           }
         }
       }
@@ -3024,13 +2982,13 @@ private void loadGame() {
     //start game
     logger.info("starting game");
     Options.snailGame = true;
-    setCurrentlyHighlightedItem(0);
+    sess.setCurrentlyHighlightedItem(0);
 
       //New Game
-      setIsNewload(false);
-      setIsMapSelectScreen(true);
-      setCurrentlyHighlightedItem(0);
-      mapPage = 0;
+    sess.setIsChooseNewGameTypeScreen(false);
+    sess.setIsMapSelectScreen(true);
+    sess.setCurrentlyHighlightedItem(0);
+      sess.setMapPage(0);
 
       //load categories
       String mapsLocation = ResourceLoader.properties.getProperty("mapsLocation");
@@ -3051,10 +3009,10 @@ private void loadGame() {
         mapCategories[i] = v.get(i);
       }
 
-      setCurrentlySelectedMapCategory(0);
-      setCurrentlySelectedSubCategory(0);
+      sess.setCurrentlySelectedMapCategory(0);
+      sess.setCurrentlySelectedSubCategory(0);
       loadMapDisplayNames();
-      mapPage = 0;
+      sess.setMapPage(0);
   }
 
   public void LaunchCreateServerGame(String username, String password, String gamename, String gamepass) {
@@ -3100,13 +3058,13 @@ private void loadGame() {
     //start game
     logger.info("starting game");
     Options.snailGame = true;
-    setCurrentlyHighlightedItem(0);
+    sess.setCurrentlyHighlightedItem(0);
 
     //New Game
-    setIsNewload(false);
-    setIsMapSelectScreen(true);
-    setCurrentlyHighlightedItem(0);
-    mapPage = 0;
+    sess.setIsChooseNewGameTypeScreen(false);
+    sess.setIsMapSelectScreen(true);
+    sess.setCurrentlyHighlightedItem(0);
+    sess.setMapPage(0);
 
     //load categories
     File[] dirs = new File("maps/").listFiles();
@@ -3126,10 +3084,10 @@ private void loadGame() {
       mapCategories[i] = v.get(i);
     }
 
-    setCurrentlySelectedMapCategory(0);
-    setCurrentlySelectedSubCategory(0);
+    sess.setCurrentlySelectedMapCategory(0);
+    sess.setCurrentlySelectedSubCategory(0);
     loadMapDisplayNames();
-    mapPage = 0;
+    sess.setMapPage(0);
   }
 
   public void LaunchLoginGame(String gamename, String username, String password) {
@@ -3160,10 +3118,10 @@ private void loadGame() {
 
     //go to information screen
     Options.snailGame = true;
-    setIsSnailInfoScreen(true);
-    setIsNewload(false);
-    setCurrentlyHighlightedItem(0);
-    item2 = 0;
+    sess.setIsSnailInfoScreen(true);
+    sess.setIsChooseNewGameTypeScreen(false);
+    sess.setCurrentlyHighlightedItem(0);
+    sess.setCurrentlyHighlightedItem2(0);
 
     refreshInfo();
   }
@@ -3198,52 +3156,52 @@ private void loadGame() {
         logger.info("Game does not exist");
         Options.gamename = JOptionPane.showInputDialog("Type in the name of the game you want to join");
         if (Options.gamename == null) {
-          setIsTitleScreen(true);
-          setIsSnailInfoScreen(false);
+        	sess.setIsTitleScreen(true);
+        	sess.setIsSnailInfoScreen(false);
           return;
         }
         Options.masterpass = JOptionPane.showInputDialog("Type in the master password of the game");
         if (Options.masterpass == null) {
-        	setIsTitleScreen(true);
-        	setIsSnailInfoScreen(false);
+        	sess.setIsTitleScreen(true);
+        	sess.setIsSnailInfoScreen(false);
           return;
         }
       } else if (reply.equals("wrong password")) {
         logger.info("Incorrect Password");
         Options.gamename = JOptionPane.showInputDialog("Type in the name of the game you want to join");
         if (Options.gamename == null) {
-        	setIsTitleScreen(true);
-        	setIsSnailInfoScreen(false);
+        	sess.setIsTitleScreen(true);
+        	sess.setIsSnailInfoScreen(false);
           return;
         }
         Options.masterpass = JOptionPane.showInputDialog("Type in the master password of the game");
         if (Options.masterpass == null) {
-        	setIsTitleScreen(true);
-        	setIsSnailInfoScreen(false);
+        	sess.setIsTitleScreen(true);
+        	sess.setIsSnailInfoScreen(false);
           return;
         }
       } else if (reply.equals("out of range")) {
         logger.info("Army choice out of range or invalid");
         slot = JOptionPane.showInputDialog("Type in the number of the army you will command");
         if (slot == null) {
-        	setIsTitleScreen(true);
-        	setIsSnailInfoScreen(false);
+        	sess.setIsTitleScreen(true);
+        	sess.setIsSnailInfoScreen(false);
           return;
         }
       } else if (reply.equals("slot taken")) {
         logger.info("Army choice already taken");
         slot = JOptionPane.showInputDialog("Type in the number of the army you will command");
         if (slot == null) {
-        	setIsTitleScreen(true);
-        	setIsSnailInfoScreen(false);
+        	sess.setIsTitleScreen(true);
+        	sess.setIsSnailInfoScreen(false);
           return;
         }
       } else {
         logger.info("Other problem");
         JOptionPane.showMessageDialog(this, "Version Mismatch");
         Options.snailGame = false;
-        setIsTitleScreen(true);
-        setIsSnailInfoScreen(false);
+        sess.setIsTitleScreen(true);
+        sess.setIsSnailInfoScreen(false);
         return;
       }
       refreshInfo();
@@ -3252,20 +3210,14 @@ private void loadGame() {
 
     //go to information screen
     Options.snailGame = true;
-    setIsSnailInfoScreen(true);
-    setIsNewload(false);
-    setCurrentlyHighlightedItem(0);
-    item2 = 0;
+    sess.setIsSnailInfoScreen(true);
+    sess.setIsChooseNewGameTypeScreen(false);
+    sess.setCurrentlyHighlightedItem(0);
+    sess.setCurrentlyHighlightedItem2(0);
 
     refreshInfo();
   }
 
-  public void setNewLoad() {
-	setIsTitleScreen(false);
-	setIsNewload(true);
-    this.repaint();
-  }
-  
   private class refreshListener implements ActionListener {
     public void actionPerformed(ActionEvent evt) {
       refreshInfo();
@@ -3273,124 +3225,26 @@ private void loadGame() {
   }
 
   private Map getMap(int item) {
-    return filteredMaps.get(mapPage * NUM_VISIBLE_ROWS + item);
+    return filteredMaps.get(sess.getMapPage() * NUM_VISIBLE_ROWS + item);
   }
 
   private boolean isMapVisible(int item) {
-    return mapPage * NUM_VISIBLE_ROWS + item < filteredMaps.size();
+    return sess.getMapPage() * NUM_VISIBLE_ROWS + item < filteredMaps.size();
   }
 
   private String getFileName(int item) {
-    return filenames[mapPage * NUM_VISIBLE_ROWS + item];
+    return filenames[sess.getMapPage() * NUM_VISIBLE_ROWS + item];
   }
 
   private boolean isOverLastPage(int mapPage) {
     return mapPage > filteredMaps.size() / NUM_VISIBLE_ROWS ||
             (mapPage == filteredMaps.size() / NUM_VISIBLE_ROWS && filteredMaps.size() % NUM_VISIBLE_ROWS == 0);
   }
-
-  public boolean isOptionsScreen() {
-	return isOptionsScreen;
-  }
-
-  public void setIsOptionsScreen(boolean options) {
-	  this.isOptionsScreen = options;
-  }
-
-  public boolean isChooseNewGameTypeScreen() {
-	  return isChooseNewGameTypeScreen;
-  }
-
-  public void setIsNewload(boolean isNewGameTypeScreen) {
-	this.isChooseNewGameTypeScreen = isNewGameTypeScreen;
-  }
-
-  public boolean isMapSelectScreen() {
-	return isMapSelectScreen;
-  }
-
-  public void setIsMapSelectScreen(boolean mapSelect) {
-	this.isMapSelectScreen = mapSelect;
-  }
-
-  public boolean isCOselectScreen() {
-	return isCOselectScreen;
-  }
-
-  public void setIsCOselectScreen(boolean coSelect) {
-	isCOselectScreen = coSelect;
-  }
-
-  public boolean isBattleOptionsScreen() {
-	return isBattleOptionsScreen;
-  }
-
-  public void setIsBattleOptionsScreen(boolean battleOptions) {
-	this.isBattleOptionsScreen = battleOptions;
-  }
-
-  public boolean isKeyMappingScreen() {
-	return isKeyMappingScreen;
-  }
-
-  public void setIsKeymappingScreen(boolean keymap) {
-	this.isKeyMappingScreen = keymap;
-  }
-
-  public boolean isSnailInfoScreen() {
-	return isSnailInfoScreen;
-  }
-
-  public void setIsSnailInfoScreen(boolean snailinfo) {
-	this.isSnailInfoScreen = snailinfo;
-  }
-
-  public boolean isInfoScreen() {
-	  return isInfoScreen;
-  }
-
-  public void setIsInfoScreen(boolean info) {
-	this.isInfoScreen = info;
-  }
-
-  public boolean isTitleScreen() {
-	  return isTitleScreen;
-  }
-
-  public void setIsTitleScreen(boolean title) {
-	  this.isTitleScreen = title;
-  }
   
-  public boolean isSideSelect() {
-	return isSideSelect;
+  public void fobbahInit(){
+  	sess.setIsTitleScreen(false);
+	sess.setIsChooseNewGameTypeScreen(true);
   }
 
-  public void setSideSelect(boolean isSideSelect) {
-	  this.isSideSelect = isSideSelect;
-  }
-
-private void setCurrentlySelectedSubCategory(int currentlySelectedSubCategory) {
-	this.currentlySelectedSubCategory = currentlySelectedSubCategory;
-}
-
-private int getCurrentlySelectedSubCategory() {
-	return currentlySelectedSubCategory;
-}
-
-private void setCurrentlySelectedMapCategory(int currentMapCategory) {
-	this.currentMapCategory = currentMapCategory;
-}
-
-private int getCurrentMapCategory() {
-	return currentMapCategory;
-}
-
-private void setCurrentlyHighlightedItem(int currentlyHighlightedItem) {
-	this.currentlyHighlightedItem = currentlyHighlightedItem;
-}
-
-private int getCurrentlyHighlightedItem() {
-	return currentlyHighlightedItem;
-}  
 }
 

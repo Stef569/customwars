@@ -18,7 +18,7 @@ import java.io.*;
 import javax.swing.*;
 
 import com.customwars.ai.BaseDMG;
-import com.customwars.ai.Mission;
+import com.customwars.ai.GameSession;
 import com.customwars.ai.Options;
 import com.customwars.state.ResourceLoader;
 import com.customwars.ui.MainMenuGraphics;
@@ -77,7 +77,7 @@ public class FobbahLauncher
         frame.setSize(480,320);
         frame.setVisible(true);
         frame.setIconImage(new ImageIcon(ResourceLoader.properties.getProperty("imagesLocation") + "/misc/icon.gif").getImage());
-        Mission.mainFrame = frame;
+        GameSession.mainFrame = frame;
         
         //Initializes the static classes
         Options.InitializeOptions();
@@ -87,7 +87,9 @@ public class FobbahLauncher
         MiscGraphics.loadImages(frame);
         MainMenuGraphics.loadImages(frame);
     	mm = new MainMenu(frame);
-    	mm.setNewLoad();
+    	mm.fobbahInit();
+    	mm.repaint();
+    	
     	frame.getContentPane().add(mm);
     	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     	frame.validate();

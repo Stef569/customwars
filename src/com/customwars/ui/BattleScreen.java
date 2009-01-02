@@ -24,7 +24,7 @@ import com.customwars.ai.Battle;
 import com.customwars.ai.BuildEvent;
 import com.customwars.ai.CWEvent;
 import com.customwars.ai.DeleteEvent;
-import com.customwars.ai.Mission;
+import com.customwars.ai.GameSession;
 import com.customwars.ai.MoveTraverse;
 import com.customwars.ai.Options;
 import com.customwars.ai.SelectionEvent;
@@ -1831,14 +1831,14 @@ public class BattleScreen extends CWScreen
             if(returnVal != 1){
                 String filename = fc.getSelectedFile().getPath();
                 if(filename.length()<8 || !filename.substring(filename.length()-7).equals(REPLAY_FILE_EXT))filename += REPLAY_FILE_EXT;
-                Mission.saveReplay(filename);
+                GameSession.saveReplay(filename);
             }
         }
     }
     
     private void returnToMain(){
         //end the mission
-        Mission.endMission();
+        GameSession.endMission();
         
         //put a Main Menu inside the frame
         parentFrame.setSize(400,400);
@@ -1854,7 +1854,7 @@ public class BattleScreen extends CWScreen
     
     private void returnToServerScreen(){
         //end the mission
-        Mission.endMission();
+        GameSession.endMission();
         
         //put a Main Menu inside the frame
         parentFrame.setSize(400,400);
@@ -3437,7 +3437,7 @@ public class BattleScreen extends CWScreen
 		            	filename += REPLAY_FILE_EXT;
 		            }
 		            
-		            Mission.saveReplay(filename);
+		            GameSession.saveReplay(filename);
 		        }
 		    }
 		}
@@ -3458,10 +3458,10 @@ public class BattleScreen extends CWScreen
 		    if(returnVal != 1){
 		        String x = fc.getSelectedFile().getPath();
 		        if(x.length()<6 || !x.substring(x.length()-5).equals(SAVE_FILE_EXT))x += SAVE_FILE_EXT;
-		        Mission.saveMission(x);
+		        GameSession.saveMission(x);
 		    }
 		}else{
-		    Mission.saveMission(TEMPORARYSAVE_SAVE_FILENAME);
+		    GameSession.saveMission(TEMPORARYSAVE_SAVE_FILENAME);
 		    b.sendFile("usave.pl", Options.gamename,TEMPORARYSAVE_SAVE_FILENAME);
 		}
 	}
@@ -3486,7 +3486,7 @@ public class BattleScreen extends CWScreen
 		        validSave = true;
 		    }
 		    
-		    if(validSave)Mission.loadMission(filename);
+		    if(validSave)GameSession.loadMission(filename);
 		}
 	}
 

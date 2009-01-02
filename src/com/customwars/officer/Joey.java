@@ -8,7 +8,7 @@ package com.customwars.officer;
  */
 import java.util.ArrayList;
 
-import com.customwars.ai.Mission;
+import com.customwars.ai.GameSession;
 import com.customwars.map.Tile;
 import com.customwars.map.location.Location;
 import com.customwars.map.location.Property;
@@ -379,7 +379,7 @@ public class Joey extends CO {
             //targProp.setOwner(army);
             if(targProp.setOwner(owned.getArmy()))
             {
-            	Mission.getBattleScreen().endBattle();
+            	GameSession.getBattleScreen().endBattle();
             }
             targProp.setCapturePoints(targProp.getMaxCapturePoints());
         } 

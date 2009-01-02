@@ -1,6 +1,6 @@
 package com.customwars.officer;
 
-import com.customwars.ai.Mission;
+import com.customwars.ai.GameSession;
 import com.customwars.map.location.Property;
 import com.customwars.unit.Army;
 import com.customwars.unit.Unit;
@@ -170,7 +170,7 @@ public class Alexander extends CO{
                 P.setCapturePoints(P.getCapturePoints() - 1);
             } else {
                 if(P.setOwner(u.getArmy())) {
-                    Mission.getBattleScreen().endBattle();
+                    GameSession.getBattleScreen().endBattle();
                 }
                 
             }

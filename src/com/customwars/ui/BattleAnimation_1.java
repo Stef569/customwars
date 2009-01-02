@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.customwars.ai.BaseDMG;
-import com.customwars.ai.Mission;
+import com.customwars.ai.GameSession;
 import com.customwars.map.location.Terrain;
 import com.customwars.unit.Unit;
 
@@ -62,12 +62,12 @@ public class BattleAnimation_1 extends Animation{
             //First! Fade out the background
             g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float)(tick * 0.02)));
             g.setColor(Color.BLACK);
-            g.fill(new Rectangle(0,0,Mission.getBattleScreen().getWidth(), Mission.getBattleScreen().getHeight()));
+            g.fill(new Rectangle(0,0,GameSession.getBattleScreen().getWidth(), GameSession.getBattleScreen().getHeight()));
             
         } else {//stay faded out plz
             g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f));
             g.setColor(Color.BLACK);
-            g.fill(new Rectangle(0,0,Mission.getBattleScreen().getWidth(), Mission.getBattleScreen().getHeight()));
+            g.fill(new Rectangle(0,0,GameSession.getBattleScreen().getWidth(), GameSession.getBattleScreen().getHeight()));
         }
         //draws the main instance of the animation: ends intro at 60;
         g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
