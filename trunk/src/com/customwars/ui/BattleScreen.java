@@ -196,7 +196,7 @@ public class BattleScreen extends CWScreen
         moveCursorTo(b.cursorLocation[0]);
         
         //KeyControl is registered with the parent frame
-        keycontroller = new BSKeyControl();
+        keycontroller = new BSKeyControl(this);
         f.addKeyListener(keycontroller);
         mousecontroller = new BSMouseControl();
         f.addMouseListener(mousecontroller);
@@ -4259,13 +4259,12 @@ public class BattleScreen extends CWScreen
     //This class deals with keypresses
     class BSKeyControl implements KeyListener
     {
-        BattleScreen parentScreen;
-        
-        public void setPScreen(BattleScreen b)
-        {
-        	parentScreen = b;
-        }
-        
+      BattleScreen parentScreen;
+
+      public BSKeyControl(BattleScreen parentScreen) {
+        this.parentScreen = parentScreen;
+      }
+
         public void keyTyped(KeyEvent e) {}
         
         public void keyPressed(KeyEvent e) 
