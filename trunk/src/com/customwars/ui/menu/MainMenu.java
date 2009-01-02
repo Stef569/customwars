@@ -2831,29 +2831,29 @@ public class MainMenu extends JComponent {
 	}
 
 	class MouseControl implements MouseInputListener {
-		private static final int	OPTIONS_HEIGHT_TOP				= 279;
-		private static final int	OPTIONS_HEIGHT_BOTTOM			= 247;
-		private static final int	OPTIONS_WIDTH_END					= 320;
-		private static final int	OPTIONS_WIDTH_START				= 175;
-		private static final int	MAP_DESIGN_HEIGHT_TOP			= 183;
-		private static final int	MAP_DESIGN_HEIGHT_BOTTOM	= 156;
-		private static final int	MAP_DESIGN_WIDTH_END			= 350;
-		private static final int	MAP_DESIGN_WIDTH_START		= 143;
-		private static final int	NEW_GAME_HEIGHT_TOP				= 87;
-		private static final int	NEW_GAME_HEIGHT_BOTTOM		= 60;
-		private static final int	NEW_GAME_WIDTH_START			= 160;
-		private static final int	NEW_GAME_WIDTH_END				= 332;
+		private static final int	SPLASH_OPTIONS_HEIGHT_TOP				= 279;
+		private static final int	SPLASH_OPTIONS_HEIGHT_BOTTOM			= 247;
+		private static final int	SPLASH_OPTIONS_WIDTH_END					= 320;
+		private static final int	SPLASH_OPTIONS_WIDTH_START				= 175;
+		private static final int	SPLASH_MAP_DESIGN_HEIGHT_TOP			= 183;
+		private static final int	SPLASH_MAP_DESIGN_HEIGHT_BOTTOM	= 156;
+		private static final int	SPLASH_MAP_DESIGN_WIDTH_END			= 350;
+		private static final int	SPLASH_MAP_DESIGN_WIDTH_START		= 143;
+		private static final int	SPLASH_NEW_GAME_HEIGHT_TOP				= 87;
+		private static final int	SPLASH_NEW_GAME_HEIGHT_BOTTOM		= 60;
+		private static final int	SPLASH_NEW_GAME_WIDTH_START			= 160;
+		private static final int	SPLASH_NEW_GAME_WIDTH_END				= 332;
 
 		public void mouseClicked(MouseEvent e) {
-			int x = e.getX() - parentJFrame.getInsets().left;
-			int y = e.getY() - parentJFrame.getInsets().top;
+			int cursorXpos = e.getX() - parentJFrame.getInsets().left;
+			int cursorYpos = e.getY() - parentJFrame.getInsets().top;
 
 			if (e.getButton() == MouseEvent.BUTTON1) {
 				// first mouse button
 				if (sess.isTitleScreen()) {
-					boolean newGame = x > NEW_GAME_WIDTH_START && x < NEW_GAME_WIDTH_END && y > NEW_GAME_HEIGHT_BOTTOM && y < NEW_GAME_HEIGHT_TOP;
-					boolean designMaps = x > MAP_DESIGN_WIDTH_START && x < MAP_DESIGN_WIDTH_END && y > MAP_DESIGN_HEIGHT_BOTTOM && y < MAP_DESIGN_HEIGHT_TOP;
-					boolean optionsScreen = x > OPTIONS_WIDTH_START && x < OPTIONS_WIDTH_END && y > OPTIONS_HEIGHT_BOTTOM && y < OPTIONS_HEIGHT_TOP;
+					boolean newGame = cursorXpos > SPLASH_NEW_GAME_WIDTH_START && cursorXpos < SPLASH_NEW_GAME_WIDTH_END && cursorYpos > SPLASH_NEW_GAME_HEIGHT_BOTTOM && cursorYpos < SPLASH_NEW_GAME_HEIGHT_TOP;
+					boolean designMaps = cursorXpos > SPLASH_MAP_DESIGN_WIDTH_START && cursorXpos < SPLASH_MAP_DESIGN_WIDTH_END && cursorYpos > SPLASH_MAP_DESIGN_HEIGHT_BOTTOM && cursorYpos < SPLASH_MAP_DESIGN_HEIGHT_TOP;
+					boolean optionsScreen = cursorXpos > SPLASH_OPTIONS_WIDTH_START && cursorXpos < SPLASH_OPTIONS_WIDTH_END && cursorYpos > SPLASH_OPTIONS_HEIGHT_BOTTOM && cursorYpos < SPLASH_OPTIONS_HEIGHT_TOP;
 
 					if (newGame) {
 						logger.info("Moving into the New Game Menu");
@@ -2875,155 +2875,243 @@ public class MainMenu extends JComponent {
 						}
 					}
 
-				} else if (sess.isChooseNewGameTypeScreen()) {
-					if (x < 130) {
-						int i = y / 30;
-						if (i < 8) {
-							sess.setCurrentlyHighlightedItem(i);
-							pressedA();
+				} else {
+					if (sess.isChooseNewGameTypeScreen()) {
+
+						int NEW_GAME_WIDTH_START = 11;
+						int NEW_GAME_WIDTH_END = 87;
+						int NEW_GAME_HEIGHT_TOP = 8;
+						int NEW_GAME_HEIGHT_BOTTOM = 28;
+						
+						int LOAD_GAME_WIDTH_START = 11;
+						int LOAD_GAME_WIDTH_END= 87;
+						int LOAD_GAME_HEIGHT_TOP = 29;
+						int LOAD_GAME_HEIGHT_BOTTOM = 56;
+						
+						int NETWORK_GAME_WIDTH_START = 11;
+						int NETWORK_GAME_WIDTH_END = 200;
+						int NETWORK_GAME_HEIGHT_BOTTOM = 76;
+						int NETWORK_GAME_HEIGHT_TOP = 57;
+
+						int LOAD_REPLAY_WIDTH_START = 11;
+						int LOAD_REPLAY_WIDTH_END = 200;
+						int LOAD_REPLAY_HEIGHT_BOTTOM = 106;
+						int LOAD_REPLAY_HEIGHT_TOP = 76;
+						
+						int NEW_SERVER_GAME_WIDTH_START = 11;
+						int NEW_SERVER_GAME_WIDTH_END = 334;
+						int NEW_SERVER_GAME_HEIGHT_BOTTOM = 132;
+						int NEW_SERVER_GAME_HEIGHT_TOP = 107;
+
+						int JOIN_SERVER_GAME_WIDTH_START = 11;
+						int JOIN_SERVER_GAME_WIDTH_END = 334;
+						int JOIN_SERVER_GAME_HEIGHT_BOTTOM = 156;
+						int JOIN_SERVER_GAME_HEIGHT_TOP = 133;
+						
+						int LOGIN_SERVER_GAME_WIDTH_START = 11;
+						int LOGIN_SERVER_GAME_WIDTH_END = 334;
+						int LOGIN_SERVER_GAME_HEIGHT_BOTTOM = 182;
+						int LOGIN_SERVER_GAME_HEIGHT_TOP = 157;
+
+						int JOIN_LOBBY_WIDTH_START = 11;
+						int JOIN_LOBBY_WIDTH_END = 334;
+						int JOIN_LOBBY_HEIGHT_BOTTOM = 200;
+						int JOIN_LOBBY_HEIGHT_TOP = 183;
+						
+						boolean newGameClicked = cursorXpos > NEW_GAME_WIDTH_START && cursorXpos < NEW_GAME_WIDTH_END && cursorYpos < NEW_GAME_HEIGHT_BOTTOM && cursorYpos > NEW_GAME_HEIGHT_TOP;
+						boolean loadGameClicked =   cursorXpos > LOAD_GAME_WIDTH_START && cursorXpos < LOAD_GAME_WIDTH_END && cursorYpos < LOAD_GAME_HEIGHT_BOTTOM && cursorYpos > LOAD_GAME_HEIGHT_TOP;
+						boolean networkGameClicked =    cursorXpos > NETWORK_GAME_WIDTH_START && cursorXpos < NETWORK_GAME_WIDTH_END && cursorYpos < NETWORK_GAME_HEIGHT_BOTTOM && cursorYpos > NETWORK_GAME_HEIGHT_TOP;
+						boolean loadReplayClicked = cursorXpos > LOAD_REPLAY_WIDTH_START && cursorXpos < LOAD_REPLAY_WIDTH_END && cursorYpos < LOAD_REPLAY_HEIGHT_BOTTOM && cursorYpos > LOAD_REPLAY_HEIGHT_TOP;
+						boolean newServerGameClicked = cursorXpos > NEW_SERVER_GAME_WIDTH_START && cursorXpos < NEW_SERVER_GAME_WIDTH_END && cursorYpos < NEW_SERVER_GAME_HEIGHT_BOTTOM && cursorYpos > NEW_SERVER_GAME_HEIGHT_TOP;
+						boolean joinServerGameClicked = cursorXpos > JOIN_SERVER_GAME_WIDTH_START && cursorXpos < JOIN_SERVER_GAME_WIDTH_END && cursorYpos < JOIN_SERVER_GAME_HEIGHT_BOTTOM && cursorYpos > JOIN_SERVER_GAME_HEIGHT_TOP;
+						boolean loginToServerGameClicked = cursorXpos > LOGIN_SERVER_GAME_WIDTH_START && cursorXpos < LOGIN_SERVER_GAME_WIDTH_END && cursorYpos < LOGIN_SERVER_GAME_HEIGHT_BOTTOM && cursorYpos > LOGIN_SERVER_GAME_HEIGHT_TOP;
+						boolean joinLobbyClicked = cursorXpos > JOIN_LOBBY_WIDTH_START && cursorXpos < JOIN_LOBBY_WIDTH_END && cursorYpos < JOIN_LOBBY_HEIGHT_BOTTOM && cursorYpos > JOIN_LOBBY_HEIGHT_TOP;
+						
+						if(newGameClicked){
+							logger.debug("New Game Clicked");
+							sess.setCurrentlyHighlightedItem(0);
 						}
-					}
-				} else if (sess.isOptionsScreen()) {
-					if (x < 220) {
-						int i = y / 20;
-						if ((i < 6 || i > 6) && i < 11) {
-							sess.setCurrentlyHighlightedItem(i);
-							pressedA();
-						} else if (i == 6) {
-							sess.setCurrentlyHighlightedItem(i);
-							Options.incrementCursor();
+						
+						if(loadGameClicked){
+							logger.debug("Load Game Clicked");
+							sess.setCurrentlyHighlightedItem(1);
 						}
-					}
-				} else if (sess.isMapSelectScreen()) {
-					if (y < 30) {
-						if (x < 180) {
-							// change category
-							sess.setCurrentlySelectedMapCategory(sess.getCurrentlySelectedMapCategory() + 1);
-							if (sess.getCurrentlySelectedMapCategory() > mapCategories.length - 1) sess.setCurrentlySelectedMapCategory(0);
-							sess.setCurrentlySelectedSubCategory(0);
+						
+						if(networkGameClicked){
+							logger.debug("Network Game Clicked");
+							sess.setCurrentlyHighlightedItem(2);
+						}
+						
+						if(loadReplayClicked){
+							logger.debug("Load Replay Clicked");
+							sess.setCurrentlyHighlightedItem(3);
+						}
+						
+						if(newServerGameClicked){
+							logger.debug("New Server Game Clicked");
+							sess.setCurrentlyHighlightedItem(4);
+						}
+						
+						if(joinServerGameClicked){
+							logger.debug("Join Server Game Clicked");
+							sess.setCurrentlyHighlightedItem(5);
+						}
+						
+						if(loginToServerGameClicked){
+							logger.debug("Login to Server Game Clicked");
+							sess.setCurrentlyHighlightedItem(6);
+						}
+						
+						if(joinLobbyClicked){
+							logger.debug("Join Game Lobby Clicked");
+							sess.setCurrentlyHighlightedItem(7);
+						}
+						
+						parseSelectedNewGameTypeInput();
+						
+						
+					} else if (sess.isOptionsScreen()) {
+						if (cursorXpos < 220) {
+							int i = cursorYpos / 20;
+							if ((i < 6 || i > 6) && i < SPLASH_NEW_GAME_WIDTH_START) {
+								sess.setCurrentlyHighlightedItem(i);
+								pressedA();
+							} else if (i == 6) {
+								sess.setCurrentlyHighlightedItem(i);
+								Options.incrementCursor();
+							}
+						}
+					} else if (sess.isMapSelectScreen()) {
+						if (cursorYpos < 30) {
+							if (cursorXpos < 180) {
+								// change category
+								sess.setCurrentlySelectedMapCategory(sess.getCurrentlySelectedMapCategory() + 1);
+								if (sess.getCurrentlySelectedMapCategory() > mapCategories.length - 1) sess.setCurrentlySelectedMapCategory(0);
+								sess.setCurrentlySelectedSubCategory(0);
+
+								sess.setCurrentlyHighlightedItem(0);
+								sess.setMapPage(0);
+
+								// load maps in new directory
+								String mapsLocation = ResourceLoader.properties.getProperty("mapsLocation");
+								loadMapDisplayNames();
+							}
+						}
+						if (cursorYpos < 40 && cursorXpos > 180) {
+							// change subcategory
+							if (cursorXpos < 240)
+								sess.setCurrentlySelectedSubCategory(0);
+							else if (cursorXpos < 260)
+								sess.setCurrentlySelectedSubCategory(1);
+							else if (cursorXpos < 280)
+								sess.setCurrentlySelectedSubCategory(2);
+							else if (cursorXpos < 300)
+								sess.setCurrentlySelectedSubCategory(3);
+							else if (cursorXpos < 320)
+								sess.setCurrentlySelectedSubCategory(4);
+							else if (cursorXpos < 340)
+								sess.setCurrentlySelectedSubCategory(5);
+							else if (cursorXpos < 360)
+								sess.setCurrentlySelectedSubCategory(6);
+							else if (cursorXpos < 380)
+								sess.setCurrentlySelectedSubCategory(7);
+							else if (cursorXpos < 400)
+								sess.setCurrentlySelectedSubCategory(8);
+							else if (cursorXpos < 480) sess.setCurrentlySelectedSubCategory(9);
 
 							sess.setCurrentlyHighlightedItem(0);
 							sess.setMapPage(0);
 
 							// load maps in new directory
-							String mapsLocation = ResourceLoader.properties.getProperty("mapsLocation");
 							loadMapDisplayNames();
+						} else if (cursorYpos > 30 && cursorYpos < 38) {
+							if (cursorXpos > 84 && cursorXpos < 98) pressedPGUP();
+						} else if (cursorYpos > 50 && cursorYpos < 302) {
+							if (cursorXpos < 160) {
+								int i = (cursorYpos - 50) / 21;
+								if (i < NUM_VISIBLE_ROWS && isMapVisible(i)) {
+									sess.setCurrentlyHighlightedItem(i);
+									pressedA();
+								}
+							}
+						} else if (cursorYpos > 312 && cursorYpos < 320) {
+							if (cursorXpos > 84 && cursorXpos < 98) pressedPGDN();
 						}
-					}
-					if (y < 40 && x > 180) {
-						// change subcategory
-						if (x < 240)
-							sess.setCurrentlySelectedSubCategory(0);
-						else if (x < 260)
-							sess.setCurrentlySelectedSubCategory(1);
-						else if (x < 280)
-							sess.setCurrentlySelectedSubCategory(2);
-						else if (x < 300)
-							sess.setCurrentlySelectedSubCategory(3);
-						else if (x < 320)
-							sess.setCurrentlySelectedSubCategory(4);
-						else if (x < 340)
-							sess.setCurrentlySelectedSubCategory(5);
-						else if (x < 360)
-							sess.setCurrentlySelectedSubCategory(6);
-						else if (x < 380)
-							sess.setCurrentlySelectedSubCategory(7);
-						else if (x < 400)
-							sess.setCurrentlySelectedSubCategory(8);
-						else if (x < 480) sess.setCurrentlySelectedSubCategory(9);
-
-						sess.setCurrentlyHighlightedItem(0);
-						sess.setMapPage(0);
-
-						// load maps in new directory
-						loadMapDisplayNames();
-					} else if (y > 30 && y < 38) {
-						if (x > 84 && x < 98) pressedPGUP();
-					} else if (y > 50 && y < 302) {
-						if (x < 160) {
-							int i = (y - 50) / 21;
-							if (i < NUM_VISIBLE_ROWS && isMapVisible(i)) {
-								sess.setCurrentlyHighlightedItem(i);
-								pressedA();
+					} else if (sess.isCOselectScreen()) {
+						if (cursorYpos > 61 && cursorYpos < 321 && cursorXpos > 2 && cursorXpos < 158) {
+							sess.setCurrentCursorXposition((cursorXpos - 2) / 52);
+							sess.setCurrentCursorYposition((cursorYpos - 61) / 52);
+							pressedA();
+						} else if (cursorXpos >= 3 && cursorXpos <= 155 && cursorYpos <= 53) {
+							sess.setSelectedArmyAllegiance((cursorXpos - 3) / 19);
+							if (sess.getCurrentCursorXposition() != 0 || sess.getCurrentCursorYposition() != 0) {
+								CO temp = armyArray[sess.getSelectedArmyAllegiance()][sess.getCurrentCursorXposition() + sess.getCurrentCursorYposition() * 3 - 1];
+								if (temp != null) sess.setInfono(COList.getIndex(temp));
 							}
 						}
-					} else if (y > 312 && y < 320) {
-						if (x > 84 && x < 98) pressedPGDN();
-					}
-				} else if (sess.isCOselectScreen()) {
-					if (y > 61 && y < 321 && x > 2 && x < 158) {
-						sess.setCurrentCursorXposition((x - 2) / 52);
-						sess.setCurrentCursorYposition((y - 61) / 52);
-						pressedA();
-					} else if (x >= 3 && x <= 155 && y <= 53) {
-						sess.setSelectedArmyAllegiance((x - 3) / 19);
-						if (sess.getCurrentCursorXposition() != 0 || sess.getCurrentCursorYposition() != 0) {
-							CO temp = armyArray[sess.getSelectedArmyAllegiance()][sess.getCurrentCursorXposition() + sess.getCurrentCursorYposition() * 3 - 1];
-							if (temp != null) sess.setInfono(COList.getIndex(temp));
+					} else if (sess.isSideSelect()) {
+						if (cursorXpos < 130) {
+							if (cursorYpos / 20 < sess.getNumOfArmiesOnMap()) {
+								sess.setCurrentlyHighlightedItem(cursorYpos / 20);
+								if (sess.getSideSelections()[sess.getCurrentlyHighlightedItem()] == sess.getNumOfArmiesOnMap() - 1)
+									sess.getSideSelections()[sess.getCurrentlyHighlightedItem()] = 0;
+								else
+									sess.getSideSelections()[sess.getCurrentlyHighlightedItem()] += 1;
+							}
+						} else {
+							pressedA();
 						}
-					}
-				} else if (sess.isSideSelect()) {
-					if (x < 130) {
-						if (y / 20 < sess.getNumOfArmiesOnMap()) {
-							sess.setCurrentlyHighlightedItem(y / 20);
-							if (sess.getSideSelections()[sess.getCurrentlyHighlightedItem()] == sess.getNumOfArmiesOnMap() - 1)
-								sess.getSideSelections()[sess.getCurrentlyHighlightedItem()] = 0;
-							else
-								sess.getSideSelections()[sess.getCurrentlyHighlightedItem()] += 1;
+					} else if (sess.isBattleOptionsScreen()) {
+						if (cursorXpos > 10 && cursorXpos < 10 + BaseDMG.NUM_UNITS / 2 * 16 && cursorYpos > 184 && cursorYpos < 220) {
+							sess.setCurrentCursorYposition((cursorYpos - 184) / 20);
+							sess.setCurrentCursorXposition((cursorXpos - 10) / 16 + sess.getCurrentCursorYposition() * BaseDMG.NUM_UNITS / 2);
+							sess.setCurrentlyHighlightedItem(9);
+							pressedA();
+						} else if (cursorXpos < 210) {
+							if (cursorYpos / 20 < 9) {
+								sess.setCurrentlyHighlightedItem(cursorYpos / 20);
+								processRightKeyBattleOptions();
+							}
+						} else {
+							pressedA();
 						}
-					} else {
-						pressedA();
-					}
-				} else if (sess.isBattleOptionsScreen()) {
-					if (x > 10 && x < 10 + BaseDMG.NUM_UNITS / 2 * 16 && y > 184 && y < 220) {
-						sess.setCurrentCursorYposition((y - 184) / 20);
-						sess.setCurrentCursorXposition((x - 10) / 16 + sess.getCurrentCursorYposition() * BaseDMG.NUM_UNITS / 2);
-						sess.setCurrentlyHighlightedItem(9);
-						pressedA();
-					} else if (x < 210) {
-						if (y / 20 < 9) {
-							sess.setCurrentlyHighlightedItem(y / 20);
-							processRightKeyBattleOptions();
-						}
-					} else {
-						pressedA();
-					}
-				} else if (sess.isSnailInfoScreen()) {
-					if (x > 240 && x < 480 && y > 280 && y < 300) {
-						sess.setCurrentlyHighlightedItem(0);
-						pressedA();
-					} else if (x > 240 && x < 480 && y > 300 && y < 320) {
-						sess.setCurrentlyHighlightedItem(1);
-						pressedA();
-					} else if (x > 0 && x < 160 && y > 100 && y < 120) {
-						sess.setCurrentlyHighlightedItem2(0);
-					} else if (x > 160 && x < 320 && y > 100 && y < 120) {
-						sess.setCurrentlyHighlightedItem2(1);
-					} else if (x > 320 && x < 480 && y > 100 && y < 120) {
-						// send chat message
-						String message = JOptionPane.showInputDialog("Type in your chat message");
-						if (message == null) {
-							return;
-						}
+					} else if (sess.isSnailInfoScreen()) {
+						if (cursorXpos > 240 && cursorXpos < 480 && cursorYpos > 280 && cursorYpos < 300) {
+							sess.setCurrentlyHighlightedItem(0);
+							pressedA();
+						} else if (cursorXpos > 240 && cursorXpos < 480 && cursorYpos > 300 && cursorYpos < 320) {
+							sess.setCurrentlyHighlightedItem(1);
+							pressedA();
+						} else if (cursorXpos > 0 && cursorXpos < 160 && cursorYpos > 100 && cursorYpos < 120) {
+							sess.setCurrentlyHighlightedItem2(0);
+						} else if (cursorXpos > 160 && cursorXpos < 320 && cursorYpos > 100 && cursorYpos < 120) {
+							sess.setCurrentlyHighlightedItem2(1);
+						} else if (cursorXpos > 320 && cursorXpos < 480 && cursorYpos > 100 && cursorYpos < 120) {
+							// send chat message
+							String message = JOptionPane.showInputDialog("Type in your chat message");
+							if (message == null) {
+								return;
+							}
 
-						String command = "sendchat";
-						String extra = Options.gamename + "\n" + Options.username + "\n" + message;
-						String reply = null;
+							String command = "sendchat";
+							String extra = Options.gamename + "\n" + Options.username + "\n" + message;
+							String reply = null;
 
-						try {
-							reply = networkingManager.sendCommandToMain(command, extra);
-						} catch (MalformedURLException e1) {
-							logger.info("Bad URL " + Options.getServerName());
-						} catch (IOException e2) {
-							logger.error("Connection Problem during command " + command + " with information:\n" + extra);
+							try {
+								reply = networkingManager.sendCommandToMain(command, extra);
+							} catch (MalformedURLException e1) {
+								logger.info("Bad URL " + Options.getServerName());
+							} catch (IOException e2) {
+								logger.error("Connection Problem during command " + command + " with information:\n" + extra);
+							}
+
+							logger.info(reply);
+							refreshInfo();
+						} else if (cursorXpos > 460 && cursorXpos < 480 && cursorYpos > 0 && cursorYpos < 20) {
+							pressedPGUP();
+						} else if (cursorXpos > 460 && cursorXpos < 480 && cursorYpos > 80 && cursorYpos < 100) {
+							pressedPGDN();
 						}
-
-						logger.info(reply);
-						refreshInfo();
-					} else if (x > 460 && x < 480 && y > 0 && y < 20) {
-						pressedPGUP();
-					} else if (x > 460 && x < 480 && y > 80 && y < 100) {
-						pressedPGDN();
 					}
 				}
 			} else {
