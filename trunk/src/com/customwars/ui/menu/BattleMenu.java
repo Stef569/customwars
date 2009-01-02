@@ -8,11 +8,6 @@ package com.customwars.ui.menu;
  */
 
 //TEMPORARY
-import javax.swing.*;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.customwars.ai.Battle;
 import com.customwars.ai.CWEvent;
 import com.customwars.ai.Options;
@@ -23,10 +18,10 @@ import com.customwars.state.ResourceLoader;
 import com.customwars.ui.Animation;
 import com.customwars.ui.DialogueBox;
 import com.customwars.ui.MiscGraphics;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.*;
-import java.awt.*;
-import java.awt.image.*;
+import java.awt.image.ImageObserver;
 
 public class BattleMenu extends InGameMenu{
     Battle b;   //Holds the battle this menu is used for
@@ -87,7 +82,7 @@ public class BattleMenu extends InGameMenu{
                 	logger.info("Ending Day=["+b.getDay()+"]");
                     boolean endGame = b.endTurn();
                     if(b.getBattleOptions().isRecording())b.getReplay().push(new CWEvent(6,b.getDay(),b.getTurn()));
-                    if(endGame)return -10;
+                    if(endGame)return MENU_SEL.END_GAME;
                     else return 10;
                 }else if(displayItems[item].equals("Load")){
                     return 14;
@@ -251,15 +246,10 @@ public class BattleMenu extends InGameMenu{
                 }else if(displayItems[item].equals("Swap")){
                 	logger.info("Swap");
                     if(b.getBattleOptions().isRecording())b.getReplay().push(new CWEvent(5,b.getDay(),b.getTurn()));
-                    /*if(b.getArmy(b.getTurn()).canTagSwap()){
-                        b.getArmy(b.getTurn()).swap();
-                        //refresh army, etc.
-                    }else{*/
-                        b.getArmy(b.getTurn()).swap();
-                        boolean endGame = b.endTurn();
-                        if(endGame)return -10;
-                        else return 10;
-                    //}
+                    b.getArmy(b.getTurn()).swap();
+                    boolean endGame = b.endTurn();
+                    if(endGame) return MENU_SEL.END_GAME;
+                    else return 10;
                 }else if(displayItems[item].equals("Send On") || displayItems[item].equals("Send Off")){
                     Options.toggleSend();
                 }
