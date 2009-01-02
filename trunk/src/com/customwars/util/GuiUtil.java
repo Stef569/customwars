@@ -79,19 +79,6 @@ public final class GuiUtil {
    *         text that is larger then maxPixelWidth is discarted
    */
   public static String fitLine(String text, int maxPixelWidth, Graphics g) {
-    int stringPixelWidth = getStringWidth(text, g);
-
-    if (text == null) {
-      throw new IllegalArgumentException("text is null");
-    }
-    if (g == null) {
-      throw new IllegalArgumentException("graphics is null");
-    }
-
-    if (stringPixelWidth > maxPixelWidth) {
-      stringPixelWidth = maxPixelWidth;
-    }
-
     return getSubStringByPixelWidth(text, maxPixelWidth, 0, g);
   }
 
@@ -104,6 +91,13 @@ public final class GuiUtil {
    *         if text is smaller then maxPxWidth then text is returned
    */
   private static String getSubStringByPixelWidth(String text, int maxPxWidth, int offSet, Graphics g) {
+    if (text == null) {
+      throw new NullPointerException("Text is null");
+    }
+    if (g == null) {
+      throw new NullPointerException("Graphics is null");
+    }
+
     // Loop through each char
     for (int charPos = 0; charPos < text.length(); charPos++) {
       // Get char size in pixels
@@ -128,7 +122,6 @@ public final class GuiUtil {
 
   public static int getStringWidth(String text, Graphics g) {
     FontMetrics metrics = g.getFontMetrics();
-    Rectangle2D txtRect = metrics.getStringBounds(text, g);
-    return (int) txtRect.getWidth();
+    return metrics.stringWidth(text);
   }
 }
