@@ -1,6 +1,6 @@
 package com.customwars.officer;
 
-import com.customwars.ai.Mission;
+import com.customwars.ai.GameSession;
 import com.customwars.map.Map;
 import com.customwars.map.Tile;
 import com.customwars.map.location.Location;
@@ -364,7 +364,7 @@ public class Xavier extends CO
        {       
            if(destroyed && tempUnit.isRout())
            {
-        	   Mission.getBattleScreen().endBattle();
+        	   GameSession.getBattleScreen().endBattle();
         	   //boolean gameEnd = tempUnit.getArmy().getBattle().removeArmy(tempUnit.getArmy(),null,false);
               
               //Err can't call endBattle() through CO xD

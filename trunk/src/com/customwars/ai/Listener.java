@@ -40,7 +40,7 @@ public class Listener implements Runnable{
                 s = ss.accept();
                 if(s != null){
                     is = s.getInputStream();
-                    Mission.recieveMission(is);
+                    GameSession.recieveMission(is);
                 }
             }
         } catch(Exception e){

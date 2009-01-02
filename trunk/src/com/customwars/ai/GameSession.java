@@ -29,7 +29,7 @@ import com.customwars.ui.BattleScreen;
 import java.util.zip.CRC32;
 //import java.util.*;
 
-public class Mission {
+public class GameSession {
     private static final String REPLAY_SAVE_FILENAME = "/replay.save";
 
 	private static final String MISSION_TEMP_SAVE_FILENAME = "temporarysave.save";
@@ -46,10 +46,10 @@ public class Mission {
     public  static ServerSocket sServer;
     public  static String name;
     public  static int saveAttempts = 0;
-	final static Logger logger = LoggerFactory.getLogger(Mission.class);  
+	final static Logger logger = LoggerFactory.getLogger(GameSession.class);  
 	
     //constructor
-    public Mission() {
+    public GameSession() {
     }
    
     //Starts a 1-screen mission

@@ -10,7 +10,7 @@ package com.customwars.officer;
 import java.util.Random;
 import java.util.ArrayList;
 
-import com.customwars.ai.Mission;
+import com.customwars.ai.GameSession;
 import com.customwars.map.Tile;
 import com.customwars.map.location.Property;
 import com.customwars.unit.Army;
@@ -270,7 +270,7 @@ public class Mary extends CO {
                         //boolean gameEnd = P.setOwner(u.getArmy());
                         
                         if(P.setOwner(u.getArmy())) {
-                            Mission.getBattleScreen().endBattle();
+                            GameSession.getBattleScreen().endBattle();
                         }
                         
                         //System.out.println(P.getMaxCapturePoints());
@@ -288,7 +288,7 @@ public class Mary extends CO {
                         //boolean gameEnd = P.setOwner(u.getArmy());
                         
                         if(P.setOwner(u.getArmy())) {
-                            Mission.getBattleScreen().endBattle();
+                            GameSession.getBattleScreen().endBattle();
                         }
                         
                         //bonusTiles.remove(army.getBattle().getMap().find(u));

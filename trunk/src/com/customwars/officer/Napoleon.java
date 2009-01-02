@@ -5,7 +5,7 @@ This 'broken' version is cool because it has code for real '+4 max HP'
 
 import java.util.Random;
 
-import com.customwars.ai.Mission;
+import com.customwars.ai.GameSession;
 import com.customwars.map.location.Property;
 import com.customwars.unit.Unit;
 
@@ -257,7 +257,7 @@ public class Napoleon extends CO{
                 P.setCapturePoints(P.getCapturePoints() - u.getCOstore()[0]/10);
             } else {
                 if(P.setOwner(u.getArmy())) {
-                    Mission.getBattleScreen().endBattle();
+                    GameSession.getBattleScreen().endBattle();
                 }
                 
             }

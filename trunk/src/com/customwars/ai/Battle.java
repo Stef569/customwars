@@ -1049,7 +1049,7 @@ public void updateFoW() {
         if(Options.isNetworkGame() && Options.getSend()){
             if(!(day == 1 && turn == 0)){
                 try {
-					Mission.sendMission();
+					GameSession.sendMission();
 				} catch (IOException e) {
 					logger.error("IO Error sending mission", e);
 				}
@@ -1059,7 +1059,7 @@ public void updateFoW() {
         //deal with snail games
         if(Options.snailGame && !(turn == 0 && day == 1)){
             //upload save
-            Mission.saveMission(TEMPORARYSAVE_SAVE_FILENAME);
+            GameSession.saveMission(TEMPORARYSAVE_SAVE_FILENAME);
             sendFile("usave.pl", Options.gamename,TEMPORARYSAVE_SAVE_FILENAME);
             //TODO: retry?
             
@@ -1070,7 +1070,7 @@ public void updateFoW() {
         }
         
         //autosave if applicable
-        else if(Options.isAutosaveOn())Mission.saveMission(TEMPORARYSAVE_SAVE_FILENAME);
+        else if(Options.isAutosaveOn())GameSession.saveMission(TEMPORARYSAVE_SAVE_FILENAME);
         
         return battleEnd;
     }
@@ -1110,11 +1110,11 @@ public void updateFoW() {
             in.close();
         }catch(MalformedURLException e1){
         	logger.error("Bad URL "+Options.getServerName());
-            JOptionPane.showMessageDialog(Mission.mainFrame,"Bad URL: "+Options.getServerName());
+            JOptionPane.showMessageDialog(GameSession.mainFrame,"Bad URL: "+Options.getServerName());
             return null;
         }catch(IOException e2){
         	logger.error("Connection Problem during command "+command+" with information:\n"+extra);
-            JOptionPane.showMessageDialog(Mission.mainFrame,"Connection Problem during command "+command+" with the following information:\n"+extra);
+            JOptionPane.showMessageDialog(GameSession.mainFrame,"Connection Problem during command "+command+" with the following information:\n"+extra);
             return null;
         }
         
@@ -1168,14 +1168,14 @@ public void updateFoW() {
                 
             }catch(MalformedURLException e1){
             	logger.error("Bad URL "+Options.getServerName());
-                JOptionPane.showMessageDialog(Mission.mainFrame,"Bad URL: "+Options.getServerName());
+                JOptionPane.showMessageDialog(GameSession.mainFrame,"Bad URL: "+Options.getServerName());
                 return null;
             }catch(IOException e2){
             	logger.error("Connection problem, unable to send file");
-                JOptionPane.showMessageDialog(Mission.mainFrame,"Connection problem, unable to send file");
+                JOptionPane.showMessageDialog(GameSession.mainFrame,"Connection problem, unable to send file");
                 return null;
             }
-        } while(!reply.equals(String.valueOf(Mission.getCheckSum(file))));
+        } while(!reply.equals(String.valueOf(GameSession.getCheckSum(file))));
         
         logger.info("Reply " + reply);
         
@@ -1240,7 +1240,7 @@ public void updateFoW() {
                         }
                         sendCommandToMain("dplay",Options.gamename + "\n" + Options.username + "\n" + Options.password + "\n" + opos);
                         //upload save
-                        Mission.saveMission(TEMPORARYSAVE_SAVE_FILENAME);
+                        GameSession.saveMission(TEMPORARYSAVE_SAVE_FILENAME);
                         
                         
                         sendFile("usave.pl", Options.gamename,TEMPORARYSAVE_SAVE_FILENAME);

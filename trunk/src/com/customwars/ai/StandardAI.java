@@ -34,7 +34,7 @@ public class StandardAI extends AI{
     
     public void turn(){
        logger.info("CURRENT THREAD COUNT====== : " + Thread.activeCount());
-        BattleScreen bs = Mission.getBattleScreen();
+        BattleScreen bs = GameSession.getBattleScreen();
        logger.info("Generic AI running");
        logger.info("current thread count", Thread.currentThread());
         Thread.yield();
