@@ -9,12 +9,10 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.customwars.AllTests;
-
 
 public class FileSystemManager {
 	
-	final static Logger logger = LoggerFactory.getLogger(AllTests.class);  
+	final static Logger logger = LoggerFactory.getLogger(FileSystemManager.class);  
 	
 	private static final String DIR_IGNORE_FILTER = ".";
 	private static FilenameFilter fileNameFilters;
