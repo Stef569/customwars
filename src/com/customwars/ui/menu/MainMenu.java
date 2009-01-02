@@ -134,15 +134,15 @@ public class MainMenu extends JComponent {
     scale = 1;
 
     setIsTitleScreen(true);
-    setisOptionsScreen(false);
+    setIsOptionsScreen(false);
     setisNewload(false);
-    setisMapSelectScreen(false);
-    setisCOselectScreen(false);
+    setIsMapSelectScreen(false);
+    setIsCOselectScreen(false);
     setIsInfoScreen(false);
-    setisBattleOptionsScreen(battleOptions);
+    setIsBattleOptionsScreen(battleOptions);
     setKeymap(false);
     Options.snailGame = false;
-    setisSnailInfoScreen(false);
+    setIsSnailInfoScreen(false);
 
     keycontroller = new KeyControl();
     f.addKeyListener(keycontroller);
@@ -206,7 +206,7 @@ public class MainMenu extends JComponent {
 
   public void drawScreen(Graphics2D graphics2D) {
     drawBackground(graphics2D);
-    if (title) drawTitleScreen(graphics2D, item);
+    if (isTitleScreen()) drawTitleScreen(graphics2D, item);
     if (mapSelect) drawMapSelectScreen(graphics2D);
     if (COselect) drawCOSelectScreen(graphics2D);
     if (options) drawOptionsScreen(graphics2D);
@@ -1080,7 +1080,7 @@ public class MainMenu extends JComponent {
   }
 
   public void pressedA() {
-    if (title) {
+    if (isTitleScreen()) {
       titleScreenActions();
     } else if (info) {
       info = false;
@@ -1227,8 +1227,8 @@ public class MainMenu extends JComponent {
           String t = JOptionPane.showInputDialog("What side do you want to join? Pick from 1-" + numArmies);
           if (t == null) {
             Options.snailGame = false;
-            mapSelect = false;
-            title = true;
+            setIsMapSelectScreen(false);
+            setIsTitleScreen(true);
             return;
           }
           joinnum = Integer.parseInt(t);
@@ -1246,8 +1246,8 @@ public class MainMenu extends JComponent {
             reply = sendCommandToMain("newgame", Options.gamename + "\n" + Options.masterpass + "\n" + numArmies + "\n" + Options.version + "\n" + comment + "\n" + mapName + "\n" + Options.username);
           } else {
             Options.snailGame = false;
-            mapSelect = false;
-            title = true;
+            setIsMapSelectScreen(false);
+            setIsTitleScreen(true);
             return;
           }
         }
@@ -1454,9 +1454,9 @@ private void joinServerGame() {
 	  }
 	  String slot  = JOptionPane.showInputDialog(null, "Type in the number of the army you will command:", "Network Game: Army No.?", JOptionPane.PLAIN_MESSAGE);
 	  if (slot == null) {
-	    title = true;
-	    snailinfo = false;
-	    return;
+		  setIsTitleScreen(true);
+		  setIsSnailInfoScreen(false);
+		  return;
 	  }
 
 	  //Join
@@ -1467,52 +1467,52 @@ private void joinServerGame() {
 	      logger.info("Game does not exist");
 	      Options.gamename = JOptionPane.showInputDialog(null, "Type in a name for your game:", "Network Game: Name?", JOptionPane.PLAIN_MESSAGE);
 	      if (Options.gamename == null) {
-	        title = true;
-	        snailinfo = false;
+	    	  setIsTitleScreen(true);
+	    	  setIsSnailInfoScreen(false);
 	        return;
 	      }
 	      Options.masterpass = JOptionPane.showInputDialog(null, "Enter Password for game:", "Join Game: Master Pass", JOptionPane.PLAIN_MESSAGE);
 	      if (Options.masterpass == null) {
-	        title = true;
-	        snailinfo = false;
+	    	  setIsTitleScreen(true);
+	    	  setIsSnailInfoScreen(false);
 	        return;
 	      }
 	    } else if (reply.equals("wrong password")) {
 	      logger.info("Incorrect Password");
 	      Options.gamename = JOptionPane.showInputDialog(null, "Name of game:", "Join Game: Name", JOptionPane.PLAIN_MESSAGE);
 	      if (Options.gamename == null) {
-	        title = true;
-	        snailinfo = false;
+	    	  setIsTitleScreen(true);
+	    	  setIsSnailInfoScreen(false);
 	        return;
 	      }
 	      Options.masterpass = JOptionPane.showInputDialog(null, "Enter Password for game:", "Join Game: Master Pass", JOptionPane.PLAIN_MESSAGE);
 	      if (Options.masterpass == null) {
-	        title = true;
-	        snailinfo = false;
+	    	  setIsTitleScreen(true);
+	    	  setIsSnailInfoScreen(false);
 	        return;
 	      }
 	    } else if (reply.equals("out of range")) {
 	      logger.info("Army choice out of range or invalid");
 	      slot  = JOptionPane.showInputDialog(null, "Type in the number of the army you will command:", "Network Game: Army No.?", JOptionPane.PLAIN_MESSAGE);
 	      if (slot == null) {
-	        title = true;
-	        snailinfo = false;
+	    	  setIsTitleScreen(true);
+	    	  setIsSnailInfoScreen(false);
 	        return;
 	      }
 	    } else if (reply.equals("slot taken")) {
 	      logger.info("Army choice already taken");
 	      slot  = JOptionPane.showInputDialog(null, "Type in the number of the army you will command:", "Network Game: Army No.?", JOptionPane.PLAIN_MESSAGE);
 	      if (slot == null) {
-	        title = true;
-	        snailinfo = false;
+	    	  setIsTitleScreen(true);
+	    	  setIsSnailInfoScreen(false);
 	        return;
 	      }
 	    } else {
 	      logger.info("Other problem");
 	      JOptionPane.showMessageDialog(this, "Version Mismatch");
 	      Options.snailGame = false;
-	      snailinfo = false;
-	      title = true;
+	      setIsTitleScreen(true);
+	      setIsSnailInfoScreen(false);
 	      return;
 	    }
 	    refreshInfo();
@@ -1531,7 +1531,7 @@ private void joinServerGame() {
 }
 
 private void createServerGame() {
-	logger.info("Create Server Game");
+		logger.info("Create Server Game");
 	  //try to connect to the server first to see that the user's URL is correct
 	  if (!tryToConnect()) {
 		  return;
@@ -1790,14 +1790,14 @@ private void loadGame() {
 
   private void titleScreenActions() {
     if (item == 0) {
-      title = false;
-      newload = true;
+      setIsTitleScreen(false);
+      setisNewload(true);
     } else if (item == MAP_EDITOR) {
       startMapEditor();
     } else if (item == OPTION_MENU) {
-      title = false;
-      options = true;
-      item = 0;
+    	setIsTitleScreen(false);      
+    	setIsOptionsScreen(true);
+    	item = 0;
     }
   }
 
@@ -2008,8 +2008,8 @@ private void loadGame() {
         selectedArmy = 0;
         if (Options.isNetworkGame()) Options.stopNetwork();
         if (Options.snailGame) {
-          mapSelect = false;
-          title = true;
+        	setIsMapSelectScreen(false);
+        	setIsTitleScreen(true);
           Options.snailGame = false;
         }
       } else {
@@ -2019,17 +2019,17 @@ private void loadGame() {
         cy = 0;
       }
     } else if (options) {
-      title = true;
-      options = false;
+    	setIsTitleScreen(true);
+    	setIsOptionsScreen(false);
       item = 0;
       if (Options.isNetworkGame()) Options.stopNetwork();
     } else if (newload) {
-      title = true;
-      newload = false;
+    	setIsTitleScreen(true);
+    	setisNewload(false);
       item = 0;
       if (Options.isNetworkGame()) Options.stopNetwork();
     } else if (sideSelect) {
-      COselect = true;
+    	setIsCOselectScreen(true);
       numCOs--;
       sideSelect = false;
       Options.snailGame = false; //not always needed, but doesn't hurt
@@ -2039,7 +2039,7 @@ private void loadGame() {
       if (numCOs > 4) sideSelect = true;
       else {
         numCOs--;
-        COselect = true;
+        setIsCOselectScreen(true);
       }
       battleOptions = false;
       Options.snailGame = false; //not always needed, but doesn't hurt
@@ -2048,19 +2048,19 @@ private void loadGame() {
       cy = 0;
       if (Options.isNetworkGame()) Options.stopNetwork();
     } else if (mapSelect) {
-      newload = true;
-      mapSelect = false;
+    	setisNewload(true);
+    	setIsMapSelectScreen(false);
       Options.snailGame = false; //not always needed, but doesn't hurt
       item = 0;
       if (Options.isNetworkGame()) Options.stopNetwork();
     } else if (keymap) {
-      keymap = false;
-      options = true;
+    	setKeymap(false);
+    	setIsOptionsScreen(true);
       item = 0;
     } else if (snailinfo) {
       Options.snailGame = false;
-      snailinfo = false;
-      newload = true;
+      setIsSnailInfoScreen(false);
+      setisNewload(true);
       item = 0;
     }
   }
@@ -2181,8 +2181,8 @@ private void loadGame() {
   }
 
   public void returnToServerInfo() {
-    snailinfo = true;
-    title = false;
+	setIsSnailInfoScreen(true);
+	setIsTitleScreen(false);
     Options.snailGame = true;
     refreshInfo();
   }
@@ -2286,7 +2286,7 @@ private void loadGame() {
         chooseKey = false;
         Options.saveOptions();
       } else if (keypress == Options.up) {
-        if (title) {
+        if (isTitleScreen()) {
           String soundLocation = ResourceLoader.properties.getProperty("soundLocation");
           SFX.playClip(soundLocation + "/menutick.wav");
           item--;
@@ -2339,7 +2339,7 @@ private void loadGame() {
           if (item < 0) item = 1;
         }
       } else if (keypress == Options.down) {
-        if (title) {
+        if (isTitleScreen()) {
           String soundLocation = ResourceLoader.properties.getProperty("soundLocation");
           SFX.playClip(soundLocation + "/menutick.wav");
           item++;
@@ -2776,7 +2776,7 @@ private void loadGame() {
 
       if (e.getButton() == MouseEvent.BUTTON1) {
         //first mouse button
-        if (title) {
+        if (isTitleScreen()) {
         	boolean newGame = x > NEW_GAME_WIDTH_START && x < NEW_GAME_WIDTH_END && y > NEW_GAME_HEIGHT_BOTTOM && y < NEW_GAME_HEIGHT_TOP;
         	boolean designMaps = x > MAP_DESIGN_WIDTH_START && x < MAP_DESIGN_WIDTH_END && y > MAP_DESIGN_HEIGHT_BOTTOM && y < MAP_DESIGN_HEIGHT_TOP;
         	boolean optionsScreen = x > OPTIONS_WIDTH_START && x < OPTIONS_WIDTH_END && y > OPTIONS_HEIGHT_BOTTOM && y < OPTIONS_HEIGHT_TOP;
@@ -2784,8 +2784,8 @@ private void loadGame() {
         	if (newGame) {
         		logger.info("Moving into the New Game Menu");
 	            item = 0;
-	            title = false;
-	            newload = true;
+	            setIsTitleScreen(false);
+	            setisNewload(true);
 	          } else {
 				if (designMaps) {
 				    item = 1;
@@ -2794,8 +2794,8 @@ private void loadGame() {
 				  } else {
 					if (optionsScreen) {
 					    logger.info("Moving into the Options Menu");
-					    title = false;
-					    options = true;
+					    setIsTitleScreen(false);
+					    setIsOptionsScreen(true);
 					    item = 0;
 					  }
 				}
@@ -3197,52 +3197,52 @@ private void loadGame() {
         logger.info("Game does not exist");
         Options.gamename = JOptionPane.showInputDialog("Type in the name of the game you want to join");
         if (Options.gamename == null) {
-          title = true;
-          snailinfo = false;
+          setIsTitleScreen(true);
+          setIsSnailInfoScreen(false);
           return;
         }
         Options.masterpass = JOptionPane.showInputDialog("Type in the master password of the game");
         if (Options.masterpass == null) {
-          title = true;
-          snailinfo = false;
+        	setIsTitleScreen(true);
+        	setIsSnailInfoScreen(false);
           return;
         }
       } else if (reply.equals("wrong password")) {
         logger.info("Incorrect Password");
         Options.gamename = JOptionPane.showInputDialog("Type in the name of the game you want to join");
         if (Options.gamename == null) {
-          title = true;
-          snailinfo = false;
+        	setIsTitleScreen(true);
+        	setIsSnailInfoScreen(false);
           return;
         }
         Options.masterpass = JOptionPane.showInputDialog("Type in the master password of the game");
         if (Options.masterpass == null) {
-          title = true;
-          snailinfo = false;
+        	setIsTitleScreen(true);
+        	setIsSnailInfoScreen(false);
           return;
         }
       } else if (reply.equals("out of range")) {
         logger.info("Army choice out of range or invalid");
         slot = JOptionPane.showInputDialog("Type in the number of the army you will command");
         if (slot == null) {
-          title = true;
-          snailinfo = false;
+        	setIsTitleScreen(true);
+        	setIsSnailInfoScreen(false);
           return;
         }
       } else if (reply.equals("slot taken")) {
         logger.info("Army choice already taken");
         slot = JOptionPane.showInputDialog("Type in the number of the army you will command");
         if (slot == null) {
-          title = true;
-          snailinfo = false;
+        	setIsTitleScreen(true);
+        	setIsSnailInfoScreen(false);
           return;
         }
       } else {
         logger.info("Other problem");
         JOptionPane.showMessageDialog(this, "Version Mismatch");
         Options.snailGame = false;
-        snailinfo = false;
-        title = true;
+        setIsTitleScreen(true);
+        setIsSnailInfoScreen(false);
         return;
       }
       refreshInfo();
@@ -3251,8 +3251,8 @@ private void loadGame() {
 
     //go to information screen
     Options.snailGame = true;
-    snailinfo = true;
-    newload = false;
+    setIsSnailInfoScreen(true);
+    setisNewload(false);
     item = 0;
     item2 = 0;
 
@@ -3260,8 +3260,8 @@ private void loadGame() {
   }
 
   public void setNewLoad() {
-    title = false;
-    newload = true;
+	setIsTitleScreen(false);
+	setisNewload(true);
     this.repaint();
   }
   
@@ -3288,75 +3288,75 @@ private void loadGame() {
             (mapPage == filteredMaps.size() / NUM_VISIBLE_ROWS && filteredMaps.size() % NUM_VISIBLE_ROWS == 0);
   }
 
-public boolean isOptionsScreen() {
+  public boolean isOptionsScreen() {
 	return options;
   }
 
-public void setisOptionsScreen(boolean options) {
+  public void setIsOptionsScreen(boolean options) {
 	  this.options = options;
   }
 
-public boolean isNewload() {
+  public boolean isNewload() {
 	  return newload;
   }
 
-public void setisNewload(boolean newload) {
+  public void setisNewload(boolean newload) {
 	this.newload = newload;
   }
 
-public boolean isMapSelectScreen() {
+  public boolean isMapSelectScreen() {
 	return mapSelect;
   }
 
-public void setisMapSelectScreen(boolean mapSelect) {
+  public void setIsMapSelectScreen(boolean mapSelect) {
 	this.mapSelect = mapSelect;
   }
 
-public boolean isCOselectScreen() {
+  public boolean isCOselectScreen() {
 	return COselect;
   }
 
-public void setisCOselectScreen(boolean oselect) {
+  public void setIsCOselectScreen(boolean oselect) {
 	COselect = oselect;
   }
 
-public boolean isBattleOptionsScreen() {
+  public boolean isBattleOptionsScreen() {
 	return battleOptions;
   }
 
-public void setisBattleOptionsScreen(boolean battleOptions) {
+  public void setIsBattleOptionsScreen(boolean battleOptions) {
 	this.battleOptions = battleOptions;
   }
 
-public boolean isKeymap() {
+  public boolean isKeymap() {
 	return keymap;
   }
 
-public void setKeymap(boolean keymap) {
+  public void setKeymap(boolean keymap) {
 	this.keymap = keymap;
   }
 
-public boolean isSnailInfoScreen() {
+  public boolean isSnailInfoScreen() {
 	return snailinfo;
   }
 
-public void setisSnailInfoScreen(boolean snailinfo) {
+  public void setIsSnailInfoScreen(boolean snailinfo) {
 	this.snailinfo = snailinfo;
   }
 
-public boolean isInfoScreen() {
+  public boolean isInfoScreen() {
 	  return info;
   }
 
-public void setIsInfoScreen(boolean info) {
+  public void setIsInfoScreen(boolean info) {
 	this.info = info;
   }
 
-public boolean isTitleScreen() {
+  public boolean isTitleScreen() {
 	  return title;
   }
 
-public void setIsTitleScreen(boolean title) {
+  public void setIsTitleScreen(boolean title) {
 	  this.title = title;
   }
 }
