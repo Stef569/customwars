@@ -7,83 +7,30 @@ package com.customwars.ui;
  *The Battle Screen, the central graphical component of CW during a battle
  */
 
-import java.awt.*;
-import javax.swing.*;
-
-import java.io.*;
-import java.util.ArrayList;
-
-import java.awt.event.*;
-import javax.swing.event.MouseInputListener;
-//import javax.swing.filechooser.FileNameExtensionFilter;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.customwars.ai.Battle;
-import com.customwars.ai.BuildEvent;
-import com.customwars.ai.CWEvent;
-import com.customwars.ai.DeleteEvent;
-import com.customwars.ai.GameSession;
-import com.customwars.ai.MoveTraverse;
-import com.customwars.ai.Options;
-import com.customwars.ai.SelectionEvent;
+import com.customwars.ai.*;
 import com.customwars.map.Map;
 import com.customwars.map.Tile;
-import com.customwars.map.location.Invention;
-import com.customwars.map.location.Location;
-import com.customwars.map.location.Property;
-import com.customwars.map.location.Silo;
-import com.customwars.map.location.TerrType;
+import com.customwars.map.location.*;
 import com.customwars.officer.CO;
 import com.customwars.officer.COList;
 import com.customwars.officer.Fighter;
 import com.customwars.sfx.Music;
 import com.customwars.sfx.SFX;
 import com.customwars.state.ResourceLoader;
-import com.customwars.ui.menu.BattleMenu;
-import com.customwars.ui.menu.BuildMenu;
-import com.customwars.ui.menu.ContextMenu;
-import com.customwars.ui.menu.InGameMenu;
-import com.customwars.ui.menu.MENU_SEL;
-import com.customwars.ui.menu.MainMenu;
-import com.customwars.ui.menu.OptionsMenu;
-import com.customwars.unit.APC;
+import com.customwars.ui.menu.*;
+import com.customwars.unit.*;
 import com.customwars.unit.Action;
-import com.customwars.unit.AntiAir;
-import com.customwars.unit.Army;
-import com.customwars.unit.Artillery;
-import com.customwars.unit.Artillerycraft;
-import com.customwars.unit.BCopter;
-import com.customwars.unit.Battlecraft;
-import com.customwars.unit.Battleship;
-import com.customwars.unit.BlackBoat;
-import com.customwars.unit.BlackBomb;
-import com.customwars.unit.Bomber;
-import com.customwars.unit.Carrier;
-import com.customwars.unit.Cruiser;
-import com.customwars.unit.Destroyer;
-import com.customwars.unit.Infantry;
-import com.customwars.unit.Lander;
-import com.customwars.unit.MDTank;
-import com.customwars.unit.Mech;
-import com.customwars.unit.MegaTank;
-import com.customwars.unit.Missiles;
-import com.customwars.unit.Neotank;
-import com.customwars.unit.Oozium;
-import com.customwars.unit.Piperunner;
-import com.customwars.unit.Recon;
-import com.customwars.unit.Rockets;
-import com.customwars.unit.Shuttlerunner;
-import com.customwars.unit.Spyplane;
-import com.customwars.unit.Stealth;
-import com.customwars.unit.Submarine;
-import com.customwars.unit.TCopter;
-import com.customwars.unit.Tank;
-import com.customwars.unit.Transport;
-import com.customwars.unit.UNIT_COMMANDS;
-import com.customwars.unit.Unit;
-import com.customwars.unit.Zeppelin;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.swing.*;
+import javax.swing.event.MouseInputListener;
+import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.io.File;
+import java.util.ArrayList;
 
 //public class BattleScreen extends JComponent implements ComponentListener
 public class BattleScreen extends CWScreen 
@@ -3331,90 +3278,56 @@ public class BattleScreen extends CWScreen
 		}
 	}
 
-	private void menuActions() 
-	{
-		menu=false;
-		b.cursorLocation[b.getTurn()] = new Location(cursorYTilePos,cursorXTilePos);
-		
-		int menuselection = currentMenu.doMenuItem();
-		currentMenu = null;
-		
-		if(menuselection == MENU_SEL.INTEL)
-		{
-		    intel = true;
-		}
-		else if(menuselection == MENU_SEL.OPTION)
-		{
-		    menu = true;
-		    currentMenu = new OptionsMenu(this);
-		}
-		else if(menuselection == MENU_SEL.RESIZE_SCREEN)
-		{
-		    resizeScreen();
-		}
-		else if(menuselection == 4)
-		{
-		    if(scale < 4)
-		        scale++;
-		    else
-		        scale = 1;
-		    parentFrame.pack();
-		}
-		else if(menuselection == 5)
-		{
-		    //endBattle();
-		    returnToMain();
-		}
-		else if(menuselection == MENU_SEL.YIELD)
-		{
-			yieldCommand();
-		}
-		else if(menuselection == MENU_SEL.TOGGLE_MUSIC)
-		{
-		    toggleMusic();
-		}
-		else if(menuselection == MENU_SEL.DELETE)
-		{
-		    delete = true;
-		}
-		else if(menuselection == 9)
-		{
-		    whatTheHellIsThisItLooksImportant();
-		}
-		else if(menuselection == MENU_SEL.SAVE_REPLAY)
-		{
-		    saveReplay();
-		}
-		else if(menuselection == MENU_SEL.END_TURN)
-		{
-		    logger.info("Turn Start");
-		    daystart = true;
-		    if(Options.isNetworkGame() && Options.getSend())denyContinue = true;
-		    if(Options.snailGame){
-		        returnToServerScreen();
-		    }
-		}
-		else if(menuselection == 12)
-		{
-		    info = true;
-		}
-		else if(menuselection == MENU_SEL.SAVE_GAME)
-		{
-		    saveGame();
-		}
-		else if(menuselection == MENU_SEL.LOAD_GAME)
-		{
-		    loadLocalGame();
-		}
-		else if(menuselection == MENU_SEL.MAYBE_ERROR)
-		{
-		    endBattle();
-		}
-		
-		moveCursorTo(b.cursorLocation[b.getTurn()]);
-	}
+  private void menuActions() {
+    b.cursorLocation[b.getTurn()] = new Location(cursorYTilePos, cursorXTilePos);
+    int menuselection = currentMenu.doMenuItem();
+    currentMenu = null;
+    menu = false;
 
-	private void whatTheHellIsThisItLooksImportant() 
+    if (menuselection == MENU_SEL.INTEL) {
+      intel = true;
+    } else if (menuselection == MENU_SEL.OPTION) {
+      menu = true;
+      currentMenu = new OptionsMenu(this);
+    } else if (menuselection == MENU_SEL.RESIZE_SCREEN) {
+      resizeScreen();
+    } else if (menuselection == MENU_SEL.RESCALE) {
+      if (scale < 4)
+        scale++;
+      else
+        scale = 1;
+      parentFrame.pack();
+    } else if (menuselection == MENU_SEL.EXIT) {
+      returnToMain();
+    } else if (menuselection == MENU_SEL.YIELD) {
+      yieldCommand();
+    } else if (menuselection == MENU_SEL.TOGGLE_MUSIC) {
+      toggleMusic();
+    } else if (menuselection == MENU_SEL.DELETE) {
+      delete = true;
+    } else if (menuselection == MENU_SEL.SAVE_REPLAY) {
+      saveReplay();
+    } else if (menuselection == MENU_SEL.END_TURN) {
+      logger.info("Turn Start");
+      daystart = true;
+      if (Options.isNetworkGame() && Options.getSend()) denyContinue = true;
+      if (Options.snailGame) {
+        returnToServerScreen();
+      }
+    } else if (menuselection == MENU_SEL.INFO) {
+      info = true;
+    } else if (menuselection == MENU_SEL.SAVE_GAME) {
+      saveGame();
+    } else if (menuselection == MENU_SEL.LOAD_GAME) {
+      loadLocalGame();
+    } else if (menuselection == MENU_SEL.END_GAME) {
+      endBattle();
+    }
+
+    moveCursorTo(b.cursorLocation[b.getTurn()]);
+  }
+
+	private void saveReplay()
 	{
 		if(b.getBattleOptions().isRecording()){
 		    if(!Options.isNetworkGame() && !Options.snailGame){
@@ -3487,13 +3400,6 @@ public class BattleScreen extends CWScreen
 		    }
 		    
 		    if(validSave)GameSession.loadMission(filename);
-		}
-	}
-
-	private void saveReplay() {
-		if(!Options.isNetworkGame() && !Options.snailGame)
-		{
-		    logger.info("Replay"+b.getReplay());
 		}
 	}
 
