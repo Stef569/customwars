@@ -47,32 +47,27 @@ public class MenuSession {
 	private int syspos;
 	private int chatpos;
 
-	public MenuSession(int selectedArmyAllegiance,
-			int[] propertyTypesOnSelectedMap, int currentMapCategory,
-			int currentlySelectedSubCategory, boolean chooseKey,
-			boolean insertNewCO, String[] usernames, int glide, int skip,
-			int skipMax, int backGlide, BattleOptions bopt, int day, int turn,
-			int visibility, String[] syslog, String[] chatlog, int syspos,
-			int chatpos) {
-		this.selectedArmyAllegiance = selectedArmyAllegiance;
-		this.propertyTypesOnSelectedMap = propertyTypesOnSelectedMap;
-		this.currentMapCategory = currentMapCategory;
-		this.currentlySelectedSubCategory = currentlySelectedSubCategory;
-		this.chooseKey = chooseKey;
-		this.insertNewCO = insertNewCO;
-		this.usernames = usernames;
-		this.glide = glide;
-		this.skip = skip;
-		this.skipMax = skipMax;
-		this.backGlide = backGlide;
-		this.bopt = bopt;
-		this.day = day;
-		this.turn = turn;
-		this.visibility = visibility;
-		this.syslog = syslog;
-		this.chatlog = chatlog;
-		this.syspos = syspos;
-		this.chatpos = chatpos;
+	public MenuSession() {
+		
+		this.selectedArmyAllegiance = 0;
+		this.propertyTypesOnSelectedMap = new int[] {0, 0, 0, 0, 0, 0};
+		this.currentMapCategory = 0;
+		this.currentlySelectedSubCategory = 0;
+		this.chooseKey = false;
+		this.insertNewCO = false;
+		this.usernames = new String[] {"Unknown"};
+		this.glide = -1;
+		this.skip = 0;
+		this.skipMax = 0;
+		this.backGlide = -1;
+		this.bopt = new BattleOptions();
+		this.day = 1;
+		this.turn = 1;
+		this.visibility = 0;
+		this.syslog = new String[] {"System Log"};
+		this.chatlog = new String[] {"Chat Log"};
+		this.syspos = 0;
+		this.chatpos = 0;
 	}
 
 	public boolean isTitleScreen() {
