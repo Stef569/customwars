@@ -5,6 +5,8 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.customwars.ai.Options;
+
 
 
 public class ResourceLoader {
@@ -22,6 +24,7 @@ public class ResourceLoader {
 		properties = new Properties();
 		loadUnitTestProperties();
 		FileSystemManager.init();
+		Options.setServerName("http://localhost/customwars/cw/cw1/");
 	}
 
 

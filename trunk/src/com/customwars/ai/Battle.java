@@ -1061,12 +1061,10 @@ public void updateFoW() {
             //upload save
             GameSession.saveMission(TEMPORARYSAVE_SAVE_FILENAME);
             sendFile("usave.pl", Options.gamename,TEMPORARYSAVE_SAVE_FILENAME);
-            //TODO: retry?
             
             //update server information
             String reply = sendCommandToMain("nextturn", Options.gamename+"\n"+Options.username+"\n"+Options.password);
             logger.info("info = ["+ reply +"]");
-            //TODO: retry?
         }
         
         //autosave if applicable
@@ -1244,7 +1242,6 @@ public void updateFoW() {
                         
                         
                         sendFile("usave.pl", Options.gamename,TEMPORARYSAVE_SAVE_FILENAME);
-                        //TODO: retry?
                     }
                 }
             }

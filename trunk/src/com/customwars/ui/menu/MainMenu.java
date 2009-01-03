@@ -1334,8 +1334,6 @@ public class MainMenu extends JComponent {
 					JOptionPane.showMessageDialog(this, "Connection Problem during command " + command + " with the following information:\n" + extra);
 				}
 
-				// TODO: keep retrying if failed
-
 				// Join Game
 				extra = Options.gamename + "\n" + Options.masterpass + "\n" + Options.username + "\n" + Options.password + "\n" + joinnum + "\n" + Options.version;
 				command = "join";
@@ -1351,10 +1349,6 @@ public class MainMenu extends JComponent {
 				}
 
 				logger.info(reply);
-				// TODO: keep retrying if failed OR merge with game creation in this
-				// case
-
-				// Goto info screen
 				refreshInfo();
 				return;
 			}
