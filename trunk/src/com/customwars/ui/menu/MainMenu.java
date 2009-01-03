@@ -26,17 +26,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
-import javax.swing.Timer;
 import javax.swing.event.MouseInputListener;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.*;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+import java.util.Vector;
 
 public class MainMenu extends JComponent {
 	private static final String	TEMPORARYMAP_MAP_FILENAME		= "temporarymap.map";
@@ -2099,10 +2098,9 @@ public class MainMenu extends JComponent {
 
 	public void pressedPGDN() {
 		if (sess.isMapSelectScreen()) {
-			if (isOverLastPage(this.sess.getMapPage() + 1)) {
-				sess.setMapPage(sess.getMapPage() - 1);
-			} else
-				sess.setCurrentlyHighlightedItem(0);
+            int nextPage = this.sess.getMapPage() + 1;
+            sess.setMapPage(nextPage);
+            sess.setCurrentlyHighlightedItem(0);
 
 			loadMiniMapPreview();
 		} else if (sess.isSnailInfoScreen()) {
@@ -3616,8 +3614,8 @@ public class MainMenu extends JComponent {
 		return allMapFilenames[sess.getMapPage() * NUM_VISIBLE_ROWS + item];
 	}
 
-	private boolean isOverLastPage(int mapPage) {
-		return mapPage > filteredMaps.size() / NUM_VISIBLE_ROWS || (mapPage == filteredMaps.size() / NUM_VISIBLE_ROWS && filteredMaps.size() % NUM_VISIBLE_ROWS == 0);
+	private boolean isOverLastPage(int item) {
+		return item > filteredMaps.size() / NUM_VISIBLE_ROWS || (item == filteredMaps.size() / NUM_VISIBLE_ROWS && filteredMaps.size() % NUM_VISIBLE_ROWS == 0);
 	}
 
 	public void fobbahInit() {
