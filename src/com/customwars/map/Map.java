@@ -160,6 +160,13 @@ public class Map implements Serializable {
     return null;
   }
 
+  //returns the tile at a given location, returns null if the location is off the map
+  public Tile find(int col, int row) {
+    if (onMap(col, row))
+      return map[col][row];
+    return null;
+  }
+
   //returns the tile at a given Unit's location, returns null if the Unit is off the map/not on the map
   public Tile find(Unit l) {
     if (onMap(l.getLocation()))
