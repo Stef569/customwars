@@ -451,6 +451,10 @@ public class Options {
     public static String getServerName(){
         return servername;
     }
+
+    public static void setServerName(String name){
+    	servername = name;
+    }
     
     public static int getDefaultBans(){
         return defaultBans;

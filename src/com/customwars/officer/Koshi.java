@@ -526,13 +526,10 @@ public class Koshi extends CO
    @Override
    public void setChange(Unit u)
    {
-      // TODO Auto-generated method stub
-
    }
 
    @Override
    public void unChange(Unit u)
    {
-      // TODO Auto-generated method stub
    }
 }

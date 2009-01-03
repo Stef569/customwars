@@ -86,14 +86,12 @@ public class Tile implements Locatable,Serializable{
                 if(west!=null){
                     if(west.getIndex()==3 || west.getIndex()==4 || (west.getIndex()>=9 && west.getIndex()<=14) || west.getIndex()==16)
                         w=true;
-                    //TODO: Fix this
                     if(west.getIndex()>=5 && west.getIndex() <= 7)
                         n=true;
                 }
                 if(east!=null){
                     if(east.getIndex()==3 || east.getIndex()==4 || (east.getIndex()>=9 && east.getIndex()<=14) || east.getIndex()==16)
                         e=true;
-                    //TODO: Fix this
                     if(east.getIndex()>=5 && east.getIndex()<=7)
                         s=true;
                 }
@@ -122,7 +120,6 @@ public class Tile implements Locatable,Serializable{
                     }
                 }
                 /*if(west != null && east != null){
-                    //TODO: Fix this
                     if((west.getIndex()>=6 && west.getIndex()<=8)&&(east.getIndex()>=6 && east.getIndex()<=8))
                         n=true;
                 }*/
