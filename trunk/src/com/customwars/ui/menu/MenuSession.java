@@ -413,4 +413,7 @@ public class MenuSession {
 	public void setChatpos(int chatpos) {
 		this.chatpos = chatpos;
 	}
+
+    public void changeToState(String s) {
+    }
 }
