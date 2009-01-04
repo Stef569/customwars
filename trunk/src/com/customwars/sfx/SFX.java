@@ -10,26 +10,33 @@ package com.customwars.sfx;
 
 import com.customwars.ai.Options;
 
-import javax.sound.sampled.*;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineEvent;
+import javax.sound.sampled.LineListener;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.File;
 import java.io.IOException;
 
 public class SFX {
     private static boolean mute = false;
-    private static String soundLocation="";
+    private static String soundLocation = "";
 
     public static void playSound(String filename) {
         playClip(soundLocation + "/" + filename);
     }
 
     //Play a short clip from a file
-    public static void playClip(String fullPath){
-        if(!mute){
+    public static void playClip(String fullPath) {
+        if (!mute) {
             Clip c = openClip(fullPath);
-            if(c!=null){
-                if ( c.isRunning()){
-                	 c.stop();   // Stop the player if it is still running
-                }c.setFramePosition(0); // rewind to the beginning
+            if (c != null) {
+                if (c.isRunning()) {
+                    c.stop();   // Stop the player if it is still running
+                }
+                c.setFramePosition(0); // rewind to the beginning
                 c.start();     // Start playing
 
             }
@@ -37,35 +44,35 @@ public class SFX {
     }
 
     //Play a short clip from a file a given number of times
-    public static void playClip(String filename, int times){
-        if(!mute){
+    public static void playClip(String filename, int times) {
+        if (!mute) {
             Clip c = openClip(filename);
-            if(c!=null){
-                c.loop(times-1);
+            if (c != null) {
+                c.loop(times - 1);
                 c.close();
             }
         }
     }
 
     //is mute on or off?
-    public static boolean getMute(){
+    public static boolean getMute() {
         return mute;
     }
 
     //set mute
-    public static void setMute(boolean m){
+    public static void setMute(boolean m) {
         mute = m;
     }
 
     //toggle mute
-    public static void toggleMute(){
-        if(mute)mute = false;
+    public static void toggleMute() {
+        if (mute) mute = false;
         else mute = true;
         Options.saveOptions();
     }
 
     //prepares the clip for playback, used internally
-    private static Clip openClip(String filename){
+    private static Clip openClip(String filename) {
         Clip clip;
         try {
             // From file
@@ -103,15 +110,15 @@ public class SFX {
     }
 }
 
-class Ender implements LineListener{
+class Ender implements LineListener {
     Clip target;
 
-    Ender(Clip c){
+    Ender(Clip c) {
         target = c;
     }
 
-    public void update(LineEvent e){
-        if(e.getType()==LineEvent.Type.STOP){
+    public void update(LineEvent e) {
+        if (e.getType() == LineEvent.Type.STOP) {
             target.close();
         }
     }
