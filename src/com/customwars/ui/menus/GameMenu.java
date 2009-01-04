@@ -7,8 +7,6 @@ import com.customwars.state.ResourceLoader;
 import com.customwars.ui.MainMenuGraphics;
 import com.customwars.ui.MiscGraphics;
 import com.customwars.ui.menu.MenuSession;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -23,8 +21,6 @@ import java.awt.event.MouseEvent;
  * @since 2.0
  */
 public class GameMenu extends Menu {
-    private static final Logger logger = LoggerFactory.getLogger(GameMenu.class);
-
     private static final Font MENU_FONT = new Font(Font.SANS_SERIF, Font.BOLD, 24);
     private static final Font DESCRIPTION_FONT = new Font("Arial", Font.BOLD, 11);
 
@@ -32,7 +28,7 @@ public class GameMenu extends Menu {
     private static final Color DESCRIPTION_COLOR = Color.WHITE;
     private static final Color HIGHLIGHT_COLOR = Color.RED;
 
-    private static final int NEW_GAME = 0;
+    private static final int START_SINGLEPLAYER_GAME = 0;
     private static final int LOAD_GAME = 1;
     private static final int START_NETWORK_GAME = 2;
     private static final int LOAD_REPLAY = 3;
@@ -44,14 +40,21 @@ public class GameMenu extends Menu {
 
     private JFrame frame;
     private MenuSession menuSession;
+    private KeyControl keyControl = new KeyControl();
+    private MouseControl mouseControl = new MouseControl();
+
     private int coGlide = -1;  // Used to glide the co in
 
     public GameMenu(JFrame frame, MenuSession menuSession) {
         super(NUM_MENU_ITEMS);
         this.frame = frame;
         this.menuSession = menuSession;
-        frame.addKeyListener(new KeyControl());
-        frame.addMouseListener(new MouseControl());
+        initInput(frame);
+    }
+
+    public void initInput(JFrame frame) {
+        frame.addKeyListener(keyControl);
+        frame.addMouseListener(mouseControl);
     }
 
     // PAINTING
@@ -114,7 +117,7 @@ public class GameMenu extends Menu {
         g.setColor(DESCRIPTION_COLOR);
 
         switch (currentMenuItem) {
-            case NEW_GAME:
+            case START_SINGLEPLAYER_GAME:
                 g.drawString("Start a new game. This mode is primarily for", 190, 275);
                 g.drawString("playing against a friend on the same computer.", 190, 290);
                 break;
@@ -236,42 +239,34 @@ public class GameMenu extends Menu {
                 boolean joinLobbyClicked = x > JOIN_LOBBY_WIDTH_START && x < JOIN_LOBBY_WIDTH_END && y < JOIN_LOBBY_HEIGHT_BOTTOM && y > JOIN_LOBBY_HEIGHT_TOP;
 
                 if (newGameClicked) {
-                    logger.debug("New Game Clicked");
-                    setCurrentMenuItem(NEW_GAME);
+                    setCurrentMenuItem(START_SINGLEPLAYER_GAME);
                 }
 
                 if (loadGameClicked) {
-                    logger.debug("Load Game Clicked");
                     setCurrentMenuItem(LOAD_GAME);
                 }
 
                 if (networkGameClicked) {
-                    logger.debug("Network Game Clicked");
                     setCurrentMenuItem(START_NETWORK_GAME);
                 }
 
                 if (loadReplayClicked) {
-                    logger.debug("Load Replay Clicked");
                     setCurrentMenuItem(LOAD_REPLAY);
                 }
 
                 if (newServerGameClicked) {
-                    logger.debug("New Server Game Clicked");
                     setCurrentMenuItem(CREATE_SERVER_GAME);
                 }
 
                 if (joinServerGameClicked) {
-                    logger.debug("Join Server Game Clicked");
                     setCurrentMenuItem(JOIN_SERVER_GAME);
                 }
 
                 if (loginToServerGameClicked) {
-                    logger.debug("Login to Server Game Clicked");
                     setCurrentMenuItem(LOGIN_TO_SERVER_GAME);
                 }
 
                 if (joinLobbyClicked) {
-                    logger.debug("Join Game Lobby Clicked");
                     setCurrentMenuItem(JOIN_IRC_LOBBY);
                 }
 
@@ -287,8 +282,8 @@ public class GameMenu extends Menu {
     private void pressCurrentItem() {
         int currentMenuItem = getCurrentMenuItem();
         switch (currentMenuItem) {
-            case NEW_GAME:
-                menuSession.changeToState("NEW_GAME");
+            case START_SINGLEPLAYER_GAME:
+                menuSession.changeToState("START_SINGLEPLAYER_GAME");
                 break;
             case LOAD_GAME:
                 menuSession.changeToState("LOAD_GAME");
