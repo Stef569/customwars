@@ -47,7 +47,7 @@ public abstract class Menu {
      *         0 if the item was > max
      *         item if the item was within bounds
      */
-    final int withinBounds(int item, int max) {
+    int withinBounds(int item, int max) {
         if (item < 0) {
             return max;
         } else if (item > max) {
@@ -59,6 +59,14 @@ public abstract class Menu {
 
     int getCurrentMenuItem() {
         return currentMenuItem;
+    }
+
+    boolean isFirstItemSelected() {
+        return currentMenuItem == 0;
+    }
+
+    boolean isLastItemSelected() {
+        return currentMenuItem == numMenuItems-1;
     }
 
     void playMenuTick() {

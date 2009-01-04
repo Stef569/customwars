@@ -5,8 +5,6 @@ import com.customwars.sfx.SFX;
 import com.customwars.state.ResourceLoader;
 import com.customwars.ui.MainMenuGraphics;
 import com.customwars.ui.menu.MenuSession;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -22,7 +20,6 @@ import java.awt.event.MouseEvent;
  * @since 2.0
  */
 public class Mainmenu extends Menu {
-    private static final Logger logger = LoggerFactory.getLogger(Mainmenu.class);
     private static final String COPYRIGHT_SYMBOL = "\u00a9";
     private static final String COPYRING = "Advance Wars is " + COPYRIGHT_SYMBOL + " Nintendo/Intelligent Systems";
 
@@ -36,14 +33,19 @@ public class Mainmenu extends Menu {
 
     private JFrame frame;
     private MenuSession menuSession;
+    private KeyControl keyControl = new KeyControl();
+    private MouseControl mouseControl = new MouseControl();
 
     public Mainmenu(JFrame frame, MenuSession menuSession) {
         super(NUM_MENU_ITEMS);
         this.frame = frame;
         this.menuSession = menuSession;
-        frame.addKeyListener(new KeyControl());
-        frame.addMouseListener(new MouseControl());
-        logger.info("Started through Main menu");
+        initInput(frame);
+    }
+
+    public void initInput(JFrame frame) {
+        frame.addKeyListener(keyControl);
+        frame.addMouseListener(mouseControl);
     }
 
     protected void paintMenu(Graphics2D g) {
@@ -132,7 +134,7 @@ public class Mainmenu extends Menu {
                     pressCurrentItem();
                     frame.repaint(0);
                 }
-            }           
+            }
         }
     }
 
@@ -141,15 +143,12 @@ public class Mainmenu extends Menu {
 
         switch (currentMenuItem) {
             case NEW_GAME:
-                logger.info("Moving into the New Game Menu");
                 menuSession.changeToState("NEW_GAME");
                 break;
             case MAP_EDITOR:
-                logger.info("Moving into the Design Maps Area");
                 menuSession.changeToState("MAP_EDITOR");
                 break;
             case OPTIONS:
-                logger.info("Moving into the Options Menu");
                 menuSession.changeToState("OPTIONS");
                 break;
             default:
