@@ -35,6 +35,7 @@ public class GeneralOptionsMenu extends Menu implements State {
   private int LEFT_OFFSET = 10, TOP_OFFSET = 20;
   private int line;
   private int fontHeight;
+  private int rightPageLeftOffset;
 
   public GeneralOptionsMenu(JFrame frame, StateManager stateManager) {
     super(NUM_MENU_ITEMS);
@@ -52,13 +53,18 @@ public class GeneralOptionsMenu extends Menu implements State {
     frame.removeMouseListener(mouseControl);
   }
 
+  // PAINT
   public void paint(Graphics2D g) {
     g.drawImage(MainMenuGraphics.getBackground(), 0, 0, frame);
     g.setColor(Color.black);
     g.setFont(MainMenuGraphics.getH1Font());
-    fontHeight = g.getFontMetrics(MainMenuGraphics.getH1Font()).getHeight();
-    int currentMenuItem = getCurrentMenuItem();
+    this.fontHeight = g.getFontMetrics(MainMenuGraphics.getH1Font()).getHeight();
+    paintLines(getCurrentMenuItem(), g);
+  }
+
+  private void paintLines(int currentMenuItem, Graphics2D g) {
     line = 0;
+    rightPageLeftOffset = 0;
     drawOptionLine("Music", Options.isMusicOn() ? "On" : "Off", currentMenuItem == 0, g);
     drawOptionLine("Random Numbers", "", currentMenuItem == 1, g);
     drawOptionLine("Balance Mode", Options.isBalance() ? "On" : "Off", currentMenuItem == 2, g);
@@ -68,16 +74,19 @@ public class GeneralOptionsMenu extends Menu implements State {
     drawOptionLine("Cursor", "", currentMenuItem == 6, g);
     g.drawImage(MiscGraphics.getCursor(), 70, 120, frame);
     drawOptionLine("Remap Keys", "", currentMenuItem == 7, g);
-    drawOptionLine("Battle Background Image", Options.battleBackground ? "On" : "Off", currentMenuItem == 8, g);
-    drawOptionLine("Snail Mode Server", Options.getServerName(), currentMenuItem == 9, g);
-    drawOptionLine("Default Bans", getDefaultBans(), currentMenuItem == 10, g);
-    drawOptionLine("Main Screen CO", COList.getListing()[Options.getMainCOID()].getName(), currentMenuItem == 11, g);
-    drawOptionLine("Sound Effects", SFX.getMute() ? "On" : "Off", currentMenuItem == 12, g);
-    drawOptionLine("Terrain Tileset", getSelectedTerrainSet(), currentMenuItem == 13, g);
-    drawOptionLine("Urban Tileset", getSelectedUrbanTerrainSet(), currentMenuItem == 14, g);
-    drawOptionLine("HQ Tileset", getSelectedHqTerrainSet(), currentMenuItem == 15, g);
-    drawOptionLine("Use Default Login Info", Options.isDefaultLoginOn() ? "On" : "Off", currentMenuItem == 16, g);
-    drawOptionLine("Default Username/Password", Options.getDefaultUsername() + " / " + Options.getDefaultPassword(), currentMenuItem == 17, g);
+    drawOptionLine("Snail Mode Server", Options.getServerName(), currentMenuItem == 8, g);
+    drawOptionLine("Default Bans", getDefaultBans(), currentMenuItem == 9, g);
+    drawOptionLine("Main Screen CO", COList.getListing()[Options.getMainCOID()].getName(), currentMenuItem == 10, g);
+    drawOptionLine("Sound Effects", SFX.getMute() ? "On" : "Off", currentMenuItem == 11, g);
+    drawOptionLine("Battle Background Image", Options.battleBackground ? "On" : "Off", currentMenuItem == 12, g);
+    drawOptionLine("Default Username/Password", Options.getDefaultUsername() + " / " + Options.getDefaultPassword(), currentMenuItem == 13, g);
+
+    line = 0;
+    rightPageLeftOffset = 235;
+    drawOptionLine("Terrain Tileset", getSelectedTerrainSet(), currentMenuItem == 14, g);
+    drawOptionLine("Urban Tileset", getSelectedUrbanTerrainSet(), currentMenuItem == 15, g);
+    drawOptionLine("HQ Tileset", getSelectedHqTerrainSet(), currentMenuItem == 16, g);
+    drawOptionLine("Use Default Login Info", Options.isDefaultLoginOn() ? "On" : "Off", currentMenuItem == 17, g);
     drawOptionLine("AutoRefresh", Options.getRefresh() ? "On" : "Off", currentMenuItem == 18, g);
   }
 
@@ -136,12 +145,12 @@ public class GeneralOptionsMenu extends Menu implements State {
   private void drawOptionLine(String option, String val, boolean highLight, Graphics g) {
     option += ": ";
     setColor(highLight, g);
-    g.drawString(option, LEFT_OFFSET, TOP_OFFSET + line * fontHeight);
+    g.drawString(option, LEFT_OFFSET + rightPageLeftOffset, TOP_OFFSET + line * fontHeight);
     int optionWidth = GuiUtil.getStringWidth(option, g);
 
     g.setColor(Color.BLACK);
     if (val != null) {
-      g.drawString(val, LEFT_OFFSET + optionWidth, TOP_OFFSET + line * fontHeight);
+      g.drawString(val, LEFT_OFFSET + rightPageLeftOffset + optionWidth, TOP_OFFSET + line * fontHeight);
     }
     line++;
   }
@@ -200,15 +209,15 @@ public class GeneralOptionsMenu extends Menu implements State {
     switch (currentMenuItem) {
       case 6:
         Options.incrementCursor();
-      case 11:
+      case 10:
         Options.decrementCO();
-      case 12:
+      case 11:
         SFX.toggleMute();
-      case 13:
-        Options.decrementTerrain();
       case 14:
-        Options.decrementUrban();
+        Options.decrementTerrain();
       case 15:
+        Options.decrementUrban();
+      case 16:
         Options.decrementHQ();
     }
   }
