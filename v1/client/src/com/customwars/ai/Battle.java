@@ -7,47 +7,9 @@ package com.customwars.ai;
  *Battle keeps track of turns, holds the army list and map, etc.
  */
 
-import java.io.*;
-
-//TEMPORARY?
-import javax.swing.JOptionPane;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.customwars.map.Map;
 import com.customwars.map.Tile;
-import com.customwars.map.location.Airport;
-import com.customwars.map.location.Base;
-import com.customwars.map.location.Bridge;
-import com.customwars.map.location.City;
-import com.customwars.map.location.ComTower;
-import com.customwars.map.location.DestroyedPipeSeam;
-import com.customwars.map.location.DestroyedSeaPipeSeam;
-import com.customwars.map.location.DestroyedWall;
-import com.customwars.map.location.HQ;
-import com.customwars.map.location.Invention;
-import com.customwars.map.location.Location;
-import com.customwars.map.location.Mountain;
-import com.customwars.map.location.Pipe;
-import com.customwars.map.location.PipeSeam;
-import com.customwars.map.location.Pipestation;
-import com.customwars.map.location.Plain;
-import com.customwars.map.location.Port;
-import com.customwars.map.location.Property;
-import com.customwars.map.location.Reef;
-import com.customwars.map.location.River;
-import com.customwars.map.location.Road;
-import com.customwars.map.location.Sea;
-import com.customwars.map.location.SeaPipe;
-import com.customwars.map.location.SeaPipeSeam;
-import com.customwars.map.location.Shoal;
-import com.customwars.map.location.Silo;
-import com.customwars.map.location.SuspensionBridge;
-import com.customwars.map.location.TerrType;
-import com.customwars.map.location.Terrain;
-import com.customwars.map.location.Wall;
-import com.customwars.map.location.Wood;
+import com.customwars.map.location.*;
 import com.customwars.officer.Andy;
 import com.customwars.officer.CO;
 import com.customwars.officer.COList;
@@ -58,44 +20,23 @@ import com.customwars.state.ReplayQueue;
 import com.customwars.state.ResourceLoader;
 import com.customwars.ui.Animation;
 import com.customwars.ui.DialogueBox;
-import com.customwars.unit.APC;
-import com.customwars.unit.AntiAir;
-import com.customwars.unit.Army;
-import com.customwars.unit.Artillery;
-import com.customwars.unit.Artillerycraft;
-import com.customwars.unit.BCopter;
-import com.customwars.unit.Battlecraft;
-import com.customwars.unit.Battleship;
-import com.customwars.unit.BlackBoat;
-import com.customwars.unit.BlackBomb;
-import com.customwars.unit.Bomber;
-import com.customwars.unit.Carrier;
-import com.customwars.unit.Cruiser;
-import com.customwars.unit.Destroyer;
-import com.customwars.unit.Infantry;
-import com.customwars.unit.Lander;
-import com.customwars.unit.MDTank;
-import com.customwars.unit.Mech;
-import com.customwars.unit.MegaTank;
-import com.customwars.unit.Missiles;
-import com.customwars.unit.Neotank;
-import com.customwars.unit.Oozium;
-import com.customwars.unit.Piperunner;
-import com.customwars.unit.Recon;
-import com.customwars.unit.Rockets;
-import com.customwars.unit.Shuttlerunner;
-import com.customwars.unit.Spyplane;
-import com.customwars.unit.Stealth;
-import com.customwars.unit.Submarine;
-import com.customwars.unit.TCopter;
-import com.customwars.unit.Tank;
-import com.customwars.unit.Transport;
-import com.customwars.unit.Unit;
-import com.customwars.unit.Zeppelin;
+import com.customwars.unit.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.net.*;
-//import javax.media.bean.playerbean.MediaPlayer;
-//import java.util.Random;
+import javax.swing.*;
+import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.io.Serializable;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 
 public class Battle implements Serializable{
@@ -325,8 +266,7 @@ public class Battle implements Serializable{
                 if(tempbyte==0)break;
                 desc += tempbyte;
             }
-        	logger.info("Selecting Map name=["+ name + "] author=["+author +"] description: "+ desc);
-            
+
             //width, height, and number of armies
             width = read.readInt();
             height = read.readInt();
@@ -1061,10 +1001,12 @@ public void updateFoW() {
             //upload save
             GameSession.saveMission(TEMPORARYSAVE_SAVE_FILENAME);
             sendFile("usave.pl", Options.gamename,TEMPORARYSAVE_SAVE_FILENAME);
+            //TODO: retry?
             
             //update server information
             String reply = sendCommandToMain("nextturn", Options.gamename+"\n"+Options.username+"\n"+Options.password);
             logger.info("info = ["+ reply +"]");
+            //TODO: retry?
         }
         
         //autosave if applicable
@@ -1242,6 +1184,7 @@ public void updateFoW() {
                         
                         
                         sendFile("usave.pl", Options.gamename,TEMPORARYSAVE_SAVE_FILENAME);
+                        //TODO: retry?
                     }
                 }
             }
