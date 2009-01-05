@@ -123,13 +123,16 @@ public class CoSelectMenu implements State {
       String fullTxt = COList.getListing()[COList.getIndex(selectedCO)].getIntel();
       String[] multiLineTxt = GuiUtil.convertToMultiLineArray(fullTxt, CO_INFO_BOX_WIDTH, g);
 
-      for (int lineNumber = 0; lineNumber < multiLineTxt.length - 1; lineNumber++) {
+      for (int lineNumber = 0; lineNumber < multiLineTxt.length; lineNumber++) {
         g.drawString(multiLineTxt[lineNumber], CO_INFO_BOX_WIDTH, CO_INFO_BOX_TOP_OFFSET + lineNumber * 15);
       }
 
       g.setColor(Color.black);
       g.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 10));
-      g.drawString(COList.getListing()[COList.getIndex(selectedCO)].getTitle(), 220, 80);
+
+      String cotitle = COList.getListing()[COList.getIndex(selectedCO)].getTitle();
+      String fixedLineCoTitle = GuiUtil.fitLine(cotitle, CO_INFO_BOX_WIDTH, g);
+      g.drawString(fixedLineCoTitle, 220, 80);
     }
   }
 
