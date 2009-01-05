@@ -2,8 +2,6 @@ package com.customwars.ui.menus;
 
 import com.customwars.sfx.SFX;
 
-import java.awt.*;
-
 /**
  * A Menu where you can change the selected item by invoking either:
  * menuMoveUp, menuMoveDown or setMenuPosition
@@ -66,12 +64,10 @@ public abstract class Menu {
     }
 
     boolean isLastItemSelected() {
-        return currentMenuItem == numMenuItems-1;
+        return currentMenuItem == numMenuItems - 1;
     }
 
     void playMenuTick() {
         SFX.playSound("menutick.wav");
     }
-
-    abstract void paintMenu(Graphics2D g);
 }
