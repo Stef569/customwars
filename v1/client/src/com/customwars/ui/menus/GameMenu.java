@@ -6,7 +6,8 @@ import com.customwars.sfx.SFX;
 import com.customwars.state.ResourceLoader;
 import com.customwars.ui.MainMenuGraphics;
 import com.customwars.ui.MiscGraphics;
-import com.customwars.ui.menu.MenuSession;
+import com.customwars.ui.state.StateManager;
+import com.customwars.ui.state.State;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,10 +18,11 @@ import java.awt.event.MouseEvent;
 
 /**
  * The GameMenu handles SinglePlayer and Network games
+ *
  * @author stefan
  * @since 2.0
  */
-public class GameMenu extends Menu {
+public class GameMenu extends Menu implements State {
     private static final Font MENU_FONT = new Font(Font.SANS_SERIF, Font.BOLD, 24);
     private static final Font DESCRIPTION_FONT = new Font("Arial", Font.BOLD, 11);
 
@@ -39,26 +41,30 @@ public class GameMenu extends Menu {
     private static final int NUM_MENU_ITEMS = 8;
 
     private JFrame frame;
-    private MenuSession menuSession;
+    private StateManager stateManager;
     private KeyControl keyControl = new KeyControl();
     private MouseControl mouseControl = new MouseControl();
 
     private int coGlide = -1;  // Used to glide the co in
 
-    public GameMenu(JFrame frame, MenuSession menuSession) {
+    public GameMenu(JFrame frame, StateManager stateManager) {
         super(NUM_MENU_ITEMS);
         this.frame = frame;
-        this.menuSession = menuSession;
-        initInput(frame);
+        this.stateManager = stateManager;
     }
 
-    public void initInput(JFrame frame) {
+    public void init() {
         frame.addKeyListener(keyControl);
         frame.addMouseListener(mouseControl);
     }
 
-    // PAINTING
-    protected void paintMenu(Graphics2D g) {
+    public void stop() {
+        frame.removeKeyListener(keyControl);
+        frame.removeMouseListener(mouseControl);
+    }
+
+    // PAINT
+    public void paint(Graphics2D g) {
         g.drawImage(MainMenuGraphics.getBackground(), 0, 0, frame);
         int currentMenuItem = getCurrentMenuItem();
         paintMenu(g, currentMenuItem);
@@ -90,11 +96,18 @@ public class GameMenu extends Menu {
         g.setColor(Color.black);
     }
 
+    private void setColor(boolean highLight, Graphics g) {
+        if (highLight) {
+            g.setColor(HIGHLIGHT_COLOR);
+        } else {
+            g.setColor(Color.BLACK);
+        }
+    }
+
     private void paintGlidingCo(Graphics2D g) {
         final int dx = 329, dy = 350, dx2 = 255, dy2 = -5;
-        coGlide++;
         g.drawImage(MainMenuGraphics.getMainMenuCO(Options.getMainCOID()),
-                calcGlide(coGlide) + dx,
+                calcGlide(++coGlide) + dx,
                 dy2, calcGlide(coGlide) + dx + dx2,
                 dy2 + dy, 0, 0,
                 dx2, dy, frame);
@@ -154,14 +167,6 @@ public class GameMenu extends Menu {
                 break;
             default:
                 throw new AssertionError("Could not paint current menu item: " + currentMenuItem);
-        }
-    }
-
-    private void setColor(boolean highLight, Graphics g) {
-        if (highLight) {
-            g.setColor(HIGHLIGHT_COLOR);
-        } else {
-            g.setColor(Color.BLACK);
         }
     }
 
@@ -271,7 +276,7 @@ public class GameMenu extends Menu {
                 }
 
                 if (newGameClicked || loadGameClicked || networkGameClicked || loadReplayClicked ||
-                    newServerGameClicked || joinServerGameClicked || loginToServerGameClicked || joinLobbyClicked) {
+                        newServerGameClicked || joinServerGameClicked || loginToServerGameClicked || joinLobbyClicked) {
                     pressCurrentItem();
                     frame.repaint(0);
                 }
@@ -283,28 +288,28 @@ public class GameMenu extends Menu {
         int currentMenuItem = getCurrentMenuItem();
         switch (currentMenuItem) {
             case START_SINGLEPLAYER_GAME:
-                menuSession.changeToState("START_SINGLEPLAYER_GAME");
+                stateManager.changeToState("START_SINGLEPLAYER_GAME");
                 break;
             case LOAD_GAME:
-                menuSession.changeToState("LOAD_GAME");
+                stateManager.changeToState("LOAD_GAME");
                 break;
             case START_NETWORK_GAME:
-                menuSession.changeToState("START_NETWORK");
+                stateManager.changeToState("START_NETWORK");
                 break;
             case LOAD_REPLAY:
-                menuSession.changeToState("LOAD_REPLAY");
+                stateManager.changeToState("LOAD_REPLAY");
                 break;
             case CREATE_SERVER_GAME:
-                menuSession.changeToState("CREATE_SERVER_GAME");
+                stateManager.changeToState("CREATE_SERVER_GAME");
                 break;
             case JOIN_SERVER_GAME:
-                menuSession.changeToState("JOIN_SERVER_GAME");
+                stateManager.changeToState("JOIN_SERVER_GAME");
                 break;
             case LOGIN_TO_SERVER_GAME:
-                menuSession.changeToState("LOGIN_TO_SERVER_GAME");
+                stateManager.changeToState("LOGIN_TO_SERVER_GAME");
                 break;
             case JOIN_IRC_LOBBY:
-                menuSession.changeToState("JOIN_IRC_LOBBY");
+                stateManager.changeToState("JOIN_IRC_LOBBY");
                 break;
             default:
                 throw new AssertionError("Could not handle current menu item: " + currentMenuItem);
@@ -319,10 +324,11 @@ public class GameMenu extends Menu {
         GameSession.mainFrame = frame;
         MainMenuGraphics.loadImages(frame);
         MiscGraphics.loadImages(frame);
-        final GameMenu gameMenu = new GameMenu(frame, new MenuSession());
+        final GameMenu gameMenu = new GameMenu(frame, new StateManager(frame));
+        gameMenu.init();
         JPanel panel = new JPanel() {
             protected void paintComponent(Graphics g) {
-                gameMenu.paintMenu((Graphics2D) g);
+                gameMenu.paint((Graphics2D) g);
             }
         };
         frame.add(panel);
