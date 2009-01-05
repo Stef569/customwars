@@ -1,12 +1,12 @@
-package com.customwars.ui.menus;
+package com.customwars.ui.state;
 
 import java.awt.*;
 
 /**
  * A State is an independant Graphical component
- * First it init is invoked
+ * First init is invoked
  * then we paint the component when needed
- * when this state is over stop is invoked
+ * when this state is going to be terminated stop is invoked, allowing the state to perform any clean up needed.
  *
  * @author stefan
  * @since 2.0
