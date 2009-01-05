@@ -8,6 +8,7 @@ import com.customwars.state.ResourceLoader;
 import com.customwars.ui.MainMenuGraphics;
 import com.customwars.ui.MiscGraphics;
 import com.customwars.ui.state.State;
+import com.customwars.ui.state.StateManager;
 import com.customwars.util.GuiUtil;
 
 import javax.swing.*;
@@ -25,6 +26,7 @@ public class GeneralOptionsMenu extends Menu implements State {
   private static final Color HIGHLIGHT_COLOR = Color.RED;
   private static final int NUM_MENU_ITEMS = 19;
   private JFrame frame;
+  private StateManager stateManager;
 
   private KeyControl keyControl = new KeyControl();
   private MouseControl mouseControl = new MouseControl();
@@ -34,9 +36,10 @@ public class GeneralOptionsMenu extends Menu implements State {
   private int line;
   private int fontHeight;
 
-  public GeneralOptionsMenu(JFrame frame) {
+  public GeneralOptionsMenu(JFrame frame, StateManager stateManager) {
     super(NUM_MENU_ITEMS);
     this.frame = frame;
+    this.stateManager = stateManager;
   }
 
   public void init() {
@@ -186,6 +189,8 @@ public class GeneralOptionsMenu extends Menu implements State {
           pressCurrentItem();
           frame.repaint(0);
         }
+      } else if (SwingUtilities.isRightMouseButton(e)) {
+        stateManager.changeToState("MAIN_MENU");
       }
     }
   }
@@ -215,7 +220,8 @@ public class GeneralOptionsMenu extends Menu implements State {
     JFrame frame = new JFrame();
     GameSession.mainFrame = frame;
     MiscGraphics.loadImages(frame);
-    final GeneralOptionsMenu generalOptionsMenu = new GeneralOptionsMenu(frame);
+    MainMenuGraphics.loadImages(frame);
+    final GeneralOptionsMenu generalOptionsMenu = new GeneralOptionsMenu(frame, new StateManager(frame));
     generalOptionsMenu.init();
     JPanel panel = new JPanel() {
       protected void paintComponent(Graphics g) {

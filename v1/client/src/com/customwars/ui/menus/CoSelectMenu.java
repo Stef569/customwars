@@ -245,6 +245,8 @@ public class CoSelectMenu implements State {
           }
         }
         frame.repaint(0);
+      } else if (SwingUtilities.isRightMouseButton(e)) {
+        stateManager.changeToState("START_SINGLEPLAYER_GAME");
       }
     }
 

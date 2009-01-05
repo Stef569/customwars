@@ -6,8 +6,8 @@ import com.customwars.sfx.SFX;
 import com.customwars.state.ResourceLoader;
 import com.customwars.ui.MainMenuGraphics;
 import com.customwars.ui.MiscGraphics;
-import com.customwars.ui.state.StateManager;
 import com.customwars.ui.state.State;
+import com.customwars.ui.state.StateManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -233,7 +233,7 @@ public class GameMenu extends Menu implements State {
             int x = e.getX() - frame.getInsets().left;
             int y = e.getY() - frame.getInsets().top;
 
-            if (e.getButton() == MouseEvent.BUTTON1) {
+            if (SwingUtilities.isLeftMouseButton(e)) {
                 boolean newGameClicked = x > NEW_GAME_WIDTH_START && x < NEW_GAME_WIDTH_END && y < NEW_GAME_HEIGHT_BOTTOM && y > NEW_GAME_HEIGHT_TOP;
                 boolean loadGameClicked = x > LOAD_GAME_WIDTH_START && x < LOAD_GAME_WIDTH_END && y < LOAD_GAME_HEIGHT_BOTTOM && y > LOAD_GAME_HEIGHT_TOP;
                 boolean networkGameClicked = x > NETWORK_GAME_WIDTH_START && x < NETWORK_GAME_WIDTH_END && y < NETWORK_GAME_HEIGHT_BOTTOM && y > NETWORK_GAME_HEIGHT_TOP;
@@ -280,6 +280,8 @@ public class GameMenu extends Menu implements State {
                     pressCurrentItem();
                     frame.repaint(0);
                 }
+            } else if (SwingUtilities.isRightMouseButton(e)) {
+                stateManager.changeToState("MAIN_MENU");
             }
         }
     }

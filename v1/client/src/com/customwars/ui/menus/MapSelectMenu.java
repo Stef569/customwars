@@ -463,6 +463,8 @@ public class MapSelectMenu extends Menu implements State {
         } else if (PAGE_DOWN_CLICKED) {
           menuPageDown();
         }
+      } else if (SwingUtilities.isRightMouseButton(e)) {
+        stateManager.changeToState("NEW_GAME");
       }
       frame.repaint(0);
     }
