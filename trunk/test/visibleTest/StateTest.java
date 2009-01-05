@@ -59,7 +59,7 @@ public class StateTest {
         StateManager stateManager = new StateManager(frame);
         stateManager.addState("MAIN_MENU", new Mainmenu(frame, stateManager));
         stateManager.addState("NEW_GAME", new GameMenu(frame, stateManager));
-        stateManager.addState("OPTIONS", new GeneralOptionsMenu(frame));
+        stateManager.addState("OPTIONS", new GeneralOptionsMenu(frame,stateManager));
         stateManager.addState("START_SINGLEPLAYER_GAME", new MapSelectMenu(frame, stateManager, menuSession, maps));
         stateManager.addState("CO_SELECT", new CoSelectMenu(frame, stateManager, menuSession));
         stateManager.changeToState("MAIN_MENU");

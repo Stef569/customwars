@@ -37,6 +37,8 @@ public class StateManager {
 
             stopCurrentState();
             initNewState(newState);
+            frame.validate();
+            frame.repaint(0);
         } else {
             logger.warn("State " + stateName + " is not available, All States:" + states.keySet());
         }
