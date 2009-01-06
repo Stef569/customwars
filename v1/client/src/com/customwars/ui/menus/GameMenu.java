@@ -59,6 +59,7 @@ public class GameMenu extends Menu implements State {
     }
 
     public void stop() {
+        coGlide = -1;
         frame.removeKeyListener(keyControl);
         frame.removeMouseListener(mouseControl);
     }
@@ -76,32 +77,24 @@ public class GameMenu extends Menu implements State {
     private void paintMenu(Graphics2D g, int currentMenuItem) {
         g.setFont(MENU_FONT);
 
-        setColor(currentMenuItem == 0, g);
+        setHighlightColor(currentMenuItem == START_SINGLEPLAYER_GAME, g);
         g.drawString("New", 15, 30);
-        setColor(currentMenuItem == 1, g);
+        setHighlightColor(currentMenuItem == LOAD_GAME, g);
         g.drawString("Load", 15, 54);
-        setColor(currentMenuItem == 2, g);
+        setHighlightColor(currentMenuItem == START_NETWORK_GAME, g);
         g.drawString("Network Game", 15, 78);
-        setColor(currentMenuItem == 3, g);
+        setHighlightColor(currentMenuItem == LOAD_REPLAY, g);
         g.drawString("Load Replay", 15, 102);
-        setColor(currentMenuItem == 4, g);
+        setHighlightColor(currentMenuItem == CREATE_SERVER_GAME, g);
         g.drawString("Create New Server Game", 15, 126);
-        setColor(currentMenuItem == 5, g);
+        setHighlightColor(currentMenuItem == JOIN_SERVER_GAME, g);
         g.drawString("Join Server Game", 15, 150);
-        setColor(currentMenuItem == 6, g);
+        setHighlightColor(currentMenuItem == LOGIN_TO_SERVER_GAME, g);
         g.drawString("Login to Server Game", 15, 174);
-        setColor(currentMenuItem == 7, g);
+        setHighlightColor(currentMenuItem == JOIN_IRC_LOBBY, g);
         g.drawString("Open Online Lobby", 15, 198);
 
         g.setColor(Color.black);
-    }
-
-    private void setColor(boolean highLight, Graphics g) {
-        if (highLight) {
-            g.setColor(HIGHLIGHT_COLOR);
-        } else {
-            g.setColor(Color.BLACK);
-        }
     }
 
     private void paintGlidingCo(Graphics2D g) {
@@ -172,20 +165,17 @@ public class GameMenu extends Menu implements State {
 
     // INPUT
     private class KeyControl extends KeyAdapter {
-        public void keyPressed(KeyEvent e) {
-            switch (e.getKeyCode()) {
-                case KeyEvent.VK_UP:
-                    menuMoveUp();
-                    break;
-                case KeyEvent.VK_DOWN:
-                    menuMoveDown();
-                    break;
-                case KeyEvent.VK_A:
-                    pressCurrentItem();
-                    break;
-            }
-            frame.repaint(0);
+      public void keyPressed(KeyEvent e) {
+        int keypress = e.getKeyCode();
+        if (keypress == Options.up) {
+          menuMoveUp();
+        } else if (keypress == Options.down) {
+          menuMoveDown();
+        } else if (keypress == Options.akey) {
+          pressCurrentItem();
         }
+        frame.repaint(0);
+      }
     }
 
     private class MouseControl extends MouseAdapter {

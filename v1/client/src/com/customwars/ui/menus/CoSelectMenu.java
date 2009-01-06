@@ -88,6 +88,7 @@ public class CoSelectMenu implements State {
     frame.removeMouseMotionListener(mouseControl);
   }
 
+  // PAINT
   public void paint(Graphics2D g) {
     paintGlidingCo(g);
     if (coGlide++ > 640 * 2) {
@@ -213,16 +214,13 @@ public class CoSelectMenu implements State {
   // INPUT
   private class KeyControl extends KeyAdapter {
     public void keyPressed(KeyEvent e) {
-      switch (e.getKeyCode()) {
-        case KeyEvent.VK_UP:
-          //menuMoveUp();
-          break;
-        case KeyEvent.VK_DOWN:
-          //menuMoveDown();
-          break;
-        case KeyEvent.VK_A:
-          pressCurrentItem();
-          break;
+      int keypress = e.getKeyCode();
+      if (keypress == Options.up) {
+        //menuMoveUp();
+      } else if (keypress == Options.down) {
+        //menuMoveDown();
+      } else if (keypress == Options.akey) {
+        pressCurrentItem();
       }
       frame.repaint(0);
     }
