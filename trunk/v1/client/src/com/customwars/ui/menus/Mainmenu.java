@@ -3,6 +3,7 @@ package com.customwars.ui.menus;
 import com.customwars.ui.MainMenuGraphics;
 import com.customwars.ui.state.State;
 import com.customwars.ui.state.StateManager;
+import com.customwars.ai.Options;
 
 import javax.swing.*;
 import java.awt.*;
@@ -86,20 +87,17 @@ public class Mainmenu extends Menu implements State {
 
     // INPUT
     private class KeyControl extends KeyAdapter {
-        public void keyPressed(KeyEvent e) {
-            switch (e.getKeyCode()) {
-                case KeyEvent.VK_UP:
-                    menuMoveUp();
-                    break;
-                case KeyEvent.VK_DOWN:
-                    menuMoveDown();
-                    break;
-                case KeyEvent.VK_A:
-                    pressCurrentItem();
-                    break;
-            }
-            frame.repaint(0);
+      public void keyPressed(KeyEvent e) {
+        int keypress = e.getKeyCode();
+        if (keypress == Options.up) {
+          menuMoveUp();
+        } else if (keypress == Options.down) {
+          menuMoveDown();
+        } else if (keypress == Options.akey) {
+          pressCurrentItem();
         }
+        frame.repaint(0);
+      }
     }
 
     private class MouseControl extends MouseAdapter {

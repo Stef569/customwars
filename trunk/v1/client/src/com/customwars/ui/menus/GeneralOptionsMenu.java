@@ -9,7 +9,6 @@ import com.customwars.ui.MainMenuGraphics;
 import com.customwars.ui.MiscGraphics;
 import com.customwars.ui.state.State;
 import com.customwars.ui.state.StateManager;
-import com.customwars.util.GuiUtil;
 
 import javax.swing.*;
 import java.awt.*;
@@ -24,18 +23,35 @@ import java.awt.event.MouseEvent;
  */
 public class GeneralOptionsMenu extends Menu implements State {
   private static final Color HIGHLIGHT_COLOR = Color.RED;
+  private static final int NUM_MENU_ITEMS_ON_1_PAGE = 14;
+  private static final int ROW_HEIGHT = 20;
+
+  private static final int MUSIC = 0;
+  private static final int RANDOM_NUMBER = 1;
+  private static final int BALANCED_MODE = 2;
+  private static final int SET_IP = 3;
+  private static final int AUTO_SAVE = 4;
+  private static final int RECORD_REPLAY = 5;
+  private static final int CURSOR = 6;
+  private static final int REMAP_KEYS = 7;
+  private static final int SNAIL_MODE = 8;
+  private static final int DEFAULT_BANS = 9;
+  private static final int MAIN_SCREEN_CO = 10;
+  private static final int SOUND_EFFECTS = 11;
+  private static final int BATTLE_BACKGROUND_IMAGE = 12;
+  private static final int DEFAULT_USERNAME_PASSWORD = 13;
+  private static final int TERRAIN_TILESET = 14;
+  private static final int URBAN_TILESET = 15;
+  private static final int HQ_TILESET = 16;
+  private static final int DEFAULT_LOGIN = 17;
+  private static final int AUTO_REFRESH = 18;
   private static final int NUM_MENU_ITEMS = 19;
+
   private JFrame frame;
   private StateManager stateManager;
 
   private KeyControl keyControl = new KeyControl();
   private MouseControl mouseControl = new MouseControl();
-
-  // Layout
-  private int LEFT_OFFSET = 10, TOP_OFFSET = 20;
-  private int line;
-  private int fontHeight;
-  private int rightPageLeftOffset;
 
   public GeneralOptionsMenu(JFrame frame, StateManager stateManager) {
     super(NUM_MENU_ITEMS);
@@ -58,13 +74,12 @@ public class GeneralOptionsMenu extends Menu implements State {
     g.drawImage(MainMenuGraphics.getBackground(), 0, 0, frame);
     g.setColor(Color.black);
     g.setFont(MainMenuGraphics.getH1Font());
-    this.fontHeight = g.getFontMetrics(MainMenuGraphics.getH1Font()).getHeight();
+
     paintLines(getCurrentMenuItem(), g);
   }
 
   private void paintLines(int currentMenuItem, Graphics2D g) {
-    line = 0;
-    rightPageLeftOffset = 0;
+    super.resetLines();
     drawOptionLine("Music", Options.isMusicOn() ? "On" : "Off", currentMenuItem == 0, g);
     drawOptionLine("Random Numbers", "", currentMenuItem == 1, g);
     drawOptionLine("Balance Mode", Options.isBalance() ? "On" : "Off", currentMenuItem == 2, g);
@@ -81,8 +96,7 @@ public class GeneralOptionsMenu extends Menu implements State {
     drawOptionLine("Battle Background Image", Options.battleBackground ? "On" : "Off", currentMenuItem == 12, g);
     drawOptionLine("Default Username/Password", Options.getDefaultUsername() + " / " + Options.getDefaultPassword(), currentMenuItem == 13, g);
 
-    line = 0;
-    rightPageLeftOffset = 235;
+    super.startNewPage();
     drawOptionLine("Terrain Tileset", getSelectedTerrainSet(), currentMenuItem == 14, g);
     drawOptionLine("Urban Tileset", getSelectedUrbanTerrainSet(), currentMenuItem == 15, g);
     drawOptionLine("HQ Tileset", getSelectedHqTerrainSet(), currentMenuItem == 16, g);
@@ -142,59 +156,36 @@ public class GeneralOptionsMenu extends Menu implements State {
       return "";
   }
 
-  private void drawOptionLine(String option, String val, boolean highLight, Graphics g) {
-    option += ": ";
-    setColor(highLight, g);
-    g.drawString(option, LEFT_OFFSET + rightPageLeftOffset, TOP_OFFSET + line * fontHeight);
-    int optionWidth = GuiUtil.getStringWidth(option, g);
-
-    g.setColor(Color.BLACK);
-    if (val != null) {
-      g.drawString(val, LEFT_OFFSET + rightPageLeftOffset + optionWidth, TOP_OFFSET + line * fontHeight);
-    }
-    line++;
-  }
-
-  private void setColor(boolean highLight, Graphics g) {
-    if (highLight) {
-      g.setColor(HIGHLIGHT_COLOR);
-    } else {
-      g.setColor(Color.BLACK);
-    }
-  }
-
   // INPUT
   private class KeyControl extends KeyAdapter {
     public void keyPressed(KeyEvent e) {
-      switch (e.getKeyCode()) {
-        case KeyEvent.VK_UP:
-          menuMoveUp();
-          break;
-        case KeyEvent.VK_DOWN:
-          menuMoveDown();
-          break;
-        case KeyEvent.VK_A:
-          pressCurrentItem();
-          break;
+      int keypress = e.getKeyCode();
+      if (keypress == Options.up) {
+        menuMoveUp();
+      } else if (keypress == Options.down) {
+        menuMoveDown();
+      } else if (keypress == Options.akey) {
+        pressCurrentItem();
       }
       frame.repaint(0);
     }
   }
 
   private class MouseControl extends MouseAdapter {
-    private static final int SPLASH_NEW_GAME_WIDTH_START = 160;
-
     public void mouseClicked(MouseEvent e) {
       int x = e.getX() - frame.getInsets().left;
       int y = e.getY() - frame.getInsets().top;
+      boolean LEFT_COLUMN_CLICKED = x < 220;
+      boolean RIGHT_COLUMN_CLICKED = x > 245 && x < 460;
 
       if (SwingUtilities.isLeftMouseButton(e)) {
-        if (x < 220) {
-          int i = y / 20;
-          if (i < SPLASH_NEW_GAME_WIDTH_START) {
-            setCurrentMenuItem(i);
-          }
-
+        int rowClickedOn = y / ROW_HEIGHT;
+        if (LEFT_COLUMN_CLICKED) {
+          setCurrentMenuItem(rowClickedOn);
+          pressCurrentItem();
+          frame.repaint(0);
+        } else if (RIGHT_COLUMN_CLICKED) {
+          setCurrentMenuItem(NUM_MENU_ITEMS_ON_1_PAGE + rowClickedOn);
           pressCurrentItem();
           frame.repaint(0);
         }
@@ -207,17 +198,17 @@ public class GeneralOptionsMenu extends Menu implements State {
   private void pressCurrentItem() {
     int currentMenuItem = getCurrentMenuItem();
     switch (currentMenuItem) {
-      case 6:
-        Options.incrementCursor();
-      case 10:
+      case CURSOR:
+        Options.decrementCursor();
+      case MAIN_SCREEN_CO:
         Options.decrementCO();
-      case 11:
+      case MUSIC:
         SFX.toggleMute();
-      case 14:
+      case TERRAIN_TILESET:
         Options.decrementTerrain();
-      case 15:
+      case URBAN_TILESET:
         Options.decrementUrban();
-      case 16:
+      case HQ_TILESET:
         Options.decrementHQ();
     }
   }

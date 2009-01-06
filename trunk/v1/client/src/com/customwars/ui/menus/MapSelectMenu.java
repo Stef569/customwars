@@ -2,6 +2,7 @@ package com.customwars.ui.menus;
 
 import com.customwars.ai.Battle;
 import com.customwars.ai.GameSession;
+import com.customwars.ai.Options;
 import com.customwars.loader.MapLoader;
 import com.customwars.map.Map;
 import com.customwars.map.location.Location;
@@ -13,8 +14,8 @@ import com.customwars.state.ResourceLoader;
 import com.customwars.ui.MainMenuGraphics;
 import com.customwars.ui.MiscGraphics;
 import com.customwars.ui.TerrainGraphics;
-import com.customwars.ui.state.StateManager;
 import com.customwars.ui.state.State;
+import com.customwars.ui.state.StateManager;
 import com.customwars.util.GuiUtil;
 
 import javax.swing.*;
@@ -409,23 +410,19 @@ public class MapSelectMenu extends Menu implements State {
 
   private class KeyControl extends KeyAdapter {
     public void keyPressed(KeyEvent e) {
-      switch (e.getKeyCode()) {
-        case KeyEvent.VK_UP:
-          menuMoveUp();
-          break;
-        case KeyEvent.VK_DOWN:
-          menuMoveDown();
-          break;
-        case KeyEvent.VK_A:
-          pressCurrentItem();
-          break;
-        case KeyEvent.VK_RIGHT:
-          selectedMapDir = withinBounds(++selectedMapDir, mapDirs.length - 1);
-          break;
-        case KeyEvent.VK_LEFT:
-          selectedMapDir = withinBounds(--selectedMapDir, mapDirs.length - 1);
-          break;
+      int keypress = e.getKeyCode();
+      if (keypress == Options.up) {
+        menuMoveUp();
+      } else if (keypress == Options.down) {
+        menuMoveDown();
+      } else if (keypress == Options.akey) {
+        pressCurrentItem();
+      } else if (keypress == Options.right) {
+        selectedMapDir = withinBounds(++selectedMapDir, mapDirs.length - 1);
+      } else if (keypress == Options.left) {
+        selectedMapDir = withinBounds(--selectedMapDir, mapDirs.length - 1);
       }
+
       // todo THIS IS FOR TESTING ONLY!!!!!!!!!!!
       // Repaint after user action, later replaced by 1 sec repaint Timer.
       frame.repaint(0);
@@ -446,11 +443,8 @@ public class MapSelectMenu extends Menu implements State {
         if (CHANGE_DIR_RANGE_CLICKED) {
           selectedMapDir++;
           if (selectedMapDir > mapDirs.length - 1) selectedMapDir = 0;
-
-          // load maps in new directory
           filterMapsOnPlayerCount();
         }
-
 
         if (PAGE_UP_CLICKED) {
           menuPageUp();
