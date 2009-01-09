@@ -7,17 +7,19 @@ package com.customwars.ai;
  *Holds Options info
  */
 
-import java.io.*;
-import javax.swing.JOptionPane;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.customwars.sfx.Music;
 import com.customwars.sfx.SFX;
 import com.customwars.state.ResourceLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.awt.event.*;
+import javax.swing.*;
+import java.awt.event.KeyEvent;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 /** Class which contains options and functions to modify those options.
  */
@@ -126,7 +128,7 @@ public class Options {
     public static void InitializeOptions(){
         //rng = new RNG();
         balanceMode = true;
-        recordReplay = true;
+        recordReplay = false;
         music = false;
         ip[0] = 127;
         ip[1] = 0;
