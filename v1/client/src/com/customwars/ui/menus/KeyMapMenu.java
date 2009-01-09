@@ -87,26 +87,26 @@ public class KeyMapMenu extends Menu implements State {
 
   private void paintLines(int currentMenuItem, Graphics g) {
     super.resetLines();
-    drawOptionLine("Up", KeyEvent.getKeyText(Options.up), currentMenuItem == 0, g);
-    drawOptionLine("Down", KeyEvent.getKeyText(Options.down), currentMenuItem == 1, g);
-    drawOptionLine("Left", KeyEvent.getKeyText(Options.left), currentMenuItem == 2, g);
-    drawOptionLine("Right", KeyEvent.getKeyText(Options.right), currentMenuItem == 3, g);
-    drawOptionLine("Select Button", KeyEvent.getKeyText(Options.akey), currentMenuItem == 4, g);
-    drawOptionLine("Cancel Button", KeyEvent.getKeyText(Options.bkey), currentMenuItem == 5, g);
-    drawOptionLine("Page Up", KeyEvent.getKeyText(Options.pgup), currentMenuItem == 6, g);
-    drawOptionLine("Page Down", KeyEvent.getKeyText(Options.pgdn), currentMenuItem == 7, g);
-    drawOptionLine("<", KeyEvent.getKeyText(Options.altleft), currentMenuItem == 8, g);
-    drawOptionLine(">", KeyEvent.getKeyText(Options.altright), currentMenuItem == 9, g);
-    drawOptionLine("Menu", KeyEvent.getKeyText(Options.menu), currentMenuItem == 10, g);
-    drawOptionLine("Minimap", KeyEvent.getKeyText(Options.minimap), currentMenuItem == 11, g);
-    drawOptionLine("Constant Mode", KeyEvent.getKeyText(Options.constmode), currentMenuItem == 12, g);
+    drawConfigLine("Up", KeyEvent.getKeyText(Options.up), currentMenuItem == 0, g);
+    drawConfigLine("Down", KeyEvent.getKeyText(Options.down), currentMenuItem == 1, g);
+    drawConfigLine("Left", KeyEvent.getKeyText(Options.left), currentMenuItem == 2, g);
+    drawConfigLine("Right", KeyEvent.getKeyText(Options.right), currentMenuItem == 3, g);
+    drawConfigLine("Select Button", KeyEvent.getKeyText(Options.akey), currentMenuItem == 4, g);
+    drawConfigLine("Cancel Button", KeyEvent.getKeyText(Options.bkey), currentMenuItem == 5, g);
+    drawConfigLine("Page Up", KeyEvent.getKeyText(Options.pgup), currentMenuItem == 6, g);
+    drawConfigLine("Page Down", KeyEvent.getKeyText(Options.pgdn), currentMenuItem == 7, g);
+    drawConfigLine("<", KeyEvent.getKeyText(Options.altleft), currentMenuItem == 8, g);
+    drawConfigLine(">", KeyEvent.getKeyText(Options.altright), currentMenuItem == 9, g);
+    drawConfigLine("Menu", KeyEvent.getKeyText(Options.menu), currentMenuItem == 10, g);
+    drawConfigLine("Minimap", KeyEvent.getKeyText(Options.minimap), currentMenuItem == 11, g);
+    drawConfigLine("Constant Mode", KeyEvent.getKeyText(Options.constmode), currentMenuItem == 12, g);
 
     super.startNewPage();
-    drawOptionLine("Delete Unit", KeyEvent.getKeyText(Options.delete), currentMenuItem == 13, g);
-    drawOptionLine("Terrain Menu", KeyEvent.getKeyText(Options.tkey), currentMenuItem == 14, g);
-    drawOptionLine("Side Menu", KeyEvent.getKeyText(Options.skey), currentMenuItem == 15, g);
-    drawOptionLine("Unit Menu", KeyEvent.getKeyText(Options.ukey), currentMenuItem == 16, g);
-    drawOptionLine("Next Unit", KeyEvent.getKeyText(Options.nextunit), currentMenuItem == 17, g);
+    drawConfigLine("Delete Unit", KeyEvent.getKeyText(Options.delete), currentMenuItem == 13, g);
+    drawConfigLine("Terrain Menu", KeyEvent.getKeyText(Options.tkey), currentMenuItem == 14, g);
+    drawConfigLine("Side Menu", KeyEvent.getKeyText(Options.skey), currentMenuItem == 15, g);
+    drawConfigLine("Unit Menu", KeyEvent.getKeyText(Options.ukey), currentMenuItem == 16, g);
+    drawConfigLine("Next Unit", KeyEvent.getKeyText(Options.nextunit), currentMenuItem == 17, g);
   }
 
   private void paintUsage(Graphics g) {

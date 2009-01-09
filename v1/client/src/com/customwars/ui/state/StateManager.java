@@ -16,6 +16,7 @@ import java.util.Map;
  * <p/>
  * States should be added before invoking changeToState by invoking addState(String stateName, State state)
  * A debug message is logged when this class could not change to the stateName.
+ *
  * @author stefan
  * @since 2.0
  */
@@ -61,6 +62,10 @@ public class StateManager {
 
     public void removeState(String stateName) {
         states.remove(stateName);
+    }
+
+    public boolean isInCurrentState(String stateName) {
+        return currentState == states.get(stateName);
     }
 
     /**

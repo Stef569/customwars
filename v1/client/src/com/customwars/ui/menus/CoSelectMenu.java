@@ -41,7 +41,7 @@ public class CoSelectMenu implements State {
   private int[] coSelections;
   private boolean[] altSelections;
   private int infono;
-  private int cursorX, cursorY;   // Square Position(0..NUM_MENU_ITEMS)
+  private int col, row;   // Square Position(0..NUM_MENU_ITEMS)
 
   private JFrame frame;
   private StateManager stateManager;
@@ -75,7 +75,7 @@ public class CoSelectMenu implements State {
       coSelections = new int[numPlayers * 2];
       altSelections = new boolean[numPlayers * 2];
     } else {
-      throw new RuntimeException("No maps set in menuSession");
+      throw new RuntimeException("No map set in menuSession");
     }
     frame.addKeyListener(keyControl);
     frame.addMouseListener(mouseControl);
@@ -122,10 +122,10 @@ public class CoSelectMenu implements State {
 
     if (selectedCO != null) {
       String fullTxt = COList.getListing()[COList.getIndex(selectedCO)].getIntel();
-      String[] multiLineTxt = GuiUtil.convertToMultiLineArray(fullTxt, CO_INFO_BOX_WIDTH, g);
+      String[] multiLineCoIntel = GuiUtil.convertToMultiLineArray(fullTxt, CO_INFO_BOX_WIDTH, g);
 
-      for (int lineNumber = 0; lineNumber < multiLineTxt.length; lineNumber++) {
-        g.drawString(multiLineTxt[lineNumber], CO_INFO_BOX_WIDTH, CO_INFO_BOX_TOP_OFFSET + lineNumber * 15);
+      for (int lineNumber = 0; lineNumber < multiLineCoIntel.length; lineNumber++) {
+        g.drawString(multiLineCoIntel[lineNumber], CO_INFO_BOX_WIDTH, CO_INFO_BOX_TOP_OFFSET + lineNumber * 15);
       }
 
       g.setColor(Color.black);
@@ -186,7 +186,7 @@ public class CoSelectMenu implements State {
       g.setColor(Color.RED);
     else
       g.setColor(Color.BLUE);
-    g.drawRect(2 + cursorX * 52, 61 + cursorY * 52, 48, 48);
+    g.drawRect(2 + col * 52, 61 + row * 52, 48, 48);
   }
 
   private void paintCurrentCoInfo(Graphics2D g, int offset) {
@@ -240,8 +240,8 @@ public class CoSelectMenu implements State {
           pressCurrentItem();
         } else if (withinCoColor) {
           selectedArmy = (x - 3) / 19;
-          if (cursorX != 0 || cursorY != 0) {
-            CO temp = armyArray[selectedArmy][cursorX + cursorY * 3 - 1];
+          if (col != 0 || row != 0) {
+            CO temp = armyArray[selectedArmy][col + row * 3 - 1];
             if (temp != null) infono = COList.getIndex(temp);
           }
         }
@@ -257,10 +257,10 @@ public class CoSelectMenu implements State {
       boolean withinSquares = y > 61 && y < 321 && x > 2 && x < 158;
 
       if (withinSquares) {
-        cursorX = (x - 2) / 52;
-        cursorY = (y - 61) / 52;
-        if (cursorX != 0 || cursorY != 0) {
-          CO temp = armyArray[selectedArmy][cursorX + cursorY * 3 - 1];
+        col = (x - 2) / 52;
+        row = (y - 61) / 52;
+        if (col != 0 || row != 0) {
+          CO temp = armyArray[selectedArmy][col + row * 3 - 1];
 
           if (temp != null) {
             infono = COList.getIndex(temp);
@@ -273,14 +273,16 @@ public class CoSelectMenu implements State {
   }
 
   private void pressCurrentItem() {
+    if (numCOs == numPlayers * 2) return;
+
     boolean nosecco = false;
     CO temp = null;
-    if (cursorX == 0 && cursorY == 0 && numCOs % 2 == 1) {
+    if (col == 0 && row == 0 && numCOs % 2 == 1) {
       coSelections[numCOs] = -1;
       nosecco = true;
     } else {
-      if (cursorX == 0 && cursorY == 0) return;
-      temp = armyArray[selectedArmy][cursorX + cursorY * 3 - 1];
+      if (col == 0 && row == 0) return;
+      temp = armyArray[selectedArmy][col + row * 3 - 1];
     }
 
     if (nosecco || temp != null && !(numCOs % 2 == 1 && COList.getIndex(temp) == coSelections[numCOs - 1])) {
@@ -292,9 +294,14 @@ public class CoSelectMenu implements State {
       mainaltcostume = altcostume;
       altcostume = false;
       numCOs++;
-      cursorX = 0;
-      cursorY = 0;
+      col = 0;
+      row = 0;
 
+      if (Options.snailGame && numCOs == 2) {
+        //snailGame();
+      }
+
+      // All the co's have been chosen, goto BATTLE_OPTIONS
       if (numCOs == numPlayers * 2) {
         logger.info("Total No of competing COs=[" + numCOs + "]  Players=[" + numPlayers + "]");
 
@@ -305,6 +312,10 @@ public class CoSelectMenu implements State {
         } else {
           //no alliances allowed for 2 players
           sideSelect = new int[]{0, 1};
+          menuSession.setSideSelect(sideSelect);
+          menuSession.setAltSelect(altSelections);
+          menuSession.setCoSelections(coSelections);
+          stateManager.changeToState("BATTLE_OPTIONS");
         }
       }
     }

@@ -67,7 +67,7 @@ public class MainMenu extends JComponent {
 	public NetworkingManager		networkingManager;
 	private static final int		MAX_USERNAME_LENGTH					= 12;
 
-	public MainMenu(JFrame parentJFrame) {
+  public MainMenu(JFrame parentJFrame) {
 		// makes the panel opaque, and thus visible
 		this.setOpaque(true);
 		this.parentJFrame = parentJFrame;
@@ -125,7 +125,6 @@ public class MainMenu extends JComponent {
 		super.paintComponent(g);
 		Graphics2D g2 = createGraphics2D(getSize().width, getSize().height);
 		g2.scale(scaleMuliplier, scaleMuliplier);
-
 		drawScreen(g2);
 		g2.dispose();
 		g.drawImage(bufferedImg, 0, 0, this);
@@ -2682,7 +2681,7 @@ public class MainMenu extends JComponent {
 					sess.setCurrentlyHighlightedItem2(sess.getCurrentlyHighlightedItem2() + 1);
 					if (sess.getCurrentlyHighlightedItem2() > 1) sess.setCurrentlyHighlightedItem2(0);
 				}
-			} else if (keypress == Options.pgdn) {
+			} else if (keypress != Options.pgdn) {
 				pressedPGDN();
 			} else if (keypress == Options.pgup) {
 				pressedPGUP();

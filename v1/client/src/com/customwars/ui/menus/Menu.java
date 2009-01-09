@@ -29,7 +29,7 @@ public abstract class Menu {
     private int numMenuItems;
     private int currentMenuItem;
     private int line;
-    private String OPTION_LINE_DELIMITER = ": ";
+    private String CONFIG_LINE_DELIMITER = ": ";
     private int multiHorizontalPageLeftOffset;
 
     protected Menu(int numMenuItems) {
@@ -72,6 +72,11 @@ public abstract class Menu {
         return currentMenuItem;
     }
 
+    int getTopOffset(Graphics g) {
+      int fontHeight = g.getFontMetrics().getHeight();
+      return multiHorizontalPageLeftOffset + TOP_OFFSET + line * fontHeight;
+    }
+
     boolean isFirstItemSelected() {
         return currentMenuItem == 0;
     }
@@ -99,7 +104,7 @@ public abstract class Menu {
     }
 
     /**
-     * Paints a config and next to it the value on 1 line.
+     * Paints a config txt and next to it the value on 1 line.
      * config is painted in HIGHLIGHT_COLOR if highLight is true
      * configVal is painted in defaultColor
      * <p/>
@@ -108,9 +113,9 @@ public abstract class Menu {
      * Output:
      * Music Muted: Yes
      */
-    public void drawOptionLine(String config, String configVal, boolean highLight, Graphics g) {
+    public void drawConfigLine(String config, String configVal, boolean highLight, Graphics g) {
         Color defaultColor = MainMenuGraphics.getH1Color();
-        drawOptionLine(config, configVal, highLight ? HIGHLIGHT_COLOR : defaultColor, defaultColor, g);
+        drawConfigLine(config, configVal, highLight ? HIGHLIGHT_COLOR : defaultColor, defaultColor, g);
     }
 
     /**
@@ -125,15 +130,15 @@ public abstract class Menu {
      * @param highLightColor Color used to paint the config string.
      * @param defaultColor   Color used to paint the configVal string.
      */
-    public void drawOptionLine(String config, String configVal, Color highLightColor, Color defaultColor, Graphics g) {
-        config += OPTION_LINE_DELIMITER;
+    public void drawConfigLine(String config, String configVal, Color highLightColor, Color defaultColor, Graphics g) {
+        config += CONFIG_LINE_DELIMITER;
         g.setColor(highLightColor);
         drawOnCurrentLine(config, multiHorizontalPageLeftOffset, g);
 
         g.setColor(defaultColor);
         if (configVal != null) {
-            int optionWidth = GuiUtil.getStringWidth(config, g);
-            drawOnCurrentLine(configVal, multiHorizontalPageLeftOffset + optionWidth, g);
+            int configWidth = GuiUtil.getStringWidth(config, g);
+            drawOnCurrentLine(configVal, multiHorizontalPageLeftOffset + configWidth, g);
         }
         line++;
     }
@@ -175,7 +180,7 @@ public abstract class Menu {
     }
 
     public void setOptionLineDelimiter(String optionLineDelimiter) {
-        this.OPTION_LINE_DELIMITER = optionLineDelimiter;
+        this.CONFIG_LINE_DELIMITER = optionLineDelimiter;
     }
 
     // ACTIONS
