@@ -3,11 +3,14 @@ package com.customwars.ui.menus;
 import com.customwars.ai.GameSession;
 import com.customwars.ai.Options;
 import com.customwars.sfx.SFX;
+import com.customwars.state.NetworkException;
 import com.customwars.state.ResourceLoader;
+import com.customwars.state.NetworkSession;
 import com.customwars.ui.MainMenuGraphics;
 import com.customwars.ui.MiscGraphics;
 import com.customwars.ui.state.State;
 import com.customwars.ui.state.StateManager;
+import org.apache.log4j.Logger;
 
 import javax.swing.*;
 import java.awt.*;
@@ -23,12 +26,12 @@ import java.awt.event.MouseEvent;
  * @since 2.0
  */
 public class GameMenu extends Menu implements State {
+    private static final Logger logger = Logger.getLogger(GameMenu.class);
     private static final Font MENU_FONT = new Font(Font.SANS_SERIF, Font.BOLD, 24);
     private static final Font DESCRIPTION_FONT = new Font("Arial", Font.BOLD, 11);
 
     private static final Color DESCRIPTION_BOX_BACKGROUND = new Color(7, 66, 97);
     private static final Color DESCRIPTION_COLOR = Color.WHITE;
-    private static final Color HIGHLIGHT_COLOR = Color.RED;
 
     private static final int START_SINGLEPLAYER_GAME = 0;
     private static final int LOAD_GAME = 1;
@@ -46,11 +49,13 @@ public class GameMenu extends Menu implements State {
     private MouseControl mouseControl = new MouseControl();
 
     private int coGlide = -1;  // Used to glide the co in
+    private NetworkSession networkSession;
 
     public GameMenu(JFrame frame, StateManager stateManager) {
         super(NUM_MENU_ITEMS);
         this.frame = frame;
         this.stateManager = stateManager;
+        this.networkSession = new NetworkSession();
     }
 
     public void init() {
@@ -165,17 +170,17 @@ public class GameMenu extends Menu implements State {
 
     // INPUT
     private class KeyControl extends KeyAdapter {
-      public void keyPressed(KeyEvent e) {
-        int keypress = e.getKeyCode();
-        if (keypress == Options.up) {
-          menuMoveUp();
-        } else if (keypress == Options.down) {
-          menuMoveDown();
-        } else if (keypress == Options.akey) {
-          pressCurrentItem();
+        public void keyPressed(KeyEvent e) {
+            int keypress = e.getKeyCode();
+            if (keypress == Options.up) {
+                menuMoveUp();
+            } else if (keypress == Options.down) {
+                menuMoveDown();
+            } else if (keypress == Options.akey) {
+                pressCurrentItem();
+            }
+            frame.repaint(0);
         }
-        frame.repaint(0);
-      }
     }
 
     private class MouseControl extends MouseAdapter {
@@ -285,27 +290,114 @@ public class GameMenu extends Menu implements State {
             case LOAD_GAME:
                 stateManager.changeToState("LOAD_GAME");
                 break;
+
             case START_NETWORK_GAME:
-                stateManager.changeToState("START_NETWORK");
+                Options.startNetwork();
                 break;
+
             case LOAD_REPLAY:
                 stateManager.changeToState("LOAD_REPLAY");
                 break;
+
             case CREATE_SERVER_GAME:
-                stateManager.changeToState("CREATE_SERVER_GAME");
+                try {
+                    createServerGame();
+                } catch (NetworkException e) {
+                    logger.fatal("Could not start server game", e);
+                    JOptionPane.showMessageDialog(frame, e);
+                    break;
+                }
+                logger.debug("starting snail game");
+                stateManager.changeToState("SNAIL_GAME");
                 break;
+
             case JOIN_SERVER_GAME:
-                stateManager.changeToState("JOIN_SERVER_GAME");
+                try {
+                    joinServerGame();
+                } catch (NetworkException e) {
+                    logger.fatal("Could not join network game", e);
+                    JOptionPane.showMessageDialog(frame, e);
+                    break;
+                }
+
+                String slot = JOptionPane.showInputDialog(frame, "Type in the number of the army you will command:", "Network Game: Army No.?", JOptionPane.PLAIN_MESSAGE);
+                if (slot == null) {
+                    stateManager.changeToState("NEW_GAME");
+                    break;
+                }
+                stateManager.changeToState("SNAIL_GAME");
                 break;
+
             case LOGIN_TO_SERVER_GAME:
-                stateManager.changeToState("LOGIN_TO_SERVER_GAME");
+                try {
+                    loginToServer();
+                } catch (NetworkException e) {
+                    logger.fatal("Could not start network game", e);
+                    JOptionPane.showMessageDialog(frame, e);
+                    break;
+                }
+                stateManager.changeToState("SNAIL_GAME");
                 break;
+
             case JOIN_IRC_LOBBY:
                 stateManager.changeToState("JOIN_IRC_LOBBY");
                 break;
+
             default:
                 throw new AssertionError("Could not handle current menu item: " + currentMenuItem);
         }
+    }
+
+    private void loginToServer() throws NetworkException {
+        String gameName, userName, userPass;
+
+        gameName = JOptionPane.showInputDialog(frame, "Type in a name for your game:", "Network Game: Name?", JOptionPane.PLAIN_MESSAGE);
+
+        if (Options.isDefaultLoginOn()) {
+            userName = Options.getDefaultUsername();
+            userPass = Options.getDefaultPassword();
+
+        } else {
+            userName = JOptionPane.showInputDialog(null, "Username for your game:", "Network Game: User(12char)", JOptionPane.PLAIN_MESSAGE);
+            userPass = JOptionPane.showInputDialog(null, "Password for your game:", "Network Game: Password?", JOptionPane.PLAIN_MESSAGE);
+        }
+
+        networkSession.loginToServerGame(gameName, userName, userPass);
+    }
+
+    private void joinServerGame() throws NetworkException {
+        String gameName, masterPass, userName, userPass, slot;
+        gameName = JOptionPane.showInputDialog(null, "Name of game:", "Join Game: Name", JOptionPane.PLAIN_MESSAGE);
+        masterPass = JOptionPane.showInputDialog(null, "Enter Password for game:", "Join Game: Master Pass", JOptionPane.PLAIN_MESSAGE);
+
+        if (Options.isDefaultLoginOn()) {
+            userName = Options.getDefaultUsername();
+            userPass = Options.getDefaultPassword();
+        } else {
+            userName = JOptionPane.showInputDialog(null, "Username for your game:", "Network Game: User(12char)", JOptionPane.PLAIN_MESSAGE);
+            userPass = JOptionPane.showInputDialog(null, "Password for your game:", "Network Game: Password", JOptionPane.PLAIN_MESSAGE);
+        }
+
+        slot = JOptionPane.showInputDialog(null, "Type in the number of the army you will command:", "Network Game: Army No.?", JOptionPane.PLAIN_MESSAGE);
+        int slotNum = Integer.parseInt(slot);
+        networkSession.joinServerGame(gameName, masterPass, userName, userPass, slotNum);
+    }
+
+    private void createServerGame() throws NetworkException {
+        String gamename = JOptionPane.showInputDialog(null, "Type in a name for your game:", "Network Game: Name", JOptionPane.PLAIN_MESSAGE);
+        String masterpass = JOptionPane.showInputDialog(null, "Master Password for your game:", "Network Game: Master Pass?", JOptionPane.PLAIN_MESSAGE);
+
+        String userName, userPassword;
+
+        // set the master password and join
+        if (Options.isDefaultLoginOn()) {
+            userName = Options.getDefaultUsername();
+            userPassword = Options.getDefaultPassword();
+        } else {
+            userName = JOptionPane.showInputDialog(null, "Username for your game:", "Network Game: User(12char)?", JOptionPane.PLAIN_MESSAGE);
+            userPassword = JOptionPane.showInputDialog(null, "Password for your game:", "Network Game: Password?", JOptionPane.PLAIN_MESSAGE);
+        }
+        networkSession.createServerGame(gamename, masterpass, userName, userPassword);
     }
 
     public static void main(String[] args) {
