@@ -78,28 +78,28 @@ public class GeneralOptionsMenu extends Menu implements State {
 
   private void paintLines(int currentMenuItem, Graphics2D g) {
     super.resetLines();
-    drawConfigLine("Music", Options.isMusicOn() ? "On" : "Off", currentMenuItem == 0, g);
-    drawConfigLine("Random Numbers", "", currentMenuItem == 1, g);
-    drawConfigLine("Balance Mode", Options.isBalance() ? "On" : "Off", currentMenuItem == 2, g);
-    drawConfigLine("Set IP", Options.getDisplayIP(), currentMenuItem == 3, g);
-    drawConfigLine("Autosave", Options.isAutosaveOn() ? "On" : "Off", currentMenuItem == 4, g);
-    drawConfigLine("Record Replay", Options.isRecording() ? "On" : "Off", currentMenuItem == 5, g);
-    drawConfigLine("Cursor", "", currentMenuItem == 6, g);
+    drawOptionLine("Music", Options.isMusicOn() ? "On" : "Off", currentMenuItem == 0, g);
+    drawOptionLine("Random Numbers", "", currentMenuItem == 1, g);
+    drawOptionLine("Balance Mode", Options.isBalance() ? "On" : "Off", currentMenuItem == 2, g);
+    drawOptionLine("Set IP", Options.getDisplayIP(), currentMenuItem == 3, g);
+    drawOptionLine("Autosave", Options.isAutosaveOn() ? "On" : "Off", currentMenuItem == 4, g);
+    drawOptionLine("Record Replay", Options.isRecording() ? "On" : "Off", currentMenuItem == 5, g);
+    drawOptionLine("Cursor", "", currentMenuItem == 6, g);
     g.drawImage(MiscGraphics.getCursor(), 70, 120, frame);
-    drawConfigLine("Remap Keys", "", currentMenuItem == 7, g);
-    drawConfigLine("Snail Mode Server", Options.getServerName(), currentMenuItem == 8, g);
-    drawConfigLine("Default Bans", getDefaultBans(), currentMenuItem == 9, g);
-    drawConfigLine("Main Screen CO", COList.getListing()[Options.getMainCOID()].getName(), currentMenuItem == 10, g);
-    drawConfigLine("Sound Effects", SFX.getMute() ? "On" : "Off", currentMenuItem == 11, g);
-    drawConfigLine("Battle Background Image", Options.battleBackground ? "On" : "Off", currentMenuItem == 12, g);
-    drawConfigLine("Default Username/Password", Options.getDefaultUsername() + " / " + Options.getDefaultPassword(), currentMenuItem == 13, g);
+    drawOptionLine("Remap Keys", "", currentMenuItem == 7, g);
+    drawOptionLine("Snail Mode Server", Options.getServerName(), currentMenuItem == 8, g);
+    drawOptionLine("Default Bans", getDefaultBans(), currentMenuItem == 9, g);
+    drawOptionLine("Main Screen CO", COList.getListing()[Options.getMainCOID()].getName(), currentMenuItem == 10, g);
+    drawOptionLine("Sound Effects", Options.isSFXOn() ? "On" : "Off", currentMenuItem == 11, g);
+    drawOptionLine("Battle Background Image", Options.battleBackground ? "On" : "Off", currentMenuItem == 12, g);
+    drawOptionLine("Default Username/Password", Options.getDefaultUsername() + " / " + Options.getDefaultPassword(), currentMenuItem == 13, g);
 
     super.startNewPage();
-    drawConfigLine("Terrain Tileset", getSelectedTerrainSet(), currentMenuItem == 14, g);
-    drawConfigLine("Urban Tileset", getSelectedUrbanTerrainSet(), currentMenuItem == 15, g);
-    drawConfigLine("HQ Tileset", getSelectedHqTerrainSet(), currentMenuItem == 16, g);
-    drawConfigLine("Use Default Login Info", Options.isDefaultLoginOn() ? "On" : "Off", currentMenuItem == 17, g);
-    drawConfigLine("AutoRefresh", Options.getRefresh() ? "On" : "Off", currentMenuItem == 18, g);
+    drawOptionLine("Terrain Tileset", getSelectedTerrainSet(), currentMenuItem == 14, g);
+    drawOptionLine("Urban Tileset", getSelectedUrbanTerrainSet(), currentMenuItem == 15, g);
+    drawOptionLine("HQ Tileset", getSelectedHqTerrainSet(), currentMenuItem == 16, g);
+    drawOptionLine("Use Default Login Info", Options.isDefaultLoginOn() ? "On" : "Off", currentMenuItem == 17, g);
+    drawOptionLine("AutoRefresh", Options.getRefresh() ? "On" : "Off", currentMenuItem == 18, g);
   }
 
   private String getSelectedHqTerrainSet() {
@@ -201,7 +201,7 @@ public class GeneralOptionsMenu extends Menu implements State {
       case MAIN_SCREEN_CO:
         Options.decrementCO();
       case MUSIC:
-        SFX.toggleMute();
+        Options.toggleSFX();
       case TERRAIN_TILESET:
         Options.decrementTerrain();
       case URBAN_TILESET:

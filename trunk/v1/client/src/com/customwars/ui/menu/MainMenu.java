@@ -554,7 +554,7 @@ public class MainMenu extends JComponent {
 
 		if (sess.getCurrentlyHighlightedItem() == 12) g.setColor(Color.red);
 		g.drawString("Sound Effects: ", 10, 260);
-		if (SFX.getMute())
+		if (!Options.isSFXOn())
 			g.drawString("Off", 130, 260);
 		else
 			g.drawString("On", 130, 260);
@@ -2532,7 +2532,7 @@ public class MainMenu extends JComponent {
 					Options.decrementCO();
 					sess.setGlide(0);
 				} else if (sess.isOptionsScreen() && sess.getCurrentlyHighlightedItem() == 12) {
-					SFX.toggleMute();
+					Options.toggleSFX();
 				} else if (sess.isOptionsScreen() && sess.getCurrentlyHighlightedItem() == 13) {
 					Options.decrementTerrain();
 				} else if (sess.isOptionsScreen() && sess.getCurrentlyHighlightedItem() == 14) {
@@ -2657,7 +2657,7 @@ public class MainMenu extends JComponent {
 					Options.incrementCO();
 					sess.setGlide(0);
 				} else if (sess.isOptionsScreen() && sess.getCurrentlyHighlightedItem() == 12) {
-					SFX.toggleMute();
+					Options.toggleSFX();
 				} else if (sess.isOptionsScreen() && sess.getCurrentlyHighlightedItem() == 13) {
 					Options.incrementTerrain();
 				} else if (sess.isOptionsScreen() && sess.getCurrentlyHighlightedItem() == 14) {

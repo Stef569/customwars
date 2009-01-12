@@ -115,6 +115,7 @@ public class Options {
     static String customUrban = "Press Z To Set";
     static String customHQ = "Press Z To Set";
     public static boolean refresh = false;
+		private static boolean	sfxOn = false;
     
     public Options() {
         String imagesLocation = ResourceLoader.properties.getProperty("imagesLocation");
@@ -142,7 +143,9 @@ public class Options {
         sound = true;
         useDefaultLogin = false;
         readOptions();
-        if(music == true)Music.initializeMusic();
+        if(music == true){
+        	Music.initializeMusic();
+        }
     }
     
     public static boolean isMusicOn(){
@@ -370,7 +373,7 @@ public class Options {
             write.writeUTF(defaultUsername);
             write.writeUTF(defaultPassword);
             write.writeInt(mainCOID);
-            write.writeBoolean(SFX.getMute());
+            write.writeBoolean(!Options.isSFXOn());
             write.writeInt(selectedTerrain);
             write.writeInt(selectedUrban);
             write.writeInt(selectedHQ);
@@ -418,7 +421,6 @@ public class Options {
             defaultUsername = read.readUTF();
             defaultPassword = read.readUTF();
             mainCOID = read.readInt();
-            SFX.setMute(read.readBoolean());
             selectedTerrain = read.readInt();
             selectedUrban = read.readInt();
             selectedHQ = read.readInt();
@@ -625,4 +627,21 @@ public class Options {
                     curHQ = imagesLocation + "/terrain/" + customHQ + ".gif";
             }
     }
+
+		public static boolean isSFXOn() {
+			return sfxOn;
+		}
+		
+		public static void setIsSFXOn(boolean state) {
+			sfxOn = state;
+		}
+		
+		public static void toggleSFX() {
+			if (Options.isSFXOn()) {
+				Options.setIsSFXOn(false);
+			} else {
+				Options.setIsSFXOn(true);
+			}
+		}
+		
 }

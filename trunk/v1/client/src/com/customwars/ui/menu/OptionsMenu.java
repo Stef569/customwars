@@ -14,7 +14,7 @@ public class OptionsMenu extends InGameMenu{
   // Menu Items
   private static final int MNU_DELETE = 0;
   private static final int MNU_SURRENDER = 1;
-  private static final int MNU_TOGGLE_MUSIC = 2;
+  private static final int SFX_ON_OFF = 2;
   private static final int MNU_VISUAL_MODE = 3;
   private static final int MNU_RESIZE = 4;
   private static final int MNU_RESCALE = 5;
@@ -23,7 +23,7 @@ public class OptionsMenu extends InGameMenu{
   private static final int MNU_MAIN = 8;
 
   // Menu Names
-  private static final String[] s = {"Delete","Yield","Music On/Off","Visual Mode","Resize","Scale","Save Replay",
+  private static final String[] s = {"Delete","Yield","SFX On/Off","Visual Mode","Resize","Scale","Save Replay",
           "Test Replay DEBUG","Exit Map"};
 
   // Gui Layout
@@ -42,8 +42,8 @@ public class OptionsMenu extends InGameMenu{
                 return MENU_SEL.DELETE;
             case MNU_SURRENDER:
                 return MENU_SEL.YIELD;
-            case MNU_TOGGLE_MUSIC:
-                return MENU_SEL.TOGGLE_MUSIC;
+            case SFX_ON_OFF:
+                return MENU_SEL.TOGGLE_SFX;
             case MNU_VISUAL_MODE:
                 break;
             case MNU_RESIZE:
