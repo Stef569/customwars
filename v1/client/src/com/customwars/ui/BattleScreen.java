@@ -3301,8 +3301,8 @@ public class BattleScreen extends CWScreen
       returnToMain();
     } else if (menuselection == MENU_SEL.YIELD) {
       yieldCommand();
-    } else if (menuselection == MENU_SEL.TOGGLE_MUSIC) {
-      toggleMusic();
+    } else if (menuselection == MENU_SEL.TOGGLE_SFX) {
+      Options.toggleSFX();
     } else if (menuselection == MENU_SEL.DELETE) {
       delete = true;
     } else if (menuselection == MENU_SEL.SAVE_REPLAY) {
@@ -3414,7 +3414,7 @@ public class BattleScreen extends CWScreen
 		else Options.turnMusicOn();
 		if(Options.isMusicOn())Music.startMusic(COList.getIndex(b.getArmy(b.getTurn()).getCO()));
 	}
-
+	
 	private void yieldCommand() 
 	{
 		//YIELD

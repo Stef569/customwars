@@ -13,14 +13,12 @@ import com.customwars.map.Map;
 public class MenuSession {
   private Map map;
   private String fileName;
-
   private int[] sideSelect;
   private boolean[] altSelect;
   private int[] coSelections;
 
   private BattleOptions battleOptions;
 
-  // SETTERS
   public void setMap(Map map) {
     this.map = map;
   }
@@ -41,7 +39,6 @@ public class MenuSession {
     this.altSelect = altSelect;
   }
 
-  // GETTERS
   public Map getMap() {
     return map;
   }

@@ -8,7 +8,7 @@ public class MENU_SEL {
 
   public static final int EXIT = 5;
   public static final int YIELD = 6;
-  public static final int TOGGLE_MUSIC = 7;
+  public static final int TOGGLE_SFX = 7;
   public static final int DELETE = 8;
   public static final int SAVE_REPLAY = 9;
 

@@ -36,7 +36,7 @@ public class Main {
     public static void main(String[] args) {
     	ResourceLoader.init();
     	
-        //Create window
+        //Create 
         JFrame frame = new JFrame("Custom Wars");
         frame.setSize(480,320);
         frame.setVisible(true);

@@ -21,7 +21,6 @@ import java.io.File;
 import java.io.IOException;
 
 public class SFX {
-    private static boolean mute = false;
     private static String soundLocation = "";
 
     public static void playSound(String filename) {
@@ -30,7 +29,7 @@ public class SFX {
 
     //Play a short clip from a file
     public static void playClip(String fullPath) {
-        if (!mute) {
+        if (!Options.isSFXOn()) {
             Clip c = openClip(fullPath);
             if (c != null) {
                 if (c.isRunning()) {
@@ -45,30 +44,13 @@ public class SFX {
 
     //Play a short clip from a file a given number of times
     public static void playClip(String filename, int times) {
-        if (!mute) {
+        if (!Options.isSFXOn()) {
             Clip c = openClip(filename);
             if (c != null) {
                 c.loop(times - 1);
                 c.close();
             }
         }
-    }
-
-    //is mute on or off?
-    public static boolean getMute() {
-        return mute;
-    }
-
-    //set mute
-    public static void setMute(boolean m) {
-        mute = m;
-    }
-
-    //toggle mute
-    public static void toggleMute() {
-        if (mute) mute = false;
-        else mute = true;
-        Options.saveOptions();
     }
 
     //prepares the clip for playback, used internally
