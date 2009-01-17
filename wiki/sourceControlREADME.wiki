@@ -16,7 +16,7 @@ Breaking your work into small pieces is a fundamental idea in productivity. Prog
 
 When you commit to the repository *ALWAYS* write a commit message.
 Yes, ALWAYS write a commit message. ALWAYS. ALWAYS. ALWAYS.
-If you do not write a commit message, no one knows what you have done without scrutinising  and then understanding your code, this is a major productivity blow for those wanting to work on the code base. Please consider others and write a commit message you'd like to receive that details what you were doing. If you have been working on an issue that is listed on the google code repo then please also included it on the commit message.
+If you do not write a commit message, no one knows what you have done without scrutinising  and then understanding your code, this is a major productivity blow for those wanting to work on the code base. Please consider others and write a commit message you'd like to receive that details what you were doing. Raise an issue number on google code before you commit and include it in your commit message in the format Issue #1. 
 
 
 = The trunk code works correctly =
