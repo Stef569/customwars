@@ -25,7 +25,7 @@ We use following labels:
 CW1: Label for cw1
 CW2: Label for cw2
 
-if you are not familiar with these terms read the glossary @ http://www.customwars.com/wiki/index.php?title=Glossary
+if you are not familiar with these terms read the [http://www.customwars.com/wiki/index.php?title=Glossary glossary]
 
 = The trunk code works correctly =
 The code in the trunk is guaranteed to always work. If you break it, you fix it, otherwise do not commit. Fixing other peoples changes is very time consuming so please never commit something you know not to work. 
