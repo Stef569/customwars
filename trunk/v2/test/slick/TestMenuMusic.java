@@ -3,6 +3,8 @@ package test.slick;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.Sound;
+import org.newdawn.slick.Input;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 
@@ -12,8 +14,10 @@ import org.newdawn.slick.state.StateBasedGame;
  * on mouse click another sound is played
  */
 public class TestMenuMusic extends BasicGameState {
+  private Sound menuTick;
 
   public void init(GameContainer gameContainer, StateBasedGame stateBasedGame) throws SlickException {
+    menuTick = new Sound("v2/res/sound/menutick.wav");
   }
 
   public void render(GameContainer gameContainer, StateBasedGame stateBasedGame, Graphics g) throws SlickException {
@@ -22,6 +26,12 @@ public class TestMenuMusic extends BasicGameState {
 
   public void update(GameContainer gameContainer, StateBasedGame stateBasedGame, int i) throws SlickException {
 
+  }
+
+  public void keyPressed(int key, char c) {
+    if(key == Input.KEY_A) {
+      menuTick.play();
+    }
   }
 
   public int getID() {
