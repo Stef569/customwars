@@ -53,4 +53,5 @@ public class TestMenuMusic extends BasicGameState {
     if(key == Input.KEY_DOWN && option < 2){
         option++;
     }
+  }
 }
