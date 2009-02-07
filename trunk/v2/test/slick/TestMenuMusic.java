@@ -6,22 +6,27 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.Sound;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.Image;
+import org.newdawn.slick.Music;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 
 /**
  * Shows a menu on the screen
  * when the menu is shown a sound is played
- * on mouse click another sound is played
  */
 public class TestMenuMusic extends BasicGameState {
-  private Sound menuTick;
+  private Music backgroundMusic;
+  private Sound menuTickSound;
   private Image image;
   private Image cursor;
   private int option;
 
   public void init(GameContainer gameContainer, StateBasedGame stateBasedGame) throws SlickException {
-    menuTick = new Sound("v2/res/sound/menutick.wav");
+    menuTickSound = new Sound("v2/res/sound/menutick.wav");
+    backgroundMusic = new Music("v2/res/sound/shortBackground.ogg");
+    backgroundMusic.setVolume(0.5F);
+    backgroundMusic.loop();
+
     image = new Image("v2/res/image/cliff.gif");
     cursor = new Image("v2/res/image/white.png");
     option = 0;
@@ -43,7 +48,11 @@ public class TestMenuMusic extends BasicGameState {
 
   public void keyPressed(int key, char c) {
     if(key == Input.KEY_A) {
-      menuTick.play();
+      menuTickSound.play();
+    }
+
+    if(key == Input.KEY_Q) {
+      backgroundMusic.stop(); 
     }
     
     if(key == Input.KEY_UP && option > 0){
