@@ -54,4 +54,8 @@ public class TestMenuMusic extends BasicGameState {
         option++;
     }
   }
+
+  public int getID() {
+    return 0;
+  }
 }
