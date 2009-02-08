@@ -9,7 +9,7 @@ import java.util.*;
  * An Image that contains only 1 Row. Aka an ImageStrip
  * each img is accessible by index(col) number
  *
- * It can read sprite sheet images and transform it into a single row.
+ * It can read sprite sheet images(multi rows, multi columns) and transform it into a single row.
  *
  * @author stefan
  */

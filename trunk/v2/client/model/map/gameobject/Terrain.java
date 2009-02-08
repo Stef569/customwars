@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * An immutable terrain datastore(no setters)
  * Traversing a terrain costs 'move points', this ranges from 1 to IMPASSIBLE
- * Each moveType ID which is just the index in the array has a movecost value in the moveCosts collection.
+ * Each moveType ID which is just the index in the array has a movecost value.
  * See {@link #canBeTraverseBy(int)} and {@link #getMoveCost(int)}
  *
  * @author stefan
@@ -43,7 +43,7 @@ public class Terrain extends GameObject {
     for (Byte byteVal : moveCosts) {
       if (byteVal == null) {
         throw new IllegalArgumentException("movecosts cannot contain null in terrain " + this +
-          " use Terrain.IMPASSIBLE for max movecost.");
+          "use Terrain.IMPASSIBLE for max movecost and 1 for min movecost.");
       }
       if (byteVal <= 0) {
         throw new IllegalArgumentException("movecosts cannot contain <=0 values in terrain " + this +
