@@ -1,12 +1,15 @@
 package test.slick;
 
+import client.ui.CWInput;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Image;
+import org.newdawn.slick.Input;
+import org.newdawn.slick.Music;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.Sound;
-import org.newdawn.slick.Input;
-import org.newdawn.slick.Image;
-import org.newdawn.slick.Music;
+import org.newdawn.slick.command.Command;
+import org.newdawn.slick.command.InputProviderListener;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 
@@ -14,12 +17,18 @@ import org.newdawn.slick.state.StateBasedGame;
  * Shows a menu on the screen
  * when the menu is shown a sound is played
  */
-public class TestMenuMusic extends BasicGameState {
+public class TestMenuMusic extends BasicGameState implements InputProviderListener {
   private Music backgroundMusic;
   private Sound menuTickSound;
   private Image image;
   private Image cursor;
   private int option;
+  private CWInput cwInput;
+
+  public TestMenuMusic(CWInput cwInput) {
+    this.cwInput = cwInput;
+    cwInput.addCommandListener(this);
+  }
 
   public void init(GameContainer gameContainer, StateBasedGame stateBasedGame) throws SlickException {
     menuTickSound = new Sound("v2/res/sound/menutick.wav");
@@ -38,29 +47,30 @@ public class TestMenuMusic extends BasicGameState {
     g.drawString("Option 1", 100, 100);
     g.drawString("Option 2", 100, 120);
     g.drawString("Option 3", 100, 140);
-    
+
     //One line... all action?
-    g.drawImage(cursor, 80, (100+(option*20)));
+    g.drawImage(cursor, 80, (100 + (option * 20)));
   }
 
   public void update(GameContainer gameContainer, StateBasedGame stateBasedGame, int i) throws SlickException {
   }
 
-  public void keyPressed(int key, char c) {
-    if(key == Input.KEY_A) {
+  public void controlPressed(Command command) {
+    if (cwInput.isSelectPressed(command)) {
       menuTickSound.play();
+    } else if (cwInput.isNextMenuItemPressed(command) && option < 2) {
+      option++;
+    } else if (cwInput.isPreviousMenuItemPressed(command) && option > 0) {
+      option--;
     }
+  }
 
-    if(key == Input.KEY_Q) {
-      backgroundMusic.stop(); 
-    }
-    
-    if(key == Input.KEY_UP && option > 0){
-        option--;
-    }
-    
-    if(key == Input.KEY_DOWN && option < 2){
-        option++;
+  public void controlReleased(Command command) {
+  }
+
+  public void keyPressed(int key, char c) {
+    if (key == Input.KEY_S) {
+      backgroundMusic.stop();
     }
   }
 

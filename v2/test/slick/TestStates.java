@@ -1,62 +1,83 @@
 package test.slick;
 
+import client.ui.CWInput;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.command.Command;
+import org.newdawn.slick.command.InputProviderListener;
+import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
-import org.newdawn.slick.state.transition.FadeOutTransition;
-import org.newdawn.slick.state.transition.Transition;
+import org.newdawn.slick.state.transition.FadeInTransition;
 
 /**
  * Tests a state based game by iterating over all the tests
  * shows different transitions between states
+ * input is generic and is put into cwInput
  */
-public class TestStates extends StateBasedGame {
-  private static final int MAX_TEST_STATES = 2;
-  private static AppGameContainer container;
-  private final Transition stateEnterTransition;
+public class TestStates extends StateBasedGame implements InputProviderListener {
+  private static final int NUM_TEST_STATES = 2;
+  private static AppGameContainer appGameContainer;
+  private CWInput cwInput;
+  private int startState;
 
-  public TestStates() {
+  public TestStates(int startState) {
     super("Tests");
-    stateEnterTransition = new FadeOutTransition(Color.black);
+    this.startState = startState;
   }
 
   public void initStatesList(GameContainer gameContainer) throws SlickException {
-    addState(new TestMenuMusic());
-    addState(new TestMapRenderer());
+    cwInput = new CWInput(appGameContainer.getInput());
+    cwInput.addCommandListener(this);
+
+    BasicGameState testMenuMusic = new TestMenuMusic(cwInput);
+    BasicGameState testMapRenderer = new TestMapRenderer(cwInput);
+
+    addState(testMenuMusic);
+    addState(testMapRenderer);
+    gotoState(startState);
   }
 
-  public void keyReleased(int key, char c) {
-    if (key == Input.KEY_SPACE) {
-      gotoNextState(stateEnterTransition, null);
+  public void controlPressed(Command command) {
+    if (cwInput.isSelectPressed(command)) {
+      gotoState(getNextStateID());
     }
   }
 
-  public void mouseClicked(int button, int x, int y, int clickCount) {
-    gotoNextState(stateEnterTransition, null);
+  public void controlReleased(Command command) {
+    if (cwInput.isExitPressed(command)) {
+      appGameContainer.exit();
+    }
   }
 
-  public void gotoNextState(Transition enter, Transition leave) {
-    enterState(getNextStateID(), enter, leave);
-    container.setTitle(getCurrentState().getClass().toString());
+  private void gotoState(int index) {
+    enterState(index, null, new FadeInTransition(Color.black));
+    appGameContainer.setTitle(getCurrentState().getClass().toString());
   }
 
   private int getNextStateID() {
     int nextID = getCurrentStateID() + 1;
-    return nextID < MAX_TEST_STATES ? nextID : 0;
+    return nextID < NUM_TEST_STATES ? nextID : 0;
   }
 
   /**
    * Entry point to our state test
+   *
+   * @param argv First argument provided is the startState as a number.
    */
   public static void main(String[] argv) {
+    int startState = 0;
+
+    if (argv.length > 0) {
+      startState = Integer.parseInt(argv[0]);
+    }
+
     try {
-      container = new AppGameContainer(new TestStates());
-      container.setDisplayMode(800, 600, false);
-      container.setTargetFrameRate(60);
-      container.start();
+      appGameContainer = new AppGameContainer(new TestStates(startState));
+      appGameContainer.setDisplayMode(800, 600, false);
+      appGameContainer.setTargetFrameRate(60);
+      appGameContainer.start();
     } catch (SlickException e) {
       e.printStackTrace();
     }

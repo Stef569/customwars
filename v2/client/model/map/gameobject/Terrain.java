@@ -19,22 +19,25 @@ public class Terrain extends GameObject {
   private byte defenseBonus;
   private byte height;
   private List<Byte> moveCosts;
+  private boolean hidden;
 
   /**
    * @param id           Unique identifier
    * @param name         Short name ie 'plain', 'grass', 'woods'
-   * @param defenseBonus Some terrains offer better defense then others
+   * @param description  long description ie 'provides good cover for ground units'
+   * @param defenseBonus The defense bonus used in attack calculations, forrest offer better protection then plain.
    * @param height       Height of this terrain ie ocean is lower then a Mountain
    * @param moveCosts    The cost to move over this terrain for each movementType, starts at 1(no cost) to 127(Impassible)
    *                     The movementType is used as index to retrieve the moveCost from the moveCosts array
-   * @param description  long description ie 'provides good cover for ground units'
+   * @param hidden       is this terrain hidden within a moveZone
    */
-  public Terrain(int id, String name, String description, byte defenseBonus, byte height, Byte[] moveCosts) {
+  public Terrain(int id, String name, String description, byte defenseBonus, byte height, boolean hidden, Byte[] moveCosts) {
     this.id = id;
     this.name = name;
     this.description = description;
     this.defenseBonus = defenseBonus;
     this.height = height;
+    this.hidden = hidden;
     this.moveCosts = Arrays.asList(moveCosts);
     validateMoveCosts(moveCosts);
   }
@@ -58,17 +61,16 @@ public class Terrain extends GameObject {
    * @param otherTerrain The Terrain to copy
    */
   Terrain(Terrain otherTerrain) {
+    this.hidden = hidden;
     this.id = otherTerrain.id;
     this.name = otherTerrain.name;
     this.description = otherTerrain.description;
     this.defenseBonus = otherTerrain.defenseBonus;
     this.height = otherTerrain.height;
+    this.hidden = otherTerrain.hidden;
     this.moveCosts = otherTerrain.moveCosts;
   }
 
-  // ----------------------------------------------------------------------------
-  // GETTERS
-  // ----------------------------------------------------------------------------
   public int getID() {
     return id;
   }
@@ -87,6 +89,10 @@ public class Terrain extends GameObject {
 
   public int getHeight() {
     return height;
+  }
+
+  public boolean isHidden() {
+    return hidden;
   }
 
   /**

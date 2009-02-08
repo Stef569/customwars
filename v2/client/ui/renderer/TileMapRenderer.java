@@ -14,6 +14,7 @@ import java.awt.*;
  * @author Stefan
  */
 public abstract class TileMapRenderer {
+  private int x, y;                     // The point where we start rendering
   int tileSize;
   private TileMap<Tile> map;
   private boolean renderTerrain = true;
@@ -25,39 +26,21 @@ public abstract class TileMapRenderer {
   public void render(Graphics g) {
     if (map == null) return;
 
+    g.translate(x,y);
     for (Tile t : map.getAllTiles()) {
-      int x = t.getCol() * tileSize;
-      int y = t.getRow() * tileSize;
       Terrain terrain = t.getTerrain();
       boolean fogged = t.isFogged();
 
       if (renderTerrain) {
-        renderTerrain(g, terrain, x, y, fogged);
+        renderTerrain(g, terrain, t.getCol(), t.getRow(), fogged);
       }
     }
+    g.translate(-x,-y);
   }
 
   public abstract void loadResources() throws SlickException;
 
-  public abstract void renderTerrain(Graphics g, Terrain terrain, int x, int y, boolean fogged);
-
-  //----------------------------------------------------------------------------
-  // Setters
-  // ---------------------------------------------------------------------------
-  /**
-   * Sets the map to be rendered
-   * if the map is null nothing is rendered
-   */
-  public void setMap(TileMap<Tile> map) {
-    this.map = map;
-    if (map != null) {
-      this.tileSize = map.getTileSize();
-    }
-  }
-
-  public void setRenderTerrain(boolean renderTerrain) {
-    this.renderTerrain = renderTerrain;
-  }
+  public abstract void renderTerrain(Graphics g, Terrain terrain, int col, int row, boolean fogged);
 
   public Tile pixelsToTile(Point p) {
     return pixelsToTile(p.x, p.y);
@@ -77,6 +60,29 @@ public abstract class TileMapRenderer {
     int col = x / tileSize;
     int row = y / tileSize;
     return map.getTile(col, row);
+  }
+
+  //----------------------------------------------------------------------------
+  // Setters
+  // ---------------------------------------------------------------------------
+  /**
+   * Sets the map to be rendered
+   * if the map is null nothing is rendered
+   */
+  public void setMap(TileMap<Tile> map) {
+    this.map = map;
+    if (map != null) {
+      this.tileSize = map.getTileSize();
+    }
+  }
+
+  public void setRenderTerrain(boolean renderTerrain) {
+    this.renderTerrain = renderTerrain;
+  }
+
+  public void setLocation(int x, int y) {
+    this.x = x;
+    this.y = y;
   }
 }
 
