@@ -1,6 +1,7 @@
 package client.model.map;
 
 /**
+ * 2D location
  * @author stefan
  */
 public class Location {

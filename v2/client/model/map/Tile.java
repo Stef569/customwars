@@ -26,6 +26,10 @@ public class Tile extends Location {
     this.terrain = terrain;
   }
 
+  public void setFogged(boolean fogged) {
+    this.fogged = fogged;
+  }
+
   public boolean isFogged() {
     return fogged;
   }
