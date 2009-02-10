@@ -25,8 +25,6 @@ public class TestMenuMusic extends BasicGameState implements InputProviderListen
   private int option;
   private CWInput cwInput;
   private TestMenu testmenu;
-  //BasicGameState game;
-  //game.mouseMoved(int oldx, int oldy, int newx, int newy);
 
   public TestMenuMusic(CWInput cwInput) {
     this.cwInput = cwInput;
@@ -47,6 +45,7 @@ public class TestMenuMusic extends BasicGameState implements InputProviderListen
     testmenu.setOptionName("Option 2");
     testmenu.setOptionName("Option 3");
     testmenu.setImage(cursor);
+    testmenu.setSound(menuTickSound);
   }
 
   public void render(GameContainer gameContainer, StateBasedGame stateBasedGame, Graphics g) throws SlickException {
@@ -72,6 +71,10 @@ public class TestMenuMusic extends BasicGameState implements InputProviderListen
     if (key == Input.KEY_S) {
       backgroundMusic.stop();
     }
+  }
+  
+  public void mouseMoved(int oldx, int oldy, int newx, int newy){
+    testmenu.mouseMoved(newx, newy);
   }
 
   public int getID() {
