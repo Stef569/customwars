@@ -20,8 +20,8 @@ public class TestMenuMusic extends CWState {
   private Sound menuTickSound;
   private Image image;
   private Image cursor;
-  private int option;
   private CWInput input;
+  private TestMenu menu;
 
   public TestMenuMusic(CWInput cwInput) {
     this.input = cwInput;
@@ -30,39 +30,35 @@ public class TestMenuMusic extends CWState {
   public void init(GameContainer gameContainer, StateBasedGame stateBasedGame) throws SlickException {
     menuTickSound = new Sound("res/sound/menutick.wav");
     backgroundMusic = new Music("res/sound/shortBackground.ogg");
-    backgroundMusic.setVolume(0.5F);
-    backgroundMusic.loop();
+//    backgroundMusic.setVolume(0.5F);
+//    backgroundMusic.loop();
 
     image = new Image("res/image/cliff.gif");
     cursor = new Image("res/image/white.png");
-    option = 0;
+    buildTestMenu();
+  }
+
+  private void buildTestMenu() {
+    menu = new TestMenu(3, input);
+    menu.optionName(0, "Attack!");
+    menu.optionName(1, "Select");
+    menu.optionName(2, "ok this is a bit longer");
+    menu.changeLocation(150, 150);
   }
 
   public void render(GameContainer gameContainer, StateBasedGame stateBasedGame, Graphics g) throws SlickException {
     g.drawImage(image, 0, 0);
     g.drawString("Now in Test Menu and Music state", 80, 80);
-    g.drawString("Option 1", 100, 100);
-    g.drawString("Option 2", 100, 120);
-    g.drawString("Option 3", 100, 140);
 
-    //One line... all action?
-    g.drawImage(cursor, 80, (100 + (option * 20)));
+    menu.render(gameContainer, stateBasedGame, g);
   }
 
-  public void update(GameContainer gameContainer, StateBasedGame stateBasedGame, int i) throws SlickException {
+  public void update(GameContainer gameContainer, StateBasedGame stateBasedGame, int delta) throws SlickException {
+    menu.update(gameContainer, stateBasedGame, delta);
   }
 
   public void controlPressed(Command command) {
-    if (input.isSelectPressed(command)) {
-      menuTickSound.play();
-    } else if (input.isNextMenuItemPressed(command) && option < 2) {
-      option++;
-    } else if (input.isPreviousMenuItemPressed(command) && option > 0) {
-      option--;
-    }
-  }
-
-  public void controlReleased(Command command) {
+    menu.controlPressed(command);
   }
 
   public void keyPressed(int key, char c) {
