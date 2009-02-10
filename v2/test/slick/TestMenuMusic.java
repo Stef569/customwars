@@ -9,15 +9,13 @@ import org.newdawn.slick.Music;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.Sound;
 import org.newdawn.slick.command.Command;
-import org.newdawn.slick.command.InputProviderListener;
-import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 
 /**
  * Shows a menu on the screen
  * when the menu is shown a sound is played
  */
-public class TestMenuMusic extends BasicGameState implements InputProviderListener {
+public class TestMenuMusic extends CWState {
   private Music backgroundMusic;
   private Sound menuTickSound;
   private Image image;
@@ -27,7 +25,6 @@ public class TestMenuMusic extends BasicGameState implements InputProviderListen
 
   public TestMenuMusic(CWInput cwInput) {
     this.input = cwInput;
-    cwInput.addListener(this);
   }
 
   public void init(GameContainer gameContainer, StateBasedGame stateBasedGame) throws SlickException {

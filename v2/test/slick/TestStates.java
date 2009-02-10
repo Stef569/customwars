@@ -9,7 +9,6 @@ import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.command.Command;
 import org.newdawn.slick.command.InputProviderListener;
-import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.state.transition.FadeInTransition;
 
@@ -38,9 +37,9 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
     cwInput = new CWInput(appGameContainer.getInput());
     cwInput.addListener(this);
 
-    BasicGameState testMenuMusic = new TestMenuMusic(cwInput);
-    BasicGameState testMapRenderer = new TestMapRenderer(cwInput);
-    BasicGameState remapKeysTest = new RemapKeysTest(cwInput);
+    CWState testMenuMusic = new TestMenuMusic(cwInput);
+    CWState testMapRenderer = new TestMapRenderer(cwInput);
+    CWState remapKeysTest = new RemapKeysTest(cwInput);
 
     addState(testMenuMusic);
     addState(testMapRenderer);
@@ -48,13 +47,19 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
     gotoState(startStateID);
   }
 
+  // Delegate Command Press/releases to the current state
   public void controlPressed(Command command) {
-  }
-
-  public void controlReleased(Command command) {
     if (cwInput.isExitPressed(command)) {
       appGameContainer.exit();
     }
+
+    CWState state = (CWState) getCurrentState();
+    state.controlPressed(command);
+  }
+
+  public void controlReleased(Command command) {
+    CWState state = (CWState) getCurrentState();
+    state.controlReleased(command);
   }
 
   public void keyPressed(int key, char c) {
