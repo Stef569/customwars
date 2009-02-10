@@ -1,9 +1,12 @@
-package client.ui;
+package com.customwars.client.ui;
 
-import org.newdawn.slick.*;
+import org.newdawn.slick.Color;
+import org.newdawn.slick.Image;
+import org.newdawn.slick.SlickException;
 
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * An Image that contains only 1 Row. Aka an ImageStrip
@@ -87,5 +90,10 @@ public class ImageStrip extends Image {
     init();
 
     return imgStrip.size();
+  }
+
+  public Image[] toArray() {
+    init();
+    return imgStrip.toArray(new Image[0]);
   }
 }

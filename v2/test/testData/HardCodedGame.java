@@ -1,8 +1,8 @@
-package test;
+package testData;
 
-import client.model.map.Tile;
-import client.model.map.TileMap;
-import client.model.map.gameobject.Terrain;
+import com.customwars.client.model.map.Tile;
+import com.customwars.client.model.map.TileMap;
+import com.customwars.client.model.map.gameobject.Terrain;
 
 /**
  * Hardcoded game data, useful for testing

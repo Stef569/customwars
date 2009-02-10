@@ -1,6 +1,6 @@
-package client.model.map;
+package com.customwars.client.model.map;
 
-import client.model.map.gameobject.Terrain;
+import com.customwars.client.model.map.gameobject.Terrain;
 
 /**
  * A Tile contains Terrains
@@ -36,5 +36,13 @@ public class Tile extends Location {
 
   public Terrain getTerrain() {
     return terrain;
+  }
+
+  public String toString() {
+    String toString = "[(" + col + "," + row + ")";
+    if (terrain != null) {
+      toString += " Terrain=" + terrain;
+    }
+    return toString + "]";
   }
 }

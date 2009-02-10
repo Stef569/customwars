@@ -1,4 +1,4 @@
-package client.model.map.gameobject;
+package com.customwars.client.model.map.gameobject;
 
 import java.util.Arrays;
 import java.util.List;
@@ -46,11 +46,11 @@ public class Terrain extends GameObject {
     for (Byte byteVal : moveCosts) {
       if (byteVal == null) {
         throw new IllegalArgumentException("movecosts cannot contain null in terrain " + this +
-          "use Terrain.IMPASSIBLE for max movecost and 1 for min movecost.");
+                "use Terrain.IMPASSIBLE for max movecost and 1 for min movecost.");
       }
       if (byteVal <= 0) {
         throw new IllegalArgumentException("movecosts cannot contain <=0 values in terrain " + this +
-          "use Terrain.IMPASSIBLE for max movecost and 1 for min movecost.");
+                "use Terrain.IMPASSIBLE for max movecost and 1 for min movecost.");
       }
     }
   }
@@ -61,7 +61,6 @@ public class Terrain extends GameObject {
    * @param otherTerrain The Terrain to copy
    */
   Terrain(Terrain otherTerrain) {
-    this.hidden = hidden;
     this.id = otherTerrain.id;
     this.name = otherTerrain.name;
     this.description = otherTerrain.description;
@@ -113,6 +112,6 @@ public class Terrain extends GameObject {
   }
 
   public String toString() {
-    return String.format("[ID=%s Name=%s Height=%s Defense=%s MoveCost=%s]", id, name, height, defenseBonus, moveCosts);
+    return String.format("[ID=%s Name=%s Height=%s Defense=%s]", id, name, height, defenseBonus);
   }
 }

@@ -1,9 +1,11 @@
-package test.slick;
+package slick;
 
-import client.ui.CWInput;
+import com.customwars.client.ui.CWInput;
+import org.apache.log4j.BasicConfigurator;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.command.Command;
 import org.newdawn.slick.command.InputProviderListener;
@@ -17,37 +19,47 @@ import org.newdawn.slick.state.transition.FadeInTransition;
  * input is generic and is put into cwInput
  */
 public class TestStates extends StateBasedGame implements InputProviderListener {
-  private static final int NUM_TEST_STATES = 2;
+  private static final int NUM_TEST_STATES = 3;
   private static AppGameContainer appGameContainer;
   private CWInput cwInput;
-  private int startState;
+  private int startStateID;
 
-  public TestStates(int startState) {
+  public TestStates() {
     super("Tests");
-    this.startState = startState;
+    startStateID = 0;
+  }
+
+  public TestStates(int startStateID) {
+    this();
+    this.startStateID = startStateID;
   }
 
   public void initStatesList(GameContainer gameContainer) throws SlickException {
     cwInput = new CWInput(appGameContainer.getInput());
-    cwInput.addCommandListener(this);
+    cwInput.addListener(this);
 
     BasicGameState testMenuMusic = new TestMenuMusic(cwInput);
     BasicGameState testMapRenderer = new TestMapRenderer(cwInput);
+    BasicGameState remapKeysTest = new RemapKeysTest(cwInput);
 
     addState(testMenuMusic);
     addState(testMapRenderer);
-    gotoState(startState);
+    addState(remapKeysTest);
+    gotoState(startStateID);
   }
 
   public void controlPressed(Command command) {
-    if (cwInput.isSelectPressed(command)) {
-      gotoState(getNextStateID());
-    }
   }
 
   public void controlReleased(Command command) {
     if (cwInput.isExitPressed(command)) {
       appGameContainer.exit();
+    }
+  }
+
+  public void keyPressed(int key, char c) {
+    if (key == Input.KEY_SPACE) {
+      gotoState(getNextStateID());
     }
   }
 
@@ -67,14 +79,14 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
    * @param argv First argument provided is the startState as a number.
    */
   public static void main(String[] argv) {
-    int startState = 0;
+    int startStateID = 0;
 
     if (argv.length > 0) {
-      startState = Integer.parseInt(argv[0]);
+      startStateID = Integer.parseInt(argv[0]);
     }
-
     try {
-      appGameContainer = new AppGameContainer(new TestStates(startState));
+      BasicConfigurator.configure();
+      appGameContainer = new AppGameContainer(new TestStates(startStateID));
       appGameContainer.setDisplayMode(800, 600, false);
       appGameContainer.setTargetFrameRate(60);
       appGameContainer.start();
