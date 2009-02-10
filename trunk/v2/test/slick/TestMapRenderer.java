@@ -12,8 +12,6 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.command.Command;
-import org.newdawn.slick.command.InputProviderListener;
-import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 import testData.HardCodedGame;
 
@@ -22,14 +20,13 @@ import testData.HardCodedGame;
  *
  * @author stefan
  */
-public class TestMapRenderer extends BasicGameState implements InputProviderListener {
+public class TestMapRenderer extends CWState {
   private MapRenderer mapRenderer;
   private MiniMapRenderer miniMapRenderer;
   private CWInput input;
 
   public TestMapRenderer(CWInput input) {
     this.input = input;
-    input.addListener(this);
   }
 
   public void init(GameContainer container, StateBasedGame game) throws SlickException {
