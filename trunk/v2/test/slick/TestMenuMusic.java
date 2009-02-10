@@ -24,32 +24,33 @@ public class TestMenuMusic extends BasicGameState implements InputProviderListen
   private Image cursor;
   private int option;
   private CWInput cwInput;
+  private TestMenu testmenu;
 
   public TestMenuMusic(CWInput cwInput) {
     this.cwInput = cwInput;
     cwInput.addCommandListener(this);
+    testmenu = new TestMenu(3);
+    testmenu.changeLocation(80,100);
   }
 
   public void init(GameContainer gameContainer, StateBasedGame stateBasedGame) throws SlickException {
     menuTickSound = new Sound("v2/res/sound/menutick.wav");
-    backgroundMusic = new Music("v2/res/sound/shortBackground.ogg");
-    backgroundMusic.setVolume(0.5F);
-    backgroundMusic.loop();
+    //backgroundMusic = new Music("v2/res/sound/shortBackground.ogg");
+    //backgroundMusic.setVolume(0.5F);
+    //backgroundMusic.loop();
 
     image = new Image("v2/res/image/cliff.gif");
     cursor = new Image("v2/res/image/white.png");
-    option = 0;
+    testmenu.optionName(0, "Option 1");
+    testmenu.optionName(1, "Option 2");
+    testmenu.optionName(2, "Option 3");
+    testmenu.changeImage(cursor);
   }
 
   public void render(GameContainer gameContainer, StateBasedGame stateBasedGame, Graphics g) throws SlickException {
     g.drawImage(image, 0, 0);
     g.drawString("Now in Test Menu and Music state", 80, 80);
-    g.drawString("Option 1", 100, 100);
-    g.drawString("Option 2", 100, 120);
-    g.drawString("Option 3", 100, 140);
-
-    //One line... all action?
-    g.drawImage(cursor, 80, (100 + (option * 20)));
+    testmenu.render(gameContainer, stateBasedGame, g);
   }
 
   public void update(GameContainer gameContainer, StateBasedGame stateBasedGame, int i) throws SlickException {
@@ -58,10 +59,10 @@ public class TestMenuMusic extends BasicGameState implements InputProviderListen
   public void controlPressed(Command command) {
     if (cwInput.isSelectPressed(command)) {
       menuTickSound.play();
-    } else if (cwInput.isNextMenuItemPressed(command) && option < 2) {
-      option++;
-    } else if (cwInput.isPreviousMenuItemPressed(command) && option > 0) {
-      option--;
+    } else if (cwInput.isNextMenuItemPressed(command)) {
+      testmenu.selectDown();
+    } else if (cwInput.isPreviousMenuItemPressed(command)) {
+      testmenu.selectUp();
     }
   }
 
