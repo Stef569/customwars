@@ -19,7 +19,6 @@ public class TestMenuMusic extends CWState {
   private Music backgroundMusic;
   private Sound menuTickSound;
   private Image image;
-  private Image cursor;
   private CWInput input;
   private TestMenu menu;
 
@@ -30,11 +29,10 @@ public class TestMenuMusic extends CWState {
   public void init(GameContainer gameContainer, StateBasedGame stateBasedGame) throws SlickException {
     menuTickSound = new Sound("res/sound/menutick.wav");
     backgroundMusic = new Music("res/sound/shortBackground.ogg");
-//    backgroundMusic.setVolume(0.5F);
-//    backgroundMusic.loop();
+    backgroundMusic.setVolume(0.5F);
+    backgroundMusic.loop();
 
     image = new Image("res/image/cliff.gif");
-    cursor = new Image("res/image/white.png");
     buildTestMenu();
   }
 
@@ -65,6 +63,11 @@ public class TestMenuMusic extends CWState {
     if (key == Input.KEY_S) {
       backgroundMusic.stop();
     }
+  }
+
+  public void mousePressed(int button, int x, int y) {
+    if (button == Input.MOUSE_RIGHT_BUTTON)
+      menu.changeLocation(x, y);
   }
 
   public int getID() {
