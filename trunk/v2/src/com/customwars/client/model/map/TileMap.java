@@ -1,4 +1,4 @@
-package client.model.map;
+package com.customwars.client.model.map;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -13,6 +13,7 @@ import java.util.NoSuchElementException;
  * There are various ways to iterate over the tiles:
  * All tiles of this map or surrounding tiles around a center tile within a min/max range.
  * This class should not contain game specific objects, it only knows about Location objects.
+ *
  * @author Stefan
  * @see Location
  */
@@ -83,8 +84,7 @@ public class TileMap<T extends Location> {
      * Get the next tile as a T rather as an object.
      *
      * @return next T
-     * @throws java.util.NoSuchElementException
-     *          if iterator is exhausted.
+     * @throws java.util.NoSuchElementException if iterator is exhausted.
      */
     public abstract T nextTile() throws NoSuchElementException;
 
@@ -128,8 +128,7 @@ public class TileMap<T extends Location> {
 
     /**
      * @return Next tile
-     * @throws java.util.NoSuchElementException
-     *          if we ran off the map bounds
+     * @throws java.util.NoSuchElementException if we ran off the map bounds
      */
     @Override
     public T nextTile() throws NoSuchElementException {

@@ -1,10 +1,10 @@
-package test.model.map.gameobject;
+package model.map.gameobject;
 
-import client.model.map.gameobject.Terrain;
+import com.customwars.client.model.map.gameobject.Terrain;
 import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import test.HardCodedGame;
+import testData.HardCodedGame;
 
 /**
  * Test the 2 methods in Terrain

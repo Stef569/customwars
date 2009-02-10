@@ -1,7 +1,8 @@
-package client.model.map;
+package com.customwars.client.model.map;
 
 /**
  * 2D location
+ *
  * @author stefan
  */
 public class Location {

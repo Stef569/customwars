@@ -1,6 +1,6 @@
-package test.slick;
+package slick;
 
-import client.ui.CWInput;
+import com.customwars.client.ui.CWInput;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
@@ -23,46 +23,45 @@ public class TestMenuMusic extends BasicGameState implements InputProviderListen
   private Image image;
   private Image cursor;
   private int option;
-  private CWInput cwInput;
-  private TestMenu testmenu;
+  private CWInput input;
 
   public TestMenuMusic(CWInput cwInput) {
-    this.cwInput = cwInput;
-    cwInput.addCommandListener(this);
-    testmenu = new TestMenu(3);
-    testmenu.changeLocation(80,100);
+    this.input = cwInput;
+    cwInput.addListener(this);
   }
 
   public void init(GameContainer gameContainer, StateBasedGame stateBasedGame) throws SlickException {
-    menuTickSound = new Sound("v2/res/sound/menutick.wav");
-    //backgroundMusic = new Music("v2/res/sound/shortBackground.ogg");
-    //backgroundMusic.setVolume(0.5F);
-    //backgroundMusic.loop();
+    menuTickSound = new Sound("res/sound/menutick.wav");
+    backgroundMusic = new Music("res/sound/shortBackground.ogg");
+    backgroundMusic.setVolume(0.5F);
+    backgroundMusic.loop();
 
-    image = new Image("v2/res/image/cliff.gif");
-    cursor = new Image("v2/res/image/white.png");
-    testmenu.optionName(0, "Option 1");
-    testmenu.optionName(1, "Option 2");
-    testmenu.optionName(2, "Option 3");
-    testmenu.changeImage(cursor);
+    image = new Image("res/image/cliff.gif");
+    cursor = new Image("res/image/white.png");
+    option = 0;
   }
 
   public void render(GameContainer gameContainer, StateBasedGame stateBasedGame, Graphics g) throws SlickException {
     g.drawImage(image, 0, 0);
     g.drawString("Now in Test Menu and Music state", 80, 80);
-    testmenu.render(gameContainer, stateBasedGame, g);
+    g.drawString("Option 1", 100, 100);
+    g.drawString("Option 2", 100, 120);
+    g.drawString("Option 3", 100, 140);
+
+    //One line... all action?
+    g.drawImage(cursor, 80, (100 + (option * 20)));
   }
 
   public void update(GameContainer gameContainer, StateBasedGame stateBasedGame, int i) throws SlickException {
   }
 
   public void controlPressed(Command command) {
-    if (cwInput.isSelectPressed(command)) {
+    if (input.isSelectPressed(command)) {
       menuTickSound.play();
-    } else if (cwInput.isNextMenuItemPressed(command)) {
-      testmenu.selectDown();
-    } else if (cwInput.isPreviousMenuItemPressed(command)) {
-      testmenu.selectUp();
+    } else if (input.isNextMenuItemPressed(command) && option < 2) {
+      option++;
+    } else if (input.isPreviousMenuItemPressed(command) && option > 0) {
+      option--;
     }
   }
 

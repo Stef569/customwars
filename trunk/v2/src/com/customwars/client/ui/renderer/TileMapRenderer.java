@@ -1,12 +1,12 @@
-package client.ui.renderer;
+package com.customwars.client.ui.renderer;
 
-import client.model.map.Tile;
-import client.model.map.TileMap;
-import client.model.map.gameobject.Terrain;
+import com.customwars.client.model.map.Tile;
+import com.customwars.client.model.map.TileMap;
+import com.customwars.client.model.map.gameobject.Terrain;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 
-import java.awt.*;
+import java.awt.Point;
 
 /**
  * Provide an easy way to render a map to the screen
@@ -16,17 +16,19 @@ import java.awt.*;
 public abstract class TileMapRenderer {
   private int x, y;                     // The point where we start rendering
   int tileSize;
-  private TileMap<Tile> map;
+  TileMap<Tile> map;
   private boolean renderTerrain = true;
 
   public TileMapRenderer(TileMap<Tile> map) throws SlickException {
     setMap(map);
   }
 
+  public abstract void update(int elapsedTime);
+
   public void render(Graphics g) {
     if (map == null) return;
 
-    g.translate(x,y);
+    g.translate(x, y);
     for (Tile t : map.getAllTiles()) {
       Terrain terrain = t.getTerrain();
       boolean fogged = t.isFogged();
@@ -35,12 +37,14 @@ public abstract class TileMapRenderer {
         renderTerrain(g, terrain, t.getCol(), t.getRow(), fogged);
       }
     }
-    g.translate(-x,-y);
+    renderOnTop(g);
+    g.translate(-x, -y);
   }
 
-  public abstract void loadResources() throws SlickException;
-
   public abstract void renderTerrain(Graphics g, Terrain terrain, int col, int row, boolean fogged);
+
+  public void renderOnTop(Graphics g) {
+  }
 
   public Tile pixelsToTile(Point p) {
     return pixelsToTile(p.x, p.y);
