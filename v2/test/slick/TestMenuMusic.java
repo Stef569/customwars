@@ -44,7 +44,9 @@ public class TestMenuMusic extends BasicGameState implements InputProviderListen
     testmenu.setOptionName("Option 1");
     testmenu.setOptionName("Option 2");
     testmenu.setOptionName("Option 3");
-    testmenu.setImage(cursor);
+    testmenu.setCursorImage(cursor);
+    //Uncomment to test images on menu
+    //testmenu.setOptionImage(2, image);
     testmenu.setSound(menuTickSound);
   }
 
