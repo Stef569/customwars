@@ -6,6 +6,7 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.Sound;
 import org.newdawn.slick.command.Command;
 import org.newdawn.slick.command.InputProviderListener;
+import org.newdawn.slick.gui.MouseOverArea;
 import client.ui.CWInput;
 
 /**
@@ -14,16 +15,26 @@ import client.ui.CWInput;
 
 public class TestMenu{
     
+    private final int IMG_RIGHT_MARGIN = 5;
+    
     private String[] options;
+    private Image[] optImg;
     private Color baseColor;
     private Color selectColor;
     private int locx;
     private int locy;
     private int mousex;
     private int mousey;
+    private int spacingy;
     private Image cursor;
     private int curoptn;
     private Sound menuSound;
+    private MouseOverArea moa;
+    
+    //For those junk menu functions
+    private int spacing;
+    private int picSpaceX;
+    private int picSpaceY;
       
     TestMenu(int noOfOptions){
       locx = 0;
@@ -31,15 +42,38 @@ public class TestMenu{
       mousex = -1;
       mousey = -1;
       curoptn = 0;
+      spacing = 0;
+      picSpaceX = 0;
+      picSpaceY = 0;
+      spacingy = 20;
       cursor = null;
       menuSound = null;
-      options = new String[noOfOptions];
+      setSize(noOfOptions);
       baseColor = new Color(Color.white);
       selectColor = new Color(Color.black);
     }
-
-    public int getOption(){
-      return curoptn;
+    
+    public void setSize(int noOfOptions){
+      String[] temp = new String[0];
+      Image[] tempImg = new Image[0];
+      if(options != null)
+          temp = options;
+      if(optImg != null)
+          tempImg = optImg;
+      options = new String[noOfOptions];
+      optImg = new Image[noOfOptions];
+      for(int i = 0; i < options.length; i++){
+        options[i] = "";
+        optImg[i] = null;
+        if(i < temp.length)
+           options[i] = temp[i];
+        if(i < tempImg.length)
+            optImg[i] = tempImg[i];
+      }
+    }
+    
+    public void setSpacing(int number){
+        spacingy = number;
     }
     
     public void setLocation(int x, int y){
@@ -47,7 +81,7 @@ public class TestMenu{
       locy = y;
     }
     
-    public void setImage(Image theImage){
+    public void setCursorImage(Image theImage){
       cursor = theImage;
     }
     
@@ -59,15 +93,23 @@ public class TestMenu{
     public void setColor(Color base, Color selected){
       baseColor = base;
       selectColor = selected;
+    } 
+    
+    public void setOptionImage(Image image){
+      for(int i = 0; i < options.length; i++){
+        if(image != null){
+           if(optImg[i] == null){
+             optImg[i] = image;
+             return;
+           }
+        }
+      }
     }
     
-    public void setSize(int noOfOptions){
-      String[] temp = options;
-      options = new String[noOfOptions];
-      for(int i = 0; i < options.length; i++){
-        options[i] = "";
-        if(i < temp.length)
-           options[i] = temp[i];
+    public void setOptionImage(int index, Image image){
+      if(index >= 0 && index < optImg.length){
+        if(image != null)
+          optImg[index] = image;
       }
     }
     
@@ -100,48 +142,53 @@ public class TestMenu{
     }
 
     public void render(Graphics g){
+      if(cursor != null)
+        spacing = cursor.getWidth()+IMG_RIGHT_MARGIN;
+      
       //Deals with the mouse...
       for(int i = 0; i < options.length; i++){
-        if(cursor == null){
-          if(mousex >= locx && mousex <= locx+g.getFont().getWidth(options[i])){
-            if(mousey >= locy+(i*20) &&
-                   mousey <= locy+(i*20)+g.getFont().getHeight(options[i])){
-               if(curoptn != i){
-                 curoptn = i;
-                 if(menuSound != null)
-                   menuSound.play();
-               }
-             }
-          }
+          
+        //Saves space, time, and money
+        if(optImg[i] != null){
+          picSpaceX = optImg[i].getWidth();
+          picSpaceY = optImg[i].getHeight();
         }else{
-           if(mousex >= locx && mousex <= 
-                   cursor.getWidth()+5+locx+g.getFont().getWidth(options[i])){
-            if(mousey >= locy+(i*20) &&
-                   mousey <= locy+(i*20)+g.getFont().getHeight(options[i])){
+          picSpaceX = g.getFont().getWidth(options[i]);
+          picSpaceY = g.getFont().getHeight(options[i]);
+        }
+          
+        if(mousex >= locx && mousex <= spacing+locx+picSpaceX){
+            if(mousey >= locy+(i*spacingy) && mousey <= 
+                    locy+(i*spacingy)+picSpaceY){
                if(curoptn != i){
                  curoptn = i;
-                 if(menuSound != null)
-                   menuSound.play();
+                 mousex = -1;
+                 mousey = -1;
+                 playSound();
                }
              }
           } 
-        }
       }
       
       for(int i = 0; i < options.length; i++){
-        if(curoptn == i)
+        if(curoptn == i){
           g.setColor(selectColor);
-        else
+          if(optImg[i] != null)
+              g.drawImage(optImg[i], spacing+locx, 
+                      locy+(i*spacingy), selectColor);
+        }else{
           g.setColor(baseColor);
-            
-        if(cursor == null)
-          g.drawString(options[i], locx, locy+(i*20));
-        else
-          g.drawString(options[i], cursor.getWidth()+5+locx, locy+(i*20));
+          if(optImg[i] != null)
+              g.drawImage(optImg[i], spacing+locx, 
+                      locy+(i*spacingy), baseColor);
+        }
+        
+        if(optImg[i] == null)
+            g.drawString(options[i], spacing+locx, locy+(i*spacingy));
       }
         
       if(cursor != null)
-        g.drawImage(cursor, locx, (locy+(curoptn*20)));
+        g.drawImage(cursor, locx, (locy+(curoptn*spacingy)));
         
       g.setColor(baseColor);
     }
@@ -149,17 +196,20 @@ public class TestMenu{
     public void controlPressed(Command command, CWInput cwInput) {
       if (cwInput.isNextMenuItemPressed(command)) {
         moveDown();
-        if(menuSound != null)
-           menuSound.play();
+        playSound();
       } else if (cwInput.isPreviousMenuItemPressed(command)) {
         moveUp();
-        if(menuSound != null)
-           menuSound.play();
+        playSound();
       }
     }
     
-    public void mouseMoved(int mousex, int mousey){
-        this.mousex = mousex;
-        this.mousey = mousey;
+    public void mouseMoved(int newx, int newy){
+        mousex = newx;
+        mousey = newy;
+    }
+    
+    private void playSound(){
+        if(menuSound != null)
+           menuSound.play();
     }
 }
