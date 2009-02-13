@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ColorFilters [
+        <!ELEMENT ColorFilters (ColorFilter)+>
+        <!ELEMENT ColorFilter (Name , BaseColor , OriginalColors , IgnoredColors , ReplacementColor*)>
+        <!ELEMENT Name (#PCDATA)>
+        <!ELEMENT BaseColor (#PCDATA)>
+        <!ELEMENT OriginalColors (#PCDATA)>
+        <!ELEMENT IgnoredColors (#PCDATA)>
+        <!ELEMENT ReplacementColor (Name , ReplacementColors)>
+        <!ELEMENT ReplacementColors (#PCDATA)>
+        ]>
+<!-- Colors that can be used instead of their RGB values: WHITE,LIGHT_GRAY,GRAY,DARK_GRAY,BLACK,RED,PINK,ORANGE,YELLOW,GREEN,MAGENTA,CYAN,BLUE 
+For example the unit baseColor could be replaced by RED
+-->
+<ColorFilters>
+  <ColorFilter>
+    <Name>unit</Name>
+    <BaseColor>FF0000</BaseColor>
+    <OriginalColors>840010, C60000, F70008, FF5A00, FF9C6B, FFBD7B, FFFFFF</OriginalColors>
+    <IgnoredColors>0, 000000, 6B5A63, 8C7B6B, 948C84, CEBDAD, DE8452, ffde84</IgnoredColors>
+    <ReplacementColor>
+      <Name>BLUE</Name>
+      <ReplacementColors>000089, 0000BD, 0000F5, 005AFF, 699CFF, 7ABDFF, B2DCFF</ReplacementColors>
+    </ReplacementColor>
+    <ReplacementColor>
+      <Name>GREEN</Name>
+      <ReplacementColors>088048, 08A830, 10D028, 28F028, 88F880, A8E878, C4F1B7</ReplacementColors>
+    </ReplacementColor>
+    <ReplacementColor>
+      <Name>YELLOW</Name>
+      <ReplacementColors>B85060, D08000, E0A810, F0D028, F8F040, F8F8A8, F9F9C8</ReplacementColors>
+    </ReplacementColor>
+    <ReplacementColor>
+      <Name>ORANGE</Name>
+      <ReplacementColors>702B00, 702B00, CC6C00, FF7F00, FFBA60, FFD4AD, FFF3E5</ReplacementColors>
+    </ReplacementColor>
+    <ReplacementColor>
+      <Name>CYAN</Name>
+      <ReplacementColors>349496, 3EA998, 7CC7B3, 9ED4C5, C9F7EB, D1EBE2, E9F6F1</ReplacementColors>
+    </ReplacementColor>
+    <ReplacementColor>
+      <Name>PINK</Name>
+      <ReplacementColors>29107A, 3418A0, 785EC0, A95FFE, E58AFC, EEABFE, F6D2FE</ReplacementColors>
+    </ReplacementColor>
+    <ReplacementColor>
+      <Name>GRAY</Name>
+      <ReplacementColors>000000, 707070, 754848, B6B3B3, D0CECE, D9D8D8, F0F0F0</ReplacementColors>
+    </ReplacementColor>
+    <ReplacementColor>
+      <Name>BLACK</Name>
+      <ReplacementColors>502860, 605080, 707098, 989888, C0C0A8, D8E0D8, E3E8E3</ReplacementColors>
+    </ReplacementColor>
+  </ColorFilter>
+  <ColorFilter>
+    <Name>property</Name>
+    <BaseColor>RED</BaseColor>
+    <OriginalColors>605058, C904058, a04068, e06068, f8b078, e8d090</OriginalColors>
+    <IgnoredColors>0, 000000, 609890, 507018, ffffff, 835468, d8e8f8, f8f870, f8f8f8, f8e0d0</IgnoredColors>
+    <ReplacementColor>
+      <Name>BLUE</Name>
+      <ReplacementColors>484880, 6048d8, 6048d8, 6070f8, 78c8f0, 98e0f8</ReplacementColors>
+    </ReplacementColor>
+    <ReplacementColor>
+      <Name>GREEN</Name>
+      <ReplacementColors>386028, 50a050, 50a050, 40c080, 78e078, b8f880</ReplacementColors>
+    </ReplacementColor>
+    <ReplacementColor>
+      <Name>YELLOW</Name>
+      <ReplacementColors>605040, a08040, a08040, d09838, F8c028, f8e048</ReplacementColors>
+    </ReplacementColor>
+    <ReplacementColor>
+      <Name>ORANGE</Name>
+      <ReplacementColors>605058, 904058, a04068, ff6a00, f8b078, e8d090</ReplacementColors>
+    </ReplacementColor>
+    <ReplacementColor>
+      <Name>CYAN</Name>
+      <ReplacementColors>349496, 3EA9980, 7CC7B3, 9ED4C5, C9F7EB, D1EBE2</ReplacementColors>
+    </ReplacementColor>
+    <ReplacementColor>
+      <Name>PINK</Name>
+      <ReplacementColors>29107A, 3418A0, 785EC0, A95FFE, E58AFC, EEABFE</ReplacementColors>
+    </ReplacementColor>
+    <ReplacementColor>
+      <Name>GRAY</Name>
+      <ReplacementColors>706870, 606060, 908890, c0c0c0, d0d0c8, f0f0e0</ReplacementColors>
+    </ReplacementColor>
+    <ReplacementColor>
+      <Name>BLACK</Name>
+      <ReplacementColors>3d3d3d, 3c3c3c, 3f3f3f, 5a5a5a, 888888, 979797</ReplacementColors>
+    </ReplacementColor>
+  </ColorFilter>
+</ColorFilters>

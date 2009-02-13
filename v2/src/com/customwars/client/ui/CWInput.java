@@ -7,14 +7,10 @@ import org.newdawn.slick.command.InputProvider;
 import org.newdawn.slick.command.KeyControl;
 import org.newdawn.slick.command.MouseButtonControl;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 /**
- * Contains all the input Commands used in cw
- * Storing the mapping of keys into 1 object allows
- * to remap keys that active a command or to load different inputs.
+ * Contains all the input Commands used in cw(Select, Menu up,...)
+ * Storing multiple controls into 1 Command object allows
+ * to remap keys that active a command and to load input from a file.
  *
  * @author stefan
  */
@@ -27,7 +23,6 @@ public class CWInput extends InputProvider {
   // Menu commands
   private Command nextMenuItem = new BasicCommand("Next MenuItem");
   private Command previousMenuItem = new BasicCommand("Previous MenuItem");
-  private List<Command> cwCommands;
 
   /**
    * Create a new input proider which will provide abstract input descriptions
@@ -37,30 +32,24 @@ public class CWInput extends InputProvider {
    */
   public CWInput(Input input) {
     super(input);
-    cwCommands = new ArrayList<Command>();
     initDefaults();
   }
 
   private void initDefaults() {
     initGameCommands();
     initMenuCommands();
-    cwCommands.add(exit);
     bindCommand(new KeyControl(Input.KEY_ESCAPE), exit);
   }
 
   private void initGameCommands() {
-    cwCommands.add(select);
     bindCommand(new KeyControl(Input.KEY_A), select);
     bindCommand(new MouseButtonControl(Input.MOUSE_LEFT_BUTTON), select);
-    cwCommands.add(cancel);
     bindCommand(new KeyControl(Input.KEY_B), cancel);
     bindCommand(new MouseButtonControl(Input.MOUSE_RIGHT_BUTTON), cancel);
   }
 
   private void initMenuCommands() {
-    cwCommands.add(previousMenuItem);
     bindCommand(new KeyControl(Input.KEY_UP), previousMenuItem);
-    cwCommands.add(nextMenuItem);
     bindCommand(new KeyControl(Input.KEY_DOWN), nextMenuItem);
   }
 
@@ -82,9 +71,5 @@ public class CWInput extends InputProvider {
 
   public boolean isPreviousMenuItemPressed(Command command) {
     return previousMenuItem.equals(command);
-  }
-
-  public Collection<Command> getCommands() {
-    return cwCommands;
   }
 }

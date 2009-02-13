@@ -1,7 +1,6 @@
 package slick;
 
 import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.command.Command;
 import org.newdawn.slick.command.InputProviderListener;
@@ -17,15 +16,13 @@ import org.newdawn.slick.state.StateBasedGame;
  */
 public abstract class CWState extends BasicGameState implements InputProviderListener {
 
-  public void init(GameContainer container, StateBasedGame game) throws SlickException {
-  }
-
-  public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
-  }
-
   public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
   }
 
   public void controlReleased(Command command) {
+  }
+
+  public void mousePressed(int button, int x, int y) {
+
   }
 }

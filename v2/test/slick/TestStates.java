@@ -18,7 +18,7 @@ import org.newdawn.slick.state.transition.FadeInTransition;
  * input is generic and is put into cwInput
  */
 public class TestStates extends StateBasedGame implements InputProviderListener {
-  private static final int NUM_TEST_STATES = 3;
+  private static final int NUM_TEST_STATES = 4;
   private static AppGameContainer appGameContainer;
   private CWInput cwInput;
   private int startStateID;
@@ -40,10 +40,12 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
     CWState testMenuMusic = new TestMenuMusic(cwInput);
     CWState testMapRenderer = new TestMapRenderer(cwInput);
     CWState remapKeysTest = new RemapKeysTest(cwInput);
+    CWState recolorTest = new RecolorTest();
 
     addState(testMenuMusic);
     addState(testMapRenderer);
     addState(remapKeysTest);
+    addState(recolorTest);
     gotoState(startStateID);
   }
 

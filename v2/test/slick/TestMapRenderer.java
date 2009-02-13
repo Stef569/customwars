@@ -1,9 +1,9 @@
 package slick;
 
+import com.customwars.client.io.img.slick.ImageStrip;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.model.map.TileMap;
 import com.customwars.client.ui.CWInput;
-import com.customwars.client.ui.ImageStrip;
 import com.customwars.client.ui.renderer.MapRenderer;
 import com.customwars.client.ui.renderer.MiniMapRenderer;
 import com.customwars.client.ui.sprite.TileSprite;
@@ -42,7 +42,7 @@ public class TestMapRenderer extends CWState {
     mapRenderer.setTerrainStrip(terrainStrip);
     mapRenderer.addCursor("SELECT", selectCursor);
     mapRenderer.addCursor("AIM", aimCursor);
-    mapRenderer.activedCursor("SELECT");
+    mapRenderer.activeCursor("SELECT");
 
     ImageStrip miniMapTerrainStrip = new ImageStrip("res/image/miniMap.png", 4, 4);
     miniMapRenderer = new MiniMapRenderer(map);
@@ -73,13 +73,13 @@ public class TestMapRenderer extends CWState {
 
   public void keyReleased(int key, char c) {
     if (key == Input.KEY_0) {
-      mapRenderer.activedCursor("DOES_NOT_EXISTS");
+      mapRenderer.activeCursor("DOES_NOT_EXISTS");
     }
     if (key == Input.KEY_1) {
-      mapRenderer.activedCursor("AIM");
+      mapRenderer.activeCursor("AIM");
     }
     if (key == Input.KEY_2) {
-      mapRenderer.activedCursor("SELECT");
+      mapRenderer.activeCursor("SELECT");
     }
   }
 

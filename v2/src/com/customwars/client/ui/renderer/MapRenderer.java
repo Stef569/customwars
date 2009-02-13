@@ -1,10 +1,10 @@
 package com.customwars.client.ui.renderer;
 
+import com.customwars.client.io.img.slick.ImageStrip;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.model.map.TileMap;
 import com.customwars.client.model.map.gameobject.Terrain;
-import com.customwars.client.ui.ImageStrip;
 import com.customwars.client.ui.sprite.SpriteManager;
 import com.customwars.client.ui.sprite.TileSprite;
 import org.newdawn.slick.Color;
@@ -61,7 +61,7 @@ public class MapRenderer extends TileMapRenderer {
     spriteManager.addCursor(cursorName, cursorSprite);
   }
 
-  public void activedCursor(String cursorName) {
+  public void activeCursor(String cursorName) {
     spriteManager.setActiveCursor(cursorName);
   }
 

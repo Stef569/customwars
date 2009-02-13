@@ -1,9 +1,9 @@
 package com.customwars.client.ui.renderer;
 
+import com.customwars.client.io.img.slick.ImageStrip;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.model.map.TileMap;
 import com.customwars.client.model.map.gameobject.Terrain;
-import com.customwars.client.ui.ImageStrip;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
