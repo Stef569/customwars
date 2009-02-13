@@ -1,8 +1,8 @@
 package com.customwars.client.ui.sprite;
 
+import com.customwars.client.io.img.slick.ImageStrip;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.TileMap;
-import com.customwars.client.ui.ImageStrip;
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
@@ -12,7 +12,7 @@ import org.newdawn.slick.Image;
  * it will handle images that don't fit to a tile by
  * #1 translating the image up
  * #2 centering the image
- * A TiledSprite moves from one Location to another.<br/>
+ * A TiledSprite moves from one Location to another. It cannot move out of the map bounds
  */
 public class TileSprite extends Sprite {
   private TileMap map;
@@ -49,20 +49,20 @@ public class TileSprite extends Sprite {
 
   public void render(Graphics g) {
     if (super.canRenderAnim(g)) {
-      translateImageOffset(g, renderInCenter);
+      translateOffset(g, renderInCenter);
       super.render(g);
       undoTranslateOffset(g);
     }
   }
 
   /**
-   * Calculate and store the offsets, translate the graphics
+   * Calculate and store the image offsets, translate the graphics
    *
    * @param center True -> Center on the tile
-   *               False -> Images that don't fit to the tile are drawen higher,
-   *               so that the image base is equal with the tile base(Default)
+   *               Default False -> Images that don't fit to the tile are drawn higher,
+   *               so that the image base is equal with the tile base
    */
-  void translateImageOffset(Graphics g, boolean center) {
+  void translateOffset(Graphics g, boolean center) {
     Image img = anim.getCurrentFrame();
     if (img != null) {
       if (center) {
@@ -90,12 +90,12 @@ public class TileSprite extends Sprite {
   // ---------------------------------------------------------------------------
   private void setMap(TileMap map) {
     this.map = map;
-    tileSize = map.getTileSize();
+    this.tileSize = map.getTileSize();
   }
 
   /**
    * Converts newLocation to x,y coordinates and change the position of the sprite
-   * if no map is set or newLocation is not valid within the map then a warning is logged.
+   * if no map is set or newLocation is not valid within the map then the sprite won't move.
    *
    * @param newLocation the location the sprite should move to
    */
