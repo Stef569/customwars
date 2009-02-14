@@ -1,0 +1,18 @@
+#labels Featured,help,faq,setup
+=Heading1= A short guide to Checkout cw2 from google code:
+
+#1 Join us on google code, you'll need a Google Account
+#2 checkout the V2 directory using your svn client the svn url should start with
+ httpS NOTE THE S AT THE END full url 'https://customwars.googlecode.com/svn/trunk/v2'
+#3 provide google username, your personal password can be found here http://code.google.com/hosting/settings
+#4 There will be many compile errors at this time fix that by adding each jar in the lib dir.
+#5 now the code should compile
+#6 attempt to run the main method will throw 
+Exception in thread "main" java.lang.UnsatisfiedLinkError: no lwjgl in java.library.path
+	at java.lang.ClassLoader.loadLibrary(ClassLoader.java:1682)
+That's a good thing, everything compiles, only 1 more step.
+
+#7 We are using native libraries and the virtual machine needs to know where to find them.
+Add '-Djava.library.path=lib/native/natives-(your os)' to the vm parameters.
+
+You should now be greeted with a screen
