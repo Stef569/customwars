@@ -1,5 +1,5 @@
 #labels Featured,help,faq,setup
-=Heading1= A short guide to Checkout cw2 from google code:
+= A short guide to Checkout cw2 from google code =
 
 #1 Join us on google code, you'll need a Google Account
 #2 checkout the V2 directory using your svn client the svn url should start with
