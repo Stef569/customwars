@@ -3,7 +3,7 @@ package com.customwars.client.model.map;
 import com.customwars.client.model.map.gameobject.Terrain;
 
 /**
- * A Tile contains Terrains
+ * A Tile contains a Terrain
  * it can be fogged
  *
  * @author stefan

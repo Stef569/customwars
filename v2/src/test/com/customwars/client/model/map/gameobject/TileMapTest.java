@@ -1,4 +1,4 @@
-package model.map.gameobject;
+package test.com.customwars.client.model.map.gameobject;
 
 import com.customwars.client.model.map.Direction;
 import com.customwars.client.model.map.Location;
@@ -7,7 +7,7 @@ import com.customwars.client.model.map.TileMap;
 import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import testData.HardCodedGame;
+import test.testData.HardCodedGame;
 
 /**
  * Test functions in the TileMap2D class

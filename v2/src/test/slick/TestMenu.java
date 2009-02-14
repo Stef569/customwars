@@ -1,4 +1,4 @@
-package slick;
+package test.slick;
 
 import com.customwars.client.ui.CWInput;
 import org.newdawn.slick.Color;
