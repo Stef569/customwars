@@ -1,4 +1,4 @@
-package slick;
+package test.slick;
 
 import com.customwars.client.io.img.slick.ImageStrip;
 import com.customwars.client.model.map.Tile;
@@ -13,14 +13,14 @@ import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.command.Command;
 import org.newdawn.slick.state.StateBasedGame;
-import testData.HardCodedGame;
+import test.testData.HardCodedGame;
 
 /**
  * renders a hardcoded map
  *
  * @author stefan
  */
-public class TestMapRenderer extends CWState {
+public class TestMapRenderer extends com.customwars.client.ui.CWState {
   private MapRenderer mapRenderer;
   private MiniMapRenderer miniMapRenderer;
   private CWInput input;

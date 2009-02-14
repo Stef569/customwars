@@ -1,4 +1,4 @@
-package slick;
+package test.slick;
 
 import com.customwars.client.io.img.ImageLib;
 import com.customwars.client.io.img.awt.AwtImageLib;
@@ -27,7 +27,7 @@ import java.io.IOException;
  * converting to slick images
  * Deferred loading of the above+Loading bar that fits to the screen
  */
-public class RecolorTest extends CWState {
+public class RecolorTest extends com.customwars.client.ui.CWState {
   private static final String IMAGE_FILTER_FILE = "res/data/colors.xml";
   private static final String UNIT_IMG_FILTER = "unit";
   private static final String UNIT_IMG_PREFIX = "UNIT_";

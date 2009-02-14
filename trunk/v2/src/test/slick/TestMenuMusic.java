@@ -1,4 +1,4 @@
-package slick;
+package test.slick;
 
 import com.customwars.client.ui.CWInput;
 import org.newdawn.slick.GameContainer;
@@ -15,7 +15,7 @@ import org.newdawn.slick.state.StateBasedGame;
  * Shows a menu on the screen
  * when the menu is shown a sound is played
  */
-public class TestMenuMusic extends CWState {
+public class TestMenuMusic extends com.customwars.client.ui.CWState {
   private Music backgroundMusic;
   private Sound menuTickSound;
   private Image image;

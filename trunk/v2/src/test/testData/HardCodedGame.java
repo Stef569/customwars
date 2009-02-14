@@ -1,4 +1,4 @@
-package testData;
+package test.testData;
 
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.model.map.TileMap;

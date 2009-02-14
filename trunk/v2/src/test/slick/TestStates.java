@@ -1,6 +1,7 @@
-package slick;
+package test.slick;
 
 import com.customwars.client.ui.CWInput;
+import com.customwars.client.ui.CWState;
 import org.apache.log4j.BasicConfigurator;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.Color;
@@ -60,7 +61,7 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
   }
 
   public void controlReleased(Command command) {
-    CWState state = (CWState) getCurrentState();
+    com.customwars.client.ui.CWState state = (CWState) getCurrentState();
     state.controlReleased(command);
   }
 
