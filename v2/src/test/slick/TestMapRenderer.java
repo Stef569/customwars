@@ -24,6 +24,10 @@ public class TestMapRenderer extends com.customwars.client.ui.CWState {
   private MapRenderer mapRenderer;
   private MiniMapRenderer miniMapRenderer;
   private CWInput input;
+  
+  //Minor adjustment for mouseCursor...
+  private int mouseX;
+  private int mouseY;
 
   public TestMapRenderer(CWInput input) {
     this.input = input;
@@ -48,6 +52,9 @@ public class TestMapRenderer extends com.customwars.client.ui.CWState {
     miniMapRenderer = new MiniMapRenderer(map);
     miniMapRenderer.setTerrainStrip(miniMapTerrainStrip);
     miniMapRenderer.setLocation(510, 25);
+    
+    mouseX = 0;
+    mouseY = 0;
   }
 
   public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
@@ -81,10 +88,14 @@ public class TestMapRenderer extends com.customwars.client.ui.CWState {
     if (key == Input.KEY_2) {
       mapRenderer.activeCursor("SELECT");
     }
+    
+    mapRenderer.moveCursor(mouseX, mouseY);
   }
 
   public void mouseMoved(int oldx, int oldy, int newx, int newy) {
-    mapRenderer.moveCursor(newx, newy);
+      mouseX = newx;
+      mouseY = newy;
+      mapRenderer.moveCursor(newx, newy);
   }
 
   public int getID() {
