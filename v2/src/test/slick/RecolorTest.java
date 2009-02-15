@@ -196,12 +196,16 @@ public class RecolorTest extends com.customwars.client.ui.CWState {
   }
 
   public void mouseWheelMoved(int newValue) {
-    recolor(++currentColorPos);
+      recolor(currentColorPos -= (newValue/120));
   }
 
   private void recolor(int i) {
     if (i >= colors.length) {
       i = 0;
+    }
+    
+    if(i < 0){
+      i = colors.length-1;
     }
 
     currentColorPos = i;
