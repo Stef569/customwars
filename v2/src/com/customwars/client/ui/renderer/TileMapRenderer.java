@@ -4,9 +4,6 @@ import com.customwars.client.model.map.Tile;
 import com.customwars.client.model.map.TileMap;
 import com.customwars.client.model.map.gameobject.Terrain;
 import org.newdawn.slick.Graphics;
-import org.newdawn.slick.SlickException;
-
-import java.awt.Point;
 
 /**
  * Provide an easy way to render a map to the screen
@@ -14,16 +11,20 @@ import java.awt.Point;
  * @author Stefan
  */
 public abstract class TileMapRenderer {
-  private int x, y;                     // The point where we start rendering
-  int tileSize;
-  TileMap<Tile> map;
+  private int x, y;
   private boolean renderTerrain = true;
+  private TileMap<Tile> map;
+  int tileSize;
 
-  public TileMapRenderer(TileMap<Tile> map) throws SlickException {
+  public TileMapRenderer() {
+  }
+
+  public TileMapRenderer(TileMap<Tile> map) {
     setMap(map);
   }
 
-  public abstract void update(int elapsedTime);
+  public void update(int elapsedTime) {
+  }
 
   public void render(Graphics g) {
     if (map == null) return;
@@ -37,25 +38,17 @@ public abstract class TileMapRenderer {
         renderTerrain(g, terrain, t.getCol(), t.getRow(), fogged);
       }
     }
-    renderOnTop(g);
     g.translate(-x, -y);
   }
 
   public abstract void renderTerrain(Graphics g, Terrain terrain, int col, int row, boolean fogged);
 
-  public void renderOnTop(Graphics g) {
-  }
-
-  public Tile pixelsToTile(Point p) {
-    return pixelsToTile(p.x, p.y);
-  }
-
   /**
-   * Converts pixel coordinates into a Tile
+   * Converts pixel coordinates into a Tile within the map
    *
    * @param x pixel position on screen x(where x is relative to the map 0,0 coordinates)
    * @param y pixel position on screen y(where y is relative to the map 0,0 coordinates)
-   * @return The tile at the pixel location, or null if not found
+   * @return The tile at the pixel location, or null if x,y is not valid.
    */
   public Tile pixelsToTile(int x, int y) {
     if (map == null) return null;
@@ -66,9 +59,6 @@ public abstract class TileMapRenderer {
     return map.getTile(col, row);
   }
 
-  //----------------------------------------------------------------------------
-  // Setters
-  // ---------------------------------------------------------------------------
   /**
    * Sets the map to be rendered
    * if the map is null nothing is rendered
@@ -84,6 +74,9 @@ public abstract class TileMapRenderer {
     this.renderTerrain = renderTerrain;
   }
 
+  /**
+   * The location to render this tile map
+   */
   public void setLocation(int x, int y) {
     this.x = x;
     this.y = y;

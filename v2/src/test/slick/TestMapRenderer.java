@@ -5,7 +5,7 @@ import com.customwars.client.model.map.Tile;
 import com.customwars.client.model.map.TileMap;
 import com.customwars.client.ui.CWInput;
 import com.customwars.client.ui.renderer.MapRenderer;
-import com.customwars.client.ui.renderer.MiniMapRenderer;
+import com.customwars.client.ui.renderer.TerrainRenderer;
 import com.customwars.client.ui.sprite.TileSprite;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -22,9 +22,9 @@ import test.testData.HardCodedGame;
  */
 public class TestMapRenderer extends com.customwars.client.ui.CWState {
   private MapRenderer mapRenderer;
-  private MiniMapRenderer miniMapRenderer;
+  private TerrainRenderer miniMapRenderer;
   private CWInput input;
-  
+
   //Minor adjustment for mouseCursor...
   private int mouseX;
   private int mouseY;
@@ -46,13 +46,13 @@ public class TestMapRenderer extends com.customwars.client.ui.CWState {
     mapRenderer.setTerrainStrip(terrainStrip);
     mapRenderer.addCursor("SELECT", selectCursor);
     mapRenderer.addCursor("AIM", aimCursor);
-    mapRenderer.activeCursor("SELECT");
+    mapRenderer.activedCursor("SELECT");
 
     ImageStrip miniMapTerrainStrip = new ImageStrip("res/image/miniMap.png", 4, 4);
-    miniMapRenderer = new MiniMapRenderer(map);
+    miniMapRenderer = new TerrainRenderer(map);
     miniMapRenderer.setTerrainStrip(miniMapTerrainStrip);
     miniMapRenderer.setLocation(510, 25);
-    
+
     mouseX = 0;
     mouseY = 0;
   }
@@ -80,22 +80,22 @@ public class TestMapRenderer extends com.customwars.client.ui.CWState {
 
   public void keyReleased(int key, char c) {
     if (key == Input.KEY_0) {
-      mapRenderer.activeCursor("DOES_NOT_EXISTS");
+      mapRenderer.activedCursor("DOES_NOT_EXISTS");
     }
     if (key == Input.KEY_1) {
-      mapRenderer.activeCursor("AIM");
+      mapRenderer.activedCursor("AIM");
     }
     if (key == Input.KEY_2) {
-      mapRenderer.activeCursor("SELECT");
+      mapRenderer.activedCursor("SELECT");
     }
-    
+
     mapRenderer.moveCursor(mouseX, mouseY);
   }
 
   public void mouseMoved(int oldx, int oldy, int newx, int newy) {
-      mouseX = newx;
-      mouseY = newy;
-      mapRenderer.moveCursor(newx, newy);
+    mouseX = newx;
+    mouseY = newy;
+    mapRenderer.moveCursor(newx, newy);
   }
 
   public int getID() {

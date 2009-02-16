@@ -83,7 +83,7 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
 
   private void gotoState(int index) {
     enterState(index, null, new FadeInTransition(Color.black));
-    appGameContainer.setTitle(getCurrentState().getClass().toString());
+    appGameContainer.setTitle(getState(index).getClass().toString());
   }
 
   private int getNextStateID() {

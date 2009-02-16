@@ -9,6 +9,7 @@ import java.util.Map;
 
 /**
  * Handles all sprites in the game
+ * cursor, units, properties
  *
  * @author stefan
  */
@@ -25,7 +26,7 @@ public class SpriteManager {
     activeCursor.update(elapsedTime);
   }
 
-  public void renderCursor(Graphics g) {
+  public void render(Graphics g) {
     if (isCursorSet()) {
       activeCursor.render(g);
     }
