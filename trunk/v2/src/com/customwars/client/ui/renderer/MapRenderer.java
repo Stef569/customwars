@@ -4,20 +4,22 @@ import com.customwars.client.io.img.slick.ImageStrip;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.model.map.TileMap;
-import com.customwars.client.model.map.gameobject.Terrain;
 import com.customwars.client.ui.sprite.SpriteManager;
 import com.customwars.client.ui.sprite.TileSprite;
-import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
-import org.newdawn.slick.Image;
-import org.newdawn.slick.SlickException;
 
-public class MapRenderer extends TileMapRenderer {
-  private ImageStrip terrainStrip;
+import java.awt.Point;
+
+/**
+ * A map is rendered in 2 layers
+ * The terrain and the sprites on the terrain
+ */
+public class MapRenderer {
+  private TerrainRenderer terrainRenderer;
   private SpriteManager spriteManager;
 
-  public MapRenderer(TileMap<Tile> map) throws SlickException {
-    super(map);
+  public MapRenderer(TileMap<Tile> map) {
+    terrainRenderer = new TerrainRenderer(map);
     spriteManager = new SpriteManager();
   }
 
@@ -33,47 +35,40 @@ public class MapRenderer extends TileMapRenderer {
     spriteManager.update(elapsedTime);
   }
 
-  public void renderTerrain(Graphics g, Terrain terrain, int col, int row, boolean fogged) {
-    Image terrainImg = terrainStrip.getSubImage(terrain.getID());
-
-    int heightOffset = terrainImg.getHeight() - tileSize;
-    int x = col * tileSize;
-    int y = row * tileSize;
-
-    g.translate(0, -heightOffset);
-    if (fogged) {
-      g.drawImage(terrainImg, x, y, Color.lightGray);
-    } else {
-      g.drawImage(terrainImg, x, y);
-    }
-    g.translate(0, heightOffset);
-  }
-
-  public void renderOnTop(Graphics g) {
-    spriteManager.renderCursor(g);
-  }
-
-  public void setTerrainStrip(ImageStrip terrainStrip) {
-    this.terrainStrip = terrainStrip;
+  public void render(Graphics g) {
+    terrainRenderer.render(g);
+    spriteManager.render(g);
   }
 
   public void addCursorSprite(String cursorName, TileSprite cursorSprite) {
     spriteManager.addCursor(cursorName, cursorSprite);
   }
 
-  public void activeCursor(String cursorName) {
+  public void activedCursor(String cursorName) {
     spriteManager.setActiveCursor(cursorName);
+  }
+
+  public Tile pixelsToTile(Point p) {
+    return pixelsToTile(p.x, p.y);
+  }
+
+  public Tile pixelsToTile(int x, int y) {
+    return terrainRenderer.pixelsToTile(x, y);
+  }
+
+  public void addCursor(String cursorName, TileSprite cursor) {
+    spriteManager.addCursor(cursorName, cursor);
+  }
+
+  public void setTerrainStrip(ImageStrip terrainStrip) {
+    terrainRenderer.setTerrainStrip(terrainStrip);
   }
 
   public Location getCursorLocation() {
     if (spriteManager.isCursorSet()) {
       return spriteManager.getCursorLocation();
     } else {
-      return map.getTile(0, 0);
+      return null;
     }
-  }
-
-  public void addCursor(String cursorName, TileSprite cursor) {
-    spriteManager.addCursor(cursorName, cursor);
   }
 }
