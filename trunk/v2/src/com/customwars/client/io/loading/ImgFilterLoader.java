@@ -3,6 +3,7 @@ package com.customwars.client.io.loading;
 import com.customwars.client.io.img.awt.AwtImageLib;
 import com.customwars.client.io.img.awt.ImgFilter;
 import org.newdawn.slick.loading.DeferredResource;
+import org.newdawn.slick.util.ResourceLoader;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import tools.IOUtil;
@@ -45,7 +46,7 @@ public class ImgFilterLoader implements DeferredResource {
   public void load() throws IOException {
     InputStream colorStream = null;
     try {
-      colorStream = IOUtil.getResource(colorXmlPath);
+      colorStream = ResourceLoader.getResourceAsStream(colorXmlPath);
       NodeList colorNodes = Xml.parseXmlStreamToNodeList(colorStream, XML_EL_COLOR_FILTER);
       for (int i = 0; i < colorNodes.getLength(); i++) {
         Element colorElement = Xml.nodeToElement(colorNodes.item(i));

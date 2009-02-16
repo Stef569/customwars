@@ -1,8 +1,10 @@
 package test.slick;
 
+import com.customwars.client.io.loading.ModelLoader;
 import com.customwars.client.ui.CWInput;
 import com.customwars.client.ui.CWState;
-import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
@@ -12,6 +14,11 @@ import org.newdawn.slick.command.Command;
 import org.newdawn.slick.command.InputProviderListener;
 import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.state.transition.FadeInTransition;
+import org.newdawn.slick.util.ResourceLoader;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 
 /**
  * Tests a state based game by iterating over all the tests
@@ -19,14 +26,17 @@ import org.newdawn.slick.state.transition.FadeInTransition;
  * input is generic and is put into cwInput
  */
 public class TestStates extends StateBasedGame implements InputProviderListener {
+  private static final Logger logger = Logger.getLogger(TestStates.class);
   private static final int NUM_TEST_STATES = 4;
   private static AppGameContainer appGameContainer;
+  private ModelLoader modelLoader = new ModelLoader();
   private CWInput cwInput;
   private int startStateID;
 
   public TestStates() {
     super("Tests");
     startStateID = 0;
+    modelLoader.load();
   }
 
   public TestStates(int startStateID) {
@@ -88,18 +98,27 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
    */
   public static void main(String[] argv) {
     int startStateID = 0;
-
     if (argv.length > 0) {
       startStateID = Integer.parseInt(argv[0]);
     }
     try {
-      BasicConfigurator.configure();
+      loadAndApplyLoggerProperties();
+      logger.info("Starting up");
       appGameContainer = new AppGameContainer(new TestStates(startStateID));
       appGameContainer.setDisplayMode(800, 600, false);
       appGameContainer.setTargetFrameRate(60);
       appGameContainer.start();
     } catch (SlickException e) {
-      e.printStackTrace();
+      logger.fatal("", e);
+    } catch (IOException e) {
+      logger.fatal("", e);
     }
+  }
+
+  private static void loadAndApplyLoggerProperties() throws IOException {
+    Properties props = new Properties();
+    InputStream in = ResourceLoader.getResourceAsStream("res/data/config/log4j.properties");
+    props.load(in);
+    PropertyConfigurator.configure(props);
   }
 }

@@ -2,7 +2,7 @@ package com.customwars.client.io.img.awt;
 
 import org.newdawn.slick.loading.DeferredResource;
 import org.newdawn.slick.loading.LoadingList;
-import tools.IOUtil;
+import org.newdawn.slick.util.ResourceLoader;
 import tools.ImageUtil;
 
 import javax.imageio.ImageIO;
@@ -51,7 +51,7 @@ public class AwtImageLib {
    */
   private void loadImage(String awtImgPath, String imgName) throws IOException {
     if (!bufferedImgCache.containsKey(imgName)) {
-      addAwtImg(imgName, ImageIO.read(IOUtil.getImgResource(awtImgPath)));
+      addAwtImg(imgName, ImageIO.read(ResourceLoader.getResourceAsStream(awtImgPath)));
     }
   }
 

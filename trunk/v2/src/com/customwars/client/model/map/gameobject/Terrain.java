@@ -43,14 +43,13 @@ public class Terrain extends GameObject {
   }
 
   private void validateMoveCosts(Byte[] moveCosts) {
+    String usage = " use Terrain.IMPASSIBLE for max movecost and 1 for min movecost.";
     for (Byte byteVal : moveCosts) {
       if (byteVal == null) {
-        throw new IllegalArgumentException("movecosts cannot contain null in terrain " + this +
-                "use Terrain.IMPASSIBLE for max movecost and 1 for min movecost.");
+        throw new IllegalArgumentException("movecosts cannot contain null in terrain " + this + usage);
       }
       if (byteVal <= 0) {
-        throw new IllegalArgumentException("movecosts cannot contain <=0 values in terrain " + this +
-                "use Terrain.IMPASSIBLE for max movecost and 1 for min movecost.");
+        throw new IllegalArgumentException("movecosts cannot contain <=0 values in terrain " + this + usage);
       }
     }
   }
@@ -112,6 +111,6 @@ public class Terrain extends GameObject {
   }
 
   public String toString() {
-    return String.format("[ID=%s Name=%s Height=%s Defense=%s]", id, name, height, defenseBonus);
+    return String.format("[id=%s name=%s height=%s defense=%s]", id, name, height, defenseBonus);
   }
 }
