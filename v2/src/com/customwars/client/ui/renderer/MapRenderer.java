@@ -1,5 +1,6 @@
 package com.customwars.client.ui.renderer;
 
+import com.customwars.client.io.ResourceManager;
 import com.customwars.client.io.img.slick.ImageStrip;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Tile;
@@ -21,6 +22,10 @@ public class MapRenderer {
   public MapRenderer(TileMap<Tile> map) {
     terrainRenderer = new TerrainRenderer(map);
     spriteManager = new SpriteManager();
+  }
+
+  public void loadResources(ResourceManager resources) {
+
   }
 
   public void moveCursor(int x, int y) {
