@@ -1,5 +1,7 @@
 package test.slick;
 
+import com.customwars.client.io.ResourceManager;
+import com.customwars.client.io.img.ImageLib;
 import com.customwars.client.io.img.slick.ImageStrip;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.model.map.TileMap;
@@ -7,6 +9,7 @@ import com.customwars.client.ui.CWInput;
 import com.customwars.client.ui.renderer.MapRenderer;
 import com.customwars.client.ui.renderer.TerrainRenderer;
 import com.customwars.client.ui.sprite.TileSprite;
+import org.apache.log4j.Logger;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
@@ -15,12 +18,15 @@ import org.newdawn.slick.command.Command;
 import org.newdawn.slick.state.StateBasedGame;
 import test.testData.HardCodedGame;
 
+import java.io.IOException;
+
 /**
  * renders a hardcoded map
  *
  * @author stefan
  */
 public class TestMapRenderer extends com.customwars.client.ui.CWState {
+  private static final Logger logger = Logger.getLogger(TestMapRenderer.class);
   private MapRenderer mapRenderer;
   private TerrainRenderer miniMapRenderer;
   private CWInput input;
@@ -34,21 +40,31 @@ public class TestMapRenderer extends com.customwars.client.ui.CWState {
   }
 
   public void init(GameContainer container, StateBasedGame game) throws SlickException {
-    TileMap<Tile> map = HardCodedGame.getMap();
-    ImageStrip terrainStrip = new ImageStrip("res/image/awTerrains.png", map.getTileSize(), 42);
+    ImageLib imageLib = new ImageLib();
+    ResourceManager resources = new ResourceManager(imageLib);
 
-    ImageStrip cursor1 = new ImageStrip("res/image/selectCursor.png", 48, 48);
+    try {
+      resources.loadImages();
+    } catch (IOException e) {
+      logger.fatal(e);
+    }
+
+    TileMap<Tile> map = HardCodedGame.getMap();
+    ImageStrip terrainStrip = imageLib.getSlickImgStrip("terrains");
+    ImageStrip cursor1 = imageLib.getSlickImgStrip("selectCursor");
+    ImageStrip cursor2 = imageLib.getSlickImgStrip("aimCursor");
+
     TileSprite selectCursor = new TileSprite(cursor1, 250, map.getRandomTile(), map);
-    ImageStrip cursor2 = new ImageStrip("res/image/aimcursor0.png", 54, 54);
     TileSprite aimCursor = new TileSprite(cursor2, map.getRandomTile(), map);
 
     mapRenderer = new MapRenderer(map);
+    mapRenderer.loadResources(resources);
     mapRenderer.setTerrainStrip(terrainStrip);
     mapRenderer.addCursor("SELECT", selectCursor);
     mapRenderer.addCursor("AIM", aimCursor);
     mapRenderer.activedCursor("SELECT");
 
-    ImageStrip miniMapTerrainStrip = new ImageStrip("res/image/miniMap.png", 4, 4);
+    ImageStrip miniMapTerrainStrip = imageLib.getSlickImgStrip("miniMap");
     miniMapRenderer = new TerrainRenderer(map);
     miniMapRenderer.setTerrainStrip(miniMapTerrainStrip);
     miniMapRenderer.setLocation(510, 25);

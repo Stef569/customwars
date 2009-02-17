@@ -35,6 +35,14 @@ public class ImageLib {
     SlickImageFactory.setImageLib(awtImageLib);
   }
 
+  public ImageLib() {
+    this(new AwtImageLib());
+  }
+
+  public void loadAwtImg(String imgName, String imgPath) {
+    awtImageLib.loadImg(imgPath, imgName);
+  }
+
   public void loadSlickImage(String imgName) {
     loadSlickImage(imgName, imgName);
   }
@@ -113,7 +121,6 @@ public class ImageLib {
     return originalString;
   }
 
-
   public boolean isSlickImgLoaded(String slickImgName) {
     return slickImgCache.containsKey(slickImgName);
   }
@@ -139,5 +146,9 @@ public class ImageLib {
 
   public Color getBaseColor(String filterName) {
     return awtImageLib.getBaseColor(filterName);
+  }
+
+  public void buildColorsFromImgFilters() {
+    awtImageLib.buildColorsFromImgFilters();
   }
 }
