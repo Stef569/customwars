@@ -1,6 +1,7 @@
 package test.slick;
 
 import com.customwars.client.ui.CWInput;
+import com.customwars.client.ui.PopUpMenu;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
@@ -13,20 +14,18 @@ import org.newdawn.slick.state.StateBasedGame;
 
 /**
  * Shows a menu on the screen
- * when the menu is shown a sound is played
+ * when the mouse hovers over the menu items a sound is played
  */
 public class TestMenuMusic extends com.customwars.client.ui.CWState {
   private Music backgroundMusic;
   private Sound menuTickSound;
   private Image image;
-  private Image cursor;
-  private int option;
   private CWInput cwInput;
-  private TestMenu testmenu;
+  private PopUpMenu testmenu;
 
   public TestMenuMusic(CWInput cwInput) {
     this.cwInput = cwInput;
-    testmenu = new TestMenu(3);
+    testmenu = new PopUpMenu();
     testmenu.setLocation(80, 100);
   }
 
@@ -37,14 +36,14 @@ public class TestMenuMusic extends com.customwars.client.ui.CWState {
     backgroundMusic.loop();
 
     image = new Image("res/image/cliff.gif");
-    cursor = new Image("res/image/white.png");
-    testmenu.setOptionName("Option 1");
-    testmenu.setOptionName("Option 2");
-    testmenu.setOptionName("Option 3");
+    Image cursor = new Image("res/image/white.png");
+    testmenu.addOption("Option 1");
+    testmenu.addOption("Option 2");
+    testmenu.addOption("Option 3");
     testmenu.setCursorImage(cursor);
-    //Uncomment to test images on menu
-    //testmenu.setOptionImage(2, image);
     testmenu.setSound(menuTickSound);
+    //testmenu.setVerticalMargin(50);   // uncomment to show 50px vertical margin
+    //testmenu.addOptionImage(image);   // Uncomment to test 4th menu option as image
   }
 
   public void render(GameContainer gameContainer, StateBasedGame stateBasedGame, Graphics g) throws SlickException {
