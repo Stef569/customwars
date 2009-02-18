@@ -12,6 +12,8 @@ import org.newdawn.slick.state.StateBasedGame;
  * each state can listen for input commands(Select, Cancel, menuUp,menuDown etc)
  * by implementing controlPressed(Command command)
  *
+ * We extend BasicGameState to add cw specific functionality.
+ *
  * @author stefan
  */
 public abstract class CWState extends BasicGameState implements InputProviderListener {
@@ -20,9 +22,5 @@ public abstract class CWState extends BasicGameState implements InputProviderLis
   }
 
   public void controlReleased(Command command) {
-  }
-
-  public void mousePressed(int button, int x, int y) {
-
   }
 }
