@@ -1,12 +1,15 @@
 package test.slick;
 
+import com.customwars.client.io.loading.ModelLoader;
 import com.customwars.client.ui.state.CWInput;
 import com.customwars.client.ui.state.CWState;
+import com.customwars.client.ui.state.StateLogic;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.command.Command;
@@ -28,12 +31,14 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
   private static final Logger logger = Logger.getLogger(TestStates.class);
   private static final int NUM_TEST_STATES = 4;
   private static AppGameContainer appGameContainer;
+  private ModelLoader modelLoader = new ModelLoader();
   private CWInput cwInput;
   private int startStateID;
 
   public TestStates() {
     super("Tests");
     startStateID = 0;
+    modelLoader.load();
   }
 
   public TestStates(int startStateID) {
@@ -44,6 +49,7 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
   public void initStatesList(GameContainer gameContainer) throws SlickException {
     cwInput = new CWInput(appGameContainer.getInput());
     cwInput.addListener(this);
+    
 
     CWState testMenuMusic = new TestMenuMusic(cwInput);
     CWState testMapRenderer = new TestMapRenderer(cwInput);
@@ -55,27 +61,46 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
     addState(remapKeysTest);
     addState(recolorTest);
     gotoState(startStateID);
+    
   }
 
+  
+  
   // Delegate Command Press/releases to the current state
   public void controlPressed(Command command) {
     if (cwInput.isExitPressed(command)) {
       appGameContainer.exit();
     }
 
+    //works okay for button presses
     CWState state = (CWState) getCurrentState();
+    state.init(this, appGameContainer);
+    state.changeGameState(state.setState());
     state.controlPressed(command);
+    
   }
 
   public void controlReleased(Command command) {
-    CWState state = (CWState) getCurrentState();
+    com.customwars.client.ui.CWState state = (CWState) getCurrentState();
     state.controlReleased(command);
+  }
+  
+  public void update(GameContainer gcontainer, Graphics g){
   }
 
   public void keyPressed(int key, char c) {
     if (key == Input.KEY_SPACE) {
       gotoState(getNextStateID());
     }
+    
+    if (key == Input.KEY_ENTER) {
+      gotoState(0);
+    }
+    
+    //works okay for key presses
+    CWState state = (CWState) getCurrentState();
+    state.init(this, appGameContainer);
+    state.changeGameState(state.setState());
   }
 
   private void gotoState(int index) {
