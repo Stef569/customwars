@@ -38,7 +38,7 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
   public TestStates() {
     super("Tests");
     startStateID = 0;
-    modelLoader.load();
+    modelLoader.loadModel();
   }
 
   public TestStates(int startStateID) {
@@ -81,7 +81,7 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
   }
 
   public void controlReleased(Command command) {
-    com.customwars.client.ui.CWState state = (CWState) getCurrentState();
+    CWState state = (CWState) getCurrentState();
     state.controlReleased(command);
   }
   

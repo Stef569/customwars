@@ -162,10 +162,11 @@ public class PopUpMenu {
     }
   }
 
-  public void controlPressed(Command command, CWInput cwInput) {
-    if (cwInput.isNextMenuItemPressed(command)) {
+  public void controlPressed(Command command, 
+          com.customwars.client.ui.state.CWInput cwInput) {
+    if (cwInput.isDownPressed(command)) {
       moveDown();
-    } else if (cwInput.isPreviousMenuItemPressed(command)) {
+    } else if (cwInput.isUpPressed(command)) {
       moveUp();
     }
   }
