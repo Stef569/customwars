@@ -1,5 +1,6 @@
 package com.customwars.client.ui.state;
 
+import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.command.Command;
@@ -18,9 +19,27 @@ import org.newdawn.slick.state.StateBasedGame;
  */
 public abstract class CWState extends BasicGameState implements InputProviderListener {
 
+  private StateLogic statelogic = new StateLogic();
+    
   public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
   }
 
   public void controlReleased(Command command) {
+  }
+  
+  //initializes the statelogic class (no overhead)
+  public void init(StateBasedGame game, AppGameContainer container){
+      statelogic.initialize(game, container);
+  }
+  
+  //changes a game state (no overhead)
+  public void changeGameState(int index){
+      statelogic.changeGameState(index);
+  }
+  
+  //Overwrite function below to change states
+  //numbers < 0 == remain on current state...
+  public int setState(){
+      return -1;
   }
 }

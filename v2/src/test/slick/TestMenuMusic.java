@@ -1,8 +1,7 @@
 package test.slick;
 
-import com.customwars.client.ui.PopUpMenu;
 import com.customwars.client.ui.state.CWInput;
-import com.customwars.client.ui.state.CWState;
+import com.customwars.client.ui.PopUpMenu;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
@@ -17,7 +16,7 @@ import org.newdawn.slick.state.StateBasedGame;
  * Shows a menu on the screen
  * when the mouse hovers over the menu items a sound is played
  */
-public class TestMenuMusic extends CWState {
+public class TestMenuMusic extends com.customwars.client.ui.CWState {
   private Music backgroundMusic;
   private Sound menuTickSound;
   private Image image;
@@ -38,9 +37,9 @@ public class TestMenuMusic extends CWState {
 
     image = new Image("res/image/cliff.gif");
     Image cursor = new Image("res/image/white.png");
-    testmenu.addOption("Option 1");
-    testmenu.addOption("Option 2");
-    testmenu.addOption("Option 3");
+    testmenu.addOption("Option 1: Test Map Terrain");
+    testmenu.addOption("Option 2: Key Input Change (Under Construction)");
+    testmenu.addOption("Option 3: Spritesheets");
     testmenu.setCursorImage(cursor);
     testmenu.setSound(menuTickSound);
     //testmenu.setVerticalMargin(50);   // uncomment to show 50px vertical margin
@@ -49,6 +48,7 @@ public class TestMenuMusic extends CWState {
 
   public void render(GameContainer gameContainer, StateBasedGame stateBasedGame, Graphics g) throws SlickException {
     g.drawImage(image, 0, 0);
+    g.drawString("ENTER: TO GO BACK TO MENU", 400, 80);
     g.drawString("Now in Test Menu and Music state", 80, 80);
     testmenu.render(g);
   }
@@ -71,6 +71,10 @@ public class TestMenuMusic extends CWState {
 
   public void mouseMoved(int oldx, int oldy, int newx, int newy) {
     testmenu.mouseMoved(newx, newy);
+  }
+  
+  public int setState(){
+      return testmenu.getOption()+1;
   }
 
   public int getID() {
