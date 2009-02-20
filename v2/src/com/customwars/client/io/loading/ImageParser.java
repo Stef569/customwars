@@ -18,7 +18,7 @@ import java.util.StringTokenizer;
  *
  * @author stefan
  */
-public class ImageConfigParser {
+public class ImageParser {
   private final static Character SINGLE_IMAGE_SYMBOL = 'o';
   private final static Character STRIP_IMAGE_SYMBOL = 's';
   private final static Character MATRIX_IMAGE_SYMBOL = 'm';
@@ -26,7 +26,7 @@ public class ImageConfigParser {
 
   private ImageLib imageLib;
 
-  public ImageConfigParser(ImageLib imageLib) {
+  public ImageParser(ImageLib imageLib) {
     this.imageLib = imageLib;
   }
 

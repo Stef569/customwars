@@ -1,8 +1,7 @@
 package test.slick;
 
-import com.customwars.client.io.loading.ModelLoader;
-import com.customwars.client.ui.CWInput;
-import com.customwars.client.ui.CWState;
+import com.customwars.client.ui.state.CWInput;
+import com.customwars.client.ui.state.CWState;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.newdawn.slick.AppGameContainer;
@@ -29,14 +28,12 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
   private static final Logger logger = Logger.getLogger(TestStates.class);
   private static final int NUM_TEST_STATES = 4;
   private static AppGameContainer appGameContainer;
-  private ModelLoader modelLoader = new ModelLoader();
   private CWInput cwInput;
   private int startStateID;
 
   public TestStates() {
     super("Tests");
     startStateID = 0;
-    modelLoader.load();
   }
 
   public TestStates(int startStateID) {
@@ -71,7 +68,7 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
   }
 
   public void controlReleased(Command command) {
-    com.customwars.client.ui.CWState state = (CWState) getCurrentState();
+    CWState state = (CWState) getCurrentState();
     state.controlReleased(command);
   }
 

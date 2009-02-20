@@ -1,0 +1,41 @@
+<list>
+  <weapon name="SMG" id="0">
+    <price>100</price>
+    <minRange>1</minRange>
+    <maxRange>1</maxRange>
+    <description>For close Combat</description>
+  </weapon>
+  <weapon name="BAZOOKA" id="1">
+    <price>100</price>
+    <minRange>1</minRange>
+    <maxRange>1</maxRange>
+    <maxAmmo>7</maxAmmo>
+    <description>For taking out tanks in close Combat</description>
+  </weapon>
+  <weapon name="TANK_MACHIN_GUN" id="2">
+    <price>100</price>
+    <minRange>1</minRange>
+    <maxRange>1</maxRange>
+    <description>For tank fighting in close Combat</description>
+  </weapon>
+  <weapon name="CANNON" id="3">
+    <price>100</price>
+    <minRange>2</minRange>
+    <maxRange>5</maxRange>
+    <maxAmmo>5</maxAmmo>
+    <description>Can be used on Medium Tanks</description>
+  </weapon>
+  <weapon name="ANTI_AIR" id="4">
+    <price>100</price>
+    <minRange>1</minRange>
+    <maxRange>1</maxRange>
+    <description>Shoot airplanes out of the sky</description>
+  </weapon>
+  <weapon name="ROCKETS" id="5">
+    <price>100</price>
+    <minRange>3</minRange>
+    <maxRange>5</maxRange>
+    <maxAmmo>5</maxAmmo>
+    <description>none</description>
+  </weapon>
+</list>

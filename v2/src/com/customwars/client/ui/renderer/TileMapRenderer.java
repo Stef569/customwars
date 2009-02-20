@@ -1,8 +1,8 @@
 package com.customwars.client.ui.renderer;
 
+import com.customwars.client.model.gameobject.Terrain;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.model.map.TileMap;
-import com.customwars.client.model.map.gameobject.Terrain;
 import org.newdawn.slick.Graphics;
 
 /**

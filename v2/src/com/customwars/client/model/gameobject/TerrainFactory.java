@@ -1,4 +1,4 @@
-package com.customwars.client.model.map.gameobject;
+package com.customwars.client.model.gameobject;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -19,12 +19,13 @@ public class TerrainFactory {
   }
 
   /**
-   * @param terrain The terrain to add to the cache, use the terrain ID as key
+   * @param terrain The terrain to add to the cache, using the terrain ID as key
    */
   public static void addTerrain(Terrain terrain) {
+    terrain.init();
     int terrainID = terrain.getID();
     if (terrains.containsKey(terrainID)) {
-      throw new IllegalArgumentException("TerrainID " + terrainID + " is already used by " + terrains.get(terrainID));
+      throw new IllegalArgumentException("Terrain ID " + terrainID + " is already used by " + terrains.get(terrainID));
     }
     terrains.put(terrainID, terrain);
   }

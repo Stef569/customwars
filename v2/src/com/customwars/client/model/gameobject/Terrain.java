@@ -1,6 +1,7 @@
-package com.customwars.client.model.map.gameobject;
+package com.customwars.client.model.gameobject;
 
-import java.util.Arrays;
+import tools.Args;
+
 import java.util.List;
 
 /**
@@ -9,16 +10,19 @@ import java.util.List;
  * Each moveType ID which is just the index in the array has a movecost value.
  * See {@link #canBeTraverseBy(int)} and {@link #getMoveCost(int)}
  *
+ * Some terrains remain hidden even within the los of other objects.
+ *
  * @author stefan
  */
 public class Terrain extends GameObject {
-  public static final byte IMPASSIBLE = Byte.MAX_VALUE;
+  public static final int IMPASSIBLE = Byte.MAX_VALUE;
+  public static final int MIN_MOVE_COST = 1;
   private int id;
   private String name;
   private String description;
-  private byte defenseBonus;
-  private byte height;
-  private List<Byte> moveCosts;
+  private int defenseBonus;
+  private int height;
+  private List<Integer> moveCosts;
   private boolean hidden;
 
   /**
@@ -27,30 +31,38 @@ public class Terrain extends GameObject {
    * @param description  long description ie 'provides good cover for ground units'
    * @param defenseBonus The defense bonus used in attack calculations, forrest offer better protection then plain.
    * @param height       Height of this terrain ie ocean is lower then a Mountain
+   * @param hidden       is this terrain hidden within a moveZone
    * @param moveCosts    The cost to move over this terrain for each movementType, starts at 1(no cost) to 127(Impassible)
    *                     The movementType is used as index to retrieve the moveCost from the moveCosts array
-   * @param hidden       is this terrain hidden within a moveZone
    */
-  public Terrain(int id, String name, String description, byte defenseBonus, byte height, boolean hidden, Byte[] moveCosts) {
+  public Terrain(int id, String name, String description, int defenseBonus, int height, boolean hidden, List<Integer> moveCosts) {
+    super(GameObjectState.IDLE);
     this.id = id;
     this.name = name;
     this.description = description;
     this.defenseBonus = defenseBonus;
     this.height = height;
     this.hidden = hidden;
-    this.moveCosts = Arrays.asList(moveCosts);
-    validateMoveCosts(moveCosts);
+    this.moveCosts = moveCosts;
+    init();
   }
 
-  private void validateMoveCosts(Byte[] moveCosts) {
-    String usage = " use Terrain.IMPASSIBLE for max movecost and 1 for min movecost.";
-    for (Byte byteVal : moveCosts) {
-      if (byteVal == null) {
-        throw new IllegalArgumentException("movecosts cannot contain null in terrain " + this + usage);
-      }
-      if (byteVal <= 0) {
-        throw new IllegalArgumentException("movecosts cannot contain <=0 values in terrain " + this + usage);
-      }
+  void init() {
+    Args.checkForContent(name, "Name is required");
+    Args.checkForNull(moveCosts, "move costs are required for " + name);
+    for (int moveCost : moveCosts)
+      validateMoveCost(moveCost);
+
+    if (description == null) description = "";
+  }
+
+  private void validateMoveCost(int moveCosts) {
+    String usage = " use " + IMPASSIBLE + " for max movecost and " + MIN_MOVE_COST + " for min movecost.";
+    if (moveCosts < MIN_MOVE_COST) {
+      throw new IllegalArgumentException("movecost " + moveCosts + " is <" + MIN_MOVE_COST + " in terrain " + this + usage);
+    }
+    if (moveCosts > IMPASSIBLE) {
+      throw new IllegalArgumentException("movecost " + moveCosts + " is >" + IMPASSIBLE + " in terrain " + this + usage);
     }
   }
 
@@ -60,6 +72,7 @@ public class Terrain extends GameObject {
    * @param otherTerrain The Terrain to copy
    */
   Terrain(Terrain otherTerrain) {
+    super(otherTerrain);
     this.id = otherTerrain.id;
     this.name = otherTerrain.name;
     this.description = otherTerrain.description;
@@ -81,7 +94,7 @@ public class Terrain extends GameObject {
     return description;
   }
 
-  public byte getDefenseBonus() {
+  public int getDefenseBonus() {
     return defenseBonus;
   }
 
@@ -106,7 +119,7 @@ public class Terrain extends GameObject {
    *
    * @return The cost for moving over this terrain for a movementType
    */
-  public byte getMoveCost(int movementType) {
+  public int getMoveCost(int movementType) {
     return moveCosts.get(movementType);
   }
 

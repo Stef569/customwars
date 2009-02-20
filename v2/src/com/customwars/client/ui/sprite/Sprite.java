@@ -69,10 +69,7 @@ public class Sprite {
   public void update(long elapsedTime) {
     locX += dx * elapsedTime / ONE_SECOND;
     locY += dy * elapsedTime / ONE_SECOND;
-
-    if (anim != null) {
-      anim.update(elapsedTime);
-    }
+    if (anim != null) anim.update(elapsedTime);
   }
 
   /**

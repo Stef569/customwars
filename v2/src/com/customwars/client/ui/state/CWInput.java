@@ -1,4 +1,4 @@
-package com.customwars.client.ui;
+package com.customwars.client.ui.state;
 
 import org.newdawn.slick.Input;
 import org.newdawn.slick.command.BasicCommand;
@@ -15,14 +15,13 @@ import org.newdawn.slick.command.MouseButtonControl;
  * @author stefan
  */
 public class CWInput extends InputProvider {
-  /// Game commands
   private Command select = new BasicCommand("Select");
   private Command cancel = new BasicCommand("Cancel");
   private Command exit = new BasicCommand("Exit");
-
-  // Menu commands
-  private Command nextMenuItem = new BasicCommand("Next MenuItem");
-  private Command previousMenuItem = new BasicCommand("Previous MenuItem");
+  private Command down = new BasicCommand("Up");
+  private Command up = new BasicCommand("Down");
+  private Command left = new BasicCommand("Left");
+  private Command right = new BasicCommand("Right");
 
   /**
    * Create a new input proider which will provide abstract input descriptions
@@ -37,8 +36,7 @@ public class CWInput extends InputProvider {
 
   private void initDefaults() {
     initGameCommands();
-    initMenuCommands();
-    bindCommand(new KeyControl(Input.KEY_ESCAPE), exit);
+    initMoveCommands();
   }
 
   private void initGameCommands() {
@@ -46,11 +44,14 @@ public class CWInput extends InputProvider {
     bindCommand(new MouseButtonControl(Input.MOUSE_LEFT_BUTTON), select);
     bindCommand(new KeyControl(Input.KEY_B), cancel);
     bindCommand(new MouseButtonControl(Input.MOUSE_RIGHT_BUTTON), cancel);
+    bindCommand(new KeyControl(Input.KEY_ESCAPE), exit);
   }
 
-  private void initMenuCommands() {
-    bindCommand(new KeyControl(Input.KEY_UP), previousMenuItem);
-    bindCommand(new KeyControl(Input.KEY_DOWN), nextMenuItem);
+  private void initMoveCommands() {
+    bindCommand(new KeyControl(Input.KEY_UP), up);
+    bindCommand(new KeyControl(Input.KEY_DOWN), down);
+    bindCommand(new KeyControl(Input.KEY_LEFT), left);
+    bindCommand(new KeyControl(Input.KEY_RIGHT), right);
   }
 
   public boolean isSelectPressed(Command command) {
@@ -65,11 +66,19 @@ public class CWInput extends InputProvider {
     return exit.equals(command);
   }
 
-  public boolean isNextMenuItemPressed(Command command) {
-    return nextMenuItem.equals(command);
+  public boolean isUpPressed(Command command) {
+    return up.equals(command);
   }
 
-  public boolean isPreviousMenuItemPressed(Command command) {
-    return previousMenuItem.equals(command);
+  public boolean isDownPressed(Command command) {
+    return down.equals(command);
+  }
+
+  public boolean isLeftPressed(Command command) {
+    return left.equals(command);
+  }
+
+  public boolean isRightPressed(Command command) {
+    return right.equals(command);
   }
 }

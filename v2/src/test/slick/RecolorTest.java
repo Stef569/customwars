@@ -4,7 +4,8 @@ import com.customwars.client.io.img.ImageLib;
 import com.customwars.client.io.img.awt.AwtImageLib;
 import com.customwars.client.io.img.slick.ImageStrip;
 import com.customwars.client.io.img.slick.SpriteSheet;
-import com.customwars.client.io.loading.ImgFilterLoader;
+import com.customwars.client.io.loading.ImageFilterParser;
+import com.customwars.client.ui.state.CWState;
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -15,10 +16,12 @@ import org.newdawn.slick.loading.DeferredResource;
 import org.newdawn.slick.loading.LoadingList;
 import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.util.Log;
+import org.newdawn.slick.util.ResourceLoader;
 import tools.ColorUtil;
 
 import java.awt.Color;
 import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Tests:
@@ -27,7 +30,7 @@ import java.io.IOException;
  * converting to slick images
  * Deferred loading of the above+Loading bar that fits to the screen
  */
-public class RecolorTest extends com.customwars.client.ui.CWState {
+public class RecolorTest extends CWState {
   private static final String IMAGE_FILTER_FILE = "res/data/colors.xml";
   private static final String UNIT_IMG_FILTER = "unit";
   private static final String UNIT_IMG_PREFIX = "UNIT_";
@@ -90,9 +93,10 @@ public class RecolorTest extends com.customwars.client.ui.CWState {
   }
 
   private void loadImgFilters(AwtImageLib awtImgLib) {
-    ImgFilterLoader imgFilterLoader = new ImgFilterLoader(IMAGE_FILTER_FILE);
+    ImageFilterParser imgFilterParser = new ImageFilterParser();
+    InputStream in = ResourceLoader.getResourceAsStream(IMAGE_FILTER_FILE);
     try {
-      imgFilterLoader.load();
+      imgFilterParser.loadConfigFile(in);
     } catch (IOException e) {
       Log.error("Could not load img filter", e);
     }
@@ -196,16 +200,16 @@ public class RecolorTest extends com.customwars.client.ui.CWState {
   }
 
   public void mouseWheelMoved(int newValue) {
-      recolor(currentColorPos -= (newValue/120));
+    recolor(currentColorPos -= (newValue / 120));
   }
 
   private void recolor(int i) {
     if (i >= colors.length) {
       i = 0;
     }
-    
-    if(i < 0){
-      i = colors.length-1;
+
+    if (i < 0) {
+      i = colors.length - 1;
     }
 
     currentColorPos = i;

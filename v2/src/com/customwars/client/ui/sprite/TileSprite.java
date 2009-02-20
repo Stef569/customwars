@@ -1,6 +1,7 @@
 package com.customwars.client.ui.sprite;
 
 import com.customwars.client.io.img.slick.ImageStrip;
+import com.customwars.client.model.gameobject.Locatable;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.TileMap;
 import org.newdawn.slick.Animation;
@@ -14,7 +15,7 @@ import org.newdawn.slick.Image;
  * #2 centering the image
  * A TiledSprite moves from one Location to another. It cannot move out of the map bounds
  */
-public class TileSprite extends Sprite {
+public class TileSprite extends Sprite implements Locatable {
   private TileMap map;
   private int tileSize;
   protected Location location;

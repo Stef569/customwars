@@ -1,6 +1,7 @@
 package test.slick;
 
-import com.customwars.client.ui.CWInput;
+import com.customwars.client.ui.state.CWInput;
+import com.customwars.client.ui.state.CWState;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
@@ -21,7 +22,7 @@ import java.util.List;
  *
  * @author stefan
  */
-public class RemapKeysTest extends com.customwars.client.ui.CWState {
+public class RemapKeysTest extends CWState {
   private CWInput input;
   private List<TextField> fields = new ArrayList<TextField>();
 
