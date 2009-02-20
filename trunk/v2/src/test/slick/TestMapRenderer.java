@@ -3,12 +3,14 @@ package test.slick;
 import com.customwars.client.io.ResourceManager;
 import com.customwars.client.io.img.ImageLib;
 import com.customwars.client.io.img.slick.ImageStrip;
+import com.customwars.client.model.map.Direction;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.model.map.TileMap;
-import com.customwars.client.ui.CWInput;
 import com.customwars.client.ui.renderer.MapRenderer;
 import com.customwars.client.ui.renderer.TerrainRenderer;
 import com.customwars.client.ui.sprite.TileSprite;
+import com.customwars.client.ui.state.CWInput;
+import com.customwars.client.ui.state.CWState;
 import org.apache.log4j.Logger;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -25,15 +27,11 @@ import java.io.IOException;
  *
  * @author stefan
  */
-public class TestMapRenderer extends com.customwars.client.ui.CWState {
+public class TestMapRenderer extends CWState {
   private static final Logger logger = Logger.getLogger(TestMapRenderer.class);
   private MapRenderer mapRenderer;
   private TerrainRenderer miniMapRenderer;
   private CWInput input;
-
-  //Minor adjustment for mouseCursor...
-  private int mouseX;
-  private int mouseY;
 
   public TestMapRenderer(CWInput input) {
     this.input = input;
@@ -42,6 +40,8 @@ public class TestMapRenderer extends com.customwars.client.ui.CWState {
   public void init(GameContainer container, StateBasedGame game) throws SlickException {
     ImageLib imageLib = new ImageLib();
     ResourceManager resources = new ResourceManager(imageLib);
+    resources.setDataPath("res/data/");
+    resources.setImgPath("res/image/");
 
     try {
       resources.loadImages();
@@ -68,9 +68,6 @@ public class TestMapRenderer extends com.customwars.client.ui.CWState {
     miniMapRenderer = new TerrainRenderer(map);
     miniMapRenderer.setTerrainStrip(miniMapTerrainStrip);
     miniMapRenderer.setLocation(510, 25);
-
-    mouseX = 0;
-    mouseY = 0;
   }
 
   public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
@@ -86,12 +83,25 @@ public class TestMapRenderer extends com.customwars.client.ui.CWState {
   }
 
   public void controlPressed(Command command) {
+    moveCursor(command);
     if (input.isSelectPressed(command)) {
       System.out.println("Clicked on " + mapRenderer.getCursorLocation());
     }
   }
 
-  public void controlReleased(Command command) {
+  private void moveCursor(Command command) {
+    if (input.isUpPressed(command)) {
+      mapRenderer.moveCursor(Direction.NORTH);
+    }
+    if (input.isDownPressed(command)) {
+      mapRenderer.moveCursor(Direction.SOUTH);
+    }
+    if (input.isLeftPressed(command)) {
+      mapRenderer.moveCursor(Direction.WEST);
+    }
+    if (input.isRightPressed(command)) {
+      mapRenderer.moveCursor(Direction.EAST);
+    }
   }
 
   public void keyReleased(int key, char c) {
@@ -104,13 +114,9 @@ public class TestMapRenderer extends com.customwars.client.ui.CWState {
     if (key == Input.KEY_2) {
       mapRenderer.activedCursor("SELECT");
     }
-
-    mapRenderer.moveCursor(mouseX, mouseY);
   }
 
   public void mouseMoved(int oldx, int oldy, int newx, int newy) {
-    mouseX = newx;
-    mouseY = newy;
     mapRenderer.moveCursor(newx, newy);
   }
 

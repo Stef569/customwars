@@ -1,10 +1,12 @@
 package test.com.customwars.client.model.map.gameobject;
 
-import com.customwars.client.model.map.gameobject.Terrain;
+import com.customwars.client.model.gameobject.Terrain;
 import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import test.testData.HardCodedGame;
+
+import java.util.List;
 
 /**
  * Test the 2 methods in Terrain
@@ -41,8 +43,8 @@ public class TerrainTest {
 
   @Test
   public void testInfMoveCost() {
-    Byte[] plainMoveCosts = HardCodedGame.plainMoveCosts;
-    int infMoveCost = plainMoveCosts[HardCodedGame.MOVE_INF];
+    List<Integer> plainMoveCosts = HardCodedGame.plainMoveCosts;
+    int infMoveCost = plainMoveCosts.get(HardCodedGame.MOVE_INF);
     Assert.assertEquals(infMoveCost, plain.getMoveCost(HardCodedGame.MOVE_INF));
   }
 }

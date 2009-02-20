@@ -1,5 +1,8 @@
 package com.customwars.client.model.map;
 
+import com.customwars.client.model.gameobject.GameObject;
+import com.customwars.client.model.gameobject.Locatable;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -7,9 +10,8 @@ import java.util.NoSuchElementException;
 
 /**
  * Data is stored as a 2-dimensional array containing references to Location objects
- * A List is used because it has better generics support
- * <br/>
- * Each location represents a tile square of height:tileSize and width:tileSize.
+ * A List is used because it has generic support.
+ * Each location represents a tile square of equal height and width of tileSize.
  * There are various ways to iterate over the tiles:
  * All tiles of this map or surrounding tiles around a center tile within a min/max range.
  * This class should not contain game specific objects, it only knows about Location objects.
@@ -17,7 +19,7 @@ import java.util.NoSuchElementException;
  * @author Stefan
  * @see Location
  */
-public class TileMap<T extends Location> {
+public class TileMap<T extends Location> extends GameObject {
   private int tileSize;             // The square size in pixels
   private int cols, rows;
   private List<List<T>> tiles;
@@ -46,6 +48,46 @@ public class TileMap<T extends Location> {
         rowList.add(null);
       }
       tiles.add(rowList);
+    }
+  }
+
+  /**
+   * Validate the vars set for this map
+   *
+   * @param validateLocations if all the tiles in the map should be checked
+   * @throws IllegalStateException when the map is not valid
+   */
+  void validateMapState(boolean validateLocations) throws IllegalStateException {
+    if (cols <= 0 || rows <= 0) {
+      throw new IllegalStateException("Map cols:" + cols + ", rows:" + rows + " is not valid");
+    }
+
+    if (tileSize <= 0) {
+      throw new IllegalStateException("TileSize: " + tileSize + " is <=0");
+    }
+
+    if (validateLocations) {
+      // Each map position needs a Location object
+      for (int row = 0; row < rows; row++) {
+        for (int col = 0; col < cols; col++) {
+          T tile = tiles.get(col).get(row);
+          if (tile == null) {
+            throw new IllegalStateException("Map Location @ col:" + col + ", Row:" + row + " is null");
+          }
+        }
+      }
+    }
+  }
+
+  /**
+   * Teleports the locatable from Location <tt>from<tt> to Location <tt>to<tt>
+   * <tt>from<tt> should contain the locatable, else the teleport action will not be executed
+   * if <tt>to<tt> already contains a Locatable then locatable is added to <to>.
+   */
+  public void teleport(Location from, Location to, Locatable locatable) {
+    if (from.contains(locatable)) {
+      from.remove(locatable);
+      to.add(locatable);
     }
   }
 
@@ -254,7 +296,6 @@ public class TileMap<T extends Location> {
       throw new NoSuchElementException("Iterator exhausted");
     }
   }
-
 
   /**
    * Loop through Tiles around the Center Location
@@ -466,6 +507,16 @@ public class TileMap<T extends Location> {
   }
 
   /**
+   * Use the col, row of the Location
+   * to set itself in the map.
+   *
+   * @param location the location to put in the map at location.getCol(), location.getRow()
+   */
+  public void setTile(T location) {
+    setTile(location.getCol(), location.getRow(), location);
+  }
+
+  /**
    * @param mapLocation the col, row where newTile should be placed
    * @param newTile     the tile to add to the map
    */
@@ -476,7 +527,9 @@ public class TileMap<T extends Location> {
   }
 
   public void setTile(int col, int row, T newTile) {
+    T oldVal = tiles.get(col).get(row);
     tiles.get(col).set(row, newTile);
+    firePropertyChange("tile", oldVal, newTile);
   }
 
   public int getTileSize() {
@@ -555,8 +608,7 @@ public class TileMap<T extends Location> {
    * What direction is the baseTile relative to the adjacentTile
    * if <code>adjacentTile</code> is not adjacent or null Direction.STILL is returned.
    *
-   * @return The Direction of adjacentTile relative to baseTile
-   *         if the adjacentTile is not adjacent then STILL is returned.
+   * @return The Direction of adjacentTile relative to baseTile.
    */
   public Direction getDirectionTo(Location baseTile, Location adjacentTile) {
     Direction direction;

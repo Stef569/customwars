@@ -1,4 +1,4 @@
-package com.customwars.client.ui;
+package com.customwars.client.ui.state;
 
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.SlickException;

@@ -1,5 +1,6 @@
 package com.customwars.client.ui;
 
+import com.customwars.client.ui.state.CWInput;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Font;
 import org.newdawn.slick.Graphics;
@@ -159,9 +160,9 @@ public class PopUpMenu {
   }
 
   public void controlPressed(Command command, CWInput cwInput) {
-    if (cwInput.isNextMenuItemPressed(command)) {
+    if (cwInput.isDownPressed(command)) {
       moveDown();
-    } else if (cwInput.isPreviousMenuItemPressed(command)) {
+    } else if (cwInput.isUpPressed(command)) {
       moveUp();
     }
   }

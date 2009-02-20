@@ -2,8 +2,6 @@ package com.customwars.client.io.loading;
 
 import com.customwars.client.io.img.awt.AwtImageLib;
 import com.customwars.client.io.img.awt.ImgFilter;
-import org.newdawn.slick.loading.DeferredResource;
-import org.newdawn.slick.util.ResourceLoader;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import tools.IOUtil;
@@ -21,11 +19,11 @@ import java.util.List;
 /**
  * Handles xml for 1 ImgFilter class
  * Only loading is supported
- * ImgFilters are added to the AwtImageLib
+ * ImgFilters recolor awt images and store the results in the AwtImageLib
  *
  * @author stefan
  */
-public class ImgFilterLoader implements DeferredResource {
+public class ImageFilterParser {
   public static final String ROOT_ELEMENT_TAGNAME = "ColorFilters";
   private static final String XML_EL_COLOR_FILTER = "ColorFilter";
   private static final String XML_EL_NAME = "Name";
@@ -34,19 +32,9 @@ public class ImgFilterLoader implements DeferredResource {
   private static final String XML_EL_IGNORED_COLORS = "IgnoredColors";
   private static final String XML_EL_REPLACEMENT_COLOR = "ReplacementColor";
   private static final String XML_EL_REPLACEMENT_COLORS = "ReplacementColors";
-  private String colorXmlPath;
 
-  /**
-   * @param colorXmlPath full path to the color xml file
-   */
-  public ImgFilterLoader(String colorXmlPath) {
-    this.colorXmlPath = colorXmlPath;
-  }
-
-  public void load() throws IOException {
-    InputStream colorStream = null;
+  public void loadConfigFile(InputStream colorStream) throws IOException {
     try {
-      colorStream = ResourceLoader.getResourceAsStream(colorXmlPath);
       NodeList colorNodes = Xml.parseXmlStreamToNodeList(colorStream, XML_EL_COLOR_FILTER);
       for (int i = 0; i < colorNodes.getLength(); i++) {
         Element colorElement = Xml.nodeToElement(colorNodes.item(i));
@@ -87,9 +75,5 @@ public class ImgFilterLoader implements DeferredResource {
     Color replaceColorName = Xml.getColorValue(element, XML_EL_NAME);
     List<Color> repLaceColors = Xml.getColorListFromHex(element, XML_EL_REPLACEMENT_COLORS);
     filter.addReplacementColors(replaceColorName, repLaceColors);
-  }
-
-  public String getDescription() {
-    return colorXmlPath;
   }
 }

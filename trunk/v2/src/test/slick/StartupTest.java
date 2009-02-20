@@ -1,0 +1,118 @@
+package test.slick;
+
+import com.customwars.client.Config;
+import com.customwars.client.io.ResourceManager;
+import org.newdawn.slick.AppGameContainer;
+import org.newdawn.slick.BasicGame;
+import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.Graphics;
+import org.newdawn.slick.SlickException;
+import org.newdawn.slick.loading.DeferredResource;
+import org.newdawn.slick.loading.LoadingList;
+
+import java.io.IOException;
+
+/**
+ * Configure
+ * Load resources
+ * It's a stand alone test because I couldn't load resources 2x.
+ *
+ * @author stefan
+ */
+public class StartupTest extends BasicGame {
+  private ResourceManager resources;
+  private Config config;
+
+  // Deferred loading
+  private DeferredResource nextResource;
+  private boolean loadingComplete;
+  private int screenWidth;
+
+  public StartupTest() {
+    super("Resource Loading");
+  }
+
+  public void init(GameContainer container) throws SlickException {
+    LoadingList.setDeferredLoading(true);
+    resources = new ResourceManager();
+    resources.setDataPath("res/data/");
+    resources.setImgPath("res/image/");
+
+    config = new Config(resources);
+    config.configure();
+    screenWidth = container.getWidth();
+
+    try {
+      resources.load();
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  public void update(GameContainer container, int delta) throws SlickException {
+    updateLoadingProgress();
+  }
+
+  private void updateLoadingProgress() throws SlickException {
+    if (nextResource != null) {
+      try {
+        nextResource.load();
+        // slow down loading for example purposes
+        try {
+          Thread.sleep(500);
+        } catch (Exception e) {
+        }
+      } catch (IOException e) {
+        throw new SlickException("Failed to load: " + nextResource.getDescription(), e);
+      }
+
+      nextResource = null;
+    }
+
+    if (LoadingList.get().getRemainingResources() > 0) {
+      nextResource = LoadingList.get().getNext();
+    } else {
+      if (!loadingComplete) {
+        loadingComplete = true;
+      }
+    }
+  }
+
+  public void render(GameContainer container, Graphics g) throws SlickException {
+    if (loadingComplete) {
+      g.setColor(org.newdawn.slick.Color.white);
+      g.drawString("LOADING COMPLETED", 100, 50);
+    } else {
+      renderLoadingProgress(g);
+    }
+  }
+
+  private void renderLoadingProgress(Graphics g) {
+    if (LoadingList.isDeferredLoading()) {
+      if (nextResource != null) {
+        g.drawString("Loading: " + nextResource.getDescription(), 100, 100);
+      }
+
+      int total = LoadingList.get().getTotalResources();
+      int loaded = LoadingList.get().getTotalResources() - LoadingList.get().getRemainingResources();
+      float totalPx = screenWidth - 30;
+      float loadedPX = loaded / (float) total;  // 0 .. 1
+
+      g.fillRect(10, 150, loadedPX * totalPx, 20);
+      g.drawRect(10, 150, totalPx, 20);
+    } else {
+      g.drawString("Loading...", 100, 100);
+    }
+  }
+
+  public int getID() {
+    return 1;
+  }
+
+  public static void main(String[] args) throws SlickException {
+    AppGameContainer appGameContainer = new AppGameContainer(new StartupTest());
+    appGameContainer.setDisplayMode(800, 600, false);
+    appGameContainer.setTargetFrameRate(60);
+    appGameContainer.start();
+  }
+}

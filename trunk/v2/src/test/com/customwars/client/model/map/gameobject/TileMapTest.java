@@ -13,7 +13,6 @@ import test.testData.HardCodedGame;
  * Test functions in the TileMap2D class
  *
  * @author Stefan
- * @since 2.0
  */
 public class TileMapTest {
   private TileMap<Tile> map;
