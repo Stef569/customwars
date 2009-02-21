@@ -5,7 +5,9 @@ import com.customwars.client.io.img.awt.AwtImageLib;
 import com.customwars.client.io.img.slick.ImageStrip;
 import com.customwars.client.io.img.slick.SpriteSheet;
 import com.customwars.client.io.loading.ImageFilterParser;
+import com.customwars.client.ui.state.CWInput;
 import com.customwars.client.ui.state.CWState;
+import com.customwars.client.ui.state.StateLogic;
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -55,6 +57,10 @@ public class RecolorTest extends CWState {
 
   // Test parameters
   private static final boolean DEFERRED_LOADING = true;
+
+  public RecolorTest(CWInput cwInput, StateLogic statelogic) {
+    super(cwInput, statelogic);
+  }
 
   public void init(GameContainer container, StateBasedGame game) throws SlickException {
     LoadingList.setDeferredLoading(DEFERRED_LOADING);
@@ -221,7 +227,7 @@ public class RecolorTest extends CWState {
     currentUnitImg = imageLib.getSlickImg(UNIT_IMG_PREFIX + ColorUtil.toString(color));
   }
 
-  public void controlPressed(Command command) {
+  public void controlPressed(Command command, CWInput cwInput) {
   }
 
   public int getID() {

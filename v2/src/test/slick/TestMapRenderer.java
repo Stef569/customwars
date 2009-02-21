@@ -11,6 +11,7 @@ import com.customwars.client.ui.renderer.TerrainRenderer;
 import com.customwars.client.ui.sprite.TileSprite;
 import com.customwars.client.ui.state.CWInput;
 import com.customwars.client.ui.state.CWState;
+import com.customwars.client.ui.state.StateLogic;
 import org.apache.log4j.Logger;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -31,10 +32,9 @@ public class TestMapRenderer extends CWState {
   private static final Logger logger = Logger.getLogger(TestMapRenderer.class);
   private MapRenderer mapRenderer;
   private TerrainRenderer miniMapRenderer;
-  private CWInput input;
 
-  public TestMapRenderer(CWInput input) {
-    this.input = input;
+  public TestMapRenderer(CWInput cwInput, StateLogic stateLogic) {
+    super(cwInput, stateLogic);
   }
 
   public void init(GameContainer container, StateBasedGame game) throws SlickException {
@@ -82,24 +82,24 @@ public class TestMapRenderer extends CWState {
     mapRenderer.update(delta);
   }
 
-  public void controlPressed(Command command) {
-    moveCursor(command);
-    if (input.isSelectPressed(command)) {
+  public void controlPressed(Command command, CWInput cwInput) {
+    moveCursor(command, cwInput);
+    if (cwInput.isSelectPressed(command)) {
       System.out.println("Clicked on " + mapRenderer.getCursorLocation());
     }
   }
 
-  private void moveCursor(Command command) {
-    if (input.isUpPressed(command)) {
+  private void moveCursor(Command command, CWInput cwInput) {
+    if (cwInput.isUpPressed(command)) {
       mapRenderer.moveCursor(Direction.NORTH);
     }
-    if (input.isDownPressed(command)) {
+    if (cwInput.isDownPressed(command)) {
       mapRenderer.moveCursor(Direction.SOUTH);
     }
-    if (input.isLeftPressed(command)) {
+    if (cwInput.isLeftPressed(command)) {
       mapRenderer.moveCursor(Direction.WEST);
     }
-    if (input.isRightPressed(command)) {
+    if (cwInput.isRightPressed(command)) {
       mapRenderer.moveCursor(Direction.EAST);
     }
   }

@@ -6,7 +6,6 @@ import com.customwars.client.ui.state.StateLogic;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.newdawn.slick.AppGameContainer;
-import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
@@ -14,7 +13,6 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.command.Command;
 import org.newdawn.slick.command.InputProviderListener;
 import org.newdawn.slick.state.StateBasedGame;
-import org.newdawn.slick.state.transition.FadeInTransition;
 import org.newdawn.slick.util.ResourceLoader;
 
 import java.io.IOException;
@@ -28,7 +26,6 @@ import java.util.Properties;
  */
 public class TestStates extends StateBasedGame implements InputProviderListener {
   private static final Logger logger = Logger.getLogger(TestStates.class);
-  private static final int NUM_TEST_STATES = 4;
   private static AppGameContainer appGameContainer;
   private CWInput cwInput;
   private int startStateID;
@@ -50,21 +47,21 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
 
     statelogic = new StateLogic(this, appGameContainer);
     statelogic.addState("mainmenu", 0);
+    statelogic.addState("MAIN_MENU", 0);
     statelogic.addState("terrainmenu", 1);
     statelogic.addState("keymenu", 2);
     statelogic.addState("spritemenu", 3);
-    
-    CWState testMenuMusic = new TestMenuMusic(cwInput);
-    CWState testMapRenderer = new TestMapRenderer(cwInput);
-    CWState remapKeysTest = new RemapKeysTest(cwInput);
-    CWState recolorTest = new RecolorTest();
+
+    CWState testMenuMusic = new TestMenuMusic(cwInput, statelogic);
+    CWState testMapRenderer = new TestMapRenderer(cwInput, statelogic);
+    CWState remapKeysTest = new RemapKeysTest(cwInput, statelogic);
+    CWState recolorTest = new RecolorTest(cwInput, statelogic);
 
     addState(testMenuMusic);
     addState(testMapRenderer);
     addState(remapKeysTest);
     addState(recolorTest);
-    gotoState(startStateID);
-
+    statelogic.gotoState(startStateID);
   }
 
   // Delegate Command Press/releases to the current state
@@ -73,15 +70,8 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
       appGameContainer.exit();
     }
 
-    //works okay for button presses
     CWState state = (CWState) getCurrentState();
-    state.addStateLogic(statelogic);
-    if(state.setMenu() >= 0)
-        state.changeGameState(state.setMenu());
-    else
-        state.changeGameState(state.setState());
     state.controlPressed(command);
-
   }
 
   public void controlReleased(Command command) {
@@ -94,30 +84,12 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
 
   public void keyPressed(int key, char c) {
     if (key == Input.KEY_SPACE) {
-      gotoState(getNextStateID());
+      statelogic.changeToNext();
     }
 
     if (key == Input.KEY_ENTER) {
-      gotoState(0);
+      statelogic.changeTo("MAIN_MenU");
     }
-
-    //works okay for key presses
-    CWState state = (CWState) getCurrentState();
-    state.addStateLogic(statelogic);
-    if(state.setMenu() >= 0)
-        state.changeGameState(state.setMenu());
-    else
-        state.changeGameState(state.setState());
-  }
-
-  private void gotoState(int index) {
-    enterState(index, null, new FadeInTransition(Color.black));
-    appGameContainer.setTitle(getState(index).getClass().toString());
-  }
-
-  private int getNextStateID() {
-    int nextID = getCurrentStateID() + 1;
-    return nextID < NUM_TEST_STATES ? nextID : 0;
   }
 
   /**

@@ -1,6 +1,5 @@
 package com.customwars.client.ui.state;
 
-import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.command.Command;
@@ -18,37 +17,27 @@ import org.newdawn.slick.state.StateBasedGame;
  * @author stefan
  */
 public abstract class CWState extends BasicGameState implements InputProviderListener {
+  private StateLogic statelogic;    // Allows to change to another state
+  protected CWInput cwInput;        // Handles input, subclasses should implement controlPressed
 
-  private StateLogic statelogic;
-    
+  protected CWState(CWInput cwInput, StateLogic statelogic) {
+    this.cwInput = cwInput;
+    this.statelogic = statelogic;
+  }
+
   public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
   }
 
+  public final void controlPressed(Command command) {
+    controlPressed(command, cwInput);
+  }
+
+  public abstract void controlPressed(Command command, CWInput cwInput);
+
   public void controlReleased(Command command) {
   }
-  
-  public void addStateLogic(StateLogic state){
-      statelogic = state;
+
+  public void changeGameState(String newStateName) {
+    statelogic.changeTo(newStateName);
   }
-  
-  //changes a game state (no overhead)
-  public void changeGameState(int index){
-      statelogic.changeGameState(index);
-  }
-  
-  public void changeGameState(String theString){
-      statelogic.changeGameState(theString);
-  }
-  
-  public String setState(){
-      return null;
-  }
-  
-  //Overwrite function below to change states
-  //numbers < 0 == remain on current state...
-  public int setMenu(){
-      return -1;
-  }
-  
-  
 }
