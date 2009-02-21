@@ -1,5 +1,7 @@
 package com.customwars.client.ui;
 
+import com.customwars.client.ui.slick.BasicComponent;
+import com.customwars.client.ui.slick.MouseOverArea;
 import com.customwars.client.ui.state.CWInput;
 import org.newdawn.slick.AngelCodeFont;
 import org.newdawn.slick.Color;
@@ -12,10 +14,8 @@ import org.newdawn.slick.command.Command;
 import org.newdawn.slick.gui.AbstractComponent;
 import org.newdawn.slick.gui.ComponentListener;
 import org.newdawn.slick.gui.GUIContext;
-import org.newdawn.slick.gui.MouseOverArea;
 import org.newdawn.slick.util.Log;
 
-import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,30 +26,27 @@ import java.util.List;
  * @author JSR
  */
 
-public class PopUpMenu extends AbstractComponent implements ComponentListener {
-  private static final int ITEM_HEIGHT = 10;
+public class PopUpMenu extends BasicComponent implements ComponentListener {
+  private static final float HOVER_TRANSPARANCY = 0.6f;
   private GUIContext container;
   private List<String> txtOptions;
   private List<Image> imgOptions;
   private List<MouseOverArea> mouseOverAreas;
   private Color baseColor;
   private Color selectColor;
-  private int locX;
-  private int locY;
+
   private int spacingY;
   private int spacingX;
   private int curoptn;
-  private Sound menuSound;
+  private Sound optionChangeSound;
   private Image cursor;
   private Font font;
-  private Dimension dimension;
   private boolean initDone;
 
   public PopUpMenu(GUIContext container, Font font) {
     super(container);
     this.container = container;
-    this.font = font == null ? getDefaultFont() : font;
-    dimension = new Dimension();
+    this.font = font != null ? font : getDefaultFont();
     spacingY = 20;
     spacingX = 10;
     baseColor = Color.white;
@@ -63,17 +60,88 @@ public class PopUpMenu extends AbstractComponent implements ComponentListener {
     this(container, null);
   }
 
-  private Font getDefaultFont() {
-    Font defaultFont = null;
-    try {
-      defaultFont = new AngelCodeFont(
-              "org/newdawn/slick/data/default.fnt",
-              "org/newdawn/slick/data/default_00.tga");
-    } catch (SlickException e) {
-      Log.error(e);
-    }
-    return defaultFont;
+  public void addOption(String name) {
+    addMenuOption(name, null);
   }
+
+  public void addOptionImage(Image image) {
+    addMenuOption(null, image);
+  }
+
+  private void addMenuOption(String name, Image img) {
+    if (name != null || img != null) {
+      txtOptions.add(name);
+      imgOptions.add(img);
+
+      int optionWidth = getWidth(name, img);
+      if (optionWidth > width) {
+        width = optionWidth;
+      }
+    } else {
+      throw new IllegalArgumentException("null name or img not allowed");
+    }
+  }
+
+  public void moveUp() {
+    setOption(curoptn - 1);
+  }
+
+  public void moveDown() {
+    setOption(curoptn + 1);
+  }
+
+  /**
+   * Init mouse over areas once
+   * this is because we need to know the widest option in the menu before we define the moa bounds
+   */
+  private void init() {
+    int numOptions = txtOptions.size();
+    for (int i = 0; i < numOptions; i++) {
+      createMouseOverArea(i);
+    }
+    height = numOptions * spacingY;
+    initDone = true;
+  }
+
+  private void createMouseOverArea(int i) {
+    MouseOverArea moa;
+    int locX = spacingX + x;
+    int locY = y + (i * spacingY);
+    int optionHeight = getHeight(txtOptions.get(i), imgOptions.get(i));
+
+    moa = new MouseOverArea(container, null, locX, locY, width, optionHeight, this);
+    moa.setNormalColor(new Color(1, 1, 1, 0.0f));
+    moa.setMouseOverColor(new Color(1, 1, 1, HOVER_TRANSPARANCY));
+    mouseOverAreas.add(moa);
+  }
+
+  public void render(GUIContext container, Graphics g) throws SlickException {
+    if (!initDone) init();
+
+    if (cursor != null) {
+      g.drawImage(cursor, x, (y + (curoptn * spacingY)));
+    }
+
+    for (MouseOverArea moa : mouseOverAreas) {
+      if (moa.isSelected()) {
+        setOption(mouseOverAreas.indexOf(moa));
+      }
+      moa.render(container, g);
+    }
+
+    // Text on top of the mouse over area
+    for (int i = 0; i < txtOptions.size(); i++) {
+      if (txtOptions.get(i) != null) {
+        int locX = spacingX + x;
+        int locY = y + (i * spacingY);
+        setCurrentColor(g, i);
+        g.drawString(txtOptions.get(i), locX, locY);
+        g.setColor(baseColor);
+      }
+    }
+    g.setColor(baseColor);
+  }
+
 
   public void setVerticalMargin(int verticalMargin) {
     spacingY = verticalMargin;
@@ -89,114 +157,17 @@ public class PopUpMenu extends AbstractComponent implements ComponentListener {
       this.spacingX = cursor.getWidth() + spacingX;
   }
 
-  public void setLocation(int x, int y) {
-    locX = x;
-    locY = y;
-  }
-
-  public int getX() {
-    return locX;
-  }
-
-  public int getY() {
-    return locY;
-  }
-
-  public int getWidth() {
-    return (int) dimension.getWidth();
-  }
-
-  public int getHeight() {
-    return (int) dimension.getHeight();
-  }
-
   /**
-   * @param menuTickSound The sound to play when the menu changes to another menu item
-   *                      null to disable that sound
+   * @param optionChangeSound The sound to play when the menu changes to another menu option
+   *                          null to disable that sound
    */
-  public void setSound(Sound menuTickSound) {
-    menuSound = menuTickSound;
+  public void setOptionChangeSound(Sound optionChangeSound) {
+    this.optionChangeSound = optionChangeSound;
   }
 
   public void setColor(Color base, Color selected) {
     baseColor = base;
     selectColor = selected;
-  }
-
-  public void addOption(String name) {
-    addMenuOption(name, null);
-  }
-
-  public void addOptionImage(Image image) {
-    addMenuOption(null, image);
-  }
-
-  private void addMenuOption(String name, Image img) {
-    txtOptions.add(name);
-    imgOptions.add(img);
-
-    int width = font.getWidth(name);
-
-    // store total width and total height
-    if (width > dimension.getWidth()) {
-      dimension.setSize(width, ITEM_HEIGHT + spacingX);
-    }
-  }
-
-  public void moveUp() {
-    setOption(curoptn - 1);
-  }
-
-  public void moveDown() {
-    setOption(curoptn + 1);
-  }
-
-  public int getOption() {
-    return curoptn;
-  }
-
-  private void setOption(int option) {
-    if (option >= 0 && option < txtOptions.size() && option != curoptn) {
-      curoptn = option;
-      playMenuTick();
-    }
-  }
-
-  public void render(GUIContext container, Graphics g) throws SlickException {
-    if (!initDone) init();
-
-    if (cursor != null) {
-      g.drawImage(cursor, locX, (locY + (curoptn * spacingY)));
-    }
-
-    for (MouseOverArea moa : mouseOverAreas) {
-      moa.render(container, g);
-    }
-
-    for (int i = 0; i < txtOptions.size(); i++) {
-      int x = spacingX + locX;
-      int y = locY + (i * spacingY);
-      setCurrentColor(g, i);
-      g.drawString(txtOptions.get(i), x, y);
-      g.setColor(baseColor);
-    }
-    g.setColor(baseColor);
-  }
-
-  /**
-   * Init mouse over areas once
-   * this is because we need to know the widest option in the menu before we define the moa bounds
-   */
-  private void init() {
-    for (int i = 0; i < txtOptions.size(); i++) {
-      int x = spacingX + locX;
-      int y = locY + (i * spacingY);
-      MouseOverArea moa = new MouseOverArea(container, null, x, y, (int) dimension.getWidth(), (int) dimension.getHeight(), this);
-      moa.setNormalColor(new Color(1, 1, 100, 0.5f));
-      moa.setMouseOverColor(new Color(1, 1, 200, 0.8f));
-      mouseOverAreas.add(moa);
-      initDone = true;
-    }
   }
 
   private void setCurrentColor(Graphics g, int i) {
@@ -207,17 +178,68 @@ public class PopUpMenu extends AbstractComponent implements ComponentListener {
     }
   }
 
+  private void setOption(int option) {
+    if (option != curoptn && option >= 0 && option < txtOptions.size()) {
+      curoptn = option;
+      playMenuTick();
+      selectOption(curoptn);
+    }
+  }
+
+  private void playMenuTick() {
+    if (optionChangeSound != null)
+      optionChangeSound.play();
+  }
+
+  private void selectOption(int i) {
+    for (MouseOverArea moa : mouseOverAreas) {
+      if (mouseOverAreas.get(i) == moa) {
+        moa.setSelected(true);
+      } else {
+        moa.setSelected(false);
+      }
+    }
+  }
+
+
+  public int getOption() {
+    return curoptn;
+  }
+
+  private int getWidth(String option, Image img) {
+    if (img != null) {
+      return img.getWidth();
+    } else {
+      return font.getWidth(option);
+    }
+  }
+
+  private int getHeight(String option, Image img) {
+    if (img != null) {
+      return img.getHeight();
+    } else {
+      return spacingY;
+    }
+  }
+
+  private Font getDefaultFont() {
+    Font defaultFont = null;
+    try {
+      defaultFont = new AngelCodeFont(
+              "org/newdawn/slick/data/default.fnt",
+              "org/newdawn/slick/data/default_00.tga");
+    } catch (SlickException e) {
+      Log.error(e);
+    }
+    return defaultFont;
+  }
+
   public void controlPressed(Command command, CWInput cwInput) {
     if (cwInput.isDownPressed(command)) {
       moveDown();
     } else if (cwInput.isUpPressed(command)) {
       moveUp();
     }
-  }
-
-  private void playMenuTick() {
-    if (menuSound != null)
-      menuSound.play();
   }
 
   /**
