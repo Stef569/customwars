@@ -2,6 +2,7 @@ package test.slick;
 
 import com.customwars.client.ui.state.CWInput;
 import com.customwars.client.ui.state.CWState;
+import com.customwars.client.ui.state.StateLogic;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
@@ -23,7 +24,6 @@ import java.util.List;
  * @author stefan
  */
 public class RemapKeysTest extends CWState {
-  private CWInput input;
   private List<TextField> fields = new ArrayList<TextField>();
 
   private TextField activeField;
@@ -33,8 +33,8 @@ public class RemapKeysTest extends CWState {
     SELECTING, MAPPING
   }
 
-  public RemapKeysTest(CWInput input) {
-    this.input = input;
+  public RemapKeysTest(CWInput cwInput, StateLogic stateLogic) {
+    super(cwInput, stateLogic);
   }
 
   public void init(GameContainer container, StateBasedGame game) throws SlickException {
@@ -82,9 +82,8 @@ public class RemapKeysTest extends CWState {
     }
   }
 
-  public void controlPressed(Command command) {
+  public void controlPressed(Command command, CWInput cwInput) {
   }
-
 
   public void mousePressed(int button, int x, int y) {
     if (activeField != null) {
@@ -105,14 +104,14 @@ public class RemapKeysTest extends CWState {
 
   private void bind(Control control, Command command) {
     System.out.println("Binding " + control + " to " + command);
-    input.bindCommand(control, command);
+    cwInput.bindCommand(control, command);
     activeField.setFocus(false);
     inputState = InputState.SELECTING;
   }
 
   private void unBind(Control control) {
     System.out.println("unBinding " + control);
-    input.unbindCommand(control);
+    cwInput.unbindCommand(control);
     activeField.setFocus(false);
     activeField.setAcceptingInput(true);
     inputState = InputState.SELECTING;
