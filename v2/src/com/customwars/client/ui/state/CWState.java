@@ -19,7 +19,7 @@ import org.newdawn.slick.state.StateBasedGame;
  */
 public abstract class CWState extends BasicGameState implements InputProviderListener {
 
-  private StateLogic statelogic = new StateLogic();
+  private StateLogic statelogic;
     
   public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
   }
@@ -27,9 +27,8 @@ public abstract class CWState extends BasicGameState implements InputProviderLis
   public void controlReleased(Command command) {
   }
   
-  //initializes the statelogic class (no overhead)
-  public void init(StateBasedGame game, AppGameContainer container){
-      statelogic.initialize(game, container);
+  public void addStateLogic(StateLogic state){
+      statelogic = state;
   }
   
   //changes a game state (no overhead)
@@ -37,9 +36,19 @@ public abstract class CWState extends BasicGameState implements InputProviderLis
       statelogic.changeGameState(index);
   }
   
+  public void changeGameState(String theString){
+      statelogic.changeGameState(theString);
+  }
+  
+  public String setState(){
+      return null;
+  }
+  
   //Overwrite function below to change states
   //numbers < 0 == remain on current state...
-  public int setState(){
+  public int setMenu(){
       return -1;
   }
+  
+  
 }

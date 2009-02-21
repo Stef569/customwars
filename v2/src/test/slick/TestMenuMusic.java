@@ -1,5 +1,6 @@
 package test.slick;
 
+import com.customwars.client.ui.state.CWInput;
 import com.customwars.client.ui.PopUpMenu;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -19,10 +20,10 @@ public class TestMenuMusic extends com.customwars.client.ui.state.CWState {
   private Music backgroundMusic;
   private Sound menuTickSound;
   private Image image;
-  private com.customwars.client.ui.state.CWInput cwInput;
+  private CWInput cwInput;
   private PopUpMenu testmenu;
 
-  public TestMenuMusic(com.customwars.client.ui.state.CWInput cwInput) {
+  public TestMenuMusic(CWInput cwInput) {
     this.cwInput = cwInput;
     testmenu = new PopUpMenu();
     testmenu.setLocation(80, 100);
@@ -50,6 +51,20 @@ public class TestMenuMusic extends com.customwars.client.ui.state.CWState {
     g.drawString("ENTER: TO GO BACK TO MENU", 400, 80);
     g.drawString("Now in Test Menu and Music state", 80, 80);
     testmenu.render(g);
+    switch(testmenu.getOption()){
+        case 0:
+            g.drawString("Scroll a mini-map and see the terrain up close. \n" +
+                    "Use [1] and [2] to switch firing cursor.", 80, 200);
+            break;
+        case 1:
+            g.drawString("The way buttons will be set on the keyboard. \n" +
+                    "Still under construction :(...", 80, 200);
+            break;
+        case 2:
+            g.drawString("Loads up the spritesheets used for the game. \n" +
+                    "Use your mouse scroll wheel to swap colors.", 80, 200);
+            break;
+    }
   }
 
   public void update(GameContainer gameContainer, StateBasedGame stateBasedGame, int i) throws SlickException {
@@ -59,7 +74,7 @@ public class TestMenuMusic extends com.customwars.client.ui.state.CWState {
     if (cwInput.isSelectPressed(command)) {
       menuTickSound.play();
     }
-    testmenu.controlPressed(command, cwInput);//controlPressed(command, cwInput);
+    testmenu.controlPressed(command, cwInput);
   }
 
   public void keyPressed(int key, char c) {
@@ -72,7 +87,7 @@ public class TestMenuMusic extends com.customwars.client.ui.state.CWState {
     testmenu.mouseMoved(newx, newy);
   }
   
-  public int setState(){
+  public int setMenu(){
       return testmenu.getOption()+1;
   }
 
