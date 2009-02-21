@@ -45,10 +45,10 @@ public class TestMenuMusic extends CWState implements ComponentListener {
     testmenu.addOption("Option 2: Key Input Change (Under Construction)");
     testmenu.addOption("Option 3: Spritesheets");
     testmenu.setCursorImage(cursor);
-    testmenu.setSound(menuTickSound);
+    testmenu.setOptionChangeSound(menuTickSound);
     testmenu.addListener(this);
-    //testmenu.setVerticalMargin(50);   // uncomment to show 50px vertical margin
-    //testmenu.addOptionImage(image);   // Uncomment to test 4th menu option as image
+    //testmenu.setVerticalMargin(50);   // Uncomment to show 50px vertical margin
+    //testmenu.addOptionImage(image);   // Uncomment to show 4th menu option as image
   }
 
   public void render(GameContainer gameContainer, StateBasedGame stateBasedGame, Graphics g) throws SlickException {
@@ -89,10 +89,6 @@ public class TestMenuMusic extends CWState implements ComponentListener {
     if (key == Input.KEY_ENTER) {
       changeGameState("MAIN_MENU");
     }
-  }
-
-  public int setMenu() {
-    return testmenu.getOption() + 1;
   }
 
   public int getID() {
