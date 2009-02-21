@@ -1,9 +1,7 @@
 package test.slick;
 
-import com.customwars.client.io.loading.ModelLoader;
 import com.customwars.client.ui.state.CWInput;
 import com.customwars.client.ui.state.CWState;
-import com.customwars.client.ui.state.StateLogic;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.newdawn.slick.AppGameContainer;
@@ -31,14 +29,12 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
   private static final Logger logger = Logger.getLogger(TestStates.class);
   private static final int NUM_TEST_STATES = 4;
   private static AppGameContainer appGameContainer;
-  private ModelLoader modelLoader = new ModelLoader();
   private CWInput cwInput;
   private int startStateID;
 
   public TestStates() {
-    super("Tests");
+    super("Slick Tests!!");
     startStateID = 0;
-    modelLoader.loadModel();
   }
 
   public TestStates(int startStateID) {
@@ -49,7 +45,7 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
   public void initStatesList(GameContainer gameContainer) throws SlickException {
     cwInput = new CWInput(appGameContainer.getInput());
     cwInput.addListener(this);
-    
+
 
     CWState testMenuMusic = new TestMenuMusic(cwInput);
     CWState testMapRenderer = new TestMapRenderer(cwInput);
@@ -61,11 +57,9 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
     addState(remapKeysTest);
     addState(recolorTest);
     gotoState(startStateID);
-    
+
   }
 
-  
-  
   // Delegate Command Press/releases to the current state
   public void controlPressed(Command command) {
     if (cwInput.isExitPressed(command)) {
@@ -77,26 +71,26 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
     state.init(this, appGameContainer);
     state.changeGameState(state.setState());
     state.controlPressed(command);
-    
+
   }
 
   public void controlReleased(Command command) {
     CWState state = (CWState) getCurrentState();
     state.controlReleased(command);
   }
-  
-  public void update(GameContainer gcontainer, Graphics g){
+
+  public void update(GameContainer gcontainer, Graphics g) {
   }
 
   public void keyPressed(int key, char c) {
     if (key == Input.KEY_SPACE) {
       gotoState(getNextStateID());
     }
-    
+
     if (key == Input.KEY_ENTER) {
       gotoState(0);
     }
-    
+
     //works okay for key presses
     CWState state = (CWState) getCurrentState();
     state.init(this, appGameContainer);
