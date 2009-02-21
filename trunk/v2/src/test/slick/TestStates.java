@@ -2,6 +2,7 @@ package test.slick;
 
 import com.customwars.client.ui.state.CWInput;
 import com.customwars.client.ui.state.CWState;
+import com.customwars.client.ui.state.StateLogic;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.newdawn.slick.AppGameContainer;
@@ -31,6 +32,7 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
   private static AppGameContainer appGameContainer;
   private CWInput cwInput;
   private int startStateID;
+  private StateLogic statelogic;
 
   public TestStates() {
     super("Slick Tests!!");
@@ -46,7 +48,12 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
     cwInput = new CWInput(appGameContainer.getInput());
     cwInput.addListener(this);
 
-
+    statelogic = new StateLogic(this, appGameContainer);
+    statelogic.addState("mainmenu", 0);
+    statelogic.addState("terrainmenu", 1);
+    statelogic.addState("keymenu", 2);
+    statelogic.addState("spritemenu", 3);
+    
     CWState testMenuMusic = new TestMenuMusic(cwInput);
     CWState testMapRenderer = new TestMapRenderer(cwInput);
     CWState remapKeysTest = new RemapKeysTest(cwInput);
@@ -68,8 +75,11 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
 
     //works okay for button presses
     CWState state = (CWState) getCurrentState();
-    state.init(this, appGameContainer);
-    state.changeGameState(state.setState());
+    state.addStateLogic(statelogic);
+    if(state.setMenu() >= 0)
+        state.changeGameState(state.setMenu());
+    else
+        state.changeGameState(state.setState());
     state.controlPressed(command);
 
   }
@@ -93,8 +103,11 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
 
     //works okay for key presses
     CWState state = (CWState) getCurrentState();
-    state.init(this, appGameContainer);
-    state.changeGameState(state.setState());
+    state.addStateLogic(statelogic);
+    if(state.setMenu() >= 0)
+        state.changeGameState(state.setMenu());
+    else
+        state.changeGameState(state.setState());
   }
 
   private void gotoState(int index) {
