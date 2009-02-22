@@ -155,55 +155,52 @@ public class SpriteSheet extends Image {
    */
   protected void initImpl() {
     if (subImages == null) {
-      int tilesAcross = ((getWidth() - tw) / (tw + spacing)) + 1;
-      int tilesDown = ((getHeight() - th) / (th + spacing)) + 1;
-      if ((getHeight() - th) % (th + spacing) != 0) {
-        tilesDown++;
-      }
+      int cols = (int) (Math.floor(getWidth() / (tw + spacing) + 1));
+      int rows = (int) (Math.floor(getHeight() / (th + spacing) + 1));
 
-      subImages = new Image[tilesAcross][tilesDown];
-      for (int x = 0; x < tilesAcross; x++) {
-        for (int y = 0; y < tilesDown; y++) {
-          subImages[x][y] = getSprite(x, y);
+      subImages = new Image[rows][cols];
+      for (int row = 0; row < rows; row++) {
+        for (int col = 0; col < cols; col++) {
+          subImages[row][col] = getSprite(col, row);
         }
       }
     }
   }
 
   /**
-   * Get the sub image cached in this sprite sheet
+   * Get the sub image from this sprite sheet
    *
-   * @param x The x position in tiles of the image to get
-   * @param y The y position in tiles of the image to get
+   * @param col The col position in tiles of the image to get
+   * @param row The row position in tiles of the image to get
    * @return The subimage at that location on the sheet
    */
-  public Image getSubImage(int x, int y) {
-    if ((x < 0) || (x >= subImages.length)) {
-      throw new RuntimeException("SubImage out of sheet bounds: " + x + "," + y);
+  public Image getSubImage(int col, int row) {
+    if ((row < 0) || (row >= subImages.length)) {
+      throw new RuntimeException("SubImage row out of sheet bounds: " + col + "/" + subImages.length);
     }
-    if ((y < 0) || (y >= subImages[0].length)) {
-      throw new RuntimeException("SubImage out of sheet bounds: " + x + "," + y);
+    if ((col < 0) || (col >= subImages[0].length)) {
+      throw new RuntimeException("SubImage col out of sheet bounds: " + col + "/" + subImages[0].length);
     }
 
-    return subImages[x][y];
+    return subImages[row][col];
   }
 
   /**
    * Get a sprite at a particular cell on the sprite sheet
    *
-   * @param x The x position of the cell on the sprite sheet
-   * @param y The y position of the cell on the sprite sheet
+   * @param col The col position of the cell on the sprite sheet
+   * @param row The row position of the cell on the sprite sheet
    * @return The single image from the sprite sheet
    */
-  public Image getSprite(int x, int y) {
-    if ((x < 0) || (x >= subImages.length)) {
-      throw new RuntimeException("SubImage out of sheet bounds: " + x + "," + y);
+  public Image getSprite(int col, int row) {
+    if ((row < 0) || (row >= subImages.length)) {
+      throw new RuntimeException("SubImage row out of sheet bounds: " + col + "," + row);
     }
-    if ((y < 0) || (y >= subImages[0].length)) {
-      throw new RuntimeException("SubImage out of sheet bounds: " + x + "," + y);
+    if ((col < 0) || (col >= subImages[0].length)) {
+      throw new RuntimeException("SubImage col out of sheet bounds: " + col + "," + row);
     }
 
-    return getSubImage(x * (tw + spacing), y * (th + spacing), tw, th);
+    return getSubImage(col * (tw + spacing), row * (th + spacing), tw, th);
   }
 
   /**

@@ -2,7 +2,6 @@ package test.com.customwars.client.model.map.gameobject;
 
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.CityFactory;
-import com.customwars.client.model.gameobject.GameObject;
 import com.customwars.client.model.gameobject.Terrain;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.ConversionException;
@@ -20,11 +19,14 @@ public class CityXStreamTest {
     // Using Reflection
     xStream.alias("city", City.class);
 
-    // Ignore those
-    xStream.omitField(GameObject.class, "changeSupport");
-    xStream.omitField(GameObject.class, "state");
-    xStream.omitField(Terrain.class, "hidden");
-    xStream.omitField(City.class, "capCount");
+    // You can use omitField at deserialization time currently only to tell XStream
+    // to omit the val tag if your class no longer has the field to omit. Otherwise
+    // it would though an exception.
+    //
+    // As alternative you can declare val as transient member, then the XML tag is
+    // ignored automatically.
+    // xStream.omitField(GameObject.class, "changeSupport");
+
     // id and name are read from attributes, not elements
     xStream.useAttributeFor(Terrain.class, "id");
     xStream.useAttributeFor(Terrain.class, "name");

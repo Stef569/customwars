@@ -125,19 +125,19 @@ public class ImageLib {
     return slickImgCache.containsKey(slickImgName);
   }
 
-  public Image getSlickImg(String imgName) {
-    if (!slickImgCache.containsKey(imgName)) {
-      throw new RuntimeException("No image found for '" + imgName + "' available names: " + slickImgCache.keySet());
-    }
-    return slickImgCache.get(imgName);
-  }
-
   public ImageStrip getSlickImgStrip(String imgName) {
     return (ImageStrip) getSlickImg(imgName);
   }
 
   public SpriteSheet getSlickSpriteSheet(String imgName) {
     return (SpriteSheet) getSlickImg(imgName);
+  }
+
+  public Image getSlickImg(String imgName) {
+    if (!slickImgCache.containsKey(imgName)) {
+      throw new RuntimeException("No image found for '" + imgName + "' images: " + slickImgCache.keySet());
+    }
+    return slickImgCache.get(imgName);
   }
 
   public int countSlickImages() {
