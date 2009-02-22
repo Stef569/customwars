@@ -50,7 +50,7 @@ import java.util.Set;
  * @author Stefan
  */
 public class ImgFilter extends RGBImageFilter {
-  private final static Logger logger = Logger.getLogger("logger");
+  private final static Logger logger = Logger.getLogger(ImgFilter.class);
   private Color baseColor;
   private Color replacementColor;
   private java.util.List<Integer> ignoredPixels;      // Pixels that will not be Filtered
@@ -100,7 +100,7 @@ public class ImgFilter extends RGBImageFilter {
       int knownColorPos = knownColors.get(rgb);
       return replaceColors.get(knownColorPos).getRGB();
     } else {
-      logger.warn("Unknown Color: " + Integer.toHexString(rgb));
+      logger.warn("Unknown rgb: " + rgb + " hex: " + Integer.toHexString(rgb));
       return rgb;
     }
   }

@@ -2,8 +2,10 @@ package test.slick;
 
 import com.customwars.client.Config;
 import com.customwars.client.io.ResourceManager;
+import org.newdawn.slick.Animation;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.BasicGame;
+import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
@@ -65,7 +67,6 @@ public class StartupTest extends BasicGame {
       } catch (IOException e) {
         throw new SlickException("Failed to load: " + nextResource.getDescription(), e);
       }
-
       nextResource = null;
     }
 
@@ -80,8 +81,16 @@ public class StartupTest extends BasicGame {
 
   public void render(GameContainer container, Graphics g) throws SlickException {
     if (loadingComplete) {
-      g.setColor(org.newdawn.slick.Color.white);
-      g.drawString("LOADING COMPLETED", 100, 50);
+      g.setColor(Color.white);
+      g.drawString("LOADING COMPLETED  showing all Animations", 100, 50);
+      int line = 0, col = 0;
+      for (Animation anim : resources.getAllAnims()) {
+        g.drawAnimation(anim, 100 + (col * 32), 150 + (line * 40));
+        if (++col == 12) {
+          col = 0;
+          line++;
+        }
+      }
     } else {
       renderLoadingProgress(g);
     }

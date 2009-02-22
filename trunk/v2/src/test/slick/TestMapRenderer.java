@@ -1,7 +1,6 @@
 package test.slick;
 
 import com.customwars.client.io.ResourceManager;
-import com.customwars.client.io.img.ImageLib;
 import com.customwars.client.io.img.slick.ImageStrip;
 import com.customwars.client.model.map.Direction;
 import com.customwars.client.model.map.Tile;
@@ -38,8 +37,7 @@ public class TestMapRenderer extends CWState {
   }
 
   public void init(GameContainer container, StateBasedGame game) throws SlickException {
-    ImageLib imageLib = new ImageLib();
-    ResourceManager resources = new ResourceManager(imageLib);
+    ResourceManager resources = new ResourceManager();
     resources.setDataPath("res/data/");
     resources.setImgPath("res/image/");
 
@@ -50,9 +48,9 @@ public class TestMapRenderer extends CWState {
     }
 
     TileMap<Tile> map = HardCodedGame.getMap();
-    ImageStrip terrainStrip = imageLib.getSlickImgStrip("terrains");
-    ImageStrip cursor1 = imageLib.getSlickImgStrip("selectCursor");
-    ImageStrip cursor2 = imageLib.getSlickImgStrip("aimCursor");
+    ImageStrip terrainStrip = resources.getSlickImgStrip("terrains");
+    ImageStrip cursor1 = resources.getSlickImgStrip("selectCursor");
+    ImageStrip cursor2 = resources.getSlickImgStrip("aimCursor");
 
     TileSprite selectCursor = new TileSprite(cursor1, 250, map.getRandomTile(), map);
     TileSprite aimCursor = new TileSprite(cursor2, map.getRandomTile(), map);
@@ -64,7 +62,7 @@ public class TestMapRenderer extends CWState {
     mapRenderer.addCursor("AIM", aimCursor);
     mapRenderer.activedCursor("SELECT");
 
-    ImageStrip miniMapTerrainStrip = imageLib.getSlickImgStrip("miniMap");
+    ImageStrip miniMapTerrainStrip = resources.getSlickImgStrip("miniMap");
     miniMapRenderer = new TerrainRenderer(map);
     miniMapRenderer.setTerrainStrip(miniMapTerrainStrip);
     miniMapRenderer.setLocation(510, 25);

@@ -2,6 +2,7 @@ package com.customwars.client.io.loading;
 
 import static com.customwars.client.io.ErrConstants.*;
 import com.customwars.client.io.img.ImageLib;
+import tools.IOUtil;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -60,7 +61,7 @@ public class ImageParser {
     } catch (IOException ex) {
       throw new IOException("Could not load image for line " + line);
     } finally {
-      br.close();
+      IOUtil.closeStream(stream);
     }
   }
 
