@@ -19,6 +19,8 @@ import tools.ColorUtil;
 import java.awt.Color;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.FileInputStream;
+import java.util.Properties;
 import java.util.Collection;
 import java.util.Set;
 
@@ -33,6 +35,7 @@ public class ResourceManager {
   private static final String IMAGE_LOADER_FILE = "imageLoader.txt";
   private static final String ANIM_LOADER_FILE = "animLoader.txt";
   private static final String COLORS_FILE = "colors.xml";
+  private static final String GAME_FILE = "game.properties";
   private ModelLoader modelLoader = new ModelLoader();
 
   private ImageLib imageLib;
@@ -64,7 +67,15 @@ public class ResourceManager {
       recolorImages();
       loadAnimations();
       createRecoloredAnimations();
+      loadGameProperties();
     }
+  }
+  
+  private void loadGameProperties() throws IOException{
+    Properties prop = new Properties(System.getProperties());
+    FileInputStream in = new FileInputStream(dataPath + GAME_FILE);
+    prop.load(in);
+    System.setProperties(prop);
   }
 
   private void loadColors() throws IOException {
