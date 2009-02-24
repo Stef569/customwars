@@ -12,6 +12,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.FilteredImageSource;
 import java.awt.image.ImageProducer;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -34,11 +35,12 @@ public class AwtImageLib {
   }
 
   public void loadImg(String awtImgPath, String imgName) {
+    String key = imgName.toUpperCase();
     if (LoadingList.isDeferredLoading()) {
-      LoadingList.get().add(new DeferredAwtImgLoader(awtImgPath, imgName));
+      LoadingList.get().add(new DeferredAwtImgLoader(awtImgPath, key));
     } else {
       try {
-        loadImage(awtImgPath, imgName);
+        loadImage(awtImgPath, key);
       } catch (IOException e) {
         throw new RuntimeException(e);
       }
@@ -70,11 +72,7 @@ public class AwtImageLib {
    * @param storeImgName UNIT_BLUE the name of the recolored image, key in the BufferedImage Map
    */
   public void recolorImg(Color recolorTo, String filterName, String baseImgName, String storeImgName, int darkPerc) {
-    if (LoadingList.isDeferredLoading()) {
-      LoadingList.get().add(new DeferredImgRecoloring(recolorTo, filterName, baseImgName, storeImgName, darkPerc));
-    } else {
-      recolorImage(recolorTo, filterName, baseImgName, storeImgName, darkPerc);
-    }
+    recolorImage(recolorTo, filterName, baseImgName, storeImgName, darkPerc);
   }
 
   private void recolorImage(Color recolorTo, String filterName, String baseImgName, String storeImgName, int darkPerc) {
@@ -83,9 +81,10 @@ public class AwtImageLib {
       return;
     }
 
-    ImgFilter filter = imgFilters.get(filterName);
+    ImgFilter filter = imgFilters.get(filterName.toUpperCase());
     if (filter == null)
-      throw new IllegalArgumentException("No ImgFilter found for " + filterName + " available filters " + imgFilters.keySet());
+      throw new IllegalArgumentException(
+              "No ImgFilter found for " + filterName.toUpperCase() + " available filters: " + imgFilters.keySet());
 
     BufferedImage awtImg = getAwImg(baseImgName);
     filter.setReplacementColor(recolorTo);
@@ -112,19 +111,24 @@ public class AwtImageLib {
   }
 
   public void addAwtImg(String imgName, BufferedImage img) {
-    if (imgName != null && img != null && !bufferedImgCache.containsKey(imgName))
-      bufferedImgCache.put(imgName, img);
+    String key = imgName.toUpperCase();
+    if (!bufferedImgCache.containsKey(key)) {
+      if (img != null)
+        bufferedImgCache.put(key, img);
+    } else {
+      throw new IllegalArgumentException("imgName " + key + " is already cached");
+    }
   }
 
   public static void addImgFilter(String filterName, ImgFilter filter) {
-    if (filterName != null && filter != null && !imgFilters.containsKey(filterName))
-      imgFilters.put(filterName, filter);
+    if (filterName != null && filter != null)
+      imgFilters.put(filterName.toUpperCase(), filter);
   }
 
   public void buildColorsFromImgFilters() {
     for (ImgFilter imgFilter : imgFilters.values()) {
       Set<java.awt.Color> replacementColors = imgFilter.getReplacementColors();
-      for (java.awt.Color c : replacementColors) {
+      for (Color c : replacementColors) {
         addColor(c);
       }
     }
@@ -149,14 +153,15 @@ public class AwtImageLib {
   // Getters
   //----------------------------------------------------------------------------
   public boolean isAwtImgLoaded(String awtImgName) {
-    return bufferedImgCache.containsKey(awtImgName);
+    return bufferedImgCache.containsKey(awtImgName.toUpperCase());
   }
 
   public BufferedImage getAwImg(String awtImgName) {
-    if (!bufferedImgCache.containsKey(awtImgName))
-      throw new IllegalArgumentException("No awt image found for '" + awtImgName + "' available names " + bufferedImgCache.keySet());
+    String key = awtImgName.toUpperCase();
+    if (!bufferedImgCache.containsKey(key))
+      throw new IllegalArgumentException("No awt image found for '" + key + "' available names " + bufferedImgCache.keySet());
 
-    return bufferedImgCache.get(awtImgName);
+    return bufferedImgCache.get(key);
   }
 
   public boolean contains(String awtImgName) {
@@ -168,11 +173,19 @@ public class AwtImageLib {
   }
 
   public Color getBaseColor(String filterName) {
-    return imgFilters.get(filterName).getBaseColor();
+    String key = filterName.toUpperCase();
+    if (!imgFilters.containsKey(key)) {
+      throw new IllegalArgumentException("No img filter found for '" + key + "' available names " + imgFilters.keySet());
+    }
+    return imgFilters.get(key).getBaseColor();
   }
 
   public Set<Color> getSupportedColors() {
-    return supportedColors;
+    return Collections.unmodifiableSet(supportedColors);
+  }
+
+  public Set<String> getStoredImgNames() {
+    return bufferedImgCache.keySet();
   }
 
   private class DeferredAwtImgLoader implements DeferredResource {
@@ -190,28 +203,6 @@ public class AwtImageLib {
 
     public String getDescription() {
       return imgName;
-    }
-  }
-
-  private class DeferredImgRecoloring implements DeferredResource {
-    private Color recolorTo;
-    private String filterName, baseImgName, storeImgName;
-    private int darkPerc;
-
-    public DeferredImgRecoloring(Color recolorTo, String filterName, String baseImgName, String storeImgName, int darkPerc) {
-      this.recolorTo = recolorTo;
-      this.filterName = filterName;
-      this.baseImgName = baseImgName;
-      this.storeImgName = storeImgName;
-      this.darkPerc = darkPerc;
-    }
-
-    public void load() throws IOException {
-      recolorImage(recolorTo, filterName, baseImgName, storeImgName, darkPerc);
-    }
-
-    public String getDescription() {
-      return storeImgName;
     }
   }
 }

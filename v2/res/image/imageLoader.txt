@@ -14,8 +14,8 @@ s miniMap res/image/miniMap.png 4 4
 //s moveTile moveTile.png 7
 //s attackTile attackTile.png 7
 
-m unit_RED res/image/units_RED.png 32 40
+m UNIT_RED res/image/units_RED.png 32 40
 //s unit_Decoration unitDecoration.png 6
 
-//m property_RED cities_RED.png 5 2
-//s property_Decoration citiesDecorations.png 2
+m CITY_RED res/image/cities_RED.png 32 60
+//s city_Decoration cityDecoration.png 2

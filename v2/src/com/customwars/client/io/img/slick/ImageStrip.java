@@ -90,4 +90,12 @@ public class ImageStrip extends Image {
     init();
     return imgStrip.toArray(new Image[0]);
   }
+
+  public int getTileWidth() {
+    return tileWidth;
+  }
+
+  public int getTileHeight() {
+    return tileHeight;
+  }
 }

@@ -1,7 +1,6 @@
 package test.slick;
 
 import com.customwars.client.io.img.ImageLib;
-import com.customwars.client.io.img.awt.AwtImageLib;
 import com.customwars.client.io.img.slick.ImageStrip;
 import com.customwars.client.io.img.slick.SpriteSheet;
 import com.customwars.client.io.loading.ImageFilterParser;
@@ -41,7 +40,6 @@ public class RecolorTest extends CWState {
   private Animation unitAnimRight;
 
   // Images
-  private AwtImageLib awtImgLib;
   private ImageLib imageLib;
   private ImageStrip imageStrip;
   private SpriteSheet currentUnitImgStrip;
@@ -56,7 +54,8 @@ public class RecolorTest extends CWState {
   private int currentColorPos = 0;
 
   // Test parameters
-  private static final boolean DEFERRED_LOADING = true;
+  private static final boolean DEFERRED_LOADING = false;
+  private boolean darker;
 
   public RecolorTest(CWInput cwInput, StateLogic statelogic) {
     super(cwInput, statelogic);
@@ -65,12 +64,23 @@ public class RecolorTest extends CWState {
   public void init(GameContainer container, StateBasedGame game) throws SlickException {
     LoadingList.setDeferredLoading(DEFERRED_LOADING);
     screenWidth = container.getWidth();
-    awtImgLib = new AwtImageLib();
-    imageLib = new ImageLib(awtImgLib);
+    imageLib = new ImageLib();
 
     // Load the image filters, they provide the data needed to recolor images
     // Store the colors they support in colors[]
-    loadImgFilters(awtImgLib);
+    loadImgFilters();
+  }
+
+  private void loadImgFilters() {
+    ImageFilterParser imgFilterParser = new ImageFilterParser();
+    InputStream in = ResourceLoader.getResourceAsStream(IMAGE_FILTER_FILE);
+    try {
+      imgFilterParser.loadConfigFile(in);
+    } catch (IOException e) {
+      Log.error("Could not load img filter", e);
+    }
+    imageLib.buildColorsFromImgFilters();
+    colors = imageLib.getSupportedColors().toArray(new Color[0]);
   }
 
   /**
@@ -78,11 +88,13 @@ public class RecolorTest extends CWState {
    * since images are cached each method returns if the image has already been loaded.
    */
   public void enter(GameContainer container, StateBasedGame game) throws SlickException {
-    // Load awt images and recolor them
-    loadAwtImages(awtImgLib);
-    recolorAwtImages(awtImgLib);
+    // Load unit awt image
+    imageLib.loadAwtImg(UNIT_IMG_PREFIX + "RED", "res/image/units_RED.png");
+    imageLib.loadSlickSpriteSheet("UNIT_RED", 32, 40);
 
-    // Create Slick images from the awt Images
+    recolorUnitImages();
+
+    // Create Slick images from the recolored awt Images
     loadSlickImages();
 
     // Retrieve some slick images
@@ -98,39 +110,16 @@ public class RecolorTest extends CWState {
     }
   }
 
-  private void loadImgFilters(AwtImageLib awtImgLib) {
-    ImageFilterParser imgFilterParser = new ImageFilterParser();
-    InputStream in = ResourceLoader.getResourceAsStream(IMAGE_FILTER_FILE);
-    try {
-      imgFilterParser.loadConfigFile(in);
-    } catch (IOException e) {
-      Log.error("Could not load img filter", e);
-    }
-    awtImgLib.buildColorsFromImgFilters();
-    colors = awtImgLib.getSupportedColors().toArray(new Color[0]);
-  }
-
-  private void loadAwtImages(AwtImageLib awtImgLib) {
-    awtImgLib.loadImg("res/image/cliff.gif", "cliff");
-    awtImgLib.loadImg("res/image/numbers.png", "numbers");
-    awtImgLib.loadImg("res/image/white.png", "white");
-    awtImgLib.loadImg("res/image/awTerrains.png", "terains");
-    awtImgLib.loadImg("res/image/units_RED.png", UNIT_IMG_PREFIX + "RED");
-  }
-
-  private void recolorAwtImages(AwtImageLib awtImgLib) {
-    Color baseColor = awtImgLib.getBaseColor(UNIT_IMG_FILTER);
+  private void recolorUnitImages() {
     for (Color color : colors) {
-      String baseImgName = UNIT_IMG_PREFIX + ColorUtil.toString(baseColor);
-      String storeImgName = UNIT_IMG_PREFIX + ColorUtil.toString(color);
-      awtImgLib.recolorImg(color, UNIT_IMG_FILTER, baseImgName, storeImgName, 10);
+      imageLib.recolorImg(color, "unit", "", UNIT_IMG_FILTER, 0);
+    }
+    for (Color color : colors) {
+      imageLib.recolorImg(color, "unit", "darker", UNIT_IMG_FILTER, 60);
     }
   }
 
   private void loadSlickImages() {
-    for (Color color : colors) {
-      imageLib.loadSlickImage(UNIT_IMG_PREFIX + ColorUtil.toString(color));
-    }
     imageLib.loadSlickImageStrip(UNIT_IMG_PREFIX + "AS_STRIP", UNIT_IMG_PREFIX + "RED", 32, 42);
     imageLib.loadSlickSpriteSheet(UNIT_IMG_PREFIX + "AS_SPRITESHEET", UNIT_IMG_PREFIX + "RED", 32, 42);
   }
@@ -151,7 +140,6 @@ public class RecolorTest extends CWState {
       } catch (IOException e) {
         throw new SlickException("Failed to load: " + nextResource.getDescription(), e);
       }
-
       nextResource = null;
     }
 
@@ -171,7 +159,8 @@ public class RecolorTest extends CWState {
 
       Color currentColor = colors[currentColorPos];
       g.setColor(new org.newdawn.slick.Color(currentColor.getRGB()));
-      g.drawString(ColorUtil.toString(currentColor), 50, 70);
+      String darkTxt = darker ? "Darker " : "";
+      g.drawString(darkTxt + ColorUtil.toString(currentColor), 50, 70);
 
       if (currentUnitImg == null) {
         currentUnitImgStrip.getSubImage(0, 1).draw(100, 100);
@@ -224,7 +213,12 @@ public class RecolorTest extends CWState {
 
   private void recolor() {
     Color color = colors[currentColorPos];
-    currentUnitImg = imageLib.getSlickImg(UNIT_IMG_PREFIX + ColorUtil.toString(color));
+    this.darker = !darker;
+    if (darker) {
+      currentUnitImg = imageLib.getSlickImg(UNIT_IMG_PREFIX + ColorUtil.toString(color) + "_darker");
+    } else {
+      currentUnitImg = imageLib.getSlickImg(UNIT_IMG_PREFIX + ColorUtil.toString(color));
+    }
   }
 
   public void controlPressed(Command command, CWInput cwInput) {

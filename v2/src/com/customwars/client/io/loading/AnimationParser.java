@@ -131,46 +131,14 @@ public class AnimationParser implements DeferredResource {
     int lastFrameRow = cmdScanner.nextInt();
     boolean loop = cmdScanner.nextBoolean();
 
-    Point startFrame = new Point(firstFrameRow, firstFrameCol);
-    Point endFrame = new Point(lastFrameRow, lastFrameCol);
-    List<Image> result = grabInnerList(sheet, startFrame, endFrame);
+    Point startFrame = new Point(firstFrameCol, firstFrameRow);
+    Point endFrame = new Point(lastFrameCol, lastFrameRow);
+    List<Image> result = sheet.getInnerList(startFrame, endFrame);
     Animation anim = new Animation(result.toArray(new Image[]{}), frameDuration);
     anim.setAutoUpdate(loop);
     return anim;
   }
 
-  /**
-   * Grabs the entries of an inner List(row or col) in the given matrix.
-   *
-   * @param matrix     List of lists (rows) containing the source elements (columns).
-   * @param startPoint Start point of the inner List in the matrix
-   * @param endPoint   End point of the ineer list in the matrix
-   * @return the entries of the inner List from startPoint to endPoint
-   * @throws IndexOutOfBoundsException if the inner List is bigger then the matrix
-   */
-  public List<Image> grabInnerList(SpriteSheet matrix, Point startPoint, Point endPoint) {
-    final List<Image> result = new ArrayList<Image>();
-    if (isOnSameColumn(startPoint, endPoint)) {
-      for (int rowIndex = startPoint.y; rowIndex <= endPoint.y; rowIndex++) {
-        result.add(matrix.getSubImage(rowIndex, startPoint.x));
-      }
-    } else {
-      for (int colIndex = startPoint.x; colIndex <= endPoint.x; colIndex++) {
-        result.add(matrix.getSubImage(colIndex, startPoint.y));
-      }
-    }
-
-    return result;
-  }
-
-  /**
-   * 2 points are in the same column if their x value are the same
-   *
-   * @return if 2 points are in the same column
-   */
-  private boolean isOnSameColumn(Point a, Point b) {
-    return a.x == b.x;
-  }
 
   public void load() throws IOException {
     loadNow(stream);

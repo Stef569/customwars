@@ -52,10 +52,12 @@ For example the unit baseColor could be replaced by RED
     </ReplacementColor>
   </ColorFilter>
   <ColorFilter>
-    <Name>property</Name>
+    <Name>city</Name>
     <BaseColor>RED</BaseColor>
     <OriginalColors>605058, C904058, a04068, e06068, f8b078, e8d090</OriginalColors>
-    <IgnoredColors>0, 000000, 609890, 507018, ffffff, 835468, d8e8f8, f8f870, f8f8f8, f8e0d0</IgnoredColors>
+    <IgnoredColors>0, 000000, 609890, 507018, ffffff, 835468, d8e8f8, f8f870, f8f8f8, f8e0d0, d0e860, e0f060, d0f060,
+      c0e060, c8e860
+    </IgnoredColors>
     <ReplacementColor>
       <Name>BLUE</Name>
       <ReplacementColors>484880, 6048d8, 6048d8, 6070f8, 78c8f0, 98e0f8</ReplacementColors>

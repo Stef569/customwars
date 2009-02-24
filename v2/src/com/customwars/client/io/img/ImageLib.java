@@ -6,21 +6,25 @@ import com.customwars.client.io.img.slick.SlickImageFactory;
 import com.customwars.client.io.img.slick.SpriteSheet;
 import org.apache.log4j.Logger;
 import org.newdawn.slick.Image;
+import org.newdawn.slick.loading.DeferredResource;
+import org.newdawn.slick.loading.LoadingList;
 import tools.ColorUtil;
 
 import java.awt.Color;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
- * Stores references to Slick Images
+ * Stores references to Slick Images, mapped by a string value.
  * Slick images are loaded from awt images,
- * The awt Images should be loaded first into the awtImageLib and then passed to this class constructor
+ * The awt Images should be loaded first by
+ * loading them into the awtImageLib and then passed to this class constructor
+ * or by using the loadAwtImg method
  *
- * Every request for an image trought the load... methods
- * will return a cached Image if slickImgName has already been loaded
- *
- * Normally you would call load... once and then use one of the get... methods to return the correct image.
+ * Every request for an image trought the load methods
+ * will return a cached Image if the imgName has already been loaded.
  *
  * @author stefan
  */
@@ -48,85 +52,154 @@ public class ImageLib {
   }
 
   /**
-   * load and add the slick image to the cache keyed by the slickImgName
+   * load and add the slick image to the cache keyed by the imgName
    *
-   * @param slickImgName the image name to be used as key for the Slick image
-   * @param awtImgName   the awt image name key to retrieve the awtImg, we need
-   *                     the awtImg to be able to create a new Slick Image.
+   * @param imgName    the image name to be used as key for the Slick image
+   * @param awtImgName the awt image name key to retrieve the awtImg, we need
+   *                   the awtImg to be able to create a new Slick Image.
    */
-  public void loadSlickImage(String slickImgName, String awtImgName) {
-    if (!slickImgCache.containsKey(slickImgName)) {
-      Image slickImg = SlickImageFactory.createSlickImg(slickImgName, awtImgName);
-      addSlickImg(slickImgName, slickImg);
+  public void loadSlickImage(String imgName, String awtImgName) {
+    if (!slickImgCache.containsKey(imgName)) {
+      Image slickImg = SlickImageFactory.createSlickImg(imgName, awtImgName);
+      addSlickImg(imgName, slickImg);
     }
+  }
+
+  private void loadSlickImageStrip(String storeImgName, ImageStrip strip) {
+    loadSlickImageStrip(storeImgName, strip.getTileWidth(), strip.getTileHeight());
   }
 
   public void loadSlickImageStrip(String imgName, int tileWidth, int tileHeight) {
     loadSlickImageStrip(imgName, imgName, tileWidth, tileHeight);
   }
 
-  public void loadSlickImageStrip(String slickImgName, String awtImgName, int tileWidth, int tileHeight) {
-    if (!slickImgCache.containsKey(slickImgName)) {
-      ImageStrip slickImg = SlickImageFactory.createSlickImgStrip(slickImgName, awtImgName, tileWidth, tileHeight);
-      addSlickImg(slickImgName, slickImg);
+  public void loadSlickImageStrip(String imgName, String awtImgName, int tileWidth, int tileHeight) {
+    if (!slickImgCache.containsKey(imgName)) {
+      ImageStrip slickImg = SlickImageFactory.createSlickImgStrip(imgName, awtImgName, tileWidth, tileHeight);
+      addSlickImg(imgName, slickImg);
     }
+  }
+
+
+  private void loadSlickSpriteSheet(String imgName, SpriteSheet sheet) {
+    loadSlickSpriteSheet(imgName, sheet.getTileWidth(), sheet.getTileHeight());
   }
 
   public void loadSlickSpriteSheet(String imgName, int tileWidth, int tileHeight) {
     loadSlickSpriteSheet(imgName, imgName, tileWidth, tileHeight);
   }
 
-  public void loadSlickSpriteSheet(String slickImgName, String awtImgName, int tileWidth, int tileHeight) {
-    if (!slickImgCache.containsKey(slickImgName)) {
-      SpriteSheet slickImg = SlickImageFactory.createSpriteSheet(slickImgName, awtImgName, tileWidth, tileHeight);
-      addSlickImg(slickImgName, slickImg);
+  public void loadSlickSpriteSheet(String imgName, String awtImgName, int tileWidth, int tileHeight) {
+    if (!slickImgCache.containsKey(imgName.toUpperCase())) {
+      SpriteSheet slickImg = SlickImageFactory.createSpriteSheet(imgName, awtImgName, tileWidth, tileHeight);
+      addSlickImg(imgName, slickImg);
     }
   }
-
 
   public void clearImages() {
     slickImgCache.clear();
   }
 
-  public void addSlickImg(String imgName, Image img) {
-    if (imgName != null && img != null && !slickImgCache.containsKey(imgName))
-      slickImgCache.put(imgName, img);
+  public void addSlickImg(String slickImgName, Image img) {
+    String key = slickImgName.toUpperCase();
+    if (!slickImgCache.containsKey(key)) {
+      if (img != null)
+        slickImgCache.put(key, img);
+    } else {
+      throw new IllegalArgumentException("slick image " + key + " is already cached");
+    }
   }
 
-  public void recolorImg(Color recolorTo, String imgName, int darkPerc) {
+  /**
+   * Recolor imgName to recolorTo
+   * imgName is also the imgFilter name
+   * The image is not darkened
+   * The image will be stored in the format imgName_COLOR
+   */
+  public void recolorImg(Color recolorTo, String imgName) {
     recolorImg(recolorTo, imgName, "", imgName, 0);
   }
 
-  public void recolorImg(Color color, String imgName, String prefix, int darkPerc) {
-    recolorImg(color, imgName, prefix, imgName, darkPerc);
+  /**
+   * Recolor imgName to recolorTo
+   * imgName is also the imgFilter name
+   * Darken the image with darkPercentage(0-100)
+   * The image will be stored in the format imgName_COLOR_suffix
+   */
+  public void recolorImg(Color recolorTo, String imgName, String suffix, int darkPercentage) {
+    recolorImg(recolorTo, imgName, suffix, imgName, darkPercentage);
   }
 
-  public void recolorImg(Color recolorTo, String imgName, String prefix, String imgFilterName, int darkPerc) {
+  public void recolorImg(Color recolorTo, String imgName, String suffix, String imgFilterName, int darkPercentage) {
     String colorToName = ColorUtil.toString(recolorTo);
     Color baseColor = awtImageLib.getBaseColor(imgFilterName);
     String baseColorName = ColorUtil.toString(baseColor);
     String baseImgName = imgName + "_" + baseColorName;
-    String storeImgName = appendValidStringValue(imgName, prefix, prefix + "_") + colorToName;
+    String storeImgName = imgName + "_" + colorToName;
 
-    awtImageLib.recolorImg(recolorTo, imgFilterName, baseImgName, storeImgName, darkPerc);
+    if (suffix != null && suffix.trim().length() > 0) {
+      storeImgName += "_" + suffix;
+    }
+
+    if (LoadingList.isDeferredLoading()) {
+      LoadingList.get().add(new DeferredImgRecoloring(recolorTo, imgFilterName, baseImgName, storeImgName, darkPercentage));
+    } else {
+      recolorImgNow(recolorTo, imgFilterName, baseImgName, storeImgName, darkPercentage);
+    }
+  }
+
+  private void recolorImgNow(Color recolorTo, String imgFilterName, String baseImgName, String storeImgName, int darkPercentage) {
+    String key = storeImgName.toUpperCase();
+
+    if (isSlickImgLoaded(key)) {
+      return;
+    }
+
+    awtImageLib.recolorImg(recolorTo, imgFilterName, baseImgName, key, darkPercentage);
+    createSlickImg(baseImgName, storeImgName);
   }
 
   /**
-   * Append only if <tt>value<tt> contains a valid String value
+   * Get the base slick image
+   * get the tileWidth/tileHeight
+   * create slick img
+   *
+   * This method ignores deferred loading because
+   * 1. recoloring already is deferred @see DeferredImgRecoloring
+   * 2. With deferredloading the SlickImageFactory will load the image data later
+   * by adding a DeferredResource to the <b>end</b> of the loadingList.
+   *
+   * But the methods after recolorImg need the image data!
+   * so we force SlickImageFactory to load the image data instantly.
    */
-  public String appendValidStringValue(String originalString, String value, String append) {
-    if (value != null && value.trim().length() != 0) {
-      originalString += append;
+  private void createSlickImg(String baseImgName, String storeImgName) {
+    Image img = getSlickImg(baseImgName);
+    boolean origValue = SlickImageFactory.isDeferredLoading();
+    SlickImageFactory.setDeferredLoading(false);
+
+    if (img instanceof SpriteSheet) {
+      SpriteSheet sheet = (SpriteSheet) img;
+      loadSlickSpriteSheet(storeImgName, sheet);
+    } else if (img instanceof ImageStrip) {
+      ImageStrip strip = (ImageStrip) img;
+      loadSlickImageStrip(storeImgName, strip);
+    } else {
+      loadSlickImage(storeImgName, baseImgName);
     }
-    return originalString;
+    SlickImageFactory.setDeferredLoading(origValue);
   }
 
   public boolean isSlickImgLoaded(String slickImgName) {
-    return slickImgCache.containsKey(slickImgName);
+    return slickImgCache.containsKey(slickImgName.toUpperCase());
   }
 
   public ImageStrip getSlickImgStrip(String imgName) {
     return (ImageStrip) getSlickImg(imgName);
+  }
+
+  public SpriteSheet getSlickSpriteSheet(String imgName, Color color) {
+    String colorName = ColorUtil.toString(color);
+    return getSlickSpriteSheet(imgName + "_" + colorName);
   }
 
   public SpriteSheet getSlickSpriteSheet(String imgName) {
@@ -134,10 +207,11 @@ public class ImageLib {
   }
 
   public Image getSlickImg(String imgName) {
-    if (!slickImgCache.containsKey(imgName)) {
-      throw new RuntimeException("No image found for '" + imgName + "' images: " + slickImgCache.keySet());
+    String key = imgName.toUpperCase();
+    if (!slickImgCache.containsKey(key)) {
+      throw new RuntimeException("No image found for '" + key + "' available: " + slickImgCache.keySet());
     }
-    return slickImgCache.get(imgName);
+    return slickImgCache.get(key);
   }
 
   public int countSlickImages() {
@@ -150,5 +224,35 @@ public class ImageLib {
 
   public void buildColorsFromImgFilters() {
     awtImageLib.buildColorsFromImgFilters();
+  }
+
+  public Set<Color> getSupportedColors() {
+    return awtImageLib.getSupportedColors();
+  }
+
+  public String getStoredImgNames() {
+    return slickImgCache.keySet().toString();
+  }
+
+  private class DeferredImgRecoloring implements DeferredResource {
+    private Color recolorTo;
+    private String filterName, baseImgName, storeImgName;
+    private int darkPerc;
+
+    public DeferredImgRecoloring(Color recolorTo, String filterName, String baseImgName, String storeImgName, int darkPerc) {
+      this.recolorTo = recolorTo;
+      this.filterName = filterName;
+      this.baseImgName = baseImgName;
+      this.storeImgName = storeImgName;
+      this.darkPerc = darkPerc;
+    }
+
+    public void load() throws IOException {
+      recolorImgNow(recolorTo, filterName, baseImgName, storeImgName, darkPerc);
+    }
+
+    public String getDescription() {
+      return storeImgName;
+    }
   }
 }

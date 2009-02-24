@@ -3,6 +3,7 @@ package com.customwars.client.io;
 import com.customwars.client.io.img.AnimLib;
 import com.customwars.client.io.img.ImageLib;
 import com.customwars.client.io.img.slick.ImageStrip;
+import com.customwars.client.io.img.slick.SlickImageFactory;
 import com.customwars.client.io.img.slick.SpriteSheet;
 import com.customwars.client.io.loading.AnimationParser;
 import com.customwars.client.io.loading.ImageFilterParser;
@@ -11,12 +12,15 @@ import com.customwars.client.io.loading.ModelLoader;
 import org.apache.log4j.Logger;
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Image;
+import org.newdawn.slick.loading.LoadingList;
 import org.newdawn.slick.util.ResourceLoader;
+import tools.ColorUtil;
 
 import java.awt.Color;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
+import java.util.Set;
 
 /**
  * Handles and hides all kind of resources through 1 object
@@ -46,6 +50,7 @@ public class ResourceManager {
   public ResourceManager(ImageLib imageLib, AnimLib animLib) {
     this.imageLib = imageLib;
     this.animLib = animLib;
+    SlickImageFactory.setDeferredLoading(LoadingList.isDeferredLoading());
   }
 
   public void load() throws IOException {
@@ -56,7 +61,9 @@ public class ResourceManager {
     if (imageLib != null) {
       loadColors();
       loadImages();
+      recolorImages();
       loadAnimations();
+      createRecoloredAnimations();
     }
   }
 
@@ -74,10 +81,33 @@ public class ResourceManager {
     imgParser.loadConfigFile(in);
   }
 
+  private void recolorImages() {
+    Set<Color> colors = imageLib.getSupportedColors();
+    for (Color color : colors) {
+      imageLib.recolorImg(color, "unit");
+      imageLib.recolorImg(color, "city");
+    }
+
+    for (Color color : colors) {
+      imageLib.recolorImg(color, "unit", "darker", "unit", 60);
+    }
+  }
+
   private void loadAnimations() throws IOException {
     AnimationParser animParser = new AnimationParser(imageLib, animLib);
     InputStream in = ResourceLoader.getResourceAsStream(imgPath + ANIM_LOADER_FILE);
     animParser.loadConfigFile(in);
+  }
+
+  private void createRecoloredAnimations() {
+    Set<Color> colors = getSupportedColors();
+    Color unitBaseColor = getBaseColor("unit");
+    Color cityBaseColor = getBaseColor("city");
+
+    for (Color color : colors) {
+      animLib.createUnitAnimations(unitBaseColor, this, color);
+      animLib.createCityAnimations(cityBaseColor, this, color);
+    }
   }
 
   public void clear() {
@@ -105,6 +135,11 @@ public class ResourceManager {
     return (ImageStrip) imageLib.getSlickImg(imgName);
   }
 
+  public SpriteSheet getSlickSpriteSheet(String imgName, Color color) {
+    String colorName = ColorUtil.toString(color);
+    return getSlickSpriteSheet(imgName + "_" + colorName);
+  }
+
   public SpriteSheet getSlickSpriteSheet(String imgName) {
     return (SpriteSheet) imageLib.getSlickImg(imgName);
   }
@@ -113,15 +148,23 @@ public class ResourceManager {
     return imageLib.countSlickImages();
   }
 
+  public Color getBaseColor(String filterName) {
+    return imageLib.getBaseColor(filterName);
+  }
+
+  public Set<Color> getSupportedColors() {
+    return imageLib.getSupportedColors();
+  }
+
   public Animation getAnim(String animName) {
     return animLib.getAnim(animName);
   }
 
-  public Collection<Animation> getAllAnims() {
-    return animLib.getAllAnims();
+  public Animation getAnim(int unitID, Color color, String suffix) {
+    return animLib.getUnitAnim(unitID, color, suffix);
   }
 
-  public Color getBaseColor(String filterName) {
-    return imageLib.getBaseColor(filterName);
+  public Collection<Animation> getAllAnims() {
+    return animLib.getAllAnimations();
   }
 }

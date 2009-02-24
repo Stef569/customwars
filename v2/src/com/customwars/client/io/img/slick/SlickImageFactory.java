@@ -22,6 +22,7 @@ import java.io.IOException;
  * @author stefan
  */
 public class SlickImageFactory {
+  private static boolean deferredLoading;
   private static AwtImageLib imageLib;
 
   public static void setImageLib(AwtImageLib imageLib) {
@@ -55,16 +56,29 @@ public class SlickImageFactory {
   }
 
   public static void setTexture(String awtImgName, String imgName, Image img) {
-    if (LoadingList.isDeferredLoading()) {
+    if (deferredLoading) {
       LoadingList.get().add(new DeferredTexture(awtImgName, imgName, img));
     } else {
       try {
-        BufferedImage awtImg = imageLib.getAwImg(awtImgName);
-        img.setTexture((BufferedImageUtil.getTexture(imgName, awtImg)));
+        setTextureNow(img, awtImgName);
       } catch (IOException e) {
         throw new RuntimeException(e);
       }
     }
+  }
+
+  private static void setTextureNow(Image img, String awtImgName) throws IOException {
+    BufferedImage awtImg = imageLib.getAwImg(awtImgName);
+    Texture target = BufferedImageUtil.getTexture("", awtImg);
+    img.setTexture(target);
+  }
+
+  public static void setDeferredLoading(boolean deferred) {
+    deferredLoading = deferred;
+  }
+
+  public static boolean isDeferredLoading() {
+    return deferredLoading;
   }
 
   private static class DeferredTexture extends TextureImpl implements DeferredResource {

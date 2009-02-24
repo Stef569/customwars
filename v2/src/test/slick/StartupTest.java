@@ -59,11 +59,6 @@ public class StartupTest extends BasicGame {
     if (nextResource != null) {
       try {
         nextResource.load();
-        // slow down loading for example purposes
-        try {
-          Thread.sleep(500);
-        } catch (Exception e) {
-        }
       } catch (IOException e) {
         throw new SlickException("Failed to load: " + nextResource.getDescription(), e);
       }
@@ -82,11 +77,11 @@ public class StartupTest extends BasicGame {
   public void render(GameContainer container, Graphics g) throws SlickException {
     if (loadingComplete) {
       g.setColor(Color.white);
-      g.drawString("LOADING COMPLETED  showing all Animations", 100, 50);
+      g.drawString("LOADING COMPLETED  showing all Animations...", 100, 50);
       int line = 0, col = 0;
       for (Animation anim : resources.getAllAnims()) {
-        g.drawAnimation(anim, 100 + (col * 32), 150 + (line * 40));
-        if (++col == 12) {
+        g.drawAnimation(anim, (col * 32), 100 + (line * 40));
+        if (++col == 25) {
           col = 0;
           line++;
         }
@@ -112,10 +107,6 @@ public class StartupTest extends BasicGame {
     } else {
       g.drawString("Loading...", 100, 100);
     }
-  }
-
-  public int getID() {
-    return 1;
   }
 
   public static void main(String[] args) throws SlickException {
