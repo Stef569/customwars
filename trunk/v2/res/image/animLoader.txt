@@ -5,11 +5,11 @@
 //S EXPLOSION explosion 150 0 9 False
 
 // Create Property Animations
-//M property_0_RED cities_RED True 500 0 0 1 0
-//M property_1_RED cities_RED True 500 0 1 1 1
-//M property_2_RED cities_RED True 500 0 2 1 2
-//M property_3_RED cities_RED True 500 0 3 1 3
-//M property_4_RED cities_RED True 500 0 4 1 4
+M city_0_RED city_RED 500 0 0 1 0 True
+M city_1_RED city_RED 500 0 1 1 1 True 
+M city_2_RED city_RED 500 0 2 1 2 True 
+M city_3_RED city_RED 500 0 3 1 3 True 
+M city_4_RED city_RED 500 0 4 1 4 True 
 
 // Create Unit Animations out of the unit_RED spriteSheet
 // Animations: 3 Left, 3 right, 3 down, 3 up.

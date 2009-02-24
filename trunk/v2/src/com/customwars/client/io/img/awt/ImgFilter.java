@@ -53,7 +53,7 @@ public class ImgFilter extends RGBImageFilter {
   private final static Logger logger = Logger.getLogger(ImgFilter.class);
   private Color baseColor;
   private Color replacementColor;
-  private java.util.List<Integer> ignoredPixels;      // Pixels that will not be Filtered
+  private Set<Integer> ignoredPixels;      // Pixels that will not be Filtered
   private Map<Integer, Integer> knownColors;          // Key=known Color value from the image, Val=index position
   private Map<Color, List<Color>> replacementColors;  // Key=ReplacementColor, Val=replacement colors
   private int darkenPercentage;   // The percentage that each px should be darkened
@@ -62,7 +62,7 @@ public class ImgFilter extends RGBImageFilter {
     this.baseColor = baseColor;
     this.replacementColors = new HashMap<Color, List<Color>>();
     this.knownColors = new HashMap<Integer, Integer>();
-    this.ignoredPixels = new ArrayList<Integer>();
+    this.ignoredPixels = new HashSet<Integer>();
     initDefaults();
   }
 

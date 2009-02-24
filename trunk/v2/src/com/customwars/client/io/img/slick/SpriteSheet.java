@@ -4,7 +4,10 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 
+import java.awt.Point;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A sheet of sprites that can be drawn individually
@@ -155,8 +158,8 @@ public class SpriteSheet extends Image {
    */
   protected void initImpl() {
     if (subImages == null) {
-      int cols = (int) (Math.floor(getWidth() / (tw + spacing) + 1));
-      int rows = (int) (Math.floor(getHeight() / (th + spacing) + 1));
+      int cols = (int) (Math.floor(getWidth() / (tw + spacing)));
+      int rows = (int) (Math.floor(getHeight() / (th + spacing)));
 
       subImages = new Image[rows][cols];
       for (int row = 0; row < rows; row++) {
@@ -176,13 +179,44 @@ public class SpriteSheet extends Image {
    */
   public Image getSubImage(int col, int row) {
     if ((row < 0) || (row >= subImages.length)) {
-      throw new RuntimeException("SubImage row out of sheet bounds: " + col + "/" + subImages.length);
+      throw new RuntimeException("SubImage row out of sheet bounds: " + row + "/" + subImages.length);
     }
     if ((col < 0) || (col >= subImages[0].length)) {
       throw new RuntimeException("SubImage col out of sheet bounds: " + col + "/" + subImages[0].length);
     }
 
     return subImages[row][col];
+  }
+
+  /**
+   * Grabs the entries of an inner List(row or col) in the this spritesheet
+   *
+   * @param startPoint Start point of the inner List
+   * @param endPoint   End point of the ineer list
+   * @return the entries of the inner List from startPoint to endPoint
+   * @throws IndexOutOfBoundsException if the inner List is bigger then the sheet bounds
+   */
+  public List<Image> getInnerList(Point startPoint, Point endPoint) {
+    final List<Image> result = new ArrayList<Image>();
+    if (isOnSameColumn(startPoint, endPoint)) {
+      for (int rowIndex = startPoint.y; rowIndex <= endPoint.y; rowIndex++) {
+        result.add(getSubImage(rowIndex, startPoint.x));
+      }
+    } else {
+      for (int colIndex = startPoint.x; colIndex <= endPoint.x; colIndex++) {
+        result.add(getSubImage(colIndex, startPoint.y));
+      }
+    }
+    return result;
+  }
+
+  /**
+   * 2 points are in the same column if their x value are the same
+   *
+   * @return if 2 points are in the same column
+   */
+  private boolean isOnSameColumn(Point a, Point b) {
+    return a.x == b.x;
   }
 
   /**
@@ -211,7 +245,7 @@ public class SpriteSheet extends Image {
   public int getHorizontalCount() {
     initImpl();
 
-    return subImages.length;
+    return subImages[0].length;
   }
 
   /**
@@ -222,7 +256,7 @@ public class SpriteSheet extends Image {
   public int getVerticalCount() {
     initImpl();
 
-    return subImages[0].length;
+    return subImages.length;
   }
 
   /**
@@ -251,5 +285,13 @@ public class SpriteSheet extends Image {
    */
   public void startUse() {
     super.startUse();
+  }
+
+  public int getTileHeight() {
+    return th;
+  }
+
+  public int getTileWidth() {
+    return tw;
   }
 }
