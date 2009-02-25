@@ -2,6 +2,8 @@ package test.slick;
 
 import com.customwars.client.Config;
 import com.customwars.client.io.ResourceManager;
+import com.customwars.client.io.loading.MapParser;
+import java.io.FileNotFoundException;
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.BasicGame;
@@ -49,6 +51,17 @@ public class StartupTest extends BasicGame {
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
+    
+    //MapParser map = new MapParser();
+    //try {
+    //    map.writeMap("res/map/cool.txt","[yeah][its][cool][but]");
+    //    map.printMap("res/map/cool.txt");
+    //} catch (FileNotFoundException ex) {
+    //    ex.printStackTrace();
+    //} catch (IOException ex) {
+    //    ex.printStackTrace();
+    //}
+        
   }
 
   public void update(GameContainer container, int delta) throws SlickException {
