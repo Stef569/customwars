@@ -52,9 +52,6 @@ public class UnitXStreamTest {
     UnitFactory.addUnit(unit);
     Unit unitCopy = UnitFactory.getRandomUnit();
 
-    // Default to 1, when not in xml
-    Assert.assertEquals(1, unitCopy.getMinHealRange());
-    Assert.assertEquals(1, unitCopy.getMaxHealRange());
     Assert.assertEquals(true, unitCopy.canCapture());
   }
 

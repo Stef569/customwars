@@ -22,6 +22,7 @@ public class CWInput extends InputProvider {
   private Command up = new BasicCommand("Down");
   private Command left = new BasicCommand("Left");
   private Command right = new BasicCommand("Right");
+  private Command muteMusic = new BasicCommand("Mute Sound");
 
   /**
    * Create a new input proider which will provide abstract input descriptions
@@ -45,6 +46,7 @@ public class CWInput extends InputProvider {
     bindCommand(new KeyControl(Input.KEY_B), cancel);
     bindCommand(new MouseButtonControl(Input.MOUSE_RIGHT_BUTTON), cancel);
     bindCommand(new KeyControl(Input.KEY_ESCAPE), exit);
+    bindCommand(new KeyControl(Input.KEY_S), muteMusic);
   }
 
   private void initMoveCommands() {
@@ -80,5 +82,9 @@ public class CWInput extends InputProvider {
 
   public boolean isRightPressed(Command command) {
     return right.equals(command);
+  }
+
+  public boolean isMusicMuted(Command command) {
+    return muteMusic.equals(command);
   }
 }

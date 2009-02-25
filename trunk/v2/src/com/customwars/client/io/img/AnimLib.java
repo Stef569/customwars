@@ -26,6 +26,7 @@ public class AnimLib {
   public static final String ANIM_RIGHT = "RIGHT";
   public static final String ANIM_UP = "UP";
   public static final String ANIM_DOWN = "DOWN";
+  public static final String ANIM_INACTIVE = "INACTIVE";
 
   private static Map<String, Animation> animations = new HashMap<String, Animation>();
 
@@ -61,7 +62,8 @@ public class AnimLib {
       LoadingList.get().add(new DeferredUnitAnimationCreator(baseColor, resources, color));
     } else {
       SpriteSheet unitSpriteSheet = resources.getSlickSpriteSheet("unit", color);
-      createUnitAnimationsNow(baseColor, unitSpriteSheet, color);
+      SpriteSheet darkerSpriteSheet = resources.getSlickSpriteSheet("unit", color, "darker");
+      createUnitAnimationsNow(baseColor, unitSpriteSheet, darkerSpriteSheet, color);
     }
   }
 
@@ -70,26 +72,27 @@ public class AnimLib {
       LoadingList.get().add(new DeferredCityAnimationCreator(baseColor, resources, color));
     } else {
       SpriteSheet citySpriteSheet = resources.getSlickSpriteSheet("city", color);
-      createCityAnimationsNow(baseColor, citySpriteSheet, color);
+      SpriteSheet darkerCitySpriteSheet = resources.getSlickSpriteSheet("city", color, "darker");
+      createCityAnimationsNow(baseColor, citySpriteSheet, darkerCitySpriteSheet, color);
     }
   }
 
   //----------------------------------------------------------------------------
   // City Animation
   //----------------------------------------------------------------------------
-  private void createCityAnimationsNow(Color baseColor, SpriteSheet citySpriteSheet, Color color) {
+  private void createCityAnimationsNow(Color baseColor, SpriteSheet citySpriteSheet, SpriteSheet darkerCitySpriteSheet, Color color) {
     // Read frame count and durations from the base animations
     Animation baseAnim = getCityBaseAnimation(baseColor);
     int[] durations = baseAnim.getDurations();
-    int frames = baseAnim.getFrameCount();
+    int totalFrames = baseAnim.getFrameCount();
 
     for (int row = 0; row < citySpriteSheet.getVerticalCount(); row++) {
-      int frame = 0, totalFrames = frames; // Frames within 1 row
+      Animation animActive = createAnim(citySpriteSheet, 0, totalFrames, row, durations);
+      addCityAnim(row, color, "", animActive);
 
-      Animation animLeft = createAnim(citySpriteSheet, frame, totalFrames, row, durations);
-      addCityAnim(row, color, animLeft);
-      frame += frames;
-      totalFrames += frames;
+      Animation animFogged = new Animation(false);
+      animFogged.addFrame(darkerCitySpriteSheet.getSubImage(0, row), 99);
+      addCityAnim(row, color, ANIM_INACTIVE, animFogged);
     }
   }
 
@@ -98,14 +101,28 @@ public class AnimLib {
     return getAnim(cityAnimName);
   }
 
-  private void addCityAnim(int cityID, Color color, Animation cityAnim) {
-    String cityAnimName = createCityAnimName(cityID, color);
+  private void addCityAnim(int cityID, Color color, String suffix, Animation cityAnim) {
+    String cityAnimName = createCityAnimName(cityID, color, suffix);
     addAnim(cityAnimName, cityAnim);
   }
 
   public String createCityAnimName(int cityID, Color color) {
     String colorName = ColorUtil.toString(color);
     return "city_" + cityID + "_" + colorName;
+  }
+
+  public Animation getCityAnim(int cityID, Color color, String suffix) {
+    String cityAnimName = createCityAnimName(cityID, color, suffix);
+    return getAnim(cityAnimName);
+  }
+
+  public String createCityAnimName(int cityID, Color color, String suffix) {
+    String colorName = ColorUtil.toString(color);
+    if (suffix != null && suffix.trim().length() > 0) {
+      return "city_" + cityID + "_" + colorName + "_" + suffix;
+    } else {
+      return "city_" + cityID + "_" + colorName;
+    }
   }
 
   //----------------------------------------------------------------------------
@@ -118,7 +135,7 @@ public class AnimLib {
    * @param unitSpriteSheet the spritesheet to extract the images from
    * @param color           the color of the unitSpriteSheet, used to store the animations ie UNIT_0_BLUE
    */
-  private void createUnitAnimationsNow(Color baseColor, SpriteSheet unitSpriteSheet, Color color) {
+  private void createUnitAnimationsNow(Color baseColor, SpriteSheet unitSpriteSheet, SpriteSheet inactiveUnitSpriteSheet, Color color) {
     // Read frame count and durations from the base animations
     Animation baseAnimLeft = getUnitBaseAnimation(baseColor, ANIM_LEFT);
     Animation baseAnimRight = getUnitBaseAnimation(baseColor, ANIM_RIGHT);
@@ -157,6 +174,11 @@ public class AnimLib {
       addUnitAnim(row, color, ANIM_DOWN, animDown);
       frame += animDownFrameCount;
       totalFrames += animDownFrameCount;
+
+      Animation animInActive = new Animation(false);
+      Image img = inactiveUnitSpriteSheet.getSubImage(animLeftFrameCount + 1, row);
+      animInActive.addFrame(img, 99);
+      addUnitAnim(row, color, ANIM_INACTIVE, animInActive);
     }
   }
 
@@ -204,7 +226,8 @@ public class AnimLib {
 
     public void load() throws IOException {
       SpriteSheet unitSpriteSheet = resources.getSlickSpriteSheet("unit", color);
-      createUnitAnimationsNow(baseColor, unitSpriteSheet, color);
+      SpriteSheet darkerSpriteSheet = resources.getSlickSpriteSheet("unit", color, "darker");
+      createUnitAnimationsNow(baseColor, unitSpriteSheet, darkerSpriteSheet, color);
     }
 
     public String getDescription() {
@@ -224,11 +247,12 @@ public class AnimLib {
 
     public void load() throws IOException {
       SpriteSheet citySpriteSheet = resources.getSlickSpriteSheet("city", color);
-      createCityAnimationsNow(baseColor, citySpriteSheet, color);
+      SpriteSheet darkerCitySpriteSheet = resources.getSlickSpriteSheet("city", color, "darker");
+      createCityAnimationsNow(baseColor, citySpriteSheet, darkerCitySpriteSheet, color);
     }
 
     public String getDescription() {
-      return "City animations";
+      return "city animations";
     }
   }
 }

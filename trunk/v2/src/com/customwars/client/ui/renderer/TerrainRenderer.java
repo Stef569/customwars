@@ -17,6 +17,9 @@ public class TerrainRenderer extends TileMapRenderer {
   private ImageStrip terrainStrip;
   private Color fogColor = Color.lightGray;
 
+  public TerrainRenderer() {
+  }
+
   public TerrainRenderer(TileMap<Tile> map) {
     super(map);
   }

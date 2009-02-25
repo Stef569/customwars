@@ -7,7 +7,6 @@ import com.customwars.client.ui.state.StateLogic;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
-import org.newdawn.slick.Input;
 import org.newdawn.slick.Music;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.Sound;
@@ -79,16 +78,10 @@ public class TestMenuMusic extends CWState implements ComponentListener {
     if (cwInput.isSelectPressed(command)) {
       menuTickSound.play();
     }
-    testmenu.controlPressed(command, cwInput);
-  }
-
-  public void keyPressed(int key, char c) {
-    if (key == Input.KEY_S) {
+    if (cwInput.isMusicMuted(command)) {
       backgroundMusic.stop();
     }
-    if (key == Input.KEY_ENTER) {
-      changeGameState("MAIN_MENU");
-    }
+    testmenu.controlPressed(command, cwInput);
   }
 
   public int getID() {

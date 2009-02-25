@@ -14,9 +14,10 @@ import java.awt.Point;
  * @author Stefan
  */
 public class Sprite {
-  static final Logger logger = Logger.getLogger(Sprite.class);
-  private boolean illegalRenderingLogged;
+  private static final Logger logger = Logger.getLogger(Sprite.class);
   private static final int ONE_SECOND = 1000;
+  private boolean illegalRenderingLogged;
+  private boolean visible = true;
 
   // Position (pixels)
   protected int locX;
@@ -80,7 +81,7 @@ public class Sprite {
    * @param g slick graphics to render the image on
    */
   public void render(Graphics g) {
-    if (canRenderAnim(g)) {
+    if (canRenderAnim(g) && visible) {
       anim.getCurrentFrame().draw(locX, locY);
     }
   }
@@ -148,6 +149,10 @@ public class Sprite {
 
   public void setDy(float dy) {
     this.dy = dy;
+  }
+
+  public void setVisible(boolean visible) {
+    this.visible = visible;
   }
 
   //----------------------------------------------------------------------------

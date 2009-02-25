@@ -42,7 +42,7 @@ public class TestMapRenderer extends CWState {
     resources.setImgPath("res/image/");
 
     try {
-      resources.loadImages();
+      resources.load();
     } catch (IOException e) {
       logger.fatal(e);
     }
@@ -55,9 +55,9 @@ public class TestMapRenderer extends CWState {
     TileSprite selectCursor = new TileSprite(cursor1, 250, map.getRandomTile(), map);
     TileSprite aimCursor = new TileSprite(cursor2, map.getRandomTile(), map);
 
-    mapRenderer = new MapRenderer(map);
-    mapRenderer.loadResources(resources);
+    mapRenderer = new MapRenderer(resources);
     mapRenderer.setTerrainStrip(terrainStrip);
+    mapRenderer.setMap(map);
     mapRenderer.addCursor("SELECT", selectCursor);
     mapRenderer.addCursor("AIM", aimCursor);
     mapRenderer.activedCursor("SELECT");
@@ -70,7 +70,18 @@ public class TestMapRenderer extends CWState {
 
   public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
     mapRenderer.render(g);
-    g.drawString(mapRenderer.getCursorLocation().toString(), 10, container.getHeight() - 20);
+    String tileInfo = mapRenderer.getCursorLocation().toString();
+    String line1 = tileInfo, line2 = "";
+
+    int endIndex = tileInfo.length();
+    while (g.getFont().getWidth(line1) > container.getWidth() - 20) {
+      line1 = tileInfo.substring(0, endIndex--);
+    }
+
+    if (endIndex > 0)
+      line2 = tileInfo.substring(endIndex);
+    g.drawString(line1, 10, container.getHeight() - 40);
+    g.drawString(line2, 10, container.getHeight() - 20);
 
     g.drawString("MiniMap", 500, 2);
     miniMapRenderer.render(g);

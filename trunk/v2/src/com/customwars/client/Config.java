@@ -16,6 +16,9 @@ import java.util.Properties;
  */
 public class Config {
   private static final Logger logger = Logger.getLogger(Config.class);
+  private static final String configPath = "res/data/config/";
+  private static final String GAME_PROPERTIES_FILE = "game.properties";
+  private static final String LOG_PROPERTIES_FILE = "log4j.properties";
   private ResourceManager resources;
 
   public Config(ResourceManager resources) {
@@ -24,7 +27,8 @@ public class Config {
 
   public void configure() {
     try {
-      loadAndApplyLog4JProperties();
+      loadLog4JProperties();
+      loadGameProperties();
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -33,10 +37,17 @@ public class Config {
     resources.setDataPath("res/data/");
   }
 
-  private static void loadAndApplyLog4JProperties() throws IOException {
+  private static void loadLog4JProperties() throws IOException {
     Properties props = new Properties();
-    InputStream in = ResourceLoader.getResourceAsStream("res/data/config/log4j.properties");
+    InputStream in = ResourceLoader.getResourceAsStream(configPath + LOG_PROPERTIES_FILE);
     props.load(in);
     PropertyConfigurator.configure(props);
+  }
+
+  private void loadGameProperties() throws IOException {
+    Properties prop = new Properties(System.getProperties());
+    InputStream in = ResourceLoader.getResourceAsStream(configPath + GAME_PROPERTIES_FILE);
+    prop.load(in);
+    System.setProperties(prop);
   }
 }
