@@ -93,8 +93,6 @@ public class Unit extends GameObject implements Mover, Location {
 
   void init() {
     if (canTransport) this.transport = new LinkedList<Locatable>();
-    if (minHealRange == 0) minHealRange = 1;
-    if (maxHealRange == 0) maxHealRange = 1;
   }
 
   /**
@@ -109,7 +107,7 @@ public class Unit extends GameObject implements Mover, Location {
     resupply();
     experience = 0;
     setOrientation(Direction.EAST);
-    setState(GameObjectState.IDLE);
+    setState(GameObjectState.ACTIVE);
   }
 
   /**
@@ -658,8 +656,8 @@ public class Unit extends GameObject implements Mover, Location {
     return canTransport() && canBeTransportedBy.contains(id);
   }
 
-  private boolean canTransport() {
-    return transport != null;
+  public boolean canTransport() {
+    return canTransport && transport != null;
   }
 
   public int getMinHealRange() {
@@ -672,7 +670,7 @@ public class Unit extends GameObject implements Mover, Location {
 
   @Override
   public String toString() {
-    StringBuilder strBuilder = new StringBuilder("[name=" + name + " id=" + id + " ");
+    StringBuilder strBuilder = new StringBuilder("[name=" + name + " id=" + id);
     if (owner != null) strBuilder.append(" owner=").append(owner);
     strBuilder.append("]");
     return strBuilder.toString();

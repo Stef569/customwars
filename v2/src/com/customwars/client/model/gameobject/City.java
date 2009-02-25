@@ -288,10 +288,9 @@ public class City extends Terrain implements PropertyChangeListener {
 
   @Override
   public String toString() {
-    StringBuilder strBuilder = new StringBuilder("[" + super.toString());
-    if (owner != null) strBuilder.append("owner=").append(owner);
-    if (location != null)
-      strBuilder.append("location=").append(location.getCol()).append(",").append(location.getRow());
+    StringBuilder strBuilder = new StringBuilder(
+            "[" + super.toString() + " capCount=" + capCount + "/" + maxCapCount + " vision=" + vision);
+    if (owner != null) strBuilder.append(" owner=").append(owner);
     return strBuilder.append("]").toString();
   }
 

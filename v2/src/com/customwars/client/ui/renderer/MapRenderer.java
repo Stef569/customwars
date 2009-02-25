@@ -21,13 +21,9 @@ public class MapRenderer {
   private SpriteManager spriteManager;
   private TileMap<Tile> map;
 
-  public MapRenderer(TileMap<Tile> map) {
-    this.map = map;
-    terrainRenderer = new TerrainRenderer(map);
-    spriteManager = new SpriteManager();
-  }
-
-  public void loadResources(ResourceManager resources) {
+  public MapRenderer(ResourceManager resources) {
+    terrainRenderer = new TerrainRenderer();
+    spriteManager = new SpriteManager(resources);
   }
 
   public void moveCursor(int x, int y) {
@@ -75,6 +71,13 @@ public class MapRenderer {
 
   public void setTerrainStrip(ImageStrip terrainStrip) {
     terrainRenderer.setTerrainStrip(terrainStrip);
+  }
+
+  public void setMap(TileMap<Tile> map) {
+    this.map = map;
+    terrainRenderer.setMap(map);
+    spriteManager.setMap(map);
+    spriteManager.loadSprites();
   }
 
   public Location getCursorLocation() {

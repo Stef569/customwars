@@ -2,8 +2,6 @@ package test.slick;
 
 import com.customwars.client.Config;
 import com.customwars.client.io.ResourceManager;
-import com.customwars.client.io.loading.MapParser;
-import java.io.FileNotFoundException;
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.BasicGame;
@@ -24,6 +22,7 @@ import java.io.IOException;
  * @author stefan
  */
 public class StartupTest extends BasicGame {
+  private static AppGameContainer appGameContainer;
   private ResourceManager resources;
   private Config config;
 
@@ -39,9 +38,6 @@ public class StartupTest extends BasicGame {
   public void init(GameContainer container) throws SlickException {
     LoadingList.setDeferredLoading(true);
     resources = new ResourceManager();
-    resources.setDataPath("res/data/");
-    resources.setImgPath("res/image/");
-
     config = new Config(resources);
     config.configure();
     screenWidth = container.getWidth();
@@ -51,18 +47,18 @@ public class StartupTest extends BasicGame {
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
-    
-    //MapParser map = new MapParser();
-    //try {
-    //    map.writeMap("res/map/cool.txt","[yeah][its][cool][but]");
-    //    map.printMap("res/map/cool.txt");
-    //} catch (FileNotFoundException ex) {
-    //    ex.printStackTrace();
-    //} catch (IOException ex) {
-    //    ex.printStackTrace();
-    //}
-        
+    appGameContainer.setTitle(System.getProperty("game.name"));
   }
+
+  //MapParser map = new MapParser();
+  //try {
+  //    map.writeMap("res/map/cool.txt","[yeah][its][cool][but]");
+  //    map.printMap("res/map/cool.txt");
+  //} catch (FileNotFoundException ex) {
+  //    ex.printStackTrace();
+  //} catch (IOException ex) {
+  //    ex.printStackTrace();
+  //}
 
   public void update(GameContainer container, int delta) throws SlickException {
     updateLoadingProgress();
@@ -123,7 +119,7 @@ public class StartupTest extends BasicGame {
   }
 
   public static void main(String[] args) throws SlickException {
-    AppGameContainer appGameContainer = new AppGameContainer(new StartupTest());
+    appGameContainer = new AppGameContainer(new StartupTest());
     appGameContainer.setDisplayMode(800, 600, false);
     appGameContainer.setTargetFrameRate(60);
     appGameContainer.start();

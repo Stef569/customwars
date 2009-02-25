@@ -11,6 +11,9 @@ import com.customwars.client.model.rules.MapRules;
 import org.apache.log4j.Logger;
 import tools.Args;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -347,5 +350,17 @@ public class Map<T extends Tile> extends TileMap<T> {
 
   public String getProperty(String key) {
     return properties.getProperty(key);
+  }
+
+  public boolean hasProperty(String property) {
+    return properties.contains(property);
+  }
+
+  public void writeProperties(OutputStream out, String comments) throws IOException {
+    properties.store(out, comments);
+  }
+
+  public void readProperties(InputStream in) throws IOException {
+    properties.load(in);
   }
 }

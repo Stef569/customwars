@@ -37,7 +37,7 @@ public class Tile extends GameObject implements Location {
   }
 
   public boolean remove(Locatable locatable) {
-    if (!locatables.contains(locatable) || locatable == null) {
+    if (!contains(locatable) || locatable == null) {
       return false;
     } else {
       locatable.setLocation(null);    // Keep locatable and tile in sync
@@ -103,9 +103,12 @@ public class Tile extends GameObject implements Location {
   }
 
   public String toString() {
-    String toString = "[(" + getCol() + "," + getRow() + ")";
+    String toString = "[(" + getCol() + "," + getRow() + ") fog=" + fogged;
     if (terrain != null) {
       toString += " Terrain=" + terrain;
+    }
+    if (!locatables.isEmpty()) {
+      toString += " Locatables=" + locatables;
     }
     return toString + "]";
   }

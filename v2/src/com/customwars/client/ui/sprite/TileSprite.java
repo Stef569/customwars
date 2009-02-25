@@ -10,18 +10,24 @@ import org.newdawn.slick.Image;
 
 /**
  * TiledSprite extends Sprite adding a tile Location.
- * it will handle images that don't fit to a tile by
- * #1 translating the image up
- * #2 centering the image
+ * it will handle animations that don't fit to a tile by
+ * #1 translating the Image frame up or
+ * #2 centering the Image frame
  * A TiledSprite moves from one Location to another. It cannot move out of the map bounds
  */
 public class TileSprite extends Sprite implements Locatable {
   private TileMap map;
   private int tileSize;
-  protected Location location;
+  private Location location;
   private int frameHeightOffset;
   private int frameWidthOffset;
   private boolean renderInCenter;
+
+  public TileSprite(Location location, TileMap map) {
+    super(null);
+    setMap(map);
+    setLocation(location);
+  }
 
   public TileSprite(int x, int y, Location location, TileMap map) {
     super(x, y);
@@ -103,7 +109,7 @@ public class TileSprite extends Sprite implements Locatable {
   public void setLocation(Location newLocation) {
     if (map != null && map.isValid(newLocation)) {
       this.location = newLocation;
-      super.setLocation(location.getCol() * map.getTileSize(), location.getRow() * map.getTileSize());
+      super.setLocation(newLocation.getCol() * tileSize, newLocation.getRow() * tileSize);
     }
   }
 
