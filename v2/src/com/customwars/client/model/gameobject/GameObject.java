@@ -85,9 +85,6 @@ public class GameObject {
   }
 
   public synchronized void addPropertyChangeListener(PropertyChangeListener listener) {
-    if (listener == null) {
-      return;
-    }
     changeSupport.addPropertyChangeListener(listener);
   }
 
@@ -103,16 +100,10 @@ public class GameObject {
    * @see #addPropertyChangeListener(java.lang.String,java.beans.PropertyChangeListener)
    */
   public synchronized void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
-    if (listener == null) {
-      return;
-    }
     changeSupport.addPropertyChangeListener(propertyName, listener);
   }
 
   public synchronized void removePropertyChangeListener(PropertyChangeListener listener) {
-    if (listener == null || changeSupport == null) {
-      return;
-    }
     changeSupport.removePropertyChangeListener(listener);
   }
 
@@ -130,9 +121,6 @@ public class GameObject {
    * @see #addPropertyChangeListener(java.lang.String,java.beans.PropertyChangeListener)
    */
   public synchronized void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
-    if (listener == null || changeSupport == null) {
-      return;
-    }
     changeSupport.removePropertyChangeListener(propertyName, listener);
   }
 }
