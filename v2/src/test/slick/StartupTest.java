@@ -36,7 +36,6 @@ public class StartupTest extends BasicGame {
   }
 
   public void init(GameContainer container) throws SlickException {
-    LoadingList.setDeferredLoading(true);
     resources = new ResourceManager();
     config = new Config(resources);
     config.configure();

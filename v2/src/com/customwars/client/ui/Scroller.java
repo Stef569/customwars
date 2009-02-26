@@ -5,8 +5,8 @@ import com.customwars.client.model.map.Location;
 
 /**
  * Scroll the camera by determening if the cursorlocation is x tiles from the edge of the camera
- * autoUpdate will attempt to scroll after a small delay has passed,
- * turning autoUpdate off means that scroll(Direction)
+ * autoScroll will attempt to scroll after a small delay has passed,
+ * turning autoScroll off means that scroll(Direction)
  * should be invoked manually when an attempt to scroll should be undertaken.
  *
  * @author stefan
@@ -17,22 +17,21 @@ public class Scroller {
   private int time;
   private Camera2D camera;
   private Location cursorLocation;
-  private boolean autoUpdate;
+  private boolean autoScroll;
 
   public Scroller(Camera2D camera) {
     this(camera, true);
   }
 
   public Scroller(Camera2D camera, boolean autoUpdate) {
-    this.autoUpdate = autoUpdate;
+    this.autoScroll = autoUpdate;
     this.camera = camera;
   }
 
-  public void update(int delta) {
-    if (autoUpdate) {
-      time += delta;
+  public void update(int elapsedTime) {
+    if (autoScroll) {
+      time += elapsedTime;
 
-      // Try to scroll after every SCROLL_DELAY has passed
       if (time >= SCROLL_DELAY) {
         scroll(Direction.NORTH);
         scroll(Direction.EAST);
@@ -74,7 +73,11 @@ public class Scroller {
     this.cursorLocation = cursorLocation;
   }
 
-  public void setAutoUpdate(boolean autoUpdate) {
-    this.autoUpdate = autoUpdate;
+  public void setAutoScroll(boolean autoScroll) {
+    this.autoScroll = autoScroll;
+  }
+
+  public void toggleAutoUpdate() {
+    this.autoScroll = !autoScroll;
   }
 }

@@ -43,8 +43,10 @@ public class Camera2D {
   }
 
   public void centerOnTile(int col, int row) {
-    setX((int) (col * tileSize - camera.getWidth() / 2));
-    setY((int) (row * tileSize - camera.getHeight() / 2));
+    if (canMove()) {
+      setX((int) (col * tileSize - camera.getWidth() / 2));
+      setY((int) (row * tileSize - camera.getHeight() / 2));
+    }
   }
 
   public int convertToGameX(int x) {
@@ -68,7 +70,8 @@ public class Camera2D {
   }
 
   private void moveLeft(int amount) {
-    setX(cameraX - amount);
+    if (canMove())
+      setX(cameraX - amount);
   }
 
   public void moveRight() {
@@ -76,7 +79,8 @@ public class Camera2D {
   }
 
   private void moveRight(int amount) {
-    setX(cameraX + amount);
+    if (canMove())
+      setX(cameraX + amount);
   }
 
   public void moveUp() {
@@ -84,7 +88,8 @@ public class Camera2D {
   }
 
   private void moveUp(int amount) {
-    setY(cameraY - amount);
+    if (canMove())
+      setY(cameraY - amount);
   }
 
   public void moveDown() {
@@ -92,18 +97,20 @@ public class Camera2D {
   }
 
   private void moveDown(int amount) {
-    setY(cameraY + amount);
+    if (canMove())
+      setY(cameraY + amount);
   }
 
   private void setZoomLvl(float newZoomLvl) {
-    System.out.println(newZoomLvl);
     if (newZoomLvl > 0.3 && newZoomLvl < 1.6) {
       this.zoomLvl = newZoomLvl;
     }
   }
 
   /**
+   * Validate the new camera x position
    * Make sure the camera doesn't scroll off the map
+   * Don't change the camera position when the camera is smaller then the screen
    */
   private void setX(int cameraX) {
     if (cameraX < 0) cameraX = 0;
@@ -114,6 +121,7 @@ public class Camera2D {
   }
 
   /**
+   * Validate the new camera x position
    * Make sure the camera doesn't scroll off the map
    */
   private void setY(int cameraY) {
@@ -158,5 +166,13 @@ public class Camera2D {
 
   public float getZoomLvl() {
     return zoomLvl;
+  }
+
+  /**
+   * Can't move when the camera is larger then the game world
+   */
+  public boolean canMove() {
+    return camera.getWidth() < world.getWidth() &&
+            camera.getHeight() < world.getHeight();
   }
 }

@@ -2,7 +2,6 @@ package test.slick;
 
 import com.customwars.client.ui.state.CWInput;
 import com.customwars.client.ui.state.CWState;
-import com.customwars.client.ui.state.StateLogic;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
@@ -33,10 +32,6 @@ public class RemapKeysTest extends CWState {
     SELECTING, MAPPING
   }
 
-  public RemapKeysTest(CWInput cwInput, StateLogic stateLogic) {
-    super(cwInput, stateLogic);
-  }
-
   public void init(GameContainer container, StateBasedGame game) throws SlickException {
     int lines = 0;
     Point startPoint = new Point(50, 100);
@@ -55,7 +50,7 @@ public class RemapKeysTest extends CWState {
 //    }
   }
 
-  public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
+  public void render(GameContainer container, Graphics g) throws SlickException {
     g.drawString("Press key to change", 10, 45);
 
     for (TextField field : fields) {
@@ -63,7 +58,7 @@ public class RemapKeysTest extends CWState {
     }
   }
 
-  public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
+  public void update(GameContainer container, int delta) throws SlickException {
     boolean foundActiveField = false;
 
     // find the field that has been clicked on, store it
