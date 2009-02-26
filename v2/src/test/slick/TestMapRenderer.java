@@ -3,10 +3,12 @@ package test.slick;
 import com.customwars.client.io.ResourceManager;
 import com.customwars.client.io.img.slick.ImageStrip;
 import com.customwars.client.model.map.Direction;
+import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
-import com.customwars.client.model.map.TileMap;
+import com.customwars.client.ui.Camera2D;
+import com.customwars.client.ui.Scroller;
 import com.customwars.client.ui.renderer.MapRenderer;
-import com.customwars.client.ui.renderer.TerrainRenderer;
+import com.customwars.client.ui.renderer.TileMapRenderer;
 import com.customwars.client.ui.sprite.TileSprite;
 import com.customwars.client.ui.state.CWInput;
 import com.customwars.client.ui.state.CWState;
@@ -20,6 +22,7 @@ import org.newdawn.slick.command.Command;
 import org.newdawn.slick.state.StateBasedGame;
 import test.testData.HardCodedGame;
 
+import java.awt.Dimension;
 import java.io.IOException;
 
 /**
@@ -30,7 +33,9 @@ import java.io.IOException;
 public class TestMapRenderer extends CWState {
   private static final Logger logger = Logger.getLogger(TestMapRenderer.class);
   private MapRenderer mapRenderer;
-  private TerrainRenderer miniMapRenderer;
+  private TileMapRenderer miniMapRenderer;
+  private Camera2D camera;
+  private Scroller scroller;
 
   public TestMapRenderer(CWInput cwInput, StateLogic stateLogic) {
     super(cwInput, stateLogic);
@@ -47,7 +52,15 @@ public class TestMapRenderer extends CWState {
       logger.fatal(e);
     }
 
-    TileMap<Tile> map = HardCodedGame.getMap();
+    Map<Tile> map = HardCodedGame.getMap();
+
+    // Create Camera & scroller
+    Dimension worldSize = new Dimension(map.getWidth(), map.getHeight());
+    Dimension cameraSize = new Dimension(container.getWidth(), container.getHeight());
+    Dimension screenSize = cameraSize;
+    camera = new Camera2D(cameraSize, screenSize, worldSize, map.getTileSize());
+    scroller = new Scroller(camera);
+
     ImageStrip terrainStrip = resources.getSlickImgStrip("terrains");
     ImageStrip cursor1 = resources.getSlickImgStrip("selectCursor");
     ImageStrip cursor2 = resources.getSlickImgStrip("aimCursor");
@@ -62,15 +75,25 @@ public class TestMapRenderer extends CWState {
     mapRenderer.addCursor("AIM", aimCursor);
     mapRenderer.activedCursor("SELECT");
 
+    // Changse in the map at this point will change the graphics, so let's test that:
+    Tile t = map.getTile(6, 6);
+    map.getUnitOn(t).setOrientation(Direction.WEST);
+
     ImageStrip miniMapTerrainStrip = resources.getSlickImgStrip("miniMap");
-    miniMapRenderer = new TerrainRenderer(map);
+    miniMapRenderer = new TileMapRenderer(map);
     miniMapRenderer.setTerrainStrip(miniMapTerrainStrip);
-    miniMapRenderer.setLocation(510, 25);
   }
 
   public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
-    mapRenderer.render(g);
-    String tileInfo = mapRenderer.getCursorLocation().toString();
+    g.scale(camera.getZoomLvl(), camera.getZoomLvl());
+    mapRenderer.render(-camera.getX(), -camera.getY(), g);
+    renderTileInfo(mapRenderer.getCursorLocation().toString(), g, container);
+
+    g.drawString("MiniMap", 500, 2);
+    miniMapRenderer.render(510, 25, g);
+  }
+
+  private void renderTileInfo(String tileInfo, Graphics g, GameContainer container) {
     String line1 = tileInfo, line2 = "";
 
     int endIndex = tileInfo.length();
@@ -83,12 +106,12 @@ public class TestMapRenderer extends CWState {
     g.drawString(line1, 10, container.getHeight() - 40);
     g.drawString(line2, 10, container.getHeight() - 20);
 
-    g.drawString("MiniMap", 500, 2);
-    miniMapRenderer.render(g);
   }
 
   public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
     mapRenderer.update(delta);
+    scroller.update(delta);
+    camera.update(delta);
   }
 
   public void controlPressed(Command command, CWInput cwInput) {
@@ -99,6 +122,8 @@ public class TestMapRenderer extends CWState {
   }
 
   private void moveCursor(Command command, CWInput cwInput) {
+    scroller.setCursorLocation(mapRenderer.getCursorLocation());
+
     if (cwInput.isUpPressed(command)) {
       mapRenderer.moveCursor(Direction.NORTH);
     }
@@ -123,10 +148,27 @@ public class TestMapRenderer extends CWState {
     if (key == Input.KEY_2) {
       mapRenderer.activedCursor("SELECT");
     }
+    if (key == Input.KEY_C) {
+      camera.centerOnTile(0, 0);
+    }
+    if (key == Input.KEY_O) {
+      camera.centerOnTile(8, 3);
+    }
+  }
+
+  public void mouseWheelMoved(int newValue) {
+    if (newValue > 0) {
+      camera.zoomIn();
+    } else {
+      camera.zoomOut();
+    }
   }
 
   public void mouseMoved(int oldx, int oldy, int newx, int newy) {
-    mapRenderer.moveCursor(newx, newy);
+    int gameX = camera.convertToGameX(newx);
+    int gameY = camera.convertToGameY(newy);
+    scroller.setCursorLocation(mapRenderer.getCursorLocation());
+    mapRenderer.moveCursor(gameX, gameY);
   }
 
   public int getID() {

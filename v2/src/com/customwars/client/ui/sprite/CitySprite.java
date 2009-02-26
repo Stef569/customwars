@@ -45,8 +45,8 @@ public class CitySprite extends TileSprite implements PropertyChangeListener {
     t.addPropertyChangeListener(this);
   }
 
-  public void render(Graphics g) {
-    super.render(g);
+  public void render(int x, int y, Graphics g) {
+    super.render(x, y, g);
   }
 
   public void updateAnim() {

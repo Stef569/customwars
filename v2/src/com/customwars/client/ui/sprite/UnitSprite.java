@@ -51,6 +51,7 @@ public class UnitSprite extends TileSprite implements PropertyChangeListener {
     super(location, map);
     this.unit = unit;
     this.decorations = decorations;
+    unit.addPropertyChangeListener(this);
   }
 
   // ----------------------------------------------------------------------------
@@ -120,20 +121,20 @@ public class UnitSprite extends TileSprite implements PropertyChangeListener {
     }
   }
 
-  public void render(Graphics g) {
-    super.render(g);
+  public void render(int x, int y, Graphics g) {
+    super.render(x, y, g);
 
     translateOffset(g, false);
     if (lowHp) {
-      g.drawString(unit.getHp() + "", locX + UNIT_DECOR_LOWER_RIGHT_X, locY + UNIT_DECOR_LOWER_RIGHT_Y);
+      g.drawString(unit.getHp() + "", x + locX + UNIT_DECOR_LOWER_RIGHT_X, y + locY + UNIT_DECOR_LOWER_RIGHT_Y);
     }
 
     if (lowAmmo) {
-      g.drawImage(decorations.getSubImage(LOW_AMMO), locX + UNIT_DECOR_MIDDLE_RIGHT_X, locY + UNIT_DECOR_MIDDLE_RIGHT_Y, null);
+      g.drawImage(decorations.getSubImage(LOW_AMMO), x + locX + UNIT_DECOR_MIDDLE_RIGHT_X, y + locY + UNIT_DECOR_MIDDLE_RIGHT_Y, null);
     }
 
     if (lowSupplies) {
-      g.drawImage(decorations.getSubImage(LOW_SUPPLIES), locX + UNIT_DECOR_MIDDLE_RIGHT_X, locY + UNIT_DECOR_MIDDLE_RIGHT_Y, null);
+      g.drawImage(decorations.getSubImage(LOW_SUPPLIES), x + locX + UNIT_DECOR_MIDDLE_RIGHT_X, y + locY + UNIT_DECOR_MIDDLE_RIGHT_Y, null);
     }
 
     undoTranslateOffset(g);

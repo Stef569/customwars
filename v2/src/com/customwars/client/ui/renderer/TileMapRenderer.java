@@ -1,19 +1,24 @@
 package com.customwars.client.ui.renderer;
 
-import com.customwars.client.model.gameobject.Terrain;
+import com.customwars.client.io.img.slick.ImageStrip;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.model.map.TileMap;
+import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Image;
+
+import java.awt.Point;
 
 /**
- * Provide an easy way to render a map to the screen
+ * Render a map to the screen
+ * Each terrainID has an image in the terrainStrip
  *
  * @author Stefan
  */
-public abstract class TileMapRenderer {
-  private int x, y;
-  private boolean renderTerrain = true;
-  private TileMap<Tile> map;
+public class TileMapRenderer {
+  TileMap<Tile> map;
+  private ImageStrip terrainStrip;
+  private Color fogColor = Color.lightGray;
   int tileSize;
 
   public TileMapRenderer() {
@@ -23,31 +28,60 @@ public abstract class TileMapRenderer {
     setMap(map);
   }
 
-  public void update(int elapsedTime) {
-  }
-
-  public void render(Graphics g) {
+  public void render(int x, int y, Graphics g) {
     if (map == null) return;
 
-    g.translate(x, y);
     for (Tile t : map.getAllTiles()) {
-      Terrain terrain = t.getTerrain();
-      boolean fogged = t.isFogged();
-
-      if (renderTerrain) {
-        renderTerrain(g, terrain, t.getCol(), t.getRow(), fogged);
-      }
+      renderTile(g, t, x, y, t.isFogged());
     }
-    g.translate(-x, -y);
   }
 
-  public abstract void renderTerrain(Graphics g, Terrain terrain, int col, int row, boolean fogged);
+  public void renderTile(Graphics g, Tile tile, int x, int y, boolean fogged) {
+    Image terrainImg = terrainStrip.getSubImage(tile.getTerrain().getID());
+    int tileWidth, tileHeight;
+    int imgWidthOffset, imgHeightOffset;
+
+    // If the image is higher then the tile size, then store the excess height
+    if (terrainImg.getHeight() > tileSize) {
+      tileHeight = tileSize;
+      imgHeightOffset = terrainImg.getHeight() - tileSize;
+    } else {
+      tileHeight = terrainImg.getHeight();
+      imgHeightOffset = 0;
+    }
+
+    // If the image is wider then the tileSize, then center it
+    if (terrainImg.getWidth() > tileSize) {
+      tileWidth = tileSize;
+      imgWidthOffset = (terrainImg.getWidth() - tileSize) / 2;
+    } else {
+      tileWidth = terrainImg.getWidth();
+      imgWidthOffset = 0;
+    }
+
+    int px = x + (tile.getCol() * tileWidth) - imgWidthOffset;
+    int py = y + (tile.getRow() * tileHeight) - imgHeightOffset;
+
+    if (fogged) {
+      g.drawImage(terrainImg, px, py, fogColor);
+    } else {
+      g.drawImage(terrainImg, px, py);
+    }
+  }
+
+  public void setTerrainStrip(ImageStrip terrainStrip) {
+    this.terrainStrip = terrainStrip;
+  }
+
+  public Tile pixelsToTile(Point p) {
+    return pixelsToTile(p.x, p.y);
+  }
 
   /**
    * Converts pixel coordinates into a Tile within the map
    *
-   * @param x pixel position on screen x(where x is relative to the map 0,0 coordinates)
-   * @param y pixel position on screen y(where y is relative to the map 0,0 coordinates)
+   * @param x pixel position in the game (where x is relative to the map 0,0 coordinates)
+   * @param y pixel position in the game (where y is relative to the map 0,0 coordinates)
    * @return The tile at the pixel location, or null if x,y is not valid.
    */
   public Tile pixelsToTile(int x, int y) {
@@ -70,16 +104,8 @@ public abstract class TileMapRenderer {
     }
   }
 
-  public void setRenderTerrain(boolean renderTerrain) {
-    this.renderTerrain = renderTerrain;
-  }
-
-  /**
-   * The location to render this tile map
-   */
-  public void setLocation(int x, int y) {
-    this.x = x;
-    this.y = y;
+  public void setFogColor(Color fogColor) {
+    this.fogColor = fogColor;
   }
 }
 

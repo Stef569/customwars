@@ -16,7 +16,7 @@ import java.util.Map;
  * multiple stateNames can point to the same stateID.
  *
  * Each time we change to a state, we store that stateID into previousStates which uses a LIFO Queue
- * This allows to go back 1 state, clearPreviousStates removes all stored stateID's.
+ * This allows to go back 1 state, clearPreviousStates removes all stored stateID's from the previousStates queue.
  */
 public class StateLogic {
   private static final int PREVIOUS_STATE_LIMIT = 20;
