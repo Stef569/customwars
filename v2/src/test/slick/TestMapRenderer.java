@@ -23,7 +23,6 @@ import org.newdawn.slick.state.StateBasedGame;
 import test.testData.HardCodedGame;
 
 import java.awt.Dimension;
-import java.io.IOException;
 
 /**
  * renders a hardcoded map
@@ -45,20 +44,14 @@ public class TestMapRenderer extends CWState {
     ResourceManager resources = new ResourceManager();
     resources.setDataPath("res/data/");
     resources.setImgPath("res/image/");
-
-    try {
-      resources.load();
-    } catch (IOException e) {
-      logger.fatal(e);
-    }
+    resources.loadAll();
 
     Map<Tile> map = HardCodedGame.getMap();
 
     // Create Camera & scroller
     Dimension worldSize = new Dimension(map.getWidth(), map.getHeight());
-    Dimension cameraSize = new Dimension(container.getWidth(), container.getHeight());
-    Dimension screenSize = cameraSize;
-    camera = new Camera2D(cameraSize, screenSize, worldSize, map.getTileSize());
+    Dimension screenSize = new Dimension(container.getWidth(), container.getHeight());
+    camera = new Camera2D(screenSize, worldSize, map.getTileSize());
     scroller = new Scroller(camera);
 
     ImageStrip terrainStrip = resources.getSlickImgStrip("terrains");

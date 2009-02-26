@@ -143,8 +143,10 @@ public class SpriteManager implements PropertyChangeListener {
    * have an id, this is used to retrieve the image
    */
   public void loadUnitSprite(Unit unit) {
+    Color unitColor = unit.getOwner().getColor();
+    resources.recolor(unitColor);
     UnitSprite sprite = createUnitSprite(unit);
-    recolorUnitSprite(sprite, unit.getOwner().getColor(), unit.getID());
+    recolorUnitSprite(sprite, unitColor, unit.getID());
     addUnitSprite(unit, sprite);
     sprite.addPropertyChangeListener(this);
     unit.addPropertyChangeListener(this);
@@ -201,8 +203,10 @@ public class SpriteManager implements PropertyChangeListener {
    * have an id, this is used to retrieve the image
    */
   public void loadCitySprite(City city) {
+    Color cityColor = city.getOwner().getColor();
+    resources.recolor(cityColor);
     CitySprite sprite = createCitySprite(city);
-    recolorCitySprite(sprite, city.getOwner().getColor(), city.getID());
+    recolorCitySprite(sprite, cityColor, city.getID());
     addCitySprite(city, sprite);
     sprite.addPropertyChangeListener(this);
     city.addPropertyChangeListener(this);

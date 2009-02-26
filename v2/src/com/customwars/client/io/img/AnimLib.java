@@ -4,13 +4,10 @@ import com.customwars.client.io.ResourceManager;
 import com.customwars.client.io.img.slick.SpriteSheet;
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Image;
-import org.newdawn.slick.loading.DeferredResource;
-import org.newdawn.slick.loading.LoadingList;
 import tools.Args;
 import tools.ColorUtil;
 
 import java.awt.Color;
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -58,23 +55,15 @@ public class AnimLib {
   }
 
   public void createUnitAnimations(Color baseColor, ResourceManager resources, Color color) {
-    if (LoadingList.isDeferredLoading()) {
-      LoadingList.get().add(new DeferredUnitAnimationCreator(baseColor, resources, color));
-    } else {
-      SpriteSheet unitSpriteSheet = resources.getSlickSpriteSheet("unit", color);
-      SpriteSheet darkerSpriteSheet = resources.getSlickSpriteSheet("unit", color, "darker");
-      createUnitAnimationsNow(baseColor, unitSpriteSheet, darkerSpriteSheet, color);
-    }
+    SpriteSheet unitSpriteSheet = resources.getSlickSpriteSheet("unit", color);
+    SpriteSheet darkerSpriteSheet = resources.getSlickSpriteSheet("unit", color, "darker");
+    createUnitAnimationsNow(baseColor, unitSpriteSheet, darkerSpriteSheet, color);
   }
 
   public void createCityAnimations(Color baseColor, ResourceManager resources, Color color) {
-    if (LoadingList.isDeferredLoading()) {
-      LoadingList.get().add(new DeferredCityAnimationCreator(baseColor, resources, color));
-    } else {
-      SpriteSheet citySpriteSheet = resources.getSlickSpriteSheet("city", color);
-      SpriteSheet darkerCitySpriteSheet = resources.getSlickSpriteSheet("city", color, "darker");
-      createCityAnimationsNow(baseColor, citySpriteSheet, darkerCitySpriteSheet, color);
-    }
+    SpriteSheet citySpriteSheet = resources.getSlickSpriteSheet("city", color);
+    SpriteSheet darkerCitySpriteSheet = resources.getSlickSpriteSheet("city", color, "darker");
+    createCityAnimationsNow(baseColor, citySpriteSheet, darkerCitySpriteSheet, color);
   }
 
   //----------------------------------------------------------------------------
@@ -212,47 +201,5 @@ public class AnimLib {
       col++;
     }
     return anim;
-  }
-
-  private class DeferredUnitAnimationCreator implements DeferredResource {
-    private Color baseColor, color;
-    private ResourceManager resources;
-
-    public DeferredUnitAnimationCreator(Color baseColor, ResourceManager resources, Color color) {
-      this.baseColor = baseColor;
-      this.resources = resources;
-      this.color = color;
-    }
-
-    public void load() throws IOException {
-      SpriteSheet unitSpriteSheet = resources.getSlickSpriteSheet("unit", color);
-      SpriteSheet darkerSpriteSheet = resources.getSlickSpriteSheet("unit", color, "darker");
-      createUnitAnimationsNow(baseColor, unitSpriteSheet, darkerSpriteSheet, color);
-    }
-
-    public String getDescription() {
-      return "unit Animations";
-    }
-  }
-
-  private class DeferredCityAnimationCreator implements DeferredResource {
-    private Color baseColor, color;
-    private ResourceManager resources;
-
-    public DeferredCityAnimationCreator(Color baseColor, ResourceManager resources, Color color) {
-      this.baseColor = baseColor;
-      this.color = color;
-      this.resources = resources;
-    }
-
-    public void load() throws IOException {
-      SpriteSheet citySpriteSheet = resources.getSlickSpriteSheet("city", color);
-      SpriteSheet darkerCitySpriteSheet = resources.getSlickSpriteSheet("city", color, "darker");
-      createCityAnimationsNow(baseColor, citySpriteSheet, darkerCitySpriteSheet, color);
-    }
-
-    public String getDescription() {
-      return "city animations";
-    }
   }
 }

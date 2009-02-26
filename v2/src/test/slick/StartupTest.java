@@ -5,13 +5,13 @@ import com.customwars.client.io.ResourceManager;
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.BasicGame;
-import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.loading.DeferredResource;
 import org.newdawn.slick.loading.LoadingList;
 
+import java.awt.Color;
 import java.io.IOException;
 
 /**
@@ -41,12 +41,7 @@ public class StartupTest extends BasicGame {
     config = new Config(resources);
     config.configure();
     screenWidth = container.getWidth();
-
-    try {
-      resources.load();
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
+    resources.loadAll();
     appGameContainer.setTitle(System.getProperty("game.name"));
   }
 
@@ -79,13 +74,14 @@ public class StartupTest extends BasicGame {
     } else {
       if (!loadingComplete) {
         loadingComplete = true;
+        resources.recolor(Color.RED, Color.BLUE, Color.GREEN);
       }
     }
   }
 
   public void render(GameContainer container, Graphics g) throws SlickException {
     if (loadingComplete) {
-      g.setColor(Color.white);
+      g.setColor(org.newdawn.slick.Color.white);
       g.drawString("LOADING COMPLETED  showing all Animations...", 100, 50);
       int line = 0, col = 0;
       for (Animation anim : resources.getAllAnims()) {

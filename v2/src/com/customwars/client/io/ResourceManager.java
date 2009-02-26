@@ -33,7 +33,7 @@ public class ResourceManager {
   private static final String IMAGE_LOADER_FILE = "imageLoader.txt";
   private static final String ANIM_LOADER_FILE = "animLoader.txt";
   private static final String COLORS_FILE = "colors.xml";
-  private final int DARK_PERCENTAGE = 20;
+  private final int DARK_PERCENTAGE = 50;
   private final ModelLoader modelLoader = new ModelLoader();
 
   private ImageLib imageLib;
@@ -54,37 +54,55 @@ public class ResourceManager {
     SlickImageFactory.setDeferredLoading(LoadingList.isDeferredLoading());
   }
 
-  public void load() throws IOException {
+  public void loadAll() {
     logger.info("Loading resources");
-    modelLoader.setModelResPath(dataPath);
-    modelLoader.loadModel();
-
-    if (imageLib != null) {
-      loadColors();
-      loadImages();
-      recolorImages();
-      loadAnimations();
-      createRecoloredAnimations();
+    loadModel();
+    try {
+      loadFromFile();
+    } catch (IOException e) {
+      throw new RuntimeException("Failed to load resource " + e);
     }
   }
 
-  private void loadColors() throws IOException {
+  public void loadModel() {
+    modelLoader.setModelResPath(dataPath);
+    modelLoader.loadModel();
+  }
+
+  public void loadFromFile() throws IOException {
+    loadColorsFromFile();
+    loadImagesFromFile();
+    loadAnimationsFromFile();
+  }
+
+  private void loadColorsFromFile() throws IOException {
     ImageFilterParser imgFilterParser = new ImageFilterParser();
     InputStream in = ResourceLoader.getResourceAsStream(dataPath + COLORS_FILE);
     imgFilterParser.loadConfigFile(in);
     imageLib.buildColorsFromImgFilters();
   }
 
-  public void loadImages() throws IOException {
+  private void loadImagesFromFile() throws IOException {
     logger.info("Reading file " + imgPath + IMAGE_LOADER_FILE);
     ImageParser imgParser = new ImageParser(imageLib);
     InputStream in = ResourceLoader.getResourceAsStream(imgPath + IMAGE_LOADER_FILE);
     imgParser.loadConfigFile(in);
   }
 
-  private void recolorImages() {
-    Set<Color> colors = imageLib.getSupportedColors();
+  private void loadAnimationsFromFile() throws IOException {
+    AnimationParser animParser = new AnimationParser(imageLib, animLib);
+    InputStream in = ResourceLoader.getResourceAsStream(imgPath + ANIM_LOADER_FILE);
+    animParser.loadConfigFile(in);
+  }
+
+  public void recolor(Color... colors) {
+    recolorImages(colors);
+    createRecoloredAnimations(colors);
+  }
+
+  private void recolorImages(Color... colors) {
     for (Color color : colors) {
+      checkIsColorSupported(color);
       imageLib.recolorImg(color, "unit");
       imageLib.recolorImg(color, "city");
     }
@@ -95,20 +113,21 @@ public class ResourceManager {
     }
   }
 
-  private void loadAnimations() throws IOException {
-    AnimationParser animParser = new AnimationParser(imageLib, animLib);
-    InputStream in = ResourceLoader.getResourceAsStream(imgPath + ANIM_LOADER_FILE);
-    animParser.loadConfigFile(in);
-  }
-
-  private void createRecoloredAnimations() {
-    Set<Color> colors = getSupportedColors();
+  private void createRecoloredAnimations(Color... colors) {
     Color unitBaseColor = getBaseColor("unit");
     Color cityBaseColor = getBaseColor("city");
 
     for (Color color : colors) {
+      checkIsColorSupported(color);
       animLib.createUnitAnimations(unitBaseColor, this, color);
       animLib.createCityAnimations(cityBaseColor, this, color);
+    }
+  }
+
+  private void checkIsColorSupported(Color color) {
+    if (!imageLib.getSupportedColors().contains(color)) {
+      throw new IllegalArgumentException(
+              "Color " + color + " is not supported, add the color info to " + COLORS_FILE);
     }
   }
 

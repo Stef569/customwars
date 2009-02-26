@@ -6,12 +6,9 @@ import com.customwars.client.io.img.slick.SlickImageFactory;
 import com.customwars.client.io.img.slick.SpriteSheet;
 import org.apache.log4j.Logger;
 import org.newdawn.slick.Image;
-import org.newdawn.slick.loading.DeferredResource;
-import org.newdawn.slick.loading.LoadingList;
 import tools.ColorUtil;
 
 import java.awt.Color;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -141,11 +138,7 @@ public class ImageLib {
       storeImgName += "_" + suffix;
     }
 
-    if (LoadingList.isDeferredLoading()) {
-      LoadingList.get().add(new DeferredImgRecoloring(recolorTo, imgFilterName, baseImgName, storeImgName, darkPercentage));
-    } else {
-      recolorImgNow(recolorTo, imgFilterName, baseImgName, storeImgName, darkPercentage);
-    }
+    recolorImgNow(recolorTo, imgFilterName, baseImgName, storeImgName, darkPercentage);
   }
 
   private void recolorImgNow(Color recolorTo, String imgFilterName, String baseImgName, String storeImgName, int darkPercentage) {
@@ -232,27 +225,5 @@ public class ImageLib {
 
   public String getStoredImgNames() {
     return slickImgCache.keySet().toString();
-  }
-
-  private class DeferredImgRecoloring implements DeferredResource {
-    private Color recolorTo;
-    private String filterName, baseImgName, storeImgName;
-    private int darkPerc;
-
-    public DeferredImgRecoloring(Color recolorTo, String filterName, String baseImgName, String storeImgName, int darkPerc) {
-      this.recolorTo = recolorTo;
-      this.filterName = filterName;
-      this.baseImgName = baseImgName;
-      this.storeImgName = storeImgName;
-      this.darkPerc = darkPerc;
-    }
-
-    public void load() throws IOException {
-      recolorImgNow(recolorTo, filterName, baseImgName, storeImgName, darkPerc);
-    }
-
-    public String getDescription() {
-      return storeImgName;
-    }
   }
 }
