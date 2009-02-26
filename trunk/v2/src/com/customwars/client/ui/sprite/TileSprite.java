@@ -54,10 +54,10 @@ public class TileSprite extends Sprite implements Locatable {
     anim = new Animation(imageStrip.toArray(), delay);
   }
 
-  public void render(Graphics g) {
+  public void render(int x, int y, Graphics g) {
     if (super.canRenderAnim(g)) {
       translateOffset(g, renderInCenter);
-      super.render(g);
+      super.render(x, y, g);
       undoTranslateOffset(g);
     }
   }

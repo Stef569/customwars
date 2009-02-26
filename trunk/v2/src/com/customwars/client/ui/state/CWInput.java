@@ -22,7 +22,9 @@ public class CWInput extends InputProvider {
   private Command up = new BasicCommand("Down");
   private Command left = new BasicCommand("Left");
   private Command right = new BasicCommand("Right");
-  private Command muteMusic = new BasicCommand("Mute Sound");
+  private Command toggleMusic = new BasicCommand("Toggle Music");
+  private Command zoomIn = new BasicCommand("Zoom in");
+  private Command zoomOut = new BasicCommand("Zoom out");
 
   /**
    * Create a new input proider which will provide abstract input descriptions
@@ -46,7 +48,9 @@ public class CWInput extends InputProvider {
     bindCommand(new KeyControl(Input.KEY_B), cancel);
     bindCommand(new MouseButtonControl(Input.MOUSE_RIGHT_BUTTON), cancel);
     bindCommand(new KeyControl(Input.KEY_ESCAPE), exit);
-    bindCommand(new KeyControl(Input.KEY_S), muteMusic);
+    bindCommand(new KeyControl(Input.KEY_S), toggleMusic);
+    bindCommand(new KeyControl(Input.KEY_COMMA), zoomIn);
+    bindCommand(new KeyControl(Input.KEY_COLON), zoomOut);
   }
 
   private void initMoveCommands() {
@@ -84,7 +88,15 @@ public class CWInput extends InputProvider {
     return right.equals(command);
   }
 
-  public boolean isMusicMuted(Command command) {
-    return muteMusic.equals(command);
+  public boolean isToggleMusicPressed(Command command) {
+    return toggleMusic.equals(command);
+  }
+
+  public boolean isZoomInPressed(Command command) {
+    return zoomIn.equals(command);
+  }
+
+  public boolean isZoomOutPressed(Command command) {
+    return zoomOut.equals(command);
   }
 }

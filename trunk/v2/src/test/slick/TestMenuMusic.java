@@ -78,8 +78,13 @@ public class TestMenuMusic extends CWState implements ComponentListener {
     if (cwInput.isSelectPressed(command)) {
       menuTickSound.play();
     }
-    if (cwInput.isMusicMuted(command)) {
-      backgroundMusic.stop();
+
+    if (cwInput.isToggleMusicPressed(command)) {
+      if (backgroundMusic.playing()) {
+        backgroundMusic.pause();
+      } else {
+        backgroundMusic.resume();
+      }
     }
     testmenu.controlPressed(command, cwInput);
   }

@@ -57,15 +57,15 @@ public class SpriteManager implements PropertyChangeListener {
     }
   }
 
-  public void render(Graphics g) {
+  public void render(int x, int y, Graphics g) {
     for (Sprite sprite : citySprites.values()) {
-      sprite.render(g);
+      sprite.render(x, y, g);
     }
     for (Sprite sprite : unitSprites.values()) {
-      sprite.render(g);
+      sprite.render(x, y, g);
     }
     if (isCursorSet()) {
-      activeCursor.render(g);
+      activeCursor.render(x, y, g);
     }
   }
 

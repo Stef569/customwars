@@ -7,7 +7,6 @@ import com.customwars.client.model.gameobject.Weapon;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Player;
 import com.customwars.client.model.map.Tile;
-import com.customwars.client.model.map.TileMap;
 import com.customwars.client.model.map.path.DefaultMoveStrategy;
 import com.customwars.client.model.rules.CityRules;
 import com.customwars.client.model.rules.MapRules;
@@ -65,7 +64,7 @@ public class HardCodedGame {
   private static UnitRules unitRules = new UnitRules(map);
   private static CityRules cityRules = new CityRules();
 
-  public static TileMap<Tile> getMap() {
+  public static Map<Tile> getMap() {
     fillWithTerrain(plain);
     map.getTile(0, 3).setTerrain(verticalRiver);
     map.getTile(0, 1).setTerrain(verticalRiver);
