@@ -60,16 +60,16 @@ public class UnitSprite extends TileSprite implements PropertyChangeListener {
   private void setOrientation(Direction dir) {
     switch (dir) {
       case EAST:
-        anim = animRight;
+        setAnim(animRight);
         break;
       case NORTH:
-        anim = animUp;
+        setAnim(animUp);
         break;
       case SOUTH:
-        anim = animDown;
+        setAnim(animDown);
         break;
       case WEST:
-        anim = animLeft;
+        setAnim(animLeft);
         break;
     }
   }
@@ -110,13 +110,13 @@ public class UnitSprite extends TileSprite implements PropertyChangeListener {
   private void changeState(GameObjectState gameObjectState) {
     switch (gameObjectState) {
       case IDLE:
-        anim = animInActive;
+        setAnim(animInActive);
         break;
       case ACTIVE:
-        anim = animRight;
+        setAnim(animRight);
         break;
       case DESTROYED:
-        anim = animDying;
+        setAnim(animDying);
         break;
     }
   }

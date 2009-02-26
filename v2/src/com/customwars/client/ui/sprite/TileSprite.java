@@ -51,7 +51,7 @@ public class TileSprite extends Sprite implements Locatable {
     super(null, 0, 0);
     setMap(map);
     setLocation(location);
-    anim = new Animation(imageStrip.toArray(), delay);
+    setAnim(new Animation(imageStrip.toArray(), delay));
   }
 
   public void render(int x, int y, Graphics g) {
