@@ -3,10 +3,10 @@ package test.slick;
 import com.customwars.client.ui.PopUpMenu;
 import com.customwars.client.ui.state.CWInput;
 import com.customwars.client.ui.state.CWState;
-import com.customwars.client.ui.state.StateLogic;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
+import org.newdawn.slick.Input;
 import org.newdawn.slick.Music;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.Sound;
@@ -25,15 +25,10 @@ public class TestMenuMusic extends CWState implements ComponentListener {
   private Image image;
   private PopUpMenu testmenu;
 
-  public TestMenuMusic(CWInput cwInput, StateLogic stateLogic) {
-    super(cwInput, stateLogic);
-  }
-
   public void init(GameContainer container, StateBasedGame stateBasedGame) throws SlickException {
     menuTickSound = new Sound("res/sound/menutick.wav");
     backgroundMusic = new Music("res/sound/shortBackground.ogg");
     backgroundMusic.setVolume(0.5F);
-    backgroundMusic.loop();
 
     image = new Image("res/image/cliff.gif");
     Image cursor = new Image("res/image/white.png");
@@ -42,7 +37,6 @@ public class TestMenuMusic extends CWState implements ComponentListener {
     testmenu.setLocation(80, 100);
     testmenu.addOption("Option 1: Test Map Terrain");
     testmenu.addOption("Option 2: Key Input Change (Under Construction)");
-    testmenu.addOption("Option 3: Spritesheets");
     testmenu.setCursorImage(cursor);
     testmenu.setOptionChangeSound(menuTickSound);
     testmenu.addListener(this);
@@ -50,7 +44,12 @@ public class TestMenuMusic extends CWState implements ComponentListener {
     //testmenu.addOptionImage(image);   // Uncomment to show 4th menu option as image
   }
 
-  public void render(GameContainer gameContainer, StateBasedGame stateBasedGame, Graphics g) throws SlickException {
+  public void enter(GameContainer container, StateBasedGame game) throws SlickException {
+    super.enter(container, game);
+    backgroundMusic.loop();
+  }
+
+  public void render(GameContainer gameContainer, Graphics g) throws SlickException {
     g.drawImage(image, 0, 0);
     g.drawString("ENTER: TO GO BACK TO MENU", 400, 80);
     g.drawString("Now in Test Menu and Music state", 80, 80);
@@ -64,14 +63,10 @@ public class TestMenuMusic extends CWState implements ComponentListener {
         g.drawString("The way buttons will be set on the keyboard. \n" +
                 "Still under construction :(...", 80, 200);
         break;
-      case 2:
-        g.drawString("Loads up the spritesheets used for the game. \n" +
-                "Use your mouse scroll wheel to swap colors.", 80, 200);
-        break;
     }
   }
 
-  public void update(GameContainer gameContainer, StateBasedGame stateBasedGame, int elapsedTime) throws SlickException {
+  public void update(GameContainer gameContainer, int elapsedTime) throws SlickException {
   }
 
   public void controlPressed(Command command, CWInput cwInput) {
@@ -79,14 +74,18 @@ public class TestMenuMusic extends CWState implements ComponentListener {
       menuTickSound.play();
     }
 
-    if (cwInput.isToggleMusicPressed(command)) {
-      if (backgroundMusic.playing()) {
-        backgroundMusic.pause();
-      } else {
-        backgroundMusic.resume();
-      }
-    }
     testmenu.controlPressed(command, cwInput);
+  }
+
+  public void keyReleased(int key, char c) {
+    if (key == Input.KEY_S) {
+      super.toggleMusic(backgroundMusic);
+    }
+  }
+
+  public void leave(GameContainer container, StateBasedGame game) throws SlickException {
+    super.leave(container, game);
+    backgroundMusic.stop();
   }
 
   public int getID() {
@@ -101,9 +100,6 @@ public class TestMenuMusic extends CWState implements ComponentListener {
         break;
       case 1:
         changeGameState("keymenu");
-        break;
-      case 2:
-        changeGameState("spritemenu");
         break;
     }
   }

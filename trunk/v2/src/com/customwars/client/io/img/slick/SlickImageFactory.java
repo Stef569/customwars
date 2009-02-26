@@ -25,10 +25,6 @@ public class SlickImageFactory {
   private static boolean deferredLoading;
   private static AwtImageLib imageLib;
 
-  public static void setImageLib(AwtImageLib imageLib) {
-    SlickImageFactory.imageLib = imageLib;
-  }
-
   public static Image createSlickImg(String slickImgName, String awtImgName) {
     Image img = getEmptyImage();
     setTexture(awtImgName, slickImgName, img);
@@ -163,6 +159,10 @@ public class SlickImageFactory {
     public String getDescription() {
       return imgName;
     }
+  }
+
+  public static void setImageLib(AwtImageLib imageLib) {
+    SlickImageFactory.imageLib = imageLib;
   }
 }
 

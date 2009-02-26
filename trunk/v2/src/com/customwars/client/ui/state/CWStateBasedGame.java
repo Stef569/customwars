@@ -1,15 +1,10 @@
-package test.slick;
+package com.customwars.client.ui.state;
 
 import com.customwars.client.Config;
 import com.customwars.client.io.ResourceManager;
-import com.customwars.client.ui.state.CWInput;
-import com.customwars.client.ui.state.CWState;
-import com.customwars.client.ui.state.StateLogic;
-import com.customwars.client.ui.state.StateSession;
 import org.apache.log4j.Logger;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.command.Command;
 import org.newdawn.slick.command.InputProviderListener;
@@ -17,14 +12,16 @@ import org.newdawn.slick.loading.LoadingList;
 import org.newdawn.slick.state.StateBasedGame;
 import test.testData.HardCodedGame;
 
-public class TestStates extends StateBasedGame implements InputProviderListener {
-  private static final Logger logger = Logger.getLogger(TestStates.class);
+/**
+ * @author stefan
+ */
+public class CWStateBasedGame extends StateBasedGame implements InputProviderListener {
+  private static final Logger logger = Logger.getLogger(CWStateBasedGame.class);
   private static ResourceManager resources;
   private GameContainer gameContainer;
   private CWInput cwInput;
-  private StateLogic statelogic;
 
-  public TestStates() {
+  public CWStateBasedGame() {
     super(System.getProperty("game.name"));
   }
 
@@ -45,22 +42,15 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
   }
 
   private void buildStateList() {
-    CWState testMenuMusic = new TestMenuMusic();
-    CWState testMapRenderer = new TestMapRenderer();
-    CWState remapKeysTest = new RemapKeysTest();
-
-    addState(testMenuMusic);
-    addState(testMapRenderer);
-    addState(remapKeysTest);
-    resources.loadAll();
+    CWState startupState = new StartupState();
+    CWState inGame = new InGameState();
+    addState(startupState);
+    addState(inGame);
   }
 
   private void mapStateIdsToName() {
-    statelogic = new StateLogic(this);
-    statelogic.addState("mainmenu", 0);
-    statelogic.addState("MAIN_MENU", 0);
-    statelogic.addState("terrainmenu", 1);
-    statelogic.addState("keymenu", 2);
+    StateLogic statelogic = new StateLogic(this);
+    statelogic.addState("IN_GAME", 10);
     CWState.setStatelogic(statelogic);
   }
 
@@ -81,17 +71,6 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
     state.controlReleased(command);
   }
 
-  public void keyPressed(int key, char c) {
-    super.keyPressed(key, c);
-    if (key == Input.KEY_SPACE) {
-      statelogic.changeToNext();
-    }
-
-    if (key == Input.KEY_ENTER) {
-      statelogic.changeTo("MAIN_MenU");
-    }
-  }
-
   public static void main(String[] argv) {
     try {
       LoadingList.setDeferredLoading(false);
@@ -100,14 +79,14 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
       Config config = new Config(resources);
       config.configure();
 
-      AppGameContainer appGameContainer = new AppGameContainer(new TestStates());
+      AppGameContainer appGameContainer = new AppGameContainer(new CWStateBasedGame());
       appGameContainer.setDisplayMode(250, 250, false);
       appGameContainer.setTargetFrameRate(60);
       appGameContainer.start();
     } catch (SlickException e) {
       logger.fatal("", e);
     } catch (Exception e) {
-      logger.fatal("", e);
+      logger.fatal(e);
     }
   }
 }

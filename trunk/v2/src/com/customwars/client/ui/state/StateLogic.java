@@ -1,6 +1,5 @@
 package com.customwars.client.ui.state;
 
-import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.state.transition.FadeInTransition;
@@ -11,7 +10,7 @@ import java.util.LinkedList;
 import java.util.Map;
 
 /**
- * Handles transitions between states, each state has an ID starting from 0 to uniqueStateCount
+ * Handles transitions between states, each state has an ID starting from 0
  * It maps state names to their stateID, state names are always stored in upper case.
  * multiple stateNames can point to the same stateID.
  *
@@ -20,26 +19,18 @@ import java.util.Map;
  */
 public class StateLogic {
   private static final int PREVIOUS_STATE_LIMIT = 20;
-
   private StateBasedGame stategame;
-  private AppGameContainer appcontainer;
   private Deque<Integer> previousStates;
   private Map<String, Integer> states;
-  private int uniqueStateCount;
 
-  public StateLogic(StateBasedGame game, AppGameContainer container) {
+  public StateLogic(StateBasedGame game) {
     this.stategame = game;
-    this.appcontainer = container;
     this.states = new HashMap<String, Integer>();
     this.previousStates = new LinkedList<Integer>();
   }
 
   public void addState(String stateName, int stateID) {
     if (stateName != null) {
-      if (!states.values().contains(stateID)) {
-        uniqueStateCount++;
-      }
-
       String key = stateName.toUpperCase();
       states.put(key, stateID);
     }
@@ -62,14 +53,23 @@ public class StateLogic {
     }
   }
 
-  public void changeToNext() {
-    gotoState(getNextStateID());
-  }
-
   public void changeToPrevious() {
     if (!previousStates.isEmpty()) {
       int lastStateID = previousStates.removeLast();
       gotoState(lastStateID);
+    }
+  }
+
+  /**
+   * Try to move to the next state, only works if ID's start from 0
+   * and go up by 1.
+   */
+  public void changeToNext() {
+    int nextID = stategame.getCurrentStateID() + 1;
+    if (stategame.getState(nextID) != null) {
+      gotoState(nextID);
+    } else {
+      gotoState(0);
     }
   }
 
@@ -84,23 +84,13 @@ public class StateLogic {
   }
 
   public void gotoState(int stateID) throws IllegalArgumentException {
-    if (stateID >= 0 && stateID < uniqueStateCount) {
+    if (stateID >= 0) {
       stategame.enterState(stateID, null, new FadeInTransition(Color.black));
-      appcontainer.setTitle(stategame.getState(stateID).getClass().toString());
       if (previousStates.size() < PREVIOUS_STATE_LIMIT)
         previousStates.add(stateID);
     } else {
       throw new IllegalArgumentException(
-              "StateID " + stateID + " is not within state bounds >=0 <" + uniqueStateCount);
+              "StateID " + stateID + " is not within state bounds >=0");
     }
-  }
-
-  /**
-   * @return the next valid stateID
-   *         returns 0 when the next stateID is off state bounds.
-   */
-  private int getNextStateID() {
-    int nextID = stategame.getCurrentStateID() + 1;
-    return nextID < uniqueStateCount ? nextID : 0;
   }
 }

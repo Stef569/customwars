@@ -92,6 +92,7 @@ public class SpriteManager implements PropertyChangeListener {
     if (map != null) {
       uniqueAnimations.clear();
       initCursors();
+      initColors();
       initMapSprites();
     }
   }
@@ -109,6 +110,30 @@ public class SpriteManager implements PropertyChangeListener {
 
     if (activeCursor != null)
       uniqueAnimations.add(activeCursor.anim);
+  }
+
+  /**
+   * Search for units and cities,
+   * get their Color, recoloring might take a while.
+   */
+  private void initColors() {
+    Set<Color> colorsInMap = new HashSet<Color>(6);
+    for (Tile t : map.getAllTiles()) {
+      Locatable locatable = t.getLastLocatable();
+      Terrain terrain = t.getTerrain();
+
+      if (locatable instanceof Unit) {
+        Unit unit = (Unit) locatable;
+        colorsInMap.add(unit.getOwner().getColor());
+      }
+
+      if (terrain instanceof City) {
+        City city = (City) terrain;
+        colorsInMap.add(city.getOwner().getColor());
+      }
+    }
+
+    resources.recolor(colorsInMap.toArray(new Color[]{}));
   }
 
   /**
@@ -144,7 +169,6 @@ public class SpriteManager implements PropertyChangeListener {
    */
   public void loadUnitSprite(Unit unit) {
     Color unitColor = unit.getOwner().getColor();
-    resources.recolor(unitColor);
     UnitSprite sprite = createUnitSprite(unit);
     recolorUnitSprite(sprite, unitColor, unit.getID());
     addUnitSprite(unit, sprite);
@@ -204,7 +228,6 @@ public class SpriteManager implements PropertyChangeListener {
    */
   public void loadCitySprite(City city) {
     Color cityColor = city.getOwner().getColor();
-    resources.recolor(cityColor);
     CitySprite sprite = createCitySprite(city);
     recolorCitySprite(sprite, cityColor, city.getID());
     addCitySprite(city, sprite);

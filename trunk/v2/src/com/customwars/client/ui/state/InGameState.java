@@ -1,4 +1,4 @@
-package test.slick;
+package com.customwars.client.ui.state;
 
 import com.customwars.client.io.img.slick.ImageStrip;
 import com.customwars.client.model.map.Direction;
@@ -8,21 +8,17 @@ import com.customwars.client.ui.Camera2D;
 import com.customwars.client.ui.Scroller;
 import com.customwars.client.ui.renderer.MapRenderer;
 import com.customwars.client.ui.sprite.TileSprite;
-import com.customwars.client.ui.state.CWInput;
-import com.customwars.client.ui.state.CWState;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
-import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.command.Command;
 import org.newdawn.slick.state.StateBasedGame;
 
 import java.awt.Dimension;
 
-public class TestMapRenderer extends CWState {
+public class InGameState extends CWState {
   private MapRenderer mapRenderer;
   private Camera2D camera;
-  private Scroller scroller;
 
   public void init(GameContainer container, StateBasedGame game) throws SlickException {
     mapRenderer = new MapRenderer(resources);
@@ -34,12 +30,11 @@ public class TestMapRenderer extends CWState {
     Map<Tile> map = stateSession.getMap();
     mapRenderer.setMap(map);
 
-    // Create Camera & scroller
+    // Create Camera & Scroller
     Dimension worldSize = new Dimension(map.getWidth(), map.getHeight());
     Dimension screenSize = new Dimension(container.getWidth(), container.getHeight());
     camera = new Camera2D(screenSize, worldSize, map.getTileSize());
-    scroller = new Scroller(camera);
-    mapRenderer.setScroller(scroller);
+    mapRenderer.setScroller(new Scroller(camera));
 
     // Create & add Cursors
     ImageStrip cursor1 = resources.getSlickImgStrip("selectCursor");
@@ -100,40 +95,6 @@ public class TestMapRenderer extends CWState {
     }
   }
 
-  public void keyPressed(int key, char c) {
-    System.out.println("key PRessed?");
-  }
-
-  public void keyReleased(int key, char c) {
-    if (key == Input.KEY_0) {
-      mapRenderer.activedCursor("DOES_NOT_EXISTS");
-    }
-    if (key == Input.KEY_1) {
-      mapRenderer.activedCursor("AIM");
-    }
-    if (key == Input.KEY_2) {
-      mapRenderer.activedCursor("SELECT");
-    }
-    if (key == Input.KEY_3) {
-      camera.centerOnTile(0, 0);
-    }
-    if (key == Input.KEY_4) {
-      camera.centerOnTile(5, 5);
-    }
-    if (key == Input.KEY_5) {
-      camera.centerOnTile(9, 9);
-    }
-    if (key == Input.KEY_R) {
-      mapRenderer.setMap(stateSession.getMap());
-    }
-    if (key == Input.KEY_U) {
-      scroller.toggleAutoUpdate();
-    }
-    if (key == Input.KEY_L) {
-      mapRenderer.toggleCursorLock();
-    }
-  }
-
   public void mouseWheelMoved(int newValue) {
     if (newValue > 0) {
       camera.zoomIn();
@@ -149,6 +110,6 @@ public class TestMapRenderer extends CWState {
   }
 
   public int getID() {
-    return 1;
+    return 10;
   }
 }
