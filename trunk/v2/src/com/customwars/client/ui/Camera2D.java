@@ -30,6 +30,10 @@ public class Camera2D {
     this.tileSize = tileSize;
   }
 
+  public Camera2D(Dimension screenSize, Dimension worldSize, int tileSize) {
+    this(screenSize, screenSize, worldSize, tileSize);
+  }
+
   public void update(int elapsedTime) {
 
   }
