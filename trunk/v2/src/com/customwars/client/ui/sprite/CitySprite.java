@@ -50,7 +50,7 @@ public class CitySprite extends TileSprite implements PropertyChangeListener {
   }
 
   public void updateAnim() {
-    super.anim = renderFogged ? animFogged : animActive;
+    setAnim(renderFogged ? animFogged : animActive);
   }
 
   public void propertyChange(PropertyChangeEvent evt) {

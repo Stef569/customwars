@@ -7,6 +7,8 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 
 import java.awt.Point;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 
 /**
  * A Sprite represents an animation of Images, that is located at x,y position.
@@ -18,6 +20,7 @@ public class Sprite {
   private static final int ONE_SECOND = 1000;
   private boolean illegalRenderingLogged;
   private boolean visible = true;
+  PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
 
   // Position (pixels)
   protected int locX;
@@ -27,7 +30,7 @@ public class Sprite {
   protected float dx;
   protected float dy;
 
-  protected Animation anim;
+  Animation anim;
 
   /**
    * Create a Sprite with no animation set
@@ -124,10 +127,31 @@ public class Sprite {
   }
 
   //----------------------------------------------------------------------------
+  // EVENTS
+  // ---------------------------------------------------------------------------
+  public synchronized void addPropertyChangeListener(PropertyChangeListener listener) {
+    changeSupport.addPropertyChangeListener(listener);
+  }
+
+  public synchronized void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+    changeSupport.addPropertyChangeListener(propertyName, listener);
+  }
+
+  public synchronized void removePropertyChangeListener(PropertyChangeListener listener) {
+    changeSupport.removePropertyChangeListener(listener);
+  }
+
+  public synchronized void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+    changeSupport.removePropertyChangeListener(propertyName, listener);
+  }
+
+  //----------------------------------------------------------------------------
   // SETTERS
   // ---------------------------------------------------------------------------
   public void setAnim(Animation anim) {
+    Animation oldVal = this.anim;
     this.anim = anim;
+    changeSupport.firePropertyChange("anim", oldVal, anim);
   }
 
   public void setLocation(int x, int y) {

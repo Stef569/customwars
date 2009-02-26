@@ -26,6 +26,9 @@ import java.util.Set;
  * Handles all sprites in the game
  * cursors, units, cities
  *
+ * Each unique animation is stored and updated.
+ * A animation is added when a sprite changes his anim
+ *
  * @author stefan
  */
 public class SpriteManager implements PropertyChangeListener {
@@ -82,7 +85,6 @@ public class SpriteManager implements PropertyChangeListener {
   //----------------------------------------------------------------------------
   // load Sprites
   //----------------------------------------------------------------------------
-
   /**
    * Create and locate each Sprite
    */
@@ -144,6 +146,7 @@ public class SpriteManager implements PropertyChangeListener {
     UnitSprite sprite = createUnitSprite(unit);
     recolorUnitSprite(sprite, unit.getOwner().getColor(), unit.getID());
     addUnitSprite(unit, sprite);
+    sprite.addPropertyChangeListener(this);
     unit.addPropertyChangeListener(this);
   }
 
@@ -201,6 +204,7 @@ public class SpriteManager implements PropertyChangeListener {
     CitySprite sprite = createCitySprite(city);
     recolorCitySprite(sprite, city.getOwner().getColor(), city.getID());
     addCitySprite(city, sprite);
+    sprite.addPropertyChangeListener(this);
     city.addPropertyChangeListener(this);
   }
 
@@ -292,5 +296,15 @@ public class SpriteManager implements PropertyChangeListener {
   }
 
   public void propertyChange(PropertyChangeEvent evt) {
+    String propertyName = evt.getPropertyName();
+    if (evt.getSource() instanceof Sprite) {
+      if (propertyName.equals("anim")) {
+        if (evt.getOldValue() != null && evt.getNewValue() != null) {
+          uniqueAnimations.remove(evt.getOldValue());
+          uniqueAnimations.add((Animation) evt.getNewValue());
+          System.out.println(uniqueAnimations.size());
+        }
+      }
+    }
   }
 }
