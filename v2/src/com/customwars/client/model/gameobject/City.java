@@ -1,7 +1,7 @@
 package com.customwars.client.model.gameobject;
 
+import com.customwars.client.model.game.Player;
 import com.customwars.client.model.map.Location;
-import com.customwars.client.model.map.Player;
 import com.customwars.client.model.rules.CityRules;
 import tools.Args;
 

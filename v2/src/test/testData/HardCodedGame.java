@@ -1,14 +1,17 @@
 package test.testData;
 
+import com.customwars.client.model.game.Game;
+import com.customwars.client.model.game.GameConfig;
+import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Terrain;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.gameobject.Weapon;
 import com.customwars.client.model.map.Map;
-import com.customwars.client.model.map.Player;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.model.map.path.DefaultMoveStrategy;
 import com.customwars.client.model.rules.CityRules;
+import com.customwars.client.model.rules.GameRules;
 import com.customwars.client.model.rules.MapRules;
 import com.customwars.client.model.rules.UnitRules;
 
@@ -54,8 +57,9 @@ public class HardCodedGame {
 
   // Players
   public static Player p_RED = new Player(0, Color.RED, false, null, "Stef", Integer.MAX_VALUE, 0, false);
-  public static Player p_BLUE = new Player(0, Color.BLUE, false, null, "JSR", 8500, 0, false);
-  public static Player p_GREEN = new Player(0, Color.GREEN, false, null, "Ben", 500, 1, false);
+  public static Player p_BLUE = new Player(1, Color.BLUE, false, null, "JSR", 8500, 0, false);
+  public static Player p_GREEN = new Player(2, Color.GREEN, false, null, "Ben", 500, 1, false);
+  public static Player p_GRAY = new Player(Color.GRAY, null, -1);
 
   private static Map<Tile> map = new Map<Tile>(10, 10, 32, -5, true);
 
@@ -63,6 +67,16 @@ public class HardCodedGame {
   private static MapRules mapRules = new MapRules(map);
   private static UnitRules unitRules = new UnitRules(map);
   private static CityRules cityRules = new CityRules();
+
+  // Hardcoded Game
+  public static Game getGame() {
+    GameConfig gc = new GameConfig();
+    gc.setTurnLimit(500);
+    gc.setCityfunds(1000);
+    gc.setRules(new GameRules());
+
+    return new Game(getMap(), Arrays.asList(p_RED, p_BLUE, p_GREEN), gc);
+  }
 
   public static Map<Tile> getMap() {
     fillWithTerrain(plain);

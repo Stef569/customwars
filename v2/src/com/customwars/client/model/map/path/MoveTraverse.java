@@ -1,8 +1,8 @@
 package com.customwars.client.model.map.path;
 
+import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.Locatable;
 import com.customwars.client.model.map.Location;
-import com.customwars.client.model.map.Player;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.model.map.TileMap;
 import org.apache.log4j.Logger;
