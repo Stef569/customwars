@@ -100,10 +100,6 @@ public class TestMapRenderer extends CWState {
     }
   }
 
-  public void keyPressed(int key, char c) {
-    System.out.println("key PRessed?");
-  }
-
   public void keyReleased(int key, char c) {
     if (key == Input.KEY_0) {
       mapRenderer.activedCursor("DOES_NOT_EXISTS");

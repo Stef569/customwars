@@ -73,7 +73,7 @@ public class CWStateBasedGame extends StateBasedGame implements InputProviderLis
 
   public static void main(String[] argv) {
     try {
-      LoadingList.setDeferredLoading(false);
+      LoadingList.setDeferredLoading(true);
       resources = new ResourceManager();
 
       Config config = new Config(resources);

@@ -1,8 +1,8 @@
 package com.customwars.client.model.gameobject;
 
+import com.customwars.client.model.game.Player;
 import com.customwars.client.model.map.Direction;
 import com.customwars.client.model.map.Location;
-import com.customwars.client.model.map.Player;
 import com.customwars.client.model.map.UnitFight;
 import com.customwars.client.model.map.path.MovementCost;
 import com.customwars.client.model.map.path.Mover;

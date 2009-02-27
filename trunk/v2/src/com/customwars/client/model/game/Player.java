@@ -1,4 +1,4 @@
-package com.customwars.client.model.map;
+package com.customwars.client.model.game;
 
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.GameObject;
@@ -14,7 +14,7 @@ import java.util.List;
 
 /**
  * Represent a player that can participates in the game, can be either
- * a human player or an AI-player.
+ * a human, AI or neutral -player.
  * Can be allied with another Player
  * Each non neutral player has an unique ID
  *
@@ -52,6 +52,13 @@ public class Player extends GameObject {
     this.budget = budget;
     this.team = team;
     this.ai = ai;
+  }
+
+  /**
+   * Create a Neutral player
+   */
+  public Player(Color color, City hq, int team) {
+    this(Player.NEUTRAL_PLAYER_ID, color, true, hq, "Neutral", 0, team, false);
   }
 
   // ---------------------------------------------------------------------------

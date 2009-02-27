@@ -1,9 +1,9 @@
 package com.customwars.client.model.map.path;
 
+import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.Locatable;
 import com.customwars.client.model.map.Direction;
 import com.customwars.client.model.map.Location;
-import com.customwars.client.model.map.Player;
 
 import java.util.List;
 
