@@ -1,20 +1,20 @@
-package test.com.customwars.client.model.map.gameobject;
+package com.customwars.client.model.gameobject;
 
-import com.customwars.client.model.gameobject.City;
-import com.customwars.client.model.gameobject.CityFactory;
-import com.customwars.client.model.gameobject.Terrain;
+import com.customwars.client.model.testdata.TestData;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.ConversionException;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 import junit.framework.Assert;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class CityXStreamTest {
-  private XStream xStream = new XStream(new DomDriver());
+  private static XStream xStream = new XStream(new DomDriver());
 
-  @Before
-  public void beforeEachTest() {
+  @BeforeClass
+  public static void beforeAllTest() {
     // When we find a city tag, create a City object
     // Using Reflection
     xStream.alias("city", City.class);
@@ -30,7 +30,19 @@ public class CityXStreamTest {
     // id and name are read from attributes, not elements
     xStream.useAttributeFor(Terrain.class, "id");
     xStream.useAttributeFor(Terrain.class, "name");
+  }
+
+  @Before
+  public void beforeEachTest() {
     CityFactory.clear();
+  }
+
+  @AfterClass
+  /**
+   * We messed with CityFactory, restore the test data
+   */
+  public static void afterAllTest() {
+    TestData.storeTestData();
   }
 
   @Test
@@ -55,15 +67,21 @@ public class CityXStreamTest {
             "  <capCount>10</capCount>" +
             "  <funds>0</funds>" +
             "</city>";
+    // Parse xml data into City object
     City city = (City) xStream.fromXML(validCityXml);
+    // Add the city to the factory, invoking init and reset on it
+    // cityCopy now contains valid data.
     CityFactory.addCity(city);
-    CityFactory.getRandomCity();
+    City cityCopy = CityFactory.getRandomCity();
 
-    Assert.assertEquals(0, city.getID());
-    Assert.assertEquals("Factory", city.getName());
-    Assert.assertEquals(0, city.getID());
-    Assert.assertEquals(1, city.getVision());
-    //Assert.assertEquals(0, city.getCapCountPercentage());
+    Assert.assertEquals(0, cityCopy.getID());
+    Assert.assertEquals("Factory", cityCopy.getName());
+    Assert.assertEquals(0, cityCopy.getID());
+    Assert.assertEquals(1, cityCopy.getVision());
+
+    // capCount was set to 10 in the xml, but the city has been validated and
+    // capCount is set to 0. The cap percentage is now 0.
+    Assert.assertEquals(0, cityCopy.getCapCountPercentage());
   }
 
   @Test(expected = ConversionException.class)
@@ -88,8 +106,8 @@ public class CityXStreamTest {
     CityFactory.addCity(city);
     CityFactory.getRandomCity();
 
-    // Default to 1, if not in xml
-    Assert.assertEquals(1, city.getMinHealRange());
-    Assert.assertEquals(1, city.getMaxHealRange());
+    // Default to 0, if not in xml
+    Assert.assertEquals(0, city.getMinHealRange());
+    Assert.assertEquals(0, city.getMaxHealRange());
   }
 }

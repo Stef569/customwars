@@ -1,4 +1,4 @@
-package test.slick;
+package slick;
 
 import com.customwars.client.ui.state.CWInput;
 import com.customwars.client.ui.state.CWState;
