@@ -40,6 +40,10 @@ public class UnitFactory {
     return Collections.unmodifiableCollection(units.values());
   }
 
+  /**
+   * Retrieve a random unit
+   * Only works if unit ID's are linear starting from 0
+   */
   public static Unit getRandomUnit() {
     int rand = (int) (Math.random() * units.size());
     return getUnit(rand);

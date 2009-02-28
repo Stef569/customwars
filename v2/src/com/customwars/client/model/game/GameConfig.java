@@ -1,6 +1,5 @@
 package com.customwars.client.model.game;
 
-import com.customwars.client.model.rules.GameRules;
 
 /**
  * Game specific configuration:
@@ -11,16 +10,14 @@ public class GameConfig {
   private int startWeather = 0;
   private int turnLimit;
   private int cityfunds;
-  private GameRules rules;
 
   public GameConfig() {
   }
 
-  public GameConfig(int weather, int turnLimit, int cityfunds, GameRules rules) {
+  public GameConfig(int weather, int turnLimit, int cityfunds) {
     this.startWeather = weather;
     this.turnLimit = turnLimit;
     this.cityfunds = cityfunds;
-    this.rules = rules;
   }
 
   // ---------------------------------------------------------------------------
@@ -38,10 +35,6 @@ public class GameConfig {
     this.cityfunds = cityfunds;
   }
 
-  public void setRules(GameRules rules) {
-    this.rules = rules;
-  }
-
   // ---------------------------------------------------------------------------
   // GETTERS
   // --------------------------------------------------------------------------
@@ -55,9 +48,5 @@ public class GameConfig {
 
   public int getCityFunds() {
     return cityfunds;
-  }
-
-  public GameRules getRules() {
-    return rules;
   }
 }

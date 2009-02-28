@@ -1,8 +1,8 @@
 package com.customwars.client.model.gameobject;
 
+import com.customwars.client.model.TurnHandler;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.map.Location;
-import com.customwars.client.model.rules.CityRules;
 import tools.Args;
 
 import java.beans.PropertyChangeEvent;
@@ -22,7 +22,7 @@ import java.util.List;
  *
  * @author stefan
  */
-public class City extends Terrain implements PropertyChangeListener {
+public class City extends Terrain implements PropertyChangeListener, TurnHandler {
   private int vision;         // Amount of tiles this terrain can 'see' in each direction
   private Location location;  // The location this City is on
   private Player owner;       // Player owning this City(never null)
@@ -37,7 +37,6 @@ public class City extends Terrain implements PropertyChangeListener {
   private Unit capturer;      // Capturing unit that is capturing this property
   private int capCount;       // The current capture count(if capCount==maxCapCount then this property is considered to be captured)
   private int funds;          // Amount of money that this property produces every turn
-  private CityRules rules;    // The rules for this City
 
   public City(int id, String name, String description, int defenseBonus, int height, List<Integer> moveCosts,
               int vision, boolean hidden,
@@ -59,8 +58,6 @@ public class City extends Terrain implements PropertyChangeListener {
     this.heals = Args.createEmptyListIfNull(heals);
     this.canBeCaptureBy = Args.createEmptyListIfNull(canBeCaptureBy);
     this.builds = Args.createEmptyListIfNull(builds);
-    if (minHealRange == 0) minHealRange = 1;
-    if (maxHealRange == 0) maxHealRange = 1;
 
     Args.validate(maxHealRange < 0, "maxHealRange should be positive");
     Args.validate(minHealRange < 0, "minHealRange should be positive");
@@ -84,15 +81,13 @@ public class City extends Terrain implements PropertyChangeListener {
     this.capturer = otherCity.capturer;
     this.capCount = otherCity.capCount;
     this.funds = otherCity.funds;
-    this.rules = otherCity.rules;
   }
 
   /**
-   * Set each value that has a max value
-   * to max value
+   * Resets the city state to default
    */
   void reset() {
-    this.capCount = maxCapCount;
+    this.capCount = 0;
   }
 
   /**
@@ -139,7 +134,7 @@ public class City extends Terrain implements PropertyChangeListener {
         owner.removeCity(this);
         newOwner.addCity(this);
         setOwner(newOwner);
-        firePropertyChange("captured", false, true);
+        firePropertyChange("captured", null, true);
       }
     }
   }
@@ -157,7 +152,7 @@ public class City extends Terrain implements PropertyChangeListener {
 
   public void supply(Unit unit) {
     if (canSupply(unit)) {
-      unit.addHp(healRate);
+      unit.addSupplies(healRate);
     }
   }
 
@@ -182,10 +177,6 @@ public class City extends Terrain implements PropertyChangeListener {
     firePropertyChange("funds", oldVal, this.funds);
   }
 
-  public void setRules(CityRules rules) {
-    this.rules = rules;
-  }
-
   /**
    * When capCount reaches maxCapCount isCaptured() returns true.
    *
@@ -200,13 +191,15 @@ public class City extends Terrain implements PropertyChangeListener {
    */
   private void setCapCount(int capCount) {
     int oldVal = this.capCount;
-    this.capCount = Args.validateBetweenZeroMax(capCount, maxCapCount);
+    this.capCount = Args.getBetweenZeroMax(capCount, maxCapCount);
     firePropertyChange("capcount", oldVal, this.capCount);
   }
 
   private void setCapturer(Unit capturer) {
     Unit oldVal = this.capturer;
-    this.capturer.removePropertyChangeListener(this);
+    if (oldVal != null)
+      oldVal.removePropertyChangeListener(this);
+
     this.capturer = capturer;
     capturer.addPropertyChangeListener(this);
     firePropertyChange("capturer", oldVal, this.capturer);
@@ -216,35 +209,27 @@ public class City extends Terrain implements PropertyChangeListener {
   // Getters
   // ---------------------------------------------------------------------------
   public boolean canHeal(Unit unit) {
-    return rules.canHeal(this, unit);
-  }
-
-  public boolean canHeal(int id) {
-    return heals.contains(id);
+    return unit != null && heals.contains(unit.getArmyBranch());
   }
 
   public boolean canSupply(Unit unit) {
-    return rules.canSupply(this, unit);
+    return unit != null && heals.contains(unit.getArmyBranch());
   }
 
-  private boolean isCaptured() {
-    return capCount == maxCapCount;
+  public boolean canBeCapturedBy(Unit unit) {
+    return unit != null && canBeCaptureBy.contains(unit.getArmyBranch());
+  }
+
+  public boolean canBuild(Unit unit) {
+    return unit != null && builds.contains(unit.getArmyBranch());
   }
 
   public boolean isCapturedBy(Unit unit) {
     return isCaptured() && this.capturer == unit;
   }
 
-  private boolean canBeCapturedBy(Unit unit) {
-    return rules.canBeCapturedBy(this, unit);
-  }
-
-  public boolean canBeCapturedBy(int id) {
-    return canBeCaptureBy.contains(id);
-  }
-
-  public boolean canBuild(int id) {
-    return builds.contains(id);
+  public boolean isCaptured() {
+    return capCount == maxCapCount;
   }
 
   public int getMinHealRange() {
@@ -280,10 +265,6 @@ public class City extends Terrain implements PropertyChangeListener {
 
   public boolean isOwnedBy(Player player) {
     return owner == player;
-  }
-
-  boolean isOnSameLocation(Location location) {
-    return this.location == location;
   }
 
   @Override

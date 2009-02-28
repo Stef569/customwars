@@ -17,6 +17,7 @@ import java.util.List;
  * a human, AI or neutral -player.
  * Can be allied with another Player
  * Each non neutral player has an unique ID
+ * A Player is always in the IDLE state
  *
  * @author stefan
  */
@@ -32,6 +33,7 @@ public class Player extends GameObject {
   private City hq;          // Headquarters
   private List<Unit> army;  // All the units of this player
   private List<City> cities;// All the cities of this player
+  private boolean createdFirstUnit;
 
   private Player() {
     army = new LinkedList<Unit>();
@@ -43,7 +45,7 @@ public class Player extends GameObject {
     this.id = id;
     this.color = color;
     this.neutral = neutral;
-    this.hq = hq;
+    setHq(hq);
   }
 
   public Player(int id, Color color, boolean neutral, City hq, String name, int budget, int team, boolean ai) {
@@ -61,9 +63,6 @@ public class Player extends GameObject {
     this(Player.NEUTRAL_PLAYER_ID, color, true, hq, "Neutral", 0, team, false);
   }
 
-  // ---------------------------------------------------------------------------
-  // Actions
-  // ---------------------------------------------------------------------------
   public void startTurn() {
     if (neutral) return;
     for (Unit unit : army) {
@@ -113,7 +112,7 @@ public class Player extends GameObject {
   }
 
   public void addToBudget(int amount) {
-    int validBudget = Args.validateBetweenZeroMax(this.budget + amount, Integer.MAX_VALUE);
+    int validBudget = Args.getBetweenZeroMax(this.budget + amount, Integer.MAX_VALUE);
     setBudget(validBudget);
   }
 
@@ -132,6 +131,7 @@ public class Player extends GameObject {
       throw new IllegalArgumentException("cannot add the same city");
 
     cities.add(city);
+    city.setOwner(this);
     firePropertyChange("city", null, city);
   }
 
@@ -144,7 +144,7 @@ public class Player extends GameObject {
     firePropertyChange("city", city, null);
   }
 
-  public void removeAllProperties() {
+  public void removeAllCities() {
     cities.clear();
     firePropertyChange("property", null, null);
   }
@@ -167,7 +167,9 @@ public class Player extends GameObject {
     if (u == null) throw new IllegalArgumentException("null unit cannot be added");
     if (army.contains(u)) throw new IllegalArgumentException("army already contains the same unit");
 
+    if (army.size() == 0) createdFirstUnit = true;
     army.add(u);
+    u.setOwner(this);
     firePropertyChange("unit", null, u);
   }
 
@@ -196,9 +198,11 @@ public class Player extends GameObject {
     return it;
   }
 
-  // ---------------------------------------------------------------------------
-  // Setters
-  // ---------------------------------------------------------------------------
+  public void clear() {
+    removeAllUnits();
+    removeAllCities();
+  }
+
   public void setName(String name) {
     String oldVal = this.name;
     this.name = name;
@@ -218,12 +222,10 @@ public class Player extends GameObject {
   }
 
   public void setHq(City hq) {
+    if (hq != null) hq.setOwner(this);
     this.hq = hq;
   }
 
-  // ---------------------------------------------------------------------------
-  // Getters
-  // ---------------------------------------------------------------------------
   public int getId() {
     return id;
   }
@@ -253,9 +255,8 @@ public class Player extends GameObject {
   }
 
   public boolean isDestroyed() {
-    return army.isEmpty();
+    return createdFirstUnit && army.isEmpty();
   }
-
 
   public boolean isAlliedWith(Player p) {
     return p.getTeam() == team;

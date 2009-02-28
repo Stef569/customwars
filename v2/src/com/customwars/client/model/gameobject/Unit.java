@@ -1,12 +1,12 @@
 package com.customwars.client.model.gameobject;
 
+import com.customwars.client.model.TurnHandler;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.map.Direction;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.UnitFight;
 import com.customwars.client.model.map.path.MovementCost;
 import com.customwars.client.model.map.path.Mover;
-import com.customwars.client.model.rules.UnitRules;
 import tools.Args;
 
 import java.util.LinkedList;
@@ -20,7 +20,7 @@ import java.util.List;
  *
  * @author Stefan
  */
-public class Unit extends GameObject implements Mover, Location {
+public class Unit extends GameObject implements Mover, Location, TurnHandler {
   private int id;               // The unit Type ie(1->INF, 2->APC,...)
   private String name;          // Full name ie Infantry, Tank, ...
   private String description;   // Information about this Unit
@@ -57,7 +57,6 @@ public class Unit extends GameObject implements Mover, Location {
   private Weapon primaryWeapon, secondaryWeapon;
   private List<Locatable> transport;        // Units that are within this Transport(null means can't transport)
   private List<Integer> canBeTransportedBy; // Movement Types that can be transported
-  private UnitRules rules;
 
   public Unit(int id, String name, String description,
               int cost, int movement, int vision,
@@ -93,21 +92,6 @@ public class Unit extends GameObject implements Mover, Location {
 
   void init() {
     if (canTransport) this.transport = new LinkedList<Locatable>();
-  }
-
-  /**
-   * resets the unit values back to default:
-   * 100% Supplies, health
-   * 100% ammo in both weapons(or 1 or none)
-   * Facing east
-   * Idle state
-   */
-  void reset() {
-    restock();
-    resupply();
-    experience = 0;
-    setOrientation(Direction.EAST);
-    setState(GameObjectState.ACTIVE);
   }
 
   /**
@@ -154,7 +138,20 @@ public class Unit extends GameObject implements Mover, Location {
     owner = otherUnit.owner;
     description = otherUnit.description;
     transport = otherUnit.transport;
-    rules = otherUnit.rules;
+  }
+
+  /**
+   * Resets the unit state to default:
+   * 100% Supplies, health
+   * 100% ammo in both weapons(or 1 or none)
+   * Facing east, Idle state, no exp
+   */
+  void reset() {
+    restock();
+    resupply();
+    experience = 0;
+    setOrientation(Direction.EAST);
+    setState(GameObjectState.ACTIVE);
   }
 
   /**
@@ -246,7 +243,7 @@ public class Unit extends GameObject implements Mover, Location {
    * 1 of the two weapons are set and have >0 ammo.
    */
   public boolean canAttack(Unit unit) {
-    return unit != null && canFire() && rules.canAttack(this, unit);
+    return unit != null && canFire();
   }
 
   public void defend(Unit attacker, UnitFight fight) {
@@ -334,7 +331,7 @@ public class Unit extends GameObject implements Mover, Location {
   }
 
   public boolean canSupply(Unit unit) {
-    return unit != null && canSupply && rules.canSupply(this, unit);
+    return unit != null && canSupply;
   }
 
   public void heal(Unit unit) {
@@ -344,7 +341,7 @@ public class Unit extends GameObject implements Mover, Location {
   }
 
   private boolean canHeal(Unit unit) {
-    return unit != null && canHeal && rules.canHeal(this, unit);
+    return unit != null && canHeal;
   }
 
   // ---------------------------------------------------------------------------
@@ -385,7 +382,7 @@ public class Unit extends GameObject implements Mover, Location {
 
   protected void setHp(int hp) {
     int oldVal = this.hp;
-    int validHp = Args.validateBetweenZeroMax(hp, maxHp);
+    int validHp = Args.getBetweenZeroMax(hp, maxHp);
     this.hp = validHp;
     firePropertyChange("hp", oldVal, validHp);
   }
@@ -396,7 +393,7 @@ public class Unit extends GameObject implements Mover, Location {
 
   protected void setSupply(int amount) {
     int oldVal = this.supplies;
-    int validSupply = Args.validateBetweenZeroMax(amount, maxSupplies);
+    int validSupply = Args.getBetweenZeroMax(amount, maxSupplies);
     this.supplies = validSupply;
     firePropertyChange("supplies", oldVal, validSupply);
   }
@@ -441,12 +438,6 @@ public class Unit extends GameObject implements Mover, Location {
     MovementCost oldVal = this.moveStrategy;
     this.moveStrategy = moveStrategy;
     firePropertyChange("moveStrategy", oldVal, moveStrategy);
-  }
-
-  public void setRules(UnitRules rules) {
-    UnitRules oldVal = this.rules;
-    this.rules = rules;
-    firePropertyChange("rules", oldVal, rules);
   }
 
   // ---------------------------------------------------------------------------
@@ -518,6 +509,10 @@ public class Unit extends GameObject implements Mover, Location {
   // ---------------------------------------------------------------------------
   // Getters :: Supplies, hp
   // ---------------------------------------------------------------------------
+  protected int getSupplies() {
+    return supplies;
+  }
+
   public int getSuppliesPercentage() {
     int percentage;
     if (maxSupplies <= 0) {
@@ -671,6 +666,8 @@ public class Unit extends GameObject implements Mover, Location {
   @Override
   public String toString() {
     StringBuilder strBuilder = new StringBuilder("[name=" + name + " id=" + id);
+    if (location != null)
+      strBuilder.append(" location=(").append(location.getCol()).append(",").append(location.getRow()).append(")");
     if (owner != null) strBuilder.append(" owner=").append(owner);
     strBuilder.append("]");
     return strBuilder.toString();

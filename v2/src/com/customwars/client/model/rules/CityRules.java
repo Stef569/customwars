@@ -8,24 +8,27 @@ public class CityRules {
    * Supplying has the same conditions as healing
    */
   public boolean canSupply(City city, Unit unit) {
-    return canHeal(city, unit);
+    return city != null && unit != null &&
+            canHeal(city, unit);
   }
 
   /**
    * Can the City heal the unit
    */
   public boolean canHeal(City city, Unit unit) {
-    return city.getOwner().isAlliedWith(unit.getOwner()) &&
+    return city != null && unit != null &&
+            city.getOwner().isAlliedWith(unit.getOwner()) &&
             city.getLocation() == unit.getLocation() &&
-            city.canHeal(unit.getArmyBranch());
+            city.canHeal(unit);
   }
 
   /**
    * Can the City be captured by the unit
    */
   public boolean canBeCapturedBy(City city, Unit unit) {
-    return !city.getOwner().isAlliedWith(unit.getOwner()) &&
-            city.canBeCapturedBy(unit.getArmyBranch()) &&
+    return city != null && unit != null &&
+            !city.getOwner().isAlliedWith(unit.getOwner()) &&
+            city.canBeCapturedBy(unit) &&
             unit.canCapture() && unit.isActive();
   }
 }

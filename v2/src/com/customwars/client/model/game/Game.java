@@ -17,17 +17,14 @@ public class Game extends TurnBasedGame {
   private int cityFunds;          // The amount of money each City produces each turn
 
   public Game(Map<Tile> map, List<Player> players, GameConfig gameConfig) {
-    super(map, players, gameConfig.getRules());
+    super(map, players);
     applyGameConfig(gameConfig);
   }
 
   public void applyGameConfig(GameConfig gameConfig) {
     this.weather = gameConfig.getStartWeather();
     this.cityFunds = gameConfig.getCityFunds();
-
-    // Start at turn -1, because startGame will end the first turn to allow the first player to get
-    // The city funds.
-    super.turn = new Turn(-1, gameConfig.getTurnLimit());
+    super.turn = new Turn(0, gameConfig.getTurnLimit());
   }
 
   /**
@@ -53,7 +50,9 @@ public class Game extends TurnBasedGame {
 
       replaceCityOwner(city);
       replaceUnitOwner(unit);
-      initCityFunds(t);
+
+      if (city != null)
+        city.setFunds(cityFunds);
     }
 
     super.startGame(gameStarter);
@@ -63,20 +62,14 @@ public class Game extends TurnBasedGame {
   private void replaceCityOwner(City city) {
     if (city != null) {
       Player newOwner = getGamePlayer(city.getOwner());
-
-      // Link Player and city
       newOwner.addCity(city);
-      city.setOwner(newOwner);
     }
   }
 
   private void replaceUnitOwner(Unit unit) {
     if (unit != null) {
       Player newOwner = getGamePlayer(unit.getOwner());
-
-      // Link Player and unit
       newOwner.addUnit(unit);
-      unit.setOwner(newOwner);
     }
   }
 
@@ -88,15 +81,8 @@ public class Game extends TurnBasedGame {
   }
 
   /**
-   * Set city funds to the city on t
-   */
-  private void initCityFunds(Tile t) {
-    City city = map.getCityOn(t);
-    city.setFunds(cityFunds);
-  }
-
-  /**
    * Create move/Attack zones for each unit of each player.
+   * fog of war is reset for each player
    */
   public void initZones() {
     for (Player player : getAllPlayers()) {
