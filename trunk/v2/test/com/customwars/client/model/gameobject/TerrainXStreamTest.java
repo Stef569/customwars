@@ -1,29 +1,39 @@
-package test.com.customwars.client.model.map.gameobject;
+package com.customwars.client.model.gameobject;
 
-import com.customwars.client.model.gameobject.Terrain;
-import com.customwars.client.model.gameobject.TerrainFactory;
+import com.customwars.client.model.testdata.TestData;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.ConversionException;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 import junit.framework.Assert;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.util.List;
 
 public class TerrainXStreamTest {
-  private XStream xStream = new XStream(new DomDriver());
+  private static XStream xStream = new XStream(new DomDriver());
 
-  @Before
-  public void beforeEachTest() {
+  @BeforeClass
+  public static void beforeAllTest() {
     // When we find a terrain tag, create a Terrain object
     // Using Reflection
     xStream.alias("terrain", Terrain.class);
     // id and name are read from attributes, not elements
     xStream.useAttributeFor(Terrain.class, "id");
     xStream.useAttributeFor(Terrain.class, "name");
+  }
+
+  @Before
+  public void beforeEachTest() {
     TerrainFactory.clear();
+  }
+
+  @AfterClass
+  public static void afterAllTest() {
+    TestData.storeTestData();
   }
 
   @Test

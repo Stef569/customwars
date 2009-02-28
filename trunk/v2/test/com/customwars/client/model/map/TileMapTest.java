@@ -1,13 +1,11 @@
-package test.com.customwars.client.model.map.gameobject;
+package com.customwars.client.model.map;
 
-import com.customwars.client.model.map.Direction;
-import com.customwars.client.model.map.Location;
-import com.customwars.client.model.map.Tile;
-import com.customwars.client.model.map.TileMap;
+import com.customwars.client.model.gameobject.TerrainFactory;
+import com.customwars.client.model.testdata.TestData;
 import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import test.testData.HardCodedGame;
+import tools.MapUtil;
 
 /**
  * Test functions in the TileMap2D class
@@ -19,7 +17,8 @@ public class TileMapTest {
 
   @Before
   public void beforeEachTest() {
-    map = HardCodedGame.getMap();
+    map = new Map<Tile>(10, 15, 32, 3, true);
+    MapUtil.fillWithTiles(map, TerrainFactory.getTerrain(TestData.PLAIN));
   }
 
   // Check If getAllTiles realy Returns AllTiles

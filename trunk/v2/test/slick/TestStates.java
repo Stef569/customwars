@@ -1,7 +1,8 @@
-package test.slick;
+package slick;
 
 import com.customwars.client.Config;
 import com.customwars.client.io.ResourceManager;
+import com.customwars.client.model.testdata.TestData;
 import com.customwars.client.ui.state.CWInput;
 import com.customwars.client.ui.state.CWState;
 import com.customwars.client.ui.state.StateLogic;
@@ -15,7 +16,8 @@ import org.newdawn.slick.command.Command;
 import org.newdawn.slick.command.InputProviderListener;
 import org.newdawn.slick.loading.LoadingList;
 import org.newdawn.slick.state.StateBasedGame;
-import test.testData.HardCodedGame;
+
+import java.io.IOException;
 
 public class TestStates extends StateBasedGame implements InputProviderListener {
   private static final Logger logger = Logger.getLogger(TestStates.class);
@@ -31,6 +33,8 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
   public void initStatesList(GameContainer container) throws SlickException {
     this.gameContainer = container;
     StateSession stateSession = new StateSession();
+
+    TestData.storeTestData();
     stateSession.setMap(HardCodedGame.getMap());  // Later set by a mapSelectState
 
     cwInput = new CWInput(container.getInput());
@@ -52,7 +56,12 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
     addState(testMenuMusic);
     addState(testMapRenderer);
     addState(remapKeysTest);
-    resources.loadAll();
+
+    try {
+      resources.loadFromFile();
+    } catch (IOException e) {
+      logger.fatal(e);
+    }
   }
 
   private void mapStateIdsToName() {
@@ -101,7 +110,7 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
       config.configure();
 
       AppGameContainer appGameContainer = new AppGameContainer(new TestStates());
-      appGameContainer.setDisplayMode(250, 250, false);
+      appGameContainer.setDisplayMode(1024, 800, false);
       appGameContainer.setTargetFrameRate(60);
       appGameContainer.start();
     } catch (SlickException e) {

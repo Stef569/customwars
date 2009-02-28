@@ -1,4 +1,4 @@
-package test.slick;
+package slick;
 
 import com.customwars.client.Config;
 import com.customwars.client.io.ResourceManager;
@@ -17,14 +17,13 @@ import java.io.IOException;
 /**
  * Configure
  * Load resources
- * It's a stand alone test because I couldn't load resources 2x.
+ * It's a stand alone test because resources could not be loaded 2x.
  *
  * @author stefan
  */
 public class StartupTest extends BasicGame {
   private static AppGameContainer appGameContainer;
   private ResourceManager resources;
-  private Config config;
 
   // Deferred loading
   private DeferredResource nextResource;
@@ -37,7 +36,7 @@ public class StartupTest extends BasicGame {
 
   public void init(GameContainer container) throws SlickException {
     resources = new ResourceManager();
-    config = new Config(resources);
+    Config config = new Config(resources);
     config.configure();
     screenWidth = container.getWidth();
     resources.loadAll();

@@ -1,12 +1,10 @@
-package test.com.customwars.client.model.map.gameobject;
+package com.customwars.client.model.gameobject;
 
-import com.customwars.client.model.gameobject.GameObjectState;
-import com.customwars.client.model.gameobject.Unit;
+import com.customwars.client.model.testdata.TestData;
 import junit.framework.Assert;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import test.testData.HardCodedGame;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -20,7 +18,7 @@ public class UnitEventTest implements PropertyChangeListener {
 
   @Before
   public void beforeEachTest() {
-    unit = HardCodedGame.getInf();
+    unit = UnitFactory.getUnit(TestData.INF);
     unit.addPropertyChangeListener(this);
   }
 

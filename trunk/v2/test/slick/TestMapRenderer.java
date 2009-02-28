@@ -1,4 +1,4 @@
-package test.slick;
+package slick;
 
 import com.customwars.client.io.img.slick.ImageStrip;
 import com.customwars.client.model.map.Direction;
@@ -127,6 +127,9 @@ public class TestMapRenderer extends CWState {
     }
     if (key == Input.KEY_L) {
       mapRenderer.toggleCursorLock();
+    }
+    if (key == Input.KEY_J) {
+      mapRenderer.setRenderSprites(!mapRenderer.isRenderingSprites());
     }
   }
 

@@ -1,25 +1,23 @@
-package test.com.customwars.client.model.map.gameobject;
+package com.customwars.client.model.gameobject;
 
 import com.customwars.client.io.converter.UnitWeaponConverter;
-import com.customwars.client.model.gameobject.Unit;
-import com.customwars.client.model.gameobject.UnitFactory;
-import com.customwars.client.model.gameobject.Weapon;
-import com.customwars.client.model.gameobject.WeaponFactory;
+import com.customwars.client.model.testdata.TestData;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 import junit.framework.Assert;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
-import test.testData.HardCodedGame;
 
 /**
  * @author stefan
  */
 public class UnitXStreamTest {
-  private XStream xStream = new XStream(new DomDriver());
+  private static XStream xStream = new XStream(new DomDriver());
 
-  @Before
-  public void beforeEachTest() {
+  @BeforeClass
+  public static void beforeAllTest() {
     // When we find a unit tag, create a Unit object
     xStream.alias("unit", Unit.class);
     // When we find a Weapon, use our own converter
@@ -30,8 +28,16 @@ public class UnitXStreamTest {
     // id and name are read from attributes, not elements
     xStream.useAttributeFor(Unit.class, "id");
     xStream.useAttributeFor(Unit.class, "name");
+  }
+
+  @Before
+  public void beforeEachTest() {
     UnitFactory.clear();
-    WeaponFactory.clear();
+  }
+
+  @AfterClass
+  public static void afterAllTest() {
+    TestData.storeTestData();
   }
 
   @Test
@@ -63,12 +69,10 @@ public class UnitXStreamTest {
             "</primaryWeapon>" +
             "</unit>";
 
-    // First add the smg weapon to the factory
-    WeaponFactory.addWeapon(HardCodedGame.SMG);
-    // Magic! the weapon is retrieved from the factory and added to the unit as primaryWeapon
+    // Magic! the weapon is retrieved from the UnitFactory and added to the unit as primaryWeapon
     Unit unit = (Unit) xStream.fromXML(unitXml);
-    Assert.assertEquals(HardCodedGame.SMG.getID(), unit.getPrimaryWeapon().getID());
-    Assert.assertEquals(HardCodedGame.SMG.getName(), unit.getPrimaryWeapon().getName());
+    Assert.assertEquals(TestData.SMG, unit.getPrimaryWeapon().getID());
+    Assert.assertEquals(WeaponFactory.getWeapon(TestData.SMG).getName(), unit.getPrimaryWeapon().getName());
     Assert.assertEquals(99, unit.getPrimaryWeapon().getAmmo());
   }
 
@@ -83,16 +87,14 @@ public class UnitXStreamTest {
             "</secondaryWeapon>" +
             "</unit>";
 
-    // First add the smg weapon to the factory
-    WeaponFactory.addWeapon(HardCodedGame.SMG);
     // Magic! the weapon is retrieved from the factory and added to the unit as primaryWeapon
     Unit unit = (Unit) xStream.fromXML(unitXml);
-    Assert.assertEquals(HardCodedGame.SMG.getID(), unit.getPrimaryWeapon().getID());
-    Assert.assertEquals(HardCodedGame.SMG.getName(), unit.getPrimaryWeapon().getName());
+    Assert.assertEquals(TestData.SMG, unit.getPrimaryWeapon().getID());
+    Assert.assertEquals(WeaponFactory.getWeapon(TestData.SMG).getName(), unit.getPrimaryWeapon().getName());
     Assert.assertEquals(99, unit.getPrimaryWeapon().getAmmo());
 
-    Assert.assertEquals(HardCodedGame.SMG.getID(), unit.getSecondaryWeapon().getID());
-    Assert.assertEquals(HardCodedGame.SMG.getName(), unit.getSecondaryWeapon().getName());
+    Assert.assertEquals(WeaponFactory.getWeapon(TestData.SMG).getID(), unit.getSecondaryWeapon().getID());
+    Assert.assertEquals(WeaponFactory.getWeapon(TestData.SMG).getName(), unit.getSecondaryWeapon().getName());
     Assert.assertEquals(12, unit.getSecondaryWeapon().getAmmo());
   }
 }
