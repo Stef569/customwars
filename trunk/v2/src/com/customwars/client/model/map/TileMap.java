@@ -38,6 +38,7 @@ public class TileMap<T extends Location> extends GameObject {
     this.tileSize = tileSize;
     this.tiles = new ArrayList<List<T>>(cols);
     initMap();
+    validateMapState(false);
   }
 
   public void initMap() {
@@ -54,10 +55,10 @@ public class TileMap<T extends Location> extends GameObject {
   /**
    * Validate the vars set for this map
    *
-   * @param validateLocations if all the tiles in the map should be checked
+   * @param validateTiles if all the tiles in the map should be checked
    * @throws IllegalStateException when the map is not valid
    */
-  void validateMapState(boolean validateLocations) throws IllegalStateException {
+  void validateMapState(boolean validateTiles) throws IllegalStateException {
     if (cols <= 0 || rows <= 0) {
       throw new IllegalStateException("Map cols:" + cols + ", rows:" + rows + " is not valid");
     }
@@ -66,8 +67,8 @@ public class TileMap<T extends Location> extends GameObject {
       throw new IllegalStateException("TileSize: " + tileSize + " is <=0");
     }
 
-    if (validateLocations) {
-      // Each map position needs a Location object
+    if (validateTiles) {
+      // Each map position needs a non null tile object
       for (int row = 0; row < rows; row++) {
         for (int col = 0; col < cols; col++) {
           T tile = tiles.get(col).get(row);

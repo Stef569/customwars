@@ -39,9 +39,13 @@ public class CitySprite extends TileSprite implements PropertyChangeListener {
   }
 
   public void setLocation(Location newLocation) {
-    super.setLocation(newLocation);
+    Tile oldval = (Tile) getLocation();
     Tile t = (Tile) newLocation;
-    t.removePropertyChangeListener(this);
+
+    super.setLocation(newLocation);
+
+    if (oldval != null)
+      oldval.removePropertyChangeListener(this);
     t.addPropertyChangeListener(this);
   }
 

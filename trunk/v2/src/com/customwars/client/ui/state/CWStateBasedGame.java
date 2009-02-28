@@ -10,7 +10,6 @@ import org.newdawn.slick.command.Command;
 import org.newdawn.slick.command.InputProviderListener;
 import org.newdawn.slick.loading.LoadingList;
 import org.newdawn.slick.state.StateBasedGame;
-import test.testData.HardCodedGame;
 
 /**
  * @author stefan
@@ -28,7 +27,6 @@ public class CWStateBasedGame extends StateBasedGame implements InputProviderLis
   public void initStatesList(GameContainer container) throws SlickException {
     this.gameContainer = container;
     StateSession stateSession = new StateSession();
-    stateSession.setMap(HardCodedGame.getMap());  // Later set by a mapSelectState
 
     cwInput = new CWInput(container.getInput());
     cwInput.addListener(this);

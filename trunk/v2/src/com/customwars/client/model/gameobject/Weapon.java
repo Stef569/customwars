@@ -55,7 +55,7 @@ public class Weapon extends GameObject {
   }
 
   public void fire(int shots) {
-    int validAmmo = Args.validateBetweenZeroMax(shots, maxAmmo);
+    int validAmmo = Args.getBetweenZeroMax(shots, maxAmmo);
     addAmmo(-validAmmo);
   }
 
@@ -69,7 +69,7 @@ public class Weapon extends GameObject {
 
   public void setAmmo(int ammo) {
     int oldAmmo = this.ammo;
-    this.ammo = Args.validateBetweenZeroMax(ammo, maxAmmo);
+    this.ammo = Args.getBetweenZeroMax(ammo, maxAmmo);
     firePropertyChange("ammo", oldAmmo, this.ammo);
   }
 

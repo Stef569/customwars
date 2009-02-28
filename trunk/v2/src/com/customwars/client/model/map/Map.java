@@ -1,5 +1,6 @@
 package com.customwars.client.model.map;
 
+import com.customwars.client.model.TurnHandler;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.GameObjectState;
@@ -8,7 +9,6 @@ import com.customwars.client.model.gameobject.Terrain;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.path.Mover;
 import com.customwars.client.model.map.path.PathFinder;
-import com.customwars.client.model.rules.MapRules;
 import org.apache.log4j.Logger;
 import tools.Args;
 
@@ -25,13 +25,13 @@ import java.util.Properties;
  *
  * @author stefan
  */
-public class Map<T extends Tile> extends TileMap<T> {
+public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
   private static final Logger logger = Logger.getLogger(Map.class);
+  private static final int MOUNTAIN_VISION = 3;
   private Properties properties = new Properties();
   private int numPlayers;           // Amount of players that can play on this map
   private boolean fogOfWarOn;       // is fog of war in effect
   private PathFinder pathFinder;    // to builds paths within the map
-  private MapRules rules;
 
   public Map(int cols, int rows, int tileSize, int numPlayers, boolean fogOfWarOn) {
     super(cols, rows, tileSize);
@@ -45,26 +45,19 @@ public class Map<T extends Tile> extends TileMap<T> {
     this.properties = properties == null ? new Properties() : properties;
   }
 
-  // ---------------------------------------------------------------------------
-  // Validate
-  // ---------------------------------------------------------------------------
   protected void validateMapState(boolean validateTiles) throws IllegalStateException {
     super.validateMapState(validateTiles);
-    Args.validateBetweenZeroMax(numPlayers, Integer.MAX_VALUE);
-    for (Tile t : getAllTiles()) {
-      if (t.getTerrain() == null) {
-        throw new IllegalStateException("Tile " + t + " has no terrain.");
-      }
-    }
+    Args.validateBetweenZeroMax(numPlayers, Integer.MAX_VALUE, "numplayers");
 
-    if (numPlayers <= 0) {
-      throw new IllegalStateException("Max amount of Players cannot be <=0");
+    if (validateTiles) {
+      for (Tile t : getAllTiles()) {
+        if (t.getTerrain() == null) {
+          throw new IllegalStateException("Tile " + t + " has no terrain.");
+        }
+      }
     }
   }
 
-  // ----------------------------------------------------------------------------
-  // Actions
-  // ----------------------------------------------------------------------------
   /**
    * Start the turn by resetting the map to the new player
    */
@@ -100,6 +93,7 @@ public class Map<T extends Tile> extends TileMap<T> {
    * @param player The player who's units should be made active and fog applied to.
    */
   public void resetMap(Player player) {
+    validateMapState(true);
     resetUnits(player);
     if (fogOfWarOn) {
       resetFogMap(player);
@@ -232,9 +226,6 @@ public class Map<T extends Tile> extends TileMap<T> {
     return pathFinder.getDirections(mover, destination);
   }
 
-  // ---------------------------------------------------------------------------
-  // Fog Actions
-  // ---------------------------------------------------------------------------
   /**
    * First set all tiles to fogged
    * then set the tiles that are visible for this player and his allies to clear(not fogged).
@@ -285,7 +276,16 @@ public class Map<T extends Tile> extends TileMap<T> {
   }
 
   public int calcExtraVision(Tile t) {
-    return 0;
+    int additionalVision;
+    int terrainHeight = t.getTerrain().getHeight();
+
+    // When on higher terrain, Can see further...
+    if (terrainHeight > 2) {
+      additionalVision = MOUNTAIN_VISION;
+    } else {
+      additionalVision = 0;
+    }
+    return additionalVision;
   }
 
   /**
@@ -315,18 +315,38 @@ public class Map<T extends Tile> extends TileMap<T> {
   }
 
   private void clearFog(Tile baseTile, Tile tileToBeFogged) {
-    if (isValid(tileToBeFogged) && rules.canClearFog(baseTile, tileToBeFogged))
+    if (isValid(tileToBeFogged) && canClearFog(baseTile, tileToBeFogged))
       tileToBeFogged.setFogged(false);
+  }
+
+  /**
+   * if a tile is within the unit los
+   * then there are some terrains and properties that remain fogged.
+   * <br/>
+   * They can only be made clear if the unit is directly next to it
+   * The sameTile and adjacent tile are always visible.
+   *
+   * @param tileToBeFogged The tile to check relative to the baseTile
+   * @param baseTile       The tile the unit is on
+   * @return If the tile can be cleared of fog.
+   */
+  public boolean canClearFog(Tile baseTile, Tile tileToBeFogged) {
+    boolean adjacent = isAdjacent(tileToBeFogged, baseTile);
+    City city = getCityOn(tileToBeFogged);
+    Unit unit = getUnitOn(tileToBeFogged);
+
+    // Not directly next to the baseTile
+    // If unit/City is hidden(remain fogged until directly next to it)
+    // we cannot clear the fog.
+    boolean hiddenUnit = unit != null && unit.isHidden();
+    boolean hiddenProperty = city != null && city.isHidden();
+
+    // If directly next to the tile we can see everything
+    return adjacent && !hiddenUnit && !hiddenProperty;
   }
 
   public void addProperty(String key, String value) {
     properties.put(key, value);
-  }
-
-  public void setRules(MapRules rules) {
-    MapRules oldVal = this.rules;
-    this.rules = rules;
-    firePropertyChange("rules", oldVal, rules);
   }
 
   public Unit getUnitOn(Location location) {

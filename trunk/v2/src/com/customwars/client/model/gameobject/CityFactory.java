@@ -21,19 +21,21 @@ public class CityFactory {
   }
 
   public static void addCity(City city) {
-    city.init();
     int cityID = city.getID();
     if (cities.containsKey(cityID)) {
       throw new IllegalArgumentException("City ID " + cityID + " is already used by " + getCity(cityID));
     }
+    city.init();
     cities.put(cityID, city);
   }
 
   public static City getCity(int id) {
     if (!cities.containsKey(id)) {
-      throw new IllegalArgumentException("City ID " + id + " is not cached " + cities);
+      throw new IllegalArgumentException("City ID " + id + " is not cached " + cities.keySet());
     }
-    return new City(cities.get(id));
+    City city = new City(cities.get(id));
+    city.reset();
+    return city;
   }
 
   public static Collection<City> getAllCities() {

@@ -1,6 +1,7 @@
 package com.customwars.client.ui.renderer;
 
 import com.customwars.client.io.img.slick.ImageStrip;
+import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.model.map.TileMap;
 import org.newdawn.slick.Color;
@@ -37,6 +38,8 @@ public class TileMapRenderer {
   }
 
   public void renderTile(Graphics g, Tile tile, int x, int y, boolean fogged) {
+    if (tile.getTerrain() instanceof City) return;
+
     Image terrainImg = terrainStrip.getSubImage(tile.getTerrain().getID());
     int tileWidth, tileHeight;
     int imgWidthOffset, imgHeightOffset;

@@ -15,6 +15,8 @@ import org.newdawn.slick.Graphics;
  * The terrain and the sprites on the terrain
  */
 public class MapRenderer extends TileMapRenderer {
+  private boolean renderTerrain = true;
+  private boolean renderSprites = true;
   private SpriteManager spriteManager;
   private Scroller scroller;
   private boolean cursorLocked;
@@ -46,8 +48,8 @@ public class MapRenderer extends TileMapRenderer {
   }
 
   public void render(int x, int y, Graphics g) {
-    super.render(x, y, g);
-    spriteManager.render(x, y, g);
+    if (renderTerrain) super.render(x, y, g);
+    if (renderSprites) spriteManager.render(x, y, g);
   }
 
   public void addCursorSprite(String cursorName, TileSprite cursorSprite) {
@@ -90,6 +92,14 @@ public class MapRenderer extends TileMapRenderer {
     } else {
       return null;
     }
+  }
+
+  public void setRenderSprites(boolean renderSprites) {
+    this.renderSprites = renderSprites;
+  }
+
+  public boolean isRenderingSprites() {
+    return renderSprites;
   }
 }
 

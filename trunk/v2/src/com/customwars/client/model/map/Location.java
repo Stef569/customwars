@@ -17,6 +17,11 @@ public interface Location {
    */
   public boolean canAdd(Locatable locatable);
 
+  /**
+   * Adds the locatable to the location, if canAdd(Locatable) returns true
+   *
+   * @param locatable The locatable to be added
+   */
   public void add(Locatable locatable);
 
   /**

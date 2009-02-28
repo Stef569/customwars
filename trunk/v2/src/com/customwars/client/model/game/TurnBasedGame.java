@@ -4,10 +4,12 @@ import com.customwars.client.model.gameobject.GameObject;
 import com.customwars.client.model.gameobject.GameObjectState;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
-import com.customwars.client.model.rules.GameRules;
 import org.apache.log4j.Logger;
 import tools.Args;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -19,43 +21,45 @@ import java.util.List;
  *
  * @author Stefan
  */
-public abstract class TurnBasedGame extends GameObject {
+public class TurnBasedGame extends GameObject implements PropertyChangeListener {
   private static final Logger logger = Logger.getLogger(TurnBasedGame.class);
   Map<Tile> map;                // The map containing all the units/cities
   Turn turn;                    // The current turn
   private List<Player> players; // The players that are in this game
   Player activePlayer;          // There can only be one active player in a game at any time
-  private GameRules rules;
 
   /**
    * Start a game with no turn specified
    * The subclass is responsible for setting the turn
    */
-  public TurnBasedGame(Map<Tile> map, List<Player> players, GameRules rules) {
-    this(map, players, null, rules);
+  public TurnBasedGame(Map<Tile> map, List<Player> players) {
+    this(map, players, null);
   }
 
-  public TurnBasedGame(Map<Tile> map, List<Player> players, Turn turn, GameRules rules) {
+  public TurnBasedGame(Map<Tile> map, List<Player> players, Turn turn) {
     this.map = map;
     this.players = players;
     this.turn = turn;
-    this.rules = rules;
+
+    for (Player player : players) {
+      player.addPropertyChangeListener(this);
+    }
   }
 
   // ---------------------------------------------------------------------------
   // Actions
   // ---------------------------------------------------------------------------
   /**
+   * Start the turn and end the turn of the gameStarter
+   * This has the unwanted effect of increasing the turn by 1, so the turn count is put back to 0
+   *
    * @param gameStarter The player that starts this game
    */
   public void startGame(Player gameStarter) {
     canStartGame(gameStarter);
     setActivePlayer(gameStarter);
     setState(GameObjectState.ACTIVE);
-    endTurn(gameStarter);
-  }
-
-  public void startTurn(Player currentPlayer) {
+    startTurn(gameStarter);
   }
 
   public void endTurn() throws NotYourTurnException {
@@ -68,39 +72,26 @@ public abstract class TurnBasedGame extends GameObject {
    * @param invoker player trying to end his turn
    * @throws NotYourTurnException When the invoker is not the activePlayer
    */
-  private void endTurn(Player invoker) throws NotYourTurnException {
+  public void endTurn(Player invoker) throws NotYourTurnException {
     canEndTurn(invoker);
     Player nextActivePlayer = getNextActivePlayer(activePlayer);
-
-    if (rules.isGameOver(this)) {
-      setState(GameObjectState.DESTROYED);
-      return;
-    }
-
-    turn.increaseTurn();
-    if (turn.isTurnLimitReached()) {
-      setState(GameObjectState.DESTROYED);
-      return;
-    }
-
-    // End the turn for the invoker
+    increaseTurn();
     invoker.endTurn();
     map.endTurn(invoker);
+    startTurn(nextActivePlayer);
+  }
 
-    // Start the next
-    nextActivePlayer.startTurn();
-    map.startTurn(nextActivePlayer);
-    setActivePlayer(nextActivePlayer);
-
-    firePropertyChange("turn", turn, turn);
+  private void increaseTurn() {
+    int oldVal = getTurn();
+    turn.increaseTurn();
+    if (turn.isTurnLimitReached()) {
+      endGame();
+    }
+    firePropertyChange("turn", oldVal, getTurn());
   }
 
   /**
-   * We can end the turn when
-   * the game in the IN_GAME(Active) state
-   * there is an active player
-   * there is a nextPlayer available
-   * the invoker is the current activePlayer
+   * Check if we can end a turn
    *
    * @param invoker The player trying to end his turn
    * @throws NotYourTurnException when the invoking player cannot end his turn
@@ -109,13 +100,16 @@ public abstract class TurnBasedGame extends GameObject {
     Args.checkForNull(invoker, "requesting EndOfTurn Player cannot be null");
 
     // Game check:
-    if (!isActive()) {
+    if (isIdle()) {
       throw new IllegalStateException("Trying to endTurn on a not started Game");
     }
 
+    if (isGameOver())
+      throw new IllegalStateException("Trying to endTurn on a ended Game");
+
     // Player check:
-    Player currentActivePlayer = getActivePlayer();           // current player
-    Player nextActivePlayer = getNextPlayer(activePlayer);    // Next player to be active
+    Player currentActivePlayer = getActivePlayer();                 // current player
+    Player nextActivePlayer = getNextActivePlayer(activePlayer);    // Next player to be active
 
     if (currentActivePlayer == null) {
       throw new IllegalStateException("No ActivePlayer");
@@ -131,19 +125,31 @@ public abstract class TurnBasedGame extends GameObject {
     }
   }
 
+  private void startTurn(Player nextActivePlayer) {
+    nextActivePlayer.startTurn();
+    map.startTurn(nextActivePlayer);
+    setActivePlayer(nextActivePlayer);
+  }
+
+  private void endGame() {
+    setState(GameObjectState.DESTROYED);
+  }
+
   public void changePlayerName(String from, String to) {
     Player p = getPlayer(from);
     p.setName(to);
   }
 
-  public void setRules(GameRules rules) {
-    this.rules = rules;
-  }
-
   private void setActivePlayer(Player p) {
     Player oldVal = this.activePlayer;
+    if (oldVal != null)
+      oldVal.setState(GameObjectState.IDLE);
     activePlayer = p;
     firePropertyChange("activePlayer", oldVal, this.activePlayer);
+  }
+
+  public boolean isGameOver() {
+    return isDestroyed();
   }
 
   public int getTurn() {
@@ -177,9 +183,13 @@ public abstract class TurnBasedGame extends GameObject {
   }
 
   public Player getNextActivePlayer(Player player) {
+    int playerSkipCount = 0;
     Player nextPlayer = getNextPlayer(player);
     while (nextPlayer.isDestroyed()) {
       nextPlayer = getNextPlayer(nextPlayer);
+      if (playerSkipCount++ == players.size()) {
+        return null;
+      }
     }
     return nextPlayer;
   }
@@ -241,9 +251,6 @@ public abstract class TurnBasedGame extends GameObject {
     return players.indexOf(activePlayer) + 1 == players.indexOf(p);
   }
 
-  // ---------------------------------------------------------------------------
-  // Validation
-  // --------------------------------------------------------------------------
   /**
    * Check if we can Start the game
    * is the game already in progress? or still loading?
@@ -302,5 +309,42 @@ public abstract class TurnBasedGame extends GameObject {
         }
       }
     }
+  }
+
+  public void propertyChange(PropertyChangeEvent evt) {
+    String propertyName = evt.getPropertyName();
+
+    if (evt.getSource().getClass() == Player.class) {
+      if (propertyName.equals("unit")) {
+        if (allEnemiesDead()) {
+          endGame();
+        }
+      }
+    }
+  }
+
+  private boolean allEnemiesDead() {
+    List<Player> enemies = getEnemies();
+
+    if (enemies.size() == 0) {
+      return true;
+    }
+
+    for (Player enemy : enemies) {
+      if (enemy.isDestroyed()) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private List<Player> getEnemies() {
+    List<Player> enemies = new ArrayList<Player>();
+    for (Player p : getAllPlayers()) {
+      if (!p.isAlliedWith(activePlayer)) {
+        enemies.add(p);
+      }
+    }
+    return enemies;
   }
 }
