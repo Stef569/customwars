@@ -34,12 +34,12 @@ public class TestData {
   public static final int MECH = 1;
   public static final int APC = 3;
   public static final int TANK = 4;
-  public static final int ROCKET = 7;
+  public static final int ROCKETS = 7;
   public static final int ARTILLERY = 9;
 
   public static final int SMG = 0;
   public static final int CANNON = 1;
-  public static final int ROCKETS = 2;
+  public static final int ROCKET = 2;
 
   public static final int BASE = 0;
   public static final int FACTORY = 1;
