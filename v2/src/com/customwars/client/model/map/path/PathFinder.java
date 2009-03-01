@@ -16,7 +16,7 @@ import java.util.List;
  *
  * @author Benjamin Islip
  */
-public class PathFinder {
+public class PathFinder implements MovementCost {
   TileMap map;
   Dijkstra dijkstra;          // data
   Mover currentMover = null;  // remembering this saves an unnessary recalculation of Dijk0
@@ -25,11 +25,7 @@ public class PathFinder {
   public PathFinder(TileMap map) {
     this.map = map;
     dijkstra = new Dijkstra(map.getCols(), map.getRows());
-  }
-
-  public PathFinder(TileMap map, MovementCost cost) {
-    this(map);
-    setMoveCost(cost);
+    dijkstra.setMovementCosts(this);
   }
 
   /**
@@ -140,8 +136,17 @@ public class PathFinder {
     }
   }
 
-  public void setMoveCost(MovementCost cost) {
-    if (cost == null) throw new IllegalArgumentException("Movement cost is null");
-    dijkstra.setMovementCosts(cost);
+  /**
+   * Delegate the move cost calculation to the current mover
+   */
+  public int getMovementCost(int x, int y) {
+    if (currentMover != null)
+      return currentMover.getMoveStrategy().getMoveCost(map.getTile(x, y));
+    else
+      return 0;
+  }
+
+  public void setMover(Mover currentMover) {
+    this.currentMover = currentMover;
   }
 }

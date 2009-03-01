@@ -5,7 +5,7 @@ import com.customwars.client.model.game.Player;
 import com.customwars.client.model.map.Direction;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.UnitFight;
-import com.customwars.client.model.map.path.MovementCost;
+import com.customwars.client.model.map.path.MoveStrategy;
 import com.customwars.client.model.map.path.Mover;
 import tools.Args;
 
@@ -41,7 +41,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler {
 
   private int armyBranch;       // Naval, Ground, Air
   private int movementType;     // Inf, Mech, Tires, Tread, Air, Naval ...
-  private MovementCost moveStrategy;
+  private MoveStrategy moveStrategy;
 
   private int hp;               // Health Points, if 0 the unit is dead
   private int supplies;         // Each unit has supplies, this can be in the form of rations(troops) or fuel(motorized vehicles)
@@ -434,8 +434,8 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler {
     firePropertyChange("hidden", oldVal, hidden);
   }
 
-  public void setMoveStrategy(MovementCost moveStrategy) {
-    MovementCost oldVal = this.moveStrategy;
+  public void setMoveStrategy(MoveStrategy moveStrategy) {
+    MoveStrategy oldVal = this.moveStrategy;
     this.moveStrategy = moveStrategy;
     firePropertyChange("moveStrategy", oldVal, moveStrategy);
   }
@@ -562,7 +562,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler {
     return movementType;
   }
 
-  public MovementCost getMoveStrategy() {
+  public MoveStrategy getMoveStrategy() {
     return moveStrategy;
   }
 

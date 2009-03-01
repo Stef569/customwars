@@ -10,7 +10,6 @@ import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.gameobject.UnitFactory;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
-import com.customwars.client.model.map.TileMap;
 import com.customwars.client.model.testdata.TestData;
 import tools.MapUtil;
 
@@ -22,58 +21,55 @@ import java.util.List;
  * Hardcoded game, useful for using in Slick tests
  */
 public class HardCodedGame {
-  // Players
-  public static Player p_RED = new Player(0, Color.RED, false, null, "Stef", Integer.MAX_VALUE, 0, false);
-  public static Player p_BLUE = new Player(1, Color.BLUE, false, null, "JSR", 8500, 0, false);
-  public static Player p_GREEN = new Player(2, Color.GREEN, false, null, "Ben", 500, 1, false);
+  // Game Players
+  public static Player p_RED = new Player(1, Color.RED, false, null, "Stef", Integer.MAX_VALUE, 0, false);
+  public static Player p_BLUE = new Player(2, Color.BLUE, false, null, "JSR", 8500, 1, false);
   public static Player p_GRAY = new Player(Color.GRAY, null, -1);
-
-  private static Map<Tile> map = new Map<Tile>(10, 10, 32, 4, true);
+  private static Map<Tile> map;
 
   /**
    * Creates a Game with hard coded values, a default map is loaded.
    * The Game is started
    */
-  public static Game getStartedGame() {
-    List<Player> players = Arrays.asList(p_RED, p_BLUE, p_GREEN, p_GRAY);
+  public static Game getGame() {
+    List<Player> players = Arrays.asList(p_RED, p_BLUE, p_GRAY);
     GameConfig gc = new GameConfig();
     gc.setTurnLimit(500);
 
     Game game = new Game(getMap(), players, gc);
-    game.startGame();
     return game;
   }
 
   public static Map<Tile> getMap() {
-    Map<Tile> map = new Map<Tile>(10, 15, 32, 3, true);
+    map = new Map<Tile>(10, 15, 32, 3, true);
     initMapProperties();
     MapUtil.fillWithTiles(map, TerrainFactory.getTerrain(TestData.PLAIN));
     map.getTile(2, 1).setTerrain(TerrainFactory.getTerrain(TestData.VERTICAL_RIVER));
 
     // Map Players, colors are suggestions game players overwrite them
-    Player p_GRAY = new Player(Player.NEUTRAL_PLAYER_ID, Color.GRAY, true, null);
-    Player p_GREEN = new Player(0, Color.GREEN, false, null);
-    Player p_BLUE = new Player(1, Color.BLUE, false, null);
+    Player p1 = new Player(1, Color.GREEN, false, null);
+    Player p2 = new Player(2, Color.BLUE, false, null);
+    Player p3 = new Player(Player.NEUTRAL_PLAYER_ID, Color.GRAY, true, null);
 
-    City blueHQ = addCityToMap(map, 8, 5, TestData.HQ, p_BLUE);
-    City greenHQ = addCityToMap(map, 0, 2, TestData.HQ, p_GREEN);
-    p_BLUE.setHq(blueHQ);
-    p_GREEN.setHq(greenHQ);
+    City blueHQ = addCityToMap(8, 5, TestData.HQ, p2);
+    City greenHQ = addCityToMap(0, 2, TestData.HQ, p1);
+    p2.setHq(blueHQ);
+    p1.setHq(greenHQ);
 
-    addCityToMap(map, 2, 5, TestData.FACTORY, p_GRAY);
-    addCityToMap(map, 3, 3, TestData.BASE, p_GRAY);
-    addCityToMap(map, 0, 0, TestData.FACTORY, p_GREEN);
-    addCityToMap(map, 7, 8, TestData.FACTORY, p_BLUE);
+    addCityToMap(2, 5, TestData.FACTORY, p3);
+    addCityToMap(3, 3, TestData.BASE, p3);
+    addCityToMap(0, 0, TestData.FACTORY, p1);
+    addCityToMap(7, 8, TestData.FACTORY, p2);
 
-    addUnitToMap(map, 5, 6, TestData.INF, p_BLUE);
-    addUnitToMap(map, 5, 7, TestData.INF, p_BLUE);
-    addUnitToMap(map, 6, 5, TestData.TANK, p_BLUE);
-    addUnitToMap(map, 8, 4, TestData.TANK, p_BLUE);
+    addUnitToMap(5, 6, TestData.INF, p2);
+    addUnitToMap(5, 7, TestData.INF, p2);
+    addUnitToMap(6, 5, TestData.TANK, p2);
+    addUnitToMap(8, 4, TestData.TANK, p2);
 
-    addUnitToMap(map, 4, 2, TestData.INF, p_BLUE);
-    addUnitToMap(map, 3, 2, TestData.TANK, p_BLUE);
-    addUnitToMap(map, 5, 2, TestData.ROCKET, p_BLUE);
-    addUnitToMap(map, 6, 2, TestData.APC, p_BLUE);
+    addUnitToMap(4, 2, TestData.INF, p2);
+    addUnitToMap(3, 2, TestData.TANK, p2);
+    addUnitToMap(5, 2, TestData.ROCKET, p2);
+    addUnitToMap(6, 2, TestData.APC, p2);
     return map;
   }
 
@@ -84,19 +80,19 @@ public class HardCodedGame {
     map.addProperty("DESCRIPTION", "A small [10x10] test map containing a couple of units and some cities.");
   }
 
-  private static City addCityToMap(TileMap<Tile> map, int col, int row, int cityID, Player owner) {
+  private static City addCityToMap(int col, int row, int cityID, Player owner) {
     Tile t = map.getTile(col, row);
     City city = CityFactory.getCity(cityID);
-    owner.addCity(city);
+    city.setOwner(owner);
     t.setTerrain(city);
     city.setLocation(t);
     return city;
   }
 
-  private static void addUnitToMap(TileMap<Tile> map, int col, int row, int unitID, Player owner) {
+  private static void addUnitToMap(int col, int row, int unitID, Player owner) {
     Tile t = map.getTile(col, row);
     Unit unit = UnitFactory.getUnit(unitID);
-    owner.addUnit(unit);
+    unit.setOwner(owner);
     t.add(unit);
   }
 }

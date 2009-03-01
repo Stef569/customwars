@@ -207,7 +207,7 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
    * Build a zone in which the mover can make a move
    */
   public void buildMovementZone(Mover mover) {
-    pathFinder.setMoveCost(mover.getMoveStrategy());
+    pathFinder.setMover(mover);
     mover.setMoveZone(pathFinder.getMovementZone(mover));
   }
 
@@ -222,7 +222,7 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
       return new ArrayList<Direction>();
     }
 
-    pathFinder.setMoveCost(mover.getMoveStrategy());
+    pathFinder.setMover(mover);
     return pathFinder.getDirections(mover, destination);
   }
 
@@ -343,6 +343,10 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
 
     // If directly next to the tile we can see everything
     return adjacent && !hiddenUnit && !hiddenProperty;
+  }
+
+  public void setFogOfWarOn(boolean fogOfWarOn) {
+    this.fogOfWarOn = fogOfWarOn;
   }
 
   public void addProperty(String key, String value) {

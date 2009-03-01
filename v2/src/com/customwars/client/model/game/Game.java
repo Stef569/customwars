@@ -44,6 +44,8 @@ public class Game extends TurnBasedGame {
    * add the unit/city to their army/cities
    */
   public void startGame(Player gameStarter) {
+    canStartGame(gameStarter);
+
     for (Tile t : map.getAllTiles()) {
       City city = map.getCityOn(t);
       Unit unit = map.getUnitOn(t);

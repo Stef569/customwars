@@ -47,11 +47,13 @@ public class UnitSprite extends TileSprite implements PropertyChangeListener {
   private Unit unit;
   private boolean lowHp, lowAmmo, lowSupplies;
 
-  public UnitSprite(Location location, TileMap map, Unit unit, ImageStrip decorations) {
-    super(location, map);
+  public UnitSprite(Tile tile, TileMap map, Unit unit, ImageStrip decorations) {
+    super(tile, map);
     this.unit = unit;
     this.decorations = decorations;
     unit.addPropertyChangeListener(this);
+
+    assert tile == unit.getLocation() : "Unitsprite should have same location as the unit";
   }
 
   // ----------------------------------------------------------------------------
@@ -99,12 +101,11 @@ public class UnitSprite extends TileSprite implements PropertyChangeListener {
   }
 
   public void setLocation(Location newLocation) {
+    Tile oldTile = (Tile) getLocation();
     super.setLocation(newLocation);
-    if (newLocation instanceof Tile) {
-      Tile t = (Tile) newLocation;
-      t.removePropertyChangeListener(this);
-      t.addPropertyChangeListener(this);
-    }
+    Tile newTile = (Tile) newLocation;
+    if (oldTile != null) oldTile.removePropertyChangeListener(this);
+    newTile.addPropertyChangeListener(this);
   }
 
   private void changeState(GameObjectState gameObjectState) {
@@ -143,6 +144,12 @@ public class UnitSprite extends TileSprite implements PropertyChangeListener {
   public void propertyChange(PropertyChangeEvent evt) {
     String propertyName = evt.getPropertyName();
 
+    if (evt.getSource() == getLocation()) {
+      if (propertyName.equals("fog")) {
+        setVisible(!(Boolean) evt.getNewValue());
+      }
+    }
+
     if (evt.getSource() == unit) {
       if (propertyName.equals("hp")) {
         lowHp = unit.hasLowHp();
@@ -156,12 +163,6 @@ public class UnitSprite extends TileSprite implements PropertyChangeListener {
         setOrientation((Direction) evt.getNewValue());
       } else if (propertyName.equals("location")) {
         setLocation((Location) evt.getNewValue());
-      }
-    }
-
-    if (evt.getSource() == unit.getLocation()) {
-      if (propertyName.equals("fogged")) {
-        setVisible((Boolean) evt.getNewValue());
       }
     }
   }

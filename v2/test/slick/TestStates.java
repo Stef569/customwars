@@ -25,9 +25,11 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
   private GameContainer gameContainer;
   private CWInput cwInput;
   private StateLogic statelogic;
+  private int startID;
 
-  public TestStates() {
+  public TestStates(int startID) {
     super(System.getProperty("game.name"));
+    this.startID = startID;
   }
 
   public void initStatesList(GameContainer container) throws SlickException {
@@ -46,16 +48,19 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
 
     buildStateList();
     mapStateIdsToName();
+    statelogic.gotoState(startID);
   }
 
   private void buildStateList() {
     CWState testMenuMusic = new TestMenuMusic();
-    CWState testMapRenderer = new TestMapRenderer();
     CWState remapKeysTest = new RemapKeysTest();
+    CWState inGameTest = new TestInGameState();
+    CWState testMapRenderer = new TestMapRenderer();
 
     addState(testMenuMusic);
     addState(testMapRenderer);
     addState(remapKeysTest);
+    addState(inGameTest);
 
     try {
       resources.loadFromFile();
@@ -70,6 +75,7 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
     statelogic.addState("MAIN_MENU", 0);
     statelogic.addState("terrainmenu", 1);
     statelogic.addState("keymenu", 2);
+    statelogic.addState("IN_GAME", 3);
     CWState.setStatelogic(statelogic);
   }
 
@@ -102,6 +108,10 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
   }
 
   public static void main(String[] argv) {
+    int startID = 0;
+    if (argv.length > 0)
+      startID = Integer.valueOf(argv[0]);
+
     try {
       LoadingList.setDeferredLoading(false);
       resources = new ResourceManager();
@@ -109,7 +119,7 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
       Config config = new Config(resources);
       config.configure();
 
-      AppGameContainer appGameContainer = new AppGameContainer(new TestStates());
+      AppGameContainer appGameContainer = new AppGameContainer(new TestStates(startID));
       appGameContainer.setDisplayMode(1024, 800, false);
       appGameContainer.setTargetFrameRate(60);
       appGameContainer.start();

@@ -329,7 +329,7 @@ public class SpriteManager implements PropertyChangeListener {
         if (evt.getOldValue() != null && evt.getNewValue() != null) {
           uniqueAnimations.remove(evt.getOldValue());
           uniqueAnimations.add((Animation) evt.getNewValue());
-          System.out.println(uniqueAnimations.size());
+          logger.info("unique anims:" + uniqueAnimations.size());
         }
       }
     }

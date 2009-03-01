@@ -22,7 +22,7 @@ import java.util.List;
  * @author stefan
  */
 public class Player extends GameObject {
-  public static final int NEUTRAL_PLAYER_ID = -1;
+  public static final int NEUTRAL_PLAYER_ID = 0;
   private int id;           // Unique Number
   private String name;      // Name for this player,not unique
   private Color color;      // Unique Color
@@ -45,7 +45,7 @@ public class Player extends GameObject {
     this.id = id;
     this.color = color;
     this.neutral = neutral;
-    setHq(hq);
+    this.hq = hq;
   }
 
   public Player(int id, Color color, boolean neutral, City hq, String name, int budget, int team, boolean ai) {
@@ -222,8 +222,11 @@ public class Player extends GameObject {
   }
 
   public void setHq(City hq) {
-    if (hq != null) hq.setOwner(this);
     this.hq = hq;
+  }
+
+  public void setState(GameObjectState state) {
+    throw new UnsupportedOperationException("Player is always Idle");
   }
 
   public int getId() {

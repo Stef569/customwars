@@ -50,7 +50,7 @@ public class MoveTraverse {
     Args.checkForNull(destination);
 
     prepareForNextMove();
-    pathFinder.setMoveCost(mover.getMoveStrategy());
+    pathFinder.setMover(mover);
 
     if (pathFinder.canMoveTo(mover, destination)) {
       this.mover = mover;

@@ -60,12 +60,16 @@ public class Tile extends GameObject implements Location {
   }
 
   public void setTerrain(Terrain terrain) {
-    Args.checkForNull(terrain, "Terrain is a required");
+    Args.checkForNull(terrain, "Terrain is required");
+    Terrain oldVal = this.terrain;
     this.terrain = terrain;
+    firePropertyChange("terrain", oldVal, terrain);
   }
 
   public void setFogged(boolean fogged) {
+    boolean oldVal = this.fogged;
     this.fogged = fogged;
+    firePropertyChange("fog", oldVal, fogged);
   }
 
   public int getCol() {
