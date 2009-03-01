@@ -142,10 +142,8 @@ public class TurnBasedGame extends GameObject implements PropertyChangeListener 
 
   private void setActivePlayer(Player p) {
     Player oldVal = this.activePlayer;
-    if (oldVal != null)
-      oldVal.setState(GameObjectState.IDLE);
-    activePlayer = p;
-    firePropertyChange("activePlayer", oldVal, this.activePlayer);
+    this.activePlayer = p;
+    firePropertyChange("activePlayer", oldVal, p);
   }
 
   public boolean isGameOver() {
@@ -261,7 +259,7 @@ public class TurnBasedGame extends GameObject implements PropertyChangeListener 
    */
   protected void canStartGame(Player gameStarter) {
     if (!isIdle()) {
-      throw new IllegalStateException("Game is in a Illegal state " + getState() + " to start");
+      throw new IllegalStateException("Game is in a Illegal state " + getState() + " to start, a game cannot be started 2X.");
     }
 
     if (map == null) {
@@ -316,7 +314,7 @@ public class TurnBasedGame extends GameObject implements PropertyChangeListener 
 
     if (evt.getSource().getClass() == Player.class) {
       if (propertyName.equals("unit")) {
-        if (allEnemiesDead()) {
+        if (isActive() && allEnemiesDead()) {
           endGame();
         }
       }

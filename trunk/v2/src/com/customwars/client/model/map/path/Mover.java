@@ -37,7 +37,7 @@ public interface Mover extends Locatable {
 
   void setOrientation(Direction direction);
 
-  MovementCost getMoveStrategy();
+  MoveStrategy getMoveStrategy();
 
   boolean isWithinMoveZone(Location location);
 

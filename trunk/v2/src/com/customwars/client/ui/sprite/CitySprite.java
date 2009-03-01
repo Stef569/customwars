@@ -39,14 +39,11 @@ public class CitySprite extends TileSprite implements PropertyChangeListener {
   }
 
   public void setLocation(Location newLocation) {
-    Tile oldval = (Tile) getLocation();
-    Tile t = (Tile) newLocation;
-
+    Tile oldTile = (Tile) getLocation();
     super.setLocation(newLocation);
-
-    if (oldval != null)
-      oldval.removePropertyChangeListener(this);
-    t.addPropertyChangeListener(this);
+    Tile newTile = (Tile) newLocation;
+    if (oldTile != null) oldTile.removePropertyChangeListener(this);
+    newTile.addPropertyChangeListener(this);
   }
 
   public void render(int x, int y, Graphics g) {
@@ -60,19 +57,19 @@ public class CitySprite extends TileSprite implements PropertyChangeListener {
   public void propertyChange(PropertyChangeEvent evt) {
     String propertyName = evt.getPropertyName();
 
+    if (evt.getSource() == getLocation()) {
+      if (propertyName.equals("fog")) {
+        renderFogged = (Boolean) evt.getNewValue();
+        updateAnim();
+      }
+    }
+
     if (evt.getSource() == city) {
       if (propertyName.equalsIgnoreCase("location")) {
         Tile newLocation = (Tile) evt.getNewValue();
         if (newLocation != null) {
           super.setLocation(newLocation);
         }
-      }
-    }
-
-    if (evt.getSource() == city.getLocation()) {
-      if (propertyName.equals("fogged")) {
-        renderFogged = (Boolean) evt.getNewValue();
-        updateAnim();
       }
     }
   }

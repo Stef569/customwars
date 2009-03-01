@@ -1,5 +1,7 @@
 package com.customwars.client.model.gameobject;
 
+import com.customwars.client.model.map.path.DefaultMoveStrategy;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -33,6 +35,7 @@ public class UnitFactory {
     }
     Unit unit = new Unit(units.get(id));
     unit.reset();
+    if (unit.getMoveStrategy() == null) unit.setMoveStrategy(new DefaultMoveStrategy(unit));
     return unit;
   }
 

@@ -216,4 +216,8 @@ public class Sprite {
   public boolean isRenderingSameAnim(Sprite otherSprite) {
     return otherSprite.isRenderingAnim(anim);
   }
+
+  public boolean isVisible() {
+    return visible;
+  }
 }
