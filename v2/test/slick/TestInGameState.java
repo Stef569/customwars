@@ -34,11 +34,12 @@ public class TestInGameState extends CWState {
   public void enter(GameContainer container, StateBasedGame stateBasedGame) throws SlickException {
     super.enter(container, stateBasedGame);
     game = HardCodedGame.getGame();
-    game.startGame();
+    game.init();
 
     Map<Tile> map = game.getMap();
     mapRenderer.setMap(map);
-    map.resetFogMap(game.getActivePlayer());
+
+    game.startGame();
 
     // Create Camera & scroller
     Dimension worldSize = new Dimension(map.getWidth(), map.getHeight());

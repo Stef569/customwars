@@ -19,14 +19,18 @@ import java.util.List;
  * It can be in 3 states:
  * IDLE, IN_GAME(active), GAME_OVER(destroyed)
  *
+ * The game is over when:
+ * The turn limit is reached or
+ * When all enemies of the active player have been destroyed.
+ *
  * @author Stefan
  */
 public class TurnBasedGame extends GameObject implements PropertyChangeListener {
   private static final Logger logger = Logger.getLogger(TurnBasedGame.class);
   Map<Tile> map;                // The map containing all the units/cities
-  Turn turn;                    // The current turn
+  Turn turn;                    // The current turn+turn limit
   private List<Player> players; // The players that are in this game
-  Player activePlayer;          // There can only be one active player in a game at any time
+  private Player activePlayer;  // There can only be one active player in a game at any time
 
   /**
    * Start a game with no turn specified
@@ -87,7 +91,7 @@ public class TurnBasedGame extends GameObject implements PropertyChangeListener 
     if (turn.isTurnLimitReached()) {
       endGame();
     }
-    firePropertyChange("turn", oldVal, getTurn());
+    firePropertyChange("turn", oldVal, turn);
   }
 
   /**
@@ -100,9 +104,8 @@ public class TurnBasedGame extends GameObject implements PropertyChangeListener 
     Args.checkForNull(invoker, "requesting EndOfTurn Player cannot be null");
 
     // Game check:
-    if (isIdle()) {
+    if (isIdle())
       throw new IllegalStateException("Trying to endTurn on a not started Game");
-    }
 
     if (isGameOver())
       throw new IllegalStateException("Trying to endTurn on a ended Game");
@@ -161,7 +164,7 @@ public class TurnBasedGame extends GameObject implements PropertyChangeListener 
     playerCount = players.size();
 
     if (playerCount > 0) {
-      day = turnCount / playerCount;
+      day = (turnCount / playerCount) + 1;
     } else {
       day = -1;
     }
