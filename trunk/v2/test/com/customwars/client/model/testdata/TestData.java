@@ -49,7 +49,7 @@ public class TestData {
 
   public static final int CITY_HEAL_RATE = 2;
   public static final int UNIT_MAX_HP = 10;
-  public static final int MAX_UNIT_SUPPLIES=20;
+  public static final int MAX_UNIT_SUPPLIES = 20;
 
   // Movecosts: INF, MECH, TREAD, TIRES, AIR, NAVAL
   private static int IMP = Terrain.IMPASSIBLE;
@@ -63,12 +63,12 @@ public class TestData {
   private static Terrain mountain = new Terrain(17, "Mountain", "", 4, 2, false, mountainMoveCosts);
 
   // Units
-  private static Unit infantry = new Unit(0, "Infantry", "", 3000, 3, 5, UNIT_MAX_HP, MAX_UNIT_SUPPLIES, 0, true, false, false, false, false, null, ARMY_BRANCH_GROUND, MOVE_INF, 0, 0);
+  private static Unit infantry = new Unit(0, "Infantry", "", 3000, 3, 3, UNIT_MAX_HP, MAX_UNIT_SUPPLIES, 0, true, false, false, false, false, null, ARMY_BRANCH_GROUND, MOVE_INF, 0, 0);
   private static Unit mech = new Unit(1, "Mech", "", 3000, 3, 3, UNIT_MAX_HP, MAX_UNIT_SUPPLIES, 0, true, false, false, false, false, null, ARMY_BRANCH_GROUND, MOVE_MECH, 0, 0);
   private static Unit apc = new Unit(3, "Apc", "", 8000, 5, 1, UNIT_MAX_HP, MAX_UNIT_SUPPLIES, 0, false, false, true, true, true, Arrays.asList(MOVE_INF, MOVE_MECH), ARMY_BRANCH_GROUND, MOVE_TREAD, 1, 1);
   private static Unit tank = new Unit(4, "Tank", "", 7000, 6, 3, UNIT_MAX_HP, MAX_UNIT_SUPPLIES, 0, false, false, false, false, false, null, ARMY_BRANCH_GROUND, MOVE_TREAD, 0, 0);
-  private static Unit rocket = new Unit(7, "Rockets", "", 15000, 5, 1, UNIT_MAX_HP, MAX_UNIT_SUPPLIES, 0, false, false, false, false, false, null, ARMY_BRANCH_GROUND, MOVE_TREAD, 0, 0);
-  private static Unit artillery = new Unit(9, "Artillery", "", 4000, 4, 1, UNIT_MAX_HP, MAX_UNIT_SUPPLIES, 0, false, false, false, false, false, null, ARMY_BRANCH_GROUND, MOVE_TREAD, 0, 0);
+  private static Unit rocket = new Unit(7, "Rockets", "", 15000, 2, 1, UNIT_MAX_HP, MAX_UNIT_SUPPLIES, 0, false, false, false, false, false, null, ARMY_BRANCH_GROUND, MOVE_TREAD, 0, 0);
+  private static Unit artillery = new Unit(9, "Artillery", "", 4000, 3, 1, UNIT_MAX_HP, MAX_UNIT_SUPPLIES, 0, false, false, false, false, false, null, ARMY_BRANCH_GROUND, MOVE_TREAD, 0, 0);
 
   // Weapons
   private static Weapon smg = new Weapon(0, "smg", "", 1500, 1, 1, Weapon.UNLIMITED_AMMO, false);

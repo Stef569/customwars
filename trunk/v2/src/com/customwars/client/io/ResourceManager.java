@@ -33,7 +33,7 @@ public class ResourceManager {
   private static final String IMAGE_LOADER_FILE = "imageLoader.txt";
   private static final String ANIM_LOADER_FILE = "animLoader.txt";
   private static final String COLORS_FILE = "colors.xml";
-  private final int DARK_PERCENTAGE = 50;
+  private final int DARK_PERCENTAGE = 30;
   private final ModelLoader modelLoader = new ModelLoader();
 
   private ImageLib imageLib;
