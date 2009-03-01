@@ -315,8 +315,9 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
   }
 
   private void clearFog(Tile baseTile, Tile tileToBeFogged) {
-    if (isValid(tileToBeFogged) && canClearFog(baseTile, tileToBeFogged))
+    if (isValid(tileToBeFogged) && canClearFog(baseTile, tileToBeFogged)) {
       tileToBeFogged.setFogged(false);
+    }
   }
 
   /**
@@ -331,18 +332,18 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
    * @return If the tile can be cleared of fog.
    */
   public boolean canClearFog(Tile baseTile, Tile tileToBeFogged) {
-    boolean adjacent = isAdjacent(tileToBeFogged, baseTile);
     City city = getCityOn(tileToBeFogged);
     Unit unit = getUnitOn(tileToBeFogged);
 
-    // Not directly next to the baseTile
     // If unit/City is hidden(remain fogged until directly next to it)
     // we cannot clear the fog.
     boolean hiddenUnit = unit != null && unit.isHidden();
-    boolean hiddenProperty = city != null && city.isHidden();
+    boolean hiddenCity = city != null && city.isHidden();
 
     // If directly next to the tile we can see everything
-    return adjacent && !hiddenUnit && !hiddenProperty;
+    boolean adjacent = isAdjacent(tileToBeFogged, baseTile);
+
+    return (!hiddenUnit && !hiddenCity) || adjacent;
   }
 
   public void setFogOfWarOn(boolean fogOfWarOn) {
