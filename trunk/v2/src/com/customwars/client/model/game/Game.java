@@ -10,6 +10,12 @@ import java.util.List;
 /**
  * CW Impl of a Turnbase game
  * The Players in the map will be replaced by a player from the players list.
+ *
+ * Usage:
+ * Game game = new Game(map,players,gameConfig)
+ * game.init();
+ * game.startGame();
+ * game.endTurn();
  */
 public class Game extends TurnBasedGame {
   private Unit activeUnit;        // There can only be one active unit in a game at any time
@@ -28,50 +34,27 @@ public class Game extends TurnBasedGame {
   }
 
   /**
-   * Start the game for the first player in the players list
-   */
-  public void startGame() {
-    startGame(getPlayer(0));
-  }
-
-  /**
-   * Starts a game
-   * replacing mapPlayers with GamePlayers
+   * replace mapPlayers with GamePlayers
    * Get all cities, Units from the map
    * Read their id,
    * Overwrite the dummy map owner of the city/Unit by
    * comparing their id to a real player in the Game
    * add the unit/city to their army/cities
    */
-  public void startGame(Player gameStarter) {
-    canStartGame(gameStarter);
-
+  public void init() {
     for (Tile t : map.getAllTiles()) {
       City city = map.getCityOn(t);
       Unit unit = map.getUnitOn(t);
 
-      replaceCityOwner(city);
-      replaceUnitOwner(unit);
-
-      if (city != null)
+      if (city != null) {
+        Player newOwner = getGamePlayer(city.getOwner());
+        newOwner.addCity(city);
         city.setFunds(cityFunds);
-    }
-
-    super.startGame(gameStarter);
-    initZones();
-  }
-
-  private void replaceCityOwner(City city) {
-    if (city != null) {
-      Player newOwner = getGamePlayer(city.getOwner());
-      newOwner.addCity(city);
-    }
-  }
-
-  private void replaceUnitOwner(Unit unit) {
-    if (unit != null) {
-      Player newOwner = getGamePlayer(unit.getOwner());
-      newOwner.addUnit(unit);
+      }
+      if (unit != null) {
+        Player newOwner = getGamePlayer(unit.getOwner());
+        newOwner.addUnit(unit);
+      }
     }
   }
 
@@ -83,6 +66,19 @@ public class Game extends TurnBasedGame {
   }
 
   /**
+   * Start the game for the first player in the players list
+   */
+  public void startGame() {
+    startGame(getPlayer(0));
+  }
+
+  public void startGame(Player gameStarter) {
+    super.startGame(gameStarter);
+    initZones();
+  }
+
+
+  /**
    * Create move/Attack zones for each unit of each player.
    * fog of war is reset for each player
    */
@@ -91,7 +87,7 @@ public class Game extends TurnBasedGame {
       map.resetFogMap(player);
       map.initUnitZonesForPlayer(player);
     }
-    map.resetFogMap(activePlayer);
+    map.resetFogMap(getActivePlayer());
   }
 
   // ---------------------------------------------------------------------------

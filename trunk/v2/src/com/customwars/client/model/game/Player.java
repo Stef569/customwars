@@ -14,10 +14,11 @@ import java.util.List;
 
 /**
  * Represent a player that can participates in the game, can be either
- * a human, AI or neutral -player.
+ * a human, AI or neutral player.
  * Can be allied with another Player
  * Each non neutral player has an unique ID
  * A Player is always in the IDLE state
+ * any attempt to change to another state will result in an exception
  *
  * @author stefan
  */
