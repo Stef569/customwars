@@ -4,7 +4,6 @@ import com.customwars.client.io.img.awt.AwtImageLib;
 import com.customwars.client.io.img.slick.ImageStrip;
 import com.customwars.client.io.img.slick.SlickImageFactory;
 import com.customwars.client.io.img.slick.SpriteSheet;
-import org.apache.log4j.Logger;
 import org.newdawn.slick.Image;
 import tools.ColorUtil;
 
@@ -14,7 +13,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Stores references to Slick Images, mapped by a string value.
+ * Stores references to Slick Images, mapped by a upper case string value.
  * Slick images are loaded from awt images,
  * The awt Images should be loaded first by
  * loading them into the awtImageLib and then passed to this class constructor
@@ -26,7 +25,6 @@ import java.util.Set;
  * @author stefan
  */
 public class ImageLib {
-  private static final Logger logger = Logger.getLogger(ImageLib.class);
   private Map<String, Image> slickImgCache;
   private AwtImageLib awtImageLib;
 
@@ -76,7 +74,6 @@ public class ImageLib {
       addSlickImg(imgName, slickImg);
     }
   }
-
 
   private void loadSlickSpriteSheet(String imgName, SpriteSheet sheet) {
     loadSlickSpriteSheet(imgName, sheet.getTileWidth(), sheet.getTileHeight());

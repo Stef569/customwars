@@ -21,15 +21,15 @@ import java.util.List;
  * Hardcoded game, useful for using in Slick tests
  */
 public class HardCodedGame {
-  // Game Players
+  // 3 Game Players
+  public static Player p_GRAY = new Player(Color.GRAY, null, -1);
   public static Player p_RED = new Player(1, Color.RED, false, null, "Stef", Integer.MAX_VALUE, 0, false);
   public static Player p_BLUE = new Player(2, Color.BLUE, false, null, "JSR", 8500, 1, false);
-  public static Player p_GRAY = new Player(Color.GRAY, null, -1);
   private static Map<Tile> map;
 
   /**
    * Creates a Game with hard coded values, a default map is loaded.
-   * The Game is started
+   * The game is not inited, started
    */
   public static Game getGame() {
     List<Player> players = Arrays.asList(p_RED, p_BLUE, p_GRAY);
@@ -46,7 +46,7 @@ public class HardCodedGame {
     MapUtil.fillWithTiles(map, TerrainFactory.getTerrain(TestData.PLAIN));
     map.getTile(2, 1).setTerrain(TerrainFactory.getTerrain(TestData.VERTICAL_RIVER));
 
-    // Map Players, colors are suggestions game players overwrite them
+    // 3 Map Players, colors are suggestions game players overwrite them
     Player p1 = new Player(1, Color.GREEN, false, null);
     Player p2 = new Player(2, Color.BLUE, false, null);
     Player p3 = new Player(Player.NEUTRAL_PLAYER_ID, Color.GRAY, true, null);
@@ -61,14 +61,19 @@ public class HardCodedGame {
     addCityToMap(0, 0, TestData.FACTORY, p1);
     addCityToMap(7, 8, TestData.FACTORY, p2);
 
-    addUnitToMap(5, 6, TestData.INF, p2);
+    addUnitToMap(2, 7, TestData.ROCKETS, p1);
+    addUnitToMap(2, 2, TestData.MECH, p1);
+    addUnitToMap(0, 4, TestData.INF, p1);
+    addUnitToMap(0, 4, TestData.ROCKETS, p1);
+    addUnitToMap(1, 3, TestData.APC, p1);
+    addUnitToMap(5, 6, TestData.INF, p1);
     addUnitToMap(5, 7, TestData.INF, p2);
     addUnitToMap(6, 5, TestData.TANK, p2);
     addUnitToMap(8, 4, TestData.TANK, p2);
 
     addUnitToMap(4, 2, TestData.INF, p2);
     addUnitToMap(3, 2, TestData.TANK, p2);
-    addUnitToMap(5, 2, TestData.ROCKET, p2);
+    addUnitToMap(5, 2, TestData.ROCKETS, p2);
     addUnitToMap(6, 2, TestData.APC, p2);
     return map;
   }
