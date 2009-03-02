@@ -78,8 +78,6 @@ public class MapParser {
     //version
     //mapCreator
     //description
-    //column
-    //row
     //maxPlayers
     //Fow
     //fillTerrain
@@ -105,6 +103,8 @@ public class MapParser {
         
         DataOutputStream dataOut = new DataOutputStream(out);
         if(map != null){
+            dataOut.writeInt(map.getCols());
+            dataOut.writeInt(map.getRows());
             for(Tile t : map.getAllTiles()){
                 //Get current Terrain and Unit
                 terrain = t.getTerrain();
@@ -112,20 +112,20 @@ public class MapParser {
 
                 if(city == null){
                     //(BasicID:) How to deal with this data
-                    dataOut.writeByte(TYPE_TERRAIN);
+                    dataOut.writeInt(TYPE_TERRAIN);
                     //(Player): Who owns this terrain
-                    dataOut.writeByte(NEUTRAL-1);
+                    dataOut.writeInt(NEUTRAL);
                     //(TerrainType): What kind of terrain is this
-                    dataOut.writeByte(terrain.getID());
+                    dataOut.writeInt(terrain.getID());
                 }else{
                     //(BasicID:) How to deal with this data
-                    dataOut.writeByte(TYPE_CITY);
+                    dataOut.writeInt(TYPE_CITY);
                     //(Player): Who owns this terrain
-                    dataOut.writeByte(city.getOwner().getId());
+                    dataOut.writeInt(city.getOwner().getId());
                     //(TerrainType): What kind of terrain is this
-                    dataOut.writeByte(terrain.getID());
+                    dataOut.writeInt(terrain.getID());
                     //(CityType): What kind of city terrain this is
-                    dataOut.writeByte(city.getID());
+                    dataOut.writeInt(city.getID());
                 }
 
                 //(Column): Where it is Located on the x-axis
@@ -133,23 +133,23 @@ public class MapParser {
                 //(Row): Where it is located on the y-axis
                 dataOut.writeInt(t.getRow());
                 //(SizeX:) How much tilespace this unit occupies x-axis
-                dataOut.writeByte(DEFAULT_SIZE);
+                dataOut.writeInt(DEFAULT_SIZE);
                 //(SizeY:) How much tilespace this unit occupies y-axis
-                dataOut.writeByte(DEFAULT_SIZE);
+                dataOut.writeInt(DEFAULT_SIZE);
                 //(Active:) Whether inventions are active or not
-                dataOut.writeByte(NEUTRAL);
+                dataOut.writeInt(NEUTRAL);
 
                 //Get current unit...
                 unit = map.getUnitOn(t);
                 if(unit != null){
                     //(BasicID:) How to deal with this data
-                    dataOut.writeByte(TYPE_UNIT);
+                    dataOut.writeInt(TYPE_UNIT);
                     //(Player): Who owns this unit
-                    dataOut.writeByte(unit.getOwner().getId());
+                    dataOut.writeInt(unit.getOwner().getId());
                     //(unitType:) The type of unit
-                    dataOut.writeByte(unit.getID());
+                    dataOut.writeInt(unit.getID());
                     //(Rank): The current rank of this unit (experience)
-                    dataOut.writeByte(NEUTRAL);
+                    dataOut.writeInt(NEUTRAL);
                     //(Column): Where it is Located on the x-axis
                     dataOut.writeInt(t.getCol());
                     //(Row): Where it is located on the y-axis
@@ -231,14 +231,10 @@ public class MapParser {
                 else if(counter == 3)
                     description = temp.substring(1,temp.length()-1);
                 else if(counter == 4)
-                    column = new Integer(temp.substring(1,temp.length()-1));
-                else if(counter == 5)
-                    row = new Integer(temp.substring(1,temp.length()-1));
-                else if(counter == 6)
                     maxPlayers = new Integer(temp.substring(1,temp.length()-1));
-                else if(counter == 7)
+                else if(counter == 5)
                     fogOfWar = (temp.matches("[Tt][Rr][Uu][Ee]"));
-                else if(counter == 8)
+                else if(counter == 6)
                     fillTerrain = temp.substring(1,temp.length()-1);
             }
             System.out.println(temp);
@@ -246,25 +242,30 @@ public class MapParser {
         
         
         
+        
+        Tile newTile = null;
+        int basicID;
+        int player;
+        int terrainType;
+        int cityType;
+        int unitType;
+        int sizex;
+        int sizey;
+        int active;
+        int load;
+        int rank;
+        
+        DataInputStream datain = new DataInputStream(in);
+        column = datain.readInt();
+        row = datain.readInt();
+        
         Map<Tile> newMap = 
                 new Map<Tile>(column, row, column*row, maxPlayers, fogOfWar);
-        Tile newTile = null;
-        byte basicID;
-        byte player;
-        byte terrainType;
-        byte cityType;
-        byte unitType;
-        byte sizex;
-        byte sizey;
-        byte active;
-        int load;
-        byte rank;
         
-        if(counter >= 7){
-            DataInputStream datain = new DataInputStream(in);
+        if(counter >= 5){
             while(true){
                 try{
-                     basicID = datain.readByte();
+                     basicID = datain.readInt();
                 }catch(EOFException e){
                     break;
                 }
@@ -276,49 +277,49 @@ public class MapParser {
                 
                 if(basicID == TYPE_TERRAIN){
                     //For player
-                    player = datain.readByte();
+                    player = datain.readInt();
                     //For terrain
-                    terrainType = datain.readByte();
+                    terrainType = datain.readInt();
                     //For column
                     column = datain.readInt();
                     //For row
                     row = datain.readInt();
                     //For sizeX
-                    sizex = datain.readByte();
+                    sizex = datain.readInt();
                     //For sizeY
-                    sizey = datain.readByte();
+                    sizey = datain.readInt();
                     //For active
-                    active = datain.readByte();
+                    active = datain.readInt();
                     //Makes a new Tile
                     newTile = new Tile(column, row, 
                             TerrainFactory.getTerrain((int)terrainType));
                 }else if(basicID == TYPE_CITY){
                     //For player
-                    player = datain.readByte();
+                    player = datain.readInt();
                     //For terrain
-                    terrainType = datain.readByte();
+                    terrainType = datain.readInt();
                     //For city
-                    cityType = datain.readByte();
+                    cityType = datain.readInt();
                     //For column
                     column = datain.readInt();
                     //For row
                     row = datain.readInt();
                     //For sizeX
-                    sizex = datain.readByte();
+                    sizex = datain.readInt();
                     //For sizeY
-                    sizey = datain.readByte();
+                    sizey = datain.readInt();
                     //For active
-                    active = datain.readByte();
+                    active = datain.readInt();
                     //Makes a new Tile
                     newTile = new Tile(column, row, 
                             CityFactory.getCity((int)cityType));
                 }else if(basicID == TYPE_UNIT){
                     //For player
-                    player = datain.readByte();
+                    player = datain.readInt();
                     //For ID
-                    unitType = datain.readByte();
+                    unitType = datain.readInt();
                     //For rank
-                    rank = datain.readByte();
+                    rank = datain.readInt();
                     //For column
                     column = datain.readInt();
                     //For row
