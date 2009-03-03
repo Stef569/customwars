@@ -64,14 +64,14 @@ public class MapParser {
         printLoad();
     }
     
-    public void loadMap(String filename) throws FileNotFoundException, IOException {
+    public Map<Tile> loadMap(String filename) throws FileNotFoundException, IOException {
         in = new FileInputStream(BASE_PATH+mapPath+filename); 
-        load();
+        return load();
     }
     
-    public void loadMapAsResource(String filename) throws IOException{
+    public Map<Tile> loadMapAsResource(String filename) throws IOException{
         in = ResourceLoader.getResourceAsStream(mapPath+filename);
-        load();
+        return load();
     }
     
     //mapName
@@ -99,9 +99,10 @@ public class MapParser {
             System.out.println(filename+" Overwritten.");
         
         out = new FileOutputStream(BASE_PATH+mapPath+filename);
-        out.write(data.getBytes());
+        //out.write(data.getBytes());
         
         DataOutputStream dataOut = new DataOutputStream(out);
+        dataOut.writeUTF(data);
         if(map != null){
             dataOut.writeInt(map.getCols());
             dataOut.writeInt(map.getRows());
@@ -174,11 +175,15 @@ public class MapParser {
     }
     
     private int searchLoadedUnits(Location theLoc){
-        int counter = 0;
-        for(int i = 0; i < theLoc.getLocatableCount(); i++){
-            counter += searchLoadedUnits(theLoc.getLocatable(i).getLocation());
-        }
-        return counter;
+        return theLoc.getLocatableCount();
+        //int counter = 0;
+        
+        //if(theLoc.getLocatableCount() == 0)
+        //    return 0;
+        //for(int i = 0; i < theLoc.getLocatableCount(); i++)
+        //    counter += searchLoadedUnits(theLoc.getLocatable(i).getLocation());
+        
+        //return counter;
     }
     
     private void printLoad(){
@@ -204,9 +209,11 @@ public class MapParser {
         System.out.println("Done");
     }
     
-    private void load() throws IOException{
+    private Map<Tile> load() throws IOException{
         String temp;
-        scan = new Scanner(in);
+        
+        DataInputStream datain = new DataInputStream(in);
+        scan = new Scanner(datain.readUTF().substring(2));
         int counter = 0;
         
         String mapName = "";//0:MapName
@@ -240,9 +247,6 @@ public class MapParser {
             System.out.println(temp);
         }
         
-        
-        
-        
         Tile newTile = null;
         int basicID;
         int player;
@@ -255,7 +259,9 @@ public class MapParser {
         int load;
         int rank;
         
-        DataInputStream datain = new DataInputStream(in);
+        
+        
+        //datain = new DataInputStream(in);
         column = datain.readInt();
         row = datain.readInt();
         
@@ -333,6 +339,7 @@ public class MapParser {
         }
         
         System.out.println("Done");
+        return newMap;
     }
     
     private String basePath(){
