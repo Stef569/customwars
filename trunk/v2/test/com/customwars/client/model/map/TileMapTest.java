@@ -1,6 +1,8 @@
 package com.customwars.client.model.map;
 
 import com.customwars.client.model.gameobject.TerrainFactory;
+import com.customwars.client.model.gameobject.UnitFactory;
+import com.customwars.client.model.map.path.Mover;
 import com.customwars.client.model.testdata.TestData;
 import junit.framework.Assert;
 import org.junit.Before;
@@ -13,11 +15,12 @@ import tools.MapUtil;
  * @author Stefan
  */
 public class TileMapTest {
-  private TileMap<Tile> map;
+  private Map<Tile> map;
 
   @Before
   public void beforeEachTest() {
-    map = new Map<Tile>(10, 15, 32, 3, true);
+    map = new Map<Tile>(10, 15, 32, 3);
+    map.setFogOfWarOn(true);
     MapUtil.fillWithTiles(map, TerrainFactory.getTerrain(TestData.PLAIN));
   }
 
@@ -135,5 +138,19 @@ public class TileMapTest {
     // Not connected should return STILL
     dir = map.getDirectionTo(left, right);
     Assert.assertEquals(dir, Direction.STILL);
+  }
+
+  @Test
+  public void teleportTest() {
+    Tile from = map.getTile(0, 0);
+    Tile to = map.getTile(2, 0);
+
+    Mover mover = UnitFactory.getUnit(TestData.INF);
+    from.add(mover);
+    map.teleport(from, to, mover);
+
+    // Make sure that the unit moved to the location
+    Assert.assertEquals(to, mover.getLocation());
+    Assert.assertEquals(to.getLastLocatable(), mover);
   }
 }

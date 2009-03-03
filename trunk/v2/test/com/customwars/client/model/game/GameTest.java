@@ -26,7 +26,8 @@ public class GameTest {
   @Before
   public void beforeEachTest() {
     game = null;
-    map = new Map<Tile>(10, 10, 32, 4, true);
+    map = new Map<Tile>(10, 10, 32, 4);
+    map.setFogOfWarOn(true);
     MapUtil.fillWithTiles(map, TerrainFactory.getTerrain(TestData.PLAIN));
 
     p1 = new Player(0, Color.RED, false, null, "Stef", Integer.MAX_VALUE, 0, false);
@@ -49,6 +50,7 @@ public class GameTest {
       gc.setTurnLimit(99);
 
     game = new Game(map, players, gc);
+    game.init();
     game.startGame(gameStarter);
   }
 
