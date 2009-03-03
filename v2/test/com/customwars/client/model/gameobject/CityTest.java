@@ -3,7 +3,6 @@ package com.customwars.client.model.gameobject;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
-import com.customwars.client.model.map.TileMap;
 import com.customwars.client.model.testdata.TestData;
 import org.junit.Assert;
 import org.junit.Before;
@@ -13,7 +12,7 @@ import tools.MapUtil;
 import java.awt.Color;
 
 public class CityTest {
-  private TileMap<Tile> map;
+  private Map<Tile> map;
   private Player player1, player2;
   private City city;
 
@@ -22,7 +21,8 @@ public class CityTest {
     city = CityFactory.getCity(TestData.BASE);
     player1 = new Player(0, Color.RED, false, null, "Stef", Integer.MAX_VALUE, 0, false);
     player2 = new Player(1, Color.BLUE, false, null, "JSR", 8500, 1, false);
-    map = new Map<Tile>(10, 10, 32, 4, true);
+    map = new Map<Tile>(10, 10, 32, 4);
+    map.setFogOfWarOn(true);
     MapUtil.fillWithTiles(map, TerrainFactory.getTerrain(TestData.PLAIN));
   }
 

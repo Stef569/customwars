@@ -12,10 +12,8 @@ import com.customwars.client.model.map.path.PathFinder;
 import org.apache.log4j.Logger;
 import tools.Args;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
@@ -33,15 +31,14 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
   private boolean fogOfWarOn;       // is fog of war in effect
   private PathFinder pathFinder;    // to builds paths within the map
 
-  public Map(int cols, int rows, int tileSize, int numPlayers, boolean fogOfWarOn) {
+  public Map(int cols, int rows, int tileSize, int numPlayers) {
     super(cols, rows, tileSize);
     this.numPlayers = numPlayers;
-    this.fogOfWarOn = fogOfWarOn;
     pathFinder = new PathFinder(this);
   }
 
-  public Map(int cols, int rows, int tileSize, Properties properties, int numPlayers, boolean fogOfWarOn) {
-    this(cols, rows, tileSize, numPlayers, fogOfWarOn);
+  public Map(int cols, int rows, int tileSize, Properties properties, int numPlayers) {
+    this(cols, rows, tileSize, numPlayers);
     this.properties = properties == null ? new Properties() : properties;
   }
 
@@ -362,7 +359,8 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
     return null;
   }
 
-  public City getCityOn(Tile t) {
+  public City getCityOn(Location location) {
+    Tile t = (Tile) location;
     Terrain terrain = t.getTerrain();
     if (terrain instanceof City) {
       return (City) terrain;
@@ -382,11 +380,24 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
     return properties.contains(property);
   }
 
-  public void writeProperties(OutputStream out, String comments) throws IOException {
-    properties.store(out, comments);
-  }
+  public Iterable<java.util.Map.Entry> getProperties() {
+    final Iterator it = properties.entrySet().iterator();
+    return new Iterable<java.util.Map.Entry>() {
+      public Iterator<java.util.Map.Entry> iterator() {
+        return new Iterator<java.util.Map.Entry>() {
+          public boolean hasNext() {
+            return it.hasNext();
+          }
 
-  public void readProperties(InputStream in) throws IOException {
-    properties.load(in);
+          public java.util.Map.Entry next() {
+            return (java.util.Map.Entry) it.next();
+          }
+
+          public void remove() {
+            throw new UnsupportedOperationException("Removing properties is not allowed");
+          }
+        };
+      }
+    };
   }
 }

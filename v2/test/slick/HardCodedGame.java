@@ -41,7 +41,8 @@ public class HardCodedGame {
   }
 
   public static Map<Tile> getMap() {
-    map = new Map<Tile>(10, 15, 32, 3, true);
+    map = new Map<Tile>(10, 15, 32, 3);
+    map.setFogOfWarOn(true);
     initMapProperties();
     MapUtil.fillWithTiles(map, TerrainFactory.getTerrain(TestData.PLAIN));
     map.getTile(2, 1).setTerrain(TerrainFactory.getTerrain(TestData.VERTICAL_RIVER));

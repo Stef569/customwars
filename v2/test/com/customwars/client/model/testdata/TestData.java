@@ -14,6 +14,7 @@ import java.util.List;
 
 /**
  * Contains test data
+ * The ids for Unit,Terrain,City are the indexes within the image.
  *
  * @author stefan
  */
@@ -57,7 +58,7 @@ public class TestData {
   public static List<Integer> riverMoveCosts = Arrays.asList(1, 1, IMP, IMP, 1, IMP);
   public static List<Integer> mountainMoveCosts = Arrays.asList(3, 2, IMP, IMP, 1, IMP);
 
-  // Terrains: The id is the index within the terrain images.
+  // Terrains
   private static Terrain plain = new Terrain(0, "plain", "", 0, 0, false, plainMoveCosts);
   private static Terrain verticalRiver = new Terrain(20, "River", "", 0, -1, false, riverMoveCosts);
   private static Terrain mountain = new Terrain(17, "Mountain", "", 4, 2, false, mountainMoveCosts);
