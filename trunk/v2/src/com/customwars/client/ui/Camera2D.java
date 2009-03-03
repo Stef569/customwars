@@ -50,11 +50,11 @@ public class Camera2D {
   }
 
   public int convertToGameX(int x) {
-    return x + cameraX;
+    return (int)(x/zoomLvl) + cameraX;
   }
 
   public int convertToGameY(int y) {
-    return y + cameraY;
+    return (int)(y/zoomLvl) + cameraY;
   }
 
   public void zoomIn() {
