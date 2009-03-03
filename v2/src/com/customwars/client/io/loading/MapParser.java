@@ -260,7 +260,7 @@ public class MapParser {
         row = datain.readInt();
         
         Map<Tile> newMap = 
-                new Map<Tile>(column, row, column*row, maxPlayers, fogOfWar);
+                new Map<Tile>(column, row, column*row, maxPlayers);
         
         if(counter >= 5){
             while(true){
