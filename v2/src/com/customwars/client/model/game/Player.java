@@ -41,6 +41,12 @@ public class Player extends GameObject {
     cities = new LinkedList<City>();
   }
 
+  public Player(int id, City hq) {
+    this();
+    this.id = id;
+    this.hq = hq;
+  }
+
   public Player(int id, Color color, boolean neutral, City hq) {
     this();
     this.id = id;
