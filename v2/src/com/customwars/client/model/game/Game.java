@@ -16,6 +16,9 @@ import java.util.List;
  * game.init();
  * game.startGame();
  * game.endTurn();
+ * game.endTurn();
+ * ...
+ * game.endTurn();
  */
 public class Game extends TurnBasedGame {
   private Unit activeUnit;        // There can only be one active unit in a game at any time
@@ -72,6 +75,11 @@ public class Game extends TurnBasedGame {
     startGame(getPlayer(0));
   }
 
+  /**
+   * Start the game, gameStarter will be set to the activePlayer
+   *
+   * @param gameStarter the player starting this game
+   */
   public void startGame(Player gameStarter) {
     super.startGame(gameStarter);
     initZones();
@@ -80,7 +88,7 @@ public class Game extends TurnBasedGame {
 
   /**
    * Create move/Attack zones for each unit of each player.
-   * fog of war is reset for each player
+   * fog of war is reset for each player since fog affects zones.
    */
   public void initZones() {
     for (Player player : getAllPlayers()) {
@@ -93,9 +101,9 @@ public class Game extends TurnBasedGame {
   // ---------------------------------------------------------------------------
   // SETTERS
   // --------------------------------------------------------------------------
-  public void setActiveUnit(Unit activeUnit) {
+  public void setActiveUnit(Unit unit) {
     Unit oldVal = this.activeUnit;
-    this.activeUnit = activeUnit;
+    this.activeUnit = unit;
     firePropertyChange("activeUnit", oldVal, this.activeUnit);
   }
 
