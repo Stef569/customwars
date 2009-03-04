@@ -1,6 +1,5 @@
 package com.customwars.client.model.map.path;
 
-import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.Locatable;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Tile;
@@ -12,11 +11,11 @@ import java.util.List;
 
 /**
  * Allows Movers to traverse within a TileMap
- * <p/>
+ *
  * Usage:
  * moveSystem.prepareMove(mover, destination)
  * Then repeatedly call moveSystem.update() to do 1 step in the path
- * <p/>
+ *
  * There can only be one mover moving through the map at any time.
  * The pathFinder creates the shortest path from the mover location to the destination.
  * The calculation is based on the MovementCost to move from 1 location to another,
@@ -31,7 +30,6 @@ public class MoveTraverse {
   private static final Logger logger = Logger.getLogger(MoveTraverse.class);
   private TileMap<Tile> map;      // The map the mover can move in
   private Mover mover;
-  private Player moverOwner;
   private int totalMoveCost;
 
   private int pathIndex;              // Contains the current position in the move path
@@ -69,7 +67,6 @@ public class MoveTraverse {
    */
   void prepareForNextMove() {
     mover = null;
-    moverOwner = null;
     movePath = null;
     pathIndex = 0;
     pathMoveComplete = false;
@@ -115,7 +112,7 @@ public class MoveTraverse {
 
     if (locatable instanceof Mover) {
       Mover trapper = (Mover) locatable;
-      return !trapper.getOwner().isAlliedWith(moverOwner);
+      return !trapper.getOwner().isAlliedWith(mover.getOwner());
     }
     return false;
   }
@@ -125,7 +122,7 @@ public class MoveTraverse {
     Tile nextLocation = (Tile) movePath.get(pathIndex + 1);
     mover.setOrientation(map.getDirectionTo(currentLocation, nextLocation));
     map.teleport(currentLocation, nextLocation, mover);
-    totalMoveCost += nextLocation.getTerrain().getMoveCost(mover.getMovement());
+    totalMoveCost += nextLocation.getTerrain().getMoveCost(mover.getMovementType());
   }
 
   /**

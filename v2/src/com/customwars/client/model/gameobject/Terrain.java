@@ -120,6 +120,9 @@ public class Terrain extends GameObject {
    * @return The cost for moving over this terrain for a movementType
    */
   public int getMoveCost(int movementType) {
+    if (movementType >= moveCosts.size()) {
+      throw new IllegalArgumentException(this + " does not contain movecosts for movetype: " + movementType + " " + moveCosts);
+    }
     return moveCosts.get(movementType);
   }
 
