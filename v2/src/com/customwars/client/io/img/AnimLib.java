@@ -140,7 +140,8 @@ public class AnimLib {
     int[] animUpFrameDurations = baseAnimUp.getDurations();
     int[] animDownFrameDuractions = baseAnimDown.getDurations();
 
-    // For each row get LEFT, RIGHT, UP and DOWN Images and create Animations out of them.
+    // For each row get LEFT, RIGHT, DOWN and UP Images and create Animations out of them.
+    // THE ORDER IN WHICH IMAGES ARE READ IS IMPORTANT!
     for (int row = 0; row < unitSpriteSheet.getVerticalCount(); row++) {
       int frame = 0, totalFrames = animLeftFrameCount; // Frames within 1 row
 
@@ -154,15 +155,15 @@ public class AnimLib {
       frame += animRightFrameCount;
       totalFrames += animRightFrameCount;
 
-      Animation animUp = createAnim(unitSpriteSheet, frame, totalFrames, row, animUpFrameDurations);
-      addUnitAnim(row, color, ANIM_UP, animUp);
-      frame += animUpFrameCount;
-      totalFrames += animUpFrameCount;
-
       Animation animDown = createAnim(unitSpriteSheet, frame, totalFrames, row, animDownFrameDuractions);
       addUnitAnim(row, color, ANIM_DOWN, animDown);
       frame += animDownFrameCount;
       totalFrames += animDownFrameCount;
+
+      Animation animUp = createAnim(unitSpriteSheet, frame, totalFrames, row, animUpFrameDurations);
+      addUnitAnim(row, color, ANIM_UP, animUp);
+      frame += animUpFrameCount;
+      totalFrames += animUpFrameCount;
 
       Animation animInActive = new Animation(false);
       Image img = inactiveUnitSpriteSheet.getSubImage(animLeftFrameCount + 1, row);

@@ -15,6 +15,7 @@ import org.newdawn.slick.command.MouseButtonControl;
  * @author stefan
  */
 public class CWInput extends InputProvider {
+  private Input input;
   private Command select = new BasicCommand("Select");
   private Command cancel = new BasicCommand("Cancel");
   private Command exit = new BasicCommand("Exit");
@@ -34,6 +35,7 @@ public class CWInput extends InputProvider {
    */
   public CWInput(Input input) {
     super(input);
+    this.input = input;
     initDefaults();
   }
 
@@ -98,5 +100,13 @@ public class CWInput extends InputProvider {
 
   public boolean isZoomOutPressed(Command command) {
     return zoomOut.equals(command);
+  }
+
+  public int getMouseX() {
+    return input.getMouseX();
+  }
+
+  public int getMouseY() {
+    return input.getMouseY();
   }
 }

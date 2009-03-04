@@ -2,6 +2,7 @@ package com.customwars.client.ui.sprite;
 
 import com.customwars.client.io.ResourceManager;
 import com.customwars.client.io.img.AnimLib;
+import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Locatable;
 import com.customwars.client.model.gameobject.Terrain;
@@ -42,12 +43,15 @@ public class SpriteManager implements PropertyChangeListener {
   private Set<Animation> uniqueAnimations;
   private TileSprite activeCursor;
 
-  public SpriteManager(ResourceManager resources) {
-    this.resources = resources;
+  public SpriteManager() {
     cursorSprites = new HashMap<String, TileSprite>();
     unitSprites = new HashMap<Unit, UnitSprite>();
     citySprites = new HashMap<City, CitySprite>();
     uniqueAnimations = new HashSet<Animation>();
+  }
+
+  public void loadResources(ResourceManager resources) {
+    this.resources = resources;
   }
 
   /**
@@ -70,6 +74,14 @@ public class SpriteManager implements PropertyChangeListener {
     if (isCursorSet()) {
       activeCursor.render(x, y, g);
     }
+  }
+
+  public void renderUnit(int x, int y, Graphics g, Unit unit) {
+    unitSprites.get(unit).render(x, y, g);
+  }
+
+  public void renderCity(int x, int y, Graphics g, City city) {
+    citySprites.get(city).render(x, y, g);
   }
 
   public void moveCursorTo(Location location) {
@@ -264,7 +276,7 @@ public class SpriteManager implements PropertyChangeListener {
   }
 
   /**
-   * changes the activeCursor to the cursor mapped by cursorName
+   * Changes the activeCursor to the cursor mapped by cursorName
    *
    * @param cursorName case incensitive name of the cursor ie Select, SELECT both return the same cursor
    */
@@ -273,7 +285,7 @@ public class SpriteManager implements PropertyChangeListener {
       if (activeCursor != null) {
         uniqueAnimations.remove(activeCursor.anim);
       }
-      activeCursor = cursorSprites.get(cursorName);
+      activeCursor = cursorSprites.get(cursorName.toUpperCase());
       uniqueAnimations.add(activeCursor.anim);
     } else {
       logger.warn(cursorName + " is not available, cursors:" + cursorSprites.keySet());
@@ -324,13 +336,35 @@ public class SpriteManager implements PropertyChangeListener {
 
   public void propertyChange(PropertyChangeEvent evt) {
     String propertyName = evt.getPropertyName();
-    if (evt.getSource() instanceof Sprite) {
-      if (propertyName.equals("anim")) {
-        if (evt.getOldValue() != null && evt.getNewValue() != null) {
-          uniqueAnimations.remove(evt.getOldValue());
-          uniqueAnimations.add((Animation) evt.getNewValue());
-        }
+
+    if (evt.getSource() instanceof City) {
+      if (propertyName.equals("owner")) {
+        cityOwnerChange(evt);
       }
+    } else if (evt.getSource() instanceof Sprite) {
+      if (propertyName.equals("anim")) {
+        spriteAnimChange(evt);
+      }
+    }
+  }
+
+  private void cityOwnerChange(PropertyChangeEvent evt) {
+    Player oldVal = (Player) evt.getOldValue();
+    Player newVal = (Player) evt.getNewValue();
+    Color oldColor = oldVal.getColor();
+    Color newColor = newVal.getColor();
+
+    if (!oldColor.equals(newColor)) {
+      City city = (City) evt.getSource();
+      CitySprite sprite = citySprites.get(city);
+      recolorCitySprite(sprite, newColor, city.getID());
+    }
+  }
+
+  private void spriteAnimChange(PropertyChangeEvent evt) {
+    if (evt.getOldValue() != null && evt.getNewValue() != null) {
+      uniqueAnimations.remove(evt.getOldValue());
+      uniqueAnimations.add((Animation) evt.getNewValue());
     }
   }
 }

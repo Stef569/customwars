@@ -2,6 +2,7 @@ package com.customwars.client.ui.renderer;
 
 import com.customwars.client.io.img.slick.ImageStrip;
 import com.customwars.client.model.gameobject.City;
+import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.model.map.TileMap;
 import org.newdawn.slick.Color;
@@ -13,6 +14,7 @@ import java.awt.Point;
 /**
  * Render a map to the screen
  * Each terrainID has an image in the terrainStrip
+ * Cities are skipped
  *
  * @author Stefan
  */
@@ -41,35 +43,48 @@ public class TileMapRenderer {
     if (tile.getTerrain() instanceof City) return;
 
     Image terrainImg = terrainStrip.getSubImage(tile.getTerrain().getID());
+
+    if (fogged) {
+      renderImgOnTile(g, terrainImg, tile, x, y, fogColor);
+    } else {
+      renderImgOnTile(g, terrainImg, tile, x, y);
+    }
+  }
+
+  void renderImgOnTile(Graphics g, Image img, Location location) {
+    renderImgOnTile(g, img, location, 0, 0);
+  }
+
+  void renderImgOnTile(Graphics g, Image img, Location location, int x, int y) {
+    renderImgOnTile(g, img, location, x, y, null);
+  }
+
+  void renderImgOnTile(Graphics g, Image img, Location location, int x, int y, Color color) {
     int tileWidth, tileHeight;
     int imgWidthOffset, imgHeightOffset;
 
     // If the image is higher then the tile size, then store the excess height
-    if (terrainImg.getHeight() > tileSize) {
+    if (img.getHeight() > tileSize) {
       tileHeight = tileSize;
-      imgHeightOffset = terrainImg.getHeight() - tileSize;
+      imgHeightOffset = img.getHeight() - tileSize;
     } else {
-      tileHeight = terrainImg.getHeight();
+      tileHeight = img.getHeight();
       imgHeightOffset = 0;
     }
 
     // If the image is wider then the tileSize, then center it
-    if (terrainImg.getWidth() > tileSize) {
+    if (img.getWidth() > tileSize) {
       tileWidth = tileSize;
-      imgWidthOffset = (terrainImg.getWidth() - tileSize) / 2;
+      imgWidthOffset = (img.getWidth() - tileSize) / 2;
     } else {
-      tileWidth = terrainImg.getWidth();
+      tileWidth = img.getWidth();
       imgWidthOffset = 0;
     }
 
-    int px = x + (tile.getCol() * tileWidth) - imgWidthOffset;
-    int py = y + (tile.getRow() * tileHeight) - imgHeightOffset;
+    int px = x + (location.getCol() * tileWidth) - imgWidthOffset;
+    int py = y + (location.getRow() * tileHeight) - imgHeightOffset;
 
-    if (fogged) {
-      g.drawImage(terrainImg, px, py, fogColor);
-    } else {
-      g.drawImage(terrainImg, px, py);
-    }
+    g.drawImage(img, px, py, color);
   }
 
   public void setTerrainStrip(ImageStrip terrainStrip) {

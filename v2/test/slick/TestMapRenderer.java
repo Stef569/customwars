@@ -25,8 +25,9 @@ public class TestMapRenderer extends CWState {
   private Scroller scroller;
 
   public void init(GameContainer container, StateBasedGame game) throws SlickException {
-    mapRenderer = new MapRenderer(resources);
+    mapRenderer = new MapRenderer();
     mapRenderer.setTerrainStrip(resources.getSlickImgStrip("terrains"));
+    mapRenderer.loadResources(resources);
   }
 
   public void enter(GameContainer container, StateBasedGame game) throws SlickException {
@@ -49,7 +50,7 @@ public class TestMapRenderer extends CWState {
 
     mapRenderer.addCursor("SELECT", selectCursor);
     mapRenderer.addCursor("AIM", aimCursor);
-    mapRenderer.activedCursor("SELECT");
+    mapRenderer.activateCursor("SELECT");
   }
 
   public void update(GameContainer container, int delta) throws SlickException {
@@ -102,13 +103,13 @@ public class TestMapRenderer extends CWState {
 
   public void keyReleased(int key, char c) {
     if (key == Input.KEY_0) {
-      mapRenderer.activedCursor("DOES_NOT_EXISTS");
+      mapRenderer.activateCursor("DOES_NOT_EXISTS");
     }
     if (key == Input.KEY_1) {
-      mapRenderer.activedCursor("AIM");
+      mapRenderer.activateCursor("AIM");
     }
     if (key == Input.KEY_2) {
-      mapRenderer.activedCursor("SELECT");
+      mapRenderer.activateCursor("SELECT");
     }
     if (key == Input.KEY_3) {
       camera.centerOnTile(0, 0);

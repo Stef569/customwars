@@ -8,7 +8,6 @@ import java.awt.Dimension;
  * Handles screen and world coordinates
  * The cameraX and cameraY values are used as offset for rendering other components.
  * In reality there is no camera, the components x and y coordinates are just translated.
- * todo howto add zoomLvl to convertToGame methods
  *
  * Further improvements can be shaking the screen throught the update method.
  *
@@ -50,11 +49,11 @@ public class Camera2D {
   }
 
   public int convertToGameX(int x) {
-    return (int)(x/zoomLvl) + cameraX;
+    return (int) (x / zoomLvl) + cameraX;
   }
 
   public int convertToGameY(int y) {
-    return (int)(y/zoomLvl) + cameraY;
+    return (int) (y / zoomLvl) + cameraY;
   }
 
   public void zoomIn() {
@@ -108,9 +107,9 @@ public class Camera2D {
   }
 
   /**
-   * Validate the new camera x position
    * Make sure the camera doesn't scroll off the map
-   * Don't change the camera position when the camera is smaller then the screen
+   *
+   * @param cameraX the new camera position on the x axis
    */
   private void setX(int cameraX) {
     if (cameraX < 0) cameraX = 0;
@@ -121,8 +120,9 @@ public class Camera2D {
   }
 
   /**
-   * Validate the new camera x position
    * Make sure the camera doesn't scroll off the map
+   *
+   * @param cameraY the new camera position on the y axis
    */
   private void setY(int cameraY) {
     if (cameraY < 0) cameraY = 0;
@@ -169,9 +169,9 @@ public class Camera2D {
   }
 
   /**
-   * Can't move when the camera is larger then the game world
+   * @return True when the camera is larger then the game world
    */
-  public boolean canMove() {
+  private boolean canMove() {
     return camera.getWidth() < world.getWidth() &&
             camera.getHeight() < world.getHeight();
   }

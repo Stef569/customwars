@@ -13,6 +13,7 @@ import org.apache.log4j.Logger;
 import tools.Args;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
@@ -204,22 +205,20 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
    * Build a zone in which the mover can make a move
    */
   public void buildMovementZone(Mover mover) {
-    pathFinder.setMover(mover);
     mover.setMoveZone(pathFinder.getMovementZone(mover));
   }
 
   /**
    * Get a path of compass directions for the Mover to get to the destination
    * Each step in the path has a Direction relative to the previous location.
-   * The list never contains null
+   * In case of illegal data an empty list is returned
    */
   public List<Direction> getDirectionsPath(Mover mover, Location destination) {
     if (mover == null) {
       logger.warn("mover is null");
-      return new ArrayList<Direction>();
+      return Collections.emptyList();
     }
 
-    pathFinder.setMover(mover);
     return pathFinder.getDirections(mover, destination);
   }
 
