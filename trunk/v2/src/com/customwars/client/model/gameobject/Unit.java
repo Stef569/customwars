@@ -577,7 +577,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler {
     return moveStrategy;
   }
 
-  public int getMovement() {
+  public int getMovePoints() {
     return movement;
   }
 

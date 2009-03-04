@@ -24,7 +24,7 @@ public interface Mover extends Locatable {
   /**
    * @return the amount of tiles that this Mover can move
    */
-  int getMovement();
+  int getMovePoints();
 
   /**
    * Adds the total cost to move over the path to this mover

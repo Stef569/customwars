@@ -130,7 +130,7 @@ public class PathFinder implements MovementCost {
 
       int xLoc = currentMover.getLocation().getCol();
       int yLoc = currentMover.getLocation().getRow();
-      int movement = currentMover.getMovement();
+      int movement = currentMover.getMovePoints();
 
       dijkstra.calculate(xLoc, yLoc, movement);
     }
