@@ -8,14 +8,14 @@ import com.customwars.client.model.map.Location;
 import java.util.List;
 
 /**
- * Defines Objects that can move between tiles
+ * An Objects that can move between tiles
  *
  * @author stefan
  */
 public interface Mover extends Locatable {
   /**
    * Could be: Tires, Tread, Naval, Ship, Transport,...
-   * This can be used to lookup to moveCost for this Mover
+   * This can be used to lookup the moveCost for this Mover
    *
    * @return The number representing the movementType
    */
@@ -26,10 +26,18 @@ public interface Mover extends Locatable {
    */
   int getMovement();
 
-  void addPathMoveCost(int moveCost);
+  /**
+   * Adds the total cost to move over the path to this mover
+   *
+   * @param cost the total cost to move over the path
+   */
+  void addPathMoveCost(int cost);
 
   /**
+   * This method always returns a valid List, it will never return null
+   *
    * @return A list of Locations in which the Mover can make a move
+   *         Including the mover Location
    */
   List<Location> getMoveZone();
 

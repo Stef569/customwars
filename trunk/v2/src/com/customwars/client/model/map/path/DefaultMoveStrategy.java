@@ -7,7 +7,8 @@ import com.customwars.client.model.map.Tile;
 import tools.Args;
 
 /**
- * Default Move strategy for units:
+ * Default Move strategy for units
+ * The Pathfinder will use getMoveCost(Tile) to build paths and zones.
  */
 public class DefaultMoveStrategy implements MoveStrategy {
   private Mover mover;
@@ -17,8 +18,13 @@ public class DefaultMoveStrategy implements MoveStrategy {
     this.mover = mover;
   }
 
-  public int getMoveCost(Location location) {
-    return getMoveCost((Tile) location);
+  /**
+   * If a tile cannot be traversed over then Terrain.IMPASSIBLE should be returned.
+   * moveCosts are within bounds of 0 and Terrain.IMPASSIBLE
+   * Each terrain has a moveCost for a mover
+   */
+  public int getMoveCost(Location tile) {
+    return getMoveCost((Tile) tile);
   }
 
   public int getMoveCost(Tile tile) {
@@ -45,6 +51,4 @@ public class DefaultMoveStrategy implements MoveStrategy {
     int movementType = mover.getMovementType();
     return terrain.getMoveCost(movementType);
   }
-
-
 }

@@ -21,6 +21,8 @@ import java.util.List;
  * @author Stefan
  */
 public class Unit extends GameObject implements Mover, Location, TurnHandler {
+  public static final Direction DEFAULT_ORIENTATION = Direction.EAST;
+  private static final int MAX_EXP = 10;
   private int id;               // The unit Type ie(1->INF, 2->APC,...)
   private String name;          // Full name ie Infantry, Tank, ...
   private String description;   // Information about this Unit
@@ -28,10 +30,11 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler {
   private int movement;         // The amount of tiles this unit may move per turn.
   private int vision;           // The amount of tiles this unit can see in all directions aka line of sight
 
-  private int maxHp;            // The value when this unit is 100% Healthy
+  private int maxHp;              // The value when this unit is 100% Healthy
   private int minHealRange, maxHealRange; // Range in which we can heal
-  private int maxSupplies;      // The value when this unit has 100% supplies
-  private int dailyUse;         // Amount of supplies that are subtracted each turn
+  private int maxSupplies;        // The value when this unit has 100% supplies
+  private int maxTransportCount;  // Amount of units that can be transported
+  private int dailyUse;           // Amount of supplies that are subtracted each turn
 
   private boolean canCapture;   // Abilities
   private boolean canDive;
@@ -55,13 +58,13 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler {
   private boolean hidden;           // In fog of war, is this unit visible within enemy moveZone
 
   private Weapon primaryWeapon, secondaryWeapon;
-  private List<Locatable> transport;        // Units that are within this Transport(null means can't transport)
-  private List<Integer> canBeTransportedBy; // Movement Types that can be transported
+  private List<Locatable> transport;      // Units that are within this Transport(null means can't transport)
+  private List<Integer> transportTypes;   // Movement Types that can be transported
 
   public Unit(int id, String name, String description,
               int cost, int movement, int vision,
-              int maxHp, int maxSupplies, int suppliesPerTurn,
-              boolean canCapture, boolean canDive, boolean canSupply, boolean canHeal, boolean canTransport, List<Integer> canBeTransportedBy,
+              int maxHp, int maxSupplies, int maxTransportCount, int suppliesPerTurn,
+              boolean canCapture, boolean canDive, boolean canSupply, boolean canHeal, boolean canTransport, List<Integer> transportTypes,
               int armyBranch, int movementType, int minHealRange, int maxHealRange) {
     super(GameObjectState.ACTIVE);
     this.id = id;
@@ -73,6 +76,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler {
 
     this.maxHp = maxHp;
     this.maxSupplies = maxSupplies;
+    this.maxTransportCount = maxTransportCount;
     this.dailyUse = suppliesPerTurn;
 
     this.canCapture = canCapture;
@@ -80,7 +84,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler {
     this.canSupply = canSupply;
     this.canHeal = canHeal;
     this.canTransport = canTransport;
-    this.canBeTransportedBy = canBeTransportedBy;
+    this.transportTypes = transportTypes;
 
     this.armyBranch = armyBranch;
     this.movementType = movementType;
@@ -116,13 +120,14 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler {
     minHealRange = otherUnit.minHealRange;
     maxHealRange = otherUnit.maxHealRange;
     maxSupplies = otherUnit.maxSupplies;
+    maxTransportCount = otherUnit.maxTransportCount;
     dailyUse = otherUnit.dailyUse;
 
     canCapture = otherUnit.canCapture;
     canDive = otherUnit.canDive;
     canSupply = otherUnit.canSupply;
     canHeal = otherUnit.canHeal;
-    canBeTransportedBy = otherUnit.canBeTransportedBy;
+    transportTypes = otherUnit.transportTypes;
 
     armyBranch = otherUnit.armyBranch;
     movementType = otherUnit.movementType;
@@ -150,7 +155,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler {
     restock();
     resupply();
     experience = 0;
-    setOrientation(Direction.EAST);
+    setOrientation(DEFAULT_ORIENTATION);
     setState(GameObjectState.ACTIVE);
   }
 
@@ -234,8 +239,14 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler {
    * and attacking the defender
    */
   public void attack(Unit defender, UnitFight fight) {
-    if (canAttack(defender))
+    if (canAttack(defender)) {
       defender.defend(this, fight);
+      if (defender.isDestroyed()) {
+        if (++experience > MAX_EXP) {
+          experience = MAX_EXP;
+        }
+      }
+    }
   }
 
   /**
@@ -648,11 +659,11 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler {
   }
 
   public boolean canTransport(int id) {
-    return canTransport() && canBeTransportedBy.contains(id);
+    return canTransport() && transportTypes.contains(id);
   }
 
   public boolean canTransport() {
-    return canTransport && transport != null;
+    return canTransport && transport.size() - 1 < maxTransportCount;
   }
 
   public int getMinHealRange() {
