@@ -3,9 +3,11 @@ package com.customwars.client.model.map.path;
 import com.customwars.client.model.map.Direction;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.TileMap;
+import tools.Args;
 
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -51,15 +53,15 @@ public class PathFinder implements MovementCost {
    * @param mover       mover that wants to see a way to a tile.
    * @param destination tile the unit must reach.
    * @return a collection of tiles the unit must traverse to reach its goal.
-   *         returns null if destination is out of reach.
+   *         returns an empty list if destination is out of reach.
    */
   public List<Location> getMovementPath(Mover mover, Location destination) {
     calculatePaths(mover);
+
     // test does not include the destination tile
     // And We just came from here.
-
     if (!dijkstra.canMoveTo(destination.getCol(), destination.getRow())) {
-      return null;
+      return Collections.emptyList();
     }
     List<Point> points = dijkstra.getRoute(destination.getCol(), destination.getRow());
     List<Location> tiles = new ArrayList<Location>(points.size());
@@ -75,26 +77,19 @@ public class PathFinder implements MovementCost {
    * @param mover       that wants to see a way to a tile.
    * @param destination tile the mover must reach.
    * @return a collection of directions the mover must move to reach its goal.
-   *         returns null if destination is out of reach.
+   *         returns an empty list if destination is out of reach.
    */
   public List<Direction> getDirections(Mover mover, Location destination) {
-    if (mover == null) {
-      throw new IllegalArgumentException("mover is null");
-    }
-    if (destination == null) {
-      throw new IllegalArgumentException("destination is null");
-    }
+    Args.checkForNull(mover, "mover is null");
+    Args.checkForNull(destination, "destination is null");
+
     calculatePaths(mover);
 
     if (!dijkstra.canMoveTo(destination.getCol(), destination.getRow())) {
-      return null;
+      return Collections.emptyList();
     }
-    List<Direction> dirs = dijkstra.getPath(destination.getCol(), destination.getRow());
-    List<Direction> directions = new ArrayList<Direction>(dirs.size());
-    for (Direction d : dirs) {
-      directions.add(d);
-    }
-    return directions;
+
+    return dijkstra.getPath(destination.getCol(), destination.getRow());
   }
 
   /**
@@ -143,10 +138,6 @@ public class PathFinder implements MovementCost {
     if (currentMover != null)
       return currentMover.getMoveStrategy().getMoveCost(map.getTile(x, y));
     else
-      return 0;
-  }
-
-  public void setMover(Mover currentMover) {
-    this.currentMover = currentMover;
+      throw new IllegalStateException("Mover needed to get the movecost");
   }
 }

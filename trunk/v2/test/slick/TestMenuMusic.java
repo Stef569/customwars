@@ -1,6 +1,6 @@
 package slick;
 
-import com.customwars.client.ui.PopUpMenu;
+import com.customwars.client.ui.PopupMenu;
 import com.customwars.client.ui.state.CWInput;
 import com.customwars.client.ui.state.CWState;
 import org.newdawn.slick.GameContainer;
@@ -23,7 +23,7 @@ public class TestMenuMusic extends CWState implements ComponentListener {
   private Music backgroundMusic;
   private Sound menuTickSound;
   private Image image;
-  private PopUpMenu testmenu;
+  private PopupMenu testmenu;
 
   public void init(GameContainer container, StateBasedGame stateBasedGame) throws SlickException {
     menuTickSound = new Sound("res/sound/menutick.wav");
@@ -33,10 +33,11 @@ public class TestMenuMusic extends CWState implements ComponentListener {
     image = new Image("res/image/cliff.gif");
     Image cursor = new Image("res/image/white.png");
 
-    testmenu = new PopUpMenu(container);
-    testmenu.setLocation(80, 100);
+    testmenu = new PopupMenu(container, "Test Menu");
     testmenu.addOption("Option 1: Test Map Terrain");
     testmenu.addOption("Option 2: Key Input Change (Under Construction)");
+    testmenu.init();
+    testmenu.setLocation(80, 100);
     testmenu.setCursorImage(cursor);
     testmenu.setOptionChangeSound(menuTickSound);
     testmenu.addListener(this);
@@ -54,7 +55,7 @@ public class TestMenuMusic extends CWState implements ComponentListener {
     g.drawString("ENTER: TO GO BACK TO MENU", 400, 80);
     g.drawString("Now in Test Menu and Music state", 80, 80);
     testmenu.render(gameContainer, g);
-    switch (testmenu.getOption()) {
+    switch (testmenu.getCurrentOption()) {
       case 0:
         g.drawString("Scroll a mini-map and see the terrain up close. \n" +
                 "Use [1] and [2] to switch firing cursor.", 80, 200);
@@ -83,6 +84,12 @@ public class TestMenuMusic extends CWState implements ComponentListener {
     }
   }
 
+  public void mouseClicked(int button, int x, int y, int clickCount) {
+    if (button == 1) {
+      testmenu.setLocation(x, y);
+    }
+  }
+
   public void leave(GameContainer container, StateBasedGame game) throws SlickException {
     super.leave(container, game);
     backgroundMusic.stop();
@@ -93,8 +100,8 @@ public class TestMenuMusic extends CWState implements ComponentListener {
   }
 
   public void componentActivated(AbstractComponent source) {
-    PopUpMenu popUpMenu = (PopUpMenu) source;
-    switch (popUpMenu.getOption()) {
+    PopupMenu popupMenu = (PopupMenu) source;
+    switch (popupMenu.getCurrentOption()) {
       case 0:
         changeGameState("terrainmenu");
         break;

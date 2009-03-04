@@ -134,14 +134,15 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
         owner.removeCity(this);
         newOwner.addCity(this);
         setOwner(newOwner);
+        resetCapturing();
         firePropertyChange("captured", null, true);
       }
     }
   }
 
   private void resetCapturing() {
-    capCount = 0;
-    capturer = null;
+    setCapCount(0);
+    setCapturer(null);
   }
 
   public void heal(Unit unit) {
@@ -201,7 +202,7 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
       oldVal.removePropertyChangeListener(this);
 
     this.capturer = capturer;
-    capturer.addPropertyChangeListener(this);
+    if (capturer != null) capturer.addPropertyChangeListener(this);
     firePropertyChange("capturer", oldVal, this.capturer);
   }
 
@@ -217,7 +218,7 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
   }
 
   public boolean canBeCapturedBy(Unit unit) {
-    return unit != null && canBeCaptureBy.contains(unit.getArmyBranch());
+    return unit != null && canBeCaptureBy.contains(unit.getID());
   }
 
   public boolean canBuild(Unit unit) {
@@ -228,7 +229,7 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
     return isCaptured() && this.capturer == unit;
   }
 
-  public boolean isCaptured() {
+  protected boolean isCaptured() {
     return capCount == maxCapCount;
   }
 
@@ -240,6 +241,11 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
     return maxHealRange;
   }
 
+  /**
+   * @return The capping process percentage,
+   *         100 is never returned instead
+   *         when the city is captured 0 is returned
+   */
   public int getCapCountPercentage() {
     int percentage;
     if (maxCapCount <= 0) {
@@ -275,8 +281,11 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
     return strBuilder.append("]").toString();
   }
 
+  /**
+   * Listen for changes of the capturing unit
+   */
   public void propertyChange(PropertyChangeEvent evt) {
-    assert evt.getSource() == capturer : "Only interested in events from the unit that is capturing";
+    assert capturer != null && evt.getSource() == capturer : "Only interested in events from the unit that is capturing";
     String propertyName = evt.getPropertyName();
     if (propertyName.equalsIgnoreCase("state")) {
       if (evt.getNewValue() == GameObjectState.DESTROYED) {

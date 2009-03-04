@@ -30,11 +30,12 @@ public class CityTest {
   /**
    * A Unit captures a City, in 2 steps
    * The first time the unit tries to capture the city the capCount will be 50% (10/20)
-   * The next attempt will fully capture the city 100% (20/20) player2 is now owning the city
+   * The next attempt will fully capture the city 100% (20/20)
+   * player2 is now owning the city, capcount is put back to 0.
    *
-   * Unit Hp is used to increase the cap count
+   * The Unit Hp is used to increase the cap count
    */
-  public void testValidCaptureBuilding() {
+  public void testValidCaptureCity() {
     map.getTile(0, 0).setTerrain(city);
     city.setOwner(player1);
 
@@ -42,13 +43,34 @@ public class CityTest {
     capturingUnit.setOwner(player2);
 
     city.capture(capturingUnit);
-
     Assert.assertEquals(50, city.getCapCountPercentage());
-    Assert.assertEquals(false, city.isCaptured());  // only 50% is captured
 
-    city.capture(capturingUnit);  // 100% captured
-    Assert.assertEquals(100, city.getCapCountPercentage());
-    Assert.assertEquals(true, city.isCaptured());
+    city.capture(capturingUnit);
+    Assert.assertEquals(0, city.getCapCountPercentage());
+    Assert.assertEquals(player2, city.getOwner());
+  }
+
+  @Test
+  /**
+   * 1. city owned by p1
+   * 2. p2 captures city
+   * 3. p1 recaptures the city
+   */
+  public void testMultipleCaptureAttempts() {
+    map.getTile(0, 0).setTerrain(city);
+    city.setOwner(player1);
+
+    Unit capturingUnit = UnitFactory.getUnit(TestData.INF);
+    capturingUnit.setOwner(player2);
+    city.capture(capturingUnit);
+    city.capture(capturingUnit);
+
+    Unit capturingUnit2 = UnitFactory.getUnit(TestData.INF);
+    capturingUnit2.setOwner(player1);
+    city.capture(capturingUnit2);
+    city.capture(capturingUnit2);
+
+    Assert.assertEquals(city.getOwner(), player1);
   }
 
   @Test
@@ -81,7 +103,7 @@ public class CityTest {
    * we need to add the unit to the same tile as the city
    * as this will be checked.
    */
-  public void testSupplyFromBuilding() {
+  public void testSupplyFromCity() {
     final int UNIT_SUPPLIES = 5;
     Tile tile = map.getTile(0, 0);
 

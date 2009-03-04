@@ -48,7 +48,6 @@ public class MoveTraverse {
     Args.checkForNull(destination);
 
     prepareForNextMove();
-    pathFinder.setMover(mover);
 
     if (pathFinder.canMoveTo(mover, destination)) {
       this.mover = mover;

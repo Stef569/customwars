@@ -38,7 +38,7 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
 
     TestData.storeTestData();
     stateSession.setMap(HardCodedGame.getMap());  // Later set by a mapSelectState
-
+    stateSession.setGame(HardCodedGame.getGame());
     cwInput = new CWInput(container.getInput());
     cwInput.addListener(this);
 
@@ -53,14 +53,16 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
 
   private void buildStateList() {
     CWState testMenuMusic = new TestMenuMusic();
+    CWState testMapRenderer = new TestMapRenderer();
     CWState remapKeysTest = new RemapKeysTest();
     CWState inGameTest = new TestInGameState();
-    CWState testMapRenderer = new TestMapRenderer();
+    CWState endTurnState = new EndTurnState();
 
     addState(testMenuMusic);
     addState(testMapRenderer);
     addState(remapKeysTest);
     addState(inGameTest);
+    addState(endTurnState);
 
     try {
       resources.loadFromFile();
@@ -76,6 +78,7 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
     statelogic.addState("terrainmenu", 1);
     statelogic.addState("keymenu", 2);
     statelogic.addState("IN_GAME", 3);
+    statelogic.addState("END_TURN", 4);
     CWState.setStatelogic(statelogic);
   }
 
