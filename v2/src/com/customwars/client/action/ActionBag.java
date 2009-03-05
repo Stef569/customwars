@@ -36,13 +36,20 @@ public class ActionBag extends CWAction {
   }
 
   /**
-   * Keep looping until all action have finished
+   * Keep looping until all actions have finished
    */
   public void update(int elapsedTime) {
     if (started && canPerformAction(elapsedTime)) {
       CWAction currentAction = actions.get(index);
-      performAction(currentAction);
-      actionComplete(currentAction);
+
+      if (!currentAction.isActionCompleted()) {
+        performAction(currentAction);
+      }
+
+      if (currentAction.isActionCompleted()) {
+        gotoNextAction();
+        currentAction.actionCompleted = false;
+      }
     }
   }
 
@@ -52,24 +59,20 @@ public class ActionBag extends CWAction {
   }
 
   private void performAction(CWAction action) {
-    if (!action.isActionCompleted())
-      if (doAll) {
-        action.doAction();
-      } else if (undoAll) {
-        action.undoAction();
-      }
+    if (doAll) {
+      action.doAction();
+    } else if (undoAll) {
+      action.undoAction();
+    }
   }
 
-  private void actionComplete(CWAction action) {
-    if (action.isActionCompleted()) {
-      action.actionCompleted = false;
-      index++;
-      if (index >= actions.size()) {
-        index = 0;
-        doAll = false;
-        undoAll = false;
-        started = false;
-      }
+  private void gotoNextAction() {
+    index++;
+    if (index >= actions.size()) {
+      index = 0;
+      doAll = false;
+      undoAll = false;
+      started = false;
     }
   }
 
