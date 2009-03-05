@@ -1,5 +1,6 @@
-package com.customwars.client.action;
+package com.customwars.client.ui.state;
 
+import com.customwars.client.action.CWAction;
 import com.customwars.client.model.map.Tile;
 
 import javax.swing.undo.AbstractUndoableEdit;
@@ -7,7 +8,7 @@ import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoManager;
 
 /**
- * Allows to share information between in game actions
+ * Allows to share information in the inGameState
  * Stores
  * a history of clicks in a tileMap and
  * a history of CWactions
@@ -17,7 +18,7 @@ import javax.swing.undo.UndoManager;
 public class InGameSession {
   // Input mode:
   public enum MODE {
-    DEFAULT,        // Clicking starts Menu or Unit_Select
+    DEFAULT,        // Clicking shows a Menu or selects a unit
     MENU,           // Input is handled inside the menu
     UNIT_SELECT,    // Clicking on a unit will select it
     UNIT_ATTACK,    // Clicking on a unit will attack it
@@ -30,6 +31,7 @@ public class InGameSession {
   private MODE mode;
   private boolean trapped;
   private boolean moving;
+  private int undoCount = 0;
 
   public InGameSession() {
     this.undoManager = new UndoManager();
@@ -68,7 +70,7 @@ public class InGameSession {
 
   public void addUndoAction(CWAction action) {
     undoManager.addEdit(new Undo(action));
-    System.out.println("adding " + undoManager.getPresentationName() + " to undo list");
+    System.out.println("adding " + undoManager.getPresentationName() + " to undo list count=" + ++undoCount);
   }
 
   public void undoAll() {
@@ -83,12 +85,13 @@ public class InGameSession {
    */
   public void undo() {
     if (undoManager.canUndo()) {
-      System.out.println(undoManager.getUndoPresentationName());
+      System.out.println(undoManager.getUndoPresentationName() + " count=" + --undoCount);
       undoManager.undo();
     }
   }
 
   public void discartAllEdits() {
+    undoCount = 0;
     System.out.println("Undo history cleared");
     undoManager.discardAllEdits();
   }

@@ -1,9 +1,11 @@
-package com.customwars.client.action;
+package com.customwars.client.action.unit;
 
+import com.customwars.client.action.CWAction;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.gameobject.GameObjectState;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.ui.renderer.MapRenderer;
+import com.customwars.client.ui.state.InGameSession;
 
 /**
  * The unit is made Inactive(can no longer be controlled)
@@ -12,12 +14,12 @@ import com.customwars.client.ui.renderer.MapRenderer;
  *
  * @author stefan
  */
-public class UnitWaitAction extends CWAction {
+public class WaitAction extends CWAction {
   private Game game;
   private InGameSession inGameSession;
   private MapRenderer mapRenderer;
 
-  public UnitWaitAction(Game game, MapRenderer mapRenderer, InGameSession inGameSession) {
+  public WaitAction(Game game, MapRenderer mapRenderer, InGameSession inGameSession) {
     super("Wait", false);
     this.game = game;
     this.inGameSession = inGameSession;
@@ -49,8 +51,5 @@ public class UnitWaitAction extends CWAction {
     mapRenderer.removeZones();
     mapRenderer.showArrows(false);
     inGameSession.setMoving(false);
-  }
-
-  void undoAction() {
   }
 }

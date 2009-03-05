@@ -158,6 +158,7 @@ public class SpriteManager implements PropertyChangeListener {
     for (Tile t : map.getAllTiles()) {
       Locatable locatable = t.getLastLocatable();
       Terrain terrain = t.getTerrain();
+      t.addPropertyChangeListener(this);
 
       if (locatable instanceof Unit) {
         loadUnitSprite((Unit) locatable);
@@ -345,6 +346,10 @@ public class SpriteManager implements PropertyChangeListener {
       if (propertyName.equals("anim")) {
         spriteAnimChange(evt);
       }
+    } else if (evt.getSource() instanceof Tile) {
+      if (propertyName.equals("locatable")) {
+        unitOnTileChanged(evt);
+      }
     }
   }
 
@@ -362,9 +367,47 @@ public class SpriteManager implements PropertyChangeListener {
   }
 
   private void spriteAnimChange(PropertyChangeEvent evt) {
-    if (evt.getOldValue() != null && evt.getNewValue() != null) {
-      uniqueAnimations.remove(evt.getOldValue());
-      uniqueAnimations.add((Animation) evt.getNewValue());
+    animChange((Animation) evt.getOldValue(), (Animation) evt.getNewValue());
+  }
+
+  private void animChange(Animation oldAnim, Animation newAnim) {
+    // First look if the old Animation can be removed
+    if (!isAnimInUse(oldAnim))
+      uniqueAnimations.remove(oldAnim);
+
+    // Add the new Animation(no duplicates/nulls allowed)
+    if (!uniqueAnimations.contains(newAnim) && newAnim != null)
+      uniqueAnimations.add(newAnim);
+  }
+
+  private boolean isAnimInUse(Animation anim) {
+    if (anim == null) return false;
+    for (Sprite sprite : unitSprites.values()) {
+      if (sprite.isRenderingAnim(anim)) {
+        return true;
+      }
     }
+    for (Sprite sprite : citySprites.values()) {
+      if (sprite.isRenderingAnim(anim)) {
+        return true;
+      }
+    }
+    return true;
+  }
+
+  private void unitOnTileChanged(PropertyChangeEvent evt) {
+    Unit newUnit = (Unit) evt.getNewValue();
+
+    if (newUnit != null && !unitSprites.containsKey(newUnit)) {
+      logger.debug("Found 1 new Unit, Creating sprite...");
+      loadUnitSprite(newUnit);
+    }
+  }
+
+  public void removeUnitSprite(Unit unit) {
+    Sprite sprite = unitSprites.get(unit);
+    logger.debug("Removing UnitSprite");
+    unitSprites.remove(unit);
+    animChange(sprite.anim, null);
   }
 }

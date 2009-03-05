@@ -1,7 +1,6 @@
 package slick;
 
 import com.customwars.client.action.ActionManager;
-import com.customwars.client.action.InGameSession;
 import com.customwars.client.action.ShowPopupMenu;
 import com.customwars.client.controller.HumanUnitController;
 import com.customwars.client.controller.UnitController;
@@ -22,6 +21,7 @@ import com.customwars.client.ui.renderer.MapRenderer;
 import com.customwars.client.ui.sprite.TileSprite;
 import com.customwars.client.ui.state.CWInput;
 import com.customwars.client.ui.state.CWState;
+import com.customwars.client.ui.state.InGameSession;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
@@ -37,11 +37,11 @@ import java.beans.PropertyChangeListener;
 import java.util.HashMap;
 
 public class TestInGameState extends CWState implements PropertyChangeListener, ComponentListener {
-  private Camera2D camera;
   private HashMap<Unit, UnitController> unitControllers;
   private InGameSession inGameSession;
 
   // GUI
+  private Camera2D camera;
   private MapRenderer mapRenderer;
   private HUD hud;
 
@@ -169,45 +169,63 @@ public class TestInGameState extends CWState implements PropertyChangeListener, 
 
   public void controlPressed(Command command, CWInput cwInput) {
     if (!inGameSession.isMoving()) {
+      Tile cursorLocation = (Tile) mapRenderer.getCursorLocation();
+      Unit activeUnit = game.getActiveUnit();
+      Unit selectedUnit = game.getMap().getUnitOn(cursorLocation);
+      City city = game.getMap().getCityOn(cursorLocation);
+
+      Unit unit;
+      if (activeUnit != null) {
+        unit = activeUnit;
+      } else {
+        unit = selectedUnit;
+      }
+
       if (inGameSession.getMode() != InGameSession.MODE.MENU) {
         moveCursor(command, cwInput);
         if (cwInput.isSelectPressed(command)) {
-          handleSelect();
+          handleA(unit, city, cursorLocation);
         }
       }
 
       if (cwInput.isCancelPressed(command)) {
-        inGameSession.undo();
+        handleB(activeUnit, selectedUnit);
       }
     }
   }
 
-  public void handleSelect() {
-    Tile cursorLocation = (Tile) mapRenderer.getCursorLocation();
-    Unit activeUnit = game.getActiveUnit();
-    Unit selectedUnit = game.getMap().getUnitOn(cursorLocation);
-    City city = game.getMap().getCityOn(cursorLocation);
+  public void handleA(Unit unit, City city, Tile cursorLocation) {
+    System.out.println("handle A press");
+    handleUnitAPress(unit);
 
-    Unit unit;
-    if (activeUnit != null) {
-      unit = activeUnit;
-    } else {
-      unit = selectedUnit;
-    }
-
-    if (unit != null && unit.getMoveZone().contains(cursorLocation))
-      handleUnitPress(unit);
-    else if (inGameSession.getMode() == InGameSession.MODE.DEFAULT) {
+    if (inGameSession.getMode() == InGameSession.MODE.DEFAULT) {
       inGameSession.setClick(2, cursorLocation);
       actionManager.doAction("CONTEXT_MENU");
     }
   }
 
-  private void handleUnitPress(Unit unit) {
+  private void handleB(Unit activeUnit, Unit selectedUnit) {
+    System.out.println("handle B press");
+    if (selectedUnit != null && inGameSession.getMode() != InGameSession.MODE.MENU) {
+      handleUnitBPress(selectedUnit);
+    } else {
+      inGameSession.undo();
+    }
+  }
+
+  private void handleUnitAPress(Unit unit) {
     UnitController unitController = unitControllers.get(unit);
     if (unitController instanceof HumanUnitController) {
       HumanUnitController humanUnitController = (HumanUnitController) unitController;
-      humanUnitController.handlePress();
+      humanUnitController.handleAPress();
+    }
+  }
+
+  private void handleUnitBPress(Unit unit) {
+    UnitController unitController = unitControllers.get(unit);
+    if (unitController instanceof HumanUnitController) {
+      HumanUnitController humanUnitController = (HumanUnitController) unitController;
+      humanUnitController.handleBPress();
     }
   }
 
@@ -227,11 +245,13 @@ public class TestInGameState extends CWState implements PropertyChangeListener, 
   }
 
   public void keyReleased(int key, char c) {
-    if (key == Input.KEY_R) {
-      mapRenderer.setMap(stateSession.getMap());
-    }
-    if (key == Input.KEY_E) {
-      actionManager.doAction("END_TURN");
+    if (!inGameSession.isMoving()) {
+      if (key == Input.KEY_R) {
+        mapRenderer.setMap(stateSession.getMap());
+      }
+      if (key == Input.KEY_E) {
+        actionManager.doAction("END_TURN");
+      }
     }
   }
 

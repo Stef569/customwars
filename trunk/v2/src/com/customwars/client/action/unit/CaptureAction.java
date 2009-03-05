@@ -1,10 +1,12 @@
-package com.customwars.client.action;
+package com.customwars.client.action.unit;
 
+import com.customwars.client.action.CWAction;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.gameobject.UnitState;
 import com.customwars.client.model.map.Tile;
+import com.customwars.client.ui.state.InGameSession;
 
 /**
  * Capture a City
@@ -15,13 +17,13 @@ public class CaptureAction extends CWAction {
   private InGameSession session;
   private Game game;
 
-  protected CaptureAction(Game game, InGameSession session) {
+  public CaptureAction(Game game, InGameSession session) {
     super("Capture", false);
     this.game = game;
     this.session = session;
   }
 
-  void doActionImpl() {
+  protected void doActionImpl() {
     if (session.isTrapped()) return;
 
     Tile clicked = session.getClick(2);
@@ -38,8 +40,5 @@ public class CaptureAction extends CWAction {
         unit.setUnitState(UnitState.IDLE);
       }
     }
-  }
-
-  void undoAction() {
   }
 }

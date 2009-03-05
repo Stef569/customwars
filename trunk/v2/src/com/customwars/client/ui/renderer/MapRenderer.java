@@ -21,6 +21,7 @@ import java.util.List;
  * The terrain and the sprites on the terrain
  */
 public class MapRenderer extends TileMapRenderer {
+  private static final int ZONE_ANIM_DURATION = 250;
   // Control
   private boolean renderTerrain = true;
   private boolean renderSprites = true;
@@ -46,8 +47,8 @@ public class MapRenderer extends TileMapRenderer {
 
   public void loadResources(ResourceManager resources) {
     spriteManager.loadResources(resources);
-    moveZoneAnim = new Animation(resources.getSlickImgStrip("moveZone").toArray(), 250);
-    attackZoneAnim = new Animation(resources.getSlickImgStrip("attackZone").toArray(), 250);
+    moveZoneAnim = new Animation(resources.getSlickImgStrip("moveZone").toArray(), ZONE_ANIM_DURATION);
+    attackZoneAnim = new Animation(resources.getSlickImgStrip("attackZone").toArray(), ZONE_ANIM_DURATION);
     arrowImages = resources.getSlickImgStrip("arrows");
   }
 
@@ -230,6 +231,10 @@ public class MapRenderer extends TileMapRenderer {
     this.moveZone = null;
   }
 
+  public void removeUnit(Unit unit) {
+    spriteManager.removeUnitSprite(unit);
+  }
+
   public void setMap(TileMap<Tile> map) {
     super.setMap(map);
     spriteManager.setMap(map);
@@ -248,6 +253,10 @@ public class MapRenderer extends TileMapRenderer {
     scroller.setAutoScroll(scroll);
   }
 
+  public void setRenderSprites(boolean renderSprites) {
+    this.renderSprites = renderSprites;
+  }
+
   public void toggleCursorLock() {
     this.cursorLocked = !cursorLocked;
   }
@@ -262,10 +271,6 @@ public class MapRenderer extends TileMapRenderer {
     } else {
       return null;
     }
-  }
-
-  public void setRenderSprites(boolean renderSprites) {
-    this.renderSprites = renderSprites;
   }
 
   public boolean isRenderingSprites() {

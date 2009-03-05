@@ -1,10 +1,19 @@
 package com.customwars.client.action;
 
+import com.customwars.client.action.game.EndTurnAction;
+import com.customwars.client.action.unit.CaptureAction;
+import com.customwars.client.action.unit.LoadAction;
+import com.customwars.client.action.unit.MoveAnimatedAction;
+import com.customwars.client.action.unit.SelectAction;
+import com.customwars.client.action.unit.ShowAttackZoneAction;
+import com.customwars.client.action.unit.SupplyAndHealAction;
+import com.customwars.client.action.unit.WaitAction;
 import com.customwars.client.io.ResourceManager;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.map.path.MoveTraverse;
 import com.customwars.client.ui.HUD;
 import com.customwars.client.ui.renderer.MapRenderer;
+import com.customwars.client.ui.state.InGameSession;
 import org.apache.log4j.Logger;
 import tools.Args;
 
@@ -13,7 +22,7 @@ import java.util.Map;
 
 /**
  * Holds a reference to all Actions by upper case name.
- * Each action is updated in each game loop
+ * Each action added to actions is updated in each game loop
  *
  * Actions can be grouped into an ActionBag, allowing multiple actions to work together
  *
@@ -71,17 +80,20 @@ public class ActionManager {
   }
 
   private void buildSelectActions() {
-    CWAction unitSelect = new UnitSelectAction(game, mapRenderer, inGameSession);
+    CWAction unitSelect = new SelectAction(game, mapRenderer, inGameSession);
     actions.put("SELECT_UNIT", unitSelect);
+
+    CWAction showAttackZone = new ShowAttackZoneAction(game, mapRenderer, inGameSession);
+    actions.put("ATTACK_ZONE_UNIT", showAttackZone);
   }
 
   private void buildAnimatedActions() {
     CWAction unitMoveAnimated = new MoveAnimatedAction(game, mapRenderer, moveTraverse, inGameSession);
-    CWAction unitWait = new UnitWaitAction(game, mapRenderer, inGameSession);
+    CWAction unitWait = new WaitAction(game, mapRenderer, inGameSession);
     CWAction unitCapture = new CaptureAction(game, inGameSession);
+    CWAction unitSupplyAndHeal = new SupplyAndHealAction(game, inGameSession);
+    CWAction unitLoadIntoTransport = new LoadAction(game, inGameSession, unitWait, mapRenderer);
     actions.put("UNIT_MOVE_ANIMATED", unitMoveAnimated);
-    actions.put("UNIT_WAIT", unitWait);
-    actions.put("UNIT_CAPTURE", unitCapture);
 
     // Animated move actions
     ActionBag waitActions = new ActionBag("Wait Actions");
@@ -94,6 +106,17 @@ public class ActionManager {
     captureActions.addAction(unitCapture);
     captureActions.addAction(unitWait);
     actions.put("UNIT_MOVE_CAPTURE_WAIT", captureActions);
+
+    ActionBag supplyActions = new ActionBag("Supply Actions");
+    supplyActions.addAction(unitMoveAnimated);
+    supplyActions.addAction(unitSupplyAndHeal);
+    supplyActions.addAction(unitWait);
+    actions.put("UNIT_MOVE_SUPPLY_WAIT", supplyActions);
+
+    ActionBag loadActions = new ActionBag("Load Actions");
+    loadActions.addAction(unitMoveAnimated);
+    loadActions.addAction(unitLoadIntoTransport);
+    actions.put("UNIT_MOVE_LOAD_WAIT", loadActions);
   }
 
   public void doAction(String actionName) {

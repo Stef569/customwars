@@ -121,19 +121,24 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
   }
 
   /**
-   * @param supplier The Supplier of which we want to retrieve the suppliables in range for
-   * @return units in supplyRange of Supplier.
+   * Retrieve a list of units in heal range of the unit
+   *
+   * @param unit The unit of which we want to retrieve the suppliables in range for
+   * @return units in healRange of unit that can be healed and supplied
    */
-  public List<Unit> getSuppliablesInRange(Unit supplier, Location location) {
+  public List<Unit> getSuppliablesInRange(Unit unit) {
     List<Unit> units = new ArrayList<Unit>();
-    int minHealSupplyRange = supplier.getMinHealRange();
-    int maxHealSupplyRange = supplier.getMaxHealRange();
+    int minHealSupplyRange = unit.getMinHealRange();
+    int maxHealSupplyRange = unit.getMaxHealRange();
 
-    for (Tile t : getSurroundingTiles(location, minHealSupplyRange, maxHealSupplyRange)) {
-      Unit unit = getUnitOn(t);
+    for (Tile t : getSurroundingTiles(unit.getLocation(), minHealSupplyRange, maxHealSupplyRange)) {
+      Unit unitInRange = getUnitOn(t);
 
-      if (supplier.canSupply(unit)) {
-        units.add(unit);
+      if (unitInRange != null) {
+        if (unit.getOwner().isAlliedWith(unitInRange.getOwner()) &&
+                unit.canSupply(unitInRange) && unit.canHeal(unitInRange)) {
+          units.add(unitInRange);
+        }
       }
     }
     return units;

@@ -1,8 +1,10 @@
-package com.customwars.client.action;
+package com.customwars.client.action.game;
 
+import com.customwars.client.action.CWAction;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.ui.HUD;
 import com.customwars.client.ui.renderer.MapRenderer;
+import com.customwars.client.ui.state.InGameSession;
 
 /**
  * End the current turn, and clean up (selected unit, visible popup, undo actions,...)
@@ -15,7 +17,7 @@ public class EndTurnAction extends CWAction {
   private MapRenderer mapRenderer;
   private HUD hud;
 
-  protected EndTurnAction(Game game, InGameSession inGameSession, MapRenderer mapRenderer, HUD hud) {
+  public EndTurnAction(Game game, InGameSession inGameSession, MapRenderer mapRenderer, HUD hud) {
     super("End Turn", false);
     this.hud = hud;
     this.mapRenderer = mapRenderer;
@@ -39,8 +41,5 @@ public class EndTurnAction extends CWAction {
     mapRenderer.removeZones();
     mapRenderer.showArrows(false);
     hud.hidePopup();
-  }
-
-  void undoAction() {
   }
 }

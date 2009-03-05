@@ -127,6 +127,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler {
     canDive = otherUnit.canDive;
     canSupply = otherUnit.canSupply;
     canHeal = otherUnit.canHeal;
+    canTransport = otherUnit.canTransport;
     transportTypes = otherUnit.transportTypes;
 
     armyBranch = otherUnit.armyBranch;
@@ -351,7 +352,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler {
     }
   }
 
-  private boolean canHeal(Unit unit) {
+  public boolean canHeal(Unit unit) {
     return unit != null && canHeal;
   }
 
@@ -680,6 +681,8 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler {
     if (location != null)
       strBuilder.append(" location=(").append(location.getCol()).append(",").append(location.getRow()).append(")");
     if (owner != null) strBuilder.append(" owner=").append(owner);
+    if (transport != null)
+      strBuilder.append(" transport=").append(transport);
     strBuilder.append("]");
     return strBuilder.toString();
   }

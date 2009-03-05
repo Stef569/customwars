@@ -11,11 +11,11 @@ public abstract class CWAction {
   boolean actionCompleted;
   boolean canUndo;
 
-  protected CWAction(String name) {
+  public CWAction(String name) {
     this(name, true);
   }
 
-  protected CWAction(String name, boolean canUndo) {
+  public CWAction(String name, boolean canUndo) {
     this.name = name;
     this.canUndo = canUndo;
   }
@@ -31,9 +31,10 @@ public abstract class CWAction {
   /**
    * Contains the action code
    */
-  abstract void doActionImpl();
+  protected abstract void doActionImpl();
 
-  abstract void undoAction();
+  public void undoAction() {
+  }
 
   public String getName() {
     return name;

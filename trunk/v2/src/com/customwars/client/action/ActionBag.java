@@ -22,15 +22,12 @@ public class ActionBag extends CWAction {
     actions = new ArrayList<CWAction>();
   }
 
-  void doActionImpl() {
+  protected void doActionImpl() {
     doAll = true;
     started = true;
   }
 
-  /**
-   * after this method canPerformAction will return true
-   */
-  void undoAction() {
+  public void undoAction() {
     undoAll = true;
     started = true;
   }
