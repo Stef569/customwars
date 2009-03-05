@@ -22,14 +22,13 @@ public abstract class DelayedAction extends CWAction {
     }
   }
 
-  void undoAction() {
+  public void undoAction() {
   }
 
   /**
    * Init the delayed action, called once before doActionImpl
    */
-  abstract void init();
-
+  protected abstract void init();
 
   public void update(int elapsedTime) {
     if (running) {
@@ -49,5 +48,9 @@ public abstract class DelayedAction extends CWAction {
     if (actionCompleted) {
       running = false;
     }
+  }
+
+  public void setActionCompleted(boolean completed) {
+    super.actionCompleted = completed;
   }
 }

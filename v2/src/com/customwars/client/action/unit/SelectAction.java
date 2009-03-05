@@ -1,9 +1,11 @@
-package com.customwars.client.action;
+package com.customwars.client.action.unit;
 
+import com.customwars.client.action.CWAction;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.ui.renderer.MapRenderer;
+import com.customwars.client.ui.state.InGameSession;
 
 /**
  * Select a unit and make it the active unit in the game. This is the first action
@@ -11,12 +13,12 @@ import com.customwars.client.ui.renderer.MapRenderer;
  *
  * @author stefan
  */
-public class UnitSelectAction extends CWAction {
+public class SelectAction extends CWAction {
   private MapRenderer mapRenderer;
   private InGameSession inGameSession;
   private Game game;
 
-  protected UnitSelectAction(Game game, MapRenderer mapRenderer, InGameSession inGameSession) {
+  public SelectAction(Game game, MapRenderer mapRenderer, InGameSession inGameSession) {
     super("Select");
     this.game = game;
     this.inGameSession = inGameSession;
@@ -39,7 +41,7 @@ public class UnitSelectAction extends CWAction {
     mapRenderer.showArrows(true);
   }
 
-  void undoAction() {
+  public void undoAction() {
     deselectActiveUnit();
     inGameSession.setClick(1, null);
     inGameSession.setMode(InGameSession.MODE.DEFAULT);

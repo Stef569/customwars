@@ -3,6 +3,7 @@ package com.customwars.client.controller;
 import com.customwars.client.action.ActionManager;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.gameobject.City;
+import com.customwars.client.model.gameobject.Locatable;
 import com.customwars.client.model.gameobject.Terrain;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Location;
@@ -31,38 +32,61 @@ public abstract class UnitController {
     this.moveTraverse = moveTraverse;
   }
 
-  boolean canSelect(Location location) {
-    return isUnitOn(location) && isUnitVisible() &&
+  boolean canSelect(Location selected) {
+    return isUnitOn(selected) && isUnitVisible() &&
             unit.isActive() && game.getActiveUnit() == null;
   }
 
-  boolean canCapture(Tile clicked) {
-    if (clicked == null) return false;
+  boolean canCapture(Tile selected) {
+    if (selected == null) return false;
 
     Unit activeUnit = game.getActiveUnit();
-    Terrain terrain = clicked.getTerrain();
+    Terrain terrain = selected.getTerrain();
 
     if (terrain instanceof City) {
       City city = (City) terrain;
 
-      return isUnitOn(clicked) && isActiveUnitInGame() &&
+      return isUnitOn(selected) && isActiveUnitInGame() &&
               city.canBeCapturedBy(activeUnit) &&
               !city.getOwner().isAlliedWith(activeUnit.getOwner()) &&
-              clicked.getLocatableCount() == 1;
+              selected.getLocatableCount() == 1;
     } else {
       return false;
     }
   }
 
   boolean canMove(Location from, Location to) {
-    if (from == null || to == null) return false;
-
-    return isUnitOn(from) && isActiveUnitInGame() &&
+    return (from != null || to != null) && isUnitOn(from) && isActiveUnitInGame() &&
             unit.isActive() && game.getActiveUnit().isWithinMoveZone(to);
+
   }
 
   public boolean canWait(Tile selected) {
-    return isActiveUnitInGame() && unit.isActive();
+    return selected != null && isActiveUnitInGame() && unit.isActive();
+  }
+
+  public boolean canSupply(Tile selected) {
+    return selected != null && isActiveUnitInGame() && unit.isActive() &&
+            !game.getMap().getSuppliablesInRange(game.getActiveUnit()).isEmpty();
+  }
+
+  /**
+   * Can the activeUnit be added to the transport
+   */
+  public boolean canLoad(Tile selected) {
+    if (selected == null) return false;
+
+    Unit transporter;
+    Locatable locatable = selected.getLocatable(0);
+    if (locatable instanceof Unit) {
+      transporter = (Unit) locatable;
+    } else {
+      return false;
+    }
+
+    return isActiveUnitInGame() && unit.isActive() && isUnitVisible() &&
+            transporter.canTransport(unit.getMovementType()) &&
+            transporter.getOwner() == unit.getOwner();
   }
 
   private boolean isActiveUnitInGame() {

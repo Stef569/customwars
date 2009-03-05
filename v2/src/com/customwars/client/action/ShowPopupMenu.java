@@ -5,6 +5,7 @@ import com.customwars.client.model.map.Tile;
 import com.customwars.client.ui.HUD;
 import com.customwars.client.ui.PopupMenu;
 import com.customwars.client.ui.renderer.MapRenderer;
+import com.customwars.client.ui.state.InGameSession;
 import org.newdawn.slick.gui.AbstractComponent;
 import org.newdawn.slick.gui.ComponentListener;
 
@@ -24,11 +25,9 @@ public class ShowPopupMenu extends CWAction implements ComponentListener {
   private List<CWAction> unitActions;
   private List<String> unitMenuItemNames;
   private InGameSession inGameSession;
-  private MapRenderer mapRenderer;
 
   public ShowPopupMenu(String popupName, HUD hud, InGameSession inGameSession, MapRenderer mapRenderer) {
     super(popupName);
-    this.mapRenderer = mapRenderer;
     this.popupName = popupName;
     this.hud = hud;
     this.inGameSession = inGameSession;
@@ -48,7 +47,7 @@ public class ShowPopupMenu extends CWAction implements ComponentListener {
     hud.showPopUp(popUpLocation, popupName, actions, this);
   }
 
-  void undoAction() {
+  public void undoAction() {
     inGameSession.setMode(InGameSession.MODE.DEFAULT);
     hud.hidePopup();
   }

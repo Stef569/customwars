@@ -1,11 +1,13 @@
-package com.customwars.client.action;
+package com.customwars.client.action.unit;
 
+import com.customwars.client.action.DelayedAction;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.gameobject.UnitState;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.path.MoveTraverse;
 import com.customwars.client.ui.renderer.MapRenderer;
+import com.customwars.client.ui.state.InGameSession;
 
 /**
  * Moves the active unit to the 2nd tile in the inGameSession
@@ -43,12 +45,12 @@ public class MoveAnimatedAction extends DelayedAction {
   /**
    * This method is called by the timer everytime the MOVE_DELAY has passed
    */
-  public void doActionImpl() {
+  protected void doActionImpl() {
     moveTraverse.update();
 
     if (moveTraverse.isPathMoveComplete()) {
       pathMoveComplete();
-      actionCompleted = true;
+      setActionCompleted(true);
     }
   }
 
@@ -59,7 +61,7 @@ public class MoveAnimatedAction extends DelayedAction {
     mapRenderer.setCursorLocked(false);
   }
 
-  void undoAction() {
+  public void undoAction() {
     Location from = inGameSession.getClick(2);
     Location to = inGameSession.getClick(1);
 
