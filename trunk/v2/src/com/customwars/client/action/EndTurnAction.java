@@ -5,6 +5,8 @@ import com.customwars.client.ui.HUD;
 import com.customwars.client.ui.renderer.MapRenderer;
 
 /**
+ * End the current turn, and clean up (selected unit, visible popup, undo actions,...)
+ *
  * @author stefan
  */
 public class EndTurnAction extends CWAction {
