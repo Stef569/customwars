@@ -123,7 +123,7 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
       config.configure();
 
       AppGameContainer appGameContainer = new AppGameContainer(new TestStates(startID));
-      appGameContainer.setDisplayMode(1024, 800, false);
+      appGameContainer.setDisplayMode(640, 480, false);
       appGameContainer.setTargetFrameRate(60);
       appGameContainer.start();
     } catch (SlickException e) {
