@@ -149,7 +149,7 @@ public class TestInGameState extends CWState implements PropertyChangeListener, 
     g.scale(camera.getZoomLvl(), camera.getZoomLvl());
     mapRenderer.render(-camera.getX(), -camera.getY(), g);
     renderTileInfo(mapRenderer.getCursorLocation().toString(), g, container);
-    hud.render(g);
+    hud.render(g, -camera.getX(), -camera.getY());
   }
 
   private void renderTileInfo(String tileInfo, Graphics g, GameContainer container) {
