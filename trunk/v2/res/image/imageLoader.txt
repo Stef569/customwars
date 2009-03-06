@@ -1,7 +1,9 @@
 // ImagesFile Formats:
-// o <fileName>                  A single image
-// s <imgName> <fileName> <tileWidth> <tileHeight>    // image strip
-// m <imgName> <fileName> <tileWidth> <tileHeight>    // Rows of image strips
+// o <imgName> <fileName> <recolor>                 // A single image
+// s <imgName> <fileName> 
+// <tileWidth> <tileHeight> <recolor=false>    // image strip
+// m <imgName> <fileName> 
+// <tileWidth> <tileHeight> <recolor=false>    // Rows of image strips
 // Note: folder and image names are case sensitive!!
 
 s terrains res/image/awTerrains.png 32 42
@@ -14,8 +16,8 @@ s arrows res/image/arrows.png 32 32
 s moveZone res/image/moveTile.png 32 32
 s attackZone res/image/attackTile.png 32 32
 
-m unit_red res/image/units_RED.png 32 40
+m unit_red res/image/units_RED.png 32 40 true
 s unitDecoration res/image/unitDecoration.png 16 16
 
-m CITY_RED res/image/cities_RED.png 32 60
+m CITY_RED res/image/cities_RED.png 32 60 true
 //s cityDecoration res/image/cityDecoration.png 2

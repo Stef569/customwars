@@ -2,6 +2,10 @@ package com.customwars.client.io.loading;
 
 import static com.customwars.client.io.ErrConstants.*;
 import com.customwars.client.io.img.ImageLib;
+import com.customwars.client.io.img.slick.ImageStrip;
+import com.customwars.client.io.img.slick.SpriteSheet;
+import org.newdawn.slick.Image;
+import org.newdawn.slick.SlickException;
 import tools.IOUtil;
 
 import java.io.BufferedReader;
@@ -71,43 +75,48 @@ public class ImageParser {
     }
 
     char ch = Character.toLowerCase(line.charAt(0));
-    if (ch == SINGLE_IMAGE_SYMBOL) {                // 1 image, it's put into a strip
-      loadSingleImage(line);
-    } else if (ch == STRIP_IMAGE_SYMBOL) {          // an images strip
-      loadStripImages(line);
-    } else if (ch == MATRIX_IMAGE_SYMBOL) {         // a Matrix images accessable by row, col
-      loadSpriteSheet(line);
-    } else
-      throw new IllegalArgumentException(ERR_READING_LINE + line + ", unknown Char: " + ch);
+    try {
+      if (ch == SINGLE_IMAGE_SYMBOL) {                // 1 image, it's put into a strip
+        loadSingleImage(line);
+      } else if (ch == STRIP_IMAGE_SYMBOL) {          // an images strip
+        loadStripImages(line);
+      } else if (ch == MATRIX_IMAGE_SYMBOL) {         // a Matrix images accessable by row, col
+
+        loadSpriteSheet(line);
+
+      } else
+        throw new IllegalArgumentException(ERR_READING_LINE + line + ", unknown Char: " + ch);
+    } catch (SlickException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   /**
    * format:
-   * o <imgName> <fileName>
+   * o <imgName> <fileName> (<storeAsAwt>)
    */
-  private void loadSingleImage(String line) throws NumberFormatException, IOException {
+  private void loadSingleImage(String line) throws NumberFormatException, IOException, SlickException {
     StringTokenizer tokens = new StringTokenizer(line);
 
-    if (tokens.countTokens() != 3)
+    if (tokens.countTokens() <= 3)
       throw new IllegalArgumentException(ERR_WRONG_NUM_ARGS + " for line: " + line +
               " Usage " + SINGLE_IMAGE_SYMBOL + " <imgName> <fileName>");
     else {
       tokens.nextToken();    // skip command label
       String imgName = tokens.nextToken();
       String imgPath = tokens.nextToken();
-      imageLib.loadAwtImg(imgName, imgPath);
-      imageLib.loadSlickImage(imgName, imgPath);
+      imageLib.addSlickImg(imgName, new Image(imgPath));
     }
   }
 
   /**
    * format:
-   * s <imgName> <fileName> <tileWidth> <tileHeight>
+   * s <imgName> <fileName> <tileWidth> <tileHeight> (<storeAsAwt>)
    */
-  private void loadStripImages(String line) throws NumberFormatException, IOException {
+  private void loadStripImages(String line) throws NumberFormatException, IOException, SlickException {
     StringTokenizer tokens = new StringTokenizer(line);
 
-    if (tokens.countTokens() != 5)
+    if (tokens.countTokens() < 5)
       throw new IllegalArgumentException(ERR_WRONG_NUM_ARGS + " for line: " + line +
               " Usage: " + STRIP_IMAGE_SYMBOL + " <imgName> <fileName> <tileWidth> <tileHeight>");
     else {
@@ -116,20 +125,28 @@ public class ImageParser {
       String imgPath = tokens.nextToken();
       int tileWidth = Integer.parseInt(tokens.nextToken());
       int tileHeight = Integer.parseInt(tokens.nextToken());
+      boolean storeAsAwt = false;
+      if (tokens.hasMoreTokens()) {
+        storeAsAwt = Boolean.parseBoolean(tokens.nextToken());
+      }
 
-      imageLib.loadAwtImg(imgName, imgPath);
-      imageLib.loadSlickImageStrip(imgName, tileWidth, tileHeight);
+      if (storeAsAwt) {
+        imageLib.loadAwtImg(imgName, imgPath);
+        imageLib.loadSlickImageStrip(imgName, tileWidth, tileHeight);
+      } else {
+        imageLib.addSlickImg(imgName, new ImageStrip(imgPath, tileWidth, tileHeight));
+      }
     }
   }
 
   /**
    * format:
-   * m <imgName> <fileName> <tileWidth> <tileHeight>
+   * m <imgName> <fileName> <tileWidth> <tileHeight> (<storeAsAwt>)
    */
-  private void loadSpriteSheet(String line) throws NumberFormatException, IOException {
+  private void loadSpriteSheet(String line) throws NumberFormatException, IOException, SlickException {
     StringTokenizer tokens = new StringTokenizer(line);
 
-    if (tokens.countTokens() != 5)
+    if (tokens.countTokens() < 5)
       throw new IllegalArgumentException(ERR_WRONG_NUM_ARGS + " for line: " + line +
               " Usage: " + MATRIX_IMAGE_SYMBOL + " <imgName> <fileName> <tileWidth> <tileHeight>");
     else {
@@ -138,9 +155,17 @@ public class ImageParser {
       String imgPath = tokens.nextToken();
       int tileWidth = Integer.parseInt(tokens.nextToken());
       int tileHeight = Integer.parseInt(tokens.nextToken());
+      boolean storeAsAwt = false;
+      if (tokens.hasMoreTokens()) {
+        storeAsAwt = Boolean.parseBoolean(tokens.nextToken());
+      }
 
-      imageLib.loadAwtImg(imgName, imgPath);
-      imageLib.loadSlickSpriteSheet(imgName, tileWidth, tileHeight);
+      if (storeAsAwt) {
+        imageLib.loadAwtImg(imgName, imgPath);
+        imageLib.loadSlickSpriteSheet(imgName, tileWidth, tileHeight);
+      } else {
+        imageLib.addSlickImg(imgName, new SpriteSheet(imgPath, tileWidth, tileHeight));
+      }
     }
   }
 }
