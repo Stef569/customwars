@@ -3,7 +3,6 @@ package com.customwars.client.action.unit;
 import com.customwars.client.action.CWAction;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.gameobject.Unit;
-import com.customwars.client.model.gameobject.UnitState;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.ui.renderer.MapRenderer;
 import com.customwars.client.ui.state.InGameSession;
@@ -37,10 +36,9 @@ public class LoadAction extends CWAction {
     Unit activeUnit = game.getActiveUnit();
 
     waitAction.doAction();
+    waitAction.setActionCompleted(false);
     selected.remove(activeUnit);
     transport.add(activeUnit);
-    transport.setUnitState(UnitState.TRANSPORTING);
-    mapRenderer.setActiveUnit(null);
     mapRenderer.removeUnit(activeUnit);
   }
 }

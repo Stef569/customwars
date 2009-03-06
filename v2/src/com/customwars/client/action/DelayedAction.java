@@ -49,8 +49,4 @@ public abstract class DelayedAction extends CWAction {
       running = false;
     }
   }
-
-  public void setActionCompleted(boolean completed) {
-    super.actionCompleted = completed;
-  }
 }

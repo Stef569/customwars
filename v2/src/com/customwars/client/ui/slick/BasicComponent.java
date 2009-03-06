@@ -48,6 +48,7 @@ public abstract class BasicComponent extends AbstractComponent {
    * @see org.newdawn.slick.gui.AbstractComponent#mouseReleased(int,int,int)
    */
   public void mouseReleased(int button, int x, int y) {
+    if (camera == null) return;
     setFocus(Rectangle.contains(
             camera.convertToGameX(x),
             camera.convertToGameY(y),

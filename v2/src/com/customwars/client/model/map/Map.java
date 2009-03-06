@@ -7,6 +7,7 @@ import com.customwars.client.model.gameobject.GameObjectState;
 import com.customwars.client.model.gameobject.Locatable;
 import com.customwars.client.model.gameobject.Terrain;
 import com.customwars.client.model.gameobject.Unit;
+import com.customwars.client.model.gameobject.UnitState;
 import com.customwars.client.model.map.path.Mover;
 import com.customwars.client.model.map.path.PathFinder;
 import org.apache.log4j.Logger;
@@ -99,10 +100,10 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
   }
 
   /**
-   * Reset the map so that the player can control his units by:
-   * Making all units Idle
-   * except the units of the player
-   * They are made Active.
+   * Reset the map so that the player can
+   * control his units by setting the unit Game Object state to ACTIVE
+   * unit state is put to IDLE, so that a unit is
+   * ready to perform a unit action(ie Capture)
    *
    * @param player The player whos units should be made active
    */
@@ -113,6 +114,7 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
       if (unit != null) {
         if (unit.getOwner() == player) {
           unit.setState(GameObjectState.ACTIVE);
+          unit.setUnitState(UnitState.IDLE);
         } else {
           unit.setState(GameObjectState.IDLE);
         }

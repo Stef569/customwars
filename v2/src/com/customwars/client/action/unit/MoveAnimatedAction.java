@@ -14,7 +14,7 @@ import com.customwars.client.ui.state.InGameSession;
  * @author stefan
  */
 public class MoveAnimatedAction extends DelayedAction {
-  private static final int MOVE_DELAY = 500;
+  private static final int MOVE_DELAY = 250;
   private InGameSession inGameSession;
   private MoveTraverse moveTraverse;
   private Game game;

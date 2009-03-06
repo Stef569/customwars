@@ -4,6 +4,8 @@ package com.customwars.client.action;
  * Base class for each Action in the game
  * an Action can be done and undone.
  *
+ * When the action has been performed actioncomplete will be true
+ *
  * @author stefan
  */
 public abstract class CWAction {
@@ -34,6 +36,10 @@ public abstract class CWAction {
   protected abstract void doActionImpl();
 
   public void undoAction() {
+  }
+
+  public void setActionCompleted(boolean completed) {
+    this.actionCompleted = completed;
   }
 
   public String getName() {
