@@ -150,23 +150,7 @@ public class TestInGameState extends CWState implements PropertyChangeListener, 
   public void render(GameContainer container, Graphics g) throws SlickException {
     g.scale(camera.getZoomLvl(), camera.getZoomLvl());
     mapRenderer.render(-camera.getX(), -camera.getY(), g);
-    renderTileInfo(mapRenderer.getCursorLocation().toString(), g, container);
     hud.render(g);
-  }
-
-  private void renderTileInfo(String tileInfo, Graphics g, GameContainer container) {
-    String line1 = tileInfo, line2 = "";
-
-    int endIndex = tileInfo.length();
-    while (g.getFont().getWidth(line1) > container.getWidth() - 20) {
-      line1 = tileInfo.substring(0, endIndex--);
-    }
-
-    if (endIndex > 0)
-      line2 = tileInfo.substring(endIndex);
-    g.drawString(line1, 10, container.getHeight() - 40);
-    g.drawString(line2, 10, container.getHeight() - 20);
-
   }
 
   public void controlPressed(Command command, CWInput cwInput) {
@@ -244,6 +228,7 @@ public class TestInGameState extends CWState implements PropertyChangeListener, 
     if (cwInput.isRightPressed(command)) {
       mapRenderer.moveCursor(Direction.EAST);
     }
+    hud.moveOverTile(mapRenderer.getCursorLocation(), true);
   }
 
   public void keyReleased(int key, char c) {
@@ -269,6 +254,7 @@ public class TestInGameState extends CWState implements PropertyChangeListener, 
     int gameX = camera.convertToGameX(newx);
     int gameY = camera.convertToGameY(newy);
     mapRenderer.moveCursor(gameX, gameY);
+    hud.moveOverTile(mapRenderer.getCursorLocation(), true);
   }
 
   public int getID() {

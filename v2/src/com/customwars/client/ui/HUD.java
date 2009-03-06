@@ -3,7 +3,6 @@ package com.customwars.client.ui;
 import com.customwars.client.io.ResourceManager;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.map.Location;
-import com.customwars.client.model.map.Tile;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.gui.ComponentListener;
 import org.newdawn.slick.gui.GUIContext;
@@ -18,21 +17,22 @@ import java.util.List;
  */
 public class HUD {
   private Game game;
-  private GUIContext gui;
+  private GUIContext guiContext;
   private PopupMenu popupMenu;
+  private Location selectedTile;
 
-  public HUD(Game game, GUIContext gui) {
+  public HUD(Game game, GUIContext guiContext) {
     this.game = game;
-    this.gui = gui;
-    popupMenu = new PopupMenu(gui);
+    this.guiContext = guiContext;
+    popupMenu = new PopupMenu(guiContext);
   }
 
   public void loadResources(ResourceManager resources) {
 
   }
 
-  public void moveOverTile(Tile tile, boolean leftSide) {
-
+  public void moveOverTile(Location tile, boolean leftSide) {
+    selectedTile = tile;
   }
 
   public void showPopUp(Location popUpLocation, String popUpName, List<String> items, ComponentListener componentListener) {
@@ -58,7 +58,22 @@ public class HUD {
     g.drawString("Day:" + game.getDay(), 100, 10);
     g.drawString("Player:" + game.getActivePlayer().getName(), 100, 20);
 
-    popupMenu.render(gui, g);
+    popupMenu.render(guiContext, g);
+    renderTileInfo(selectedTile.toString(), g);
+  }
+
+  private void renderTileInfo(String tileInfo, Graphics g) {
+    String line1 = tileInfo, line2 = "";
+
+    int endIndex = tileInfo.length();
+    while (g.getFont().getWidth(line1) > guiContext.getWidth() - 20) {
+      line1 = tileInfo.substring(0, endIndex--);
+    }
+
+    if (endIndex > 0)
+      line2 = tileInfo.substring(endIndex);
+    g.drawString(line1, 10, guiContext.getHeight() - 40);
+    g.drawString(line2, 10, guiContext.getHeight() - 20);
   }
 
   public void hidePopup() {
