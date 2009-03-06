@@ -147,17 +147,41 @@ public class GameTest {
   public void testGameOver() {
     startGame(p1);
 
-    // Give p1 a unit
+    // Give p3 a unit
     Unit inf = UnitFactory.getUnit(TestData.INF);
     game.getMap().getRandomTile().add(inf);
     p3.addUnit(inf);
-
-    Assert.assertEquals(false, p1.isAlliedWith(p3));
 
     // Kill it
     inf.destroy();
 
     // Game is now over
     Assert.assertEquals(true, game.isDestroyed());
+  }
+
+  @Test
+  public void testGameWithNeutralPlayer() {
+    Player p1 = new Player(1, Color.YELLOW, false, null, "Stef", Integer.MAX_VALUE, 0, false);
+    Player p2 = new Player(2, Color.GREEN, false, null, "JSR", 8500, 0, false);
+    Player p3 = new Player(3, Color.BLACK, false, null, "Ben", 50, 0, false);
+    Player neutral = new Player(Color.GRAY, null, -1);
+
+    // Try to Start a game with neutral
+    startGame(new GameConfig(), neutral, Arrays.asList(p1, p2, p3, neutral));
+
+    // Neutral is skipped, next active player is p1
+    Assert.assertEquals(p1, game.getActivePlayer());
+
+    // next in the list is p2(doh)
+    game.endTurn();
+    Assert.assertEquals(p2, game.getActivePlayer());
+
+    // next in the list is p3(doh)
+    game.endTurn();
+    Assert.assertEquals(p3, game.getActivePlayer());
+
+    // Neutral is skipped again
+    game.endTurn();
+    Assert.assertEquals(p1, game.getActivePlayer());
   }
 }
