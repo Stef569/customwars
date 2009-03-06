@@ -59,7 +59,9 @@ public class HUD {
     g.drawString("Player:" + game.getActivePlayer().getName(), 100, 20);
 
     popupMenu.render(guiContext, g);
-    renderTileInfo(selectedTile.toString(), g);
+
+    if (selectedTile != null)
+      renderTileInfo(selectedTile.toString(), g);
   }
 
   private void renderTileInfo(String tileInfo, Graphics g) {
@@ -84,7 +86,6 @@ public class HUD {
   public void setGame(Game game) {
     this.game = game;
   }
-
 
   public boolean isPopupVisible() {
     return popupMenu != null && popupMenu.isVisible();

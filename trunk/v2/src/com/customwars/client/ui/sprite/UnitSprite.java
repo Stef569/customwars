@@ -57,9 +57,6 @@ public class UnitSprite extends TileSprite implements PropertyChangeListener {
     assert tile == unit.getLocation() : "Unitsprite should have same location as the unit";
   }
 
-  // ----------------------------------------------------------------------------
-  // Setters
-  // ----------------------------------------------------------------------------
   private void setOrientation(Direction dir) {
     switch (dir) {
       case EAST:
@@ -99,6 +96,14 @@ public class UnitSprite extends TileSprite implements PropertyChangeListener {
 
   public void setAnimDying(Animation animDying) {
     this.animDying = animDying;
+  }
+
+  /**
+   * Changes the current sprite animation by updating the sprite to the unit GameObjectState
+   * this results in a new animation to be set over the current one.
+   */
+  public void updateAnim() {
+    changeState(unit.getState());
   }
 
   public void setLocation(Location newLocation) {
@@ -146,15 +151,16 @@ public class UnitSprite extends TileSprite implements PropertyChangeListener {
   }
 
   private void renderUnitState(int x, int y, Graphics g, int unitState) {
+    if (unit.getLocatableCount() > 0) {
+      g.drawImage(decorations.getSubImage(LOAD), x + UNIT_DECOR_LOWER_LEFT_X, y + UNIT_DECOR_LOWER_LEFT_Y);
+    }
+
     switch (unitState) {
       case UnitState.CAPTURING:
         g.drawImage(decorations.getSubImage(CAPTURE), x + UNIT_DECOR_LOWER_LEFT_X, y + UNIT_DECOR_LOWER_LEFT_Y);
         break;
       case UnitState.SUBMERGED:
         g.drawImage(decorations.getSubImage(SUBMERGED), x + UNIT_DECOR_LOWER_LEFT_X, y + UNIT_DECOR_LOWER_LEFT_Y);
-        break;
-      case UnitState.TRANSPORTING:
-        g.drawImage(decorations.getSubImage(LOAD), x + UNIT_DECOR_LOWER_LEFT_X, y + UNIT_DECOR_LOWER_LEFT_Y);
         break;
     }
   }
@@ -166,9 +172,7 @@ public class UnitSprite extends TileSprite implements PropertyChangeListener {
       if (propertyName.equals("fog")) {
         setVisible(!(Boolean) evt.getNewValue());
       }
-    }
-
-    if (evt.getSource() == unit) {
+    } else if (evt.getSource() == unit) {
       if (propertyName.equals("hp")) {
         lowHp = unit.hasLowHp();
       } else if (propertyName.equals("supply")) {
@@ -183,13 +187,5 @@ public class UnitSprite extends TileSprite implements PropertyChangeListener {
         setLocation((Location) evt.getNewValue());
       }
     }
-  }
-
-  /**
-   * Changes the current sprite animation by updating the sprite to the unit GameObjectState
-   * this results in a new animation to be set over the current one.
-   */
-  public void updateAnim() {
-    changeState(unit.getState());
   }
 }

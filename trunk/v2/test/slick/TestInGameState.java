@@ -132,6 +132,7 @@ public class TestInGameState extends CWState implements PropertyChangeListener, 
     mapRenderer.addCursor("AIM", aimCursor);
     mapRenderer.activateCursor("SELECT");
     mapRenderer.setMap(map);
+    hud.moveOverTile(mapRenderer.getCursorLocation(), true);
   }
 
   private void initCamera(Map<Tile> map, GameContainer container) {

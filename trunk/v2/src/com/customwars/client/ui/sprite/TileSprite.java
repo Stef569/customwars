@@ -92,9 +92,6 @@ public class TileSprite extends Sprite implements Locatable {
     frameHeightOffset = 0;
   }
 
-  //----------------------------------------------------------------------------
-  // SETTERS
-  // ---------------------------------------------------------------------------
   private void setMap(TileMap map) {
     this.map = map;
     this.tileSize = map.getTileSize();
@@ -117,9 +114,6 @@ public class TileSprite extends Sprite implements Locatable {
     this.renderInCenter = renderInCenter;
   }
 
-  //----------------------------------------------------------------------------
-  // GETTERS
-  // ---------------------------------------------------------------------------
   public Location getLocation() {
     return location;
   }

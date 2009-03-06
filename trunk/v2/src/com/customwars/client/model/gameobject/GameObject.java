@@ -8,7 +8,7 @@ import java.beans.PropertyChangeSupport;
  * The base class for each game object
  * Game objects are the subject in the observer pattern, they fire
  * PropertyChangeEvents when a bound field changes.
- * When the field is set to the same value no event is fired.
+ * When the field value did not change no event is fired.
  *
  * @author stefan
  */
