@@ -1,6 +1,5 @@
 package com.customwars.client.action;
 
-import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.ui.HUD;
 import com.customwars.client.ui.PopupMenu;
@@ -25,12 +24,14 @@ public class ShowPopupMenu extends CWAction implements ComponentListener {
   private List<CWAction> unitActions;
   private List<String> unitMenuItemNames;
   private InGameSession inGameSession;
+  private MapRenderer mapRenderer;
 
   public ShowPopupMenu(String popupName, HUD hud, InGameSession inGameSession, MapRenderer mapRenderer) {
     super(popupName);
     this.popupName = popupName;
     this.hud = hud;
     this.inGameSession = inGameSession;
+    this.mapRenderer = mapRenderer;
     this.unitActions = new ArrayList<CWAction>();
     this.unitMenuItemNames = new ArrayList<String>();
   }
@@ -38,18 +39,16 @@ public class ShowPopupMenu extends CWAction implements ComponentListener {
   public void doActionImpl() {
     Tile clicked = inGameSession.getClick(2);
     if (clicked != null) {
-      showPopUp(clicked, unitMenuItemNames);
+      hud.showPopUp(clicked, popupName, unitMenuItemNames, this);
     }
     inGameSession.setMode(InGameSession.MODE.MENU);
-  }
-
-  private void showPopUp(Location popUpLocation, List<String> actions) {
-    hud.showPopUp(popUpLocation, popupName, actions, this);
+    mapRenderer.setCursorLocked(true);
   }
 
   public void undoAction() {
-    inGameSession.setMode(InGameSession.MODE.DEFAULT);
     hud.hidePopup();
+    inGameSession.setMode(InGameSession.MODE.DEFAULT);
+    mapRenderer.setCursorLocked(false);
   }
 
   public void addAction(CWAction action, String menuItemName) {

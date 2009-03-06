@@ -36,6 +36,7 @@ public class WaitAction extends CWAction {
     game.getMap().resetFogMap(unit.getOwner());
     game.initZones();
     game.setActiveUnit(null);
+    mapRenderer.setActiveUnit(null);
     unit.setState(GameObjectState.IDLE);
   }
 

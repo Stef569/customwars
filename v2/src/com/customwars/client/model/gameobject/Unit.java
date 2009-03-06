@@ -667,11 +667,11 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler {
     return canTransport && transport.size() - 1 < maxTransportCount;
   }
 
-  public int getMinHealRange() {
+  public int getMinSupplyRange() {
     return minHealRange;
   }
 
-  public int getMaxHealRange() {
+  public int getMaxSupplyRange() {
     return maxHealRange;
   }
 

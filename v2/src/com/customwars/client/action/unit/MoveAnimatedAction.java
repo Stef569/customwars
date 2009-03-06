@@ -3,7 +3,6 @@ package com.customwars.client.action.unit;
 import com.customwars.client.action.DelayedAction;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.gameobject.Unit;
-import com.customwars.client.model.gameobject.UnitState;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.path.MoveTraverse;
 import com.customwars.client.ui.renderer.MapRenderer;
@@ -37,8 +36,6 @@ public class MoveAnimatedAction extends DelayedAction {
     mapRenderer.removeZones();
     mapRenderer.showArrows(false);
     mapRenderer.setCursorLocked(true);
-    activeUnit.setUnitState(UnitState.MOVING);
-
     moveTraverse.prepareMove(activeUnit, to);
   }
 
@@ -56,8 +53,6 @@ public class MoveAnimatedAction extends DelayedAction {
 
   private void pathMoveComplete() {
     inGameSession.setTrapped(moveTraverse.foundTrapper());
-    Unit activeUnit = game.getActiveUnit();
-    activeUnit.setUnitState(UnitState.IDLE);
     mapRenderer.setCursorLocked(false);
   }
 

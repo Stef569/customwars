@@ -14,8 +14,8 @@ s arrows res/image/arrows.png 32 32
 s moveZone res/image/moveTile.png 32 32
 s attackZone res/image/attackTile.png 32 32
 
-m UNIT_RED res/image/units_RED.png 32 40
-//s unit_Decoration unitDecoration.png 6
+m unit_red res/image/units_RED.png 32 40
+s unitDecoration res/image/unitDecoration.png 16 16
 
 m CITY_RED res/image/cities_RED.png 32 60
-//s city_Decoration cityDecoration.png 2
+//s cityDecoration res/image/cityDecoration.png 2
