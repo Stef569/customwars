@@ -61,9 +61,15 @@ public class TurnBasedGame extends GameObject implements PropertyChangeListener 
    */
   public void startGame(Player gameStarter) {
     canStartGame(gameStarter);
-    setActivePlayer(gameStarter);
-    setState(GameObjectState.ACTIVE);
-    startTurn(gameStarter);
+    Player player = getValidPlayer(gameStarter);
+
+    if (player != null) {
+      setActivePlayer(player);
+      setState(GameObjectState.ACTIVE);
+      startTurn(player);
+    } else {
+      endGame();
+    }
   }
 
   public void endTurn() throws NotYourTurnException {
@@ -76,7 +82,7 @@ public class TurnBasedGame extends GameObject implements PropertyChangeListener 
    * @param invoker player trying to end his turn
    * @throws NotYourTurnException When the invoker is not the activePlayer
    */
-  public void endTurn(Player invoker) throws NotYourTurnException {
+  protected void endTurn(Player invoker) throws NotYourTurnException {
     canEndTurn(invoker);
     Player nextActivePlayer = getNextActivePlayer(activePlayer);
     increaseTurn();
@@ -184,15 +190,33 @@ public class TurnBasedGame extends GameObject implements PropertyChangeListener 
   }
 
   public Player getNextActivePlayer(Player player) {
-    int playerSkipCount = 0;
     Player nextPlayer = getNextPlayer(player);
-    while (nextPlayer.isDestroyed()) {
-      nextPlayer = getNextPlayer(nextPlayer);
-      if (playerSkipCount++ == players.size()) {
+    return getValidPlayer(nextPlayer);
+  }
+
+  /**
+   * Retrieve a valid player from the players list
+   * A valid player is not destroyed and not neutral
+   *
+   * While within players bounds
+   * if player is a valid player it is returned
+   * else validate the next player
+   */
+  private Player getValidPlayer(Player player) {
+    Player validPlayer = player;
+    int playerSkipCount = 0;
+    while (!isValidPlayer(validPlayer)) {
+      validPlayer = getNextPlayer(player);
+      if (playerSkipCount++ >= players.size()) {
         return null;
       }
+
     }
-    return nextPlayer;
+    return validPlayer;
+  }
+
+  private boolean isValidPlayer(Player player) {
+    return player != null && !player.isDestroyed() && !player.isNeutral();
   }
 
   public Player getNextPlayer(Player player) {
