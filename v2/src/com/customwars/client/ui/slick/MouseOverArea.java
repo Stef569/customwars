@@ -7,7 +7,6 @@ import org.newdawn.slick.Input;
 import org.newdawn.slick.Sound;
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.geom.Shape;
-import org.newdawn.slick.gui.AbstractComponent;
 import org.newdawn.slick.gui.ComponentListener;
 import org.newdawn.slick.gui.GUIContext;
 
@@ -16,7 +15,7 @@ import org.newdawn.slick.gui.GUIContext;
  *
  * @author kevin
  */
-public class MouseOverArea extends AbstractComponent {
+public class MouseOverArea extends BasicComponent {
   /**
    * The default state
    */
@@ -358,14 +357,14 @@ public class MouseOverArea extends AbstractComponent {
    * @see org.newdawn.slick.util.InputAdapter#mouseMoved(int,int,int,int)
    */
   public void mouseMoved(int oldx, int oldy, int newx, int newy) {
-    selected = area.contains(newx, newy);
+    selected = isWithinArea(newx, newy);
   }
 
   /**
    * @see org.newdawn.slick.util.InputAdapter#mousePressed(int,int,int)
    */
   public void mousePressed(int button, int mx, int my) {
-    selected = area.contains(mx, my);
+    selected = isWithinArea(mx, my);
     if (button == 0) {
       mouseDown = true;
     }
@@ -375,9 +374,17 @@ public class MouseOverArea extends AbstractComponent {
    * @see org.newdawn.slick.util.InputAdapter#mouseReleased(int,int,int)
    */
   public void mouseReleased(int button, int mx, int my) {
-    selected = area.contains(mx, my);
+    selected = isWithinArea(mx, my);
     if (button == 0) {
       mouseDown = false;
+    }
+  }
+
+  private boolean isWithinArea(int x, int y) {
+    if (camera != null) {
+      return area.contains(camera.convertToGameX(x), camera.convertToGameY(y));
+    } else {
+      return area.contains(x, y);
     }
   }
 

@@ -2,6 +2,7 @@ package com.customwars.client.ui.sprite;
 
 import com.customwars.client.io.ResourceManager;
 import com.customwars.client.io.img.AnimLib;
+import com.customwars.client.io.img.slick.ImageStrip;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Locatable;
@@ -41,6 +42,8 @@ public class SpriteManager implements PropertyChangeListener {
   private Map<Unit, UnitSprite> unitSprites;
   private Map<City, CitySprite> citySprites;
   private Set<Animation> uniqueAnimations;
+  private ImageStrip unitDecorationStrip;
+
   private TileSprite activeCursor;
 
   public SpriteManager() {
@@ -52,6 +55,7 @@ public class SpriteManager implements PropertyChangeListener {
 
   public void loadResources(ResourceManager resources) {
     this.resources = resources;
+    unitDecorationStrip = resources.getSlickImgStrip("unitDecoration");
   }
 
   /**
@@ -201,7 +205,7 @@ public class SpriteManager implements PropertyChangeListener {
     } else {
       Tile t = (Tile) unit.getLocation();
       Animation animDying = null;
-      unitSprite = new UnitSprite(t, map, unit, null);
+      unitSprite = new UnitSprite(t, map, unit, unitDecorationStrip);
       unitSprite.setAnimDying(animDying);
     }
     return unitSprite;

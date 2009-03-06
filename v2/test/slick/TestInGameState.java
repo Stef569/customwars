@@ -18,6 +18,7 @@ import com.customwars.client.ui.HUD;
 import com.customwars.client.ui.PopupMenu;
 import com.customwars.client.ui.Scroller;
 import com.customwars.client.ui.renderer.MapRenderer;
+import com.customwars.client.ui.slick.BasicComponent;
 import com.customwars.client.ui.sprite.TileSprite;
 import com.customwars.client.ui.state.CWInput;
 import com.customwars.client.ui.state.CWState;
@@ -137,6 +138,7 @@ public class TestInGameState extends CWState implements PropertyChangeListener, 
     Dimension worldSize = new Dimension(map.getWidth(), map.getHeight());
     Dimension screenSize = new Dimension(container.getWidth(), container.getHeight());
     camera = new Camera2D(screenSize, worldSize, map.getTileSize());
+    BasicComponent.setCamera(camera);
   }
 
   public void update(GameContainer container, int delta) throws SlickException {
@@ -149,7 +151,7 @@ public class TestInGameState extends CWState implements PropertyChangeListener, 
     g.scale(camera.getZoomLvl(), camera.getZoomLvl());
     mapRenderer.render(-camera.getX(), -camera.getY(), g);
     renderTileInfo(mapRenderer.getCursorLocation().toString(), g, container);
-    hud.render(g, -camera.getX(), -camera.getY());
+    hud.render(g);
   }
 
   private void renderTileInfo(String tileInfo, Graphics g, GameContainer container) {

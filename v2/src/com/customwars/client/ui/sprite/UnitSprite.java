@@ -3,6 +3,7 @@ package com.customwars.client.ui.sprite;
 import com.customwars.client.io.img.slick.ImageStrip;
 import com.customwars.client.model.gameobject.GameObjectState;
 import com.customwars.client.model.gameobject.Unit;
+import com.customwars.client.model.gameobject.UnitState;
 import com.customwars.client.model.map.Direction;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Tile;
@@ -125,20 +126,37 @@ public class UnitSprite extends TileSprite implements PropertyChangeListener {
   public void render(int x, int y, Graphics g) {
     super.render(x, y, g);
 
-    translateOffset(g, false);
-    if (lowHp) {
-      g.drawString(unit.getHp() + "", x + locX + UNIT_DECOR_LOWER_RIGHT_X, y + locY + UNIT_DECOR_LOWER_RIGHT_Y);
-    }
+    if (isVisible()) {
+      translateOffset(g, false);
+      if (lowHp) {
+        g.drawString(unit.getHp() + "", x + locX + UNIT_DECOR_LOWER_RIGHT_X, y + locY + UNIT_DECOR_LOWER_RIGHT_Y);
+      }
 
-    if (lowAmmo) {
-      g.drawImage(decorations.getSubImage(LOW_AMMO), x + locX + UNIT_DECOR_MIDDLE_RIGHT_X, y + locY + UNIT_DECOR_MIDDLE_RIGHT_Y, null);
-    }
+      if (lowAmmo) {
+        g.drawImage(decorations.getSubImage(LOW_AMMO), x + locX + UNIT_DECOR_MIDDLE_RIGHT_X, y + locY + UNIT_DECOR_MIDDLE_RIGHT_Y);
+      }
 
-    if (lowSupplies) {
-      g.drawImage(decorations.getSubImage(LOW_SUPPLIES), x + locX + UNIT_DECOR_MIDDLE_RIGHT_X, y + locY + UNIT_DECOR_MIDDLE_RIGHT_Y, null);
-    }
+      if (lowSupplies) {
+        g.drawImage(decorations.getSubImage(LOW_SUPPLIES), x + locX + UNIT_DECOR_MIDDLE_RIGHT_X, y + locY + UNIT_DECOR_MIDDLE_RIGHT_Y);
+      }
 
-    undoTranslateOffset(g);
+      renderUnitState(x + locX, y + locY, g, unit.getUnitState());
+      undoTranslateOffset(g);
+    }
+  }
+
+  private void renderUnitState(int x, int y, Graphics g, int unitState) {
+    switch (unitState) {
+      case UnitState.CAPTURING:
+        g.drawImage(decorations.getSubImage(CAPTURE), x + UNIT_DECOR_LOWER_LEFT_X, y + UNIT_DECOR_LOWER_LEFT_Y);
+        break;
+      case UnitState.SUBMERGED:
+        g.drawImage(decorations.getSubImage(SUBMERGED), x + UNIT_DECOR_LOWER_LEFT_X, y + UNIT_DECOR_LOWER_LEFT_Y);
+        break;
+      case UnitState.TRANSPORTING:
+        g.drawImage(decorations.getSubImage(LOAD), x + UNIT_DECOR_LOWER_LEFT_X, y + UNIT_DECOR_LOWER_LEFT_Y);
+        break;
+    }
   }
 
   public void propertyChange(PropertyChangeEvent evt) {
