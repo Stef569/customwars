@@ -33,7 +33,7 @@ public class Tile extends GameObject implements Location {
   }
 
   public boolean canAdd(Locatable locatable) {
-    return locatable != null;
+    return locatable != null && !contains(locatable);
   }
 
   public boolean remove(Locatable locatable) {
@@ -52,7 +52,7 @@ public class Tile extends GameObject implements Location {
   }
 
   public void add(Locatable locatable) {
-    if (locatable != null && !locatables.contains(locatable)) {
+    if (canAdd(locatable)) {
       locatables.add(locatable);
       locatable.setLocation(this);    // Keep locatable and tile in sync
     }

@@ -27,14 +27,14 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler {
   private String name;          // Full name ie Infantry, Tank, ...
   private String description;   // Information about this Unit
   private int price;            // The price for buying this Unit
-  private int movement;         // The amount of tiles this unit may move per turn.
+  private int movement;         // The move points
   private int vision;           // The amount of tiles this unit can see in all directions aka line of sight
 
   private int maxHp;              // The value when this unit is 100% Healthy
   private int minHealRange, maxHealRange; // Range in which we can heal
   private int maxSupplies;        // The value when this unit has 100% supplies
   private int maxTransportCount;  // Amount of units that can be transported
-  private int dailyUse;           // Amount of supplies that are subtracted each turn
+  private int dailyUse;           // Amount of supplies that are subtracted each turn from supplies
 
   private boolean canCapture;   // Abilities
   private boolean canDive;
@@ -58,8 +58,8 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler {
   private boolean hidden;           // In fog of war, is this unit visible within enemy moveZone
 
   private Weapon primaryWeapon, secondaryWeapon;
-  private List<Locatable> transport;      // Units that are within this Transport(null means can't transport)
-  private List<Integer> transportTypes;   // Movement Types that can be transported
+  private List<Locatable> transport;      // Units that are within this Transport (empty when this unit can't transport)
+  private List<Integer> transportTypes;   // Movement Types that can be transported (empty when this unit can't transport)
 
   public Unit(int id, String name, String description,
               int cost, int movement, int vision,
@@ -95,11 +95,13 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler {
   }
 
   void init() {
-    if (canTransport) this.transport = new LinkedList<Locatable>();
+    this.transportTypes = Args.createEmptyListIfNull(transportTypes);
+    this.transport = new LinkedList<Locatable>();
   }
 
   /**
-   * Copy Constructor
+   * Copy Constructor, primitive values are just copied
+   * objects need to be wrapped into a new Object. Unless you want 1 object to be shared between all units
    *
    * @param otherUnit unit to copy
    */
@@ -128,7 +130,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler {
     canSupply = otherUnit.canSupply;
     canHeal = otherUnit.canHeal;
     canTransport = otherUnit.canTransport;
-    transportTypes = otherUnit.transportTypes;
+    transportTypes = new LinkedList<Integer>(otherUnit.transportTypes);
 
     armyBranch = otherUnit.armyBranch;
     movementType = otherUnit.movementType;
@@ -143,7 +145,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler {
     location = otherUnit.location;
     owner = otherUnit.owner;
     description = otherUnit.description;
-    transport = otherUnit.transport;
+    transport = new LinkedList<Locatable>(otherUnit.transport);
   }
 
   /**
@@ -310,7 +312,14 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler {
   }
 
   public boolean remove(Locatable locatable) {
-    return transport.remove(locatable);
+    if (!contains(locatable) || locatable == null) {
+      return false;
+    } else {
+      locatable.setLocation(null);    // Keep locatable and tile in sync
+      transport.remove(locatable);
+      firePropertyChange("transport", locatable, null);
+    }
+    return true;
   }
 
   public boolean contains(Locatable locatable) {
@@ -320,11 +329,13 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler {
   public void add(Locatable locatable) {
     if (canAdd(locatable)) {
       transport.add(locatable);
+      locatable.setLocation(this);    // Keep locatable and tile in sync
     }
+    firePropertyChange("transport", null, locatable);
   }
 
   public boolean canAdd(Locatable locatable) {
-    return canTransport() && locatable != null;
+    return locatable != null && canTransport() && !transport.contains(locatable);
   }
 
   /**

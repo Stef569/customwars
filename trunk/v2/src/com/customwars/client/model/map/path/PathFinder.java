@@ -3,6 +3,7 @@ package com.customwars.client.model.map.path;
 import com.customwars.client.model.map.Direction;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.TileMap;
+import org.apache.log4j.Logger;
 import tools.Args;
 
 import java.awt.Point;
@@ -19,6 +20,7 @@ import java.util.List;
  * @author Benjamin Islip
  */
 public class PathFinder implements MovementCost {
+  private static final Logger logger = Logger.getLogger(PathFinder.class);
   TileMap map;
   Dijkstra dijkstra;          // data
   Mover currentMover = null;  // remembering this saves an unnessary recalculation of Dijk0
@@ -113,18 +115,20 @@ public class PathFinder implements MovementCost {
 
   private void calculatePaths(Mover mover) {
     if (mover == null) {
+      logger.warn("Mover is null");
       return;
-      // only call the expensive calculate() method if required
 
+      // Only call the expensive calculate() method if required
       // IF selecting a new mover OR mover has moved THEN
       //    recalculate dijkstra
     }
+
     if (currentMover == null || mover != currentMover || currentLocation == null || mover.getLocation() != currentLocation) {
       currentMover = mover;
       currentLocation = mover.getLocation();
 
-      int xLoc = currentMover.getLocation().getCol();
-      int yLoc = currentMover.getLocation().getRow();
+      int xLoc = currentLocation.getCol();
+      int yLoc = currentLocation.getRow();
       int movement = currentMover.getMovePoints();
 
       dijkstra.calculate(xLoc, yLoc, movement);
