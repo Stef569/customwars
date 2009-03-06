@@ -70,7 +70,7 @@ public class InGameSession {
 
   public void addUndoAction(CWAction action) {
     undoManager.addEdit(new Undo(action));
-    System.out.println("adding " + undoManager.getPresentationName() + " to undo list count=" + ++undoCount);
+    System.out.println("adding " + undoManager.getPresentationName() + " to undo list Undocount=" + ++undoCount);
   }
 
   public void undoAll() {
@@ -85,7 +85,7 @@ public class InGameSession {
    */
   public void undo() {
     if (undoManager.canUndo()) {
-      System.out.println(undoManager.getUndoPresentationName() + " count=" + --undoCount);
+      System.out.println(undoManager.getUndoPresentationName() + " Undocount=" + --undoCount);
       undoManager.undo();
     }
   }

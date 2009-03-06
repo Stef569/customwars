@@ -1,5 +1,7 @@
 package com.customwars.client.ui.slick;
 
+import com.customwars.client.ui.Camera2D;
+import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.gui.AbstractComponent;
 import org.newdawn.slick.gui.GUIContext;
 
@@ -8,6 +10,7 @@ public abstract class BasicComponent extends AbstractComponent {
   protected int y;
   protected int width;
   protected int height;
+  protected static Camera2D camera;
 
   /**
    * Create a new component
@@ -37,5 +40,20 @@ public abstract class BasicComponent extends AbstractComponent {
 
   public int getY() {
     return y;
+  }
+
+  /**
+   * Gives the focus to this component with a click of the mouse.
+   *
+   * @see org.newdawn.slick.gui.AbstractComponent#mouseReleased(int,int,int)
+   */
+  public void mouseReleased(int button, int x, int y) {
+    System.out.println("Converting x y" + x + " ," + y + " to " + camera.convertToGameX(x) + " ," + camera.convertToGameY(y));
+    setFocus(Rectangle.contains(camera.convertToGameX(x), camera.convertToGameY(y), getX(), getY(), getWidth(),
+            getHeight()));
+  }
+
+  public static void setCamera(Camera2D camera) {
+    BasicComponent.camera = camera;
   }
 }

@@ -20,8 +20,6 @@ public class HUD {
   private Game game;
   private GUIContext gui;
   private PopupMenu popupMenu;
-  private double scaleX;
-  private double scaleY;
 
   public HUD(Game game, GUIContext gui) {
     this.game = game;
@@ -56,10 +54,10 @@ public class HUD {
     popupMenu.addListener(componentListener);
   }
 
-  public void render(Graphics g, int x, int y) {
-    g.drawString("Day:" + game.getDay(), 100*x, 10*y);
-    g.drawString("Player:" + game.getActivePlayer().getName(), 100*x, 20*y);
-    //gui.setMouseCursor("blah", x, y);
+  public void render(Graphics g) {
+    g.drawString("Day:" + game.getDay(), 100, 10);
+    g.drawString("Player:" + game.getActivePlayer().getName(), 100, 20);
+
     popupMenu.render(gui, g);
   }
 
@@ -71,6 +69,7 @@ public class HUD {
   public void setGame(Game game) {
     this.game = game;
   }
+
 
   public boolean isPopupVisible() {
     return popupMenu != null && popupMenu.isVisible();
