@@ -48,7 +48,7 @@ public class HardCodedGame {
     map.getTile(2, 1).setTerrain(TerrainFactory.getTerrain(TestData.VERTICAL_RIVER));
 
     // 3 Map Players, colors are suggestions game players overwrite them
-    Player p1 = new Player(1, Color.GREEN, false, null);
+    Player p1 = new Player(1, Color.GREEN, false, null );
     Player p2 = new Player(2, Color.BLUE, false, null);
     Player p3 = new Player(Player.NEUTRAL_PLAYER_ID, Color.GRAY, true, null);
 

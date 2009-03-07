@@ -52,13 +52,13 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
   }
 
   private void buildStateList() {
-    CWState testMenuMusic = new TestMenuMusic();
+    CWState testMenu = new TestMenu();
     CWState testMapRenderer = new TestMapRenderer();
     CWState remapKeysTest = new RemapKeysTest();
     CWState inGameTest = new TestInGameState();
     CWState endTurnState = new EndTurnState();
 
-    addState(testMenuMusic);
+    addState(testMenu);
     addState(testMapRenderer);
     addState(remapKeysTest);
     addState(inGameTest);

@@ -115,7 +115,7 @@ public class PopupMenu extends BasicComponent implements ComponentListener {
 
   private void createMouseOverArea(int i) {
     int optionHeight = getHeight(txtOptions.get(i), imgOptions.get(i));
-    MouseOverArea moa = new MouseOverArea(container, null, 0, 0, width, optionHeight, this);
+    MouseOverArea moa = new MouseOverArea(container, null, 0, 0, spacingX + width, optionHeight, this);
     moa.setNormalColor(new Color(1, 1, 1, 0.0f));
     moa.setMouseOverColor(new Color(1, 1, 1, HOVER_TRANSPARANCY));
     mouseOverAreas.add(moa);
@@ -138,6 +138,7 @@ public class PopupMenu extends BasicComponent implements ComponentListener {
       setOption(mouseOverAreas.indexOf(selectedMoa));
 
       renderText(g);
+      renderImg(g);
       resetToBaseColor(g);
     }
   }
@@ -167,11 +168,23 @@ public class PopupMenu extends BasicComponent implements ComponentListener {
 
   private void renderText(Graphics g) {
     for (int i = 0; i < txtOptions.size(); i++) {
-      if (txtOptions.get(i) != null) {
+      if(txtOptions.get(i) != null){
         int locX = spacingX + x;
         int locY = y + (i * spacingY);
         setCurrentColor(g, i);
         g.drawString(txtOptions.get(i), locX, locY);
+        g.setColor(baseColor);
+      }
+    }
+  }
+
+  private void renderImg(Graphics g) {
+     for (int i = 0; i < imgOptions.size(); i++) {
+      if(imgOptions.get(i) != null){
+        int locX = spacingX + x;
+        int locY = y + (i * spacingY);
+        setCurrentColor(g, i);
+        g.drawImage(imgOptions.get(i), locX, locY);
         g.setColor(baseColor);
       }
     }
