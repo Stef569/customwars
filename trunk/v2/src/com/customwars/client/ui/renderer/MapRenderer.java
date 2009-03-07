@@ -13,6 +13,7 @@ import com.customwars.client.ui.sprite.SpriteManager;
 import com.customwars.client.ui.sprite.TileSprite;
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Color;
 
 import java.util.List;
 
@@ -29,6 +30,8 @@ public class MapRenderer extends TileMapRenderer {
   private boolean renderArrows;
   private boolean cursorLocked;
   private Scroller scroller;
+  //change the last number to change transparency
+  private final Color MOVE_TRANSPARENT = new Color(255,255,255,128); 
 
   // Graphics
   private SpriteManager spriteManager;
@@ -90,13 +93,17 @@ public class MapRenderer extends TileMapRenderer {
   private void renderzones(int x, int y, Graphics g) {
     if (moveZone != null) {
       for (Location location : moveZone) {
+        g.setColor(MOVE_TRANSPARENT);
         renderImgOnTile(g, moveZoneAnim.getCurrentFrame(), location, x, y);
+        g.setColor(Color.white);
       }
     }
 
     if (attackZone != null) {
       for (Location location : attackZone) {
+        g.setColor(MOVE_TRANSPARENT);
         renderImgOnTile(g, attackZoneAnim.getCurrentFrame(), location, x, y);
+        g.setColor(Color.white);
       }
     }
 
