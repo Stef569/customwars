@@ -36,8 +36,8 @@ public class CityTest {
    * The Unit Hp is used to increase the cap count
    */
   public void testValidCaptureCity() {
-    map.getTile(0, 0).setTerrain(city);
-    city.setOwner(player1);
+
+      city.setOwner(player1);
 
     Unit capturingUnit = UnitFactory.getUnit(TestData.INF);
     capturingUnit.setOwner(player2);
