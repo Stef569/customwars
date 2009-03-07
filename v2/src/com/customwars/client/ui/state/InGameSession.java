@@ -64,10 +64,6 @@ public class InGameSession {
     this.moving = moving;
   }
 
-  public MODE getMode() {
-    return mode;
-  }
-
   public void addUndoAction(CWAction action) {
     undoManager.addEdit(new Undo(action));
     System.out.println("adding " + undoManager.getPresentationName() + " to undo list Undocount=" + ++undoCount);
@@ -109,6 +105,26 @@ public class InGameSession {
    */
   public Tile getClick(int pos) {
     return clicks[pos - 1];
+  }
+
+  public boolean isDefaultMode() {
+    return mode == MODE.DEFAULT;
+  }
+
+  public boolean isMenuMode() {
+    return mode == MODE.MENU;
+  }
+
+  public boolean isUnitSelectMode() {
+    return mode == MODE.UNIT_SELECT;
+  }
+
+  public boolean isUnitAttackMode() {
+    return mode == MODE.UNIT_ATTACK;
+  }
+
+  public boolean isUnitDropMode() {
+    return mode == MODE.UNIT_DROP;
   }
 
   public String toString() {

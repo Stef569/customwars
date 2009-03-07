@@ -168,7 +168,7 @@ public class TestInGameState extends CWState implements PropertyChangeListener, 
         unit = selectedUnit;
       }
 
-      if (inGameSession.getMode() != InGameSession.MODE.MENU) {
+      if (!inGameSession.isMenuMode()) {
         moveCursor(command, cwInput);
         if (cwInput.isSelectPressed(command)) {
           handleA(unit, city, cursorLocation);
@@ -185,7 +185,7 @@ public class TestInGameState extends CWState implements PropertyChangeListener, 
     System.out.println("handle A press");
     handleUnitAPress(unit);
 
-    if (inGameSession.getMode() == InGameSession.MODE.DEFAULT) {
+    if (inGameSession.isDefaultMode()) {
       inGameSession.setClick(2, cursorLocation);
       actionManager.doAction("CONTEXT_MENU");
     }
@@ -193,7 +193,7 @@ public class TestInGameState extends CWState implements PropertyChangeListener, 
 
   private void handleB(Unit activeUnit, Unit selectedUnit) {
     System.out.println("handle B press");
-    if (selectedUnit != null && inGameSession.getMode() != InGameSession.MODE.MENU) {
+    if (selectedUnit != null && !inGameSession.isMenuMode()) {
       handleUnitBPress(selectedUnit);
     } else {
       inGameSession.undo();

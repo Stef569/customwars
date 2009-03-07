@@ -109,9 +109,9 @@ public class UnitSprite extends TileSprite implements PropertyChangeListener {
   public void setLocation(Location newLocation) {
     Tile oldTile = (Tile) getLocation();
     if (oldTile != null) oldTile.removePropertyChangeListener(this);
-    super.setLocation(newLocation);
 
     if (newLocation instanceof Tile) {
+      super.setLocation(newLocation);
       Tile newTile = (Tile) newLocation;
       newTile.addPropertyChangeListener(this);
     }

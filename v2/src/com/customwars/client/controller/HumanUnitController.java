@@ -33,12 +33,15 @@ public class HumanUnitController extends UnitController {
   public void handleAPress() {
     Tile cursorLocation = (Tile) mapRenderer.getCursorLocation();
 
-    if (unit.getMoveZone().contains(cursorLocation) && isUnitVisible()) {
-      if (canSelect(cursorLocation)) {
-        doAction("SELECT_UNIT");
-      } else if (canShowMenu()) {
+    if (inGameSession.isUnitDropMode() && canDrop(cursorLocation)) {
+      inGameSession.setClick(3, cursorLocation);
+      doAction("UNIT_MOVE_DROP_WAIT");
+    } else if (unit.getMoveZone().contains(cursorLocation) && isUnitVisible()) {
+      if (canShowMenu()) {
         inGameSession.setClick(2, cursorLocation);
         initUnitActionMenu(cursorLocation);
+      } else if (canSelect(cursorLocation)) {
+        doAction("SELECT_UNIT");
       }
     } else {
       inGameSession.undo();
@@ -59,24 +62,25 @@ public class HumanUnitController extends UnitController {
     return activeUnit != null && (activeUnit.getLocation() == clicked || activeUnit.isWithinMoveZone(clicked));
   }
 
-  private void initUnitActionMenu(Tile clicked) {
+  private void initUnitActionMenu(Tile selected) {
     Unit activeUnit = game.getActiveUnit();
     Location origin = activeUnit.getLocation();
 
-    map.teleport(origin, clicked, activeUnit);
-    buildUnitActionMenu(clicked);
+    map.teleport(origin, selected, activeUnit);
+    buildUnitActionMenu(selected);
     doAction(showUnitPopupMenu);
-    map.teleport(clicked, origin, activeUnit);
+    map.teleport(selected, origin, activeUnit);
   }
 
-  private void buildUnitActionMenu(Tile clicked) {
+  private void buildUnitActionMenu(Tile selected) {
     showUnitPopupMenu.clearActions();
-    addToMenu(canWait(clicked), "UNIT_MOVE_WAIT", "Wait");
-    addToMenu(canCapture(clicked), "UNIT_MOVE_CAPTURE_WAIT", "Capture");
-    addToMenu(canSupply(clicked), "UNIT_MOVE_SUPPLY_WAIT", "Supply");
-    addToMenu(canLoad(clicked), "UNIT_MOVE_LOAD_WAIT", "load");
+    addToMenu(canWait(selected), "UNIT_MOVE_WAIT", "Wait");
+    addToMenu(canCapture(selected), "UNIT_MOVE_CAPTURE_WAIT", "Capture");
+    addToMenu(canSupply(selected), "UNIT_MOVE_SUPPLY_WAIT", "Supply");
+    addToMenu(canLoad(selected), "UNIT_MOVE_LOAD_WAIT", "Load");
 //    addToMenu(canFire(clicked), "fire");
-//    addToMenu(canDrop(clicked), "drop");
+    addToMenu(canStartDrop(selected), "UNIT_START_DROP_MODE", "Drop");
+
   }
 
   /**

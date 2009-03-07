@@ -12,8 +12,8 @@ import com.customwars.client.ui.Scroller;
 import com.customwars.client.ui.sprite.SpriteManager;
 import com.customwars.client.ui.sprite.TileSprite;
 import org.newdawn.slick.Animation;
-import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Color;
+import org.newdawn.slick.Graphics;
 
 import java.util.List;
 
@@ -22,7 +22,12 @@ import java.util.List;
  * The terrain and the sprites on the terrain
  */
 public class MapRenderer extends TileMapRenderer {
+  // The dynamic position within the limitedcursorLocations list, used to manually iterator over them
+  private static int cursorTraversalPos;
   private static final int ZONE_ANIM_DURATION = 250;
+  // Change the last number to change transparency
+  private static final Color ZONE_TRANSPARENCY = new Color(255, 255, 255, 128);
+
   // Control
   private boolean renderTerrain = true;
   private boolean renderSprites = true;
@@ -30,8 +35,8 @@ public class MapRenderer extends TileMapRenderer {
   private boolean renderArrows;
   private boolean cursorLocked;
   private Scroller scroller;
-  //change the last number to change transparency
-  private final Color MOVE_TRANSPARENT = new Color(255,255,255,128); 
+  private List<Location> limitedCursorLocations;  // A list of locations in where a cursor can move
+  private boolean isTraversing;                   // Is the cursor limited to the above locations
 
   // Graphics
   private SpriteManager spriteManager;
@@ -55,23 +60,6 @@ public class MapRenderer extends TileMapRenderer {
     arrowImages = resources.getSlickImgStrip("arrows");
   }
 
-  public void moveCursor(int x, int y) {
-    moveCursor(pixelsToTile(x, y));
-  }
-
-  public void moveCursor(Direction direction) {
-    Location cursorLocation = getCursorLocation();
-    Location newLocation = map.getAdjacent(cursorLocation, direction);
-    moveCursor(newLocation);
-  }
-
-  public void moveCursor(Location location) {
-    if (!cursorLocked) {
-      spriteManager.moveCursorTo(location);
-      scroller.setCursorLocation(spriteManager.getCursorLocation());
-    }
-  }
-
   public void update(int elapsedTime) {
     spriteManager.update(elapsedTime);
     scroller.update(elapsedTime);
@@ -93,7 +81,7 @@ public class MapRenderer extends TileMapRenderer {
   private void renderzones(int x, int y, Graphics g) {
     if (moveZone != null) {
       for (Location location : moveZone) {
-        g.setColor(MOVE_TRANSPARENT);
+        g.setColor(ZONE_TRANSPARENCY);
         renderImgOnTile(g, moveZoneAnim.getCurrentFrame(), location, x, y);
         g.setColor(Color.white);
       }
@@ -101,7 +89,7 @@ public class MapRenderer extends TileMapRenderer {
 
     if (attackZone != null) {
       for (Location location : attackZone) {
-        g.setColor(MOVE_TRANSPARENT);
+        g.setColor(ZONE_TRANSPARENCY);
         renderImgOnTile(g, attackZoneAnim.getCurrentFrame(), location, x, y);
         g.setColor(Color.white);
       }
@@ -194,7 +182,55 @@ public class MapRenderer extends TileMapRenderer {
       g.drawImage(arrowImages.getSubImage(9), x, y);
   }
 
+  public void removeUnit(Unit unit) {
+    if (activeUnit == unit) {
+      activeUnit = null;
+    }
+    spriteManager.removeUnitSprite(unit);
+  }
 
+  //------------------------------------ ---------------------------------------
+  // Limit cursor movement
+  //----------------------------------------------------------------------------
+  /**
+   * This starts Cursor traversal mode
+   * invoking moveCursorToNextLocation() will move the cursor 1 location further
+   * When the sprite should no longer have a limited movement then invoke stopTileSpriteTraversal()
+   *
+   * @param locations the limited Locations the cursor can move in
+   */
+  public void startCursorTraversal(List<Location> locations) {
+    isTraversing = true;
+    limitedCursorLocations = locations;
+    moveCursorToNextLocation();
+  }
+
+  /**
+   * Move the cursor sprite to the next location in
+   * limitedcursorLocations when out of bounds start back at 0.
+   */
+  public void moveCursorToNextLocation() {
+    if (isTraversing && limitedCursorLocations != null && !limitedCursorLocations.isEmpty()) {
+      if (++cursorTraversalPos + 1 >= limitedCursorLocations.size()) {
+        cursorTraversalPos = 0;
+      }
+      spriteManager.moveCursorTo(limitedCursorLocations.get(cursorTraversalPos));
+    }
+  }
+
+  /**
+   * This stops Cursor traversal mode
+   * Allow the cursor to move to any tile
+   */
+  public void stopCursorTraversal() {
+    cursorTraversalPos = 0;
+    isTraversing = false;
+    limitedCursorLocations = null;
+  }
+
+  //------------------------------------ ---------------------------------------
+  // Cursors
+  //----------------------------------------------------------------------------
   public void addCursorSprite(String cursorName, TileSprite cursorSprite) {
     spriteManager.addCursor(cursorName, cursorSprite);
   }
@@ -207,6 +243,30 @@ public class MapRenderer extends TileMapRenderer {
     spriteManager.addCursor(cursorName, cursor);
   }
 
+  public void toggleCursorLock() {
+    this.cursorLocked = !cursorLocked;
+  }
+
+  public void moveCursor(int x, int y) {
+    moveCursor(pixelsToTile(x, y));
+  }
+
+  public void moveCursor(Direction direction) {
+    Location cursorLocation = getCursorLocation();
+    Location newLocation = map.getAdjacent(cursorLocation, direction);
+    moveCursor(newLocation);
+  }
+
+  public void moveCursor(Location location) {
+    if (!cursorLocked && (!isTraversing || limitedCursorLocations.contains(location))) {
+      spriteManager.moveCursorTo(location);
+      scroller.setCursorLocation(spriteManager.getCursorLocation());
+    }
+  }
+
+  //------------------------------------ ---------------------------------------
+  // Zones & Arrows
+  //----------------------------------------------------------------------------
   public void removeZones() {
     removeMoveZone();
     removeAttackZone();
@@ -238,10 +298,9 @@ public class MapRenderer extends TileMapRenderer {
     this.moveZone = null;
   }
 
-  public void removeUnit(Unit unit) {
-    spriteManager.removeUnitSprite(unit);
-  }
-
+  /**
+   * Set the map, and create sprites
+   */
   public void setMap(TileMap<Tile> map) {
     super.setMap(map);
     spriteManager.setMap(map);
@@ -264,12 +323,16 @@ public class MapRenderer extends TileMapRenderer {
     this.renderSprites = renderSprites;
   }
 
-  public void toggleCursorLock() {
-    this.cursorLocked = !cursorLocked;
-  }
-
   public void setCursorLocked(boolean cursorLock) {
     this.cursorLocked = cursorLock;
+  }
+
+  public void setMoveZone(List<Location> moveZone) {
+    this.moveZone = moveZone;
+  }
+
+  public void setAttackZone(List<Location> attackZone) {
+    this.attackZone = attackZone;
   }
 
   public Location getCursorLocation() {

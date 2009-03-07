@@ -64,9 +64,7 @@ public class ShowPopupMenu extends CWAction implements ComponentListener {
   public void componentActivated(AbstractComponent abstractComponent) {
     PopupMenu popupMenu = (PopupMenu) abstractComponent;
     CWAction action = unitActions.get(popupMenu.getCurrentOption());
+    this.undoAction();    // Hide the popup when clicked on a item      
     action.doAction();
-
-    // Hide the popup when clicked on a item
-    this.undoAction();
   }
 }
