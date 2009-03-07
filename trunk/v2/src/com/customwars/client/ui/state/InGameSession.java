@@ -19,7 +19,7 @@ public class InGameSession {
   // Input mode:
   public enum MODE {
     DEFAULT,        // Clicking shows a Menu or selects a unit
-    MENU,           // Input is handled inside the menu
+    GUI,            // Input is handled by the GUI
     UNIT_SELECT,    // Clicking on a unit will select it
     UNIT_ATTACK,    // Clicking on a unit will attack it
     UNIT_DROP       // Clicking on empty space drops the unit
@@ -112,7 +112,7 @@ public class InGameSession {
   }
 
   public boolean isGUIMode() {
-    return mode == MODE.MENU;
+    return mode == MODE.GUI;
   }
 
   public boolean isUnitSelectMode() {

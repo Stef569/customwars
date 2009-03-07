@@ -61,11 +61,11 @@ public abstract class UnitController {
   boolean canMove(Location from, Location to) {
     return (from != null || to != null) && isUnitOn(from) && isActiveUnitInGame() &&
             unit.isActive() && game.getActiveUnit().isWithinMoveZone(to);
-
   }
 
   public boolean canWait(Tile selected) {
-    return selected != null && isActiveUnitInGame() && unit.isActive();
+    return selected != null && isActiveUnitInGame() && unit.isActive() &&
+            selected.getLocatableCount() == 0;
   }
 
   public boolean canSupply(Tile selected) {
