@@ -41,7 +41,7 @@ public class ShowPopupMenu extends CWAction implements ComponentListener {
     if (clicked != null) {
       hud.showPopUp(clicked, popupName, unitMenuItemNames, this);
     }
-    inGameSession.setMode(InGameSession.MODE.MENU);
+    inGameSession.setMode(InGameSession.MODE.GUI);
     mapRenderer.setCursorLocked(true);
   }
 
