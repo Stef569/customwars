@@ -156,33 +156,38 @@ public class TestInGameState extends CWState implements PropertyChangeListener, 
 
   public void controlPressed(Command command, CWInput cwInput) {
     if (!inGameSession.isMoving()) {
-      Tile cursorLocation = (Tile) mapRenderer.getCursorLocation();
-      Unit activeUnit = game.getActiveUnit();
-      Unit selectedUnit = game.getMap().getUnitOn(cursorLocation);
-      City city = game.getMap().getCityOn(cursorLocation);
-
-      Unit unit;
-      if (activeUnit != null) {
-        unit = activeUnit;
+      if (inGameSession.isGUIMode()) {
+        hud.controlPressed(command, cwInput);
       } else {
-        unit = selectedUnit;
-      }
+        Tile cursorLocation = (Tile) mapRenderer.getCursorLocation();
+        Unit activeUnit = game.getActiveUnit();
+        Unit selectedUnit = game.getMap().getUnitOn(cursorLocation);
+        City city = game.getMap().getCityOn(cursorLocation);
 
-      if (!inGameSession.isMenuMode()) {
+        Unit unit;
+        if (activeUnit != null) {
+          unit = activeUnit;
+        } else {
+          unit = selectedUnit;
+        }
+
         moveCursor(command, cwInput);
         if (cwInput.isSelectPressed(command)) {
           handleA(unit, city, cursorLocation);
         }
+
+        if (cwInput.isCancelPressed(command)) {
+          handleB(activeUnit, selectedUnit);
+        }
       }
 
       if (cwInput.isCancelPressed(command)) {
-        handleB(activeUnit, selectedUnit);
+        inGameSession.undo();
       }
     }
   }
 
   public void handleA(Unit unit, City city, Tile cursorLocation) {
-    System.out.println("handle A press");
     handleUnitAPress(unit);
 
     if (inGameSession.isDefaultMode()) {
@@ -192,11 +197,8 @@ public class TestInGameState extends CWState implements PropertyChangeListener, 
   }
 
   private void handleB(Unit activeUnit, Unit selectedUnit) {
-    System.out.println("handle B press");
-    if (selectedUnit != null && !inGameSession.isMenuMode()) {
+    if (selectedUnit != null) {
       handleUnitBPress(selectedUnit);
-    } else {
-      inGameSession.undo();
     }
   }
 
@@ -217,17 +219,34 @@ public class TestInGameState extends CWState implements PropertyChangeListener, 
   }
 
   private void moveCursor(Command command, CWInput cwInput) {
+    boolean traversing = mapRenderer.isTraversing();
+
     if (cwInput.isUpPressed(command)) {
-      mapRenderer.moveCursor(Direction.NORTH);
+      if (traversing)
+        mapRenderer.moveCursorToNextLocation();
+      else
+        mapRenderer.moveCursor(Direction.NORTH);
     }
+
     if (cwInput.isDownPressed(command)) {
-      mapRenderer.moveCursor(Direction.SOUTH);
+      if (traversing)
+        mapRenderer.moveCursorToPreviousLocation();
+      else
+        mapRenderer.moveCursor(Direction.SOUTH);
     }
+
     if (cwInput.isLeftPressed(command)) {
-      mapRenderer.moveCursor(Direction.WEST);
+      if (traversing)
+        mapRenderer.moveCursorToPreviousLocation();
+      else
+        mapRenderer.moveCursor(Direction.WEST);
     }
+
     if (cwInput.isRightPressed(command)) {
-      mapRenderer.moveCursor(Direction.EAST);
+      if (traversing)
+        mapRenderer.moveCursorToNextLocation();
+      else
+        mapRenderer.moveCursor(Direction.EAST);
     }
     hud.moveOverTile(mapRenderer.getCursorLocation(), true);
   }

@@ -104,6 +104,7 @@ public class PopupMenu extends BasicComponent implements ComponentListener {
   public void init() {
     initMouseOverAreas();
     height = txtOptions.size() * spacingY;
+    selectOption(0);
   }
 
   private void initMouseOverAreas() {
@@ -168,7 +169,7 @@ public class PopupMenu extends BasicComponent implements ComponentListener {
 
   private void renderText(Graphics g) {
     for (int i = 0; i < txtOptions.size(); i++) {
-      if(txtOptions.get(i) != null){
+      if (txtOptions.get(i) != null) {
         int locX = spacingX + x;
         int locY = y + (i * spacingY);
         setCurrentColor(g, i);
@@ -179,8 +180,8 @@ public class PopupMenu extends BasicComponent implements ComponentListener {
   }
 
   private void renderImg(Graphics g) {
-     for (int i = 0; i < imgOptions.size(); i++) {
-      if(imgOptions.get(i) != null){
+    for (int i = 0; i < imgOptions.size(); i++) {
+      if (imgOptions.get(i) != null) {
         int locX = spacingX + x;
         int locY = y + (i * spacingY);
         setCurrentColor(g, i);
@@ -243,7 +244,7 @@ public class PopupMenu extends BasicComponent implements ComponentListener {
   }
 
   private void setOption(int option) {
-    if (option != curoptn && option >= 0 && option < txtOptions.size()) {
+    if (option >= 0 && option < txtOptions.size()) {
       curoptn = option;
       playMenuTick();
       selectOption(curoptn);
@@ -260,11 +261,13 @@ public class PopupMenu extends BasicComponent implements ComponentListener {
   }
 
   private void selectOption(int i) {
-    for (MouseOverArea moa : mouseOverAreas) {
-      if (mouseOverAreas.get(i) == moa) {
-        moa.setSelected(true);
-      } else {
-        moa.setSelected(false);
+    if (i >= 0 && i < mouseOverAreas.size()) {
+      for (MouseOverArea moa : mouseOverAreas) {
+        if (mouseOverAreas.get(i) == moa) {
+          moa.setSelected(true);
+        } else {
+          moa.setSelected(false);
+        }
       }
     }
   }
@@ -316,7 +319,11 @@ public class PopupMenu extends BasicComponent implements ComponentListener {
       moveUp();
     } else if (cwInput.isSelectPressed(command)) {
       selectOption(curoptn);
+      MouseOverArea moa = getSelectedMouseOverArea();
+      if (moa != null)
+        componentActivated(moa);
     }
+    consumeEvent();
   }
 
   /**
@@ -350,15 +357,16 @@ public class PopupMenu extends BasicComponent implements ComponentListener {
   }
 
   public void clear() {
+    removeAllListener();
     mouseOverAreas.clear();
     txtOptions.clear();
     imgOptions.clear();
   }
 
-  public void removeAllListener() {
+  private void removeAllListener() {
     for (MouseOverArea moa : mouseOverAreas) {
       input.removeListener(moa);
     }
-    listeners.clear();
+    this.listeners.clear();
   }
 }

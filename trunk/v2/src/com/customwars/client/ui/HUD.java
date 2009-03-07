@@ -3,7 +3,9 @@ package com.customwars.client.ui;
 import com.customwars.client.io.ResourceManager;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.map.Location;
+import com.customwars.client.ui.state.CWInput;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.command.Command;
 import org.newdawn.slick.gui.ComponentListener;
 import org.newdawn.slick.gui.GUIContext;
 
@@ -80,7 +82,6 @@ public class HUD {
 
   public void hidePopup() {
     popupMenu.setVisible(false);
-    popupMenu.removeAllListener();
   }
 
   public void setGame(Game game) {
@@ -89,5 +90,10 @@ public class HUD {
 
   public boolean isPopupVisible() {
     return popupMenu != null && popupMenu.isVisible();
+  }
+
+  public void controlPressed(Command command, CWInput cwInput) {
+    if (isPopupVisible())
+      popupMenu.controlPressed(command, cwInput);
   }
 }

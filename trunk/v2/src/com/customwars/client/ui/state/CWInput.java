@@ -45,9 +45,11 @@ public class CWInput extends InputProvider {
   }
 
   private void initGameCommands() {
+    bindCommand(new KeyControl(Input.KEY_W), select);
     bindCommand(new KeyControl(Input.KEY_A), select);
     bindCommand(new MouseButtonControl(Input.MOUSE_LEFT_BUTTON), select);
     bindCommand(new KeyControl(Input.KEY_B), cancel);
+    bindCommand(new KeyControl(Input.KEY_X), cancel);
     bindCommand(new MouseButtonControl(Input.MOUSE_RIGHT_BUTTON), cancel);
     bindCommand(new KeyControl(Input.KEY_ESCAPE), exit);
     bindCommand(new KeyControl(Input.KEY_S), toggleMusic);

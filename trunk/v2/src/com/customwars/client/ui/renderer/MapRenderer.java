@@ -207,15 +207,39 @@ public class MapRenderer extends TileMapRenderer {
 
   /**
    * Move the cursor sprite to the next location in
-   * limitedcursorLocations when out of bounds start back at 0.
+   * limitedcursorLocations when out of bounds restart at 0.
    */
   public void moveCursorToNextLocation() {
-    if (isTraversing && limitedCursorLocations != null && !limitedCursorLocations.isEmpty()) {
-      if (++cursorTraversalPos + 1 >= limitedCursorLocations.size()) {
+    if (canMoveInCursorTraversalMode()) {
+      if (cursorTraversalPos + 1 >= limitedCursorLocations.size()) {
         cursorTraversalPos = 0;
+      } else {
+        cursorTraversalPos++;
       }
-      spriteManager.moveCursorTo(limitedCursorLocations.get(cursorTraversalPos));
+      moveCursor(limitedCursorLocations.get(cursorTraversalPos));
     }
+  }
+
+  /**
+   * Move the cursor sprite to the previous location in
+   * limitedcursorLocations when out of bounds restart at last location.
+   */
+  public void moveCursorToPreviousLocation() {
+    if (canMoveInCursorTraversalMode()) {
+      if (cursorTraversalPos - 1 < 0) {
+        cursorTraversalPos = limitedCursorLocations.size() - 1;
+      } else {
+        cursorTraversalPos--;
+      }
+      moveCursor(limitedCursorLocations.get(cursorTraversalPos));
+    }
+  }
+
+  private boolean canMoveInCursorTraversalMode() {
+    if (!isTraversing)
+      throw new IllegalStateException("Cursor traversal mode not started invoke startCursorTraversal() first");
+
+    return (limitedCursorLocations != null && !limitedCursorLocations.isEmpty());
   }
 
   /**
@@ -258,10 +282,14 @@ public class MapRenderer extends TileMapRenderer {
   }
 
   public void moveCursor(Location location) {
-    if (!cursorLocked && (!isTraversing || limitedCursorLocations.contains(location))) {
+    if (canMoveCursor(location)) {
       spriteManager.moveCursorTo(location);
       scroller.setCursorLocation(spriteManager.getCursorLocation());
     }
+  }
+
+  private boolean canMoveCursor(Location location) {
+    return !cursorLocked && (!isTraversing || limitedCursorLocations.contains(location));
   }
 
   //------------------------------------ ---------------------------------------
@@ -345,6 +373,10 @@ public class MapRenderer extends TileMapRenderer {
 
   public boolean isRenderingSprites() {
     return renderSprites;
+  }
+
+  public boolean isTraversing() {
+    return isTraversing;
   }
 }
 

@@ -111,7 +111,7 @@ public class InGameSession {
     return mode == MODE.DEFAULT;
   }
 
-  public boolean isMenuMode() {
+  public boolean isGUIMode() {
     return mode == MODE.MENU;
   }
 
