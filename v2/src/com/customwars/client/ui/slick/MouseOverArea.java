@@ -118,6 +118,7 @@ public class MouseOverArea extends BasicComponent {
   public MouseOverArea(GUIContext container, Image image, int x, int y, ComponentListener listener) {
     this(container, image, x, y, image.getWidth(), image.getHeight());
     addListener(listener);
+    consumeEvent();
   }
 
   /**
@@ -147,6 +148,7 @@ public class MouseOverArea extends BasicComponent {
                        int width, int height, ComponentListener listener) {
     this(container, image, x, y, width, height);
     addListener(listener);
+    consumeEvent();
   }
 
   /**
