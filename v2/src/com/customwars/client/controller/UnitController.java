@@ -64,8 +64,14 @@ public abstract class UnitController {
   }
 
   public boolean canWait(Tile selected) {
-    return selected != null && isActiveUnitInGame() && unit.isActive() &&
-            selected.getLocatableCount() == 0;
+    if (selected == null) return false;
+
+    boolean validUnit = isActiveUnitInGame() && unit.isActive();
+    if (selected.isFogged()) {
+      return validUnit;
+    } else {
+      return selected.getLocatableCount() == 1;
+    }
   }
 
   public boolean canSupply(Tile selected) {
