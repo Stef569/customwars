@@ -11,6 +11,9 @@ import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.model.map.path.MoveTraverse;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Handles any input for 1 unit
  * This can be surrounding tile information, player clicks on a menu, Ai
@@ -87,6 +90,31 @@ public abstract class UnitController {
     return isActiveUnitInGame() && unit.isActive() && isUnitVisible() &&
             transporter.canTransport(unit.getMovementType()) &&
             transporter.getOwner() == unit.getOwner();
+  }
+
+  boolean canStartDrop(Tile selected) {
+    List<Location> emptyTiles = getEmptyAjacentTiles(selected);
+    Unit activeUnit = game.getActiveUnit();
+
+    return selected != null && !emptyTiles.isEmpty() &&
+            activeUnit.canTransport() && activeUnit.getLocatableCount() > 0;
+  }
+
+  private List<Location> getEmptyAjacentTiles(Tile clicked) {
+    List<Location> emptyTiles = new ArrayList<Location>();
+    for (Location location : game.getMap().getSurroundingTiles(clicked, 1, 1)) {
+      if (location.getLocatableCount() == 0) {
+        emptyTiles.add(location);
+      }
+    }
+    return emptyTiles;
+  }
+
+  public boolean canDrop(Tile selected) {
+    Unit transporter = game.getActiveUnit();
+    return isActiveUnitInGame() && unit.isActive() && isUnitVisible() &&
+            selected != null && selected.getLocatableCount() == 0 &&
+            transporter.getLocatableCount() > 0;
   }
 
   private boolean isActiveUnitInGame() {

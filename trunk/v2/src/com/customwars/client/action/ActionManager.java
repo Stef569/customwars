@@ -2,10 +2,13 @@ package com.customwars.client.action;
 
 import com.customwars.client.action.game.EndTurnAction;
 import com.customwars.client.action.unit.CaptureAction;
+import com.customwars.client.action.unit.ClearInGameState;
+import com.customwars.client.action.unit.DropAction;
 import com.customwars.client.action.unit.LoadAction;
 import com.customwars.client.action.unit.MoveAnimatedAction;
 import com.customwars.client.action.unit.SelectAction;
 import com.customwars.client.action.unit.ShowAttackZoneAction;
+import com.customwars.client.action.unit.StartDropAction;
 import com.customwars.client.action.unit.SupplyAndHealAction;
 import com.customwars.client.action.unit.WaitAction;
 import com.customwars.client.io.ResourceManager;
@@ -37,6 +40,7 @@ public class ActionManager {
   private MoveTraverse moveTraverse;
   private ResourceManager resources;
   private Game game;
+  private CWAction clearInGameState;
 
   private ActionManager() {
     actions = new HashMap<String, CWAction>();
@@ -65,12 +69,16 @@ public class ActionManager {
     Args.checkForNull(game);
     Args.checkForNull(moveTraverse);
 
+    clearInGameState = new ClearInGameState(game, mapRenderer, inGameSession);
     buildGameActions();
     buildUnitActions();
   }
 
   private void buildGameActions() {
-    CWAction endTurn = new EndTurnAction(game, inGameSession, mapRenderer, hud);
+    CWAction endTurn = new EndTurnAction(game);
+    ActionBag endTurnActions = new ActionBag("End Turn Actions");
+    endTurnActions.addAction(endTurn);
+    endTurnActions.addAction(clearInGameState);
     actions.put("END_TURN", endTurn);
   }
 
@@ -89,34 +97,52 @@ public class ActionManager {
 
   private void buildAnimatedActions() {
     CWAction unitMoveAnimated = new MoveAnimatedAction(game, mapRenderer, moveTraverse, inGameSession);
-    CWAction unitWait = new WaitAction(game, mapRenderer, inGameSession);
+    CWAction unitWait = new WaitAction(game, inGameSession);
     CWAction unitCapture = new CaptureAction(game, inGameSession);
     CWAction unitSupplyAndHeal = new SupplyAndHealAction(game, inGameSession);
-    CWAction unitLoadIntoTransport = new LoadAction(game, inGameSession, unitWait, mapRenderer);
+    CWAction unitLoadIntoTransport = new LoadAction(game, inGameSession, mapRenderer, unitWait);
+    CWAction startDropMode = new StartDropAction(game.getMap(), mapRenderer, inGameSession);
+    CWAction unitDrop = new DropAction(game, inGameSession, unitWait);
     actions.put("UNIT_MOVE_ANIMATED", unitMoveAnimated);
 
     // Animated move actions
     ActionBag waitActions = new ActionBag("Wait Actions");
     waitActions.addAction(unitMoveAnimated);
     waitActions.addAction(unitWait);
+    waitActions.addAction(clearInGameState);
     actions.put("UNIT_MOVE_WAIT", waitActions);
 
     ActionBag captureActions = new ActionBag("Capture Actions");
     captureActions.addAction(unitMoveAnimated);
     captureActions.addAction(unitCapture);
     captureActions.addAction(unitWait);
+    captureActions.addAction(clearInGameState);
     actions.put("UNIT_MOVE_CAPTURE_WAIT", captureActions);
 
     ActionBag supplyActions = new ActionBag("Supply Actions");
     supplyActions.addAction(unitMoveAnimated);
     supplyActions.addAction(unitSupplyAndHeal);
     supplyActions.addAction(unitWait);
+    supplyActions.addAction(clearInGameState);
     actions.put("UNIT_MOVE_SUPPLY_WAIT", supplyActions);
 
     ActionBag loadActions = new ActionBag("Load Actions");
     loadActions.addAction(unitMoveAnimated);
     loadActions.addAction(unitLoadIntoTransport);
+    loadActions.addAction(clearInGameState);
     actions.put("UNIT_MOVE_LOAD_WAIT", loadActions);
+
+    ActionBag startDropActions = new ActionBag("Start Drop Actions");
+    startDropActions.addAction(startDropMode);
+    actions.put("UNIT_START_DROP_MODE", startDropActions);
+
+    ActionBag dropActions = new ActionBag("Drop Actions");
+    dropActions.addAction(unitMoveAnimated);
+    dropActions.addAction(unitWait);
+    dropActions.addAction(unitDrop);
+    dropActions.addAction(unitWait);
+    dropActions.addAction(clearInGameState);
+    actions.put("UNIT_MOVE_DROP_WAIT", dropActions);
   }
 
   public void doAction(String actionName) {

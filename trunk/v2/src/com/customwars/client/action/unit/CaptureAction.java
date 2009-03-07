@@ -9,24 +9,24 @@ import com.customwars.client.model.map.Tile;
 import com.customwars.client.ui.state.InGameSession;
 
 /**
- * Capture a City
+ * Capture a City with the active unit
  *
  * @author stefan
  */
 public class CaptureAction extends CWAction {
-  private InGameSession session;
+  private InGameSession inGameSession;
   private Game game;
 
-  public CaptureAction(Game game, InGameSession session) {
+  public CaptureAction(Game game, InGameSession inGameSession) {
     super("Capture", false);
     this.game = game;
-    this.session = session;
+    this.inGameSession = inGameSession;
   }
 
   protected void doActionImpl() {
-    if (session.isTrapped()) return;
+    if (inGameSession.isTrapped()) return;
 
-    Tile clicked = session.getClick(2);
+    Tile clicked = inGameSession.getClick(2);
     Unit activeUnit = game.getActiveUnit();
     capture((City) clicked.getTerrain(), activeUnit);
   }

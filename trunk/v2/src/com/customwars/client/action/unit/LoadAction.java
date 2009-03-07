@@ -22,7 +22,7 @@ public class LoadAction extends CWAction {
   private CWAction waitAction;
   private MapRenderer mapRenderer;
 
-  public LoadAction(Game game, InGameSession inGameSession, CWAction waitAction, MapRenderer mapRenderer) {
+  public LoadAction(Game game, InGameSession inGameSession, MapRenderer mapRenderer, CWAction waitAction) {
     super("Load", false);
     this.mapRenderer = mapRenderer;
     this.game = game;
@@ -31,6 +31,8 @@ public class LoadAction extends CWAction {
   }
 
   protected void doActionImpl() {
+    if (inGameSession.isTrapped()) return;
+
     Tile selected = inGameSession.getClick(2);
     Unit transport = (Unit) selected.getLocatable(0);
     Unit activeUnit = game.getActiveUnit();

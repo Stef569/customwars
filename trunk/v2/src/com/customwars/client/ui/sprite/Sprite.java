@@ -11,7 +11,9 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
 /**
- * A Sprite represents an animation of Images, that is located at x,y position.
+ * A Sprite represents an animation of Images, located at x,y
+ * When Animation is null or contains no images
+ * A yellow circle is rendered and an error message logged once
  *
  * @author Stefan
  */
@@ -23,12 +25,12 @@ public class Sprite {
   PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
 
   // Position (pixels)
-  protected int locX;
-  protected int locY;
+  int locX;
+  int locY;
 
   // Velocity (pixels per second)
-  protected float dx;
-  protected float dy;
+  float dx;
+  float dy;
 
   Animation anim;
 
