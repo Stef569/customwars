@@ -8,10 +8,10 @@ import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 
 /**
- * Allows to share information in the inGameState
+ * Allows to share information in the inGame State
  * Stores
  * a history of clicks in a tileMap and
- * a history of CWactions
+ * a history of CWActions that can be undone
  *
  * @author stefan
  */
@@ -44,26 +44,6 @@ public class InGameSession {
     }
   }
 
-  /**
-   * @param index   base 1 index of the click(was it the first, second, ...) can't be higher then MAX_CLICK_HISTORY
-   * @param clicked the tile that was clicked on
-   */
-  public void setClick(int index, Tile clicked) {
-    clicks[index - 1] = clicked;
-  }
-
-  public void setMode(MODE mode) {
-    this.mode = mode;
-  }
-
-  public void setTrapped(boolean trapped) {
-    this.trapped = trapped;
-  }
-
-  public void setMoving(boolean moving) {
-    this.moving = moving;
-  }
-
   public void addUndoAction(CWAction action) {
     if (action.canUndo()) {
       undoManager.addEdit(new UndoWrapper(action));
@@ -81,9 +61,6 @@ public class InGameSession {
     return undoManager.canUndo();
   }
 
-  /**
-   * UndoWrapper the last added action
-   */
   public void undo() {
     if (undoManager.canUndo()) {
       System.out.println(" -- " + undoManager.getUndoPresentationName() + " -- ");
@@ -119,6 +96,26 @@ public class InGameSession {
     undoCount = 0;
     System.out.println("Undo history cleared");
     undoManager.discardAllEdits();
+  }
+
+  /**
+   * @param index   base 1 index of the click(was it the first, second, ...) can't be higher then MAX_CLICK_HISTORY
+   * @param clicked the tile that was clicked on
+   */
+  public void setClick(int index, Tile clicked) {
+    clicks[index - 1] = clicked;
+  }
+
+  public void setMode(MODE mode) {
+    this.mode = mode;
+  }
+
+  public void setTrapped(boolean trapped) {
+    this.trapped = trapped;
+  }
+
+  public void setMoving(boolean moving) {
+    this.moving = moving;
   }
 
   public boolean isTrapped() {
