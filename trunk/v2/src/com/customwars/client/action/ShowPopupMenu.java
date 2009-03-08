@@ -5,6 +5,7 @@ import com.customwars.client.ui.HUD;
 import com.customwars.client.ui.PopupMenu;
 import com.customwars.client.ui.renderer.MapRenderer;
 import com.customwars.client.ui.state.InGameSession;
+import org.apache.log4j.Logger;
 import org.newdawn.slick.gui.AbstractComponent;
 import org.newdawn.slick.gui.ComponentListener;
 
@@ -19,6 +20,7 @@ import java.util.List;
  * @author stefan
  */
 public class ShowPopupMenu extends CWAction implements ComponentListener {
+  private static final Logger logger = Logger.getLogger(ShowPopupMenu.class);
   private String popupName;
   private HUD hud;
   private List<CWAction> unitActions;
@@ -37,17 +39,24 @@ public class ShowPopupMenu extends CWAction implements ComponentListener {
   }
 
   public void doActionImpl() {
+    if (unitActions.size() == 0) {
+      logger.warn("No menu items");
+    }
     Tile clicked = inGameSession.getClick(2);
     if (clicked != null) {
       hud.showPopUp(clicked, popupName, unitMenuItemNames, this);
+      mapRenderer.moveCursor(clicked);
     }
+
     inGameSession.setMode(InGameSession.MODE.GUI);
+    mapRenderer.showArrows(true);
     mapRenderer.setCursorLocked(true);
   }
 
   public void undoAction() {
     hud.hidePopup();
     inGameSession.setMode(InGameSession.MODE.DEFAULT);
+    mapRenderer.showArrows(false);
     mapRenderer.setCursorLocked(false);
   }
 
@@ -64,7 +73,7 @@ public class ShowPopupMenu extends CWAction implements ComponentListener {
   public void componentActivated(AbstractComponent abstractComponent) {
     PopupMenu popupMenu = (PopupMenu) abstractComponent;
     CWAction action = unitActions.get(popupMenu.getCurrentOption());
-    this.undoAction();    // Hide the popup when clicked on a item      
-    action.doAction();
+    this.undoAction();    // Hide the popup when clicked on a item
+    inGameSession.doAction(action);
   }
 }

@@ -25,6 +25,9 @@ public class Game extends TurnBasedGame {
   private int weather;            // The current weather in effect
   private int cityFunds;          // The amount of money each City produces each turn
 
+  private boolean inited;         // Has this game been inited (map players replaced by game players)
+  private boolean started;        // Has the game been started (in progress)
+
   public Game(Map<Tile> map, List<Player> players, GameConfig gameConfig) {
     super(map, players);
     applyGameConfig(gameConfig);
@@ -45,19 +48,27 @@ public class Game extends TurnBasedGame {
    * add the unit/city to their army/cities
    */
   public void init() {
-    for (Tile t : map.getAllTiles()) {
-      City city = map.getCityOn(t);
-      Unit unit = map.getUnitOn(t);
+    if (!inited) {
+      for (Tile t : map.getAllTiles()) {
+        City city = map.getCityOn(t);
+        Unit unit = map.getUnitOn(t);
 
-      if (city != null) {
-        Player newOwner = getGamePlayer(city.getOwner());
-        newOwner.addCity(city);
-        city.setFunds(cityFunds);
+        if (city != null) {
+          Player newOwner = getGamePlayer(city.getOwner());
+          newOwner.addCity(city);
+          city.setFunds(cityFunds);
+        }
+        if (unit != null) {
+          if (t.getLocatableCount() != 1) {
+            throw new IllegalStateException("Tile @ " + t.getLocationString() + " contains " + t.getLocatableCount() + " units, limit=1");
+          }
+
+          Player newOwner = getGamePlayer(unit.getOwner());
+          newOwner.addUnit(unit);
+        }
+
       }
-      if (unit != null) {
-        Player newOwner = getGamePlayer(unit.getOwner());
-        newOwner.addUnit(unit);
-      }
+      inited = true;
     }
   }
 
@@ -81,8 +92,11 @@ public class Game extends TurnBasedGame {
    * @param gameStarter the player starting this game
    */
   public void startGame(Player gameStarter) {
-    super.startGame(gameStarter);
-    initZones();
+    if (!started) {
+      super.startGame(gameStarter);
+      initZones();
+      started = true;
+    }
   }
 
 

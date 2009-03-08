@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Allow a unit in a transport to be dropped
+ * Allow a unit in a transport to be dropped on a free adjacent tile
  *
  * @author stefan
  */
@@ -21,7 +21,7 @@ public class StartDropAction extends CWAction {
   private TileMap<Tile> map;
 
   public StartDropAction(TileMap<Tile> map, MapRenderer mapRenderer, InGameSession inGameSession) {
-    super("Start drop", false);
+    super("Start drop");
     this.map = map;
     this.mapRenderer = mapRenderer;
     this.inGameSession = inGameSession;
@@ -29,24 +29,34 @@ public class StartDropAction extends CWAction {
 
   protected void doActionImpl() {
     Tile selected = inGameSession.getClick(2);
-    List<Location> emptyAdjacentTiles = getEmptyAjacentTiles(selected);
+    List<Location> adjacentTiles = getEmptyAjacentTiles(selected);
 
     mapRenderer.removeZones();
+    mapRenderer.showArrows(false);
 
     // Only allow the cursor to move within the adjacent empty tiles,
     // show the tiles as a attackZone
-    mapRenderer.startCursorTraversal(emptyAdjacentTiles);
-    mapRenderer.setAttackZone(emptyAdjacentTiles);
+    mapRenderer.startCursorTraversal(adjacentTiles);
+    mapRenderer.setAttackZone(adjacentTiles);
     inGameSession.setMode(InGameSession.MODE.UNIT_DROP);
   }
 
   private List<Location> getEmptyAjacentTiles(Tile clicked) {
-    List<Location> emptyTiles = new ArrayList<Location>();
-    for (Location location : map.getSurroundingTiles(clicked, 1, 1)) {
-      if (location.getLocatableCount() == 0) {
-        emptyTiles.add(location);
+    List<Location> surroundingTiles = new ArrayList<Location>();
+    for (Tile tile : map.getSurroundingTiles(clicked, 1, 1)) {
+      if (tile.isFogged()) {
+        surroundingTiles.add(tile);
+      } else if (tile.getLocatableCount() == 0) {
+        surroundingTiles.add(tile);
       }
     }
-    return emptyTiles;
+    return surroundingTiles;
+  }
+
+  public void undoAction() {
+    mapRenderer.removeAttackZone();
+    mapRenderer.showArrows(true);
+    mapRenderer.stopCursorTraversal();
+    inGameSession.setMode(InGameSession.MODE.GUI);
   }
 }

@@ -4,8 +4,8 @@ import com.customwars.client.action.CWAction;
 import com.customwars.client.model.map.Tile;
 
 import javax.swing.undo.AbstractUndoableEdit;
+import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
-import javax.swing.undo.UndoManager;
 
 /**
  * Allows to share information in the inGameState
@@ -65,24 +65,53 @@ public class InGameSession {
   }
 
   public void addUndoAction(CWAction action) {
-    undoManager.addEdit(new Undo(action));
-    System.out.println("adding " + undoManager.getPresentationName() + " to undo list Undocount=" + ++undoCount);
+    if (action.canUndo()) {
+      undoManager.addEdit(new UndoWrapper(action));
+      System.out.println(++undoCount + ". Adding " + undoManager.getPresentationName() + " to undo list");
+    }
   }
 
   public void undoAll() {
-    while (undoManager.canUndo()) {
+    while (canUndo()) {
       undo();
     }
   }
 
+  public boolean canUndo() {
+    return undoManager.canUndo();
+  }
+
   /**
-   * Undo the last added action
-   * Actions that can be undo can be added by invoking addUndoAction(CWAction)
+   * UndoWrapper the last added action
    */
   public void undo() {
     if (undoManager.canUndo()) {
-      System.out.println(undoManager.getUndoPresentationName() + " Undocount=" + --undoCount);
+      System.out.println(" -- " + undoManager.getUndoPresentationName() + " -- ");
       undoManager.undo();
+      redoLast();
+    }
+  }
+
+  private void redoLast() {
+    if (undoManager.canUndo()) {
+      undoManager.undo();
+    } else {
+      // Last action
+      System.out.println(undoCount-- + ". Removing " + undoManager.getPresentationName() + " from undo list");
+      undoManager.removeLastEdit();
+    }
+
+    if (undoManager.canRedo()) {
+      undoManager.redo();
+      System.out.println(undoCount-- + ". Removing " + undoManager.getPresentationName() + " from undo list");
+      undoManager.removeLastEdit();
+    }
+  }
+
+  public void doAction(CWAction action) {
+    action.doAction();
+    if (action.canUndo()) {
+      addUndoAction(action);
     }
   }
 
@@ -136,10 +165,14 @@ public class InGameSession {
     return toString + "]";
   }
 
-  class Undo extends AbstractUndoableEdit {
+  /**
+   * Wrap a CWAction in a AbstractUndoableEdit
+   * so it can be used by the undoManager
+   */
+  class UndoWrapper extends AbstractUndoableEdit {
     private CWAction action;
 
-    public Undo(CWAction action) {
+    public UndoWrapper(CWAction action) {
       this.action = action;
     }
 
@@ -150,6 +183,24 @@ public class InGameSession {
     public void undo() throws CannotUndoException {
       super.undo();
       action.undoAction();
+    }
+
+    public void redo() throws CannotRedoException {
+      super.redo();
+      action.doAction();
+    }
+  }
+
+  /**
+   * Extend the swing undo manager
+   * so we can access the protected methods/fields.
+   */
+  private class UndoManager extends javax.swing.undo.UndoManager {
+    public void removeLastEdit() {
+      int last = edits.size() - 1;
+
+      if (last >= 0)
+        trimEdits(last, last);
     }
   }
 }

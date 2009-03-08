@@ -27,14 +27,14 @@ public abstract class CWState extends BasicGameState implements InputProviderLis
   private boolean entered;
 
   public final void controlPressed(Command command) {
-    controlPressed(command, cwInput);
+    if (entered) controlPressed(command, cwInput);
   }
 
   public void controlPressed(Command command, CWInput cwInput) {
   }
 
   public final void controlReleased(Command command) {
-    controlReleased(command, cwInput);
+    if (entered) controlReleased(command, cwInput);
   }
 
   public void controlReleased(Command command, CWInput cwInput) {

@@ -40,6 +40,7 @@ import java.util.HashMap;
 public class TestInGameState extends CWState implements PropertyChangeListener, ComponentListener {
   private HashMap<Unit, UnitController> unitControllers;
   private InGameSession inGameSession;
+  private GameContainer gameContainer;
 
   // GUI
   private Camera2D camera;
@@ -64,6 +65,7 @@ public class TestInGameState extends CWState implements PropertyChangeListener, 
     mapRenderer.loadResources(resources);
     hud = new HUD(game, container);
     hud.loadResources(resources);
+    gameContainer = container;
   }
 
   public void enter(GameContainer container, StateBasedGame stateBasedGame) throws SlickException {
@@ -78,8 +80,6 @@ public class TestInGameState extends CWState implements PropertyChangeListener, 
     MoveTraverse moveTraverse = new MoveTraverse(game.getMap());
     actionManager = new ActionManager(mapRenderer, inGameSession, moveTraverse, resources, game, hud);
     actionManager.buildActions();
-    buildContextMenu();
-
     this.game = stateSession.getGame();
     game.init();
     initGameListeners(game);
@@ -92,6 +92,8 @@ public class TestInGameState extends CWState implements PropertyChangeListener, 
     initCamera(map, container);
     mapRenderer.setScroller(new Scroller(camera));
 
+
+    buildContextMenu();
     game.startGame();
   }
 
@@ -110,6 +112,7 @@ public class TestInGameState extends CWState implements PropertyChangeListener, 
   }
 
   private void initUnitControllers(MoveTraverse moveTraverse) {
+    unitControllers.clear();
     for (Player player : game.getAllPlayers()) {
       if (!player.isNeutral())
         if (!player.isAi()) {
@@ -156,6 +159,13 @@ public class TestInGameState extends CWState implements PropertyChangeListener, 
 
   public void controlPressed(Command command, CWInput cwInput) {
     if (!inGameSession.isMoving()) {
+      if (cwInput.isCancelPressed(command)) {
+        if (inGameSession.canUndo()) {
+          inGameSession.undo();
+          return;
+        }
+      }
+
       if (inGameSession.isGUIMode()) {
         hud.controlPressed(command, cwInput);
       } else {
@@ -179,10 +189,6 @@ public class TestInGameState extends CWState implements PropertyChangeListener, 
         if (cwInput.isCancelPressed(command)) {
           handleB(activeUnit, selectedUnit);
         }
-      }
-
-      if (cwInput.isCancelPressed(command)) {
-        inGameSession.undo();
       }
     }
   }
@@ -254,7 +260,7 @@ public class TestInGameState extends CWState implements PropertyChangeListener, 
   public void keyReleased(int key, char c) {
     if (!inGameSession.isMoving()) {
       if (key == Input.KEY_R) {
-        mapRenderer.setMap(stateSession.getMap());
+        setGame(stateSession.getGame(), gameContainer);
       }
       if (key == Input.KEY_E) {
         actionManager.doAction("END_TURN");

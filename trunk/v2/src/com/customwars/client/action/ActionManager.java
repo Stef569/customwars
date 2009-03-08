@@ -79,7 +79,7 @@ public class ActionManager {
     ActionBag endTurnActions = new ActionBag("End Turn Actions");
     endTurnActions.addAction(endTurn);
     endTurnActions.addAction(clearInGameState);
-    actions.put("END_TURN", endTurn);
+    actions.put("END_TURN", endTurnActions);
   }
 
   private void buildUnitActions() {
@@ -102,7 +102,7 @@ public class ActionManager {
     CWAction unitSupplyAndHeal = new SupplyAndHealAction(game, inGameSession);
     CWAction unitLoadIntoTransport = new LoadAction(game, inGameSession, mapRenderer, unitWait);
     CWAction startDropMode = new StartDropAction(game.getMap(), mapRenderer, inGameSession);
-    CWAction unitDrop = new DropAction(game, inGameSession, unitWait);
+    CWAction unitDrop = new DropAction(game, inGameSession);
     actions.put("UNIT_MOVE_ANIMATED", unitMoveAnimated);
 
     // Animated move actions

@@ -41,6 +41,9 @@ public class HumanUnitController extends UnitController {
         inGameSession.setClick(2, cursorLocation);
         initUnitActionMenu(cursorLocation);
       } else if (canSelect(cursorLocation)) {
+        inGameSession.discartAllEdits();
+        inGameSession.clearClicks();
+        inGameSession.setClick(1, cursorLocation);
         doAction("SELECT_UNIT");
       }
     } else {
@@ -68,7 +71,7 @@ public class HumanUnitController extends UnitController {
 
     map.teleport(origin, selected, activeUnit);
     buildUnitActionMenu(selected);
-    doAction(showUnitPopupMenu);
+    inGameSession.doAction(showUnitPopupMenu);
     map.teleport(selected, origin, activeUnit);
   }
 
@@ -80,7 +83,6 @@ public class HumanUnitController extends UnitController {
     addToMenu(canLoad(selected), "UNIT_MOVE_LOAD_WAIT", "Load");
 //    addToMenu(canFire(clicked), "fire");
     addToMenu(canStartDrop(selected), "UNIT_START_DROP_MODE", "Drop");
-
   }
 
   /**
@@ -97,13 +99,6 @@ public class HumanUnitController extends UnitController {
 
   private void doAction(String actionName) {
     CWAction action = actionManager.getAction(actionName);
-    doAction(action);
-  }
-
-  private void doAction(CWAction action) {
-    action.doAction();
-    if (action.canUndo()) {
-      inGameSession.addUndoAction(action);
-    }
+    inGameSession.doAction(action);
   }
 }
