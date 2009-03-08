@@ -84,7 +84,7 @@ public class TileSprite extends Sprite implements Locatable {
   }
 
   /**
-   * Undo the translation to the graphics, by using the stored offsets
+   * UndoWrapper the translation to the graphics, by using the stored offsets
    */
   void undoTranslateOffset(Graphics g) {
     g.translate(frameWidthOffset, frameHeightOffset);

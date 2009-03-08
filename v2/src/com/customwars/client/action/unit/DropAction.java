@@ -15,11 +15,9 @@ import com.customwars.client.ui.state.InGameSession;
 public class DropAction extends CWAction {
   private InGameSession inGameSession;
   private Game game;
-  private CWAction waitAction;
 
-  public DropAction(Game game, InGameSession inGameSession, CWAction waitAction) {
+  public DropAction(Game game, InGameSession inGameSession) {
     super("Drop", false);
-    this.waitAction = waitAction;
     this.game = game;
     this.inGameSession = inGameSession;
   }
@@ -31,9 +29,10 @@ public class DropAction extends CWAction {
     Unit transporter = game.getActiveUnit();
     Unit unitInTransport = (Unit) transporter.getLastLocatable();
 
-    transporter.remove(unitInTransport);
-    clicked.add(unitInTransport);
-    waitAction.doAction();
-    waitAction.setActionCompleted(false);
+    if (clicked.getLocatableCount() == 0) {
+      transporter.remove(unitInTransport);
+      clicked.add(unitInTransport);
+      game.setActiveUnit(unitInTransport);
+    }
   }
 }

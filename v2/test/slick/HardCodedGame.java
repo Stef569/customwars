@@ -48,7 +48,7 @@ public class HardCodedGame {
     map.getTile(2, 1).setTerrain(TerrainFactory.getTerrain(TestData.VERTICAL_RIVER));
 
     // 3 Map Players, colors are suggestions game players overwrite them
-    Player p1 = new Player(1, Color.GREEN, false, null );
+    Player p1 = new Player(1, Color.GREEN, false, null);
     Player p2 = new Player(2, Color.BLUE, false, null);
     Player p3 = new Player(Player.NEUTRAL_PLAYER_ID, Color.GRAY, true, null);
 
@@ -64,7 +64,7 @@ public class HardCodedGame {
 
     addUnitToMap(2, 7, TestData.ROCKETS, p1);
     addUnitToMap(2, 2, TestData.MECH, p1);
-    addUnitToMap(0, 4, TestData.INF, p1);
+    addUnitToMap(0, 5, TestData.INF, p1);
     addUnitToMap(0, 4, TestData.ROCKETS, p1);
     addUnitToMap(1, 3, TestData.APC, p1);
     addUnitToMap(5, 6, TestData.INF, p1);

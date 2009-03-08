@@ -26,11 +26,14 @@ public class SelectAction extends CWAction {
   }
 
   public void doActionImpl() {
-    Tile clicked = (Tile) mapRenderer.getCursorLocation();
-    inGameSession.discartAllEdits();
-    inGameSession.setClick(1, clicked);
+    Tile clicked = inGameSession.getClick(1);
     selectUnit((Unit) clicked.getLastLocatable());
     inGameSession.setMode(InGameSession.MODE.UNIT_SELECT);
+
+    Tile secondClick = inGameSession.getClick(2);
+    if (secondClick != null) {
+      mapRenderer.moveCursor(secondClick);
+    }
   }
 
   private void selectUnit(Unit selectedUnit) {
@@ -43,7 +46,6 @@ public class SelectAction extends CWAction {
 
   public void undoAction() {
     deselectActiveUnit();
-    inGameSession.setClick(1, null);
     inGameSession.setMode(InGameSession.MODE.DEFAULT);
   }
 
@@ -52,5 +54,10 @@ public class SelectAction extends CWAction {
     mapRenderer.setActiveUnit(null);
     mapRenderer.removeZones();
     mapRenderer.showArrows(false);
+
+    Tile firstClick = inGameSession.getClick(1);
+    if (firstClick != null) {
+      mapRenderer.moveCursor(firstClick);
+    }
   }
 }

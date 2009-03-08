@@ -16,13 +16,13 @@ import java.util.List;
 
 /**
  * Handles any input for 1 unit
- * This can be surrounding tile information, player clicks on a menu, Ai
+ * This can be surrounding tile information, clicks in a menu, Ai
  *
  * @author stefan
  */
 public abstract class UnitController {
   Game game;
-  Map map;
+  Map<Tile> map;
   Unit unit;
   MoveTraverse moveTraverse;
   ActionManager actionManager;
@@ -64,11 +64,10 @@ public abstract class UnitController {
   }
 
   public boolean canWait(Tile selected) {
-    if (selected == null) return false;
+    if (selected == null || !isActiveUnitInGame() || !unit.isActive()) return false;
 
-    boolean validUnit = isActiveUnitInGame() && unit.isActive();
     if (selected.isFogged()) {
-      return validUnit;
+      return true;
     } else {
       return selected.getLocatableCount() == 1;
     }
@@ -119,8 +118,7 @@ public abstract class UnitController {
   public boolean canDrop(Tile selected) {
     Unit transporter = game.getActiveUnit();
     return isActiveUnitInGame() && unit.isActive() && isUnitVisible() &&
-            selected != null && selected.getLocatableCount() == 0 &&
-            transporter.getLocatableCount() > 0;
+            selected != null && transporter.getLocatableCount() > 0;
   }
 
   private boolean isActiveUnitInGame() {

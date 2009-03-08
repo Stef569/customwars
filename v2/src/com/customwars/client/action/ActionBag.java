@@ -8,6 +8,8 @@ import java.util.List;
  * If the list contains delayed actions then this class
  * Will wait with processing the next actions until the delayed action has been completed.
  *
+ * UndoWrapper doesn't wait for the action to be completed, undo code should not be delayed.
+ *
  * @author stefan
  */
 public class ActionBag extends CWAction {
@@ -60,6 +62,7 @@ public class ActionBag extends CWAction {
       action.doAction();
     } else if (undoAll) {
       action.undoAction();
+      action.setActionCompleted(true);
     }
   }
 
@@ -75,5 +78,16 @@ public class ActionBag extends CWAction {
 
   public void addAction(CWAction action) {
     actions.add(action);
+  }
+
+  /**
+   * @return if all actions can be undone
+   */
+  public boolean canUndo() {
+    for (CWAction action : actions) {
+      if (!action.canUndo())
+        return false;
+    }
+    return true;
   }
 }

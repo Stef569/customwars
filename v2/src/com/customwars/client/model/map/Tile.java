@@ -106,6 +106,10 @@ public class Tile extends GameObject implements Location {
       return null;
   }
 
+  public String getLocationString() {
+    return col + "," + row;
+  }
+
   public String toString() {
     String toString = "[(" + getCol() + "," + getRow() + ") fog=" + fogged;
     if (terrain != null) {
