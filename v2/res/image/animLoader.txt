@@ -2,7 +2,9 @@
 // M AnimName imgName firstFrameCol firstFrameRow lastFrameCol lastFrameRow loopForever
 // S AnimName imgName frameDuration startFrame totalframecount loopForever
 // To is INCLUSIVE!
-//S EXPLOSION explosion 150 0 9 False
+// If no col or row is provided for a strip, then startFrame=0 and lastFrameCol=total cols in the image
+
+S LAND_EXPLOSION landExplosion 150 False
 
 // Create Property Animations
 M city_0_RED city_RED 250 0 0 1 0 True
