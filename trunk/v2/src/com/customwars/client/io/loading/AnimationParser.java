@@ -85,8 +85,8 @@ public class AnimationParser implements DeferredResource {
     StringTokenizer tokens = new StringTokenizer(line);
     Scanner cmdScanner = new Scanner(line);
 
-    if (!(tokens.countTokens() >= 7))
-      throw new IllegalArgumentException(ERR_WRONG_NUM_ARGS + " for " + line + " Usage o <fileName>");
+    if (!(tokens.countTokens() >= 5))
+      throw new IllegalArgumentException(ERR_WRONG_NUM_ARGS + " for " + line);
     else {
       char imgType = Character.toLowerCase(cmdScanner.next().charAt(0));
       String animName = cmdScanner.next();
@@ -111,8 +111,15 @@ public class AnimationParser implements DeferredResource {
   }
 
   private Animation parseImagestripAnimations(Scanner cmdScanner, ImageStrip imgStrip, int frameDuration) {
-    int firstFrameCol = cmdScanner.nextInt();
-    int lastFrameCol = cmdScanner.nextInt();
+    int firstFrameCol, lastFrameCol;
+
+    if (cmdScanner.hasNextBoolean()) {
+      firstFrameCol = 0;
+      lastFrameCol = imgStrip.getCols();
+    } else {
+      firstFrameCol = cmdScanner.nextInt();
+      lastFrameCol = cmdScanner.nextInt();
+    }
     boolean loop = cmdScanner.nextBoolean();
 
     List<Image> result = new ArrayList<Image>();
@@ -120,7 +127,8 @@ public class AnimationParser implements DeferredResource {
       result.add(imgStrip.getSubImage(col));
     }
     Animation anim = new Animation(result.toArray(new Image[]{}), frameDuration);
-    anim.setAutoUpdate(loop);
+    anim.setAutoUpdate(false);
+    anim.setLooping(loop);
     return anim;
   }
 

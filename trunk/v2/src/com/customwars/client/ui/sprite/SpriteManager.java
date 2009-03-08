@@ -201,10 +201,10 @@ public class SpriteManager implements PropertyChangeListener {
     UnitSprite unitSprite;
 
     if (unitSprites.containsKey(unit)) {
-      throw new RuntimeException("Unit " + unit + " is already cached...");
+      throw new IllegalArgumentException("Unit " + unit + " is already cached...");
     } else {
       Tile t = (Tile) unit.getLocation();
-      Animation animDying = null;
+      Animation animDying = resources.getAnim("LAND_EXPLOSION");
       unitSprite = new UnitSprite(t, map, unit, unitDecorationStrip);
       unitSprite.setAnimDying(animDying);
     }
@@ -259,7 +259,7 @@ public class SpriteManager implements PropertyChangeListener {
     CitySprite citySprite;
 
     if (citySprites.containsKey(city)) {
-      throw new RuntimeException("City " + city + "  is already cached...");
+      throw new IllegalArgumentException("City " + city + "  is already cached...");
     } else {
       citySprite = new CitySprite(city.getLocation(), map, city, null);
     }

@@ -12,7 +12,7 @@ s aimCursor res/image/aimcursor0.png 54 54
 s miniMap res/image/miniMap.png 4 4
 
 s arrows res/image/arrows.png 32 32
-//s explosion explosion.png 10
+s landExplosion res/image/landExplosion.png 32 32
 s moveZone res/image/moveTile.png 32 32
 s attackZone res/image/attackTile.png 32 32
 
