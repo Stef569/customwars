@@ -150,16 +150,25 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
    * @param attacker The Attacker of which we want to retrieve the enemies in range for
    * @return units in attackRange of attacker.
    */
-  public List<Unit> getEnemiesInRangeOf(Unit attacker, Location location) {
+  public List<Unit> getEnemiesInRangeOf(Unit attacker) {
+    return getEnemiesInRangeOf(attacker, attacker.getLocation());
+  }
+
+  /**
+   * @param attacker The Attacker of which we want to retrieve the enemies in range for
+   * @param center   The center to iterate around
+   * @return units in attackRange of attacker.
+   */
+  public List<Unit> getEnemiesInRangeOf(Unit attacker, Location center) {
     List<Unit> units = new ArrayList<Unit>();
     int minAttackRange = attacker.getMinAttackRange();
     int maxAttackRange = attacker.getMaxAttackRange();
 
-    for (Tile t : getSurroundingTiles(location, minAttackRange, maxAttackRange)) {
+    for (Tile t : getSurroundingTiles(center, minAttackRange, maxAttackRange)) {
       Unit unit = getUnitOn(t);
 
-      if (attacker.canAttack(unit)) {
-        units.add((Unit) t.getLastLocatable());
+      if (!t.isFogged() && attacker.canAttack(unit)) {
+        units.add(unit);
       }
     }
     return units;

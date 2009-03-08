@@ -121,6 +121,26 @@ public abstract class UnitController {
             selected != null && transporter.getLocatableCount() > 0;
   }
 
+  /**
+   * @param origUnitLocation Where the unit was located(used to determine if the unit has moved)
+   * @param selected         the location that has been clicked on
+   * @return if this unit can attack
+   */
+  public boolean canStartAttack(Tile origUnitLocation, Tile selected) {
+    Unit activeUnit = game.getActiveUnit();
+    List<Unit> enemiesInRange = game.getMap().getEnemiesInRangeOf(activeUnit);
+
+    return isActiveUnitInGame() && isUnitVisible() &&
+            !enemiesInRange.isEmpty() && !isInDirect(origUnitLocation);
+  }
+
+  public boolean canAttack(Tile selected) {
+    if (!isActiveUnitInGame() || selected == null || !isUnitVisible()) return false;
+
+    Unit selectedUnit = game.getMap().getUnitOn(selected);
+    return selectedUnit != null;
+  }
+
   private boolean isActiveUnitInGame() {
     return game.getActiveUnit() == unit;
   }
@@ -132,7 +152,7 @@ public abstract class UnitController {
     return tile != null && tile.getLastLocatable() == unit;
   }
 
-  boolean isInDirect(Tile selected) {
+  boolean isInDirect(Location selected) {
     boolean moved = selected != unit.getLocation();
     return moved && unit.getMinAttackRange() > 1;
   }

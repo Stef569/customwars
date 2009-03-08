@@ -257,7 +257,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler {
    * 1 of the two weapons are set and have >0 ammo.
    */
   public boolean canAttack(Unit unit) {
-    return unit != null && canFire();
+    return unit != null && canFire() && !unit.getOwner().isAlliedWith(owner);
   }
 
   public void defend(Unit attacker, UnitFight fight) {

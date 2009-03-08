@@ -35,9 +35,9 @@ public class StartDropAction extends CWAction {
     mapRenderer.showArrows(false);
 
     // Only allow the cursor to move within the adjacent empty tiles,
-    // show the tiles as a attackZone
+    // show the tiles as a movezone
     mapRenderer.startCursorTraversal(adjacentTiles);
-    mapRenderer.setAttackZone(adjacentTiles);
+    mapRenderer.setMoveZone(adjacentTiles);
     inGameSession.setMode(InGameSession.MODE.UNIT_DROP);
   }
 
@@ -54,9 +54,8 @@ public class StartDropAction extends CWAction {
   }
 
   public void undoAction() {
-    mapRenderer.removeAttackZone();
+    mapRenderer.removeMoveZone();
     mapRenderer.showArrows(true);
     mapRenderer.stopCursorTraversal();
-    inGameSession.setMode(InGameSession.MODE.GUI);
   }
 }

@@ -1,7 +1,6 @@
 package com.customwars.client.controller;
 
 import com.customwars.client.action.ActionManager;
-import com.customwars.client.action.CWAction;
 import com.customwars.client.action.ShowPopupMenu;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.gameobject.Unit;
@@ -31,12 +30,17 @@ public class HumanUnitController extends UnitController {
   }
 
   public void handleAPress() {
+    if (!isUnitVisible()) return;
+
     Tile cursorLocation = (Tile) mapRenderer.getCursorLocation();
 
     if (inGameSession.isUnitDropMode() && canDrop(cursorLocation)) {
       inGameSession.setClick(3, cursorLocation);
-      doAction("UNIT_MOVE_DROP_WAIT");
-    } else if (unit.getMoveZone().contains(cursorLocation) && isUnitVisible()) {
+      actionManager.doAction("UNIT_MOVE_DROP_WAIT");
+    } else if (inGameSession.isUnitAttackMode() && canAttack(cursorLocation)) {
+      inGameSession.setClick(3, cursorLocation);
+      actionManager.doAction("UNIT_MOVE_ATTACK_WAIT");
+    } else if (unit.getMoveZone().contains(cursorLocation)) {
       if (canShowMenu()) {
         inGameSession.setClick(2, cursorLocation);
         initUnitActionMenu(cursorLocation);
@@ -44,7 +48,7 @@ public class HumanUnitController extends UnitController {
         inGameSession.discartAllEdits();
         inGameSession.clearClicks();
         inGameSession.setClick(1, cursorLocation);
-        doAction("SELECT_UNIT");
+        actionManager.doAction("SELECT_UNIT");
       }
     } else {
       inGameSession.undo();
@@ -55,7 +59,7 @@ public class HumanUnitController extends UnitController {
     Tile cursorLocation = (Tile) mapRenderer.getCursorLocation();
     Unit selectedUnit = map.getUnitOn(cursorLocation);
     if (isUnitVisible() && isUnitOn(cursorLocation) && selectedUnit.canFire()) {
-      doAction("ATTACK_ZONE_UNIT");
+      actionManager.doAction("ATTACK_ZONE_UNIT");
     }
   }
 
@@ -76,12 +80,13 @@ public class HumanUnitController extends UnitController {
   }
 
   private void buildUnitActionMenu(Tile selected) {
+    Tile firstSelection = inGameSession.getClick(1);
     showUnitPopupMenu.clearActions();
     addToMenu(canWait(selected), "UNIT_MOVE_WAIT", "Wait");
     addToMenu(canCapture(selected), "UNIT_MOVE_CAPTURE_WAIT", "Capture");
     addToMenu(canSupply(selected), "UNIT_MOVE_SUPPLY_WAIT", "Supply");
     addToMenu(canLoad(selected), "UNIT_MOVE_LOAD_WAIT", "Load");
-//    addToMenu(canFire(clicked), "fire");
+    addToMenu(canStartAttack(firstSelection, selected), "UNIT_START_ATTACK_MODE", "Fire");
     addToMenu(canStartDrop(selected), "UNIT_START_DROP_MODE", "Drop");
   }
 
@@ -95,10 +100,5 @@ public class HumanUnitController extends UnitController {
   private void addToMenu(boolean condition, String actionName, String menuName) {
     if (condition)
       showUnitPopupMenu.addAction(actionManager.getAction(actionName), menuName);
-  }
-
-  private void doAction(String actionName) {
-    CWAction action = actionManager.getAction(actionName);
-    inGameSession.doAction(action);
   }
 }

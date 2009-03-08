@@ -44,7 +44,7 @@ public class InGameState extends CWState {
     TileSprite aimCursor = new TileSprite(cursor2, map.getRandomTile(), map);
 
     mapRenderer.addCursor("SELECT", selectCursor);
-    mapRenderer.addCursor("AIM", aimCursor);
+    mapRenderer.addCursor("ATTACK", aimCursor);
     mapRenderer.activateCursor("SELECT");
   }
 
