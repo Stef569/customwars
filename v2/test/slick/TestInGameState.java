@@ -132,7 +132,7 @@ public class TestInGameState extends CWState implements PropertyChangeListener, 
     TileSprite aimCursor = new TileSprite(cursor2, map.getRandomTile(), map);
 
     mapRenderer.addCursor("SELECT", selectCursor);
-    mapRenderer.addCursor("AIM", aimCursor);
+    mapRenderer.addCursor("ATTACK", aimCursor);
     mapRenderer.activateCursor("SELECT");
     mapRenderer.setMap(map);
     hud.moveOverTile(mapRenderer.getCursorLocation(), true);

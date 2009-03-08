@@ -32,7 +32,7 @@ public class UnitSprite extends TileSprite implements PropertyChangeListener {
   private static final int UNIT_DECOR_LOWER_LEFT_X = 1;
   private static final int UNIT_DECOR_LOWER_LEFT_Y = 24;
   private static final int UNIT_DECOR_LOWER_RIGHT_X = 16;
-  private static final int UNIT_DECOR_LOWER_RIGHT_Y = 40;
+  private static final int UNIT_DECOR_LOWER_RIGHT_Y = 28;
   private static final int UNIT_DECOR_MIDDLE_RIGHT_X = 14;
   private static final int UNIT_DECOR_MIDDLE_RIGHT_Y = 14;
 

@@ -49,7 +49,7 @@ public class TestMapRenderer extends CWState {
     TileSprite aimCursor = new TileSprite(cursor2, map.getRandomTile(), map);
 
     mapRenderer.addCursor("SELECT", selectCursor);
-    mapRenderer.addCursor("AIM", aimCursor);
+    mapRenderer.addCursor("ATTACK", aimCursor);
     mapRenderer.activateCursor("SELECT");
   }
 
@@ -106,7 +106,7 @@ public class TestMapRenderer extends CWState {
       mapRenderer.activateCursor("DOES_NOT_EXISTS");
     }
     if (key == Input.KEY_1) {
-      mapRenderer.activateCursor("AIM");
+      mapRenderer.activateCursor("ATTACK");
     }
     if (key == Input.KEY_2) {
       mapRenderer.activateCursor("SELECT");

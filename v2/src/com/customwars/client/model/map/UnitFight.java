@@ -1,7 +1,6 @@
 package com.customwars.client.model.map;
 
 import com.customwars.client.model.gameobject.Unit;
-import com.customwars.client.model.rules.UnitRules;
 
 /**
  * Base class for Fights between an Attacking unit and a Defending unit
@@ -11,7 +10,7 @@ import com.customwars.client.model.rules.UnitRules;
 public class UnitFight {
   private static int[][] baseDMG;
   private static int[][] altDMG;
-  private UnitRules rules;
+  private Map<Tile> map;
 
   public enum FightType {
     Attack, CounterAttack
@@ -20,6 +19,10 @@ public class UnitFight {
   protected FightType type;
   protected Unit attacker;
   protected Unit defender;
+
+  public UnitFight(Map<Tile> map) {
+    this.map = map;
+  }
 
   public void initAttack(Unit attacker, Unit defender) {
     this.type = UnitFight.FightType.Attack;
@@ -32,7 +35,7 @@ public class UnitFight {
     return (int) Math.floor((attackDmgPercentage * defender.getMaxHp()) / 100);
   }
 
-  public int calcAttackDamagePercentage() {
+  public final int calcAttackDamagePercentage() {
     int terrainDef = calcTerrainDefense(defender);
     int baseDmg = getBaseDamage(attacker.getID(), defender.getID());
     int special = calcAdditionalDamageCases();
@@ -49,17 +52,28 @@ public class UnitFight {
     return 0;
   }
 
-  private int getBaseDamage(int attUnitType, int defUnitType) {
-    if (baseDMG[attUnitType][defUnitType] != -1) {
-      return baseDMG[attUnitType][defUnitType];
+  private int getBaseDamage(int attUnitID, int defUnitID) {
+    if (baseDMG[attUnitID][defUnitID] != -1) {
+      return baseDMG[attUnitID][defUnitID];
     } else {
-      return altDMG[attUnitType][defUnitType];
+      return altDMG[attUnitID][defUnitID];
     }
   }
 
+  /**
+   * Attacker is attacking defender, can the defender counter attack the attacker?
+   */
   public boolean canCounterAttack(Unit attacker, Unit defender) {
-    return type != FightType.CounterAttack &&
-            rules.canCounterAttack(attacker, defender);
+    return type != FightType.CounterAttack && isAttackerInRangeOfDefender(attacker, defender);
+  }
+
+  private boolean isAttackerInRangeOfDefender(Unit attacker, Unit defender) {
+    if (defender != null && defender.canCounterAttack()) {
+      for (Unit enemyInRange : map.getEnemiesInRangeOf(defender)) {
+        if (enemyInRange == attacker) return true;
+      }
+    }
+    return false;
   }
 
   public void counterAttack(Unit attacker) {
@@ -81,10 +95,6 @@ public class UnitFight {
     this.type = type;
   }
 
-  public void setRules(UnitRules rules) {
-    this.rules = rules;
-  }
-
   public static void setBaseDMG(int[][] baseDMG) {
     UnitFight.baseDMG = baseDMG;
   }
@@ -95,5 +105,11 @@ public class UnitFight {
 
   public FightType getType() {
     return type;
+  }
+
+  public void clear() {
+    attacker = null;
+    defender = null;
+    type = null;
   }
 }

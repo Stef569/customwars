@@ -1,6 +1,7 @@
 package com.customwars.client.action;
 
 import com.customwars.client.action.game.EndTurnAction;
+import com.customwars.client.action.unit.AttackAction;
 import com.customwars.client.action.unit.CaptureAction;
 import com.customwars.client.action.unit.ClearInGameState;
 import com.customwars.client.action.unit.DropAction;
@@ -8,11 +9,13 @@ import com.customwars.client.action.unit.LoadAction;
 import com.customwars.client.action.unit.MoveAnimatedAction;
 import com.customwars.client.action.unit.SelectAction;
 import com.customwars.client.action.unit.ShowAttackZoneAction;
+import com.customwars.client.action.unit.StartAttackAction;
 import com.customwars.client.action.unit.StartDropAction;
 import com.customwars.client.action.unit.SupplyAndHealAction;
 import com.customwars.client.action.unit.WaitAction;
 import com.customwars.client.io.ResourceManager;
 import com.customwars.client.model.game.Game;
+import com.customwars.client.model.map.UnitFight;
 import com.customwars.client.model.map.path.MoveTraverse;
 import com.customwars.client.ui.HUD;
 import com.customwars.client.ui.renderer.MapRenderer;
@@ -103,7 +106,12 @@ public class ActionManager {
     CWAction unitLoadIntoTransport = new LoadAction(game, inGameSession, mapRenderer, unitWait);
     CWAction startDropMode = new StartDropAction(game.getMap(), mapRenderer, inGameSession);
     CWAction unitDrop = new DropAction(game, inGameSession);
+    CWAction startAttackMode = new StartAttackAction(game, mapRenderer, inGameSession);
+    CWAction unitAttack = new AttackAction(game, inGameSession, new UnitFight(game.getMap()));
+
     actions.put("UNIT_MOVE_ANIMATED", unitMoveAnimated);
+    actions.put("UNIT_START_DROP_MODE", startDropMode);
+    actions.put("UNIT_START_ATTACK_MODE", startAttackMode);
 
     // Animated move actions
     ActionBag waitActions = new ActionBag("Wait Actions");
@@ -132,10 +140,6 @@ public class ActionManager {
     loadActions.addAction(clearInGameState);
     actions.put("UNIT_MOVE_LOAD_WAIT", loadActions);
 
-    ActionBag startDropActions = new ActionBag("Start Drop Actions");
-    startDropActions.addAction(startDropMode);
-    actions.put("UNIT_START_DROP_MODE", startDropActions);
-
     ActionBag dropActions = new ActionBag("Drop Actions");
     dropActions.addAction(unitMoveAnimated);
     dropActions.addAction(unitWait);
@@ -143,6 +147,13 @@ public class ActionManager {
     dropActions.addAction(unitWait);
     dropActions.addAction(clearInGameState);
     actions.put("UNIT_MOVE_DROP_WAIT", dropActions);
+
+    ActionBag attackActions = new ActionBag("Attack Actions");
+    attackActions.addAction(unitMoveAnimated);
+    attackActions.addAction(unitAttack);
+    attackActions.addAction(unitWait);
+    attackActions.addAction(clearInGameState);
+    actions.put("UNIT_MOVE_ATTACK_WAIT", attackActions);
   }
 
   public void doAction(String actionName) {
@@ -151,10 +162,7 @@ public class ActionManager {
   }
 
   public void doAction(CWAction action) {
-    action.doAction();
-    if (action.canUndo()) {
-      inGameSession.addUndoAction(action);
-    }
+    inGameSession.doAction(action);
   }
 
   public void addAction(String actionName, CWAction action) {
