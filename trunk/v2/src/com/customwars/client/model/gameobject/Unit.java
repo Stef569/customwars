@@ -263,12 +263,13 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler {
   public void defend(Unit attacker, UnitFight fight) {
     receiveDamage(attacker, fight);
 
-    if (fight.canCounterAttack(attacker, this)) {
-      fight.counterAttack(attacker);
-    }
-
     if (hp <= 0) {
       destroy();
+      return;
+    }
+
+    if (fight.canCounterAttack(attacker, this)) {
+      fight.counterAttack(attacker);
     }
   }
 
