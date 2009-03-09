@@ -244,7 +244,7 @@ public class PopupMenu extends BasicComponent implements ComponentListener {
   }
 
   private void setOption(int option) {
-    if (option >= 0 && option < txtOptions.size()) {
+    if (option != curoptn && option >= 0 && option < txtOptions.size()) {
       curoptn = option;
       playMenuTick();
       selectOption(curoptn);
