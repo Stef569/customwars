@@ -167,7 +167,7 @@ public class TurnBasedGame extends GameObject implements PropertyChangeListener 
     int day, turnCount, playerCount;
 
     turnCount = turn.getTurnCount();
-    playerCount = players.size();
+    playerCount = getNonNeutralPlayers().size();
 
     if (playerCount > 0) {
       day = (turnCount / playerCount) + 1;
@@ -179,6 +179,16 @@ public class TurnBasedGame extends GameObject implements PropertyChangeListener 
 
   public Map<Tile> getMap() {
     return map;
+  }
+
+  private List<Player> getNonNeutralPlayers() {
+    List<Player> nonNeutral = new ArrayList<Player>();
+    for (Player player : players) {
+      if (!player.isNeutral()) {
+        nonNeutral.add(player);
+      }
+    }
+    return nonNeutral;
   }
 
   public Iterable<Player> getAllPlayers() {
