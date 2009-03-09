@@ -1,6 +1,6 @@
 package com.customwars.client.action.unit;
 
-import com.customwars.client.action.CWAction;
+import com.customwars.client.action.AbstractCWAction;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.model.map.TileMap;
@@ -15,7 +15,7 @@ import java.util.List;
  *
  * @author stefan
  */
-public class StartDropAction extends CWAction {
+public class StartDropAction extends AbstractCWAction {
   private InGameSession inGameSession;
   private MapRenderer mapRenderer;
   private TileMap<Tile> map;

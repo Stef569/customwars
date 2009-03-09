@@ -2,9 +2,11 @@ package com.customwars.client.model.gameobject;
 
 import com.customwars.client.model.map.path.DefaultMoveStrategy;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Holds every unit in the game, getUnit returns deep copies
@@ -39,8 +41,12 @@ public class UnitFactory {
     return unit;
   }
 
-  public static Collection<Unit> getAllUnits() {
-    return Collections.unmodifiableCollection(units.values());
+  public static List<Unit> getAllUnits() {
+    List<Unit> unitCopies = new ArrayList<Unit>();
+    for (Unit unit : units.values()) {
+      unitCopies.add(getUnit(unit.getID()));
+    }
+    return Collections.unmodifiableList(unitCopies);
   }
 
   /**

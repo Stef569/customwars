@@ -8,23 +8,24 @@ import java.util.List;
  * If the list contains delayed actions then this class
  * Will wait with processing the next actions until the delayed action has been completed.
  *
- * UndoWrapper doesn't wait for the action to be completed, undo code should not be delayed.
+ * undo doesn't wait for the action to be completed, undo code should not be delayed.
  *
  * @author stefan
  */
-public class ActionBag extends CWAction {
+public class ActionBag implements CWAction {
   private static final int CHECK_ACTION_COMPLETE_DELAY = 250;
   private int time;
   private int index;
   private boolean doAll, undoAll, started;
   private List<CWAction> actions;
+  private String actionName;
 
   public ActionBag(String actionName) {
-    super(actionName);
+    this.actionName = actionName;
     actions = new ArrayList<CWAction>();
   }
 
-  protected void doActionImpl() {
+  public void doAction() {
     doAll = true;
     started = true;
   }
@@ -33,6 +34,7 @@ public class ActionBag extends CWAction {
     undoAll = true;
     started = true;
   }
+
 
   /**
    * Keep looping until all actions have finished
@@ -47,7 +49,7 @@ public class ActionBag extends CWAction {
 
       if (currentAction.isActionCompleted()) {
         gotoNextAction();
-        currentAction.actionCompleted = false;
+        currentAction.setActionCompleted(false);
       }
     }
   }
@@ -89,5 +91,17 @@ public class ActionBag extends CWAction {
         return false;
     }
     return true;
+  }
+
+  public void setActionCompleted(boolean b) {
+    // Wait for update to finish
+  }
+
+  public String getName() {
+    return actionName;
+  }
+
+  public boolean isActionCompleted() {
+    return !started;
   }
 }

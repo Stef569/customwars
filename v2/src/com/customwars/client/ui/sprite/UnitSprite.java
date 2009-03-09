@@ -191,7 +191,7 @@ public class UnitSprite extends TileSprite implements PropertyChangeListener {
     } else if (evt.getSource() == unit) {
       if (propertyName.equals("hp")) {
         lowHp = unit.hasLowHp();
-      } else if (propertyName.equals("supply")) {
+      } else if (propertyName.equals("supplies")) {
         lowSupplies = unit.hasLowSupplies();
       } else if (propertyName.equals("ammo")) {
         lowAmmo = unit.hasLowAmmo();

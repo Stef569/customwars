@@ -1,6 +1,6 @@
 package com.customwars.client.action.unit;
 
-import com.customwars.client.action.CWAction;
+import com.customwars.client.action.AbstractCWAction;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Location;
@@ -16,7 +16,7 @@ import java.util.List;
  *
  * @author stefan
  */
-public class StartAttackAction extends CWAction {
+public class StartAttackAction extends AbstractCWAction {
   private Game game;
   private InGameSession inGameSession;
   private MapRenderer mapRenderer;

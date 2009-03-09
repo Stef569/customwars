@@ -14,14 +14,14 @@ import com.customwars.client.ui.state.InGameSession;
  * @author stefan
  */
 public class MoveAnimatedAction extends DelayedAction {
-  private static final int MOVE_DELAY = 250;
+  private static final int MOVE_DELAY = 150;
   private InGameSession inGameSession;
   private MoveTraverse moveTraverse;
   private Game game;
   private MapRenderer mapRenderer;
 
   public MoveAnimatedAction(Game game, MapRenderer mapRenderer, MoveTraverse moveTraverse, InGameSession inGameSession) {
-    super("Move Animated", MOVE_DELAY);
+    super("Move Animated", true, MOVE_DELAY);
     this.game = game;
     this.mapRenderer = mapRenderer;
     this.inGameSession = inGameSession;
@@ -42,7 +42,7 @@ public class MoveAnimatedAction extends DelayedAction {
   /**
    * This method is called by the timer everytime the MOVE_DELAY has passed
    */
-  protected void doActionImpl() {
+  public void doActionImpl() {
     moveTraverse.update();
 
     if (moveTraverse.isPathMoveComplete()) {

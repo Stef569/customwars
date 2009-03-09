@@ -11,12 +11,13 @@ import java.util.List;
 
 /**
  * Cities can be owned by 1 Player
- * in fog of war They have a vision(The line of sight),
+ * in fog of war They have a vision aka line of sight,
  * are located on a Location
  * They have funds. The player that owns this city receives the funds each turn.
  * can heal units of a specific ID
  * can supply units of a specific ID
  * can be captured by a Units
+ * can build units of a specific ID
  *
  * healrate and healRanges are used for both healing and supplying.
  *
@@ -30,7 +31,7 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
   private List<Integer> heals;          // The ids this City can heal(Empty list means it cannot heal)
   private List<Integer> canBeCaptureBy; // The ids this City can be captured by(Empty list means it cannot be captured)
   private List<Integer> builds;         // The ids this City can build (Empty list means it cannot heal)
-  private int maxCapCount;              // When capCount == max capCount this property is captured see capture.
+  private int maxCapCount;              // When capCount == max capCount this property is captured see capture().
   private int healRate;                 // Amount of healing/repairs/supplies this property can give to a Unit
   private int minHealRange, maxHealRange;    // In what range can this City heal/Supply
 
@@ -92,9 +93,8 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
 
   /**
    * For every start of a Turn
-   * if this property is owned by the activePlayer then
-   * the funds of this property are added to the players funds
-   * if the capturer has been destroyed end the capture process.
+   * if this city is owned by the activePlayer then
+   * the funds of this city are added to the player budget.
    *
    * @param activePlayer the Player that is active in this turn
    */
@@ -112,7 +112,7 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
    * Adds the captureRate value to the capCount value on each invocation
    * it remembers the capturing Unit, if another Unit attempts to capture
    * then the capcount will be reset to 0 again.
-   * when the capcount >= the maxCapcount
+   * when capcount >= the maxCapcount
    * the property is considered captured and
    * the player that is owning the capturing unit will be the new owner of this property
    *
@@ -133,7 +133,6 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
       if (isCaptured()) {
         owner.removeCity(this);
         newOwner.addCity(this);
-        setOwner(newOwner);
         resetCapturing();
         firePropertyChange("captured", null, true);
       }
@@ -162,14 +161,14 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
   // ---------------------------------------------------------------------------
   public void setOwner(Player owner) {
     Player oldVal = this.owner;
-    firePropertyChange("owner", oldVal, owner);
     this.owner = owner;
+    firePropertyChange("owner", oldVal, owner);
   }
 
   public void setLocation(Location location) {
     Location oldVal = this.location;
-    firePropertyChange("location", oldVal, location);
     this.location = location;
+    firePropertyChange("location", oldVal, location);
   }
 
   public void setFunds(int funds) {
@@ -178,18 +177,10 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
     firePropertyChange("funds", oldVal, this.funds);
   }
 
-  /**
-   * When capCount reaches maxCapCount isCaptured() returns true.
-   *
-   * @param additionalCapCount The amount to add to the capCount
-   */
   private void addCapCount(int additionalCapCount) {
     setCapCount(capCount + additionalCapCount);
   }
 
-  /**
-   * @param capCount The amount to set the capCount to
-   */
   private void setCapCount(int capCount) {
     int oldVal = this.capCount;
     this.capCount = Args.getBetweenZeroMax(capCount, maxCapCount);
@@ -223,6 +214,10 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
 
   public boolean canBuild(Unit unit) {
     return unit != null && builds.contains(unit.getArmyBranch());
+  }
+
+  public boolean canBuild() {
+    return !builds.isEmpty();
   }
 
   public boolean isCapturedBy(Unit unit) {

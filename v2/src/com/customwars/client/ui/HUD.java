@@ -57,8 +57,9 @@ public class HUD {
   }
 
   public void render(Graphics g) {
-    g.drawString("Day:" + game.getDay(), 100, 10);
-    g.drawString("Player:" + game.getActivePlayer().getName(), 100, 20);
+    g.drawString("Day:" + game.getDay(), 150, 10);
+    g.drawString("Player:" + game.getActivePlayer().getName(), 150, 20);
+    g.drawString("Money:" + game.getActivePlayer().getBudget(), 150, 30);
 
     popupMenu.render(guiContext, g);
 

@@ -106,7 +106,7 @@ public class TurnBasedGame extends GameObject implements PropertyChangeListener 
    * @param invoker The player trying to end his turn
    * @throws NotYourTurnException when the invoking player cannot end his turn
    */
-  private void canEndTurn(Player invoker) throws NotYourTurnException {
+  void canEndTurn(Player invoker) throws NotYourTurnException {
     Args.checkForNull(invoker, "requesting EndOfTurn Player cannot be null");
 
     // Game check:
@@ -134,10 +134,10 @@ public class TurnBasedGame extends GameObject implements PropertyChangeListener 
     }
   }
 
-  private void startTurn(Player nextActivePlayer) {
-    nextActivePlayer.startTurn();
-    map.startTurn(nextActivePlayer);
-    setActivePlayer(nextActivePlayer);
+  void startTurn(Player player) {
+    player.startTurn();
+    map.startTurn(player);
+    setActivePlayer(player);
   }
 
   private void endGame() {

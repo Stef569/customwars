@@ -84,16 +84,16 @@ public class HumanUnitController extends UnitController {
   private void buildUnitActionMenu(Tile selected) {
     Tile firstSelection = inGameSession.getClick(1);
     showUnitPopupMenu.clearActions();
-    addToMenu(canWait(selected), "UNIT_MOVE_WAIT", "Wait");
     addToMenu(canCapture(selected), "UNIT_MOVE_CAPTURE_WAIT", "Capture");
     addToMenu(canSupply(selected), "UNIT_MOVE_SUPPLY_WAIT", "Supply");
     addToMenu(canLoad(selected), "UNIT_MOVE_LOAD_WAIT", "Load");
     addToMenu(canStartAttack(firstSelection, selected), "UNIT_START_ATTACK_MODE", "Fire");
     addToMenu(canStartDrop(selected), "UNIT_START_DROP_MODE", "Drop");
+    addToMenu(canWait(selected), "UNIT_MOVE_WAIT", "Wait");
   }
 
   /**
-   * Add a menu item to the menu backed by a CWAction
+   * Add a menu item to the menu backed by a AbstractCWAction
    *
    * @param condition  if the action should be added to the showpopup action
    * @param actionName The action to perform when clicked on the menu item

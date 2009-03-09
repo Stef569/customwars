@@ -1,6 +1,6 @@
 package com.customwars.client.action.game;
 
-import com.customwars.client.action.CWAction;
+import com.customwars.client.action.AbstractCWAction;
 import com.customwars.client.model.game.Game;
 
 /**
@@ -8,7 +8,7 @@ import com.customwars.client.model.game.Game;
  *
  * @author stefan
  */
-public class EndTurnAction extends CWAction {
+public class EndTurnAction extends AbstractCWAction {
   private Game game;
 
   public EndTurnAction(Game game) {

@@ -81,7 +81,7 @@ public class TestData {
   // City
   private static City base = new City(0, "Base", "", 0, 0, plainMoveCosts, 1, false, Arrays.asList(ARMY_BRANCH_GROUND), Arrays.asList(INF, MECH), null, 20, CITY_HEAL_RATE, 0, 0);
   private static City factory = new City(1, "Factory", "", 0, 0, plainMoveCosts, 1, false, Arrays.asList(ARMY_BRANCH_GROUND), Arrays.asList(INF, MECH), Arrays.asList(ARMY_BRANCH_GROUND), 20, CITY_HEAL_RATE, 0, 0);
-  private static City hq = new City(4, "HQ", "", 0, 0, plainMoveCosts, 1, false, Arrays.asList(ARMY_BRANCH_GROUND), Arrays.asList(INF, MECH), Arrays.asList(ARMY_BRANCH_GROUND), 20, CITY_HEAL_RATE, 0, 0);
+  private static City hq = new City(4, "HQ", "", 0, 0, plainMoveCosts, 1, false, Arrays.asList(ARMY_BRANCH_GROUND), Arrays.asList(INF, MECH), null, 20, CITY_HEAL_RATE, 0, 0);
 
   public static void storeTestData() {
     clearTestData();

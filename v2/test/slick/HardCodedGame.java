@@ -23,7 +23,7 @@ import java.util.List;
 public class HardCodedGame {
   // 3 Game Players
   public static Player p_GRAY = new Player(Color.GRAY, null, -1);
-  public static Player p_RED = new Player(1, Color.RED, false, null, "Stef", Integer.MAX_VALUE, 0, false);
+  public static Player p_RED = new Player(1, Color.RED, false, null, "Stef", 3800, 0, false);
   public static Player p_BLUE = new Player(2, Color.BLUE, false, null, "JSR", 8500, 1, false);
   private static Map<Tile> map;
 
@@ -35,6 +35,7 @@ public class HardCodedGame {
     List<Player> players = Arrays.asList(p_RED, p_BLUE, p_GRAY);
     GameConfig gc = new GameConfig();
     gc.setTurnLimit(500);
+    gc.setCityfunds(1000);
 
     Game game = new Game(getMap(), players, gc);
     return game;

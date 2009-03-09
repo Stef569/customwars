@@ -1,8 +1,10 @@
 package com.customwars.client.model.gameobject;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -75,7 +77,11 @@ public class WeaponFactory {
   }
 
   public static Collection<Weapon> getAllWeapons() {
-    return Collections.unmodifiableCollection(weapons.values());
+    List<Weapon> unitCopies = new ArrayList<Weapon>();
+    for (Weapon weapon : weapons.values()) {
+      unitCopies.add(getWeapon(weapon.getID()));
+    }
+    return Collections.unmodifiableList(unitCopies);
   }
 
   public static Weapon getRandomWeapon() {

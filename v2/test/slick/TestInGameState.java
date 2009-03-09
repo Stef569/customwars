@@ -2,6 +2,8 @@ package slick;
 
 import com.customwars.client.action.ActionManager;
 import com.customwars.client.action.ShowPopupMenu;
+import com.customwars.client.controller.CityController;
+import com.customwars.client.controller.HumanCityController;
 import com.customwars.client.controller.HumanUnitController;
 import com.customwars.client.controller.UnitController;
 import com.customwars.client.io.img.slick.ImageStrip;
@@ -39,6 +41,7 @@ import java.util.HashMap;
 
 public class TestInGameState extends CWState implements PropertyChangeListener, ComponentListener {
   private HashMap<Unit, UnitController> unitControllers;
+  private HashMap<City, CityController> cityControllers;
   private InGameSession inGameSession;
   private GameContainer gameContainer;
 
@@ -49,12 +52,14 @@ public class TestInGameState extends CWState implements PropertyChangeListener, 
 
   // MODEL
   private Game game;
+  private MoveTraverse moveTraverse;
 
   // ACTIONS
   private ActionManager actionManager;
 
   public TestInGameState() {
     this.unitControllers = new HashMap<Unit, UnitController>();
+    this.cityControllers = new HashMap<City, CityController>();
     this.mapRenderer = new MapRenderer();
     this.inGameSession = new InGameSession();
   }
@@ -77,12 +82,14 @@ public class TestInGameState extends CWState implements PropertyChangeListener, 
   }
 
   private void setGame(Game game, GameContainer container) {
-    MoveTraverse moveTraverse = new MoveTraverse(game.getMap());
+    moveTraverse = new MoveTraverse(game.getMap());
     actionManager = new ActionManager(mapRenderer, inGameSession, moveTraverse, resources, game, hud);
     actionManager.buildActions();
+
     this.game = stateSession.getGame();
     game.init();
     initGameListeners(game);
+    initCityControllers();
     initUnitControllers(moveTraverse);
     hud.setGame(game);
 
@@ -109,6 +116,20 @@ public class TestInGameState extends CWState implements PropertyChangeListener, 
     }
 
     game.addPropertyChangeListener(this);
+  }
+
+  private void initCityControllers() {
+    cityControllers.clear();
+    for (Player player : game.getAllPlayers()) {
+      if (!player.isNeutral()) {
+        if (!player.isAi()) {
+          for (City city : player.getAllCities()) {
+            CityController cityController = new HumanCityController(city, game, hud, inGameSession, mapRenderer, this, actionManager);
+            cityControllers.put(city, cityController);
+          }
+        }
+      }
+    }
   }
 
   private void initUnitControllers(MoveTraverse moveTraverse) {
@@ -194,9 +215,11 @@ public class TestInGameState extends CWState implements PropertyChangeListener, 
   }
 
   public void handleA(Unit unit, City city, Tile cursorLocation) {
-    handleUnitAPress(unit);
-
-    if (inGameSession.isDefaultMode()) {
+    if (unit != null) {
+      handleUnitAPress(unit);
+    } else if (city != null) {
+      handleCityAPress(city);
+    } else if (inGameSession.isDefaultMode()) {
       inGameSession.setClick(2, cursorLocation);
       actionManager.doAction("CONTEXT_MENU");
     }
@@ -213,6 +236,14 @@ public class TestInGameState extends CWState implements PropertyChangeListener, 
     if (unitController instanceof HumanUnitController) {
       HumanUnitController humanUnitController = (HumanUnitController) unitController;
       humanUnitController.handleAPress();
+    }
+  }
+
+  private void handleCityAPress(City city) {
+    CityController cityController = cityControllers.get(city);
+    if (cityController instanceof HumanCityController) {
+      HumanCityController humanCityController = (HumanCityController) cityController;
+      humanCityController.handleAPress();
     }
   }
 
@@ -281,6 +312,11 @@ public class TestInGameState extends CWState implements PropertyChangeListener, 
     int gameY = camera.convertToGameY(newy);
     mapRenderer.moveCursor(gameX, gameY);
     hud.moveOverTile(mapRenderer.getCursorLocation(), true);
+  }
+
+  public void addHumanUnitController(Unit unit) {
+    UnitController unitController = new HumanUnitController(game, unit, actionManager, moveTraverse, inGameSession, mapRenderer, hud);
+    unitControllers.put(unit, unitController);
   }
 
   public int getID() {

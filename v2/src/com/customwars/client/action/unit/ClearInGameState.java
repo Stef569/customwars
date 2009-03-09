@@ -1,6 +1,6 @@
 package com.customwars.client.action.unit;
 
-import com.customwars.client.action.CWAction;
+import com.customwars.client.action.AbstractCWAction;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.ui.HUD;
 import com.customwars.client.ui.renderer.MapRenderer;
@@ -12,7 +12,7 @@ import com.customwars.client.ui.state.InGameSession;
  *
  * @author stefan
  */
-public class ClearInGameState extends CWAction {
+public class ClearInGameState extends AbstractCWAction {
   private InGameSession inGameSession;
   private MapRenderer mapRenderer;
   private Game game;
