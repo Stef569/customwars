@@ -1,44 +1,39 @@
 package slick;
 
-import com.customwars.client.Config;
 import com.customwars.client.io.ResourceManager;
-import com.customwars.client.model.testdata.TestData;
 import com.customwars.client.ui.state.CWInput;
 import com.customwars.client.ui.state.CWState;
 import com.customwars.client.ui.state.StateLogic;
 import com.customwars.client.ui.state.StateSession;
 import org.apache.log4j.Logger;
-import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.command.Command;
 import org.newdawn.slick.command.InputProviderListener;
-import org.newdawn.slick.loading.LoadingList;
 import org.newdawn.slick.state.StateBasedGame;
 
 import java.io.IOException;
 
 public class TestStates extends StateBasedGame implements InputProviderListener {
   private static final Logger logger = Logger.getLogger(TestStates.class);
-  private static ResourceManager resources;
+  private ResourceManager resources;
+  private StateSession stateSession;
   private GameContainer gameContainer;
   private CWInput cwInput;
   private StateLogic statelogic;
   private int startID;
 
-  public TestStates(int startID) {
+  public TestStates(int startID, StateSession stateSession, ResourceManager resources) {
     super(System.getProperty("game.name"));
     this.startID = startID;
+    this.stateSession = stateSession;
+    this.resources = resources;
   }
 
   public void initStatesList(GameContainer container) throws SlickException {
     this.gameContainer = container;
-    StateSession stateSession = new StateSession();
 
-    TestData.storeTestData();
-    stateSession.setMap(HardCodedGame.getMap());  // Later set by a mapSelectState
-    stateSession.setGame(HardCodedGame.getGame());
     cwInput = new CWInput(container.getInput());
     cwInput.addListener(this);
 
@@ -107,29 +102,6 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
 
     if (key == Input.KEY_ENTER) {
       statelogic.changeTo("MAIN_MenU");
-    }
-  }
-
-  public static void main(String[] argv) {
-    int startID = 0;
-    if (argv.length > 0)
-      startID = Integer.valueOf(argv[0]);
-
-    try {
-      LoadingList.setDeferredLoading(false);
-      resources = new ResourceManager();
-
-      Config config = new Config(resources);
-      config.configure();
-
-      AppGameContainer appGameContainer = new AppGameContainer(new TestStates(startID));
-      appGameContainer.setDisplayMode(640, 480, false);
-      appGameContainer.setTargetFrameRate(60);
-      appGameContainer.start();
-    } catch (SlickException e) {
-      logger.fatal("", e);
-    } catch (Exception e) {
-      logger.fatal("", e);
     }
   }
 }
