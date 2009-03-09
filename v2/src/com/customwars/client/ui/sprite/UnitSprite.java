@@ -47,6 +47,7 @@ public class UnitSprite extends TileSprite implements PropertyChangeListener {
 
   private Unit unit;
   private boolean lowHp, lowAmmo, lowSupplies;
+  private boolean remove = false;
 
   public UnitSprite(Tile tile, TileMap map, Unit unit, ImageStrip decorations) {
     super(tile, map);
@@ -126,8 +127,21 @@ public class UnitSprite extends TileSprite implements PropertyChangeListener {
         setAnim(animRight);
         break;
       case DESTROYED:
+        if (animDying.isStopped()) {
+          animDying.restart();
+        }
         setAnim(animDying);
         break;
+    }
+  }
+
+  public void update(long elapsedTime) {
+    super.update(elapsedTime);
+
+    if (anim.isStopped() && unit.isDestroyed()) {
+      setVisible(false);
+      setAnim(null);
+      remove = true;
     }
   }
 
@@ -190,5 +204,9 @@ public class UnitSprite extends TileSprite implements PropertyChangeListener {
         setLocation((Location) evt.getNewValue());
       }
     }
+  }
+
+  public boolean canBeRemoved() {
+    return remove;
   }
 }

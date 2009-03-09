@@ -29,7 +29,7 @@ import java.util.Set;
  * cursors, units, cities
  *
  * Each unique animation is stored and updated.
- * A animation is added when a sprite changes his anim
+ * An animation is added when a sprite changes his anim.
  *
  * @author stefan
  */
@@ -65,6 +65,17 @@ public class SpriteManager implements PropertyChangeListener {
   public void update(int elapsedTime) {
     for (Animation anim : uniqueAnimations) {
       anim.update(elapsedTime);
+    }
+
+    Iterator it = unitSprites.values().iterator();
+    while (it.hasNext()) {
+      UnitSprite sprite = (UnitSprite) it.next();
+      sprite.update(elapsedTime);
+
+      if (sprite.canBeRemoved()) {
+        logger.debug("Removing UnitSprite");
+        it.remove();
+      }
     }
   }
 
@@ -187,6 +198,7 @@ public class SpriteManager implements PropertyChangeListener {
   public void loadUnitSprite(Unit unit) {
     Color unitColor = unit.getOwner().getColor();
     UnitSprite sprite = createUnitSprite(unit);
+    sprite.setUpdateAnim(false);
     recolorUnitSprite(sprite, unitColor, unit.getID());
     addUnitSprite(unit, sprite);
     sprite.addPropertyChangeListener(this);
@@ -205,6 +217,7 @@ public class SpriteManager implements PropertyChangeListener {
     } else {
       Tile t = (Tile) unit.getLocation();
       Animation animDying = resources.getAnim("LAND_EXPLOSION");
+      animDying.stopAt(animDying.getFrameCount() - 1);
       unitSprite = new UnitSprite(t, map, unit, unitDecorationStrip);
       unitSprite.setAnimDying(animDying);
     }
@@ -246,6 +259,7 @@ public class SpriteManager implements PropertyChangeListener {
   public void loadCitySprite(City city) {
     Color cityColor = city.getOwner().getColor();
     CitySprite sprite = createCitySprite(city);
+    sprite.setUpdateAnim(false);
     recolorCitySprite(sprite, cityColor, city.getID());
     addCitySprite(city, sprite);
     sprite.addPropertyChangeListener(this);
@@ -376,12 +390,14 @@ public class SpriteManager implements PropertyChangeListener {
 
   private void animChange(Animation oldAnim, Animation newAnim) {
     // First look if the old Animation can be removed
-    if (!isAnimInUse(oldAnim))
+    if (oldAnim != null && !isAnimInUse(oldAnim)) {
       uniqueAnimations.remove(oldAnim);
 
-    // Add the new Animation(no duplicates/nulls allowed)
-    if (!uniqueAnimations.contains(newAnim) && newAnim != null)
-      uniqueAnimations.add(newAnim);
+      // Add the new Animation
+      if (!uniqueAnimations.contains(newAnim) && newAnim != null && newAnim.getFrameCount() > 1) {
+        uniqueAnimations.add(newAnim);
+      }
+    }
   }
 
   private boolean isAnimInUse(Animation anim) {

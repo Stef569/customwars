@@ -21,7 +21,7 @@ public class Sprite {
   private static final Logger logger = Logger.getLogger(Sprite.class);
   private static final int ONE_SECOND = 1000;
   private boolean illegalRenderingLogged;
-  private boolean visible = true;
+  private boolean visible = true, updateAnim = true;
   PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
 
   // Position (pixels)
@@ -75,7 +75,7 @@ public class Sprite {
   public void update(long elapsedTime) {
     locX += dx * elapsedTime / ONE_SECOND;
     locY += dy * elapsedTime / ONE_SECOND;
-    if (anim != null) anim.update(elapsedTime);
+    if (anim != null && updateAnim) anim.update(elapsedTime);
   }
 
   /**
@@ -179,6 +179,10 @@ public class Sprite {
 
   public void setVisible(boolean visible) {
     this.visible = visible;
+  }
+
+  public void setUpdateAnim(boolean updateAnim) {
+    this.updateAnim = updateAnim;
   }
 
   //----------------------------------------------------------------------------
