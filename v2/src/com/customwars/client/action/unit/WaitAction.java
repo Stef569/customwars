@@ -23,7 +23,6 @@ public class WaitAction extends CWAction {
 
   public void doActionImpl() {
     wait(game.getActiveUnit());
-    inGameSession.discartAllEdits();
   }
 
   private void wait(Unit unit) {

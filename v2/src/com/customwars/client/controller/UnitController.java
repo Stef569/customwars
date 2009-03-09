@@ -127,11 +127,16 @@ public abstract class UnitController {
    * @return if this unit can attack
    */
   public boolean canStartAttack(Tile origUnitLocation, Tile selected) {
+    if (!isActiveUnitInGame() && !isUnitVisible() && !isInDirect(origUnitLocation)) return false;
+
     Unit activeUnit = game.getActiveUnit();
     List<Unit> enemiesInRange = game.getMap().getEnemiesInRangeOf(activeUnit);
 
-    return isActiveUnitInGame() && isUnitVisible() &&
-            !enemiesInRange.isEmpty() && !isInDirect(origUnitLocation);
+    if (selected.isFogged()) {
+      return !enemiesInRange.isEmpty();
+    } else {
+      return !enemiesInRange.isEmpty() && selected.getLocatableCount() == 1;
+    }
   }
 
   public boolean canAttack(Tile selected) {

@@ -30,4 +30,8 @@ public class Turn {
   public boolean isTurnLimitReached() {
     return turn == turnLimit;
   }
+
+  public String toString() {
+    return "[Turn " + turn + "/" + turnLimit + "]";
+  }
 }

@@ -72,7 +72,7 @@ public class ActionManager {
     Args.checkForNull(game);
     Args.checkForNull(moveTraverse);
 
-    clearInGameState = new ClearInGameState(game, mapRenderer, inGameSession);
+    clearInGameState = new ClearInGameState(game, mapRenderer, inGameSession, hud);
     buildGameActions();
     buildUnitActions();
   }

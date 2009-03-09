@@ -76,4 +76,8 @@ public class ShowPopupMenu extends CWAction implements ComponentListener {
     this.undoAction();    // Hide the popup when clicked on a item
     inGameSession.doAction(action);
   }
+
+  public boolean atLeastHasOneItem() {
+    return unitMenuItemNames.size() > 0;
+  }
 }
