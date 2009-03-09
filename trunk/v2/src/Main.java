@@ -16,6 +16,10 @@ import slick.TestStates;
 import tools.ColorUtil;
 
 /**
+ * Starts The client
+ * If DEBUG is on a hardcoded testGame will be loaded
+ * if DEBUG_GUI is on 2 debug windows will be visible
+ *
  * @author stefan
  */
 public class Main {
@@ -40,6 +44,7 @@ public class Main {
 
       Config config = new Config(resources);
       config.configure();
+      logger.info("Starting up");
       new Main();
     } catch (Exception e) {
       logger.fatal("Startup failure", e);
@@ -52,6 +57,7 @@ public class Main {
     console = initScript();
 
     if (DEBUG) {
+      logger.info("Init debug Mode");
       initDebugMode();
     }
 
@@ -74,7 +80,6 @@ public class Main {
   }
 
   private void initDebugMode() {
-    logger.info("Init debug Mode");
     TestData.storeTestData();
 
     logger.info("init hard coded game");

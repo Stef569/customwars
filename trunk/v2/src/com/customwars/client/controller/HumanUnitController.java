@@ -75,7 +75,9 @@ public class HumanUnitController extends UnitController {
 
     map.teleport(origin, selected, activeUnit);
     buildUnitActionMenu(selected);
-    inGameSession.doAction(showUnitPopupMenu);
+    if (showUnitPopupMenu.atLeastHasOneItem()) {
+      inGameSession.doAction(showUnitPopupMenu);
+    }
     map.teleport(selected, origin, activeUnit);
   }
 
