@@ -29,6 +29,11 @@ public class WaitAction extends CWAction {
   private void wait(Unit unit) {
     game.getMap().resetFogMap(unit.getOwner());
     game.initZones();
-    unit.setState(GameObjectState.IDLE);
+
+    // The unit performed an action disable further actions ->IDLE 
+    // when the unit didn't die from an attack.
+    if (!unit.isDestroyed()) {
+      unit.setState(GameObjectState.IDLE);
+    }
   }
 }

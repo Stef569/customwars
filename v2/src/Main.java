@@ -84,8 +84,10 @@ public class Main {
     stateSession.setGame(game);
     stateSession.setMap(game.getMap());  // Later set by a mapSelectState
 
-    DebugEnvironment debugEnvironment = new DebugEnvironment(console, bsh, game);
-    debugEnvironment.show();
+    if (DEBUG_GUI) {
+      DebugEnvironment debugEnvironment = new DebugEnvironment(console, bsh, game);
+      debugEnvironment.show();
+    }
 
     try {
       initScriptObjects(game, resources);

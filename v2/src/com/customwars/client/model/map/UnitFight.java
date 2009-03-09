@@ -79,7 +79,7 @@ public class UnitFight {
   public void counterAttack(Unit attacker) {
     swap();
     setType(UnitFight.FightType.CounterAttack);
-    attacker.attack(defender, this);
+    defender.attack(attacker, this);
   }
 
   /**

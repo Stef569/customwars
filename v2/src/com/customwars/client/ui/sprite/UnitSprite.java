@@ -140,7 +140,6 @@ public class UnitSprite extends TileSprite implements PropertyChangeListener {
 
     if (anim.isStopped() && unit.isDestroyed()) {
       setVisible(false);
-      setAnim(null);
       remove = true;
     }
   }
@@ -148,7 +147,7 @@ public class UnitSprite extends TileSprite implements PropertyChangeListener {
   public void render(int x, int y, Graphics g) {
     super.render(x, y, g);
 
-    if (isVisible()) {
+    if (isVisible() && !unit.isDestroyed()) {
       translateOffset(g, false);
       if (lowHp) {
         g.drawString(unit.getHp() + "", x + locX + UNIT_DECOR_LOWER_RIGHT_X, y + locY + UNIT_DECOR_LOWER_RIGHT_Y);

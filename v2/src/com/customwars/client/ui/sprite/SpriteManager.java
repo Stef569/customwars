@@ -95,11 +95,15 @@ public class SpriteManager implements PropertyChangeListener {
   }
 
   public void renderUnit(int x, int y, Graphics g, Unit unit) {
-    unitSprites.get(unit).render(x, y, g);
+    if (unitSprites.containsKey(unit)) {
+      unitSprites.get(unit).render(x, y, g);
+    }
   }
 
   public void renderCity(int x, int y, Graphics g, City city) {
-    citySprites.get(city).render(x, y, g);
+    if (citySprites.containsKey(city)) {
+      citySprites.get(city).render(x, y, g);
+    }
   }
 
   public void moveCursorTo(Location location) {
