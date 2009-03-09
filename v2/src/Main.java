@@ -24,8 +24,8 @@ import tools.ColorUtil;
  */
 public class Main {
   private static final Logger logger = Logger.getLogger(Main.class);
-  private static final boolean DEBUG = true;
-  private static final boolean DEBUG_GUI = true;
+  private static boolean DEBUG;
+  private static boolean DEBUG_GUI;
   private static ResourceManager resources;
 
   // Script
@@ -35,8 +35,7 @@ public class Main {
   private static int startStateID;
 
   public static void main(String[] argv) {
-    if (argv.length > 0)
-      startStateID = Integer.valueOf(argv[0]);
+    handleArgs(argv);
 
     try {
       LoadingList.setDeferredLoading(false);
@@ -49,6 +48,30 @@ public class Main {
     } catch (Exception e) {
       logger.fatal("Startup failure", e);
       System.exit(-1);
+    }
+  }
+
+  private static void handleArgs(String[] args) {
+    int i = 0;
+    String arg;
+
+    while (i < args.length && args[i].startsWith("-")) {
+      arg = args[i++];
+
+      // use this type of check for "wordy" arguments
+      if (arg.equals("-showdebuggui")) {
+        DEBUG_GUI = true;
+      } else if (arg.equals("-debug")) {
+        DEBUG = true;
+      }
+
+      // use this type of check for arguments that require arguments
+      else if (arg.equals("-startstate")) {
+        if (i < args.length)
+          startStateID = Integer.parseInt(args[i++]);
+        else
+          startStateID = 0;
+      }
     }
   }
 
