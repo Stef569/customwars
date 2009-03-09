@@ -67,11 +67,14 @@ public class SpriteManager implements PropertyChangeListener {
       anim.update(elapsedTime);
     }
 
+    for (CitySprite citySprite : citySprites.values()) {
+      citySprite.update(elapsedTime);
+    }
+
     Iterator it = unitSprites.values().iterator();
     while (it.hasNext()) {
       UnitSprite sprite = (UnitSprite) it.next();
       sprite.update(elapsedTime);
-
       if (sprite.canBeRemoved()) {
         logger.debug("Removing UnitSprite");
         it.remove();
@@ -259,8 +262,8 @@ public class SpriteManager implements PropertyChangeListener {
   public void loadCitySprite(City city) {
     Color cityColor = city.getOwner().getColor();
     CitySprite sprite = createCitySprite(city);
-    sprite.setUpdateAnim(false);
     recolorCitySprite(sprite, cityColor, city.getID());
+    sprite.setUpdateAnim(false);
     addCitySprite(city, sprite);
     sprite.addPropertyChangeListener(this);
     city.addPropertyChangeListener(this);
@@ -392,11 +395,11 @@ public class SpriteManager implements PropertyChangeListener {
     // First look if the old Animation can be removed
     if (oldAnim != null && !isAnimInUse(oldAnim)) {
       uniqueAnimations.remove(oldAnim);
+    }
 
-      // Add the new Animation
-      if (!uniqueAnimations.contains(newAnim) && newAnim != null && newAnim.getFrameCount() > 1) {
-        uniqueAnimations.add(newAnim);
-      }
+    // Add the new Animation
+    if (!uniqueAnimations.contains(newAnim) && newAnim != null && newAnim.getFrameCount() > 1) {
+      uniqueAnimations.add(newAnim);
     }
   }
 

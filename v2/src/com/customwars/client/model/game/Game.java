@@ -141,4 +141,12 @@ public class Game extends TurnBasedGame {
   public int getTurnLimit() {
     return turn.getTurnLimit();
   }
+
+  public boolean isInited() {
+    return inited;
+  }
+
+  public boolean isStarted() {
+    return started;
+  }
 }
