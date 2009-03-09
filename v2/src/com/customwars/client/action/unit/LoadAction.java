@@ -37,10 +37,10 @@ public class LoadAction extends CWAction {
     Unit transport = (Unit) selected.getLocatable(0);
     Unit activeUnit = game.getActiveUnit();
 
-    waitAction.doAction();
-    waitAction.setActionCompleted(false);
     selected.remove(activeUnit);
     transport.add(activeUnit);
     mapRenderer.removeUnit(activeUnit);
+    waitAction.doAction();
+    waitAction.setActionCompleted(false);
   }
 }
