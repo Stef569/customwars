@@ -99,7 +99,6 @@ public class Game extends TurnBasedGame {
     }
   }
 
-
   /**
    * Create move/Attack zones for each unit of each player.
    * fog of war is reset for each player since fog affects zones.
@@ -112,9 +111,21 @@ public class Game extends TurnBasedGame {
     map.resetFogMap(getActivePlayer());
   }
 
-  // ---------------------------------------------------------------------------
-  // SETTERS
-  // --------------------------------------------------------------------------
+  void startTurn(Player player) {
+    super.startTurn(player);
+    checkSupplyConditions(player);
+  }
+
+  private void checkSupplyConditions(Player player) {
+    for (City city : player.getAllCities()) {
+      Tile cityLocation = (Tile) city.getLocation();
+      if (cityLocation.getLocatableCount() > 0) {
+        Unit unit = (Unit) cityLocation.getLastLocatable();
+        city.supply(unit);
+      }
+    }
+  }
+
   public void setActiveUnit(Unit unit) {
     Unit oldVal = this.activeUnit;
     this.activeUnit = unit;
@@ -127,9 +138,6 @@ public class Game extends TurnBasedGame {
     firePropertyChange("weather", oldVal, this.weather);
   }
 
-  // ---------------------------------------------------------------------------
-  // GETTERS
-  // ---------------------------------------------------------------------------
   public Unit getActiveUnit() {
     return activeUnit;
   }

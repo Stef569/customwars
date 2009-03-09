@@ -1,8 +1,10 @@
 package com.customwars.client.model.gameobject;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * A database(cache) of cities that can be used in the game. each City is mapped to an unique ID.
@@ -39,7 +41,11 @@ public class CityFactory {
   }
 
   public static Collection<City> getAllCities() {
-    return Collections.unmodifiableCollection(cities.values());
+    List<City> cityCopies = new ArrayList<City>();
+    for (City unit : cities.values()) {
+      cityCopies.add(getCity(unit.getID()));
+    }
+    return Collections.unmodifiableList(cityCopies);
   }
 
   public static City getRandomCity() {

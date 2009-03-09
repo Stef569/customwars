@@ -109,6 +109,8 @@ public class ActionManager {
     CWAction startAttackMode = new StartAttackAction(game, mapRenderer, inGameSession);
     CWAction unitAttack = new AttackAction(game, inGameSession, new UnitFight(game.getMap()));
 
+    actions.put("CLEAR_INGAME_STATE", clearInGameState);
+    actions.put("UNIT_WAIT", unitWait);
     actions.put("UNIT_MOVE_ANIMATED", unitMoveAnimated);
     actions.put("UNIT_START_DROP_MODE", startDropMode);
     actions.put("UNIT_START_ATTACK_MODE", startAttackMode);

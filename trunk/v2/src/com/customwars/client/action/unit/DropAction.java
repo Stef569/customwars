@@ -1,6 +1,6 @@
 package com.customwars.client.action.unit;
 
-import com.customwars.client.action.CWAction;
+import com.customwars.client.action.AbstractCWAction;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Tile;
@@ -12,7 +12,7 @@ import com.customwars.client.ui.state.InGameSession;
  *
  * @author stefan
  */
-public class DropAction extends CWAction {
+public class DropAction extends AbstractCWAction {
   private InGameSession inGameSession;
   private Game game;
 

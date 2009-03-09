@@ -63,7 +63,7 @@ public abstract class UnitController {
             unit.isActive() && game.getActiveUnit().isWithinMoveZone(to);
   }
 
-  public boolean canWait(Tile selected) {
+  boolean canWait(Tile selected) {
     if (selected == null || !isActiveUnitInGame() || !unit.isActive()) return false;
 
     if (selected.isFogged()) {
@@ -73,7 +73,7 @@ public abstract class UnitController {
     }
   }
 
-  public boolean canSupply(Tile selected) {
+  boolean canSupply(Tile selected) {
     return selected != null && isActiveUnitInGame() && unit.isActive() &&
             !game.getMap().getSuppliablesInRange(game.getActiveUnit()).isEmpty();
   }
@@ -81,7 +81,7 @@ public abstract class UnitController {
   /**
    * Can the activeUnit be added to the transport
    */
-  public boolean canLoad(Tile selected) {
+  boolean canLoad(Tile selected) {
     if (selected == null) return false;
 
     Unit transporter;
@@ -115,7 +115,7 @@ public abstract class UnitController {
     return emptyTiles;
   }
 
-  public boolean canDrop(Tile selected) {
+  boolean canDrop(Tile selected) {
     Unit transporter = game.getActiveUnit();
     return isActiveUnitInGame() && unit.isActive() && isUnitVisible() &&
             selected != null && transporter.getLocatableCount() > 0;
@@ -126,8 +126,8 @@ public abstract class UnitController {
    * @param selected         the location that has been clicked on
    * @return if this unit can attack
    */
-  public boolean canStartAttack(Tile origUnitLocation, Tile selected) {
-    if (!isActiveUnitInGame() && !isUnitVisible() && !isInDirect(origUnitLocation)) return false;
+  boolean canStartAttack(Tile origUnitLocation, Tile selected) {
+    if (!isActiveUnitInGame() || isDirectUnitMoved(origUnitLocation)) return false;
 
     Unit activeUnit = game.getActiveUnit();
     List<Unit> enemiesInRange = game.getMap().getEnemiesInRangeOf(activeUnit);
@@ -139,14 +139,14 @@ public abstract class UnitController {
     }
   }
 
-  public boolean canAttack(Tile selected) {
+  boolean canAttack(Tile selected) {
     if (!isActiveUnitInGame() || selected == null || !isUnitVisible()) return false;
 
     Unit selectedUnit = game.getMap().getUnitOn(selected);
     return selectedUnit != null;
   }
 
-  private boolean isActiveUnitInGame() {
+  boolean isActiveUnitInGame() {
     return game.getActiveUnit() == unit;
   }
 
@@ -157,13 +157,17 @@ public abstract class UnitController {
     return tile != null && tile.getLastLocatable() == unit;
   }
 
-  boolean isInDirect(Location selected) {
+  /**
+   * @param selected original unit location
+   * @return if this unit is a direct fire type and has it moved
+   */
+  boolean isDirectUnitMoved(Location selected) {
     boolean moved = selected != unit.getLocation();
     return moved && unit.getMinAttackRange() > 1;
   }
 
   /**
-   * Is the tile and unit visible
+   * Is the tile and the unit on it visible
    */
   boolean isUnitVisible() {
     Tile tile = (Tile) unit.getLocation();

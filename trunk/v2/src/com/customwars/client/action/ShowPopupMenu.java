@@ -19,7 +19,7 @@ import java.util.List;
  *
  * @author stefan
  */
-public class ShowPopupMenu extends CWAction implements ComponentListener {
+public class ShowPopupMenu extends AbstractCWAction implements ComponentListener {
   private static final Logger logger = Logger.getLogger(ShowPopupMenu.class);
   private String popupName;
   private HUD hud;
@@ -43,10 +43,13 @@ public class ShowPopupMenu extends CWAction implements ComponentListener {
       logger.warn("No menu items");
     }
     Tile clicked = inGameSession.getClick(2);
-    if (clicked != null) {
-      hud.showPopUp(clicked, popupName, unitMenuItemNames, this);
-      mapRenderer.moveCursor(clicked);
+    if (clicked == null) {
+      throw new IllegalArgumentException("Location is null");
     }
+
+    hud.showPopUp(clicked, popupName, unitMenuItemNames, this);
+    mapRenderer.moveCursor(clicked);
+
 
     inGameSession.setMode(InGameSession.MODE.GUI);
     mapRenderer.showArrows(true);

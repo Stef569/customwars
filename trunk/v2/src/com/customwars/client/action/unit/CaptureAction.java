@@ -1,6 +1,6 @@
 package com.customwars.client.action.unit;
 
-import com.customwars.client.action.CWAction;
+import com.customwars.client.action.AbstractCWAction;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Unit;
@@ -13,7 +13,7 @@ import com.customwars.client.ui.state.InGameSession;
  *
  * @author stefan
  */
-public class CaptureAction extends CWAction {
+public class CaptureAction extends AbstractCWAction {
   private InGameSession inGameSession;
   private Game game;
 

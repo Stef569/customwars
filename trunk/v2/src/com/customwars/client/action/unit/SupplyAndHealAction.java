@@ -1,6 +1,6 @@
 package com.customwars.client.action.unit;
 
-import com.customwars.client.action.CWAction;
+import com.customwars.client.action.AbstractCWAction;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.ui.state.InGameSession;
@@ -11,7 +11,7 @@ import org.apache.log4j.Logger;
  *
  * @author stefan
  */
-public class SupplyAndHealAction extends CWAction {
+public class SupplyAndHealAction extends AbstractCWAction {
   private Logger logger = Logger.getLogger(SupplyAndHealAction.class);
   private Game game;
   private InGameSession inGameSession;

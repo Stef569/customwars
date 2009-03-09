@@ -6,12 +6,16 @@ package com.customwars.client.action;
  *
  * @author stefan
  */
-public abstract class DelayedAction extends CWAction {
-  private int time, delay;
+public abstract class DelayedAction extends AbstractCWAction {
+  private String actionName;
+  private boolean actionCompleted;
+  private int time;
+  private int delay;
   private boolean running;
 
-  public DelayedAction(String actionName, int delay) {
-    super(actionName);
+  public DelayedAction(String actionName, boolean canUndo, int delay) {
+    super(actionName, canUndo);
+    this.actionName = actionName;
     this.delay = delay;
   }
 
@@ -20,9 +24,6 @@ public abstract class DelayedAction extends CWAction {
       init();
       running = true;
     }
-  }
-
-  public void undoAction() {
   }
 
   /**
@@ -35,18 +36,38 @@ public abstract class DelayedAction extends CWAction {
       time += elapsedTime;
 
       if (time >= delay) {
-        actionPerformed();
+        updateAction();
         time = 0;
       }
     }
   }
 
-  public final void actionPerformed() {
+  public final void updateAction() {
     if (!actionCompleted)
       doActionImpl();
 
     if (actionCompleted) {
       running = false;
     }
+  }
+
+  /**
+   * The delayed action code
+   */
+  public abstract void doActionImpl();
+
+  public void undoAction() {
+  }
+
+  public void setActionCompleted(boolean actionCompleted) {
+    this.actionCompleted = actionCompleted;
+  }
+
+  public String getName() {
+    return actionName;
+  }
+
+  public boolean isActionCompleted() {
+    return actionCompleted;
   }
 }
