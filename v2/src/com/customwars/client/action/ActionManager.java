@@ -5,13 +5,14 @@ import com.customwars.client.action.unit.AttackAction;
 import com.customwars.client.action.unit.CaptureAction;
 import com.customwars.client.action.unit.ClearInGameState;
 import com.customwars.client.action.unit.DropAction;
+import com.customwars.client.action.unit.JoinAction;
 import com.customwars.client.action.unit.LoadAction;
 import com.customwars.client.action.unit.MoveAnimatedAction;
 import com.customwars.client.action.unit.SelectAction;
 import com.customwars.client.action.unit.ShowAttackZoneAction;
 import com.customwars.client.action.unit.StartAttackAction;
 import com.customwars.client.action.unit.StartDropAction;
-import com.customwars.client.action.unit.SupplyAndHealAction;
+import com.customwars.client.action.unit.SupplyAction;
 import com.customwars.client.action.unit.WaitAction;
 import com.customwars.client.io.ResourceManager;
 import com.customwars.client.model.game.Game;
@@ -100,14 +101,15 @@ public class ActionManager {
 
   private void buildAnimatedActions() {
     CWAction unitMoveAnimated = new MoveAnimatedAction(game, mapRenderer, moveTraverse, inGameSession);
-    CWAction unitWait = new WaitAction(game, inGameSession);
+    CWAction unitWait = new WaitAction(game);
     CWAction unitCapture = new CaptureAction(game, inGameSession);
-    CWAction unitSupplyAndHeal = new SupplyAndHealAction(game, inGameSession);
+    CWAction unitSupplyAndHeal = new SupplyAction(game, inGameSession);
     CWAction unitLoadIntoTransport = new LoadAction(game, inGameSession, mapRenderer, unitWait);
     CWAction startDropMode = new StartDropAction(game.getMap(), mapRenderer, inGameSession);
     CWAction unitDrop = new DropAction(game, inGameSession);
     CWAction startAttackMode = new StartAttackAction(game, mapRenderer, inGameSession);
     CWAction unitAttack = new AttackAction(game, inGameSession, new UnitFight(game.getMap()));
+    CWAction unitJoin = new JoinAction(game, inGameSession);
 
     actions.put("CLEAR_INGAME_STATE", clearInGameState);
     actions.put("UNIT_WAIT", unitWait);
@@ -156,6 +158,13 @@ public class ActionManager {
     attackActions.addAction(unitWait);
     attackActions.addAction(clearInGameState);
     actions.put("UNIT_MOVE_ATTACK_WAIT", attackActions);
+
+    ActionBag joinActions = new ActionBag("Join Actions");
+    joinActions.addAction(unitMoveAnimated);
+    joinActions.addAction(unitJoin);
+    joinActions.addAction(unitWait);
+    joinActions.addAction(clearInGameState);
+    actions.put("UNIT_MOVE_JOIN_WAIT", joinActions);
   }
 
   public void doAction(String actionName) {

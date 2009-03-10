@@ -59,31 +59,26 @@ public abstract class UnitController {
   }
 
   boolean canMove(Location from, Location to) {
-    return (from != null || to != null) && isUnitOn(from) && isActiveUnitInGame() &&
-            unit.isActive() && game.getActiveUnit().isWithinMoveZone(to);
+    return from != null || to != null || isValidUnit((Tile) to) && unit.isWithinMoveZone(to);
+  }
+
+  boolean isValidUnit(Tile selected) {
+    return isActiveUnitInGame() && isUnitVisible() && unit.isActive() &&
+            isUnitOn(selected);
   }
 
   boolean canWait(Tile selected) {
-    if (selected == null || !isActiveUnitInGame() || !unit.isActive()) return false;
-
-    if (selected.isFogged()) {
-      return true;
-    } else {
-      return selected.getLocatableCount() == 1;
-    }
+    return selected.isFogged() || selected.getLocatableCount() == 1;
   }
 
   boolean canSupply(Tile selected) {
-    return selected != null && isActiveUnitInGame() && unit.isActive() &&
-            !game.getMap().getSuppliablesInRange(game.getActiveUnit()).isEmpty();
+    return !game.getMap().getSuppliablesInRange(unit).isEmpty();
   }
 
   /**
    * Can the activeUnit be added to the transport
    */
   boolean canLoad(Tile selected) {
-    if (selected == null) return false;
-
     Unit transporter;
     Locatable locatable = selected.getLocatable(0);
     if (locatable instanceof Unit) {
@@ -92,17 +87,15 @@ public abstract class UnitController {
       return false;
     }
 
-    return isActiveUnitInGame() && unit.isActive() && isUnitVisible() &&
-            transporter.canTransport(unit.getMovementType()) &&
+    return transporter.canTransport(unit.getMovementType()) &&
             transporter.getOwner() == unit.getOwner();
   }
 
   boolean canStartDrop(Tile selected) {
     List<Location> emptyTiles = getEmptyAjacentTiles(selected);
-    Unit activeUnit = game.getActiveUnit();
 
-    return selected != null && !emptyTiles.isEmpty() &&
-            activeUnit.canTransport() && activeUnit.getLocatableCount() > 0;
+    return !emptyTiles.isEmpty() &&
+            unit.canTransport() && unit.getLocatableCount() > 0;
   }
 
   private List<Location> getEmptyAjacentTiles(Tile clicked) {
@@ -117,8 +110,7 @@ public abstract class UnitController {
 
   boolean canDrop(Tile selected) {
     Unit transporter = game.getActiveUnit();
-    return isActiveUnitInGame() && unit.isActive() && isUnitVisible() &&
-            selected != null && transporter.getLocatableCount() > 0;
+    return transporter.getLocatableCount() > 0 && selected.getLocatableCount() == 0;
   }
 
   /**
@@ -127,23 +119,45 @@ public abstract class UnitController {
    * @return if this unit can attack
    */
   boolean canStartAttack(Tile origUnitLocation, Tile selected) {
-    if (!isActiveUnitInGame() || isDirectUnitMoved(origUnitLocation)) return false;
+    if (isDirectUnitMoved(origUnitLocation)) return false;
 
     Unit activeUnit = game.getActiveUnit();
     List<Unit> enemiesInRange = game.getMap().getEnemiesInRangeOf(activeUnit);
 
-    if (selected.isFogged()) {
-      return !enemiesInRange.isEmpty();
-    } else {
-      return !enemiesInRange.isEmpty() && selected.getLocatableCount() == 1;
-    }
+    return !enemiesInRange.isEmpty();
   }
 
   boolean canAttack(Tile selected) {
-    if (!isActiveUnitInGame() || selected == null || !isUnitVisible()) return false;
+    return game.getMap().getUnitOn(selected) != null;
+  }
 
-    Unit selectedUnit = game.getMap().getUnitOn(selected);
-    return selectedUnit != null;
+  //The join conditions are:
+  //
+  // Our unit is on the same tile as the target, both units are of the same type
+  // The two units must have the same owner
+  // The target unit must have 50% or less HP
+  // Both units can use the join command
+  // If the unit-type of the units is Transport, the two unit must not have any units loaded
+  boolean canJoin(Tile selected) {
+    // Get the target we want to join with
+    Unit target = (Unit) selected.getLocatable(0);
+
+    if (target != null && target != unit) {
+      if (selected.getLastLocatable() == unit && unit.getID() == target.getID()) {
+        if (target.getOwner() == unit.getOwner() && target.getHpPercentage() < 50) {
+          if (target.canJoin() && unit.canJoin()) {
+            if (target.canTransport()) {
+              if (target.getLocatableCount() == 0 && unit.getLocatableCount() == 0) {
+                return true;
+              }
+            } else {
+              return true;
+            }
+          }
+        }
+      }
+    }
+    return false;
   }
 
   boolean isActiveUnitInGame() {

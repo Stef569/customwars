@@ -2,6 +2,7 @@ package com.customwars.client.ui.renderer;
 
 import com.customwars.client.io.ResourceManager;
 import com.customwars.client.io.img.slick.ImageStrip;
+import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Direction;
 import com.customwars.client.model.map.Location;
@@ -102,11 +103,7 @@ public class MapRenderer extends TileMapRenderer {
 
   /**
    * Shows a path of arrows from the active unit to the cursor location
-   * MoveSystem generates a path of Directions. to render an arrow we need a current and next direction
-   * So we read 1 Direction ahead. When the loop is at the last item in the path we render an arrowHead
-   * The arrowHead only needs 1 direction(the arrow base)
-   *
-   * nextLocation starts at the unit location and is set to the next location on each loop
+   * map generates a path of Directions.
    */
   private void renderArrowPath(Graphics g) {
     Map<Tile> map = (Map<Tile>) super.map;
@@ -115,6 +112,13 @@ public class MapRenderer extends TileMapRenderer {
     renderArrowPath(g, directionPath);
   }
 
+  /**
+   * To render an arrow we need a current and next direction
+   * So we read 1 Direction ahead. When the loop is at the last item in the path we render an arrowHead
+   * The arrowHead only needs 1 direction(the arrow base)
+   *
+   * nextLocation starts at the unit location and is set to the next location on each loop
+   */
   public void renderArrowPath(Graphics g, List<Direction> directionPath) {
     Location nextLocation = activeUnit.getLocation();
 
@@ -187,6 +191,10 @@ public class MapRenderer extends TileMapRenderer {
       activeUnit = null;
     }
     spriteManager.removeUnitSprite(unit);
+  }
+
+  public void removeCity(City city) {
+    spriteManager.removeCitySprite(city);
   }
 
   //------------------------------------ ---------------------------------------
