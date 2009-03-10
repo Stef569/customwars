@@ -63,11 +63,12 @@ public class HardCodedGame {
     addCityToMap(0, 0, TestData.FACTORY, p1);
     addCityToMap(7, 8, TestData.FACTORY, p2);
 
-    addUnitToMap(2, 7, TestData.ROCKETS, p1);
-    addUnitToMap(2, 2, TestData.MECH, p1);
     addUnitToMap(0, 5, TestData.INF, p1);
     addUnitToMap(0, 4, TestData.ROCKETS, p1);
     addUnitToMap(1, 3, TestData.APC, p1);
+    addUnitToMap(1, 7, TestData.APC, p1);
+    addUnitToMap(2, 6, TestData.INF, p1);
+    addUnitToMap(2, 7, TestData.ROCKETS, p1);
     addUnitToMap(5, 6, TestData.INF, p1);
     addUnitToMap(5, 7, TestData.INF, p2);
     addUnitToMap(6, 5, TestData.TANK, p2);

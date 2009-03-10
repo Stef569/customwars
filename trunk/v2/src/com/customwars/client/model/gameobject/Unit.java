@@ -41,6 +41,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler {
   private boolean canSupply;
   private boolean canHeal;
   private boolean canTransport;
+  private boolean canJoin;
 
   private int armyBranch;       // Naval, Ground, Air
   private int movementType;     // Inf, Mech, Tires, Tread, Air, Naval ...
@@ -64,7 +65,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler {
   public Unit(int id, String name, String description,
               int cost, int movement, int vision,
               int maxHp, int maxSupplies, int maxTransportCount, int suppliesPerTurn,
-              boolean canCapture, boolean canDive, boolean canSupply, boolean canHeal, boolean canTransport, List<Integer> transportTypes,
+              boolean canCapture, boolean canDive, boolean canSupply, boolean canHeal, boolean canTransport, boolean canJoin, List<Integer> transportTypes,
               int armyBranch, int movementType, int minHealRange, int maxHealRange) {
     super(GameObjectState.ACTIVE);
     this.id = id;
@@ -84,6 +85,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler {
     this.canSupply = canSupply;
     this.canHeal = canHeal;
     this.canTransport = canTransport;
+    this.canJoin = canJoin;
     this.transportTypes = transportTypes;
 
     this.armyBranch = armyBranch;
@@ -130,6 +132,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler {
     canSupply = otherUnit.canSupply;
     canHeal = otherUnit.canHeal;
     canTransport = otherUnit.canTransport;
+    canJoin = otherUnit.canJoin;
     transportTypes = new LinkedList<Integer>(otherUnit.transportTypes);
 
     armyBranch = otherUnit.armyBranch;
@@ -422,6 +425,13 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler {
     firePropertyChange("supplies", oldVal, validSupply);
   }
 
+  public void addAmmo(int additionalAmmo) {
+    Weapon availableWeapon = getAvailableWeapon();
+    if (availableWeapon != null) {
+      availableWeapon.addAmmo(additionalAmmo);
+    }
+  }
+
   public void setLocation(Location newLocation) {
     Location oldLocation = this.location;
     this.location = newLocation;
@@ -533,7 +543,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler {
   // ---------------------------------------------------------------------------
   // Getters :: Supplies, hp
   // ---------------------------------------------------------------------------
-  protected int getSupplies() {
+  public int getSupplies() {
     return supplies;
   }
 
@@ -685,6 +695,10 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler {
 
   public int getMaxSupplyRange() {
     return maxHealRange;
+  }
+
+  public boolean canJoin() {
+    return canJoin;
   }
 
   @Override

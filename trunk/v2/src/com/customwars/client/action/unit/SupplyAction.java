@@ -11,12 +11,12 @@ import org.apache.log4j.Logger;
  *
  * @author stefan
  */
-public class SupplyAndHealAction extends AbstractCWAction {
-  private Logger logger = Logger.getLogger(SupplyAndHealAction.class);
+public class SupplyAction extends AbstractCWAction {
+  private Logger logger = Logger.getLogger(SupplyAction.class);
   private Game game;
   private InGameSession inGameSession;
 
-  public SupplyAndHealAction(Game game, InGameSession inGameSession) {
+  public SupplyAction(Game game, InGameSession inGameSession) {
     super("Supply & Heal", false);
     this.inGameSession = inGameSession;
     this.game = game;

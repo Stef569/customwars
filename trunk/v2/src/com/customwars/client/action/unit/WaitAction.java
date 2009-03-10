@@ -4,7 +4,6 @@ import com.customwars.client.action.AbstractCWAction;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.gameobject.GameObjectState;
 import com.customwars.client.model.gameobject.Unit;
-import com.customwars.client.ui.state.InGameSession;
 
 /**
  * The unit is made Inactive(can no longer be controlled)
@@ -13,12 +12,10 @@ import com.customwars.client.ui.state.InGameSession;
  */
 public class WaitAction extends AbstractCWAction {
   private Game game;
-  private InGameSession inGameSession;
 
-  public WaitAction(Game game, InGameSession inGameSession) {
+  public WaitAction(Game game) {
     super("Wait", false);
     this.game = game;
-    this.inGameSession = inGameSession;
   }
 
   public void doActionImpl() {
@@ -29,7 +26,7 @@ public class WaitAction extends AbstractCWAction {
     game.getMap().resetFogMap(unit.getOwner());
     game.initZones();
 
-    // The unit performed an action disable further actions ->IDLE 
+    // The unit performed an action disable further actions->IDLE
     // when the unit didn't die from an attack.
     if (!unit.isDestroyed()) {
       unit.setState(GameObjectState.IDLE);

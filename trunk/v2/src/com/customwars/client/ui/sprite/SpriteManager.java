@@ -367,6 +367,10 @@ public class SpriteManager implements PropertyChangeListener {
       if (propertyName.equals("owner")) {
         cityOwnerChange(evt);
       }
+    } else if (evt.getSource() instanceof Unit) {
+      if (propertyName.equals("owner")) {
+        unitOwnerChange(evt);
+      }
     } else if (evt.getSource() instanceof Sprite) {
       if (propertyName.equals("anim")) {
         spriteAnimChange(evt);
@@ -388,6 +392,19 @@ public class SpriteManager implements PropertyChangeListener {
       City city = (City) evt.getSource();
       CitySprite sprite = citySprites.get(city);
       recolorCitySprite(sprite, newColor, city.getID());
+    }
+  }
+
+  private void unitOwnerChange(PropertyChangeEvent evt) {
+    Player oldVal = (Player) evt.getOldValue();
+    Player newVal = (Player) evt.getNewValue();
+    Color oldColor = oldVal.getColor();
+    Color newColor = newVal.getColor();
+
+    if (!oldColor.equals(newColor)) {
+      Unit unit = (Unit) evt.getSource();
+      UnitSprite sprite = unitSprites.get(unit);
+      recolorUnitSprite(sprite, newColor, unit.getID());
     }
   }
 
@@ -422,6 +439,11 @@ public class SpriteManager implements PropertyChangeListener {
     return true;
   }
 
+  /**
+   * This event is fired when a unit is added to a tile.
+   * This method is invoked for each move within a path,
+   * thus it can't be used to remove unitsprites.
+   */
   private void unitOnTileChanged(PropertyChangeEvent evt) {
     Unit newUnit = (Unit) evt.getNewValue();
 
@@ -429,6 +451,13 @@ public class SpriteManager implements PropertyChangeListener {
       logger.debug("Found 1 new Unit, Creating sprite...");
       loadUnitSprite(newUnit);
     }
+  }
+
+  public void removeCitySprite(City city) {
+    Sprite sprite = citySprites.get(city);
+    logger.debug("Removing CitySprite");
+    citySprites.remove(city);
+    animChange(sprite.anim, null);
   }
 
   public void removeUnitSprite(Unit unit) {

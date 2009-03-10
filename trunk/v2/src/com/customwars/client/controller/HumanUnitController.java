@@ -84,12 +84,21 @@ public class HumanUnitController extends UnitController {
   private void buildUnitActionMenu(Tile selected) {
     Tile firstSelection = inGameSession.getClick(1);
     showUnitPopupMenu.clearActions();
-    addToMenu(canCapture(selected), "UNIT_MOVE_CAPTURE_WAIT", "Capture");
-    addToMenu(canSupply(selected), "UNIT_MOVE_SUPPLY_WAIT", "Supply");
-    addToMenu(canLoad(selected), "UNIT_MOVE_LOAD_WAIT", "Load");
-    addToMenu(canStartAttack(firstSelection, selected), "UNIT_START_ATTACK_MODE", "Fire");
-    addToMenu(canStartDrop(selected), "UNIT_START_DROP_MODE", "Drop");
-    addToMenu(canWait(selected), "UNIT_MOVE_WAIT", "Wait");
+
+    if (canWait(selected)) {
+      if (canMove(firstSelection, selected)) {
+        addToMenu(canCapture(selected), "UNIT_MOVE_CAPTURE_WAIT", "Capture");
+        addToMenu(canSupply(selected), "UNIT_MOVE_SUPPLY_WAIT", "Supply");
+        addToMenu(canStartAttack(firstSelection, selected), "UNIT_START_ATTACK_MODE", "Fire");
+        addToMenu(canStartDrop(selected), "UNIT_START_DROP_MODE", "Drop");
+        addToMenu(canWait(selected), "UNIT_MOVE_WAIT", "Wait");
+      }
+    } else {
+      if (isValidUnit(selected)) {
+        addToMenu(canJoin(selected), "UNIT_MOVE_JOIN_WAIT", "Join");
+        addToMenu(canLoad(selected), "UNIT_MOVE_LOAD_WAIT", "Load");
+      }
+    }
   }
 
   /**
