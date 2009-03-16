@@ -31,12 +31,12 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler {
   private int vision;           // The amount of tiles this unit can see in all directions aka line of sight
 
   private int maxHp;              // The value when this unit is 100% Healthy
-  private int minHealRange, maxHealRange; // Range in which we can heal
+  private int minSupplyRange, maxSupplyRange; // Range in which the unit can supply
   private int maxSupplies;        // The value when this unit has 100% supplies
   private int maxTransportCount;  // Amount of units that can be transported
   private int dailyUse;           // Amount of supplies that are subtracted each turn from supplies
 
-  private boolean canCapture;   // Abilities
+  private boolean canCapture;     // Abilities
   private boolean canDive;
   private boolean canSupply;
   private boolean canHeal;
@@ -66,7 +66,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler {
               int cost, int movement, int vision,
               int maxHp, int maxSupplies, int maxTransportCount, int suppliesPerTurn,
               boolean canCapture, boolean canDive, boolean canSupply, boolean canHeal, boolean canTransport, boolean canJoin, List<Integer> transportTypes,
-              int armyBranch, int movementType, int minHealRange, int maxHealRange) {
+              int armyBranch, int movementType, int minSupplyRange, int maxSupplyRange) {
     super(GameObjectState.ACTIVE);
     this.id = id;
     this.name = name;
@@ -90,8 +90,8 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler {
 
     this.armyBranch = armyBranch;
     this.movementType = movementType;
-    this.minHealRange = minHealRange;
-    this.maxHealRange = maxHealRange;
+    this.minSupplyRange = minSupplyRange;
+    this.maxSupplyRange = maxSupplyRange;
     init();
     reset();
   }
@@ -121,8 +121,8 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler {
     vision = otherUnit.vision;
 
     maxHp = otherUnit.maxHp;
-    minHealRange = otherUnit.minHealRange;
-    maxHealRange = otherUnit.maxHealRange;
+    minSupplyRange = otherUnit.minSupplyRange;
+    maxSupplyRange = otherUnit.maxSupplyRange;
     maxSupplies = otherUnit.maxSupplies;
     maxTransportCount = otherUnit.maxTransportCount;
     dailyUse = otherUnit.dailyUse;
@@ -139,8 +139,6 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler {
     movementType = otherUnit.movementType;
     moveStrategy = otherUnit.moveStrategy;
 
-    // Don't copy the reference,
-    // instead create a new copy of the weapon
     primaryWeapon = otherUnit.primaryWeapon != null ? new Weapon(otherUnit.primaryWeapon) : null;
     secondaryWeapon = otherUnit.secondaryWeapon != null ? new Weapon(otherUnit.secondaryWeapon) : null;
     experience = otherUnit.experience;
@@ -155,7 +153,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler {
    * Resets the unit state to default:
    * 100% Supplies, health
    * 100% ammo in both weapons(or 1 or none)
-   * Facing east, Idle state, no exp
+   * Facing east, Active state, no exp
    */
   void reset() {
     restock();
@@ -339,7 +337,12 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler {
   }
 
   public boolean canAdd(Locatable locatable) {
-    return locatable != null && canTransport() && !transport.contains(locatable);
+    if (locatable instanceof Unit) {
+      Unit unit = (Unit) locatable;
+      return canTransport(unit.getMovementType()) && transport.size() < maxTransportCount;
+    } else {
+      return false;
+    }
   }
 
   /**
@@ -682,19 +685,19 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler {
   }
 
   public boolean canTransport(int id) {
-    return canTransport() && transportTypes.contains(id);
+    return canTransport && transportTypes.contains(id);
   }
 
   public boolean canTransport() {
-    return canTransport && transport.size() - 1 < maxTransportCount;
+    return canTransport;
   }
 
   public int getMinSupplyRange() {
-    return minHealRange;
+    return minSupplyRange;
   }
 
   public int getMaxSupplyRange() {
-    return maxHealRange;
+    return maxSupplyRange;
   }
 
   public boolean canJoin() {

@@ -10,6 +10,7 @@ import com.customwars.client.ui.debug.DebugEnvironment;
 import com.customwars.client.ui.state.StateSession;
 import org.apache.log4j.Logger;
 import org.newdawn.slick.AppGameContainer;
+import org.newdawn.slick.SlickException;
 import org.newdawn.slick.loading.LoadingList;
 import slick.HardCodedGame;
 import slick.TestStates;
@@ -24,7 +25,7 @@ import tools.ColorUtil;
  */
 public class Main {
   private static final Logger logger = Logger.getLogger(Main.class);
-  private static boolean DEBUG;
+  private static boolean DEBUG = true;
   private static boolean DEBUG_GUI;
   private static ResourceManager resources;
 
@@ -47,6 +48,7 @@ public class Main {
       new Main();
     } catch (Exception e) {
       logger.fatal("Startup failure", e);
+      e.printStackTrace();
       System.exit(-1);
     }
   }
@@ -75,7 +77,7 @@ public class Main {
     }
   }
 
-  public Main() {
+  public Main() throws SlickException {
     logger.info("init script");
     console = initScript();
 
@@ -84,16 +86,10 @@ public class Main {
       initDebugMode();
     }
 
-    try {
-      AppGameContainer appGameContainer = new AppGameContainer(new TestStates(startStateID, stateSession, resources));
-      appGameContainer.setDisplayMode(640, 480, false);
-      appGameContainer.setTargetFrameRate(60);
-      appGameContainer.start();
-    } catch (Exception e) {
-      logger.fatal("", e);
-      e.printStackTrace();
-      System.exit(-1);
-    }
+    AppGameContainer appGameContainer = new AppGameContainer(new TestStates(startStateID, stateSession, resources));
+    appGameContainer.setDisplayMode(640, 480, false);
+    appGameContainer.setTargetFrameRate(60);
+    appGameContainer.start();
   }
 
   private JConsole initScript() {
@@ -126,8 +122,6 @@ public class Main {
 
   /**
    * We add various objects to beanshell, accessible by their name
-   * See <a href="http://jadvancedwars.sourceforge.net/forum/viewtopic.php?f=20&t=49&p=79&hilit=beanshell#p79">beanshell howto</a>
-   * for more information.
    */
   private void initScriptObjects(Game game, ResourceManager resources) throws EvalError {
     for (Player p : game.getAllPlayers()) {

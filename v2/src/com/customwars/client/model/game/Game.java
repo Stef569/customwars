@@ -119,9 +119,16 @@ public class Game extends TurnBasedGame {
   private void checkSupplyConditions(Player player) {
     for (City city : player.getAllCities()) {
       Tile cityLocation = (Tile) city.getLocation();
-      if (cityLocation.getLocatableCount() > 0) {
-        Unit unit = (Unit) cityLocation.getLastLocatable();
-        city.supply(unit);
+      Unit unit = map.getUnitOn(cityLocation);
+
+      if (unit != null && city.getOwner().isAlliedWith(unit.getOwner())) {
+        if (city.canSupply(unit)) {
+          city.supply(unit);
+        }
+
+        if (city.canHeal(unit)) {
+          city.heal(unit);
+        }
       }
     }
   }

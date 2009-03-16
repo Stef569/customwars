@@ -1,6 +1,7 @@
 package com.customwars.client.model.map.path;
 
 import com.customwars.client.model.gameobject.Locatable;
+import com.customwars.client.model.map.Direction;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.model.map.TileMap;
@@ -28,15 +29,17 @@ import java.util.List;
  */
 public class MoveTraverse {
   private static final Logger logger = Logger.getLogger(MoveTraverse.class);
-  private TileMap<Tile> map;      // The map the mover can move in
+  private TileMap<Tile> map;          // The map the mover can move in
+  private PathFinder pathFinder;
+  private List<Location> movePath;    // The path we are going to move over
   private Mover mover;
-  private int totalMoveCost;
 
   private int pathIndex;              // Contains the current position in the move path
   private boolean pathMoveComplete;   // The mover has completed the move(trapped or chosen destination)
+  private int totalMoveCost;          // The running total for the movers moveCost
   private boolean foundTrapper;       // Indicates that an enemy Locatable was found on the movepath(a trapper)
-  private static PathFinder pathFinder;
-  private List<Location> movePath;    // The path we are going to move over
+  private Direction trappedDirection; // if found trapper, in what direction relative to the mover was it.
+
 
   public MoveTraverse(TileMap<Tile> map) {
     this.map = map;
@@ -64,17 +67,18 @@ public class MoveTraverse {
   /**
    * Cleans up the values from a previous move
    */
-  void prepareForNextMove() {
+  private void prepareForNextMove() {
     mover = null;
     movePath = null;
     pathIndex = 0;
     pathMoveComplete = false;
     foundTrapper = false;
+    trappedDirection = Direction.STILL;
     totalMoveCost = 0;
   }
 
   /**
-   * Updates the model position and orientation of the mover By moving one step further in the movePath
+   * Updates the map position and orientation of the mover By moving one step further in the movePath
    * movePath and mover are set by {@link #prepareMove(Mover,Location)}
    * if the path is already completed or the movePath has not been generated then nothing happens.
    * if the destination is reached then
@@ -89,6 +93,7 @@ public class MoveTraverse {
       if (withinPath(pathIndex + 1)) {
         if (hasEnemyOnNextLocation()) {
           foundTrapper = true;
+          trappedDirection = getNextDirection();
           pathMoveComplete();
         } else {
           moveToNextLocationOnPath();
@@ -102,10 +107,10 @@ public class MoveTraverse {
 
   private void pathMoveComplete() {
     pathMoveComplete = true;
-    mover.addPathMoveCost(-totalMoveCost);
+    mover.addPathMoveCost(totalMoveCost);
   }
 
-  boolean hasEnemyOnNextLocation() {
+  private boolean hasEnemyOnNextLocation() {
     Location location = movePath.get(pathIndex + 1);
     Locatable locatable = location.getLastLocatable();
 
@@ -116,7 +121,14 @@ public class MoveTraverse {
     return false;
   }
 
-  void moveToNextLocationOnPath() {
+  private Direction getNextDirection() {
+    Location location = movePath.get(pathIndex);
+    Location nextLocation = movePath.get(pathIndex + 1);
+
+    return map.getDirectionTo(location, nextLocation);
+  }
+
+  private void moveToNextLocationOnPath() {
     Location currentLocation = movePath.get(pathIndex);
     Tile nextLocation = (Tile) movePath.get(pathIndex + 1);
     mover.setOrientation(map.getDirectionTo(currentLocation, nextLocation));
@@ -137,5 +149,18 @@ public class MoveTraverse {
 
   public boolean foundTrapper() {
     return foundTrapper;
+  }
+
+  public void reset() {
+    foundTrapper = false;
+    pathMoveComplete = false;
+  }
+
+  public Mover getTrapper() {
+    return mover;
+  }
+
+  public Direction getTrappedDirection() {
+    return trappedDirection;
   }
 }

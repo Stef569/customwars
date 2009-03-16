@@ -4,14 +4,15 @@
 // To is INCLUSIVE!
 // If no col or row is provided for a strip, then startFrame=0 and lastFrameCol=total cols in the image
 
-S LAND_EXPLOSION landExplosion 150 False
+// Land Explosion 1 == ARMYBRANCH GROUND
+S EXPLOSION_1 landExplosion 150 False
 
 // Create Property Animations
-M city_0_RED city_RED 500 0 0 1 0 True
-M city_1_RED city_RED 500 0 1 1 1 True 
-M city_2_RED city_RED 500 0 2 1 2 True 
-M city_3_RED city_RED 500 0 3 1 3 True 
-M city_4_RED city_RED 500 0 4 1 4 True 
+M city_0_RED city_RED 650 0 0 1 0 True
+M city_1_RED city_RED 650 0 1 1 1 True 
+M city_2_RED city_RED 650 0 2 1 2 True 
+M city_3_RED city_RED 650 0 3 1 3 True 
+M city_4_RED city_RED 650 0 4 1 4 True 
 
 // Create Unit Animations out of the unit_RED spriteSheet
 // Animations: 3 Left, 3 right, 3 down, 3 up.

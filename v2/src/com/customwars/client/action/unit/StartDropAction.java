@@ -1,6 +1,7 @@
 package com.customwars.client.action.unit;
 
 import com.customwars.client.action.AbstractCWAction;
+import com.customwars.client.action.CWAction;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.model.map.TileMap;
@@ -11,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Allow a unit in a transport to be dropped on a free adjacent tile
+ * Allow unit(s) in a transport to be dropped on a free adjacent tile
  *
  * @author stefan
  */
@@ -19,9 +20,11 @@ public class StartDropAction extends AbstractCWAction {
   private InGameSession inGameSession;
   private MapRenderer mapRenderer;
   private TileMap<Tile> map;
+  private CWAction clearInGameSession;
 
-  public StartDropAction(TileMap<Tile> map, MapRenderer mapRenderer, InGameSession inGameSession) {
-    super("Start drop");
+  public StartDropAction(TileMap<Tile> map, MapRenderer mapRenderer, InGameSession inGameSession, CWAction clearInGameSession) {
+    super("Start drop", true);
+    this.clearInGameSession = clearInGameSession;
     this.map = map;
     this.mapRenderer = mapRenderer;
     this.inGameSession = inGameSession;
@@ -44,18 +47,23 @@ public class StartDropAction extends AbstractCWAction {
   private List<Location> getEmptyAjacentTiles(Tile clicked) {
     List<Location> surroundingTiles = new ArrayList<Location>();
     for (Tile tile : map.getSurroundingTiles(clicked, 1, 1)) {
-      if (tile.isFogged()) {
-        surroundingTiles.add(tile);
-      } else if (tile.getLocatableCount() == 0) {
-        surroundingTiles.add(tile);
+      if (!inGameSession.isDropLocationTaken(tile)) {
+        if (tile.isFogged()) {
+          surroundingTiles.add(tile);
+        } else if (tile.getLocatableCount() == 0) {
+          surroundingTiles.add(tile);
+        }
       }
     }
     return surroundingTiles;
   }
 
+  /**
+   * Undo will reset everything to default,
+   * undoing start drop is too hard
+   */
   public void undoAction() {
-    mapRenderer.removeMoveZone();
-    mapRenderer.showArrows(true);
-    mapRenderer.stopCursorTraversal();
+    clearInGameSession.doAction();
+    clearInGameSession.setActionCompleted(false);
   }
 }

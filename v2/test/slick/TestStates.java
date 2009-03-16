@@ -1,5 +1,6 @@
 package slick;
 
+import com.customwars.client.action.ActionManager;
 import com.customwars.client.io.ResourceManager;
 import com.customwars.client.ui.state.CWInput;
 import com.customwars.client.ui.state.CWState;
@@ -23,6 +24,7 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
   private CWInput cwInput;
   private StateLogic statelogic;
   private int startID;
+  private ActionManager actionManager;
 
   public TestStates(int startID, StateSession stateSession, ResourceManager resources) {
     super(System.getProperty("game.name"));
@@ -51,7 +53,7 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
     CWState testMapRenderer = new TestMapRenderer();
     CWState remapKeysTest = new RemapKeysTest();
     CWState inGameTest = new TestInGameState();
-    CWState endTurnState = new EndTurnState();
+    CWState endTurnState = new EndTurnState(actionManager);
 
     addState(testMenu);
     addState(testMapRenderer);
@@ -75,6 +77,10 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
     statelogic.addState("IN_GAME", 3);
     statelogic.addState("END_TURN", 4);
     CWState.setStatelogic(statelogic);
+  }
+
+  protected void preUpdateState(GameContainer container, int delta) throws SlickException {
+    ActionManager.update(delta);
   }
 
   private void handleGlobalInput(Command command) {

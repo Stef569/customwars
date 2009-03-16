@@ -62,31 +62,13 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
    */
   public void startTurn(Player currentPlayer) {
     resetMap(currentPlayer);
-    checkHealAndSupplyConditionsFor(currentPlayer);
-  }
-
-  private void checkHealAndSupplyConditionsFor(Player currentPlayer) {
-    for (Tile t : getAllTiles()) {
-      City city = getCityOn(t);
-      Unit unit = getUnitOn(t);
-
-      if (city != null && city.getOwner().isAlliedWith(currentPlayer)) {
-        if (city.canSupply(unit)) {
-          city.supply(unit);
-        }
-
-        if (city.canHeal(unit)) {
-          city.heal(unit);
-        }
-      }
-    }
   }
 
   public void endTurn(Player currentPlayer) {
   }
 
   /**
-   * set all units to Idle and the units of this player to active.
+   * Set all units to Idle and the units of this player to active.
    * if fog is enabled we apply the los for each active unit.
    *
    * @param player The player who's units should be made active and fog applied to.
@@ -103,9 +85,9 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
    * Reset the map so that the player can
    * control his units by setting the unit Game Object state to ACTIVE
    * unit state is put to IDLE, so that a unit is
-   * ready to perform a unit action(ie Capture)
+   * ready to perform another unit action (ie Capture)
    *
-   * @param player The player whos units should be made active
+   * @param player The player who's units should be made active
    */
   private void resetUnits(Player player) {
     for (Location location : getAllTiles()) {
@@ -198,7 +180,7 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
   }
 
   /**
-   * Determines if a mapLocation is in the attacker's firing range
+   * Determines if a map Location is in the attacker's firing range
    */
   public boolean inFireRange(Mover mover, Location mapLocation, int minAttackRange, int maxAttackRange) {
     if (maxAttackRange <= 0) return false;
@@ -333,9 +315,9 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
   }
 
   /**
-   * if a tile is within the unit los
+   * If a tile is within the unit los
    * then there are some terrains and properties that remain fogged.
-   * <br/>
+   *
    * They can only be made clear if the unit is directly next to it
    * The sameTile and adjacent tile are always visible.
    *

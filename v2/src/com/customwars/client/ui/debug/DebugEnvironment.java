@@ -34,10 +34,10 @@ public class DebugEnvironment {
   }
 
   private void initModelEventsGui(Game game) {
-    final ModelEventScreen modelEventScreen = new ModelEventScreen(eventFrame);
-    modelEventScreen.addModelEventListeners(game);
+    final ModelDebugEventScreen modelDebugEventScreen = new ModelDebugEventScreen(eventFrame);
+    modelDebugEventScreen.addModelEventListeners(game);
 
-    eventFrame.add(modelEventScreen.getGui());
+    eventFrame.add(modelDebugEventScreen.getGui());
   }
 
   private void initBeanshellGui(JConsole console) {

@@ -13,7 +13,6 @@ import com.customwars.client.model.map.Tile;
 import com.customwars.client.ui.HUD;
 import com.customwars.client.ui.renderer.MapRenderer;
 import com.customwars.client.ui.state.InGameSession;
-import slick.TestInGameState;
 
 /**
  * Allows a human to control a city
@@ -25,13 +24,11 @@ public class HumanCityController extends CityController {
   private ShowPopupMenu showCityPopupMenu;
   private InGameSession inGameSession;
   private MapRenderer mapRenderer;
-  private TestInGameState inGameState;
   private CWAction waitAction;
   private CWAction clearInGameState;
 
-  public HumanCityController(City city, Game game, HUD hud, InGameSession inGameSession, MapRenderer mapRenderer, TestInGameState inGameState, ActionManager actionManager) {
+  public HumanCityController(Game game, City city, ActionManager actionManager, InGameSession inGameSession, MapRenderer mapRenderer, HUD hud) {
     super(city, game, actionManager);
-    this.inGameState = inGameState;
     this.inGameSession = inGameSession;
     this.mapRenderer = mapRenderer;
     this.showCityPopupMenu = new ShowPopupMenu("Buy unit menu", hud, inGameSession, mapRenderer);
@@ -57,7 +54,7 @@ public class HumanCityController extends CityController {
   }
 
   private void buildMenu(Tile selected) {
-    showCityPopupMenu.clearActions();
+    showCityPopupMenu.clear();
 
     for (Unit unit : UnitFactory.getAllUnits()) {
       AbstractCWAction addUnit = new AddUnitToTileAction(unit, selected);
@@ -82,7 +79,7 @@ public class HumanCityController extends CityController {
         cityOwner.addUnit(unit);
         cityOwner.addToBudget(-unit.getPrice());
         t.add(unit);
-        inGameState.addHumanUnitController(unit);
+        inGameSession.addHumanUnitController(unit);
         game.getMap().buildMovementZone(unit);
         game.getMap().buildAttackZone(unit);
         game.setActiveUnit(unit);

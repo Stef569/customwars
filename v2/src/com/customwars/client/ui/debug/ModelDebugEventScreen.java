@@ -37,15 +37,15 @@ import java.util.List;
  *
  * @author stefan
  */
-public class ModelEventScreen implements PropertyChangeListener {
-  private static final Logger logger = Logger.getLogger(ModelEventScreen.class);
+public class ModelDebugEventScreen implements PropertyChangeListener {
+  private static final Logger logger = Logger.getLogger(ModelDebugEventScreen.class);
   private JPanel content = new JPanel(new BorderLayout());
   private JList list;
   private DefaultListModel listModel = new DefaultListModel();
   private HashMap<Class, List<String>> filters;
   private Game game;
 
-  public ModelEventScreen(JFrame frame) {
+  public ModelDebugEventScreen(JFrame frame) {
     list = new JList(listModel);
     content.add(new JScrollPane(list));
 
@@ -68,7 +68,6 @@ public class ModelEventScreen implements PropertyChangeListener {
     return menu;
   }
 
-  // EVENTS
   public void addModelEventListeners(Game game) {
     this.game = game;
     game.addPropertyChangeListener(this);
@@ -117,7 +116,6 @@ public class ModelEventScreen implements PropertyChangeListener {
     list.ensureIndexIsVisible(listModel.size() - 1);
   }
 
-  // GETTERS
   public JPanel getGui() {
     return content;
   }
@@ -131,7 +129,6 @@ public class ModelEventScreen implements PropertyChangeListener {
     }
   }
 
-  // ACTIONS
   class ClearAction extends AbstractAction {
 
     public ClearAction() {
@@ -146,7 +143,7 @@ public class ModelEventScreen implements PropertyChangeListener {
   class SaveAction extends AbstractAction {
     private static final String HEADER = "Saved Events from Events Screen";
     private static final String FILE_NAME = "events.txt";
-    private static final String SUCCESS_MSG = "Events has been saved as " + FILE_NAME;
+    private static final String SUCCESS_MSG = "Events have been saved as " + FILE_NAME;
     private static final String ERR_MSG = "Events could not be saved as " + FILE_NAME;
 
 
