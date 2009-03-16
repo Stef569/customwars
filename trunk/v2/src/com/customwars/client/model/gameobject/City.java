@@ -133,13 +133,12 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
       if (isCaptured()) {
         owner.removeCity(this);
         newOwner.addCity(this);
-        resetCapturing();
         firePropertyChange("captured", null, true);
       }
     }
   }
 
-  private void resetCapturing() {
+  public void resetCapturing() {
     setCapCount(0);
     setCapturer(null);
   }

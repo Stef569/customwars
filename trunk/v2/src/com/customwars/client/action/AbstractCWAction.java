@@ -7,8 +7,8 @@ package com.customwars.client.action;
  */
 public abstract class AbstractCWAction implements CWAction {
   String name;
-  boolean actionCompleted;
   boolean canUndo;
+  boolean actionCompleted;
 
   public AbstractCWAction(String name) {
     this(name, true);
@@ -40,12 +40,12 @@ public abstract class AbstractCWAction implements CWAction {
     return name;
   }
 
-  public boolean isActionCompleted() {
-    return actionCompleted;
-  }
-
   public boolean canUndo() {
     return canUndo;
+  }
+
+  public boolean isActionCompleted() {
+    return actionCompleted;
   }
 
   public String toString() {

@@ -20,7 +20,7 @@ import org.newdawn.slick.state.StateBasedGame;
  * @author stefan
  */
 public abstract class CWState extends BasicGameState implements InputProviderListener {
-  private static StateLogic statelogic;         // Allows to change to another state
+  protected static StateLogic statelogic;       // Allows to change to another state
   protected static ResourceManager resources;   // All the resources
   protected static CWInput cwInput;             // Handles input
   protected static StateSession stateSession;   // Handles Data between states
@@ -49,13 +49,13 @@ public abstract class CWState extends BasicGameState implements InputProviderLis
   }
 
   public final void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
-    if (entered) render(container, g);
+    render(container, g);
   }
 
   public abstract void render(GameContainer container, Graphics g) throws SlickException;
 
   public final void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
-    if (entered) update(container, delta);
+    update(container, delta);
   }
 
   public abstract void update(GameContainer container, int delta) throws SlickException;

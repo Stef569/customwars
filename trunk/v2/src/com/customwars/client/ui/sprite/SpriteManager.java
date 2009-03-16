@@ -29,7 +29,10 @@ import java.util.Set;
  * cursors, units, cities
  *
  * Each unique animation is stored and updated.
- * An animation is added when a sprite changes his anim.
+ * Gui classes are not allowed to change the model, They only listen for changes.
+ *
+ * For example when a city is captured a new Player is set.
+ * This class receives a PropertyChangeEvent and recolors the city to the new owner color.
  *
  * @author stefan
  */
@@ -59,8 +62,8 @@ public class SpriteManager implements PropertyChangeListener {
   }
 
   /**
-   * Only update animations in uniqueAnimations this is because we share Animations between sprites
-   * If we update each sprite, then we will updated the same animation multiple times.
+   * Only update animations in uniqueAnimations this is because Animations are shared between sprites
+   * updating a sprite will not update the sprite animation
    */
   public void update(int elapsedTime) {
     for (Animation anim : uniqueAnimations) {
@@ -75,6 +78,7 @@ public class SpriteManager implements PropertyChangeListener {
     while (it.hasNext()) {
       UnitSprite sprite = (UnitSprite) it.next();
       sprite.update(elapsedTime);
+
       if (sprite.canBeRemoved()) {
         logger.debug("Removing UnitSprite");
         it.remove();
@@ -223,7 +227,7 @@ public class SpriteManager implements PropertyChangeListener {
       throw new IllegalArgumentException("Unit " + unit + " is already cached...");
     } else {
       Tile t = (Tile) unit.getLocation();
-      Animation animDying = resources.getAnim("LAND_EXPLOSION");
+      Animation animDying = resources.getAnim("EXPLOSION_" + unit.getArmyBranch());
       animDying.stopAt(animDying.getFrameCount() - 1);
       unitSprite = new UnitSprite(t, map, unit, unitDecorationStrip);
       unitSprite.setAnimDying(animDying);
@@ -245,11 +249,6 @@ public class SpriteManager implements PropertyChangeListener {
     sprite.updateAnim();
   }
 
-  /**
-   * Make a Graphical representation(UnitSprite) for the unit.
-   * Preconditions:
-   * The Unit should be owned by a Player to get the color
-   */
   public void addUnitSprite(Unit unit, UnitSprite unitSprite) {
     checkTileSprites(unitSprite, unitSprites.values().iterator());
     unitSprites.put(unit, unitSprite);
@@ -257,8 +256,8 @@ public class SpriteManager implements PropertyChangeListener {
   }
 
   /**
-   * Make a Graphical representation(PropertySprite) for the city.
-   * The Property should:
+   * Make a Graphical representation(CitySprite) for the city.
+   * The City should:
    * be owned by a Player to get the color
    * have a location to set the sprite position
    * have an id, this is used to retrieve the image
@@ -273,9 +272,6 @@ public class SpriteManager implements PropertyChangeListener {
     city.addPropertyChangeListener(this);
   }
 
-  /**
-   * Create A CitySprite, that is on the same Location as the city
-   */
   private CitySprite createCitySprite(City city) {
     CitySprite citySprite;
 
@@ -304,7 +300,7 @@ public class SpriteManager implements PropertyChangeListener {
   /**
    * Changes the activeCursor to the cursor mapped by cursorName
    *
-   * @param cursorName case incensitive name of the cursor ie Select, SELECT both return the same cursor
+   * @param cursorName case insensitive name of the cursor ie 'Select' and 'SELECT' both return the same cursor
    */
   public void setActiveCursor(String cursorName) {
     if (isCursorSet(cursorName)) {
@@ -336,11 +332,11 @@ public class SpriteManager implements PropertyChangeListener {
   }
 
   /**
-   * Checks the newTileSprite to be added for correctness:
-   * if the newTileSprite location is already used by another TileSprite then
-   * that TileSprite is removed.
+   * Checks the new TileSprite to be added for correctness:
+   * if the TileSprite location is already used by another TileSprite in the sprite collection then
+   * the latter is removed.
    *
-   * @param newTileSprite the tileSprite that we want to add to the map
+   * @param newTileSprite the tileSprite that we want to add to the sprites collection
    * @return True if a sprite was removed
    */
   private boolean checkTileSprites(TileSprite newTileSprite, Iterator<? extends TileSprite> sprites) {
@@ -350,6 +346,7 @@ public class SpriteManager implements PropertyChangeListener {
       if (sprites.next().getLocation() == newTileSprite.getLocation()) {
         sprites.remove();
         spriteRemoved = true;
+        logger.debug("Removing Sprite on same location " + newTileSprite.getLocation());
       }
     }
     return spriteRemoved;
@@ -440,8 +437,7 @@ public class SpriteManager implements PropertyChangeListener {
   }
 
   /**
-   * This event is fired when a unit is added to a tile.
-   * This method is invoked for each move within a path,
+   * This method is fired when a unit is added to a tile and on each move within a path,
    * thus it can't be used to remove unitsprites.
    */
   private void unitOnTileChanged(PropertyChangeEvent evt) {

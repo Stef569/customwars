@@ -38,6 +38,8 @@ public class CaptureAction extends AbstractCWAction {
 
       if (city.isCapturedBy(unit)) {
         unit.setUnitState(UnitState.IDLE);
+        inGameSession.addHumanCityController(city);
+        city.resetCapturing();
       }
     }
   }

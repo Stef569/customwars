@@ -21,6 +21,7 @@ import com.customwars.client.model.map.path.MoveTraverse;
 import com.customwars.client.ui.HUD;
 import com.customwars.client.ui.renderer.MapRenderer;
 import com.customwars.client.ui.state.InGameSession;
+import com.customwars.client.ui.state.StateLogic;
 import org.apache.log4j.Logger;
 import tools.Args;
 
@@ -37,9 +38,10 @@ import java.util.Map;
  */
 public class ActionManager {
   private static final Logger logger = Logger.getLogger(ActionManager.class);
-  private Map<String, CWAction> actions;
+  private static Map<String, CWAction> actions;
   private MapRenderer mapRenderer;
   private HUD hud;
+  private StateLogic stateLogic;
   private InGameSession inGameSession;
   private MoveTraverse moveTraverse;
   private ResourceManager resources;
@@ -50,7 +52,7 @@ public class ActionManager {
     actions = new HashMap<String, CWAction>();
   }
 
-  public ActionManager(MapRenderer mapRenderer, InGameSession inGameSession, MoveTraverse moveTraverse, ResourceManager resources, Game game, HUD hud) {
+  public ActionManager(MapRenderer mapRenderer, InGameSession inGameSession, MoveTraverse moveTraverse, ResourceManager resources, Game game, HUD hud, StateLogic stateLogic) {
     this();
     this.mapRenderer = mapRenderer;
     this.inGameSession = inGameSession;
@@ -58,11 +60,14 @@ public class ActionManager {
     this.resources = resources;
     this.game = game;
     this.hud = hud;
+    this.stateLogic = stateLogic;
   }
 
-  public void update(int elapsedTime) {
-    for (CWAction action : actions.values()) {
-      action.update(elapsedTime);
+  public static void update(int elapsedTime) {
+    if (actions != null) {
+      for (CWAction action : actions.values()) {
+        action.update(elapsedTime);
+      }
     }
   }
 
@@ -72,8 +77,10 @@ public class ActionManager {
     Args.checkForNull(resources);
     Args.checkForNull(game);
     Args.checkForNull(moveTraverse);
+    Args.checkForNull(stateLogic);
 
     clearInGameState = new ClearInGameState(game, mapRenderer, inGameSession, hud);
+    actions.put("CLEAR_INGAME_STATE", clearInGameState);
     buildGameActions();
     buildUnitActions();
   }
@@ -87,6 +94,8 @@ public class ActionManager {
   }
 
   private void buildUnitActions() {
+    CWAction popupMenu = new ShowPopupMenu("popup menu", hud, inGameSession, mapRenderer);
+    addAction("POPUP_MENU", popupMenu);
     buildSelectActions();
     buildAnimatedActions();
   }
@@ -105,16 +114,16 @@ public class ActionManager {
     CWAction unitCapture = new CaptureAction(game, inGameSession);
     CWAction unitSupplyAndHeal = new SupplyAction(game, inGameSession);
     CWAction unitLoadIntoTransport = new LoadAction(game, inGameSession, mapRenderer, unitWait);
-    CWAction startDropMode = new StartDropAction(game.getMap(), mapRenderer, inGameSession);
+    CWAction startDropMode = new StartDropAction(game.getMap(), mapRenderer, inGameSession, clearInGameState);
     CWAction unitDrop = new DropAction(game, inGameSession);
     CWAction startAttackMode = new StartAttackAction(game, mapRenderer, inGameSession);
     CWAction unitAttack = new AttackAction(game, inGameSession, new UnitFight(game.getMap()));
     CWAction unitJoin = new JoinAction(game, inGameSession);
 
-    actions.put("CLEAR_INGAME_STATE", clearInGameState);
-    actions.put("UNIT_WAIT", unitWait);
     actions.put("UNIT_MOVE_ANIMATED", unitMoveAnimated);
+    actions.put("UNIT_WAIT", unitWait);
     actions.put("UNIT_START_DROP_MODE", startDropMode);
+    actions.put("UNIT_DROP", unitDrop);
     actions.put("UNIT_START_ATTACK_MODE", startAttackMode);
 
     // Animated move actions
@@ -187,5 +196,18 @@ public class ActionManager {
     } else {
       throw new IllegalArgumentException(key + " not found actions=" + actions.keySet());
     }
+  }
+
+  public CWAction buildDropAction(int drops) {
+    ActionBag dropActions = new ActionBag("Drop Actions");
+    dropActions.addAction(getAction("UNIT_MOVE_ANIMATED"));
+    dropActions.addAction(getAction("UNIT_WAIT"));
+
+    for (int drop = 0; drop < drops; drop++) {
+      dropActions.addAction(getAction("UNIT_DROP"));
+      dropActions.addAction(getAction("UNIT_WAIT"));
+    }
+    dropActions.addAction(clearInGameState);
+    return dropActions;
   }
 }

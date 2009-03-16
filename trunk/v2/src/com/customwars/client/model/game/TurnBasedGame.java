@@ -164,9 +164,12 @@ public class TurnBasedGame extends GameObject implements PropertyChangeListener 
   }
 
   public int getDay() {
-    int day, turnCount, playerCount;
+    return getDay(turn.getTurnCount());
+  }
 
-    turnCount = turn.getTurnCount();
+  public int getDay(int turnCount) {
+    int day, playerCount;
+
     playerCount = getNonNeutralPlayers().size();
 
     if (playerCount > 0) {
@@ -311,8 +314,8 @@ public class TurnBasedGame extends GameObject implements PropertyChangeListener 
   }
 
   /**
-   * The amount of players in the map equals the amount of players provided
-   * Are all players set
+   * The amount of players in the map equals the amount of players in the game
+   * Are all players non null
    * do they have unique colors
    * do they have unique ids
    * fires IllegalStateException when one of the above statements is false

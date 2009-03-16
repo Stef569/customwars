@@ -17,6 +17,7 @@ import java.util.List;
 /**
  * Handles any input for 1 unit
  * This can be surrounding tile information, clicks in a menu, Ai
+ * Note that the unit is teleported to the select tile in each method.
  *
  * @author stefan
  */
@@ -59,12 +60,15 @@ public abstract class UnitController {
   }
 
   boolean canMove(Location from, Location to) {
-    return from != null || to != null || isValidUnit((Tile) to) && unit.isWithinMoveZone(to);
+    return from != null || to != null && unit.isWithinMoveZone(to);
   }
 
-  boolean isValidUnit(Tile selected) {
-    return isActiveUnitInGame() && isUnitVisible() && unit.isActive() &&
-            isUnitOn(selected);
+  boolean isValidUnitLocation(Tile selected) {
+    return isUnitVisible() && isUnitOn(selected);
+  }
+
+  boolean isActiveUnit() {
+    return isActiveUnitInGame() && unit.isActive();
   }
 
   boolean canWait(Tile selected) {
@@ -87,30 +91,35 @@ public abstract class UnitController {
       return false;
     }
 
-    return transporter.canTransport(unit.getMovementType()) &&
+    return transporter.canAdd(unit) &&
             transporter.getOwner() == unit.getOwner();
   }
 
-  boolean canStartDrop(Tile selected) {
-    List<Location> emptyTiles = getEmptyAjacentTiles(selected);
+  boolean canStartDrop(Tile origin, Tile selected, int dropCount) {
+    List<Location> emptyTiles = getEmptyAjacentTiles(origin);
 
     return !emptyTiles.isEmpty() &&
-            unit.canTransport() && unit.getLocatableCount() > 0;
+            unit.canTransport() && dropCount > 0 && dropCount <= unit.getLocatableCount();
   }
 
-  private List<Location> getEmptyAjacentTiles(Tile clicked) {
+  private List<Location> getEmptyAjacentTiles(Tile selected) {
     List<Location> emptyTiles = new ArrayList<Location>();
-    for (Location location : game.getMap().getSurroundingTiles(clicked, 1, 1)) {
+    for (Location location : game.getMap().getSurroundingTiles(selected, 1, 1)) {
       if (location.getLocatableCount() == 0) {
         emptyTiles.add(location);
       }
     }
+
     return emptyTiles;
   }
 
   boolean canDrop(Tile selected) {
     Unit transporter = game.getActiveUnit();
-    return transporter.getLocatableCount() > 0 && selected.getLocatableCount() == 0;
+    if (selected.isFogged()) {
+      return transporter.getLocatableCount() > 0;
+    } else {
+      return transporter.getLocatableCount() > 0 && selected.getLocatableCount() == 0;
+    }
   }
 
   /**

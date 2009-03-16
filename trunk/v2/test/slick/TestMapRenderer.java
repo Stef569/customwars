@@ -59,9 +59,11 @@ public class TestMapRenderer extends CWState {
   }
 
   public void render(GameContainer container, Graphics g) throws SlickException {
-    g.scale(camera.getZoomLvl(), camera.getZoomLvl());
-    mapRenderer.render(-camera.getX(), -camera.getY(), g);
-    renderTileInfo(mapRenderer.getCursorLocation().toString(), g, container);
+    if (camera != null) {
+      g.scale(camera.getZoomLvl(), camera.getZoomLvl());
+      mapRenderer.render(-camera.getX(), -camera.getY(), g);
+      renderTileInfo(mapRenderer.getCursorLocation().toString(), g, container);
+    }
   }
 
   private void renderTileInfo(String tileInfo, Graphics g, GameContainer container) {

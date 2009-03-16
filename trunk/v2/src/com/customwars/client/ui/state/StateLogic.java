@@ -47,7 +47,7 @@ public class StateLogic {
    * @throws IllegalArgumentException thrown when a stateName is not mapped to a stateID
    * or when the stateID is not within state bounds(>0 <states.size)
    */
-  public void changeTo(String stateName) throws IllegalArgumentException {
+  public void changeTo(String stateName) {
     if (stateName != null) {
       gotoState(stateName.toUpperCase());
     }
@@ -73,7 +73,7 @@ public class StateLogic {
     }
   }
 
-  private void gotoState(String stateName) throws IllegalArgumentException {
+  private void gotoState(String stateName) {
     if (states.containsKey(stateName)) {
       int stateID = states.get(stateName);
       gotoState(stateID);
@@ -85,7 +85,7 @@ public class StateLogic {
 
   public void gotoState(int stateID) throws IllegalArgumentException {
     if (stateID >= 0) {
-      stategame.enterState(stateID, null, new FadeInTransition(Color.black));
+      stategame.enterState(stateID, null, new FadeInTransition(Color.black, 250));
       if (previousStates.size() < PREVIOUS_STATE_LIMIT)
         previousStates.add(stateID);
     } else {

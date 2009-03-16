@@ -98,7 +98,7 @@ public class ImageParser {
   private void loadSingleImage(String line) throws NumberFormatException, IOException, SlickException {
     StringTokenizer tokens = new StringTokenizer(line);
 
-    if (tokens.countTokens() <= 3)
+    if (tokens.countTokens() < 3)
       throw new IllegalArgumentException(ERR_WRONG_NUM_ARGS + " for line: " + line +
               " Usage " + SINGLE_IMAGE_SYMBOL + " <imgName> <fileName>");
     else {

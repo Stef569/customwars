@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * Show a popup to te screen
  * The popup is filled with CWAction objects
- * When a menu item is pressed then the CWAction behind that item is executed.
+ * When a menu item is pressed then the CWAction behind that item is executed and the menu is hidden.
  *
  * @author stefan
  */
@@ -27,6 +27,7 @@ public class ShowPopupMenu extends AbstractCWAction implements ComponentListener
   private List<String> unitMenuItemNames;
   private InGameSession inGameSession;
   private MapRenderer mapRenderer;
+  private int currentOption;
 
   public ShowPopupMenu(String popupName, HUD hud, InGameSession inGameSession, MapRenderer mapRenderer) {
     super(popupName);
@@ -68,13 +69,14 @@ public class ShowPopupMenu extends AbstractCWAction implements ComponentListener
     unitMenuItemNames.add(menuItemName);
   }
 
-  public void clearActions() {
+  public void clear() {
     unitActions.clear();
     unitMenuItemNames.clear();
   }
 
   public void componentActivated(AbstractComponent abstractComponent) {
     PopupMenu popupMenu = (PopupMenu) abstractComponent;
+    currentOption = popupMenu.getCurrentOption();
     CWAction action = unitActions.get(popupMenu.getCurrentOption());
     this.undoAction();    // Hide the popup when clicked on a item
     inGameSession.doAction(action);
@@ -82,5 +84,9 @@ public class ShowPopupMenu extends AbstractCWAction implements ComponentListener
 
   public boolean atLeastHasOneItem() {
     return unitMenuItemNames.size() > 0;
+  }
+
+  public int getCurrentOption() {
+    return currentOption;
   }
 }

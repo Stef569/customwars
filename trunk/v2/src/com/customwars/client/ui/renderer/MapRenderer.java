@@ -172,7 +172,7 @@ public class MapRenderer extends TileMapRenderer {
     }
   }
 
-  private void renderArrowHead(Graphics g, Direction baseDirection, Location location) {
+  public void renderArrowHead(Graphics g, Direction baseDirection, Location location) {
     int x = location.getCol() * tileSize;
     int y = location.getRow() * tileSize;
 

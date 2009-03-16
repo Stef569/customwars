@@ -7,8 +7,8 @@ import com.customwars.client.model.map.Tile;
 import com.customwars.client.ui.state.InGameSession;
 
 /**
- * Drop last unit within the active unit(the transport)
- * to the 3th tile
+ * Drop next unit from the inGameSession within the active unit(the transport)
+ * to the next inGameSession drop location
  *
  * @author stefan
  */
@@ -25,14 +25,12 @@ public class DropAction extends AbstractCWAction {
   protected void doActionImpl() {
     if (inGameSession.isTrapped()) return;
 
-    Tile clicked = inGameSession.getClick(3);
-    Unit transporter = game.getActiveUnit();
-    Unit unitInTransport = (Unit) transporter.getLastLocatable();
+    Unit transporter = (Unit) inGameSession.getClick(2).getLastLocatable();
+    Tile dropLocation = inGameSession.getNextDropLocation();
+    Unit unitInTransport = inGameSession.getNextUnitToBeDropped();
 
-    if (clicked.getLocatableCount() == 0) {
-      transporter.remove(unitInTransport);
-      clicked.add(unitInTransport);
-      game.setActiveUnit(unitInTransport);
-    }
+    transporter.remove(unitInTransport);
+    dropLocation.add(unitInTransport);
+    game.setActiveUnit(unitInTransport);
   }
 }

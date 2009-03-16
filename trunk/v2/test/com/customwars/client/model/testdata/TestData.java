@@ -29,8 +29,8 @@ public class TestData {
   public static final int MOVE_AIR = 4;
   public static final int MOVE_NAVAL = 5;
 
-  public static final int VERTICAL_RIVER = 20;
   public static final int PLAIN = 0;
+  public static final int VERTICAL_RIVER = 20;
 
   public static final int INF = 0;
   public static final int MECH = 1;
@@ -79,9 +79,9 @@ public class TestData {
   private static Weapon rockets = new Weapon(3, "rockets", "nonee", 1500, 3, 6, 9, false);
 
   // City
-  private static City base = new City(0, "Base", "", 0, 0, plainMoveCosts, 1, false, Arrays.asList(ARMY_BRANCH_GROUND), Arrays.asList(INF, MECH), null, 20, CITY_HEAL_RATE, 0, 0);
-  private static City factory = new City(1, "Factory", "", 0, 0, plainMoveCosts, 1, false, Arrays.asList(ARMY_BRANCH_GROUND), Arrays.asList(INF, MECH), Arrays.asList(ARMY_BRANCH_GROUND), 20, CITY_HEAL_RATE, 0, 0);
-  private static City hq = new City(4, "HQ", "", 0, 0, plainMoveCosts, 1, false, Arrays.asList(ARMY_BRANCH_GROUND), Arrays.asList(INF, MECH), null, 20, CITY_HEAL_RATE, 0, 0);
+  private static City base = new City(0, "Base", "", 0, 0, plainMoveCosts, 1, true, Arrays.asList(ARMY_BRANCH_GROUND), Arrays.asList(INF, MECH), null, 20, CITY_HEAL_RATE, 0, 0);
+  private static City factory = new City(1, "Factory", "", 0, 0, plainMoveCosts, 1, true, Arrays.asList(ARMY_BRANCH_GROUND), Arrays.asList(INF, MECH), Arrays.asList(ARMY_BRANCH_GROUND), 20, CITY_HEAL_RATE, 0, 0);
+  private static City hq = new City(4, "HQ", "", 0, 0, plainMoveCosts, 1, true, Arrays.asList(ARMY_BRANCH_GROUND), Arrays.asList(INF, MECH), null, 20, CITY_HEAL_RATE, 0, 0);
 
   public static void storeTestData() {
     clearTestData();

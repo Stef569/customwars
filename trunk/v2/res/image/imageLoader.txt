@@ -21,3 +21,6 @@ s unitDecoration res/image/unitDecoration.png 16 16
 
 m CITY_RED res/image/cities_RED.png 32 60 true
 //s cityDecoration res/image/cityDecoration.png 2
+
+o trapped res/image/trapped.png
+o supplied res/image/supplied.png

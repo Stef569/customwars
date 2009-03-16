@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Holds every unit in the game, getUnit returns deep copies
@@ -14,7 +15,7 @@ import java.util.List;
  * @author stefan
  */
 public class UnitFactory {
-  private static HashMap<Integer, Unit> units = new HashMap<Integer, Unit>();
+  private static Map<Integer, Unit> units = new HashMap<Integer, Unit>();
 
   public static void addUnits(Collection<Unit> units) {
     for (Unit unit : units) {

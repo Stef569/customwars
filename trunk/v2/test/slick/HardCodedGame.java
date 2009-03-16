@@ -25,6 +25,7 @@ public class HardCodedGame {
   public static Player p_GRAY = new Player(Color.GRAY, null, -1);
   public static Player p_RED = new Player(1, Color.RED, false, null, "Stef", 3800, 0, false);
   public static Player p_BLUE = new Player(2, Color.BLUE, false, null, "JSR", 8500, 1, false);
+  public static Player p_GREEN = new Player(3, Color.GREEN, false, null, "Kiwi", 10000, 2, false);
   private static Map<Tile> map;
 
   /**
@@ -32,7 +33,7 @@ public class HardCodedGame {
    * The game is not inited, started
    */
   public static Game getGame() {
-    List<Player> players = Arrays.asList(p_RED, p_BLUE, p_GRAY);
+    List<Player> players = Arrays.asList(p_RED, p_BLUE, p_GRAY, p_GREEN);
     GameConfig gc = new GameConfig();
     gc.setTurnLimit(500);
     gc.setCityfunds(1000);
@@ -42,31 +43,34 @@ public class HardCodedGame {
   }
 
   public static Map<Tile> getMap() {
-    map = new Map<Tile>(10, 15, 32, 3);
+    map = new Map<Tile>(10, 15, 32, 4);
     map.setFogOfWarOn(true);
     initMapProperties();
     MapUtil.fillWithTiles(map, TerrainFactory.getTerrain(TestData.PLAIN));
     map.getTile(2, 1).setTerrain(TerrainFactory.getTerrain(TestData.VERTICAL_RIVER));
 
     // 3 Map Players, colors are suggestions game players overwrite them
+    Player neutral = new Player(Player.NEUTRAL_PLAYER_ID, Color.GRAY, true, null);
     Player p1 = new Player(1, Color.GREEN, false, null);
     Player p2 = new Player(2, Color.BLUE, false, null);
-    Player p3 = new Player(Player.NEUTRAL_PLAYER_ID, Color.GRAY, true, null);
+    Player p3 = new Player(3, Color.YELLOW, false, null);
 
     City blueHQ = addCityToMap(8, 5, TestData.HQ, p2);
     City greenHQ = addCityToMap(0, 2, TestData.HQ, p1);
     p2.setHq(blueHQ);
     p1.setHq(greenHQ);
 
-    addCityToMap(2, 5, TestData.FACTORY, p3);
-    addCityToMap(3, 3, TestData.BASE, p3);
+    addCityToMap(2, 5, TestData.FACTORY, neutral);
+    addCityToMap(3, 3, TestData.BASE, neutral);
     addCityToMap(0, 0, TestData.FACTORY, p1);
     addCityToMap(7, 8, TestData.FACTORY, p2);
 
     addUnitToMap(0, 5, TestData.INF, p1);
     addUnitToMap(0, 4, TestData.ROCKETS, p1);
+    addUnitToMap(0, 8, TestData.MECH, p1);
     addUnitToMap(1, 3, TestData.APC, p1);
     addUnitToMap(1, 7, TestData.APC, p1);
+    addUnitToMap(1, 8, TestData.MECH, p1);
     addUnitToMap(2, 6, TestData.INF, p1);
     addUnitToMap(2, 7, TestData.ROCKETS, p1);
     addUnitToMap(5, 6, TestData.INF, p1);
@@ -78,6 +82,13 @@ public class HardCodedGame {
     addUnitToMap(3, 2, TestData.TANK, p2);
     addUnitToMap(5, 2, TestData.ROCKETS, p2);
     addUnitToMap(6, 2, TestData.APC, p2);
+    addUnitToMap(0, 10, TestData.MECH, p3);
+    addUnitToMap(2, 9, TestData.ROCKETS, p3);
+    addUnitToMap(2, 10, TestData.TANK, p3);
+    addUnitToMap(5, 9, TestData.INF, p3);
+    addCityToMap(2, 10, TestData.FACTORY, p3);
+    addCityToMap(5, 12, TestData.BASE, p3);
+
     return map;
   }
 

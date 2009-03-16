@@ -31,6 +31,7 @@ public class ClearInGameState extends AbstractCWAction {
     inGameSession.discartAllEdits();
     inGameSession.clearClicks();
     inGameSession.setMoving(false);
+    inGameSession.clearDropLocations();
 
     mapRenderer.activateCursor("Select");
     mapRenderer.stopCursorTraversal();
