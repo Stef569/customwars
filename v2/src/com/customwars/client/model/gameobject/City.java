@@ -88,7 +88,7 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
    * Resets the city state to default
    */
   void reset() {
-    this.capCount = 0;
+    resetCapturing();
   }
 
   /**

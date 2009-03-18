@@ -54,6 +54,13 @@ public class Game extends TurnBasedGame {
         Unit unit = map.getUnitOn(t);
 
         if (city != null) {
+          if(city.getLocation() == null) {
+            throw new IllegalStateException("City @ " + t.getLocationString() + " has no location");
+          }
+          if(city.getOwner() == null) {
+            throw new IllegalStateException("City @ " + t.getLocationString() + " has no owner");
+          }
+
           Player newOwner = getGamePlayer(city.getOwner());
           newOwner.addCity(city);
           city.setFunds(cityFunds);
@@ -62,6 +69,12 @@ public class Game extends TurnBasedGame {
           if (t.getLocatableCount() != 1) {
             throw new IllegalStateException("Tile @ " + t.getLocationString() + " contains " + t.getLocatableCount() + " units, limit=1");
           }
+          if(unit.getLocation() == null) {
+             throw new IllegalStateException("Unit @ " + t.getLocationString() + " has no location");
+           }
+           if(unit.getOwner() == null) {
+             throw new IllegalStateException("Unit @ " + t.getLocationString() + " has no owner");
+           }
 
           Player newOwner = getGamePlayer(unit.getOwner());
           newOwner.addUnit(unit);

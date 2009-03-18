@@ -31,21 +31,26 @@ public class CityTest {
    * A Unit captures a City, in 2 steps
    * The first time the unit tries to capture the city the capCount will be 50% (10/20)
    * The next attempt will fully capture the city 100% (20/20)
-   * player2 is now owning the city, capcount is put back to 0.
+   * player2 is now owning the city,
+   *
+   * resetCapturing will put the capCount back to 0.
    *
    * The Unit Hp is used to increase the cap count
    */
   public void testValidCaptureCity() {
+    city.setOwner(player1);
 
-      city.setOwner(player1);
+    Unit inf = UnitFactory.getUnit(TestData.INF);
+    inf.setOwner(player2);
 
-    Unit capturingUnit = UnitFactory.getUnit(TestData.INF);
-    capturingUnit.setOwner(player2);
-
-    city.capture(capturingUnit);
+    city.capture(inf);
     Assert.assertEquals(50, city.getCapCountPercentage());
 
-    city.capture(capturingUnit);
+    city.capture(inf);
+    Assert.assertEquals(100, city.getCapCountPercentage());
+    Assert.assertEquals(player2, city.getOwner());
+
+    city.resetCapturing();
     Assert.assertEquals(0, city.getCapCountPercentage());
     Assert.assertEquals(player2, city.getOwner());
   }
