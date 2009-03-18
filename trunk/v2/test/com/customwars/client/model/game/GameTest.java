@@ -65,12 +65,16 @@ public class GameTest {
 
     // Give player 4 a City
     City p4City = CityFactory.getCity(TestData.BASE);
-    map.getTile(0, 0).setTerrain(p4City);
+    Tile tile = map.getTile(0, 0);
+    tile.setTerrain(p4City);
+    p4City.setLocation(tile);
     p4City.setOwner(p4);
 
     // Give player 1 a City
     City p1City = CityFactory.getCity(TestData.BASE);
-    map.getTile(1, 0).setTerrain(p1City);
+    tile = map.getTile(1, 0);
+    tile.setTerrain(p1City);
+    p1City.setLocation(tile);
     p1City.setOwner(p1);
 
     GameConfig gc = new GameConfig();
