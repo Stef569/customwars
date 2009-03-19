@@ -1,4 +1,4 @@
-package com.customwars.client.model.testdata;
+package com.customwars.client.model;
 
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.CityFactory;

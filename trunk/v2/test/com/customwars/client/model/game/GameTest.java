@@ -1,5 +1,6 @@
 package com.customwars.client.model.game;
 
+import com.customwars.client.model.TestData;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.CityFactory;
 import com.customwars.client.model.gameobject.GameObjectState;
@@ -8,7 +9,6 @@ import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.gameobject.UnitFactory;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
-import com.customwars.client.model.testdata.TestData;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -165,10 +165,10 @@ public class GameTest {
 
   @Test
   public void testGameWithNeutralPlayer() {
-    Player p1 = new Player(1, Color.YELLOW, false, null, "Stef", Integer.MAX_VALUE, 0, false);
-    Player p2 = new Player(2, Color.GREEN, false, null, "JSR", 8500, 0, false);
-    Player p3 = new Player(3, Color.BLACK, false, null, "Ben", 50, 0, false);
-    Player neutral = new Player(Color.GRAY, null, -1);
+    Player neutral = new Player(Player.NEUTRAL_PLAYER_ID, Color.GRAY, true, null, "Neutral", 0, -1, false);
+    Player p1 = new Player(0, Color.YELLOW, false, null, "Stef", Integer.MAX_VALUE, 0, false);
+    Player p2 = new Player(1, Color.GREEN, false, null, "JSR", 8500, 0, false);
+    Player p3 = new Player(2, Color.BLACK, false, null, "Ben", 50, 0, false);
 
     // Try to Start a game with neutral
     startGame(new GameConfig(), neutral, Arrays.asList(p1, p2, p3, neutral));

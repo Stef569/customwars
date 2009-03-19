@@ -35,13 +35,17 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
   public void initStatesList(GameContainer container) throws SlickException {
     this.gameContainer = container;
 
+    // Create input commands
+    // listen when they are pressed
     cwInput = new CWInput(container.getInput());
     cwInput.addListener(this);
 
+    // Global data for each state
     CWState.setCwInput(cwInput);
     CWState.setResources(resources);
     CWState.setStateSession(stateSession);
 
+    // Create and map states to a string
     buildStateList();
     mapStateIdsToName();
     statelogic.gotoState(startID);
@@ -63,9 +67,9 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
     addState(mapParser);
 
     try {
-      resources.loadFromFile();
+      resources.loadConfig();
     } catch (IOException e) {
-      logger.fatal(e);
+      logger.fatal("Could not load resources config", e);
     }
   }
 
@@ -85,21 +89,27 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
     ActionManager.update(delta);
   }
 
-  private void handleGlobalInput(Command command) {
-    if (cwInput.isExitPressed(command)) {
-      gameContainer.exit();
-    }
-  }
-
+  /**
+   * Delegate the pressed control to the current state
+   */
   public void controlPressed(Command command) {
-    handleGlobalInput(command);
     CWState state = (CWState) getCurrentState();
     state.controlPressed(command);
   }
 
+  /**
+   * Delegate the released control to the current state
+   */
   public void controlReleased(Command command) {
+    handleGlobalInput(command);
     CWState state = (CWState) getCurrentState();
     state.controlReleased(command);
+  }
+
+  private void handleGlobalInput(Command command) {
+    if (cwInput.isExitPressed(command)) {
+      gameContainer.exit();
+    }
   }
 
   public void keyPressed(int key, char c) {

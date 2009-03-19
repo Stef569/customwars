@@ -6,6 +6,10 @@ import com.customwars.client.model.map.Tile;
 import com.customwars.client.model.map.TileMap;
 
 /**
+ * Utilities for a map including:
+ * filling a map with terrains, filling a square with terrains,...
+ * Useful in a map editor
+ *
  * @author stefan
  */
 public class MapUtil {

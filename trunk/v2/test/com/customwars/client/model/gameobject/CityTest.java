@@ -1,9 +1,9 @@
 package com.customwars.client.model.gameobject;
 
+import com.customwars.client.model.TestData;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
-import com.customwars.client.model.testdata.TestData;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

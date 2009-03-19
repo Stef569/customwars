@@ -4,7 +4,6 @@ package com.customwars.client.model.game;
 /**
  * Game specific configuration:
  * turns, weather etc
- * -1 for a int value means infinitive or off.
  */
 public class GameConfig {
   private int startWeather = 0;
@@ -20,9 +19,6 @@ public class GameConfig {
     this.cityfunds = cityfunds;
   }
 
-  // ---------------------------------------------------------------------------
-  // SETTERS
-  // --------------------------------------------------------------------------
   public void setStartWeather(int startWeather) {
     this.startWeather = startWeather;
   }
@@ -35,9 +31,6 @@ public class GameConfig {
     this.cityfunds = cityfunds;
   }
 
-  // ---------------------------------------------------------------------------
-  // GETTERS
-  // --------------------------------------------------------------------------
   public int getStartWeather() {
     return startWeather;
   }

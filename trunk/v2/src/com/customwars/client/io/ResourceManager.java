@@ -34,7 +34,7 @@ public class ResourceManager {
   private static final String ANIM_LOADER_FILE = "animLoader.txt";
   private static final String COLORS_FILE = "colors.xml";
   private static final int DARK_PERCENTAGE = 30;
-  private final ModelLoader modelLoader = new ModelLoader();
+  private static final ModelLoader modelLoader = new ModelLoader();
 
   private ImageLib imageLib;
   private AnimLib animLib;
@@ -58,7 +58,7 @@ public class ResourceManager {
     logger.info("Loading resources");
     loadModel();
     try {
-      loadFromFile();
+      loadConfig();
     } catch (IOException e) {
       throw new RuntimeException("Failed to load resource " + e);
     }
@@ -69,7 +69,7 @@ public class ResourceManager {
     modelLoader.loadModel();
   }
 
-  public void loadFromFile() throws IOException {
+  public void loadConfig() throws IOException {
     loadColorsFromFile();
     loadImagesFromFile();
     loadAnimationsFromFile();

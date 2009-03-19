@@ -7,9 +7,13 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * A database(cache) of cities that can be used in the game. each City is mapped to an unique ID.
- * The Cities in the cache contain values that always remain the same like: description, maxHP,...
+ * A database(cache) of cities that can be used in the game. each City is mapped to an unique City ID.
+ * The Cities in the cache contain values that always remain the same(static values) like: description, maxHP,...
  * getCity(id) will create a copy of the City in the cache and return it.
+ *
+ * When cities are added init is invoked on them, this allows the city to validate it's values before it is used.
+ * Each time a city is retrieved from this Factory reset is invoked, this allows the city to
+ * put dynamic values to max and put values to default.
  *
  * @author stefan
  */
@@ -41,11 +45,12 @@ public class CityFactory {
   }
 
   public static Collection<City> getAllCities() {
-    List<City> cityCopies = new ArrayList<City>();
-    for (City unit : cities.values()) {
-      cityCopies.add(getCity(unit.getID()));
+    List<City> allCities = new ArrayList<City>(cities.size());
+    for (City city : cities.values()) {
+      int cityID = city.getID();
+      allCities.add(getCity(cityID));
     }
-    return Collections.unmodifiableList(cityCopies);
+    return Collections.unmodifiableList(allCities);
   }
 
   public static City getRandomCity() {

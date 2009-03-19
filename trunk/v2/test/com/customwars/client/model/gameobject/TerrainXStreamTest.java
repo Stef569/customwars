@@ -1,6 +1,6 @@
 package com.customwars.client.model.gameobject;
 
-import com.customwars.client.model.testdata.TestData;
+import com.customwars.client.model.TestData;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.ConversionException;
 import com.thoughtworks.xstream.io.xml.DomDriver;

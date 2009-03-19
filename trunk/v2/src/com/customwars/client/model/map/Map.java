@@ -28,10 +28,10 @@ import java.util.Properties;
 public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
   private static final Logger logger = Logger.getLogger(Map.class);
   private static final int MOUNTAIN_VISION = 3;
-  private Properties properties = new Properties();
+  private Properties properties = new Properties();  // The properties of the map
   private int numPlayers;           // Amount of players that can play on this map
-  private boolean fogOfWarOn;       // is fog of war in effect
-  private PathFinder pathFinder;    // to builds paths within the map
+  private boolean fogOfWarOn;       // Is fog of war in effect
+  private PathFinder pathFinder;    // To builds paths within the map
 
   public Map(int cols, int rows, int tileSize, int numPlayers) {
     super(cols, rows, tileSize);
@@ -90,8 +90,8 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
    * @param player The player who's units should be made active
    */
   private void resetUnits(Player player) {
-    for (Location location : getAllTiles()) {
-      Unit unit = getUnitOn(location);
+    for (Location t : getAllTiles()) {
+      Unit unit = getUnitOn(t);
 
       if (unit != null) {
         if (unit.getOwner() == player) {
@@ -180,11 +180,12 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
   }
 
   /**
-   * Determines if a map Location is in the attacker's firing range
+   * Determines if a Location is in the attacker's firing range
    */
   public boolean inFireRange(Mover mover, Location mapLocation, int minAttackRange, int maxAttackRange) {
     if (maxAttackRange <= 0) return false;
-    int t = Math.abs(mapLocation.getRow() - mover.getLocation().getRow()) + Math.abs(mapLocation.getCol() - mover.getLocation().getCol());
+    int t = Math.abs(mapLocation.getRow() - mover.getLocation().getRow()) +
+            Math.abs(mapLocation.getCol() - mover.getLocation().getCol());
 
     //Indirects
     if (minAttackRange > 1) {
@@ -341,13 +342,19 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
   }
 
   public void setFogOfWarOn(boolean fogOfWarOn) {
+    boolean oldVal = this.fogOfWarOn;
     this.fogOfWarOn = fogOfWarOn;
+    firePropertyChange("fogOfWar", oldVal, fogOfWarOn);
   }
 
   public void addProperty(String key, String value) {
     properties.put(key, value);
   }
 
+  /**
+   * Retrieves the last unit from location
+   * if location doesn't contain a unit <b>NULL</b> is returned
+   */
   public Unit getUnitOn(Location location) {
     Locatable locatable = location.getLastLocatable();
     if (locatable instanceof Unit) {
@@ -356,6 +363,10 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
     return null;
   }
 
+  /**
+   * Retrieves a city that is on the location
+   * if location doesn't contain a city <b>NULL</b> is returned
+   */
   public City getCityOn(Location location) {
     Tile t = (Tile) location;
     Terrain terrain = t.getTerrain();
@@ -373,8 +384,8 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
     return properties.getProperty(key);
   }
 
-  public boolean hasProperty(String property) {
-    return properties.contains(property);
+  public boolean hasProperty(String key) {
+    return properties.containsKey(key);
   }
 
   public Iterable<String> getPropertyKeys() {

@@ -13,13 +13,13 @@ import java.util.List;
  * Cities can be owned by 1 Player
  * in fog of war They have a vision aka line of sight,
  * are located on a Location
- * They have funds. The player that owns this city receives the funds each turn.
- * can heal units of a specific ID
- * can supply units of a specific ID
- * can be captured by a Units
- * can build units of a specific ID
+ * They have funds, The player that owns this city receives the funds on each turn start.
+ * can heal units of a specific ArmyBranch ID
+ * can supply units of a specific ArmyBranch ID
+ * can be captured by a Units of a specific unit ID
+ * can build units of a specific ArmyBranch ID
  *
- * healrate and healRanges are used for both healing and supplying.
+ * supply rate and supply Ranges are used for both healing and supplying.
  *
  * @author stefan
  */
@@ -32,25 +32,25 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
   private List<Integer> canBeCaptureBy; // The ids this City can be captured by(Empty list means it cannot be captured)
   private List<Integer> builds;         // The ids this City can build (Empty list means it cannot heal)
   private int maxCapCount;              // When capCount == max capCount this property is captured see capture().
-  private int healRate;                 // Amount of healing/repairs/supplies this property can give to a Unit
-  private int minHealRange, maxHealRange;    // In what range can this City heal/Supply
+  private int supplyRate;                 // Amount of healing/repairs/supplies this city can give to a Unit
+  private int minSupplyRange, maxSupplyRange;    // In what range can this City heal/Supply
 
-  private Unit capturer;      // Capturing unit that is capturing this property
-  private int capCount;       // The current capture count(if capCount==maxCapCount then this property is considered to be captured)
-  private int funds;          // Amount of money that this property produces every turn
+  private Unit capturer;      // Capturing unit that is capturing this city
+  private int capCount;       // The current capture count(if capCount==maxCapCount then this city is considered to be captured)
+  private int funds;          // Amount of money that this city produces every turn
 
   public City(int id, String name, String description, int defenseBonus, int height, List<Integer> moveCosts,
               int vision, boolean hidden,
-              List<Integer> heals, List<Integer> canBeCaptureBy, List<Integer> builds, int maxCapCount, int healRate, int minHealRange, int maxHealRange) {
+              List<Integer> heals, List<Integer> canBeCaptureBy, List<Integer> builds, int maxCapCount, int supplyRate, int minHealRange, int maxHealRange) {
     super(id, name, description, defenseBonus, height, hidden, moveCosts);
     this.vision = vision;
     this.heals = heals;
     this.canBeCaptureBy = canBeCaptureBy;
     this.builds = builds;
     this.maxCapCount = maxCapCount;
-    this.healRate = healRate;
-    this.minHealRange = minHealRange;
-    this.maxHealRange = maxHealRange;
+    this.supplyRate = supplyRate;
+    this.minSupplyRange = minHealRange;
+    this.maxSupplyRange = maxHealRange;
     init();
   }
 
@@ -60,9 +60,9 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
     this.canBeCaptureBy = Args.createEmptyListIfNull(canBeCaptureBy);
     this.builds = Args.createEmptyListIfNull(builds);
 
-    Args.validate(maxHealRange < 0, "maxHealRange should be positive");
-    Args.validate(minHealRange < 0, "minHealRange should be positive");
-    Args.validate(maxHealRange < minHealRange, "minHealRange should be smaller then maxHealRange");
+    Args.validate(maxSupplyRange < 0, "maxHealRange should be positive");
+    Args.validate(minSupplyRange < 0, "minHealRange should be positive");
+    Args.validate(maxSupplyRange < minSupplyRange, "minHealRange should be smaller then maxHealRange");
     Args.validate(maxCapCount < 0, "maxCapcount should be positive");
   }
 
@@ -75,9 +75,9 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
     this.canBeCaptureBy = otherCity.canBeCaptureBy;
     this.builds = otherCity.builds;
     this.maxCapCount = otherCity.maxCapCount;
-    this.healRate = otherCity.healRate;
-    this.minHealRange = otherCity.minHealRange;
-    this.maxHealRange = otherCity.maxHealRange;
+    this.supplyRate = otherCity.supplyRate;
+    this.minSupplyRange = otherCity.minSupplyRange;
+    this.maxSupplyRange = otherCity.maxSupplyRange;
 
     this.capturer = otherCity.capturer;
     this.capCount = otherCity.capCount;
@@ -93,14 +93,14 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
 
   /**
    * For every start of a Turn
-   * if this city is owned by the activePlayer then
+   * if this city is owned by the player then
    * the funds of this city are added to the player budget.
    *
-   * @param activePlayer the Player that is active in this turn
+   * @param player the Player that is active in this turn
    */
-  public void startTurn(Player activePlayer) {
-    if (owner == activePlayer) {
-      activePlayer.addToBudget(funds);
+  public void startTurn(Player player) {
+    if (owner == player) {
+      player.addToBudget(funds);
     }
   }
 
@@ -108,13 +108,13 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
   }
 
   /**
-   * Captures this property
+   * Captures this city
    * Adds the captureRate value to the capCount value on each invocation
    * it remembers the capturing Unit, if another Unit attempts to capture
    * then the capcount will be reset to 0 again.
    * when capcount >= the maxCapcount
-   * the property is considered captured and
-   * the player that is owning the capturing unit will be the new owner of this property
+   * the city is considered captured and
+   * the player that is owning the capturing unit will be the new owner of this city
    *
    * @param capturer The Unit that will perform the capture action
    */
@@ -145,13 +145,13 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
 
   public void heal(Unit unit) {
     if (canHeal(unit)) {
-      unit.addHp(healRate);
+      unit.addHp(supplyRate);
     }
   }
 
   public void supply(Unit unit) {
     if (canSupply(unit)) {
-      unit.addSupplies(healRate);
+      unit.addSupplies(supplyRate);
     }
   }
 
@@ -227,12 +227,12 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
     return capCount == maxCapCount;
   }
 
-  public int getMinHealRange() {
-    return minHealRange;
+  public int getMinSupplyRange() {
+    return minSupplyRange;
   }
 
-  public int getMaxHealRange() {
-    return maxHealRange;
+  public int getMaxSupplyRange() {
+    return maxSupplyRange;
   }
 
   /**

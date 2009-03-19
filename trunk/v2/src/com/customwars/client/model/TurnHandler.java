@@ -20,7 +20,7 @@ public interface TurnHandler {
    * Invoked when a turn ends
    *
    * @param currentPlayer The player that is ending his turn
-   * @throws NotYourTurnException When the invoker is not allowed to end this turn
+   * @throws NotYourTurnException When the currentPlayer is not allowed to end this turn
    */
   void endTurn(Player currentPlayer) throws NotYourTurnException;
 }

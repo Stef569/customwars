@@ -1,9 +1,9 @@
 package com.customwars.client.model.map;
 
+import com.customwars.client.model.TestData;
 import com.customwars.client.model.gameobject.TerrainFactory;
 import com.customwars.client.model.gameobject.UnitFactory;
 import com.customwars.client.model.map.path.Mover;
-import com.customwars.client.model.testdata.TestData;
 import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;

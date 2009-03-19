@@ -10,7 +10,8 @@ import org.newdawn.slick.command.MouseButtonControl;
 /**
  * Contains all the input Commands used in cw(Select, Menu up,...)
  * Storing multiple controls into 1 Command object allows
- * to remap keys that active a command and to load input from a file.
+ * to remap keys that activate a command
+ * todo load input keys from a file.
  *
  * @author stefan
  */

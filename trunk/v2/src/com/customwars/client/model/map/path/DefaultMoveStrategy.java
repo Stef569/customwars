@@ -19,8 +19,9 @@ public class DefaultMoveStrategy implements MoveStrategy {
   }
 
   /**
+   * What is the cost to move over tile
    * If a tile cannot be traversed over then Terrain.IMPASSIBLE should be returned.
-   * moveCosts are within bounds of 0 and Terrain.IMPASSIBLE
+   * moveCosts are within inclusive bounds of 0 and Terrain.IMPASSIBLE
    * Each terrain has a moveCost for a mover
    */
   public int getMoveCost(Location tile) {
