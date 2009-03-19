@@ -377,17 +377,17 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
     return properties.contains(property);
   }
 
-  public Iterable<java.util.Map.Entry> getProperties() {
-    final Iterator it = properties.entrySet().iterator();
-    return new Iterable<java.util.Map.Entry>() {
-      public Iterator<java.util.Map.Entry> iterator() {
-        return new Iterator<java.util.Map.Entry>() {
+  public Iterable<String> getPropertyKeys() {
+    final Iterator it = properties.keySet().iterator();
+    return new Iterable<String>() {
+      public Iterator<String> iterator() {
+        return new Iterator<String>() {
           public boolean hasNext() {
             return it.hasNext();
           }
 
-          public java.util.Map.Entry next() {
-            return (java.util.Map.Entry) it.next();
+          public String next() {
+            return (String) it.next();
           }
 
           public void remove() {

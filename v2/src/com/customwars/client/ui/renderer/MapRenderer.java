@@ -63,7 +63,9 @@ public class MapRenderer extends TileMapRenderer {
 
   public void update(int elapsedTime) {
     spriteManager.update(elapsedTime);
-    scroller.update(elapsedTime);
+    if (scroller != null) {
+      scroller.update(elapsedTime);
+    }
     if (moveZone != null) {
       moveZoneAnim.update(elapsedTime);
     }
