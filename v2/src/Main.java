@@ -3,9 +3,9 @@ import bsh.Interpreter;
 import bsh.util.JConsole;
 import com.customwars.client.Config;
 import com.customwars.client.io.ResourceManager;
+import com.customwars.client.model.TestData;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.game.Player;
-import com.customwars.client.model.testdata.TestData;
 import com.customwars.client.ui.debug.DebugEnvironment;
 import com.customwars.client.ui.state.StateSession;
 import org.apache.log4j.Logger;
@@ -18,8 +18,8 @@ import tools.ColorUtil;
 
 /**
  * Starts The client
- * If DEBUG is on a hardcoded testGame will be loaded
- * if DEBUG_GUI is on 2 debug windows will be visible
+ * If DEBUG is true a hardcoded testGame will be loaded
+ * if DEBUG_GUI is true 2 debug windows will be visible
  *
  * @author stefan
  */
@@ -86,6 +86,7 @@ public class Main {
       initDebugMode();
     }
 
+    logger.info("Starting Slick");
     AppGameContainer appGameContainer = new AppGameContainer(new TestStates(startStateID, stateSession, resources));
     appGameContainer.setDisplayMode(640, 480, false);
     appGameContainer.setTargetFrameRate(60);

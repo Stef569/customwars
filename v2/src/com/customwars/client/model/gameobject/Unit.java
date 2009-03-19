@@ -412,9 +412,8 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler {
 
   protected void setHp(int hp) {
     int oldVal = this.hp;
-    int validHp = Args.getBetweenZeroMax(hp, maxHp);
-    this.hp = validHp;
-    firePropertyChange("hp", oldVal, validHp);
+    this.hp = Args.getBetweenZeroMax(hp, maxHp);
+    firePropertyChange("hp", oldVal, this.hp);
   }
 
   public void addSupplies(int additionalSupplies) {
@@ -423,9 +422,8 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler {
 
   protected void setSupply(int amount) {
     int oldVal = this.supplies;
-    int validSupply = Args.getBetweenZeroMax(amount, maxSupplies);
-    this.supplies = validSupply;
-    firePropertyChange("supplies", oldVal, validSupply);
+    this.supplies = Args.getBetweenZeroMax(amount, maxSupplies);
+    firePropertyChange("supplies", oldVal, this.supplies);
   }
 
   public void addAmmo(int additionalAmmo) {

@@ -13,17 +13,16 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Represent a player that can participates in the game, can be either
+ * Represent a player that can participates in a game, can be either
  * a human, AI or neutral player.
  * Can be allied with another Player
- * Each non neutral player has an unique ID
- * A Player is always in the IDLE state
- * any attempt to change to another state will result in an exception
+ * Each non neutral player has an unique ID, neutral players always have the same NEUTRAL_PLAYER_ID
+ * A Player is always in the IDLE state, any attempt to change to another state will result in an exception
  *
  * @author stefan
  */
 public class Player extends GameObject {
-  public static final int NEUTRAL_PLAYER_ID = 0;
+  public static final int NEUTRAL_PLAYER_ID = -1;
   private int id;           // Unique Number
   private String name;      // Name for this player,not unique
   private Color color;      // Unique Color
@@ -32,9 +31,9 @@ public class Player extends GameObject {
   private boolean ai;       // Is this a human or an AI player
   private boolean neutral;  // Is this player passive of active
   private City hq;          // Headquarters
-  private List<Unit> army;  // All the units of this player
-  private List<City> cities;// All the cities of this player
-  private boolean createdFirstUnit;
+  private List<Unit> army;    // All the units of this player
+  private List<City> cities;  // All the cities of this player
+  private boolean createdFirstUnit; // Has this player created his first unit
 
   private Player() {
     army = new LinkedList<Unit>();
@@ -63,15 +62,7 @@ public class Player extends GameObject {
     this.ai = ai;
   }
 
-  /**
-   * Create a Neutral player
-   */
-  public Player(Color color, City hq, int team) {
-    this(Player.NEUTRAL_PLAYER_ID, color, true, hq, "Neutral", 0, team, false);
-  }
-
   public void startTurn() {
-    if (neutral) return;
     for (Unit unit : army) {
       unit.startTurn(this);
     }
@@ -119,23 +110,24 @@ public class Player extends GameObject {
   }
 
   public void addToBudget(int amount) {
-    int validBudget = Args.getBetweenZeroMax(this.budget + amount, Integer.MAX_VALUE);
-    setBudget(validBudget);
+    setBudget(budget + amount);
   }
 
-  void setBudget(int budget) {
+  private void setBudget(int budget) {
     int oldBudget = this.budget;
-    this.budget = budget;
+    this.budget = Args.getBetweenZeroMax(budget, Integer.MAX_VALUE);
     firePropertyChange("budget", oldBudget, this.budget);
   }
 
   // ---------------------------------------------------------------------------
   // Handle cities that are owned by this player
   // ---------------------------------------------------------------------------
+  /**
+   * Add city to this player, and set this player as owner of the city
+   */
   public void addCity(City city) {
-    if (city == null) throw new IllegalArgumentException("null city cannot be added");
-    if (cities.contains(city))
-      throw new IllegalArgumentException("cannot add the same city");
+    Args.checkForNull(city, "null city cannot be added");
+    Args.validate(cities.contains(city), "cannot add the same city");
 
     cities.add(city);
     city.setOwner(this);
@@ -151,63 +143,45 @@ public class Player extends GameObject {
     firePropertyChange("city", city, null);
   }
 
-  public void removeAllCities() {
-    cities.clear();
-    firePropertyChange("property", null, null);
-  }
-
   public Iterable<City> getAllCities() {
-    Iterable<City> it;
-
-    it = new Iterable<City>() {
+    return new Iterable<City>() {
       public Iterator<City> iterator() {
         return cities.iterator();
       }
     };
-    return it;
   }
 
   // ---------------------------------------------------------------------------
   // Handle Units that are owned by this player
   // ---------------------------------------------------------------------------
-  public void addUnit(Unit u) {
-    if (u == null) throw new IllegalArgumentException("null unit cannot be added");
-    if (army.contains(u)) throw new IllegalArgumentException("army already contains the same unit");
-
+  /**
+   * Add unit to this player, and set this player as owner of the unit
+   */
+  public void addUnit(Unit unit) {
+    Args.checkForNull(unit, "null unit cannot be added");
+    Args.validate(army.contains(unit), "army already contains the same unit");
     if (army.size() == 0) createdFirstUnit = true;
-    army.add(u);
-    u.setOwner(this);
-    firePropertyChange("unit", null, u);
+
+    army.add(unit);
+    unit.setOwner(this);
+    firePropertyChange("unit", null, unit);
   }
 
-  public boolean containsUnit(Unit u) {
-    return army.contains(u);
+  public boolean containsUnit(Unit unit) {
+    return army.contains(unit);
   }
 
-  public void removeUnit(Unit u) {
-    army.remove(u);
-    firePropertyChange("unit", u, null);
-  }
-
-  public void removeAllUnits() {
-    army.clear();
-    firePropertyChange("unit", null, null);
+  public void removeUnit(Unit unit) {
+    army.remove(unit);
+    firePropertyChange("unit", unit, null);
   }
 
   public Iterable<Unit> getArmy() {
-    Iterable<Unit> it;
-
-    it = new Iterable<Unit>() {
+    return new Iterable<Unit>() {
       public Iterator<Unit> iterator() {
         return army.iterator();
       }
     };
-    return it;
-  }
-
-  public void clear() {
-    removeAllUnits();
-    removeAllCities();
   }
 
   public void setName(String name) {

@@ -1,6 +1,6 @@
 package com.customwars.client.model.gameobject;
 
-import com.customwars.client.model.testdata.TestData;
+import com.customwars.client.model.TestData;
 import junit.framework.Assert;
 import org.junit.After;
 import org.junit.Before;

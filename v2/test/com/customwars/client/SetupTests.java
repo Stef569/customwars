@@ -1,6 +1,6 @@
-package com.customwars.client.model;
+package com.customwars.client;
 
-import com.customwars.client.model.testdata.TestData;
+import com.customwars.client.model.TestData;
 import org.junit.Test;
 
 /**

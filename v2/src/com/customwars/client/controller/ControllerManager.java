@@ -11,15 +11,17 @@ import com.customwars.client.ui.renderer.MapRenderer;
 import com.customwars.client.ui.state.InGameSession;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Manages every Controller in the game
+ * When a controller could not be found for a unit/city an IllegalArgumentException is thrown
  *
  * @author stefan
  */
 public class ControllerManager {
-  private HashMap<Unit, UnitController> unitControllers;
-  private HashMap<City, CityController> cityControllers;
+  private Map<Unit, UnitController> unitControllers;
+  private Map<City, CityController> cityControllers;
   private Game game;
   private ActionManager actionManager;
   private MoveTraverse moveTraverse;
@@ -48,12 +50,16 @@ public class ControllerManager {
       if (!player.isNeutral()) {
         if (!player.isAi()) {
           for (City city : player.getAllCities()) {
-            CityController cityController = new HumanCityController(game, city, actionManager, inGameSession, mapRenderer, hud);
-            cityControllers.put(city, cityController);
+            addHumanCityController(city);
           }
         }
       }
     }
+  }
+
+  public void addHumanCityController(City city) {
+    HumanCityController unitController = new HumanCityController(game, city, actionManager, inGameSession, mapRenderer, hud);
+    cityControllers.put(city, unitController);
   }
 
   public void initUnitControllers() {
@@ -62,34 +68,9 @@ public class ControllerManager {
       if (!player.isNeutral())
         if (!player.isAi()) {
           for (Unit unit : player.getArmy()) {
-            UnitController unitController = new HumanUnitController(game, unit, actionManager, moveTraverse, inGameSession, mapRenderer);
-            unitControllers.put(unit, unitController);
+            addHumanUnitController(unit);
           }
         }
-    }
-  }
-
-  public void handleUnitAPress(Unit unit) {
-    UnitController unitController = unitControllers.get(unit);
-    if (unitController instanceof HumanUnitController) {
-      HumanUnitController humanUnitController = (HumanUnitController) unitController;
-      humanUnitController.handleAPress();
-    }
-  }
-
-  public void handleUnitBPress(Unit unit) {
-    UnitController unitController = unitControllers.get(unit);
-    if (unitController instanceof HumanUnitController) {
-      HumanUnitController humanUnitController = (HumanUnitController) unitController;
-      humanUnitController.handleBPress();
-    }
-  }
-
-  public void handleCityAPress(City city) {
-    CityController cityController = cityControllers.get(city);
-    if (cityController instanceof HumanCityController) {
-      HumanCityController humanCityController = (HumanCityController) cityController;
-      humanCityController.handleAPress();
     }
   }
 
@@ -98,9 +79,37 @@ public class ControllerManager {
     unitControllers.put(unit, unitController);
   }
 
-  public void addHumanCityController(City city) {
-    HumanCityController unitController = new HumanCityController(game, city, actionManager, inGameSession, mapRenderer, hud);
-    cityControllers.put(city, unitController);
+  public void handleUnitAPress(Unit unit) {
+    HumanUnitController humanUnitController = getHumanUnitController(unit);
+    humanUnitController.handleAPress();
+  }
+
+  public void handleUnitBPress(Unit unit) {
+    HumanUnitController humanUnitController = getHumanUnitController(unit);
+    humanUnitController.handleBPress();
+  }
+
+  private HumanUnitController getHumanUnitController(Unit unit) {
+    UnitController unitController = unitControllers.get(unit);
+    if (unitController instanceof HumanUnitController) {
+      return (HumanUnitController) unitController;
+    } else {
+      throw new IllegalArgumentException("No human unit controller found for " + unit);
+    }
+  }
+
+  public void handleCityAPress(City city) {
+    HumanCityController humanCityController = getHumanCityController(city);
+    humanCityController.handleAPress();
+  }
+
+  private HumanCityController getHumanCityController(City city) {
+    CityController cityController = cityControllers.get(city);
+    if (cityController instanceof HumanCityController) {
+      return (HumanCityController) cityController;
+    } else {
+      throw new IllegalArgumentException("No human city controller found for " + city);
+    }
   }
 
   public void removeAllHumanController() {

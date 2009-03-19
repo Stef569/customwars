@@ -3,6 +3,8 @@ package com.customwars.client.model.gameobject;
 import tools.Args;
 
 /**
+ * A weapon has an amount of ammo, it can fire within a fire range
+ *
  * @author Stefan
  */
 public class Weapon extends GameObject {
@@ -11,22 +13,29 @@ public class Weapon extends GameObject {
   private String name;
   private String description;
   private int price;
-  private int minRange;
-  private int maxRange;
+  private int minFireRange;
+  private int maxFireRange;
   private int maxAmmo;
   private boolean balistic;   // Gives this weapon indirect firing ability even after moving
   private int ammo;
 
   public Weapon(int id, String name, String description, int price, int minRange, int maxRange, int maxAmmo, boolean balistic) {
-    this.balistic = balistic;
     this.id = id;
     this.name = name;
     this.description = description;
     this.price = price;
-    this.minRange = minRange;
-    this.maxRange = maxRange;
+    this.minFireRange = minRange;
+    this.maxFireRange = maxRange;
     this.maxAmmo = maxAmmo;
+    this.balistic = balistic;
     init();
+  }
+
+  public void init() {
+    Args.validate(minFireRange < 0, "minRange should be positive");
+    Args.validate(maxFireRange < 0, "maxRange should be positive");
+    Args.validate(maxFireRange < minFireRange, "minRange should be smaller then maxRange");
+    Args.validate(maxAmmo < 0, "maxAmmo should be positive");
   }
 
   /**
@@ -39,24 +48,19 @@ public class Weapon extends GameObject {
     name = otherWeapon.name;
     description = otherWeapon.description;
     price = otherWeapon.price;
-    minRange = otherWeapon.minRange;
-    maxRange = otherWeapon.maxRange;
+    minFireRange = otherWeapon.minFireRange;
+    maxFireRange = otherWeapon.maxFireRange;
     maxAmmo = otherWeapon.maxAmmo;
     balistic = otherWeapon.balistic;
     ammo = otherWeapon.ammo;
   }
 
   public void reset() {
-
-  }
-
-  public void init() {
-
+    restock();
   }
 
   public void fire(int shots) {
-    int validAmmo = Args.getBetweenZeroMax(shots, maxAmmo);
-    addAmmo(-validAmmo);
+    addAmmo(-shots);
   }
 
   public void restock() {
@@ -90,11 +94,11 @@ public class Weapon extends GameObject {
   }
 
   public int getMinRange() {
-    return minRange;
+    return minFireRange;
   }
 
   public int getMaxRange() {
-    return maxRange;
+    return maxFireRange;
   }
 
   public int getMaxAmmo() {
@@ -106,7 +110,7 @@ public class Weapon extends GameObject {
   }
 
   public boolean isWithinRange(int range) {
-    return (range >= minRange && range <= maxRange);
+    return range >= minFireRange && range <= maxFireRange;
   }
 
   /**
@@ -140,6 +144,6 @@ public class Weapon extends GameObject {
 
   @Override
   public String toString() {
-    return "name=" + name + " id=" + id + " ammo=" + ammo;
+    return "[name=" + name + " id=" + id + " ammo=" + ammo + "]";
   }
 }

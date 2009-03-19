@@ -1,5 +1,6 @@
 package slick;
 
+import com.customwars.client.model.TestData;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.game.GameConfig;
 import com.customwars.client.model.game.Player;
@@ -10,7 +11,6 @@ import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.gameobject.UnitFactory;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
-import com.customwars.client.model.testdata.TestData;
 import tools.MapUtil;
 
 import java.awt.Color;
@@ -21,25 +21,24 @@ import java.util.List;
  * Hardcoded game, useful for using in Slick tests
  */
 public class HardCodedGame {
-  // 3 Game Players
-  public static Player p_GRAY = new Player(Color.GRAY, null, -1);
-  public static Player p_RED = new Player(1, Color.RED, false, null, "Stef", 3800, 0, false);
-  public static Player p_BLUE = new Player(2, Color.BLUE, false, null, "JSR", 8500, 1, false);
-  public static Player p_GREEN = new Player(3, Color.GREEN, false, null, "Kiwi", 10000, 2, false);
+  // 1  neutral and 3 Game Players
+  public static Player neutral = new Player(Player.NEUTRAL_PLAYER_ID, Color.GRAY, true, null, "Neutral", 0, -1, false);
+  public static Player p_RED = new Player(0, Color.RED, false, null, "Stef", 3800, 0, false);
+  public static Player p_BLUE = new Player(1, Color.BLUE, false, null, "JSR", 8500, 1, false);
+  public static Player p_GREEN = new Player(2, Color.GREEN, false, null, "Kiwi", 10000, 2, false);
   private static Map<Tile> map;
 
   /**
    * Creates a Game with hard coded values, a default map is loaded.
-   * The game is not inited, started
+   * The game is not inited and not started
    */
   public static Game getGame() {
-    List<Player> players = Arrays.asList(p_RED, p_BLUE, p_GRAY, p_GREEN);
+    List<Player> players = Arrays.asList(p_RED, p_BLUE, neutral, p_GREEN);
     GameConfig gc = new GameConfig();
     gc.setTurnLimit(500);
     gc.setCityfunds(1000);
 
-    Game game = new Game(getMap(), players, gc);
-    return game;
+    return new Game(getMap(), players, gc);
   }
 
   public static Map<Tile> getMap() {
@@ -51,9 +50,9 @@ public class HardCodedGame {
 
     // 3 Map Players, colors are suggestions game players overwrite them
     Player neutral = new Player(Player.NEUTRAL_PLAYER_ID, Color.GRAY, true, null);
-    Player p1 = new Player(1, Color.GREEN, false, null);
-    Player p2 = new Player(2, Color.BLUE, false, null);
-    Player p3 = new Player(3, Color.YELLOW, false, null);
+    Player p1 = new Player(0, Color.GREEN, false, null);
+    Player p2 = new Player(1, Color.BLUE, false, null);
+    Player p3 = new Player(2, Color.YELLOW, false, null);
 
     City blueHQ = addCityToMap(8, 5, TestData.HQ, p2);
     City greenHQ = addCityToMap(0, 2, TestData.HQ, p1);

@@ -1,6 +1,6 @@
 package com.customwars.client.model.gameobject;
 
-import com.customwars.client.model.testdata.TestData;
+import com.customwars.client.model.TestData;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.ConversionException;
 import com.thoughtworks.xstream.io.xml.DomDriver;
@@ -61,9 +61,9 @@ public class CityXStreamTest {
             "  </moveCosts>" +
             "  <vision>1</vision>" +
             "  <maxCapCount>20</maxCapCount>" +
-            "  <healRate>1</healRate>" +
-            "  <minHealRange>1</minHealRange>" +
-            "  <maxHealRange>1</maxHealRange>" +
+            "  <supplyRate>1</supplyRate>" +
+            "  <minSupplyRange>1</minSupplyRange>" +
+            "  <maxSupplyRange>1</maxSupplyRange>" +
             "  <capCount>10</capCount>" +
             "  <funds>0</funds>" +
             "</city>";
@@ -107,7 +107,7 @@ public class CityXStreamTest {
     CityFactory.getRandomCity();
 
     // Default to 0, if not in xml
-    Assert.assertEquals(0, city.getMinHealRange());
-    Assert.assertEquals(0, city.getMaxHealRange());
+    Assert.assertEquals(0, city.getMinSupplyRange());
+    Assert.assertEquals(0, city.getMaxSupplyRange());
   }
 }
