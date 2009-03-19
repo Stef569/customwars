@@ -1,6 +1,5 @@
 package slick;
 
-import com.customwars.client.action.ActionManager;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.ui.state.CWState;
@@ -15,11 +14,6 @@ import org.newdawn.slick.state.StateBasedGame;
 public class EndTurnState extends CWState {
   private static final int END_TURN_DELAY = 250;
   private int time;
-  private ActionManager actionManager;
-
-  public EndTurnState(ActionManager actionManager) {
-    this.actionManager = actionManager;
-  }
 
   public void init(GameContainer gameContainer, StateBasedGame stateBasedGame) throws SlickException {
   }
@@ -37,7 +31,7 @@ public class EndTurnState extends CWState {
     time += delta;
     if (time >= END_TURN_DELAY) {
       changeGameState("IN_GAME");
-      actionManager.doAction("END_TURN");
+      //actionManager.doAction("END_TURN");
       time = 0;
     }
   }
