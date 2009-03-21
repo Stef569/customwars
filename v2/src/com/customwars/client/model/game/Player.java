@@ -106,7 +106,11 @@ public class Player extends GameObject {
   }
 
   public boolean canPurchase(Unit unit) {
-    return budget - unit.getPrice() >= 0;
+    return isWithinBudget(unit.getPrice());
+  }
+
+  public boolean isWithinBudget(int price) {
+    return budget - price >= 0;
   }
 
   public void addToBudget(int amount) {
@@ -252,6 +256,6 @@ public class Player extends GameObject {
 
   @Override
   public String toString() {
-    return "[name=" + name + " id=" + id + " color=" + ColorUtil.toString(color) + "]";
+    return "[name=" + name + " id=" + id + " color=" + ColorUtil.toString(color) + " Budget=" + budget + "]";
   }
 }

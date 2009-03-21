@@ -544,6 +544,10 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler {
     return supplies;
   }
 
+  public int getMaxSupplies() {
+    return maxSupplies;
+  }
+
   public int getSuppliesPercentage() {
     int percentage;
     if (maxSupplies <= 0) {
