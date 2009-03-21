@@ -200,11 +200,11 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
   // Getters
   // ---------------------------------------------------------------------------
   public boolean canHeal(Unit unit) {
-    return unit != null && heals.contains(unit.getArmyBranch());
+    return unit != null && unit.getHp() != unit.getMaxHp() && heals.contains(unit.getArmyBranch());
   }
 
   public boolean canSupply(Unit unit) {
-    return unit != null && heals.contains(unit.getArmyBranch());
+    return unit != null && unit.getSupplies() != unit.getMaxSupplies() && heals.contains(unit.getArmyBranch());
   }
 
   public boolean canBeCapturedBy(Unit unit) {

@@ -4,6 +4,7 @@ import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
+import org.apache.log4j.Logger;
 
 import java.util.List;
 
@@ -21,6 +22,7 @@ import java.util.List;
  * game.endTurn();
  */
 public class Game extends TurnBasedGame {
+  private static final Logger logger = Logger.getLogger(Game.class);
   private Unit activeUnit;        // There can only be one active unit in a game at any time
   private int weather;            // The current weather in effect
   private int cityFunds;          // The amount of money each City produces each turn
@@ -54,10 +56,10 @@ public class Game extends TurnBasedGame {
         Unit unit = map.getUnitOn(t);
 
         if (city != null) {
-          if(city.getLocation() == null) {
+          if (city.getLocation() == null) {
             throw new IllegalStateException("City @ " + t.getLocationString() + " has no location");
           }
-          if(city.getOwner() == null) {
+          if (city.getOwner() == null) {
             throw new IllegalStateException("City @ " + t.getLocationString() + " has no owner");
           }
 
@@ -69,12 +71,12 @@ public class Game extends TurnBasedGame {
           if (t.getLocatableCount() != 1) {
             throw new IllegalStateException("Tile @ " + t.getLocationString() + " contains " + t.getLocatableCount() + " units, limit=1");
           }
-          if(unit.getLocation() == null) {
-             throw new IllegalStateException("Unit @ " + t.getLocationString() + " has no location");
-           }
-           if(unit.getOwner() == null) {
-             throw new IllegalStateException("Unit @ " + t.getLocationString() + " has no owner");
-           }
+          if (unit.getLocation() == null) {
+            throw new IllegalStateException("Unit @ " + t.getLocationString() + " has no location");
+          }
+          if (unit.getOwner() == null) {
+            throw new IllegalStateException("Unit @ " + t.getLocationString() + " has no owner");
+          }
 
           Player newOwner = getGamePlayer(unit.getOwner());
           newOwner.addUnit(unit);
@@ -135,12 +137,17 @@ public class Game extends TurnBasedGame {
       Unit unit = map.getUnitOn(cityLocation);
 
       if (unit != null && city.getOwner().isAlliedWith(unit.getOwner())) {
-        if (city.canSupply(unit)) {
-          city.supply(unit);
-        }
+        if (city.canSupply(unit) || city.canHeal(unit)) {
+          Player cityOwner = city.getOwner();
+          int supplyCost = unit.getPrice() / unit.getHp();
 
-        if (city.canHeal(unit)) {
-          city.heal(unit);
+          if (cityOwner.isWithinBudget(supplyCost)) {
+            int oldSupply = unit.getSupplies();
+            city.supply(unit);
+            city.heal(unit);
+            cityOwner.addToBudget(-supplyCost);
+            logger.debug("Supply unit on city(" + cityLocation.getLocationString() + ") " + oldSupply + " -> " + unit.getSupplies());
+          }
         }
       }
     }
