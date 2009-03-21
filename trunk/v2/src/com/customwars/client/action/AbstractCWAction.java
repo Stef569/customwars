@@ -6,9 +6,9 @@ package com.customwars.client.action;
  * @author stefan
  */
 public abstract class AbstractCWAction implements CWAction {
-  String name;
-  boolean canUndo;
-  boolean actionCompleted;
+  private String name;
+  private boolean canUndo;
+  private boolean actionCompleted;
 
   public AbstractCWAction(String name) {
     this(name, true);
@@ -19,36 +19,26 @@ public abstract class AbstractCWAction implements CWAction {
     this.canUndo = canUndo;
   }
 
-  public void update(int elapsedTime) {
-  }
-
-  public void doAction() {
-    doActionImpl();
-    actionCompleted = true;
-  }
-
-  protected abstract void doActionImpl();
-
-  public void undoAction() {
-  }
-
-  public void setActionCompleted(boolean completed) {
-    this.actionCompleted = completed;
-  }
-
-  public String getName() {
-    return name;
+  public void undo() {
   }
 
   public boolean canUndo() {
     return canUndo;
   }
 
-  public boolean isActionCompleted() {
+  public String getName() {
+    return name;
+  }
+
+  protected void setActionCompleted(boolean actionCompleted) {
+    this.actionCompleted = actionCompleted;
+  }
+
+  public boolean isCompleted() {
     return actionCompleted;
   }
 
   public String toString() {
-    return name;
+    return name + " canUndo=" + canUndo + " Completed=" + actionCompleted;
   }
 }

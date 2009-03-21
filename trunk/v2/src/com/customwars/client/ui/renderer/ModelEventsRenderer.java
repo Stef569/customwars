@@ -63,7 +63,12 @@ public class ModelEventsRenderer implements PropertyChangeListener {
     }
   }
 
-  public void removeModelEventListeners(Game game) {
+  public void removeAllListeners() {
+    moveTraverse.removePropertyChangeListener(this);
+    removeModelEventListeners(game);
+  }
+
+  private void removeModelEventListeners(Game game) {
     game.removePropertyChangeListener(this);
     Map<Tile> map = game.getMap();
 
@@ -78,10 +83,6 @@ public class ModelEventsRenderer implements PropertyChangeListener {
 
   public void update(int elapsedTime) {
     time += elapsedTime;
-
-    if (moveTraverse != null && moveTraverse.foundTrapper()) {
-      trapperFound();
-    }
 
     if (renderTrapped) {
       updateTrapped();
@@ -147,29 +148,39 @@ public class ModelEventsRenderer implements PropertyChangeListener {
       Unit unit = (Unit) evt.getSource();
       if (propertyName.equals("supplies") || propertyName.equals("hp")) {
         if ((Integer) evt.getNewValue() > (Integer) evt.getOldValue()) {
-          Location suppliedLocation = unit.getLocation();
-          if (!renderLocations.contains(suppliedLocation)) {
-            renderSupply = true;
-            renderLocations.add(suppliedLocation);
-            time = 0;
-            moveTime = 0;
-          }
+          unitSuppliesChange(unit);
+        }
+      }
+    } else if (evt.getSource() instanceof MoveTraverse) {
+      if (propertyName.equals("trapped")) {
+        if ((Boolean) evt.getNewValue()) {
+          trapperFound();
         }
       }
     }
   }
 
-  public void trapperFound() {
+  private void unitSuppliesChange(Unit unit) {
+    Location suppliedLocation = unit.getLocation();
+    if (!renderLocations.contains(suppliedLocation)) {
+      renderSupply = true;
+      renderLocations.add(suppliedLocation);
+      time = 0;
+      moveTime = 0;
+    }
+  }
+
+  private void trapperFound() {
     Location moverLocation = moveTraverse.getTrapper().getLocation();
     Location trappedLocation = map.getAdjacent(moverLocation, moveTraverse.getTrappedDirection());
     renderLocations.add(trappedLocation);
     renderTrapped = true;
-    moveTraverse.reset();
     time = 0;
     moveTime = 0;
   }
 
   public void setMoveTraverse(MoveTraverse moveTraverse) {
     this.moveTraverse = moveTraverse;
+    moveTraverse.addPropertyChangeListener(this);
   }
 }

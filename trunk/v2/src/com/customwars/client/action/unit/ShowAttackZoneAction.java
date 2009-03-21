@@ -1,43 +1,39 @@
 package com.customwars.client.action.unit;
 
-import com.customwars.client.action.AbstractCWAction;
-import com.customwars.client.model.game.Game;
+import com.customwars.client.action.DirectAction;
 import com.customwars.client.model.gameobject.Unit;
-import com.customwars.client.model.map.Tile;
 import com.customwars.client.ui.renderer.MapRenderer;
-import com.customwars.client.ui.state.InGameSession;
+import com.customwars.client.ui.state.InGameContext;
 
 /**
+ * Show a zone around the unit in which it can attack
+ * Showing the attackzone does not select the unit, it only shows a visible zone
+ *
  * @author stefan
  */
-public class ShowAttackZoneAction extends AbstractCWAction {
+public class ShowAttackZoneAction extends DirectAction {
+  private InGameContext context;
   private MapRenderer mapRenderer;
-  private InGameSession inGameSession;
-  private Game game;
+  private Unit unit;
 
-  public ShowAttackZoneAction(Game game, MapRenderer mapRenderer, InGameSession inGameSession) {
+  public ShowAttackZoneAction(Unit unit) {
     super("Show Attack zone");
-    this.game = game;
-    this.mapRenderer = mapRenderer;
-    this.inGameSession = inGameSession;
+    this.unit = unit;
   }
 
-  protected void doActionImpl() {
-    inGameSession.discartAllEdits();
-    Tile cursorLocation = (Tile) mapRenderer.getCursorLocation();
+  protected void init(InGameContext context) {
+    this.context = context;
+    this.mapRenderer = context.getMapRenderer();
+  }
 
-    // temporarely make the selectedUnit the active unit in map renderer
-    // if the unit stays active in the game, then selecting a unit is messed up.
-    // Showing the attackzone does not select the unit, only shows a visible zone
-    mapRenderer.setActiveUnit((Unit) cursorLocation.getLastLocatable());
+  protected void invokeAction() {
+    context.discartAllEdits();
+
     mapRenderer.removeZones();
-    mapRenderer.showAttackZone();
-    mapRenderer.setActiveUnit(null);
-    game.setActiveUnit(null);
+    mapRenderer.setAttackZone(unit.getAttackZone());
   }
 
-
-  public void undoAction() {
+  public void undo() {
     mapRenderer.removeAttackZone();
   }
 }

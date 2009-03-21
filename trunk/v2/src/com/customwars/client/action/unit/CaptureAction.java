@@ -1,44 +1,45 @@
 package com.customwars.client.action.unit;
 
-import com.customwars.client.action.AbstractCWAction;
-import com.customwars.client.model.game.Game;
+import com.customwars.client.action.DirectAction;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.gameobject.UnitState;
-import com.customwars.client.model.map.Tile;
-import com.customwars.client.ui.state.InGameSession;
+import com.customwars.client.ui.state.InGameContext;
 
 /**
- * Capture a City with the active unit
+ * Capture a City with the unit
  *
  * @author stefan
  */
-public class CaptureAction extends AbstractCWAction {
-  private InGameSession inGameSession;
-  private Game game;
+public class CaptureAction extends DirectAction {
+  private InGameContext context;
+  private Unit unit;
+  private City city;
 
-  public CaptureAction(Game game, InGameSession inGameSession) {
+  public CaptureAction(Unit unit, City city) {
     super("Capture", false);
-    this.game = game;
-    this.inGameSession = inGameSession;
+    this.unit = unit;
+    this.city = city;
   }
 
-  protected void doActionImpl() {
-    if (inGameSession.isTrapped()) return;
-
-    Tile clicked = inGameSession.getClick(2);
-    Unit activeUnit = game.getActiveUnit();
-    capture((City) clicked.getTerrain(), activeUnit);
+  protected void init(InGameContext context) {
+    this.context = context;
   }
 
-  private void capture(City city, Unit unit) {
+  protected void invokeAction() {
+    if (context.isTrapped()) return;
+
+    capture();
+  }
+
+  private void capture() {
     if (city.canBeCapturedBy(unit)) {
       unit.setUnitState(UnitState.CAPTURING);
       city.capture(unit);
 
       if (city.isCapturedBy(unit)) {
         unit.setUnitState(UnitState.IDLE);
-        inGameSession.addHumanCityController(city);
+        context.addHumanCityController(city);
         city.resetCapturing();
       }
     }

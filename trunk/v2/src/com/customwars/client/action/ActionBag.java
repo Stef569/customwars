@@ -1,5 +1,7 @@
 package com.customwars.client.action;
 
+import com.customwars.client.ui.state.InGameContext;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,22 +21,23 @@ public class ActionBag implements CWAction {
   private boolean doAll, undoAll, started;
   private List<CWAction> actions;
   private String actionName;
+  private InGameContext context;
 
   public ActionBag(String actionName) {
     this.actionName = actionName;
     actions = new ArrayList<CWAction>();
   }
 
-  public void doAction() {
+  public void invoke(InGameContext context) {
+    this.context = context;
     doAll = true;
     started = true;
   }
 
-  public void undoAction() {
+  public void undo() {
     undoAll = true;
     started = true;
   }
-
 
   /**
    * Keep looping until all actions have finished
@@ -43,13 +46,13 @@ public class ActionBag implements CWAction {
     if (started && canPerformAction(elapsedTime)) {
       CWAction currentAction = actions.get(index);
 
-      if (!currentAction.isActionCompleted()) {
+      if (!currentAction.isCompleted()) {
         performAction(currentAction);
+        currentAction.update(elapsedTime);
       }
 
-      if (currentAction.isActionCompleted()) {
+      if (currentAction.isCompleted()) {
         gotoNextAction();
-        currentAction.setActionCompleted(false);
       }
     }
   }
@@ -61,10 +64,9 @@ public class ActionBag implements CWAction {
 
   private void performAction(CWAction action) {
     if (doAll) {
-      action.doAction();
+      action.invoke(context);
     } else if (undoAll) {
-      action.undoAction();
-      action.setActionCompleted(true);
+      action.undo();
     }
   }
 
@@ -78,7 +80,7 @@ public class ActionBag implements CWAction {
     }
   }
 
-  public void addAction(CWAction action) {
+  public void add(CWAction action) {
     actions.add(action);
   }
 
@@ -101,7 +103,7 @@ public class ActionBag implements CWAction {
     return actionName;
   }
 
-  public boolean isActionCompleted() {
+  public boolean isCompleted() {
     return !started;
   }
 }

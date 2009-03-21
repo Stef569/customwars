@@ -1,9 +1,9 @@
 package com.customwars.client.action.unit;
 
-import com.customwars.client.action.AbstractCWAction;
+import com.customwars.client.action.DirectAction;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.gameobject.Unit;
-import com.customwars.client.ui.state.InGameSession;
+import com.customwars.client.ui.state.InGameContext;
 import org.apache.log4j.Logger;
 
 /**
@@ -11,24 +11,28 @@ import org.apache.log4j.Logger;
  *
  * @author stefan
  */
-public class SupplyAction extends AbstractCWAction {
+public class SupplyAction extends DirectAction {
   private Logger logger = Logger.getLogger(SupplyAction.class);
+  private InGameContext context;
   private Game game;
-  private InGameSession inGameSession;
+  private Unit supplier;
 
-  public SupplyAction(Game game, InGameSession inGameSession) {
+  public SupplyAction(Unit unit) {
     super("Supply & Heal", false);
-    this.inGameSession = inGameSession;
-    this.game = game;
+    this.supplier = unit;
   }
 
-  protected void doActionImpl() {
-    if (inGameSession.isTrapped()) return;
+  protected void init(InGameContext context) {
+    this.context = context;
+    this.game = context.getGame();
+  }
 
-    Unit activeUnit = game.getActiveUnit();
-    for (Unit unit : game.getMap().getSuppliablesInRange(activeUnit)) {
-      unit.supply(activeUnit);
-      unit.heal(activeUnit);
+  protected void invokeAction() {
+    if (context.isTrapped()) return;
+
+    for (Unit unit : game.getMap().getSuppliablesInRange(supplier)) {
+      supplier.supply(unit);
+      supplier.heal(unit);
       logger.debug("supplied " + unit);
     }
   }

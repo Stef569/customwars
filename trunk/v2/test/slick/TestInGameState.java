@@ -1,7 +1,7 @@
 package slick;
 
-import com.customwars.client.action.ActionManager;
 import com.customwars.client.action.ShowPopupMenu;
+import com.customwars.client.action.game.EndTurnAction;
 import com.customwars.client.controller.ControllerManager;
 import com.customwars.client.io.img.slick.ImageStrip;
 import com.customwars.client.model.game.Game;
@@ -21,7 +21,7 @@ import com.customwars.client.ui.slick.BasicComponent;
 import com.customwars.client.ui.sprite.TileSprite;
 import com.customwars.client.ui.state.CWInput;
 import com.customwars.client.ui.state.CWState;
-import com.customwars.client.ui.state.InGameSession;
+import com.customwars.client.ui.state.InGameContext;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
@@ -36,9 +36,8 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 public class TestInGameState extends CWState implements PropertyChangeListener, ComponentListener {
-  private InGameSession inGameSession;
+  private InGameContext context;
   private GameContainer gameContainer;
-  private ActionManager actionManager;
 
   // GUI
   private Camera2D camera;
@@ -74,14 +73,17 @@ public class TestInGameState extends CWState implements PropertyChangeListener, 
 
   private void setGame(Game game, GameContainer container) {
     MoveTraverse moveTraverse = new MoveTraverse(game.getMap());
-    this.inGameSession = new InGameSession();
-    actionManager = new ActionManager(mapRenderer, inGameSession, moveTraverse, resources, game, hud, statelogic);
-    actionManager.buildActions();
 
-    ControllerManager controllerManager = new ControllerManager(game, actionManager, moveTraverse, inGameSession, mapRenderer, hud);
-    inGameSession.setControllerManager(controllerManager);
+    this.context = new InGameContext();
+    context.setMoveTraverse(moveTraverse);
+    context.setGame(game);
+    context.setHud(hud);
+    context.setMapRenderer(mapRenderer);
 
-    this.game = stateSession.getGame();
+    ControllerManager controllerManager = new ControllerManager(context);
+    context.setControllerManager(controllerManager);
+
+    this.game = game;
     game.init();
     controllerManager.initCityControllers();
     controllerManager.initUnitControllers();
@@ -101,8 +103,8 @@ public class TestInGameState extends CWState implements PropertyChangeListener, 
   }
 
   private void buildContextMenu() {
-    showContextMenu = new ShowPopupMenu("Context menu", hud, inGameSession, mapRenderer);
-    showContextMenu.addAction(actionManager.getAction("END_TURN"), "End turn");
+    showContextMenu = new ShowPopupMenu("Context menu", null);
+    showContextMenu.addAction(new EndTurnAction(), "End turn");
   }
 
   private void initGameListeners(Game game) {
@@ -138,6 +140,7 @@ public class TestInGameState extends CWState implements PropertyChangeListener, 
     mapRenderer.update(delta);
     camera.update(delta);
     modelEventsRenderer.update(delta);
+    context.update(delta);
   }
 
   public void render(GameContainer container, Graphics g) throws SlickException {
@@ -151,27 +154,25 @@ public class TestInGameState extends CWState implements PropertyChangeListener, 
   }
 
   private void renderDropLocations(Graphics g) {
-    if (inGameSession.isUnitDropMode()) {
-      for (Tile t : inGameSession.getDropLocations()) {
-        Tile transportLocation = inGameSession.getClick(2);
-        if (transportLocation != null) {
-          Direction dir = game.getMap().getDirectionTo(transportLocation, t);
-          mapRenderer.renderArrowHead(g, dir, t);
-        }
+    for (Tile t : context.getDropLocations()) {
+      Tile transportLocation = context.getClick(2);
+      if (transportLocation != null) {
+        Direction dir = game.getMap().getDirectionTo(transportLocation, t);
+        mapRenderer.renderArrowHead(g, dir, t);
       }
     }
   }
 
   public void controlPressed(Command command, CWInput cwInput) {
-    if (!inGameSession.isMoving()) {
+    if (!context.isMoving()) {
       if (cwInput.isCancelPressed(command)) {
-        if (inGameSession.canUndo()) {
-          inGameSession.undo();
+        if (context.canUndo()) {
+          context.undo();
           return;
         }
       }
 
-      if (inGameSession.isGUIMode()) {
+      if (context.isGUIMode()) {
         hud.controlPressed(command, cwInput);
       } else {
         Tile cursorLocation = (Tile) mapRenderer.getCursorLocation();
@@ -199,20 +200,22 @@ public class TestInGameState extends CWState implements PropertyChangeListener, 
   }
 
   public void handleA(Unit unit, City city, Tile cursorLocation) {
-    if (!cursorLocation.isFogged() && unit != null && unit.isActive() ||
-            inGameSession.isUnitDropMode() || inGameSession.isUnitSelectMode() || inGameSession.isUnitAttackMode()) {
-      inGameSession.handleUnitAPress(unit);
-    } else if (!cursorLocation.isFogged() && city != null) {
-      inGameSession.handleCityAPress(city);
-    } else if (inGameSession.isDefaultMode()) {
-      inGameSession.setClick(2, cursorLocation);
-      inGameSession.doAction(showContextMenu);
+    if (unit != null && unit.isActive() || context.isInUnitMode()) {
+      context.handleUnitAPress(unit);
+    } else if (!cursorLocation.isFogged() && cursorLocation.getLocatableCount() == 0 &&
+            city != null && city.getOwner() == game.getActivePlayer() && city.canBuild()) {
+      context.handleCityAPress(city);
+    } else if (context.isDefaultMode()) {
+      showContextMenu.setLocation(cursorLocation);
+      context.clearClicks();
+      context.discartAllEdits();
+      context.doAction(showContextMenu);
     }
   }
 
   private void handleB(Unit activeUnit, Unit selectedUnit) {
     if (selectedUnit != null) {
-      inGameSession.handleUnitBPress(selectedUnit);
+      context.handleUnitBPress(selectedUnit);
     }
   }
 
@@ -250,12 +253,12 @@ public class TestInGameState extends CWState implements PropertyChangeListener, 
   }
 
   public void keyReleased(int key, char c) {
-    if (!inGameSession.isMoving()) {
+    if (!context.isMoving()) {
       if (key == Input.KEY_R) {
         setGame(stateSession.getGame(), gameContainer);
       }
       if (key == Input.KEY_E) {
-        actionManager.doAction("END_TURN");
+        context.doAction("END_TURN");
       }
     }
   }

@@ -1,36 +1,53 @@
 package com.customwars.client.action.unit;
 
-import com.customwars.client.action.AbstractCWAction;
-import com.customwars.client.model.game.Game;
 import com.customwars.client.model.gameobject.Unit;
-import com.customwars.client.model.map.Tile;
-import com.customwars.client.ui.state.InGameSession;
+import com.customwars.client.model.map.Location;
+import com.customwars.client.ui.state.InGameContext;
 
 /**
- * Drop next unit from the inGameSession within the active unit(the transport)
- * to the next inGameSession drop location
+ * Drop next unit from the inGameContext within the transport
+ * to the next inGameContext drop location
  *
  * @author stefan
  */
-public class DropAction extends AbstractCWAction {
-  private InGameSession inGameSession;
-  private Game game;
+public class DropAction extends MoveAnimatedAction {
+  private Unit transporter;
 
-  public DropAction(Game game, InGameSession inGameSession) {
-    super("Drop", false);
-    this.game = game;
-    this.inGameSession = inGameSession;
+  public DropAction(Unit transporter) {
+    super(null, transporter.getLocation(), null);
+    this.transporter = transporter;
   }
 
-  protected void doActionImpl() {
-    if (inGameSession.isTrapped()) return;
+  protected void init(InGameContext context) {
+    if (context.isTrapped()) {
+      setActionCompleted(true);
+      return;
+    }
 
-    Unit transporter = (Unit) inGameSession.getClick(2).getLastLocatable();
-    Tile dropLocation = inGameSession.getNextDropLocation();
-    Unit unitInTransport = inGameSession.getNextUnitToBeDropped();
+    to = context.getNextDropLocation();
+    unit = context.getNextUnitToBeDropped();
 
-    transporter.remove(unitInTransport);
-    dropLocation.add(unitInTransport);
-    game.setActiveUnit(unitInTransport);
+    // MoveTraverse doesn't allow to move outside a transport location.
+    // Put the unit on the transport location in the map.
+    transporter.remove(unit);
+    transporter.getLocation().add(unit);
+    super.init(context);
+  }
+
+  void pathMoveComplete() {
+    super.pathMoveComplete();
+
+    Location transportLocation = transporter.getLocation();
+    // Duplicate sprites are removed, so add the transport back when the unit moved away.
+    transportLocation.add(transporter);
+
+    // If the unit couldn't move away from the transport location
+    // because the dropLocation was not clear, add the unit to the transport again
+    if (transportLocation.contains(unit)) {
+      transportLocation.remove(unit);
+      transporter.add(unit);
+    }
+
+    assert transportLocation.getLocatableCount() == 1 : "Only the transport is on the transportLocation";
   }
 }

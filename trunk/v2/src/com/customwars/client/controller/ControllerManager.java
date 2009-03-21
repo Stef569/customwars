@@ -1,14 +1,10 @@
 package com.customwars.client.controller;
 
-import com.customwars.client.action.ActionManager;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Unit;
-import com.customwars.client.model.map.path.MoveTraverse;
-import com.customwars.client.ui.HUD;
-import com.customwars.client.ui.renderer.MapRenderer;
-import com.customwars.client.ui.state.InGameSession;
+import com.customwars.client.ui.state.InGameContext;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,26 +18,18 @@ import java.util.Map;
 public class ControllerManager {
   private Map<Unit, UnitController> unitControllers;
   private Map<City, CityController> cityControllers;
+  private InGameContext inGameContext;
   private Game game;
-  private ActionManager actionManager;
-  private MoveTraverse moveTraverse;
-  private InGameSession inGameSession;
-  private MapRenderer mapRenderer;
-  private HUD hud;
 
   private ControllerManager() {
     this.unitControllers = new HashMap<Unit, UnitController>();
     this.cityControllers = new HashMap<City, CityController>();
   }
 
-  public ControllerManager(Game game, ActionManager actionManager, MoveTraverse moveTraverse, InGameSession inGameSession, MapRenderer mapRenderer, HUD hud) {
+  public ControllerManager(InGameContext inGameContext) {
     this();
-    this.game = game;
-    this.actionManager = actionManager;
-    this.moveTraverse = moveTraverse;
-    this.inGameSession = inGameSession;
-    this.mapRenderer = mapRenderer;
-    this.hud = hud;
+    this.inGameContext = inGameContext;
+    this.game = inGameContext.getGame();
   }
 
   public void initCityControllers() {
@@ -58,7 +46,7 @@ public class ControllerManager {
   }
 
   public void addHumanCityController(City city) {
-    HumanCityController unitController = new HumanCityController(game, city, actionManager, inGameSession, mapRenderer, hud);
+    HumanCityController unitController = new HumanCityController(city, inGameContext);
     cityControllers.put(city, unitController);
   }
 
@@ -75,7 +63,7 @@ public class ControllerManager {
   }
 
   public void addHumanUnitController(Unit unit) {
-    UnitController unitController = new HumanUnitController(game, unit, actionManager, moveTraverse, inGameSession, mapRenderer);
+    UnitController unitController = new HumanUnitController(unit, inGameContext);
     unitControllers.put(unit, unitController);
   }
 

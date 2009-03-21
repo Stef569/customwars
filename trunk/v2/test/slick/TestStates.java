@@ -1,6 +1,5 @@
 package slick;
 
-import com.customwars.client.action.ActionManager;
 import com.customwars.client.io.ResourceManager;
 import com.customwars.client.ui.state.CWInput;
 import com.customwars.client.ui.state.CWState;
@@ -83,10 +82,6 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
     statelogic.addState("END_TURN", 4);
     statelogic.addState("MAP_PARSER", 5);
     CWState.setStatelogic(statelogic);
-  }
-
-  protected void preUpdateState(GameContainer container, int delta) throws SlickException {
-    ActionManager.update(delta);
   }
 
   /**

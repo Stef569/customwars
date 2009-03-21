@@ -1,49 +1,47 @@
 package com.customwars.client.action.unit;
 
-import com.customwars.client.action.AbstractCWAction;
+import com.customwars.client.action.DirectAction;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.gameobject.Unit;
-import com.customwars.client.model.map.Map;
-import com.customwars.client.model.map.Tile;
-import com.customwars.client.ui.state.InGameSession;
+import com.customwars.client.ui.state.InGameContext;
 
 /**
- * The active unit joins the unit @ the 2nd selected tile.
+ * The unit joins the target
  *
  * @author stefan
  */
-public class JoinAction extends AbstractCWAction {
+public class JoinAction extends DirectAction {
   private Game game;
-  private InGameSession inGameSession;
+  private Unit target, unit;
 
-  public JoinAction(Game game, InGameSession inGameSession) {
+  public JoinAction(Unit unit, Unit target) {
     super("Join", false);
-    this.game = game;
-    this.inGameSession = inGameSession;
+    this.unit = unit;
+    this.target = target;
   }
 
-  protected void doActionImpl() {
-    Map<Tile> map = game.getMap();
-    Unit activeUnit = game.getActiveUnit();
-    Unit target = (Unit) inGameSession.getClick(2).getLocatable(0);
+  protected void init(InGameContext context) {
+    this.game = context.getGame();
+  }
 
+  protected void invokeAction() {
     //Add Money if joining cause the target to go over 10HP
-    int tempHp = activeUnit.getHp() + target.getHp() - target.getMaxHp();
+    int tempHp = unit.getHp() + target.getHp() - target.getMaxHp();
 
     if (tempHp > 0)
-      game.getActivePlayer().addToBudget((tempHp * activeUnit.getPrice()) / activeUnit.getMaxHp());
+      game.getActivePlayer().addToBudget((tempHp * unit.getPrice()) / unit.getMaxHp());
 
     // add HP, supplies, ammo to target
-    target.addHp(activeUnit.getHp());
-    target.addSupplies(activeUnit.getSupplies());
-    target.addAmmo(activeUnit.getAvailableWeapon().getAmmo());
+    target.addHp(unit.getHp());
+    target.addSupplies(unit.getSupplies());
+    target.addAmmo(unit.getAvailableWeapon().getAmmo());
 
     // todo make the dived state of the unit being moved onto the same as the one moving
     //    target.setDived(activeUnit.isDived());
 
     // Remove Unit
-    map.getTile(activeUnit.getLocation()).remove(activeUnit);
-    activeUnit.getOwner().removeUnit(activeUnit);
+    unit.getLocation().remove(unit);
+    unit.getOwner().removeUnit(unit);
     game.setActiveUnit(target);
   }
 }

@@ -103,7 +103,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler {
 
   /**
    * Copy Constructor, primitive values are just copied
-   * objects need to be wrapped into a new Object. Unless you want 1 object to be shared between all units
+   * objects need to be wrapped into a new Object. Unless 1 object should be shared between all units
    *
    * @param otherUnit unit to copy
    */
@@ -168,10 +168,21 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler {
    * so that it can be garbage collected
    */
   public void destroy() {
-    owner.removeUnit(this);
     clearTransport();
+    owner.removeUnit(this);
+    owner = null;
     location.remove(this);
     setState(GameObjectState.DESTROYED);
+  }
+
+  /**
+   * Destroy each unit in the transport
+   */
+  private void clearTransport() {
+    while (transport.size() > 0) {
+      Unit unit = (Unit) transport.get(transport.size() - 1);
+      unit.destroy();
+    }
   }
 
   public void startTurn(Player player) {
@@ -179,21 +190,6 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler {
 
   public void endTurn(Player invoker) {
     addSupplies(-dailyUse);
-  }
-
-  /**
-   * Clear and destroys every unit in the transport
-   */
-  public void clearTransport() {
-    if (canTransport()) {
-      for (Locatable locatable : transport) {
-        if (locatable instanceof Unit) {
-          Unit unit = (Unit) locatable;
-          unit.destroy();
-        }
-      }
-      transport.clear();
-    }
   }
 
   /**
@@ -705,8 +701,11 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler {
   @Override
   public String toString() {
     StringBuilder strBuilder = new StringBuilder("[name=" + name + " id=" + id);
-    if (location != null)
+    if (location == null) {
+      strBuilder.append(" not located");
+    } else {
       strBuilder.append(" location=(").append(location.getCol()).append(",").append(location.getRow()).append(")");
+    }
     if (owner != null) strBuilder.append(" owner=").append(owner);
     if (transport != null)
       strBuilder.append(" transport=").append(transport);

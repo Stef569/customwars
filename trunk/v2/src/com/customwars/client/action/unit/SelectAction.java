@@ -1,52 +1,53 @@
 package com.customwars.client.action.unit;
 
-import com.customwars.client.action.AbstractCWAction;
+import com.customwars.client.action.DirectAction;
 import com.customwars.client.model.game.Game;
+import com.customwars.client.model.gameobject.Locatable;
 import com.customwars.client.model.gameobject.Unit;
-import com.customwars.client.model.map.Tile;
+import com.customwars.client.model.map.Location;
 import com.customwars.client.ui.renderer.MapRenderer;
-import com.customwars.client.ui.state.InGameSession;
+import com.customwars.client.ui.state.InGameContext;
 
 /**
- * Select a unit and make it the active unit in the game. This is the first action
+ * Select the last unit on selectTile and make it the active unit in the game. This is the first action
  * for a unit.
  *
  * @author stefan
  */
-public class SelectAction extends AbstractCWAction {
+public class SelectAction extends DirectAction {
+  private InGameContext context;
   private MapRenderer mapRenderer;
-  private InGameSession inGameSession;
   private Game game;
+  private Location selectTile;
 
-  public SelectAction(Game game, MapRenderer mapRenderer, InGameSession inGameSession) {
+  public SelectAction(Location selectTile) {
     super("Select");
-    this.game = game;
-    this.inGameSession = inGameSession;
-    this.mapRenderer = mapRenderer;
+    this.selectTile = selectTile;
   }
 
-  public void doActionImpl() {
-    Tile clicked = inGameSession.getClick(1);
-    selectUnit((Unit) clicked.getLastLocatable());
-    inGameSession.setMode(InGameSession.MODE.UNIT_SELECT);
-
-    Tile secondClick = inGameSession.getClick(2);
-    if (secondClick != null) {
-      mapRenderer.moveCursor(secondClick);
-    }
+  public void init(InGameContext context) {
+    this.context = context;
+    this.game = context.getGame();
+    this.mapRenderer = context.getMapRenderer();
   }
 
-  private void selectUnit(Unit selectedUnit) {
-    game.setActiveUnit(selectedUnit);
-    mapRenderer.setActiveUnit(selectedUnit);
+  protected void invokeAction() {
+    Locatable locatable = selectTile.getLastLocatable();
+    selectUnit((Unit) locatable);
+    context.setMode(InGameContext.MODE.UNIT_SELECT);
+  }
+
+  private void selectUnit(Unit unit) {
+    game.setActiveUnit(unit);
+    mapRenderer.setActiveUnit(unit);
     mapRenderer.removeZones();
     mapRenderer.showMoveZone();
     mapRenderer.showArrows(true);
   }
 
-  public void undoAction() {
+  public void undo() {
     deselectActiveUnit();
-    inGameSession.setMode(InGameSession.MODE.DEFAULT);
+    context.setMode(InGameContext.MODE.DEFAULT);
   }
 
   private void deselectActiveUnit() {
@@ -54,10 +55,6 @@ public class SelectAction extends AbstractCWAction {
     mapRenderer.setActiveUnit(null);
     mapRenderer.removeZones();
     mapRenderer.showArrows(false);
-
-    Tile firstClick = inGameSession.getClick(1);
-    if (firstClick != null) {
-      mapRenderer.moveCursor(firstClick);
-    }
+    mapRenderer.moveCursor(selectTile);
   }
 }

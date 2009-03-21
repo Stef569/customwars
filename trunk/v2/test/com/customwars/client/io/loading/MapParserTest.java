@@ -27,7 +27,7 @@ public class MapParserTest {
   }
 
   @AfterClass
-  public void afterAllTest() {
+  public static void afterAllTest() {
     File mapFile = new File(TEST_DIR + MAP_NAME);
 
     if (mapFile.exists() && !mapFile.isDirectory())
