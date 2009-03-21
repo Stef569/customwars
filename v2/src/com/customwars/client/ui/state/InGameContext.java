@@ -2,14 +2,20 @@ package com.customwars.client.ui.state;
 
 import com.customwars.client.action.CWAction;
 import com.customwars.client.controller.ControllerManager;
+import com.customwars.client.model.game.Game;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Locatable;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Tile;
+import com.customwars.client.model.map.path.MoveTraverse;
+import com.customwars.client.ui.HUD;
+import com.customwars.client.ui.renderer.MapRenderer;
+import org.apache.log4j.Logger;
 
 import javax.swing.undo.AbstractUndoableEdit;
 import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -22,7 +28,10 @@ import java.util.List;
  *
  * @author stefan
  */
-public class InGameSession {
+public class InGameContext {
+  private static final Logger logger = Logger.getLogger(InGameContext.class);
+  private final List<CWAction> actions;
+
   // Input mode:
   public enum MODE {
     DEFAULT,        // Clicking shows a Menu or selects a unit
@@ -34,19 +43,27 @@ public class InGameSession {
 
   private static final int MAX_CLICK_HISTORY = 3;
   private Tile[] clicks = new Tile[MAX_CLICK_HISTORY];
+
   private UndoManager undoManager;
+  private ControllerManager controllerManager;
+
   private MODE mode;
   private boolean trapped;
   private boolean moving;
   private LinkedList<Tile> dropLocations;
   private LinkedList<Unit> unitsToBeDropped;
   private int undoCount = 0;
-  private ControllerManager controllerManager;
 
-  public InGameSession() {
+  private Game game;
+  private MoveTraverse moveTraverse;
+  private MapRenderer mapRenderer;
+  private HUD hud;
+
+  public InGameContext() {
     undoManager = new UndoManager();
     unitsToBeDropped = new LinkedList<Unit>();
     dropLocations = new LinkedList<Tile>();
+    actions = new LinkedList<CWAction>();
     setMode(MODE.DEFAULT);
   }
 
@@ -75,21 +92,9 @@ public class InGameSession {
     dropLocations.add(location);
   }
 
-  public void removeDropLocation(Unit unit, Tile location) {
-    unitsToBeDropped.remove(unit);
-    dropLocations.remove(location);
-  }
-
   public void clearClicks() {
     for (int i = 0; i < clicks.length; i++) {
       clicks[i] = null;
-    }
-  }
-
-  public void addUndoAction(CWAction action) {
-    if (action.canUndo()) {
-      undoManager.addEdit(new UndoWrapper(action));
-      System.out.println(++undoCount + ". Adding " + undoManager.getPresentationName() + " to undo list");
     }
   }
 
@@ -105,7 +110,7 @@ public class InGameSession {
 
   public void undo() {
     if (undoManager.canUndo()) {
-      System.out.println(" -- " + undoManager.getUndoPresentationName() + " -- ");
+      logger.debug(" << " + undoManager.getUndoPresentationName() + " >> ");
       undoManager.undo();
       redoLast();
     }
@@ -116,32 +121,59 @@ public class InGameSession {
       undoManager.undo();
     } else {
       // Last action
-      System.out.println(undoCount-- + ". Removing " + undoManager.getPresentationName() + " from undo list");
+      logger.debug(undoCount-- + ". Removing " + undoManager.getPresentationName() + " from undo list");
       undoManager.removeLastEdit();
     }
 
     if (undoManager.canRedo()) {
       undoManager.redo();
-      System.out.println(undoCount-- + ". Removing " + undoManager.getPresentationName() + " from undo list");
+      logger.debug(undoCount-- + ". Removing " + undoManager.getPresentationName() + " from undo list");
       undoManager.removeLastEdit();
     }
   }
 
+  public void doAction(String actionCommand) {
+    // todo parse an actionCommand into a CWAction
+  }
+
   public void doAction(CWAction action) {
-    action.doAction();
+    action.invoke(this);
     if (action.canUndo()) {
       addUndoAction(action);
+    }
+
+    actions.add(action);
+  }
+
+  private void addUndoAction(CWAction action) {
+    if (action.canUndo()) {
+      undoManager.addEdit(new UndoWrapper(action, this));
+      logger.debug(++undoCount + ". Adding " + undoManager.getPresentationName() + " to undo list");
+    }
+  }
+
+  /**
+   * Update the actions added, until they are completed
+   */
+  public void update(int elapsedTime) {
+    if (actions != null) {
+      Iterator it = actions.iterator();
+
+      while (it.hasNext()) {
+        CWAction action = (CWAction) it.next();
+        action.update(elapsedTime);
+
+        if (action.isCompleted()) {
+          it.remove();
+        }
+      }
     }
   }
 
   public void discartAllEdits() {
     undoCount = 0;
-    System.out.println("Undo history cleared");
     undoManager.discardAllEdits();
-  }
-
-  public void setControllerManager(ControllerManager controllerManager) {
-    this.controllerManager = controllerManager;
+    logger.debug("Undo history cleared");
   }
 
   /**
@@ -156,12 +188,48 @@ public class InGameSession {
     this.mode = mode;
   }
 
+  public void setControllerManager(ControllerManager controllerManager) {
+    this.controllerManager = controllerManager;
+  }
+
   public void setTrapped(boolean trapped) {
     this.trapped = trapped;
   }
 
   public void setMoving(boolean moving) {
     this.moving = moving;
+  }
+
+  public void setGame(Game game) {
+    this.game = game;
+  }
+
+  public void setHud(HUD hud) {
+    this.hud = hud;
+  }
+
+  public void setMoveTraverse(MoveTraverse moveTraverse) {
+    this.moveTraverse = moveTraverse;
+  }
+
+  public void setMapRenderer(MapRenderer mapRenderer) {
+    this.mapRenderer = mapRenderer;
+  }
+
+  public Game getGame() {
+    return game;
+  }
+
+  public HUD getHud() {
+    return hud;
+  }
+
+  public MoveTraverse getMoveTraverse() {
+    return moveTraverse;
+  }
+
+  public MapRenderer getMapRenderer() {
+    return mapRenderer;
   }
 
   public boolean isTrapped() {
@@ -177,6 +245,10 @@ public class InGameSession {
    */
   public Tile getClick(int pos) {
     return clicks[pos - 1];
+  }
+
+  public boolean isInUnitMode() {
+    return isUnitSelectMode() || isUnitAttackMode() || isUnitDropMode();
   }
 
   public boolean isDefaultMode() {
@@ -254,9 +326,11 @@ public class InGameSession {
    */
   class UndoWrapper extends AbstractUndoableEdit {
     private CWAction action;
+    private InGameContext inGameContext;
 
-    public UndoWrapper(CWAction action) {
+    public UndoWrapper(CWAction action, InGameContext inGameContext) {
       this.action = action;
+      this.inGameContext = inGameContext;
     }
 
     public String getPresentationName() {
@@ -265,12 +339,12 @@ public class InGameSession {
 
     public void undo() throws CannotUndoException {
       super.undo();
-      action.undoAction();
+      action.undo();
     }
 
     public void redo() throws CannotRedoException {
       super.redo();
-      action.doAction();
+      action.invoke(inGameContext);
     }
   }
 

@@ -1,18 +1,17 @@
 package com.customwars.client.controller;
 
-import com.customwars.client.action.AbstractCWAction;
-import com.customwars.client.action.ActionManager;
 import com.customwars.client.action.CWAction;
+import com.customwars.client.action.ClearInGameStateAction;
+import com.customwars.client.action.DirectAction;
 import com.customwars.client.action.ShowPopupMenu;
-import com.customwars.client.model.game.Game;
+import com.customwars.client.action.unit.WaitAction;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.gameobject.UnitFactory;
 import com.customwars.client.model.map.Tile;
-import com.customwars.client.ui.HUD;
 import com.customwars.client.ui.renderer.MapRenderer;
-import com.customwars.client.ui.state.InGameSession;
+import com.customwars.client.ui.state.InGameContext;
 
 /**
  * Allows a human to control a city
@@ -21,30 +20,21 @@ import com.customwars.client.ui.state.InGameSession;
  * @author stefan
  */
 public class HumanCityController extends CityController {
-  private ShowPopupMenu showCityPopupMenu;
-  private InGameSession inGameSession;
+  private InGameContext inGameContext;
   private MapRenderer mapRenderer;
-  private CWAction waitAction;
-  private CWAction clearInGameState;
 
-  public HumanCityController(Game game, City city, ActionManager actionManager, InGameSession inGameSession, MapRenderer mapRenderer, HUD hud) {
-    super(city, game, actionManager);
-    this.inGameSession = inGameSession;
-    this.mapRenderer = mapRenderer;
-    this.showCityPopupMenu = new ShowPopupMenu("Buy unit menu", hud, inGameSession, mapRenderer);
-    this.clearInGameState = actionManager.getAction("CLEAR_INGAME_STATE");
-    this.waitAction = actionManager.getAction("UNIT_WAIT");
+  public HumanCityController(City city, InGameContext inGameContext) {
+    super(city, inGameContext.getGame());
+    this.inGameContext = inGameContext;
+    this.mapRenderer = inGameContext.getMapRenderer();
   }
 
   public void handleAPress() {
     Tile selected = (Tile) mapRenderer.getCursorLocation();
 
-    if (inGameSession.isDefaultMode() && canShowMenu()) {
-      buildMenu(selected);
-
-      // ShowPopUpMenu displays the popup on the 2nd tile
-      inGameSession.setClick(2, selected);
-      inGameSession.doAction(showCityPopupMenu);
+    if (inGameContext.isDefaultMode() && canShowMenu()) {
+      CWAction showMenu = buildMenu(selected);
+      inGameContext.doAction(showMenu);
     }
   }
 
@@ -53,42 +43,45 @@ public class HumanCityController extends CityController {
     return !selected.isFogged() && city.getLocation() == selected && city.canBuild();
   }
 
-  private void buildMenu(Tile selected) {
-    showCityPopupMenu.clear();
+  private ShowPopupMenu buildMenu(Tile selected) {
+    ShowPopupMenu showCityPopupMenu = new ShowPopupMenu("Buy unit menu", selected);
 
     for (Unit unit : UnitFactory.getAllUnits()) {
-      AbstractCWAction addUnit = new AddUnitToTileAction(unit, selected);
+      CWAction addUnit = new AddUnitToTileAction(unit, selected, inGameContext);
       showCityPopupMenu.addAction(addUnit, unit.getID() + " " + unit.getName() + " " + unit.getPrice());
     }
+    return showCityPopupMenu;
   }
 
-  private class AddUnitToTileAction extends AbstractCWAction {
-    Unit unit;
-    private Tile t;
+  private class AddUnitToTileAction extends DirectAction {
+    Unit unit;                            // Unit to be put on tile
+    private Tile tile;                    // Tile to add unit to
+    private InGameContext inGameContext;
 
-    public AddUnitToTileAction(Unit unit, Tile t) {
+    public AddUnitToTileAction(Unit unit, Tile tile, InGameContext inGameContext) {
       super("Add unit to tile", false);
       this.unit = unit;
-      this.t = t;
+      this.tile = tile;
+      this.inGameContext = inGameContext;
     }
 
-    protected void doActionImpl() {
+    protected void init(InGameContext context) {
+    }
+
+    protected void invokeAction() {
       Player cityOwner = city.getOwner();
 
       if (city.canBuild(unit) && cityOwner.canPurchase(unit)) {
         cityOwner.addUnit(unit);
         cityOwner.addToBudget(-unit.getPrice());
-        t.add(unit);
-        inGameSession.addHumanUnitController(unit);
+        tile.add(unit);
+        inGameContext.addHumanUnitController(unit);
         game.getMap().buildMovementZone(unit);
         game.getMap().buildAttackZone(unit);
         game.setActiveUnit(unit);
 
-        waitAction.doAction();
-        waitAction.setActionCompleted(false);
-
-        clearInGameState.doAction();
-        clearInGameState.setActionCompleted(false);
+        inGameContext.doAction(new WaitAction(unit));
+        inGameContext.doAction(new ClearInGameStateAction());
       }
     }
   }

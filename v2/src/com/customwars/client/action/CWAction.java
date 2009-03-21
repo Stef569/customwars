@@ -1,5 +1,7 @@
 package com.customwars.client.action;
 
+import com.customwars.client.ui.state.InGameContext;
+
 /**
  * Interface for each Action in the game
  * an Action can be done and undone.
@@ -9,20 +11,15 @@ package com.customwars.client.action;
  * @author stefan
  */
 public interface CWAction {
-  public void update(int elapsedTime);
+  void invoke(InGameContext context);
 
-  public void doAction();
+  void update(int elapsedTime);
 
-  public void undoAction();
-
-  public String getName();
-
-  public boolean isActionCompleted();
-
-  /**
-   * @return Can this action be undone
-   */
   boolean canUndo();
 
-  void setActionCompleted(boolean completed);
+  void undo();
+
+  String getName();
+
+  boolean isCompleted();
 }

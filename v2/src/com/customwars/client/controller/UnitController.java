@@ -1,6 +1,5 @@
 package com.customwars.client.controller;
 
-import com.customwars.client.action.ActionManager;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Locatable;
@@ -10,6 +9,7 @@ import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.model.map.path.MoveTraverse;
+import com.customwars.client.ui.state.InGameContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,14 +26,12 @@ public abstract class UnitController {
   Map<Tile> map;
   Unit unit;
   MoveTraverse moveTraverse;
-  ActionManager actionManager;
 
-  protected UnitController(Game game, Unit unit, ActionManager actionManager, MoveTraverse moveTraverse) {
-    this.game = game;
+  protected UnitController(Unit unit, InGameContext inGameContext) {
+    this.game = inGameContext.getGame();
     this.map = game.getMap();
     this.unit = unit;
-    this.actionManager = actionManager;
-    this.moveTraverse = moveTraverse;
+    this.moveTraverse = inGameContext.getMoveTraverse();
   }
 
   boolean canSelect(Location selected) {
@@ -80,7 +78,9 @@ public abstract class UnitController {
   }
 
   /**
-   * Can the activeUnit be added to the transport
+   * Can the unit be added to the transport
+   * The unit and the transport are both on the same tile
+   * Transport is the first unit
    */
   boolean canLoad(Tile selected) {
     Unit transporter;
@@ -95,8 +95,8 @@ public abstract class UnitController {
             transporter.getOwner() == unit.getOwner();
   }
 
-  boolean canStartDrop(Tile origin, Tile selected, int dropCount) {
-    List<Location> emptyTiles = getEmptyAjacentTiles(origin);
+  boolean canStartDrop(Tile center, Tile selected, int dropCount) {
+    List<Location> emptyTiles = getEmptyAjacentTiles(center);
 
     return !emptyTiles.isEmpty() &&
             unit.canTransport() && dropCount > 0 && dropCount <= unit.getLocatableCount();
@@ -127,7 +127,7 @@ public abstract class UnitController {
    * @param selected         the location that has been clicked on
    * @return if this unit can attack
    */
-  boolean canStartAttack(Tile origUnitLocation, Tile selected) {
+  boolean canStartAttack(Location origUnitLocation, Tile selected) {
     if (isDirectUnitMoved(origUnitLocation)) return false;
 
     Unit activeUnit = game.getActiveUnit();
@@ -181,11 +181,11 @@ public abstract class UnitController {
   }
 
   /**
-   * @param selected original unit location
+   * @param originalLocation original unit location
    * @return if this unit is a direct fire type and has it moved
    */
-  boolean isDirectUnitMoved(Location selected) {
-    boolean moved = selected != unit.getLocation();
+  boolean isDirectUnitMoved(Location originalLocation) {
+    boolean moved = originalLocation != unit.getLocation();
     return moved && unit.getMinAttackRange() > 1;
   }
 

@@ -12,11 +12,9 @@ import java.util.Scanner;
  * @author stefan
  */
 public class ActionParser {
-  private ActionManager actionManager;
   private TileMap map;
 
-  public ActionParser(ActionManager actionManager, TileMap map) {
-    this.actionManager = actionManager;
+  public ActionParser(TileMap map) {
     this.map = map;
   }
 
@@ -36,7 +34,6 @@ public class ActionParser {
     int row = scanner.nextInt();
     Location selectTile = map.getTile(col, row);
 
-    SelectAction action = (SelectAction) actionManager.getAction("SELECT_UNIT");
-    return action;
+    return new SelectAction(selectTile);
   }
 }

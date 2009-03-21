@@ -1,47 +1,38 @@
 package com.customwars.client.action.unit;
 
-import com.customwars.client.action.AbstractCWAction;
-import com.customwars.client.action.CWAction;
-import com.customwars.client.model.game.Game;
+import com.customwars.client.action.DirectAction;
 import com.customwars.client.model.gameobject.Unit;
-import com.customwars.client.model.map.Tile;
 import com.customwars.client.ui.renderer.MapRenderer;
-import com.customwars.client.ui.state.InGameSession;
+import com.customwars.client.ui.state.InGameContext;
 
 /**
- * Load the active unit in the transport on the selected tile
- *
- * The active unit and the transport are both on the same tile
- * Transport is the first unit
- * active unit the second unit
+ * Load the unit in the transport
+ * and remove the unit sprite
  *
  * @author stefan
  */
-public class LoadAction extends AbstractCWAction {
-  private Game game;
-  private InGameSession inGameSession;
-  private CWAction waitAction;
+public class LoadAction extends DirectAction {
+  private InGameContext context;
   private MapRenderer mapRenderer;
+  private Unit unit;
+  private Unit transport;
 
-  public LoadAction(Game game, InGameSession inGameSession, MapRenderer mapRenderer, CWAction waitAction) {
+  public LoadAction(Unit unit, Unit transport) {
     super("Load", false);
-    this.mapRenderer = mapRenderer;
-    this.game = game;
-    this.inGameSession = inGameSession;
-    this.waitAction = waitAction;
+    this.unit = unit;
+    this.transport = transport;
   }
 
-  protected void doActionImpl() {
-    if (inGameSession.isTrapped()) return;
+  protected void init(InGameContext context) {
+    this.context = context;
+    this.mapRenderer = context.getMapRenderer();
+  }
 
-    Tile selected = inGameSession.getClick(2);
-    Unit transport = (Unit) selected.getLocatable(0);
-    Unit activeUnit = game.getActiveUnit();
+  protected void invokeAction() {
+    if (context.isTrapped()) return;
 
-    selected.remove(activeUnit);
-    transport.add(activeUnit);
-    mapRenderer.removeUnit(activeUnit);
-    waitAction.doAction();
-    waitAction.setActionCompleted(false);
+    unit.getLocation().remove(unit);
+    transport.add(unit);
+    mapRenderer.removeUnit(unit);
   }
 }

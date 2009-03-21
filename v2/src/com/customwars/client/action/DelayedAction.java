@@ -1,5 +1,7 @@
 package com.customwars.client.action;
 
+import com.customwars.client.ui.state.InGameContext;
+
 /**
  * An action that is fired after a delay
  * Subclasses should set actionCompleted to true when the action has finished.
@@ -11,24 +13,19 @@ public abstract class DelayedAction extends AbstractCWAction {
   private int delay;
   private boolean running;
 
-  public DelayedAction(String actionName, boolean canUndo, int delay) {
-    super(actionName, canUndo);
+  protected DelayedAction(String name, int delay) {
+    super(name);
     this.delay = delay;
   }
 
-  public void doAction() {
+  public final void invoke(InGameContext context) {
     if (!running) {
-      init();
+      init(context);
       running = true;
     }
   }
 
-  /**
-   * Init the delayed action, called once before doActionImpl
-   */
-  protected abstract void init();
-
-  public void update(int elapsedTime) {
+  public final void update(int elapsedTime) {
     if (running) {
       time += elapsedTime;
 
@@ -39,16 +36,26 @@ public abstract class DelayedAction extends AbstractCWAction {
     }
   }
 
+  /**
+   * Keep invoking the action until it is complete
+   */
   public final void updateAction() {
-    if (!actionCompleted)
-      doActionImpl();
+    if (!isCompleted())
+      invokeAction();
 
-    if (actionCompleted) {
+    if (isCompleted()) {
       running = false;
     }
   }
 
-  public void setActionCompleted(boolean actionCompleted) {
-    this.actionCompleted = actionCompleted;
-  }
+  /**
+   * Init the delayed action, called once before updating this action
+   */
+  protected abstract void init(InGameContext context);
+
+  /**
+   * This method is called everytime the delay has passed
+   */
+  protected abstract void invokeAction();
 }
+

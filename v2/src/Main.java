@@ -47,7 +47,7 @@ public class Main {
       logger.info("Starting up");
       new Main();
     } catch (Exception e) {
-      logger.fatal("Startup failure", e);
+      logger.fatal("Failure", e);
       e.printStackTrace();
       System.exit(-1);
     }

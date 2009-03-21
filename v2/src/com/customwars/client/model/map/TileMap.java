@@ -2,6 +2,7 @@ package com.customwars.client.model.map;
 
 import com.customwars.client.model.gameobject.GameObject;
 import com.customwars.client.model.gameobject.Locatable;
+import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -20,8 +21,9 @@ import java.util.NoSuchElementException;
  * @see Location
  */
 public class TileMap<T extends Location> extends GameObject {
+  private static final Logger logger = Logger.getLogger(TileMap.class);
   private int tileSize;             // The square size in pixels
-  private int cols, rows;
+  private int cols, rows;           // The map size in tiles
   private List<List<T>> tiles;
 
   /**
@@ -89,25 +91,27 @@ public class TileMap<T extends Location> extends GameObject {
     if (from.contains(locatable)) {
       from.remove(locatable);
       to.add(locatable);
+    } else {
+      logger.warn("from " + from + " does not contain " + locatable);
     }
   }
 
   public Iterable<T> getAllTiles() {
     return new Iterable<T>() {
       public Iterator<T> iterator() {
-        final WholeMapIterator m = new WholeMapIterator();
+        final WholeMapIterator wholeMapIterator = new WholeMapIterator();
 
         return new Iterator<T>() {
           public boolean hasNext() {
-            return m.hasNext();
+            return wholeMapIterator.hasNext();
           }
 
           public T next() {
-            return m.next();
+            return wholeMapIterator.next();
           }
 
           public void remove() {
-            m.remove();
+            wholeMapIterator.remove();
           }
         };
       }
@@ -144,19 +148,19 @@ public class TileMap<T extends Location> extends GameObject {
   private Iterable<T> getAdjacentIterator(final Location center) {
     return new Iterable<T>() {
       public Iterator<T> iterator() {
-        final AdjacentIterator adjIterator = new AdjacentIterator(center);
+        final AdjacentIterator adjacentIterator = new AdjacentIterator(center);
 
         return new Iterator<T>() {
           public boolean hasNext() {
-            return adjIterator.hasNext();
+            return adjacentIterator.hasNext();
           }
 
           public T next() {
-            return adjIterator.next();
+            return adjacentIterator.next();
           }
 
           public void remove() {
-            adjIterator.remove();
+            adjacentIterator.remove();
           }
         };
       }

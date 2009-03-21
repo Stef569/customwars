@@ -1,12 +1,11 @@
 package com.customwars.client.action.unit;
 
-import com.customwars.client.action.AbstractCWAction;
+import com.customwars.client.action.DirectAction;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Location;
-import com.customwars.client.model.map.Tile;
 import com.customwars.client.ui.renderer.MapRenderer;
-import com.customwars.client.ui.state.InGameSession;
+import com.customwars.client.ui.state.InGameContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,29 +15,34 @@ import java.util.List;
  *
  * @author stefan
  */
-public class StartAttackAction extends AbstractCWAction {
-  private Game game;
-  private InGameSession inGameSession;
+public class StartAttackAction extends DirectAction {
+  private InGameContext context;
   private MapRenderer mapRenderer;
+  private Game game;
+  private Unit unit;
+  private Location to;
 
-  public StartAttackAction(Game game, MapRenderer mapRenderer, InGameSession unitSession) {
+  public StartAttackAction(Unit unit, Location to) {
     super("Start Attack mode");
-    this.game = game;
-    this.mapRenderer = mapRenderer;
-    this.inGameSession = unitSession;
+    this.unit = unit;
+    this.to = to;
   }
 
-  protected void doActionImpl() {
-    Tile selectedTile = inGameSession.getClick(2);
-    Unit activeUnit = game.getActiveUnit();
-    List<Unit> enemiesInRange = game.getMap().getEnemiesInRangeOf(activeUnit, selectedTile);
+  protected void init(InGameContext context) {
+    this.context = context;
+    this.game = context.getGame();
+    this.mapRenderer = context.getMapRenderer();
+  }
+
+  protected void invokeAction() {
+    List<Unit> enemiesInRange = game.getMap().getEnemiesInRangeOf(unit, to);
     List<Location> enemyLocationsInRange = getEnemyLocations(enemiesInRange);
 
+    mapRenderer.removeMoveZone();
     mapRenderer.activateCursor("ATTACK");
     mapRenderer.startCursorTraversal(enemyLocationsInRange);
-    mapRenderer.removeMoveZone();
     mapRenderer.setAttackZone(enemyLocationsInRange);
-    inGameSession.setMode(InGameSession.MODE.UNIT_ATTACK);
+    context.setMode(InGameContext.MODE.UNIT_ATTACK);
   }
 
   private List<Location> getEnemyLocations(List<Unit> enemies) {
@@ -49,11 +53,10 @@ public class StartAttackAction extends AbstractCWAction {
     return enemyLocations;
   }
 
-  public void undoAction() {
+  public void undo() {
     mapRenderer.removeAttackZone();
     mapRenderer.stopCursorTraversal();
 
     mapRenderer.activateCursor("SELECT");
-    mapRenderer.stopCursorTraversal();
   }
 }

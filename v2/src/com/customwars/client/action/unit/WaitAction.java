@@ -1,34 +1,37 @@
 package com.customwars.client.action.unit;
 
-import com.customwars.client.action.AbstractCWAction;
+import com.customwars.client.action.DirectAction;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.gameobject.GameObjectState;
 import com.customwars.client.model.gameobject.Unit;
+import com.customwars.client.ui.state.InGameContext;
 
 /**
  * The unit is made Inactive(can no longer be controlled)
  *
  * @author stefan
  */
-public class WaitAction extends AbstractCWAction {
+public class WaitAction extends DirectAction {
   private Game game;
+  private Unit unit;
 
-  public WaitAction(Game game) {
-    super("Wait", false);
-    this.game = game;
+  public WaitAction(Unit unit) {
+    super("Wait");
+    this.unit = unit;
   }
 
-  public void doActionImpl() {
-    wait(game.getActiveUnit());
+  protected void init(InGameContext context) {
+    game = context.getGame();
   }
 
-  private void wait(Unit unit) {
-    game.getMap().resetFogMap(unit.getOwner());
+  protected void invokeAction() {
     game.initZones();
 
-    // The unit performed an action disable further actions->IDLE
-    // when the unit didn't die from an attack.
     if (!unit.isDestroyed()) {
+      unit.setOrientation(Unit.DEFAULT_ORIENTATION);
+
+      // Make sure that the change to idle is picked up by the event listeners
+      unit.setState(GameObjectState.ACTIVE);
       unit.setState(GameObjectState.IDLE);
     }
   }

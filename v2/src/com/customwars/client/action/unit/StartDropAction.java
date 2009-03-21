@@ -1,53 +1,55 @@
 package com.customwars.client.action.unit;
 
-import com.customwars.client.action.AbstractCWAction;
-import com.customwars.client.action.CWAction;
+import com.customwars.client.action.ClearInGameStateAction;
+import com.customwars.client.action.DirectAction;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.model.map.TileMap;
 import com.customwars.client.ui.renderer.MapRenderer;
-import com.customwars.client.ui.state.InGameSession;
+import com.customwars.client.ui.state.InGameContext;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Allow unit(s) in a transport to be dropped on a free adjacent tile
+ * Allow unit(s) in a transport to be dropped on a free adjacent tile around the center location
  *
  * @author stefan
  */
-public class StartDropAction extends AbstractCWAction {
-  private InGameSession inGameSession;
+public class StartDropAction extends DirectAction {
+  private InGameContext context;
   private MapRenderer mapRenderer;
   private TileMap<Tile> map;
-  private CWAction clearInGameSession;
+  private Location center;
 
-  public StartDropAction(TileMap<Tile> map, MapRenderer mapRenderer, InGameSession inGameSession, CWAction clearInGameSession) {
+  public StartDropAction(Location center) {
     super("Start drop", true);
-    this.clearInGameSession = clearInGameSession;
-    this.map = map;
-    this.mapRenderer = mapRenderer;
-    this.inGameSession = inGameSession;
+    this.center = center;
   }
 
-  protected void doActionImpl() {
-    Tile selected = inGameSession.getClick(2);
-    List<Location> adjacentTiles = getEmptyAjacentTiles(selected);
+  protected void init(InGameContext context) {
+    this.context = context;
+    this.map = context.getGame().getMap();
+    this.mapRenderer = context.getMapRenderer();
+  }
+
+  protected void invokeAction() {
+    List<Location> adjacentTiles = getEmptyAjacentTiles(center);
 
     mapRenderer.removeZones();
     mapRenderer.showArrows(false);
 
-    // Only allow the cursor to move within the adjacent empty tiles,
+    // Only allow the cursor to move within the empty adjacent tiles,
     // show the tiles as a movezone
     mapRenderer.startCursorTraversal(adjacentTiles);
     mapRenderer.setMoveZone(adjacentTiles);
-    inGameSession.setMode(InGameSession.MODE.UNIT_DROP);
+    context.setMode(InGameContext.MODE.UNIT_DROP);
   }
 
-  private List<Location> getEmptyAjacentTiles(Tile clicked) {
+  private List<Location> getEmptyAjacentTiles(Location center) {
     List<Location> surroundingTiles = new ArrayList<Location>();
-    for (Tile tile : map.getSurroundingTiles(clicked, 1, 1)) {
-      if (!inGameSession.isDropLocationTaken(tile)) {
+    for (Tile tile : map.getSurroundingTiles(center, 1, 1)) {
+      if (!context.isDropLocationTaken(tile)) {
         if (tile.isFogged()) {
           surroundingTiles.add(tile);
         } else if (tile.getLocatableCount() == 0) {
@@ -62,8 +64,7 @@ public class StartDropAction extends AbstractCWAction {
    * Undo will reset everything to default,
    * undoing start drop is too hard
    */
-  public void undoAction() {
-    clearInGameSession.doAction();
-    clearInGameSession.setActionCompleted(false);
+  public void undo() {
+    new ClearInGameStateAction().invoke(context);
   }
 }

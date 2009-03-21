@@ -8,6 +8,8 @@ import com.customwars.client.model.map.TileMap;
 import org.apache.log4j.Logger;
 import tools.Args;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.List;
 
 /**
@@ -29,6 +31,7 @@ import java.util.List;
  */
 public class MoveTraverse {
   private static final Logger logger = Logger.getLogger(MoveTraverse.class);
+  private PropertyChangeSupport changeSupport;
   private TileMap<Tile> map;          // The map the mover can move in
   private PathFinder pathFinder;
   private List<Location> movePath;    // The path we are going to move over
@@ -44,6 +47,7 @@ public class MoveTraverse {
   public MoveTraverse(TileMap<Tile> map) {
     this.map = map;
     pathFinder = new PathFinder(map);
+    changeSupport = new PropertyChangeSupport(this);
   }
 
   public void prepareMove(Mover mover, Location destination) {
@@ -51,16 +55,19 @@ public class MoveTraverse {
     Args.checkForNull(destination);
 
     prepareForNextMove();
+    this.mover = mover;
 
     if (pathFinder.canMoveTo(mover, destination)) {
-      this.mover = mover;
       this.movePath = pathFinder.getMovementPath(mover, destination);
     } else {
-      pathMoveComplete = true;
       logger.warn("Could not prepare move" +
               " from " + mover.getLocation().getCol() + "," + mover.getLocation().getRow() +
               " to " + destination.getCol() + "," + destination.getRow() +
               " for " + mover);
+
+      pathMoveComplete = true;
+      setTrapped(true);
+      trappedDirection = map.getDirectionTo(mover.getLocation(), destination);
     }
   }
 
@@ -72,7 +79,7 @@ public class MoveTraverse {
     movePath = null;
     pathIndex = 0;
     pathMoveComplete = false;
-    foundTrapper = false;
+    setTrapped(false);
     trappedDirection = Direction.STILL;
     totalMoveCost = 0;
   }
@@ -91,8 +98,9 @@ public class MoveTraverse {
 
     if (withinPath(pathIndex)) {
       if (withinPath(pathIndex + 1)) {
-        if (hasEnemyOnNextLocation()) {
-          foundTrapper = true;
+        Location location = movePath.get(pathIndex + 1);
+        if (hasEnemyOn(location)) {
+          setTrapped(true);
           trappedDirection = getNextDirection();
           pathMoveComplete();
         } else {
@@ -108,10 +116,10 @@ public class MoveTraverse {
   private void pathMoveComplete() {
     pathMoveComplete = true;
     mover.addPathMoveCost(totalMoveCost);
+    changeSupport.firePropertyChange("pathMoveComplete", false, true);
   }
 
-  private boolean hasEnemyOnNextLocation() {
-    Location location = movePath.get(pathIndex + 1);
+  private boolean hasEnemyOn(Location location) {
     Locatable locatable = location.getLastLocatable();
 
     if (locatable instanceof Mover) {
@@ -134,6 +142,11 @@ public class MoveTraverse {
     mover.setOrientation(map.getDirectionTo(currentLocation, nextLocation));
     map.teleport(currentLocation, nextLocation, mover);
     totalMoveCost += nextLocation.getTerrain().getMoveCost(mover.getMovementType());
+  }
+
+  private void setTrapped(boolean foundTrapper) {
+    this.foundTrapper = foundTrapper;
+    changeSupport.firePropertyChange("trapped", null, foundTrapper);
   }
 
   /**
@@ -162,5 +175,13 @@ public class MoveTraverse {
 
   public Direction getTrappedDirection() {
     return trappedDirection;
+  }
+
+  public synchronized void removePropertyChangeListener(PropertyChangeListener listener) {
+    changeSupport.removePropertyChangeListener(listener);
+  }
+
+  public synchronized void addPropertyChangeListener(PropertyChangeListener listener) {
+    changeSupport.addPropertyChangeListener(listener);
   }
 }

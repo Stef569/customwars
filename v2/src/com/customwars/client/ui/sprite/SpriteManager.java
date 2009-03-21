@@ -395,6 +395,8 @@ public class SpriteManager implements PropertyChangeListener {
   private void unitOwnerChange(PropertyChangeEvent evt) {
     Player oldVal = (Player) evt.getOldValue();
     Player newVal = (Player) evt.getNewValue();
+    if (oldVal == null || newVal == null) return;
+
     Color oldColor = oldVal.getColor();
     Color newColor = newVal.getColor();
 
