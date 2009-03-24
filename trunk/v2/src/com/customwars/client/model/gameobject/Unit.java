@@ -172,6 +172,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler {
     owner.removeUnit(this);
     owner = null;
     location.remove(this);
+    location = null;
     setState(GameObjectState.DESTROYED);
   }
 
@@ -249,12 +250,10 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler {
     }
   }
 
-  /**
-   * A unit can attack if
-   * 1 of the two weapons are set and have >0 ammo.
-   */
-  public boolean canAttack(Unit unit) {
-    return unit != null && canFire() && !unit.getOwner().isAlliedWith(owner);
+  public boolean canAttack(Unit defender) {
+    return canFire() && !isDestroyed() &&
+            defender != null && !defender.isDestroyed() &&
+            !defender.getOwner().isAlliedWith(owner);
   }
 
   public void defend(Unit attacker, UnitFight fight) {
@@ -280,10 +279,10 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler {
   }
 
   /**
-   * We can counter Attack when we didn't die from the attack.
+   * The unit can counter Attack when it didn't die from the attack.
    */
   public boolean canCounterAttack() {
-    return !isDestroyed();
+    return canFire() && !isDestroyed();
   }
 
   // ---------------------------------------------------------------------------

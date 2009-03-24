@@ -4,18 +4,21 @@ package com.customwars.client.model.game;
 /**
  * Game specific configuration:
  * turns, weather etc
+ * -1 means infinitive
  */
 public class GameConfig {
   private int startWeather = 0;
   private int turnLimit;
   private int cityfunds;
+  private int dayLimit;
 
   public GameConfig() {
   }
 
-  public GameConfig(int weather, int turnLimit, int cityfunds) {
+  public GameConfig(int weather, int turnLimit, int dayLimit, int cityfunds) {
     this.startWeather = weather;
     this.turnLimit = turnLimit;
+    this.dayLimit = dayLimit;
     this.cityfunds = cityfunds;
   }
 
@@ -31,6 +34,10 @@ public class GameConfig {
     this.cityfunds = cityfunds;
   }
 
+  public void setDayLimit(int dayLimit) {
+    this.dayLimit = dayLimit;
+  }
+
   public int getStartWeather() {
     return startWeather;
   }
@@ -41,5 +48,9 @@ public class GameConfig {
 
   public int getCityFunds() {
     return cityfunds;
+  }
+
+  public int getDayLimit() {
+    return dayLimit;
   }
 }

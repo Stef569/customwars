@@ -4,6 +4,7 @@ import com.customwars.client.model.TestData;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.game.GameConfig;
 import com.customwars.client.model.game.Player;
+import com.customwars.client.model.game.Turn;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.CityFactory;
 import com.customwars.client.model.gameobject.TerrainFactory;
@@ -21,8 +22,8 @@ import java.util.List;
  * Hardcoded game, useful for using in Slick tests
  */
 public class HardCodedGame {
-  // 1  neutral and 3 Game Players
-  public static Player neutral = new Player(Player.NEUTRAL_PLAYER_ID, Color.GRAY, true, null, "Neutral", 0, -1, false);
+  // 3 Game Players
+  public static final Player neutral = new Player(Player.NEUTRAL_PLAYER_ID, Color.GRAY, true, null, "Neutral", 0, -1, false);
   public static Player p_RED = new Player(0, Color.RED, false, null, "Stef", 3800, 0, false);
   public static Player p_BLUE = new Player(1, Color.BLUE, false, null, "JSR", 8500, 1, false);
   public static Player p_GREEN = new Player(2, Color.GREEN, false, null, "Kiwi", 10000, 2, false);
@@ -33,16 +34,17 @@ public class HardCodedGame {
    * The game is not inited and not started
    */
   public static Game getGame() {
-    List<Player> players = Arrays.asList(p_RED, p_BLUE, neutral, p_GREEN);
+    List<Player> players = Arrays.asList(p_RED, p_BLUE, p_GREEN);
     GameConfig gc = new GameConfig();
-    gc.setTurnLimit(500);
+    gc.setTurnLimit(Turn.UNLIMITED);
+    gc.setDayLimit(Turn.UNLIMITED);
     gc.setCityfunds(1000);
 
-    return new Game(getMap(), players, gc);
+    return new Game(getMap(), players, neutral, gc);
   }
 
   public static Map<Tile> getMap() {
-    map = new Map<Tile>(10, 15, 32, 4);
+    map = new Map<Tile>(10, 15, 32, 3);
     map.setFogOfWarOn(true);
     initMapProperties();
     MapUtil.fillWithTiles(map, TerrainFactory.getTerrain(TestData.PLAIN));
@@ -54,10 +56,10 @@ public class HardCodedGame {
     Player p2 = new Player(1, Color.BLUE, false, null);
     Player p3 = new Player(2, Color.YELLOW, false, null);
 
-    City blueHQ = addCityToMap(8, 5, TestData.HQ, p2);
     City greenHQ = addCityToMap(0, 2, TestData.HQ, p1);
-    p2.setHq(blueHQ);
+    City blueHQ = addCityToMap(8, 5, TestData.HQ, p2);
     p1.setHq(greenHQ);
+    p2.setHq(blueHQ);
 
     addCityToMap(2, 5, TestData.FACTORY, neutral);
     addCityToMap(3, 3, TestData.BASE, neutral);

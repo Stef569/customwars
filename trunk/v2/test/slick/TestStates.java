@@ -3,6 +3,7 @@ package slick;
 import com.customwars.client.io.ResourceManager;
 import com.customwars.client.ui.state.CWInput;
 import com.customwars.client.ui.state.CWState;
+import com.customwars.client.ui.state.GameOverState;
 import com.customwars.client.ui.state.StateLogic;
 import com.customwars.client.ui.state.StateSession;
 import org.apache.log4j.Logger;
@@ -57,6 +58,7 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
     CWState inGameTest = new TestInGameState();
     CWState endTurnState = new EndTurnState();
     CWState mapParser = new TestMapParser();
+    CWState gameOver = new GameOverState();
 
     addState(testMenu);
     addState(testMapRenderer);
@@ -64,6 +66,7 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
     addState(inGameTest);
     addState(endTurnState);
     addState(mapParser);
+    addState(gameOver);
 
     try {
       resources.loadConfig();
@@ -80,7 +83,8 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
     statelogic.addState("keymenu", 2);
     statelogic.addState("IN_GAME", 3);
     statelogic.addState("END_TURN", 4);
-    statelogic.addState("MAP_PARSER", 5);
+    statelogic.addState("MAP_PARSER", 6);
+    statelogic.addState("GAME_OVER", 10);
     CWState.setStatelogic(statelogic);
   }
 

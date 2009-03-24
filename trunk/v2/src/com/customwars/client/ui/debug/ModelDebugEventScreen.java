@@ -101,7 +101,7 @@ public class ModelDebugEventScreen implements PropertyChangeListener {
   }
 
   public void propertyChange(PropertyChangeEvent evt) {
-    if (!isFiltered(evt.getSource().getClass(), evt.getPropertyName()) && game != null && game.isStarted()
+    if (!isFiltered(evt.getSource().getClass(), evt.getPropertyName()) && game != null && game.isActive()
             && evt.getPropertyName() != null && evt.getPropertyName().trim().length() != 0) {
       showEvent(evt);
     }

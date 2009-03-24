@@ -26,11 +26,13 @@ import java.util.List;
  * a history of CWActions that can be undone
  * The droplocations and units to be dropped on those locations.
  *
+ * It contains commonly used objects: ControllerManager, Game, MoveTraverse, MapRenderer, Hud
+ * this allows to pass this object instead of all the above as a parameter.
+ *
  * @author stefan
  */
 public class InGameContext {
   private static final Logger logger = Logger.getLogger(InGameContext.class);
-  private final List<CWAction> actions;
 
   // Input mode:
   public enum MODE {
@@ -44,35 +46,28 @@ public class InGameContext {
   private static final int MAX_CLICK_HISTORY = 3;
   private Tile[] clicks = new Tile[MAX_CLICK_HISTORY];
 
-  private UndoManager undoManager;
-  private ControllerManager controllerManager;
+  private final UndoManager undoManager;
+  private final List<CWAction> actionQueue;
 
   private MODE mode;
   private boolean trapped;
   private boolean moving;
-  private LinkedList<Tile> dropLocations;
-  private LinkedList<Unit> unitsToBeDropped;
+  private final LinkedList<Tile> dropLocations;
+  private final LinkedList<Unit> unitsToBeDropped;
   private int undoCount = 0;
 
   private Game game;
   private MoveTraverse moveTraverse;
   private MapRenderer mapRenderer;
   private HUD hud;
+  private ControllerManager controllerManager;
 
   public InGameContext() {
     undoManager = new UndoManager();
     unitsToBeDropped = new LinkedList<Unit>();
     dropLocations = new LinkedList<Tile>();
-    actions = new LinkedList<CWAction>();
+    actionQueue = new LinkedList<CWAction>();
     setMode(MODE.DEFAULT);
-  }
-
-  public void addHumanUnitController(Unit unit) {
-    controllerManager.addHumanUnitController(unit);
-  }
-
-  public void addHumanCityController(City city) {
-    controllerManager.addHumanCityController(city);
   }
 
   public void handleUnitAPress(Unit unit) {
@@ -142,7 +137,7 @@ public class InGameContext {
       addUndoAction(action);
     }
 
-    actions.add(action);
+    actionQueue.add(action);
   }
 
   private void addUndoAction(CWAction action) {
@@ -153,19 +148,18 @@ public class InGameContext {
   }
 
   /**
-   * Update the actions added, until they are completed
+   * Update the actions in the queue, until they are all completed
    */
   public void update(int elapsedTime) {
-    if (actions != null) {
-      Iterator it = actions.iterator();
+    if (actionQueue.isEmpty()) return;
+    Iterator it = actionQueue.iterator();
 
-      while (it.hasNext()) {
-        CWAction action = (CWAction) it.next();
-        action.update(elapsedTime);
+    while (it.hasNext()) {
+      CWAction action = (CWAction) it.next();
+      action.update(elapsedTime);
 
-        if (action.isCompleted()) {
-          it.remove();
-        }
+      if (action.isCompleted()) {
+        it.remove();
       }
     }
   }
@@ -230,6 +224,10 @@ public class InGameContext {
 
   public MapRenderer getMapRenderer() {
     return mapRenderer;
+  }
+
+  public ControllerManager getControllerManager() {
+    return controllerManager;
   }
 
   public boolean isTrapped() {

@@ -1,11 +1,8 @@
 package com.customwars.client.controller;
 
+import com.customwars.client.action.ActionFactory;
 import com.customwars.client.action.CWAction;
-import com.customwars.client.action.ClearInGameStateAction;
-import com.customwars.client.action.DirectAction;
 import com.customwars.client.action.ShowPopupMenu;
-import com.customwars.client.action.unit.WaitAction;
-import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.gameobject.UnitFactory;
@@ -47,42 +44,12 @@ public class HumanCityController extends CityController {
     ShowPopupMenu showCityPopupMenu = new ShowPopupMenu("Buy unit menu", selected);
 
     for (Unit unit : UnitFactory.getAllUnits()) {
-      CWAction addUnit = new AddUnitToTileAction(unit, selected, inGameContext);
-      showCityPopupMenu.addAction(addUnit, unit.getID() + " " + unit.getName() + " " + unit.getPrice());
-    }
-    return showCityPopupMenu;
-  }
-
-  private class AddUnitToTileAction extends DirectAction {
-    Unit unit;                            // Unit to be put on tile
-    private Tile tile;                    // Tile to add unit to
-    private InGameContext inGameContext;
-
-    public AddUnitToTileAction(Unit unit, Tile tile, InGameContext inGameContext) {
-      super("Add unit to tile", false);
-      this.unit = unit;
-      this.tile = tile;
-      this.inGameContext = inGameContext;
-    }
-
-    protected void init(InGameContext context) {
-    }
-
-    protected void invokeAction() {
-      Player cityOwner = city.getOwner();
-
-      if (city.canBuild(unit) && cityOwner.canPurchase(unit)) {
-        cityOwner.addUnit(unit);
-        cityOwner.addToBudget(-unit.getPrice());
-        tile.add(unit);
-        inGameContext.addHumanUnitController(unit);
-        game.getMap().buildMovementZone(unit);
-        game.getMap().buildAttackZone(unit);
-        game.setActiveUnit(unit);
-
-        inGameContext.doAction(new WaitAction(unit));
-        inGameContext.doAction(new ClearInGameStateAction());
+      if (city.canBuild(unit) && city.getOwner().isWithinBudget(unit.getPrice())) {
+        unit.setOwner(city.getOwner());
+        CWAction addUnitToTileAction = ActionFactory.buildAddUnitToTileAction(unit, selected, false, false);
+        showCityPopupMenu.addAction(addUnitToTileAction, unit.getID() + " " + unit.getName() + " " + unit.getPrice());
       }
     }
+    return showCityPopupMenu;
   }
 }

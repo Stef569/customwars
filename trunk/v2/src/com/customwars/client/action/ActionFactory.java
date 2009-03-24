@@ -1,5 +1,6 @@
 package com.customwars.client.action;
 
+import com.customwars.client.action.unit.AddUnitToTileAction;
 import com.customwars.client.action.unit.AttackAction;
 import com.customwars.client.action.unit.CaptureAction;
 import com.customwars.client.action.unit.DropAction;
@@ -11,6 +12,7 @@ import com.customwars.client.action.unit.WaitAction;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Location;
+import com.customwars.client.model.map.Tile;
 
 import java.util.List;
 
@@ -84,5 +86,13 @@ public class ActionFactory {
     attackActions.add(new WaitAction(attacker));
     attackActions.add(new ClearInGameStateAction());
     return attackActions;
+  }
+
+  public static CWAction buildAddUnitToTileAction(Unit unit, Tile selected, boolean noCostDeployement, boolean canUndo) {
+    ActionBag addToTileAction = new ActionBag("Add unit to tile");
+    addToTileAction.add(new AddUnitToTileAction(unit, selected, noCostDeployement, canUndo));
+    addToTileAction.add(new WaitAction(unit));
+    addToTileAction.add(new ClearInGameStateAction());
+    return addToTileAction;
   }
 }

@@ -5,7 +5,7 @@ import com.customwars.client.model.map.Tile;
 import junit.framework.Assert;
 import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.Test;
+import org.junit.Ignore;
 import slick.HardCodedGame;
 
 import java.io.File;
@@ -34,7 +34,7 @@ public class MapParserTest {
       mapFile.delete();
   }
 
-  @Test
+  @Ignore
   /**
    * Write a map to testdata and then read it back in.
    * the map and the loadedMap should have equal values.

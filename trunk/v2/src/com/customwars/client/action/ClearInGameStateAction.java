@@ -44,6 +44,8 @@ public class ClearInGameStateAction extends DirectAction {
 
     hud.hidePopup();
 
-    game.setActiveUnit(null);
+    // Avoid unnecesarry events to be fired
+    if (game.getActiveUnit() != null)
+      game.setActiveUnit(null);
   }
 }

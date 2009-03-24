@@ -46,8 +46,12 @@ public class ControllerManager {
   }
 
   public void addHumanCityController(City city) {
-    HumanCityController unitController = new HumanCityController(city, inGameContext);
+    CityController unitController = new HumanCityController(city, inGameContext);
     cityControllers.put(city, unitController);
+  }
+
+  public void addAICityController(City city) {
+
   }
 
   public void initUnitControllers() {
@@ -65,6 +69,10 @@ public class ControllerManager {
   public void addHumanUnitController(Unit unit) {
     UnitController unitController = new HumanUnitController(unit, inGameContext);
     unitControllers.put(unit, unitController);
+  }
+
+  public void addAIUnitController(Unit unit) {
+
   }
 
   public void handleUnitAPress(Unit unit) {
@@ -115,5 +123,13 @@ public class ControllerManager {
         }
       }
     }
+  }
+
+  public void removeUnitController(Unit unit) {
+    unitControllers.remove(unit);
+  }
+
+  public void removeCityController(City city) {
+    cityControllers.remove(city);
   }
 }

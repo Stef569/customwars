@@ -6,7 +6,6 @@ import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.model.map.TileMap;
 import org.newdawn.slick.Animation;
-import org.newdawn.slick.Graphics;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -44,10 +43,6 @@ public class CitySprite extends TileSprite implements PropertyChangeListener {
     Tile newTile = (Tile) newLocation;
     if (oldTile != null) oldTile.removePropertyChangeListener(this);
     newTile.addPropertyChangeListener(this);
-  }
-
-  public void render(int x, int y, Graphics g) {
-    super.render(x, y, g);
   }
 
   public void updateAnim() {

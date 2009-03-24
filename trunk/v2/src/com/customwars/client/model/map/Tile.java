@@ -40,7 +40,6 @@ public class Tile extends GameObject implements Location {
     if (!contains(locatable) || locatable == null) {
       return false;
     } else {
-      locatable.setLocation(null);    // Keep locatable and tile in sync
       locatables.remove(locatable);
       firePropertyChange("locatable", locatable, null);
     }

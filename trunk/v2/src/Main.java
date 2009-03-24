@@ -48,7 +48,6 @@ public class Main {
       new Main();
     } catch (Exception e) {
       logger.fatal("Failure", e);
-      e.printStackTrace();
       System.exit(-1);
     }
   }

@@ -346,7 +346,8 @@ public class SpriteManager implements PropertyChangeListener {
       if (sprites.next().getLocation() == newTileSprite.getLocation()) {
         sprites.remove();
         spriteRemoved = true;
-        logger.debug("Removing Sprite on same location " + newTileSprite.getLocation());
+        Tile tile = (Tile) newTileSprite.getLocation();
+        logger.debug("Removing Sprite on same location " + tile.getLocationString());
       }
     }
     return spriteRemoved;
@@ -367,6 +368,8 @@ public class SpriteManager implements PropertyChangeListener {
     } else if (evt.getSource() instanceof Unit) {
       if (propertyName.equals("owner")) {
         unitOwnerChange(evt);
+      } else if (propertyName.equals("location")) {
+        unitLocationchange(evt);
       }
     } else if (evt.getSource() instanceof Sprite) {
       if (propertyName.equals("anim")) {
@@ -374,7 +377,7 @@ public class SpriteManager implements PropertyChangeListener {
       }
     } else if (evt.getSource() instanceof Tile) {
       if (propertyName.equals("locatable")) {
-        unitOnTileChanged(evt);
+        unitOnTileChange(evt);
       }
     }
   }
@@ -439,15 +442,28 @@ public class SpriteManager implements PropertyChangeListener {
   }
 
   /**
-   * This method is fired when a unit is added to a tile and on each move within a path,
-   * thus it can't be used to remove unitsprites.
+   * When a unit is added to a tile, ie. on each move within a path
+   * A new unitSprite is created if it is not already present
    */
-  private void unitOnTileChanged(PropertyChangeEvent evt) {
+  private void unitOnTileChange(PropertyChangeEvent evt) {
     Unit newUnit = (Unit) evt.getNewValue();
 
     if (newUnit != null && !unitSprites.containsKey(newUnit)) {
-      logger.debug("Found 1 new Unit, Creating sprite...");
+      Tile t = (Tile) newUnit.getLocation();
+      logger.debug("Found 1 new Unit, Creating sprite @ " + t.getLocationString());
       loadUnitSprite(newUnit);
+    }
+  }
+
+  /**
+   * When the location of a unit changes to null, remove the unit sprite
+   */
+  private void unitLocationchange(PropertyChangeEvent evt) {
+    Unit unit = (Unit) evt.getSource();
+    Location newLocation = (Location) evt.getNewValue();
+
+    if (newLocation == null && unitSprites.containsKey(unit)) {
+      removeUnitSprite(unit);
     }
   }
 
