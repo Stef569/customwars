@@ -17,7 +17,6 @@ import java.util.List;
  * a human, AI or neutral player.
  * Can be allied with another Player
  * Each non neutral player has an unique ID, neutral players always have the same NEUTRAL_PLAYER_ID
- * A Player is always in the IDLE state, any attempt to change to another state will result in an exception
  *
  * @author stefan
  */
@@ -83,34 +82,32 @@ public class Player extends GameObject {
   }
 
   /**
-   * When a player dies
-   * all units are destroyed
-   * all cities are owned by the conquerer
+   * Destroy all units
+   * Cities are owned by the conquerer
    *
-   * @param conquerer the player that destroyed the last unit
+   * @param conquerer the player that has conquered this player
    */
-  public void die(Player conquerer) {
-    for (Unit unit : army) {
-      unit.setState(GameObjectState.DESTROYED);
-    }
+  public void destroy(Player conquerer) {
+    destroyAllUnits();
+    changeCityOwnersTo(conquerer);
+    setState(GameObjectState.DESTROYED);
+  }
 
-    for (City city : cities) {
-      city.setOwner(conquerer);
+  /**
+   * Keep removing units from army, until there are none left
+   * unit.destroy() removes the unit from this player's army.
+   */
+  public void destroyAllUnits() {
+    while (army.size() > 0) {
+      Unit unit = army.get(army.size() - 1);
+      unit.destroy();
     }
   }
 
-  public void purchase(Unit unit) {
-    if (canPurchase(unit)) {
-      addToBudget(-unit.getPrice());
+  public void changeCityOwnersTo(Player newOwner) {
+    for (City city : getAllCities()) {
+      city.setOwner(newOwner);
     }
-  }
-
-  public boolean canPurchase(Unit unit) {
-    return isWithinBudget(unit.getPrice());
-  }
-
-  public boolean isWithinBudget(int price) {
-    return budget - price >= 0;
   }
 
   public void addToBudget(int amount) {
@@ -123,9 +120,6 @@ public class Player extends GameObject {
     firePropertyChange("budget", oldBudget, this.budget);
   }
 
-  // ---------------------------------------------------------------------------
-  // Handle cities that are owned by this player
-  // ---------------------------------------------------------------------------
   /**
    * Add city to this player, and set this player as owner of the city
    */
@@ -155,9 +149,6 @@ public class Player extends GameObject {
     };
   }
 
-  // ---------------------------------------------------------------------------
-  // Handle Units that are owned by this player
-  // ---------------------------------------------------------------------------
   /**
    * Add unit to this player, and set this player as owner of the unit
    */
@@ -210,10 +201,6 @@ public class Player extends GameObject {
     this.hq = hq;
   }
 
-  public void setState(GameObjectState state) {
-    throw new UnsupportedOperationException("Player is always Idle");
-  }
-
   public int getId() {
     return id;
   }
@@ -234,6 +221,14 @@ public class Player extends GameObject {
     return team;
   }
 
+  public int getArmyCount() {
+    return army.size();
+  }
+
+  public int getCityCount() {
+    return cities.size();
+  }
+
   public boolean isAi() {
     return ai;
   }
@@ -242,7 +237,7 @@ public class Player extends GameObject {
     return neutral;
   }
 
-  public boolean isDestroyed() {
+  public boolean areAllUnitsDestroyed() {
     return createdFirstUnit && army.isEmpty();
   }
 
@@ -254,8 +249,13 @@ public class Player extends GameObject {
     return hq;
   }
 
+  public boolean isWithinBudget(int price) {
+    return budget - price >= 0;
+  }
+
   @Override
   public String toString() {
-    return "[name=" + name + " id=" + id + " color=" + ColorUtil.toString(color) + " Budget=" + budget + "]";
+    return "[name=" + name + " id=" + id + " state " + getState() + " color=" + ColorUtil.toString(color) +
+            " budget=" + budget + " team=" + team + "]";
   }
 }

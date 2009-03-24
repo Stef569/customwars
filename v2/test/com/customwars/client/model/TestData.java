@@ -77,6 +77,7 @@ public class TestData {
   private static Weapon tankCannon = new Weapon(1, "Tank Cannon", "nonee", 1500, 1, 1, 9, false);
   private static Weapon cannon = new Weapon(2, "Cannon", "nonee", 1500, 2, 3, 9, false);
   private static Weapon rockets = new Weapon(3, "rockets", "nonee", 1500, 3, 6, 9, false);
+  private static Weapon artilleryCannon = new Weapon(4, "Cannon", "nonee", 1500, 2, 3, 9, false);
 
   // City
   private static City base = new City(0, "Base", "", 0, 0, plainMoveCosts, 1, true, Arrays.asList(ARMY_BRANCH_GROUND), Arrays.asList(INF, MECH), null, 20, CITY_HEAL_RATE, 0, 0);
@@ -104,7 +105,7 @@ public class TestData {
     tank.setPrimaryWeapon(tankCannon);
     UnitFactory.addUnit(tank);
 
-    rocket.setPrimaryWeapon(rockets);
+    artillery.setPrimaryWeapon(artilleryCannon);
     UnitFactory.addUnit(artillery);
 
     rocket.setPrimaryWeapon(rockets);

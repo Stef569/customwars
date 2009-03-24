@@ -1,8 +1,8 @@
 package com.customwars.client.action.game;
 
 import com.customwars.client.action.DirectAction;
-import com.customwars.client.model.game.Game;
 import com.customwars.client.ui.state.InGameContext;
+import com.customwars.client.ui.state.StateLogic;
 
 /**
  * End the current turn
@@ -10,17 +10,17 @@ import com.customwars.client.ui.state.InGameContext;
  * @author stefan
  */
 public class EndTurnAction extends DirectAction {
-  private Game game;
+  private StateLogic stateLogic;
 
-  public EndTurnAction() {
+  public EndTurnAction(StateLogic statelogic) {
     super("End Turn", false);
+    this.stateLogic = statelogic;
   }
 
   protected void init(InGameContext context) {
-    game = context.getGame();
   }
 
   protected void invokeAction() {
-    game.endTurn();
+    stateLogic.changeTo("END_TURN");
   }
 }

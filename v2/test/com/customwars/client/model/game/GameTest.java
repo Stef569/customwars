@@ -21,6 +21,7 @@ import java.util.List;
 public class GameTest {
   private Game game;
   private Map<Tile> map;
+  private Player neutral;
   private Player p1, p2, p3, p4;
 
   @Before
@@ -30,6 +31,7 @@ public class GameTest {
     map.setFogOfWarOn(true);
     MapUtil.fillWithTiles(map, TerrainFactory.getTerrain(TestData.PLAIN));
 
+    neutral = new Player(Player.NEUTRAL_PLAYER_ID, Color.GRAY, true, null, "Neutral", 0, -1, false);
     p1 = new Player(0, Color.RED, false, null, "Stef", Integer.MAX_VALUE, 0, false);
     p2 = new Player(1, Color.BLUE, false, null, "JSR", 8500, 0, false);
     p3 = new Player(2, Color.GREEN, false, null, "Ben", 500, 1, false);
@@ -47,9 +49,11 @@ public class GameTest {
 
   private void startGame(GameConfig gc, Player gameStarter, List<Player> players) {
     if (gc.getTurnLimit() == 0)
-      gc.setTurnLimit(99);
+      gc.setTurnLimit(Turn.UNLIMITED);
+    if (gc.getDayLimit() == 0)
+      gc.setDayLimit(Turn.UNLIMITED);
 
-    game = new Game(map, players, gc);
+    game = new Game(map, players, neutral, gc);
     game.init();
     game.startGame(gameStarter);
   }
@@ -103,89 +107,123 @@ public class GameTest {
     Assert.assertEquals(p1.getBudget(), P1_START_BUDGET + CITY_FUNDS);
   }
 
-  @Test(expected = NotYourTurnException.class)
   /**
    * p2 cannot end his turn because the active Player is p1
    */
+  @Test(expected = NotYourTurnException.class)
   public void testEndTurnWithNonActivePlayer() {
     startGame(new GameConfig(), p1);
     game.endTurn(p2);
   }
 
-  @Test(expected = IllegalStateException.class)
   /**
-   * Turnlimit is 1, so player 1 can end his turn, but then the game has ended.
+   * Daylimit is 2, so each player can end his turn, but then the game has ended.
    */
+  @Test(expected = IllegalStateException.class)
   public void testEndTurnOnLastTurn() {
     GameConfig gc = new GameConfig();
-    gc.setTurnLimit(1);
+    gc.setDayLimit(2);
     startGame(gc, p1);
 
-    game.endTurn();
+    game.endTurn();  // p1
+    game.endTurn();  // p2
+    game.endTurn();  // p3
+    game.endTurn();  // p4
 
     // Game has ended:
-    Assert.assertEquals(true, game.isDestroyed());
+    Assert.assertEquals(true, game.isGameOver());
 
     // Attempts to end the turn after the game has ended will result in an IllegalStateException
     game.endTurn();
   }
 
-  @Test
   /**
-   *
    * Should not throw any exceptions
    * in other words the happy path
    */
+  @Test
   public void testEndTurn() {
     startGame(new GameConfig(), p1);
 
-    game.endTurn();
-    game.endTurn();
-    game.endTurn();
-    game.endTurn();
-    game.endTurn();
-    game.endTurn();
+    int counter = 0;
+    while (counter < 1500) {
+      game.endTurn();
+      counter++;
+    }
   }
 
   @Test
-  public void testGameOver() {
+  public void testGameOverByLastPlayerRemaining() {
     startGame(p1);
 
-    // Give p3 a unit
-    Unit inf = UnitFactory.getUnit(TestData.INF);
-    game.getMap().getRandomTile().add(inf);
-    p3.addUnit(inf);
+    // Give p2 a unit
+    Unit inf2 = UnitFactory.getUnit(TestData.INF);
+    map.getRandomTile().add(inf2);
+    p3.addUnit(inf2);
 
-    // Kill it
-    inf.destroy();
+    // Give p3 a unit
+    Unit inf3 = UnitFactory.getUnit(TestData.INF);
+    map.getRandomTile().add(inf3);
+    p3.addUnit(inf3);
+
+    // Give p4 a unit
+    Unit inf4 = UnitFactory.getUnit(TestData.INF);
+    map.getRandomTile().add(inf4);
+    p4.addUnit(inf4);
+
+    // p1 slays them all:
+    inf2.destroy();
+    inf3.destroy();
+    inf4.destroy();
 
     // Game is now over
-    Assert.assertEquals(true, game.isDestroyed());
+    Assert.assertTrue(game.isGameOver());
   }
 
+  /**
+   * Starting a game with a neutral player results in an exception
+   */
+  @Test(expected = IllegalStateException.class)
+  public void testStartGameWithNeutralPlayer() {
+    startGame(new GameConfig(), neutral, Arrays.asList(p1, p2, p3, p4));
+  }
+
+  /**
+   * Try to Start a game with duplicate players
+   */
+  @Test(expected = IllegalStateException.class)
+  public void testDuplicatePlayers() {
+    startGame(new GameConfig(), p1, Arrays.asList(p1, p2, p3, p3));
+  }
+
+  /**
+   * The game ends when only 1 team remains(all other team players are destroyed)
+   * There are 2 teams: 1(Stef, JSR) and 2(Ben, Joop)
+   */
   @Test
-  public void testGameWithNeutralPlayer() {
-    Player neutral = new Player(Player.NEUTRAL_PLAYER_ID, Color.GRAY, true, null, "Neutral", 0, -1, false);
-    Player p1 = new Player(0, Color.YELLOW, false, null, "Stef", Integer.MAX_VALUE, 0, false);
-    Player p2 = new Player(1, Color.GREEN, false, null, "JSR", 8500, 0, false);
-    Player p3 = new Player(2, Color.BLACK, false, null, "Ben", 50, 0, false);
+  public void testGameOverByAlliedVictory() {
+    Player p1 = new Player(0, Color.RED, false, null, "Stef", Integer.MAX_VALUE, 1, false);
+    Player p2 = new Player(1, Color.BLUE, false, null, "JSR", 8500, 1, false);
+    Player p3 = new Player(2, Color.GREEN, false, null, "Ben", 500, 2, false);
+    Player p4 = new Player(3, Color.BLACK, false, null, "Joop", 1000, 2, false);
+    startGame(new GameConfig(), p1, Arrays.asList(p1, p2, p3, p4));
 
-    // Try to Start a game with neutral
-    startGame(new GameConfig(), neutral, Arrays.asList(p1, p2, p3, neutral));
+    // p1 builds up his army
+    Unit inf1 = UnitFactory.getUnit(TestData.INF);
+    map.getRandomTile().add(inf1);
+    p1.addUnit(inf1);
 
-    // Neutral is skipped, next active player is p1
-    Assert.assertEquals(p1, game.getActivePlayer());
+    // p2 builds up his army
+    Unit inf2 = UnitFactory.getUnit(TestData.INF);
+    map.getRandomTile().add(inf2);
+    p2.addUnit(inf2);
 
-    // next in the list is p2(doh)
-    game.endTurn();
-    Assert.assertEquals(p2, game.getActivePlayer());
+    // team 2 comes along and kills all units of team 1
+    inf1.destroy();
+    inf2.destroy();
 
-    // next in the list is p3(doh)
-    game.endTurn();
-    Assert.assertEquals(p3, game.getActivePlayer());
-
-    // Neutral is skipped again
-    game.endTurn();
-    Assert.assertEquals(p1, game.getActivePlayer());
+    Assert.assertTrue(p1.isDestroyed());
+    Assert.assertTrue(p2.isDestroyed());
+    Assert.assertTrue(game.isGameOver());
   }
 }

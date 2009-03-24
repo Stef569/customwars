@@ -53,6 +53,9 @@ public class UnitSprite extends TileSprite implements PropertyChangeListener {
     super(tile, map);
     this.unit = unit;
     this.decorations = decorations;
+    lowHp = unit.hasLowHp();
+    lowAmmo = unit.hasLowAmmo();
+    lowSupplies = unit.hasLowSupplies();
     unit.addPropertyChangeListener(this);
 
     assert tile == unit.getLocation() : "Unitsprite should have same location as the unit";
@@ -185,7 +188,8 @@ public class UnitSprite extends TileSprite implements PropertyChangeListener {
     String propertyName = evt.getPropertyName();
 
     if (evt.getSource() == getLocation()) {
-      if (propertyName.equals("fog")) {
+      // stop rendering this sprite when the tile is fogged, unless the unit is dying
+      if (propertyName.equals("fog") && !unit.isDestroyed()) {
         setVisible(!(Boolean) evt.getNewValue());
       }
     } else if (evt.getSource() == unit) {

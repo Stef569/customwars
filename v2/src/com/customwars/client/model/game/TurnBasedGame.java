@@ -7,69 +7,51 @@ import com.customwars.client.model.map.Tile;
 import org.apache.log4j.Logger;
 import tools.Args;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 /**
  * A basic game that has
  * a state, map, players and the current turn.
  * It can be in 3 states:
- * IDLE, IN_GAME(active), GAME_OVER(destroyed)
+ * not started(IDLE), started(ACTIVE), Gameover(DESTROYED)
  *
- * The game is over when:
- * The turn limit is reached or
- * When all enemies of the active player have been destroyed.
+ * Neutral players are always in the IDLE state
+ * Human and AI players are ACTIVE or DESTROYED.
  *
  * @author Stefan
  */
-public class TurnBasedGame extends GameObject implements PropertyChangeListener {
+public class TurnBasedGame extends GameObject {
   private static final Logger logger = Logger.getLogger(TurnBasedGame.class);
   Map<Tile> map;                // The map containing all the units/cities
   Turn turn;                    // The current turn+turn limit
-  private List<Player> players; // The players that are in this game
+  Player neutralPlayer;         // Idle neutral player for cities that are not owned.
+  private List<Player> players; // The Human and AI players that are in this game
   private Player activePlayer;  // There can only be one active player in a game at any time
 
-  /**
-   * Start a game with no turn specified
-   * The subclass is responsible for setting the turn
-   */
-  public TurnBasedGame(Map<Tile> map, List<Player> players) {
-    this(map, players, null);
-  }
-
-  public TurnBasedGame(Map<Tile> map, List<Player> players, Turn turn) {
+  public TurnBasedGame(Map<Tile> map, List<Player> players, Player neutralPlayer, Turn turn) {
     this.map = map;
     this.players = players;
+    this.neutralPlayer = neutralPlayer;
     this.turn = turn;
-
-    for (Player player : players) {
-      player.addPropertyChangeListener(this);
-    }
   }
 
-  // ---------------------------------------------------------------------------
-  // Actions
-  // ---------------------------------------------------------------------------
   /**
-   * Start the turn and end the turn of the gameStarter
-   * This has the unwanted effect of increasing the turn by 1, so the turn count is put back to 0
-   *
    * @param gameStarter The player that starts this game
    */
   public void startGame(Player gameStarter) {
-    canStartGame(gameStarter);
-    Player player = getValidPlayer(gameStarter);
+    validateStartGame(gameStarter);
 
-    if (player != null) {
-      setActivePlayer(player);
-      setState(GameObjectState.ACTIVE);
-      startTurn(player);
-    } else {
-      endGame();
+    for (Player player : players) {
+      player.setState(GameObjectState.ACTIVE);
     }
+
+    setActivePlayer(gameStarter);
+    setState(GameObjectState.ACTIVE);
+    startTurn(activePlayer);
   }
 
   public void endTurn() throws NotYourTurnException {
@@ -83,7 +65,7 @@ public class TurnBasedGame extends GameObject implements PropertyChangeListener 
    * @throws NotYourTurnException When the invoker is not the activePlayer
    */
   protected void endTurn(Player invoker) throws NotYourTurnException {
-    canEndTurn(invoker);
+    validateEndTurn(invoker);
     Player nextActivePlayer = getNextActivePlayer(activePlayer);
     increaseTurn();
     invoker.endTurn();
@@ -91,47 +73,28 @@ public class TurnBasedGame extends GameObject implements PropertyChangeListener 
     startTurn(nextActivePlayer);
   }
 
+  /**
+   * Increase turn and day
+   * When the turnLimit or dayLimit is reached end the game
+   */
   private void increaseTurn() {
     int oldVal = getTurn();
     turn.increaseTurn();
+
     if (turn.isTurnLimitReached()) {
-      endGame();
+      logger.debug("Turn limit reached " + turn);
+      setState(GameObjectState.DESTROYED);
+    }
+
+    if (getTurn() % getActivePlayerCount() == 0) {
+      turn.increaseDay();
+    }
+
+    if (turn.isDayLimitReached()) {
+      logger.debug("Day limit reached " + turn);
+      setState(GameObjectState.DESTROYED);
     }
     firePropertyChange("turn", oldVal, turn);
-  }
-
-  /**
-   * Check if we can end a turn
-   *
-   * @param invoker The player trying to end his turn
-   * @throws NotYourTurnException when the invoking player cannot end his turn
-   */
-  void canEndTurn(Player invoker) throws NotYourTurnException {
-    Args.checkForNull(invoker, "requesting EndOfTurn Player cannot be null");
-
-    // Game check:
-    if (isIdle())
-      throw new IllegalStateException("Trying to endTurn on a not started Game");
-
-    if (isGameOver())
-      throw new IllegalStateException("Trying to endTurn on a ended Game");
-
-    // Player check:
-    Player currentActivePlayer = getActivePlayer();                 // current player
-    Player nextActivePlayer = getNextActivePlayer(activePlayer);    // Next player to be active
-
-    if (currentActivePlayer == null) {
-      throw new IllegalStateException("No ActivePlayer");
-    }
-
-    if (nextActivePlayer == null) {
-      throw new IllegalStateException("No player after ActivePlayer: " + currentActivePlayer);
-    }
-
-    if (invoker != currentActivePlayer) {
-      throw new NotYourTurnException("Player " + invoker + " cannot end his turn , because it is not the Active player in the Game\n" +
-              "Expected=" + getActivePlayer().getName());
-    }
   }
 
   void startTurn(Player player) {
@@ -140,12 +103,8 @@ public class TurnBasedGame extends GameObject implements PropertyChangeListener 
     setActivePlayer(player);
   }
 
-  private void endGame() {
-    setState(GameObjectState.DESTROYED);
-  }
-
   public void changePlayerName(String from, String to) {
-    Player p = getPlayer(from);
+    Player p = getPlayerByName(from);
     p.setName(to);
   }
 
@@ -155,22 +114,20 @@ public class TurnBasedGame extends GameObject implements PropertyChangeListener 
     firePropertyChange("activePlayer", oldVal, p);
   }
 
-  public boolean isGameOver() {
-    return isDestroyed();
-  }
-
   public int getTurn() {
     return turn.getTurnCount();
   }
 
+  public int getDayLimit() {
+    return turn.getDayLimit();
+  }
+
   public int getDay() {
-    return getDay(turn.getTurnCount());
+    return turn.getDay();
   }
 
   public int getDay(int turnCount) {
-    int day, playerCount;
-
-    playerCount = getNonNeutralPlayers().size();
+    int day, playerCount = getActivePlayerCount();
 
     if (playerCount > 0) {
       day = (turnCount / playerCount) + 1;
@@ -180,18 +137,22 @@ public class TurnBasedGame extends GameObject implements PropertyChangeListener 
     return day;
   }
 
-  public Map<Tile> getMap() {
-    return map;
+  public boolean isGameOver() {
+    return isDestroyed();
   }
 
-  private List<Player> getNonNeutralPlayers() {
-    List<Player> nonNeutral = new ArrayList<Player>();
+  int getActivePlayerCount() {
+    int playerCount = 0;
     for (Player player : players) {
-      if (!player.isNeutral()) {
-        nonNeutral.add(player);
+      if (player.isActive()) {
+        playerCount++;
       }
     }
-    return nonNeutral;
+    return playerCount;
+  }
+
+  public Map<Tile> getMap() {
+    return map;
   }
 
   public Iterable<Player> getAllPlayers() {
@@ -202,37 +163,36 @@ public class TurnBasedGame extends GameObject implements PropertyChangeListener 
     };
   }
 
-  public Player getNextActivePlayer(Player player) {
-    Player nextPlayer = getNextPlayer(player);
-    return getValidPlayer(nextPlayer);
+  public List<Player> getActivePlayers() {
+    List<Player> activePlayers = new ArrayList<Player>();
+    for (Player player : getAllPlayers()) {
+      if (player.isActive()) {
+        activePlayers.add(player);
+      }
+    }
+    return activePlayers;
   }
 
   /**
-   * Retrieve a valid player from the players list
-   * A valid player is not destroyed and not neutral
-   *
-   * While within players bounds
-   * if player is a valid player it is returned
-   * else validate the next player
+   * @param player the player index to start searching at in the players list
+   * @return the next active player after player
    */
-  private Player getValidPlayer(Player player) {
-    Player validPlayer = player;
+  public Player getNextActivePlayer(Player player) {
+    Player nextActivePlayer = getNextPlayer(player);
     int playerSkipCount = 0;
-    while (!isValidPlayer(validPlayer)) {
-      validPlayer = getNextPlayer(player);
-      if (playerSkipCount++ >= players.size()) {
+
+    while (!nextActivePlayer.isActive()) {
+      nextActivePlayer = getNextPlayer(nextActivePlayer);
+
+      if (!isWithinPlayerBounds(++playerSkipCount)) {
+        logger.warn("All players skipped");
         return null;
       }
-
     }
-    return validPlayer;
+    return nextActivePlayer;
   }
 
-  private boolean isValidPlayer(Player player) {
-    return player != null && !player.isDestroyed() && !player.isNeutral();
-  }
-
-  public Player getNextPlayer(Player player) {
+  private Player getNextPlayer(Player player) {
     int nextPlayerIndex = players.indexOf(player) + 1;
     if (nextPlayerIndex == players.size()) {
       return players.get(0);
@@ -240,17 +200,20 @@ public class TurnBasedGame extends GameObject implements PropertyChangeListener 
     return players.get(nextPlayerIndex);
   }
 
+  private boolean isWithinPlayerBounds(int index) {
+    return index >= 0 && index < players.size();
+  }
+
   public Player getActivePlayer() {
     return activePlayer;
   }
 
   /**
-   * Get a player by his playerName
-   * if there is no player with this playerName then
-   * null will be returned
-   * playerName is case sensitive!
+   * Get a game player by his playerName
+   * playerName is case sensitive
+   * if the player could not be found an IllegalArgumentException is thrown
    */
-  public Player getPlayer(String playerName) {
+  public Player getPlayerByName(String playerName) {
     Player result = null;
 
     for (Player p : players) {
@@ -260,8 +223,7 @@ public class TurnBasedGame extends GameObject implements PropertyChangeListener 
     }
 
     if (result == null) {
-      logger.warn("Unknown Playername: " + playerName + " available players:" + getAllPlayers());
-      return null;
+      throw new IllegalArgumentException("Unknown Playername: " + playerName + " available players:" + players);
     } else {
       return result;
     }
@@ -269,35 +231,30 @@ public class TurnBasedGame extends GameObject implements PropertyChangeListener 
 
   /**
    * Get a player by his ID
-   * if there is no player with this ID then
-   * null will be returned
-   * The ID starts from 0 to maxPlayers
+   * The ID can be of a game player or of the neutral player
+   * if the player could not be found an IllegalArgumentException is thrown
    */
-  public Player getPlayer(int id) {
-    for (Player p : getAllPlayers()) {
-      if (p.getId() == id) {
-        return p;
+  public Player getPlayerByID(int playerID) {
+    Player result = null;
+
+    for (Player p : players) {
+      if (p.getId() == playerID) {
+        result = p;
       }
     }
-    return null;
+
+    if (neutralPlayer.getId() == playerID) {
+      result = neutralPlayer;
+    }
+
+    if (result == null) {
+      throw new IllegalArgumentException("Unknown PlayerID " + playerID + " available players:" + players);
+    } else {
+      return result;
+    }
   }
 
-  /**
-   * Does the Player p comes directly after the activePlayer
-   */
-  public boolean isNextPlayer(Player p) {
-    return players.indexOf(activePlayer) + 1 == players.indexOf(p);
-  }
-
-  /**
-   * Check if we can Start the game
-   * is the game already in progress? or still loading?
-   * is a map provided?
-   *
-   * @param gameStarter The Player that started this game
-   * @throws IllegalStateException when the game cannot be started
-   */
-  protected void canStartGame(Player gameStarter) {
+  private void validateStartGame(Player gameStarter) {
     if (!isIdle()) {
       throw new IllegalStateException("Game is in a Illegal state " + getState() + " to start, a game cannot be started 2X.");
     }
@@ -307,26 +264,30 @@ public class TurnBasedGame extends GameObject implements PropertyChangeListener 
     }
 
     if (turn == null || turn.isTurnLimitReached()) {
-      throw new IllegalStateException("turn is null or turn limit reached");
+      throw new IllegalStateException("Turn is null or turn limit reached");
+    }
+
+    if (!players.contains(gameStarter)) {
+      throw new IllegalStateException("game starter" + gameStarter + " is not in the players list");
     }
 
     validatePlayers();
   }
 
-  /**
-   * The amount of players in the map equals the amount of players in the game
-   * Are all players non null
-   * do they have unique colors
-   * do they have unique ids
-   * fires IllegalStateException when one of the above statements is false
-   */
-  protected void validatePlayers() {
+  private void validatePlayers() {
     if (players == null)
       throw new IllegalArgumentException("No players set");
 
+    // game players must be equal to num players in map
     if (map.getNumPlayers() != players.size()) {
       throw new IllegalStateException("The amount of players in the map (" + map.getNumPlayers() + ") " +
-              "does not equal the amount of players given (" + players.size() + ")");
+              "does not equal the amount of players given (" + (players.size()) + ")");
+    }
+
+    // Each player must be unique
+    Set<Player> uniquePlayers = new HashSet<Player>(players);
+    if (players.size() != uniquePlayers.size()) {
+      throw new IllegalStateException("duplicate player found " + players);
     }
 
     for (Player p : getAllPlayers()) {
@@ -349,40 +310,28 @@ public class TurnBasedGame extends GameObject implements PropertyChangeListener 
     }
   }
 
-  public void propertyChange(PropertyChangeEvent evt) {
-    String propertyName = evt.getPropertyName();
+  /**
+   * Check if the current turn can be ended
+   *
+   * @param invoker The player trying to end his turn
+   * @throws NotYourTurnException when the invoking player cannot end his turn
+   */
+  private void validateEndTurn(Player invoker) throws NotYourTurnException {
+    Args.checkForNull(invoker, "End turn invoker cannot be null");
 
-    if (evt.getSource().getClass() == Player.class) {
-      if (propertyName.equals("unit")) {
-        if (isActive() && allEnemiesDead()) {
-          endGame();
-        }
-      }
+    if (isIdle())
+      throw new IllegalStateException("Trying to endTurn on a not started Game");
+
+    if (isDestroyed())
+      throw new IllegalStateException("Trying to endTurn on a ended Game");
+
+    Args.checkForNull(activePlayer, "No active Player");
+    Player nextPlayer = getNextActivePlayer(activePlayer);
+    Args.checkForNull(nextPlayer, "No player found after player: " + activePlayer);
+
+    if (invoker != activePlayer) {
+      throw new NotYourTurnException("Player " + invoker + " cannot end his turn , because it is not the Active player in the Game\n" +
+              "Expected=" + getActivePlayer().getName());
     }
-  }
-
-  private boolean allEnemiesDead() {
-    List<Player> enemies = getEnemies();
-
-    if (enemies.size() == 0) {
-      return true;
-    }
-
-    for (Player enemy : enemies) {
-      if (enemy.isDestroyed()) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  private List<Player> getEnemies() {
-    List<Player> enemies = new ArrayList<Player>();
-    for (Player p : getAllPlayers()) {
-      if (!p.isAlliedWith(activePlayer)) {
-        enemies.add(p);
-      }
-    }
-    return enemies;
   }
 }

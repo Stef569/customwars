@@ -1,6 +1,7 @@
 package com.customwars.client.action.unit;
 
 import com.customwars.client.action.DirectAction;
+import com.customwars.client.controller.ControllerManager;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.gameobject.UnitState;
@@ -13,6 +14,7 @@ import com.customwars.client.ui.state.InGameContext;
  */
 public class CaptureAction extends DirectAction {
   private InGameContext context;
+  private ControllerManager controllerManager;
   private Unit unit;
   private City city;
 
@@ -24,6 +26,7 @@ public class CaptureAction extends DirectAction {
 
   protected void init(InGameContext context) {
     this.context = context;
+    controllerManager = context.getControllerManager();
   }
 
   protected void invokeAction() {
@@ -39,7 +42,7 @@ public class CaptureAction extends DirectAction {
 
       if (city.isCapturedBy(unit)) {
         unit.setUnitState(UnitState.IDLE);
-        context.addHumanCityController(city);
+        controllerManager.addHumanCityController(city);
         city.resetCapturing();
       }
     }

@@ -3,7 +3,7 @@ package com.customwars.client.model.map;
 import com.customwars.client.model.gameobject.Unit;
 
 /**
- * Base class for Fights between an Attacking unit and a Defending unit
+ * Handles Fights between 2 units
  *
  * @author Stefan
  */
@@ -61,17 +61,17 @@ public class UnitFight {
   }
 
   /**
-   * Attacker is attacking defender, can the defender counter attack the attacker?
+   * Attacker has performed an attack, can the defender counter attack?
    */
   public boolean canCounterAttack(Unit attacker, Unit defender) {
-    return type != FightType.CounterAttack && isAttackerInRangeOfDefender(attacker, defender);
+    return type != FightType.CounterAttack &&
+            defender != null && defender.canCounterAttack() &&
+            isAttackerInRangeOfDefender(attacker, defender);
   }
 
   private boolean isAttackerInRangeOfDefender(Unit attacker, Unit defender) {
-    if (defender != null && defender.canCounterAttack()) {
-      for (Unit enemyInRange : map.getEnemiesInRangeOf(defender)) {
-        if (enemyInRange == attacker) return true;
-      }
+    for (Unit enemyInRange : map.getEnemiesInRangeOf(defender)) {
+      if (enemyInRange == attacker) return true;
     }
     return false;
   }

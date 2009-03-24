@@ -1,6 +1,7 @@
 package com.customwars.client;
 
 import com.customwars.client.model.TestData;
+import org.apache.log4j.BasicConfigurator;
 import org.junit.Test;
 
 /**
@@ -9,6 +10,7 @@ import org.junit.Test;
 public class SetupTests {
 
   static {
+    BasicConfigurator.configure();
     TestData.storeTestData();
   }
 

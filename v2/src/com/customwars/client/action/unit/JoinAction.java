@@ -1,6 +1,7 @@
 package com.customwars.client.action.unit;
 
 import com.customwars.client.action.DirectAction;
+import com.customwars.client.controller.ControllerManager;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.ui.state.InGameContext;
@@ -12,6 +13,7 @@ import com.customwars.client.ui.state.InGameContext;
  */
 public class JoinAction extends DirectAction {
   private Game game;
+  private ControllerManager controllerManager;
   private Unit target, unit;
 
   public JoinAction(Unit unit, Unit target) {
@@ -21,15 +23,16 @@ public class JoinAction extends DirectAction {
   }
 
   protected void init(InGameContext context) {
-    this.game = context.getGame();
+    game = context.getGame();
+    controllerManager = context.getControllerManager();
   }
 
   protected void invokeAction() {
-    //Add Money if joining cause the target to go over 10HP
-    int tempHp = unit.getHp() + target.getHp() - target.getMaxHp();
+    //Add Money if joining cause the target to go over max HP
+    int excessHP = unit.getHp() + target.getHp() - target.getMaxHp();
 
-    if (tempHp > 0)
-      game.getActivePlayer().addToBudget((tempHp * unit.getPrice()) / unit.getMaxHp());
+    if (excessHP > 0)
+      game.getActivePlayer().addToBudget((excessHP * unit.getPrice()) / unit.getMaxHp());
 
     // add HP, supplies, ammo to target
     target.addHp(unit.getHp());
@@ -39,9 +42,10 @@ public class JoinAction extends DirectAction {
     // todo make the dived state of the unit being moved onto the same as the one moving
     //    target.setDived(activeUnit.isDived());
 
-    // Remove Unit
-    unit.getLocation().remove(unit);
+    // Remove Unit manually, unit.destroy() will trigger an explosion.
     unit.getOwner().removeUnit(unit);
-    game.setActiveUnit(target);
+    unit.getLocation().remove(unit);
+    unit.setLocation(null);
+    controllerManager.removeUnitController(unit);
   }
 }

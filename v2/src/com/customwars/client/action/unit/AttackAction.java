@@ -1,6 +1,7 @@
 package com.customwars.client.action.unit;
 
 import com.customwars.client.action.DirectAction;
+import com.customwars.client.controller.ControllerManager;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.UnitFight;
 import com.customwars.client.ui.state.InGameContext;
@@ -12,6 +13,7 @@ import com.customwars.client.ui.state.InGameContext;
  */
 public class AttackAction extends DirectAction {
   private InGameContext context;
+  private ControllerManager controllerManager;
   private UnitFight unitFight;
   private Unit attacker, defender;
 
@@ -24,6 +26,7 @@ public class AttackAction extends DirectAction {
   protected void init(InGameContext context) {
     this.context = context;
     unitFight = new UnitFight(context.getGame().getMap());
+    controllerManager = context.getControllerManager();
   }
 
   protected void invokeAction() {
@@ -38,5 +41,12 @@ public class AttackAction extends DirectAction {
   public void attackUnit(Unit attacker, Unit defender) {
     unitFight.initAttack(attacker, defender);
     attacker.attack(defender, unitFight);
+
+    if (attacker.isDestroyed()) {
+      controllerManager.removeUnitController(attacker);
+    }
+    if (defender.isDestroyed()) {
+      controllerManager.removeUnitController(defender);
+    }
   }
 }

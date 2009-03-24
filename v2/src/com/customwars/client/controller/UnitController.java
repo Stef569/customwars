@@ -40,18 +40,18 @@ public abstract class UnitController {
   }
 
   boolean canCapture(Tile selected) {
-    if (selected == null) return false;
-
-    Unit activeUnit = game.getActiveUnit();
     Terrain terrain = selected.getTerrain();
 
     if (terrain instanceof City) {
       City city = (City) terrain;
+      boolean validUnit = isUnitOn(selected) && isActiveUnitInGame();
+      boolean canCapture = city.canBeCapturedBy(unit) && !city.getOwner().isAlliedWith(unit.getOwner());
 
-      return isUnitOn(selected) && isActiveUnitInGame() &&
-              city.canBeCapturedBy(activeUnit) &&
-              !city.getOwner().isAlliedWith(activeUnit.getOwner()) &&
-              selected.getLocatableCount() == 1;
+      if (selected.isFogged()) {
+        return validUnit && canCapture;
+      } else {
+        return validUnit && canCapture && selected.getLocatableCount() == 1;
+      }
     } else {
       return false;
     }
@@ -153,7 +153,7 @@ public abstract class UnitController {
 
     if (target != null && target != unit) {
       if (selected.getLastLocatable() == unit && unit.getID() == target.getID()) {
-        if (target.getOwner() == unit.getOwner() && target.getHpPercentage() < 50) {
+        if (target.getOwner() == unit.getOwner() && target.getHpPercentage() <= 50) {
           if (target.canJoin() && unit.canJoin()) {
             if (target.canTransport()) {
               if (target.getLocatableCount() == 0 && unit.getLocatableCount() == 0) {

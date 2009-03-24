@@ -1,5 +1,6 @@
 package slick;
 
+import com.customwars.client.action.ClearInGameStateAction;
 import com.customwars.client.action.ShowPopupMenu;
 import com.customwars.client.action.game.EndTurnAction;
 import com.customwars.client.controller.ControllerManager;
@@ -22,6 +23,7 @@ import com.customwars.client.ui.sprite.TileSprite;
 import com.customwars.client.ui.state.CWInput;
 import com.customwars.client.ui.state.CWState;
 import com.customwars.client.ui.state.InGameContext;
+import org.apache.log4j.Logger;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
@@ -36,6 +38,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 public class TestInGameState extends CWState implements PropertyChangeListener, ComponentListener {
+  private static final Logger logger = Logger.getLogger(TestInGameState.class);
   private InGameContext context;
   private GameContainer gameContainer;
 
@@ -104,7 +107,7 @@ public class TestInGameState extends CWState implements PropertyChangeListener, 
 
   private void buildContextMenu() {
     showContextMenu = new ShowPopupMenu("Context menu", null);
-    showContextMenu.addAction(new EndTurnAction(), "End turn");
+    showContextMenu.addAction(new EndTurnAction(statelogic), "End turn");
   }
 
   private void initGameListeners(Game game) {
@@ -206,9 +209,8 @@ public class TestInGameState extends CWState implements PropertyChangeListener, 
             city != null && city.getOwner() == game.getActivePlayer() && city.canBuild()) {
       context.handleCityAPress(city);
     } else if (context.isDefaultMode()) {
+      context.doAction(new ClearInGameStateAction());
       showContextMenu.setLocation(cursorLocation);
-      context.clearClicks();
-      context.discartAllEdits();
       context.doAction(showContextMenu);
     }
   }
@@ -258,7 +260,7 @@ public class TestInGameState extends CWState implements PropertyChangeListener, 
         setGame(stateSession.getGame(), gameContainer);
       }
       if (key == Input.KEY_E) {
-        context.doAction("END_TURN");
+        context.doAction(new EndTurnAction(statelogic));
       }
     }
   }
@@ -299,7 +301,7 @@ public class TestInGameState extends CWState implements PropertyChangeListener, 
     PopupMenu popupMenu = (PopupMenu) abstractComponent;
     switch (popupMenu.getCurrentOption()) {
       case 0:
-        game.endTurn();
+        context.doAction(new EndTurnAction(statelogic));
         break;
     }
   }

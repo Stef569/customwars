@@ -1,44 +1,50 @@
 package com.customwars.client.model.game;
 
 import com.customwars.client.model.gameobject.City;
+import com.customwars.client.model.gameobject.GameObjectState;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
 import org.apache.log4j.Logger;
+import tools.Args;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.List;
 
 /**
  * CW Impl of a Turnbase game
- * The Players in the map will be replaced by a player from the players list.
+ * The Players in the map will be replaced by players from the players list.
  *
  * Usage:
- * Game game = new Game(map,players,gameConfig)
+ * Game game = new Game(map,players,neutralPlayer,gameConfig)
  * game.init();
  * game.startGame();
  * game.endTurn();
  * game.endTurn();
  * ...
- * game.endTurn();
+ *
+ * The game is over when
+ * The turn or day limit is reached or
+ * When the active players(not destroyed, not neutral) are allied or
+ * When there is only 1 player left
  */
-public class Game extends TurnBasedGame {
+public class Game extends TurnBasedGame implements PropertyChangeListener {
   private static final Logger logger = Logger.getLogger(Game.class);
   private Unit activeUnit;        // There can only be one active unit in a game at any time
   private int weather;            // The current weather in effect
   private int cityFunds;          // The amount of money each City produces each turn
-
   private boolean inited;         // Has this game been inited (map players replaced by game players)
-  private boolean started;        // Has the game been started (in progress)
 
-  public Game(Map<Tile> map, List<Player> players, GameConfig gameConfig) {
-    super(map, players);
+  public Game(Map<Tile> map, List<Player> players, Player neutral, GameConfig gameConfig) {
+    super(map, players, neutral, null);
     applyGameConfig(gameConfig);
   }
 
   public void applyGameConfig(GameConfig gameConfig) {
     this.weather = gameConfig.getStartWeather();
     this.cityFunds = gameConfig.getCityFunds();
-    super.turn = new Turn(0, gameConfig.getTurnLimit());
+    super.turn = new Turn(0, 1, gameConfig.getTurnLimit(), gameConfig.getDayLimit());
   }
 
   /**
@@ -56,39 +62,45 @@ public class Game extends TurnBasedGame {
         Unit unit = map.getUnitOn(t);
 
         if (city != null) {
-          if (city.getLocation() == null) {
-            throw new IllegalStateException("City @ " + t.getLocationString() + " has no location");
-          }
-          if (city.getOwner() == null) {
-            throw new IllegalStateException("City @ " + t.getLocationString() + " has no owner");
-          }
-
-          Player newOwner = getGamePlayer(city.getOwner());
-          newOwner.addCity(city);
-          city.setFunds(cityFunds);
+          initCity(city);
         }
         if (unit != null) {
-          if (t.getLocatableCount() != 1) {
-            throw new IllegalStateException("Tile @ " + t.getLocationString() + " contains " + t.getLocatableCount() + " units, limit=1");
-          }
-          if (unit.getLocation() == null) {
-            throw new IllegalStateException("Unit @ " + t.getLocationString() + " has no location");
-          }
-          if (unit.getOwner() == null) {
-            throw new IllegalStateException("Unit @ " + t.getLocationString() + " has no owner");
-          }
-
-          Player newOwner = getGamePlayer(unit.getOwner());
-          newOwner.addUnit(unit);
+          initUnit(unit);
         }
-
       }
       inited = true;
     }
   }
 
+  private void initCity(City city) {
+    Tile t = (Tile) city.getLocation();
+    Args.checkForNull(city.getLocation(), "City @ " + t.getLocationString() + " has no location");
+    Args.checkForNull(city.getOwner(), "City @ " + t.getLocationString() + " has no owner");
+
+    Player mapPlayer = city.getOwner();
+    Player newOwner = getGamePlayer(mapPlayer);
+
+    // Is this city the HQ
+    if (mapPlayer.getHq() == city) {
+      newOwner.setHq(city);
+    }
+
+    newOwner.addCity(city);
+    city.setFunds(cityFunds);
+  }
+
+  private void initUnit(Unit unit) {
+    Tile t = (Tile) unit.getLocation();
+    Args.validate(t.getLocatableCount() != 1, "Tile @ " + t.getLocationString() + " contains " + t.getLocatableCount() + " units, limit=1");
+    Args.checkForNull(unit.getLocation(), "Unit @ " + t.getLocationString() + " has no location");
+    Args.checkForNull(unit.getOwner(), "Unit @ " + t.getLocationString() + " has no owner");
+
+    Player newOwner = getGamePlayer(unit.getOwner());
+    newOwner.addUnit(unit);
+  }
+
   private Player getGamePlayer(Player dummy) {
-    Player gamePlayer = getPlayer(dummy.getId());
+    Player gamePlayer = getPlayerByID(dummy.getId());
     if (gamePlayer == null)
       throw new IllegalArgumentException("No game player found for player id " + dummy.getId());
     return gamePlayer;
@@ -98,7 +110,7 @@ public class Game extends TurnBasedGame {
    * Start the game for the first player in the players list
    */
   public void startGame() {
-    startGame(getPlayer(0));
+    startGame(getPlayerByID(0));
   }
 
   /**
@@ -107,10 +119,14 @@ public class Game extends TurnBasedGame {
    * @param gameStarter the player starting this game
    */
   public void startGame(Player gameStarter) {
-    if (!started) {
-      super.startGame(gameStarter);
-      initZones();
-      started = true;
+    super.startGame(gameStarter);
+    initZones();
+
+    for (Player player : getAllPlayers()) {
+      player.addPropertyChangeListener(this);
+      if (player.getHq() != null) {
+        player.getHq().addPropertyChangeListener(this);
+      }
     }
   }
 
@@ -131,26 +147,84 @@ public class Game extends TurnBasedGame {
     checkSupplyConditions(player);
   }
 
+  /**
+   * Search for a friendly city with a unit on the same tile.
+   * supply that unit if the player can afford the supply cost.
+   */
   private void checkSupplyConditions(Player player) {
-    for (City city : player.getAllCities()) {
-      Tile cityLocation = (Tile) city.getLocation();
-      Unit unit = map.getUnitOn(cityLocation);
+    for (Unit unit : player.getArmy()) {
+      Tile location = (Tile) unit.getLocation();
+      City city = map.getCityOn(location);
 
-      if (unit != null && city.getOwner().isAlliedWith(unit.getOwner())) {
+      if (city != null && city.getOwner().isAlliedWith(player)) {
         if (city.canSupply(unit) || city.canHeal(unit)) {
-          Player cityOwner = city.getOwner();
           int supplyCost = unit.getPrice() / unit.getHp();
 
-          if (cityOwner.isWithinBudget(supplyCost)) {
+          if (player.isWithinBudget(supplyCost)) {
             int oldSupply = unit.getSupplies();
             city.supply(unit);
             city.heal(unit);
-            cityOwner.addToBudget(-supplyCost);
-            logger.debug("Supply unit on city(" + cityLocation.getLocationString() + ") " + oldSupply + " -> " + unit.getSupplies());
+            player.addToBudget(-supplyCost);
+            logger.debug("Supplied unit on city(" + location.getLocationString() + ") " + oldSupply + " -> " + unit.getSupplies());
           }
         }
       }
     }
+  }
+
+  public void propertyChange(PropertyChangeEvent evt) {
+    String propertyName = evt.getPropertyName();
+    if (!isActive()) return;
+
+    if (evt.getSource() instanceof City) {
+      if (propertyName.equals("owner")) {
+        hqOwnerChange(evt);
+      }
+    } else if (evt.getSource() instanceof Player) {
+      if (propertyName.equals("unit")) {
+        playerUnitChange(evt);
+      }
+    }
+
+    if (isTheGameOver()) {
+      setState(GameObjectState.DESTROYED);
+    }
+  }
+
+  private void hqOwnerChange(PropertyChangeEvent evt) {
+    Player oldOwner = (Player) evt.getOldValue();
+    Player newOwner = (Player) evt.getNewValue();
+    oldOwner.destroy(newOwner);
+  }
+
+  private void playerUnitChange(PropertyChangeEvent evt) {
+    Player player = (Player) evt.getSource();
+    if (player.isActive() && player.areAllUnitsDestroyed()) {
+      player.destroy(neutralPlayer);
+    }
+  }
+
+  private boolean isTheGameOver() {
+    return getActivePlayerCount() <= 1 || isAlliedVictory();
+  }
+
+  /**
+   * @return true if all the active players in the game are from the same team
+   */
+  private boolean isAlliedVictory() {
+    List<Player> activePlayers = getActivePlayers();
+
+    if (activePlayers.isEmpty()) {
+      return true;
+    }
+
+    int team = activePlayers.get(0).getTeam();
+    for (Player player : activePlayers) {
+      if (player.getTeam() != team) {
+        return false;
+      }
+    }
+    return true;
   }
 
   public void setActiveUnit(Unit unit) {
@@ -173,15 +247,7 @@ public class Game extends TurnBasedGame {
     return weather;
   }
 
-  public int getTurnLimit() {
-    return turn.getTurnLimit();
-  }
-
   public boolean isInited() {
     return inited;
-  }
-
-  public boolean isStarted() {
-    return started;
   }
 }

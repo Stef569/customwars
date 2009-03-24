@@ -46,8 +46,8 @@ public interface Location {
   public Locatable getLastLocatable();
 
   /**
-   * @return The Locatable on this Location by array index
-   *         null if there are no Locatables on this Location.
+   * @return The Locatable on this Location by index
+   *         null if there is no Locatable on this Location.
    */
   public Locatable getLocatable(int index);
 
