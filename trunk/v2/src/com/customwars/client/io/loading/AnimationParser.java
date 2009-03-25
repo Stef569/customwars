@@ -95,11 +95,11 @@ public class AnimationParser implements DeferredResource {
 
       Animation anim;
       switch (imgType) {
-        case's':
+        case 's':
           ImageStrip imageStrip = imageLib.getSlickImgStrip(imgName);
           anim = parseImagestripAnimations(cmdScanner, imageStrip, frameDuration);
           break;
-        case'm':
+        case 'm':
           SpriteSheet spriteSheet = imageLib.getSlickSpriteSheet(imgName);
           anim = parseImageSpriteSheetAnimation(cmdScanner, spriteSheet, frameDuration);
           break;

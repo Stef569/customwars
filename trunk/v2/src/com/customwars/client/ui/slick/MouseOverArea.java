@@ -282,7 +282,7 @@ public class MouseOverArea extends BasicComponent {
 
   /**
    * @see org.newdawn.slick.gui.AbstractComponent#render(org.newdawn.slick.gui.GUIContext,
-   *org.newdawn.slick.Graphics)
+   *      org.newdawn.slick.Graphics)
    */
   public void render(GUIContext container, Graphics g) {
     if (currentImage != null) {
