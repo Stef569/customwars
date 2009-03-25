@@ -1,6 +1,7 @@
 package com.customwars.client.io.loading;
 
-import static com.customwars.client.io.ErrConstants.*;
+import static com.customwars.client.io.ErrConstants.ERR_READING_LINE;
+import static com.customwars.client.io.ErrConstants.ERR_WRONG_NUM_ARGS;
 import com.customwars.client.io.img.ImageLib;
 import com.customwars.client.io.img.slick.ImageStrip;
 import com.customwars.client.io.img.slick.SpriteSheet;
