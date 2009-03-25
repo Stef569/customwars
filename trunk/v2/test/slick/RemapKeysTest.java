@@ -13,7 +13,7 @@ import org.newdawn.slick.command.MouseButtonControl;
 import org.newdawn.slick.gui.TextField;
 import org.newdawn.slick.state.StateBasedGame;
 
-import java.awt.Point;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,18 +23,18 @@ import java.util.List;
  * @author stefan
  */
 public class RemapKeysTest extends CWState {
-  private List<TextField> fields = new ArrayList<TextField>();
+    private List<TextField> fields = new ArrayList<TextField>();
 
-  private TextField activeField;
-  private InputState inputState;
+    private TextField activeField;
+    private InputState inputState;
 
-  private enum InputState {
-    SELECTING, MAPPING
-  }
+    private enum InputState {
+        SELECTING, MAPPING
+    }
 
-  public void init(GameContainer container, StateBasedGame game) throws SlickException {
-    int lines = 0;
-    Point startPoint = new Point(50, 100);
+    public void init(GameContainer container, StateBasedGame game) throws SlickException {
+        int lines = 0;
+        Point startPoint = new Point(50, 100);
 
 //    for (Command command : input.getCommands()) {
 //      TextField field = new TextField(container, container.getGraphics().getFont(), 150, 20, 500, 35, new ComponentListener() {
@@ -48,71 +48,71 @@ public class RemapKeysTest extends CWState {
 //      field.setLocation(startPoint.x, startPoint.y + (lines * field.getHeight()));
 //      lines++;
 //    }
-  }
-
-  public void render(GameContainer container, Graphics g) throws SlickException {
-    g.drawString("Press key to change", 10, 45);
-
-    for (TextField field : fields) {
-      field.render(container, g);
-    }
-  }
-
-  public void update(GameContainer container, int delta) throws SlickException {
-    boolean foundActiveField = false;
-
-    // find the field that has been clicked on, store it
-    for (TextField field : fields) {
-      if (field.hasFocus()) {
-        inputState = InputState.MAPPING;
-        activeField = field;
-        activeField.setAcceptingInput(false);
-        foundActiveField = true;
-      }
     }
 
-    if (!foundActiveField) {
-      activeField = null;
-      inputState = InputState.SELECTING;
+    public void render(GameContainer container, Graphics g) throws SlickException {
+        g.drawString("Press key to change", 10, 45);
+
+        for (TextField field : fields) {
+            field.render(container, g);
+        }
     }
-  }
 
-  public void controlPressed(Command command, CWInput cwInput) {
-  }
+    public void update(GameContainer container, int delta) throws SlickException {
+        boolean foundActiveField = false;
 
-  public void mousePressed(int button, int x, int y) {
-    if (activeField != null) {
-      int id = fields.indexOf(activeField);
-      bind(new MouseButtonControl(button), null);
+        // find the field that has been clicked on, store it
+        for (TextField field : fields) {
+            if (field.hasFocus()) {
+                inputState = InputState.MAPPING;
+                activeField = field;
+                activeField.setAcceptingInput(false);
+                foundActiveField = true;
+            }
+        }
+
+        if (!foundActiveField) {
+            activeField = null;
+            inputState = InputState.SELECTING;
+        }
     }
-  }
 
-  public void keyPressed(int key, char c) {
-    if (activeField != null && inputState == InputState.MAPPING)
-      if (key == Input.KEY_BACK) {
-        unBind(new KeyControl(key));
-      } else {
-        int id = fields.indexOf(activeField);
-        //bind(new KeyControl(key), commands.get(id));
-      }
-  }
+    public void controlPressed(Command command, CWInput cwInput) {
+    }
 
-  private void bind(Control control, Command command) {
-    System.out.println("Binding " + control + " to " + command);
-    cwInput.bindCommand(control, command);
-    activeField.setFocus(false);
-    inputState = InputState.SELECTING;
-  }
+    public void mousePressed(int button, int x, int y) {
+        if (activeField != null) {
+            int id = fields.indexOf(activeField);
+            bind(new MouseButtonControl(button), null);
+        }
+    }
 
-  private void unBind(Control control) {
-    System.out.println("unBinding " + control);
-    cwInput.unbindCommand(control);
-    activeField.setFocus(false);
-    activeField.setAcceptingInput(true);
-    inputState = InputState.SELECTING;
-  }
+    public void keyPressed(int key, char c) {
+        if (activeField != null && inputState == InputState.MAPPING)
+            if (key == Input.KEY_BACK) {
+                unBind(new KeyControl(key));
+            } else {
+                int id = fields.indexOf(activeField);
+                //bind(new KeyControl(key), commands.get(id));
+            }
+    }
 
-  public int getID() {
-    return 2;
-  }
+    private void bind(Control control, Command command) {
+        System.out.println("Binding " + control + " to " + command);
+        cwInput.bindCommand(control, command);
+        activeField.setFocus(false);
+        inputState = InputState.SELECTING;
+    }
+
+    private void unBind(Control control) {
+        System.out.println("unBinding " + control);
+        cwInput.unbindCommand(control);
+        activeField.setFocus(false);
+        activeField.setAcceptingInput(true);
+        inputState = InputState.SELECTING;
+    }
+
+    public int getID() {
+        return 2;
+    }
 }
