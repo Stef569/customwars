@@ -7,7 +7,6 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
-import org.newdawn.slick.Input;
 import org.newdawn.slick.Music;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.Sound;
@@ -17,10 +16,8 @@ import org.newdawn.slick.gui.ComponentListener;
 import org.newdawn.slick.state.StateBasedGame;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Crecen
+ * @author Crecen
  */
-
 public class TestMenu extends CWState implements ComponentListener {
   private Music backgroundMusic;
   private Sound menuTickSound;
@@ -69,7 +66,7 @@ public class TestMenu extends CWState implements ComponentListener {
 
   public void render(GameContainer gameContainer, Graphics g) throws SlickException {
     g.drawImage(image, 0, 0);
-    g.setColor(new Color(Color.white));
+    g.setColor(Color.white);
     g.drawString("ENTER: TO GO BACK TO MENU", 400, 10);
     testmenu.render(gameContainer, g);
     g.setColor(new Color(Color.darkGray));
@@ -87,24 +84,18 @@ public class TestMenu extends CWState implements ComponentListener {
         g.drawString("Tests whether a turn can end", 210, 440);
         break;
     }
-    g.setColor(new Color(Color.white));
+    g.setColor(Color.white);
   }
 
   public void update(GameContainer gameContainer, int elapsedTime) throws SlickException {
   }
 
   public void controlPressed(Command command, CWInput cwInput) {
-    if (cwInput.isSelectPressed(command)) {
-      menuTickSound.play();
+    if (cwInput.isToggleMusicPressed(command)) {
+      super.toggleMusic(backgroundMusic);
     }
 
     testmenu.controlPressed(command, cwInput);
-  }
-
-  public void keyReleased(int key, char c) {
-    if (key == Input.KEY_S) {
-      super.toggleMusic(backgroundMusic);
-    }
   }
 
   public void mouseClicked(int button, int x, int y, int clickCount) {

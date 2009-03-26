@@ -20,8 +20,8 @@ public class CWInput extends InputProvider {
   private Command select = new BasicCommand("Select");
   private Command cancel = new BasicCommand("Cancel");
   private Command exit = new BasicCommand("Exit");
-  private Command down = new BasicCommand("Up");
-  private Command up = new BasicCommand("Down");
+  private Command down = new BasicCommand("Down");
+  private Command up = new BasicCommand("Up");
   private Command left = new BasicCommand("Left");
   private Command right = new BasicCommand("Right");
   private Command toggleMusic = new BasicCommand("Toggle Music");

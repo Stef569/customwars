@@ -107,6 +107,7 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
 
   private void handleGlobalInput(Command command) {
     if (cwInput.isExitPressed(command)) {
+      logger.debug("Exit");
       gameContainer.exit();
     }
   }
