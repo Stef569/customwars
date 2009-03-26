@@ -171,6 +171,10 @@ public class Player extends GameObject {
     firePropertyChange("unit", unit, null);
   }
 
+  /**
+   * @return a list of each unit owned by this player,
+   *         note that this includes units inside transports!
+   */
   public Iterable<Unit> getArmy() {
     return new Iterable<Unit>() {
       public Iterator<Unit> iterator() {

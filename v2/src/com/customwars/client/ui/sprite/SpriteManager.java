@@ -48,6 +48,7 @@ public class SpriteManager implements PropertyChangeListener {
   private ImageStrip unitDecorationStrip;
 
   private TileSprite activeCursor;
+  private Color neutralColor = Color.GRAY;
 
   public SpriteManager() {
     cursorSprites = new HashMap<String, TileSprite>();
@@ -285,10 +286,24 @@ public class SpriteManager implements PropertyChangeListener {
 
   private void recolorCitySprite(CitySprite sprite, Color c, int cityID) {
     Animation animActive = resources.getCityAnim(cityID, c);
-    Animation animFogged = resources.getCityAnim(cityID, c, AnimLib.ANIM_INACTIVE);
+    Animation animFogged = getFoggedCityAnim(sprite.isHQ(), c, cityID);
     sprite.setAnimActive(animActive);
     sprite.setAnimFogged(animFogged);
     sprite.updateAnim();
+  }
+
+  /**
+   * The HQ owner color is always visible, even in fow
+   * all other cities are neutral until the city is within the player vision range.
+   */
+  private Animation getFoggedCityAnim(boolean hq, Color c, int cityID) {
+    Animation animFogged;
+    if (hq) {
+      animFogged = resources.getCityAnim(cityID, c, AnimLib.ANIM_INACTIVE);
+    } else {
+      animFogged = resources.getCityAnim(cityID, neutralColor, AnimLib.ANIM_INACTIVE);
+    }
+    return animFogged;
   }
 
   public void addCitySprite(City city, CitySprite citySprite) {
@@ -317,6 +332,10 @@ public class SpriteManager implements PropertyChangeListener {
   public void addCursor(String name, TileSprite cursorSprite) {
     cursorSprite.setRenderInCenter(true);
     this.cursorSprites.put(name.toUpperCase(), cursorSprite);
+  }
+
+  public void setNeutralColor(Color neutralColor) {
+    this.neutralColor = neutralColor;
   }
 
   public Location getCursorLocation() {

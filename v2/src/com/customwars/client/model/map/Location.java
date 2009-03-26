@@ -56,4 +56,9 @@ public interface Location {
   public int getCol();
 
   public int getRow();
+
+  /**
+   * @return a short string identifying this location
+   */
+  String getLocationString();
 }

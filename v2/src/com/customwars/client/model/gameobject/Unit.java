@@ -1,10 +1,12 @@
 package com.customwars.client.model.gameobject;
 
+import com.customwars.client.model.Attacker;
+import com.customwars.client.model.Defender;
+import com.customwars.client.model.Fight;
 import com.customwars.client.model.TurnHandler;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.map.Direction;
 import com.customwars.client.model.map.Location;
-import com.customwars.client.model.map.UnitFight;
 import com.customwars.client.model.map.path.MoveStrategy;
 import com.customwars.client.model.map.path.Mover;
 import tools.Args;
@@ -20,7 +22,7 @@ import java.util.List;
  *
  * @author Stefan
  */
-public class Unit extends GameObject implements Mover, Location, TurnHandler {
+public class Unit extends GameObject implements Mover, Location, TurnHandler, Attacker, Defender {
   public static final Direction DEFAULT_ORIENTATION = Direction.EAST;
   private static final int MAX_EXP = 10;
   private int id;               // The unit Type ie(1->INF, 2->APC,...)
@@ -156,8 +158,8 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler {
    * Facing east, Active state, no exp
    */
   void reset() {
-    restock();
     resupply();
+    hp = maxHp;
     experience = 0;
     setOrientation(DEFAULT_ORIENTATION);
     setState(GameObjectState.ACTIVE);
@@ -195,11 +197,12 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler {
 
   /**
    * Restore
-   * supplies, hp to the maximum
+   * supplies to max
+   * ammo to max
    */
-  private void resupply() {
-    hp = maxHp;
+  public void resupply() {
     supplies = maxSupplies;
+    restock();
   }
 
   // ----------------------------------------------------------------------------
@@ -239,7 +242,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler {
    * This unit is the attacker
    * and attacking the defender
    */
-  public void attack(Unit defender, UnitFight fight) {
+  public void attack(Defender defender, Fight fight) {
     if (canAttack(defender)) {
       defender.defend(this, fight);
       if (defender.isDestroyed()) {
@@ -250,14 +253,14 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler {
     }
   }
 
-  public boolean canAttack(Unit defender) {
+  public boolean canAttack(Defender defender) {
     return canFire() && !isDestroyed() &&
             defender != null && !defender.isDestroyed() &&
             !defender.getOwner().isAlliedWith(owner);
   }
 
-  public void defend(Unit attacker, UnitFight fight) {
-    receiveDamage(attacker, fight);
+  public void defend(Attacker attacker, Fight fight) {
+    receiveDamage(fight);
 
     if (hp <= 0) {
       destroy();
@@ -265,7 +268,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler {
     }
 
     if (fight.canCounterAttack(attacker, this)) {
-      fight.counterAttack(attacker);
+      fight.counterAttack();
     }
   }
 
@@ -273,8 +276,8 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler {
    * This unit is the defender
    * and receives damage from a Fight.
    */
-  public void receiveDamage(Unit attacker, UnitFight fight) {
-    int attackValue = fight.calcAttackDamage();
+  public void receiveDamage(Fight fight) {
+    int attackValue = fight.calcAttackDamage(this);
     addHp(-attackValue);
   }
 
@@ -294,6 +297,10 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler {
 
   public int getRow() {
     return location.getRow();
+  }
+
+  public String getLocationString() {
+    return location.getLocationString();
   }
 
   public Locatable getLastLocatable() {
@@ -356,17 +363,27 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler {
   }
 
   public boolean canSupply(Unit unit) {
-    return unit != null && canSupply;
+    return canSupply && unit != null && supplies != maxSupplies && owner == unit.getOwner();
   }
 
-  public void heal(Unit unit) {
-    if (canHeal(unit)) {
-      unit.addHp(hp);
+  public void heal(int healRate) {
+    int healCost = getHealCost(healRate);
+    if (canHeal(healCost)) {
+      addHp(healRate);
+      owner.addToBudget(-healCost);
     }
   }
 
-  public boolean canHeal(Unit unit) {
-    return unit != null && canHeal;
+  public boolean canHeal(int healCost) {
+    return canHeal && hp != maxHp && owner.isWithinBudget(healCost);
+  }
+
+  private int getHealCost(int healRate) {
+    int healAmount = maxHp - hp;
+    if (healAmount > healRate) {
+      healAmount = healRate;
+    }
+    return healAmount * (price / maxHp);
   }
 
   // ---------------------------------------------------------------------------
@@ -712,6 +729,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler {
     if (owner != null) strBuilder.append(" owner=").append(owner);
     if (transport != null)
       strBuilder.append(" transport=").append(transport);
+    strBuilder.append(" UnitState=").append(unitState).append(" state=").append(getState());
     strBuilder.append("]");
     return strBuilder.toString();
   }

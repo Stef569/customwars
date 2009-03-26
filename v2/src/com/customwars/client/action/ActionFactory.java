@@ -1,5 +1,6 @@
 package com.customwars.client.action;
 
+import com.customwars.client.action.game.EndTurnAction;
 import com.customwars.client.action.unit.AddUnitToTileAction;
 import com.customwars.client.action.unit.AttackAction;
 import com.customwars.client.action.unit.CaptureAction;
@@ -13,6 +14,7 @@ import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Tile;
+import com.customwars.client.ui.state.StateLogic;
 
 import java.util.List;
 
@@ -94,5 +96,12 @@ public class ActionFactory {
     addToTileAction.add(new WaitAction(unit));
     addToTileAction.add(new ClearInGameStateAction());
     return addToTileAction;
+  }
+
+  public static CWAction buildEndTurnAction(StateLogic statelogic) {
+    ActionBag endTurnAction = new ActionBag("End Turn");
+    endTurnAction.add(new EndTurnAction(statelogic));
+    endTurnAction.add(new ClearInGameStateAction());
+    return endTurnAction;
   }
 }

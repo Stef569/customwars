@@ -1,8 +1,8 @@
 package slick;
 
+import com.customwars.client.action.ActionFactory;
 import com.customwars.client.action.ClearInGameStateAction;
 import com.customwars.client.action.ShowPopupMenu;
-import com.customwars.client.action.game.EndTurnAction;
 import com.customwars.client.controller.ControllerManager;
 import com.customwars.client.io.img.slick.ImageStrip;
 import com.customwars.client.model.game.Game;
@@ -14,7 +14,6 @@ import com.customwars.client.model.map.Tile;
 import com.customwars.client.model.map.path.MoveTraverse;
 import com.customwars.client.ui.Camera2D;
 import com.customwars.client.ui.HUD;
-import com.customwars.client.ui.PopupMenu;
 import com.customwars.client.ui.Scroller;
 import com.customwars.client.ui.renderer.MapRenderer;
 import com.customwars.client.ui.renderer.ModelEventsRenderer;
@@ -29,15 +28,13 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.command.Command;
-import org.newdawn.slick.gui.AbstractComponent;
-import org.newdawn.slick.gui.ComponentListener;
 import org.newdawn.slick.state.StateBasedGame;
 
 import java.awt.Dimension;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-public class TestInGameState extends CWState implements PropertyChangeListener, ComponentListener {
+public class TestInGameState extends CWState implements PropertyChangeListener {
   private static final Logger logger = Logger.getLogger(TestInGameState.class);
   private InGameContext context;
   private GameContainer gameContainer;
@@ -50,7 +47,6 @@ public class TestInGameState extends CWState implements PropertyChangeListener, 
 
   // MODEL
   private Game game;
-  private ShowPopupMenu showContextMenu;
 
   public TestInGameState() {
     this.mapRenderer = new MapRenderer();
@@ -101,13 +97,7 @@ public class TestInGameState extends CWState implements PropertyChangeListener, 
     initCamera(map, container);
     mapRenderer.setScroller(new Scroller(camera));
 
-    buildContextMenu();
     game.startGame();
-  }
-
-  private void buildContextMenu() {
-    showContextMenu = new ShowPopupMenu("Context menu", null);
-    showContextMenu.addAction(new EndTurnAction(statelogic), "End turn");
   }
 
   private void initGameListeners(Game game) {
@@ -128,6 +118,7 @@ public class TestInGameState extends CWState implements PropertyChangeListener, 
     mapRenderer.addCursor("SELECT", selectCursor);
     mapRenderer.addCursor("ATTACK", aimCursor);
     mapRenderer.activateCursor("SELECT");
+    mapRenderer.setNeutralColor(game.getNeutralColor());
     mapRenderer.setMap(map);
     hud.moveOverTile(mapRenderer.getCursorLocation(), true);
   }
@@ -210,9 +201,18 @@ public class TestInGameState extends CWState implements PropertyChangeListener, 
       context.handleCityAPress(city);
     } else if (context.isDefaultMode()) {
       context.doAction(new ClearInGameStateAction());
+      ShowPopupMenu showContextMenu = buildContextMenu();
       showContextMenu.setLocation(cursorLocation);
       context.doAction(showContextMenu);
+    } else {
+      logger.warn("could not handle A press");
     }
+  }
+
+  private ShowPopupMenu buildContextMenu() {
+    ShowPopupMenu showContextMenu = new ShowPopupMenu("Context menu", null);
+    showContextMenu.addAction(ActionFactory.buildEndTurnAction(statelogic), "End turn");
+    return showContextMenu;
   }
 
   private void handleB(Unit activeUnit, Unit selectedUnit) {
@@ -260,7 +260,7 @@ public class TestInGameState extends CWState implements PropertyChangeListener, 
         setGame(stateSession.getGame(), gameContainer);
       }
       if (key == Input.KEY_E) {
-        context.doAction(new EndTurnAction(statelogic));
+        context.doAction(ActionFactory.buildEndTurnAction(statelogic));
       }
     }
   }
@@ -291,18 +291,6 @@ public class TestInGameState extends CWState implements PropertyChangeListener, 
       if (game.isGameOver()) {
         changeGameState("GAME_OVER");
       }
-    }
-  }
-
-  /**
-   * A click on a menu item in the context menu
-   */
-  public void componentActivated(AbstractComponent abstractComponent) {
-    PopupMenu popupMenu = (PopupMenu) abstractComponent;
-    switch (popupMenu.getCurrentOption()) {
-      case 0:
-        context.doAction(new EndTurnAction(statelogic));
-        break;
     }
   }
 }

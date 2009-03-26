@@ -12,10 +12,12 @@ import java.util.NoSuchElementException;
 /**
  * Data is stored as a 2-dimensional array containing references to Location objects
  * A List is used because it has generic support.
- * Each location represents a tile square of equal height and width of tileSize.
+ * The map consists of a grid of rectangular tiles. Tiles have 4 neighbours(North, East, South, West).
+ * Each tile has a height and width in pixels of tileSize.
  * There are various ways to iterate over the tiles:
- * All tiles of this map or surrounding tiles around a center tile within a min/max range.
- * This class should not contain game specific objects, it only knows about Location objects.
+ * All tiles of this map, surrounding tiles around a center tile within a range
+ * surrounding tiles in a square around a center within a range.
+ * This class should not contain game specific logic, it only knows about Location objects.
  *
  * @author Stefan
  * @see Location
@@ -39,11 +41,14 @@ public class TileMap<T extends Location> extends GameObject {
     this.rows = rows;
     this.tileSize = tileSize;
     this.tiles = new ArrayList<List<T>>(cols);
-    initMap();
+    initTiles();
     validateMapState(false);
   }
 
-  public void initMap() {
+  /**
+   * Fills the map with null tiles
+   */
+  private void initTiles() {
     tiles.clear();
     for (int col = 0; col < cols; col++) {
       ArrayList<T> rowList = new ArrayList<T>(rows);
@@ -55,7 +60,7 @@ public class TileMap<T extends Location> extends GameObject {
   }
 
   /**
-   * Validate the vars set for this map
+   * Validate this map
    *
    * @param validateTiles if all the tiles in the map should be checked
    * @throws IllegalStateException when the map is not valid
@@ -83,9 +88,9 @@ public class TileMap<T extends Location> extends GameObject {
   }
 
   /**
-   * Teleports the locatable from Location <tt>from<tt> to Location <tt>to<tt>
-   * <tt>from<tt> should contain the locatable, else the teleport action will not be executed
-   * if <tt>to<tt> already contains a Locatable then locatable is added to <to>.
+   * Teleports the locatable from Location <tt>from</tt> to Location <tt>to</tt>
+   * <tt>from</tt> should contain the locatable, else the teleport action will not be executed
+   * if <tt>to</tt> already contains a Locatable then locatable is added to <tt>to</tt>.
    */
   public void teleport(Location from, Location to, Locatable locatable) {
     if (from.contains(locatable)) {
@@ -119,9 +124,8 @@ public class TileMap<T extends Location> extends GameObject {
   }
 
   /**
-   * Return all the Locations surrounding <TT>center<TT> within the <TT>min, max range<TT>.
-   * The center is not included.
-   * <p/>
+   * Return all the tiles surrounding <tt>center</tt> within the <tt>min, max</tt> range.
+   * The center is not included.</p>
    * Based on the range an AdjacentIterator or CircleIterator is returned.
    * if center is not valid then an empty Iterator is returned
    *
@@ -211,7 +215,7 @@ public class TileMap<T extends Location> extends GameObject {
     };
   }
 
-  public Iterable<T> emptyIterator() {
+  private Iterable<T> emptyIterator() {
     return new Iterable<T>() {
       public Iterator<T> iterator() {
 
@@ -531,6 +535,11 @@ public class TileMap<T extends Location> extends GameObject {
     setTile(col, row, newTile);
   }
 
+  /**
+   * @param col     column in the map where the newTile shoud be placed
+   * @param row     row in the map where the newTile should be placed
+   * @param newTile the tile to add to the map
+   */
   public void setTile(int col, int row, T newTile) {
     T oldVal = tiles.get(col).get(row);
     tiles.get(col).set(row, newTile);
@@ -549,14 +558,23 @@ public class TileMap<T extends Location> extends GameObject {
     return rows;
   }
 
+  /**
+   * @return The total amount of tiles
+   */
   public int countTiles() {
     return rows * cols;
   }
 
+  /**
+   * @return The width in pixels
+   */
   public int getWidth() {
     return cols * tileSize;
   }
 
+  /**
+   * The height in pixels
+   */
   public int getHeight() {
     return rows * tileSize;
   }
@@ -567,10 +585,19 @@ public class TileMap<T extends Location> extends GameObject {
     return getTile(randCol, randRow);
   }
 
+  /**
+   * @param loc the location(col,row) to retrieve the tile
+   * @return the tile @ col, row or null if the location col, row coordinates are outside the map bounds
+   */
   public T getTile(Location loc) {
     return getTile(loc.getCol(), loc.getRow());
   }
 
+  /**
+   * @param col column to retrieve the tile from
+   * @param row row to retrieve the tile from
+   * @return the tile @ col, row or null if the col, row coordinates are outside the map bounds
+   */
   public T getTile(int col, int row) {
     if (isWithinMapBounds(col, row)) {
       return tiles.get(col).get(row);
@@ -610,7 +637,7 @@ public class TileMap<T extends Location> extends GameObject {
   }
 
   /**
-   * What direction is the baseTile relative to the adjacentTile
+   * What direction is the baseTile relative to the adjacentTile.
    * if <code>adjacentTile</code> is not adjacent or null Direction.STILL is returned.
    *
    * @return The Direction of adjacentTile relative to baseTile.

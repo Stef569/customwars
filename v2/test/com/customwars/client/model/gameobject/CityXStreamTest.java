@@ -96,18 +96,4 @@ public class CityXStreamTest {
     Assert.assertEquals("Factory", city.getName());
     Assert.assertEquals(1, city.getVision());
   }
-
-  @Test
-  public void testCityDefaults() {
-    String inValidCityXml = "<city id='0' name='Factory'>" +
-            "  <moveCosts/>" +
-            "</city>";
-    City city = (City) xStream.fromXML(inValidCityXml);
-    CityFactory.addCity(city);
-    CityFactory.getRandomCity();
-
-    // Default to 0, if not in xml
-    Assert.assertEquals(0, city.getMinSupplyRange());
-    Assert.assertEquals(0, city.getMaxSupplyRange());
-  }
 }

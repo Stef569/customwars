@@ -1,5 +1,6 @@
 package com.customwars.client.model.map;
 
+import com.customwars.client.model.Attacker;
 import com.customwars.client.model.TurnHandler;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.City;
@@ -94,11 +95,11 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
       Unit unit = getUnitOn(t);
 
       if (unit != null) {
+        unit.setState(GameObjectState.IDLE);
+
         if (unit.getOwner() == player) {
-          unit.setState(GameObjectState.ACTIVE);
           unit.setUnitState(UnitState.IDLE);
-        } else {
-          unit.setState(GameObjectState.IDLE);
+          unit.setState(GameObjectState.ACTIVE);
         }
       }
     }
@@ -108,7 +109,7 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
    * Retrieve a list of units in supply range of the supplier
    *
    * @param supplier The supplier of which we want to retrieve the suppliables units in range for
-   * @return units in supply range of supplier that can be healed and supplied
+   * @return units in supply range of supplier that can be supplied
    */
   public List<Unit> getSuppliablesInRange(Unit supplier) {
     List<Unit> units = new ArrayList<Unit>();
@@ -119,8 +120,7 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
       Unit unitInRange = getUnitOn(t);
 
       if (unitInRange != null) {
-        if (supplier.getOwner().isAlliedWith(unitInRange.getOwner()) &&
-                supplier.canSupply(unitInRange) && supplier.canHeal(unitInRange)) {
+        if (supplier.canSupply(unitInRange)) {
           units.add(unitInRange);
         }
       }
@@ -132,7 +132,7 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
    * @param attacker The Attacker of which we want to retrieve the enemies in range for
    * @return units in attackRange of attacker.
    */
-  public List<Unit> getEnemiesInRangeOf(Unit attacker) {
+  public List<Unit> getEnemiesInRangeOf(Attacker attacker) {
     return getEnemiesInRangeOf(attacker, attacker.getLocation());
   }
 
@@ -141,7 +141,7 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
    * @param center   The center to iterate around
    * @return units in attackRange of attacker.
    */
-  public List<Unit> getEnemiesInRangeOf(Unit attacker, Location center) {
+  public List<Unit> getEnemiesInRangeOf(Attacker attacker, Location center) {
     List<Unit> units = new ArrayList<Unit>();
     int minAttackRange = attacker.getMinAttackRange();
     int maxAttackRange = attacker.getMaxAttackRange();
@@ -166,7 +166,7 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
   /**
    * Build a zone in which the Unit can attack
    */
-  public void buildAttackZone(Unit attacker) {
+  public void buildAttackZone(Attacker attacker) {
     List<Location> attackZone = new ArrayList<Location>();
     int minAttRange = attacker.getMinAttackRange();
     int maxAttRange = attacker.getMaxAttackRange();
@@ -182,18 +182,18 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
   /**
    * Determines if a Location is in the attacker's firing range
    */
-  public boolean inFireRange(Mover mover, Location mapLocation, int minAttackRange, int maxAttackRange) {
+  public boolean inFireRange(Attacker attacker, Location mapLocation, int minAttackRange, int maxAttackRange) {
     if (maxAttackRange <= 0) return false;
-    int t = Math.abs(mapLocation.getRow() - mover.getLocation().getRow()) +
-            Math.abs(mapLocation.getCol() - mover.getLocation().getCol());
+    int t = Math.abs(mapLocation.getRow() - attacker.getLocation().getRow()) +
+            Math.abs(mapLocation.getCol() - attacker.getLocation().getCol());
 
     //Indirects
     if (minAttackRange > 1) {
       return t >= minAttackRange && t <= maxAttackRange;
     } else {
       //Directs
-      if (mover.isWithinMoveZone(mapLocation)) return true;
-      for (Location moveZoneLocation : mover.getMoveZone()) {
+      if (attacker.isWithinMoveZone(mapLocation)) return true;
+      for (Location moveZoneLocation : attacker.getMoveZone()) {
         if (isAdjacent(mapLocation, moveZoneLocation)) return true;
       }
     }
