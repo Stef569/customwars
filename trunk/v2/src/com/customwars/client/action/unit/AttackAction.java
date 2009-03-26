@@ -3,7 +3,7 @@ package com.customwars.client.action.unit;
 import com.customwars.client.action.DirectAction;
 import com.customwars.client.controller.ControllerManager;
 import com.customwars.client.model.gameobject.Unit;
-import com.customwars.client.model.map.UnitFight;
+import com.customwars.client.model.gameobject.UnitFight;
 import com.customwars.client.ui.state.InGameContext;
 
 /**
@@ -36,7 +36,7 @@ public class AttackAction extends DirectAction {
 
   /**
    * @param attacker The unit that is attacking
-   * @param defender The Unit that is under attacked
+   * @param defender The Unit that is under attack
    */
   public void attackUnit(Unit attacker, Unit defender) {
     unitFight.initAttack(attacker, defender);

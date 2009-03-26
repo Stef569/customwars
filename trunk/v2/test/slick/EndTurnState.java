@@ -5,21 +5,24 @@ import com.customwars.client.model.game.Player;
 import com.customwars.client.ui.state.CWState;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
 
 /**
  * Show information about the next turn
+ * and end the current turn when the delay has passed
  */
 public class EndTurnState extends CWState {
   private static final int END_TURN_DELAY = 250;
   private int time;
+  private Game game;
 
   public void init(GameContainer gameContainer, StateBasedGame stateBasedGame) throws SlickException {
   }
 
-  public void render(GameContainer container, org.newdawn.slick.Graphics g) throws SlickException {
-    Game game = stateSession.getGame();
+  public void render(GameContainer container, Graphics g) throws SlickException {
+    game = stateSession.getGame();
     g.setColor(Color.white);
 
     Player nextActivePlayer = game.getNextActivePlayer(game.getActivePlayer());
@@ -31,7 +34,7 @@ public class EndTurnState extends CWState {
     time += delta;
     if (time >= END_TURN_DELAY) {
       changeGameState("IN_GAME");
-      //actionManager.doAction("END_TURN");
+      game.endTurn();
       time = 0;
     }
   }

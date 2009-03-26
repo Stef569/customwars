@@ -6,9 +6,9 @@ import com.customwars.client.model.gameobject.Terrain;
 import com.customwars.client.model.gameobject.TerrainFactory;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.gameobject.UnitFactory;
+import com.customwars.client.model.gameobject.UnitFight;
 import com.customwars.client.model.gameobject.Weapon;
 import com.customwars.client.model.gameobject.WeaponFactory;
-import com.customwars.client.model.map.UnitFight;
 
 import java.util.Arrays;
 import java.util.List;
@@ -69,20 +69,20 @@ public class TestData {
   private static Unit mech = new Unit(1, "Mech", "", 3000, 3, 3, UNIT_MAX_HP, MAX_UNIT_SUPPLIES, 0, 0, true, false, false, false, false, true, null, ARMY_BRANCH_GROUND, MOVE_MECH, 0, 0);
   private static Unit apc = new Unit(3, "Apc", "", 8000, 5, 1, UNIT_MAX_HP, MAX_UNIT_SUPPLIES, 3, 0, false, false, true, true, true, true, Arrays.asList(MOVE_INF, MOVE_MECH), ARMY_BRANCH_GROUND, MOVE_TREAD, 1, 1);
   private static Unit tank = new Unit(4, "Tank", "", 7000, 6, 3, UNIT_MAX_HP, MAX_UNIT_SUPPLIES, 0, 0, false, false, false, false, false, true, null, ARMY_BRANCH_GROUND, MOVE_TREAD, 0, 0);
-  private static Unit rocket = new Unit(7, "Rockets", "", 15000, 2, 1, UNIT_MAX_HP, MAX_UNIT_SUPPLIES, 0, 0, false, false, false, false, true, false, null, ARMY_BRANCH_GROUND, MOVE_TREAD, 0, 0);
-  private static Unit artillery = new Unit(9, "Artillery", "", 4000, 3, 1, UNIT_MAX_HP, MAX_UNIT_SUPPLIES, 0, 0, false, false, false, false, false, true, null, ARMY_BRANCH_GROUND, MOVE_TREAD, 0, 0);
+  private static Unit rocket = new Unit(7, "Rockets", "", 14000, 5, 1, UNIT_MAX_HP, MAX_UNIT_SUPPLIES, 0, 0, false, false, false, false, false, false, null, ARMY_BRANCH_GROUND, MOVE_TIRES, 0, 0);
+  private static Unit artillery = new Unit(9, "Artillery", "", 6000, 5, 1, UNIT_MAX_HP, 50, 0, 0, false, false, false, false, false, true, null, ARMY_BRANCH_GROUND, MOVE_TREAD, 0, 0);
 
   // Weapons
   private static Weapon smg = new Weapon(0, "smg", "", 1500, 1, 1, Weapon.UNLIMITED_AMMO, false);
   private static Weapon tankCannon = new Weapon(1, "Tank Cannon", "nonee", 1500, 1, 1, 9, false);
   private static Weapon cannon = new Weapon(2, "Cannon", "nonee", 1500, 2, 3, 9, false);
-  private static Weapon rockets = new Weapon(3, "rockets", "nonee", 1500, 3, 6, 9, false);
+  private static Weapon rockets = new Weapon(3, "rockets", "nonee", 1500, 3, 5, 6, false);
   private static Weapon artilleryCannon = new Weapon(4, "Cannon", "nonee", 1500, 2, 3, 9, false);
 
   // City
-  private static City base = new City(0, "Base", "", 0, 0, plainMoveCosts, 1, true, Arrays.asList(ARMY_BRANCH_GROUND), Arrays.asList(INF, MECH), null, 20, CITY_HEAL_RATE, 0, 0);
-  private static City factory = new City(1, "Factory", "", 0, 0, plainMoveCosts, 1, true, Arrays.asList(ARMY_BRANCH_GROUND), Arrays.asList(INF, MECH), Arrays.asList(ARMY_BRANCH_GROUND), 20, CITY_HEAL_RATE, 0, 0);
-  private static City hq = new City(4, "HQ", "", 0, 0, plainMoveCosts, 1, true, Arrays.asList(ARMY_BRANCH_GROUND), Arrays.asList(INF, MECH), null, 20, CITY_HEAL_RATE, 0, 0);
+  private static City base = new City(0, "Base", "", 0, 0, plainMoveCosts, 1, true, Arrays.asList(ARMY_BRANCH_GROUND), Arrays.asList(INF, MECH), null, 20, CITY_HEAL_RATE);
+  private static City factory = new City(1, "Factory", "", 0, 0, plainMoveCosts, 1, true, Arrays.asList(ARMY_BRANCH_GROUND), Arrays.asList(INF, MECH), Arrays.asList(ARMY_BRANCH_GROUND), 20, CITY_HEAL_RATE);
+  private static City hq = new City(4, "HQ", "", 0, 0, plainMoveCosts, 1, true, Arrays.asList(ARMY_BRANCH_GROUND), Arrays.asList(INF, MECH), null, 20, CITY_HEAL_RATE);
 
   public static void storeTestData() {
     clearTestData();

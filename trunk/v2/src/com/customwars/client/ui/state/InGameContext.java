@@ -132,6 +132,11 @@ public class InGameContext {
   }
 
   public void doAction(CWAction action) {
+    if (action == null) {
+      logger.warn("Trying to execute null action");
+      return;
+    }
+
     action.invoke(this);
     if (action.canUndo()) {
       addUndoAction(action);

@@ -35,7 +35,6 @@ public class Game extends TurnBasedGame implements PropertyChangeListener {
   private int weather;            // The current weather in effect
   private int cityFunds;          // The amount of money each City produces each turn
   private boolean inited;         // Has this game been inited (map players replaced by game players)
-  private static final int HEAL_VALUE = 2; //Basically, how much a unit can heal per turn
 
   public Game(Map<Tile> map, List<Player> players, Player neutral, GameConfig gameConfig) {
     super(map, players, neutral, null);
@@ -150,7 +149,7 @@ public class Game extends TurnBasedGame implements PropertyChangeListener {
 
   /**
    * Search for a friendly city with a unit on the same tile.
-   * supply that unit if the player can afford the supply cost.
+   * try to supply and heal the unit on the city
    */
   private void checkSupplyConditions(Player player) {
     for (Unit unit : player.getArmy()) {
@@ -158,23 +157,8 @@ public class Game extends TurnBasedGame implements PropertyChangeListener {
       City city = map.getCityOn(location);
 
       if (city != null && city.getOwner().isAlliedWith(player)) {
-        if (city.canSupply(unit) || city.canHeal(unit)) {
-          int supplyCost = 0;
-
-          int heal = (unit.getMaxHp() - unit.getHp());
-          if (heal > HEAL_VALUE)
-            heal = HEAL_VALUE;
-          if (unit.getHp() < unit.getMaxHp())
-            supplyCost = (heal * (unit.getPrice() / unit.getMaxHp()));
-
-          int oldSupply = unit.getSupplies();
-          city.supply(unit);
-          if (player.isWithinBudget(supplyCost)) {
-            city.heal(unit);
-            player.addToBudget(-supplyCost);
-            logger.debug("Supplied unit on city(" + location.getLocationString() + ") " + oldSupply + " -> " + unit.getSupplies());
-          }
-        }
+        city.supply(unit);
+        city.heal(unit);
       }
     }
   }

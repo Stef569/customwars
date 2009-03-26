@@ -7,7 +7,7 @@ import com.customwars.client.ui.state.InGameContext;
 import org.apache.log4j.Logger;
 
 /**
- * Heal and supply the units in supply range
+ * Supply the units in supply range
  *
  * @author stefan
  */
@@ -32,7 +32,6 @@ public class SupplyAction extends DirectAction {
 
     for (Unit unit : game.getMap().getSuppliablesInRange(supplier)) {
       supplier.supply(unit);
-      supplier.heal(unit);
       logger.debug("supplied " + unit);
     }
   }

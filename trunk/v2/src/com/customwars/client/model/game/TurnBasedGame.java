@@ -7,6 +7,7 @@ import com.customwars.client.model.map.Tile;
 import org.apache.log4j.Logger;
 import tools.Args;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -252,6 +253,10 @@ public class TurnBasedGame extends GameObject {
     } else {
       return result;
     }
+  }
+
+  public Color getNeutralColor() {
+    return neutralPlayer.getColor();
   }
 
   private void validateStartGame(Player gameStarter) {

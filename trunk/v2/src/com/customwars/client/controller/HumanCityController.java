@@ -43,11 +43,19 @@ public class HumanCityController extends CityController {
   private ShowPopupMenu buildMenu(Tile selected) {
     ShowPopupMenu showCityPopupMenu = new ShowPopupMenu("Buy unit menu", selected);
 
+    // Get Unit copies, filter on units that this city can build
+    // display all filtered units
+    // attach a null action to units that cannot be bought.
     for (Unit unit : UnitFactory.getAllUnits()) {
-      if (city.canBuild(unit) && city.getOwner().isWithinBudget(unit.getPrice())) {
-        unit.setOwner(city.getOwner());
-        CWAction addUnitToTileAction = ActionFactory.buildAddUnitToTileAction(unit, selected, false, false);
-        showCityPopupMenu.addAction(addUnitToTileAction, unit.getID() + " " + unit.getName() + " " + unit.getPrice());
+      if (city.canBuild(unit)) {
+        String unitInfo = unit.getID() + " " + unit.getName() + " " + unit.getPrice();
+        if (city.getOwner().isWithinBudget(unit.getPrice())) {
+          unit.setOwner(city.getOwner());
+          CWAction addUnitToTileAction = ActionFactory.buildAddUnitToTileAction(unit, selected, false, false);
+          showCityPopupMenu.addAction(addUnitToTileAction, unitInfo);
+        } else {
+          showCityPopupMenu.addAction(null, unitInfo);
+        }
       }
     }
     return showCityPopupMenu;

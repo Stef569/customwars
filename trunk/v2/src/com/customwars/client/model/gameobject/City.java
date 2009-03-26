@@ -3,6 +3,7 @@ package com.customwars.client.model.gameobject;
 import com.customwars.client.model.TurnHandler;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.map.Location;
+import org.apache.log4j.Logger;
 import tools.Args;
 
 import java.beans.PropertyChangeEvent;
@@ -19,11 +20,17 @@ import java.util.List;
  * can be captured by a Units of a specific unit ID
  * can build units of a specific ArmyBranch ID
  *
- * supply rate and supply Ranges are used for both healing and supplying.
+ * When a city is captured
+ * getCapturePercentage == 100
+ * isCaptured() == true
+ *
+ * Preparing for another capture is done when
+ * another unit tries to capture this city, or manually through resetCapturing()
  *
  * @author stefan
  */
 public class City extends Terrain implements PropertyChangeListener, TurnHandler {
+  private static final Logger logger = Logger.getLogger(City.class);
   private int vision;         // Amount of tiles this terrain can 'see' in each direction
   private Location location;  // The location this City is on
   private Player owner;       // Player owning this City(never null)
@@ -31,9 +38,8 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
   private List<Integer> heals;          // The ids this City can heal(Empty list means it cannot heal)
   private List<Integer> canBeCaptureBy; // The ids this City can be captured by(Empty list means it cannot be captured)
   private List<Integer> builds;         // The ids this City can build (Empty list means it cannot heal)
-  private int maxCapCount;              // When capCount == max capCount this property is captured see capture().
-  private int supplyRate;                 // Amount of healing/repairs/supplies this city can give to a Unit
-  private int minSupplyRange, maxSupplyRange;    // In what range can this City heal/Supply
+  private int maxCapCount;              // When capCount == max capCount this city is captured see capture().
+  private int healRate;                 // Amount of healing/repairs this city can give to a Unit
 
   private Unit capturer;      // Capturing unit that is capturing this city
   private int capCount;       // The current capture count(if capCount==maxCapCount then this city is considered to be captured)
@@ -41,16 +47,14 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
 
   public City(int id, String name, String description, int defenseBonus, int height, List<Integer> moveCosts,
               int vision, boolean hidden,
-              List<Integer> heals, List<Integer> canBeCaptureBy, List<Integer> builds, int maxCapCount, int supplyRate, int minHealRange, int maxHealRange) {
+              List<Integer> heals, List<Integer> canBeCaptureBy, List<Integer> builds, int maxCapCount, int healRate) {
     super(id, name, description, defenseBonus, height, hidden, moveCosts);
     this.vision = vision;
     this.heals = heals;
     this.canBeCaptureBy = canBeCaptureBy;
     this.builds = builds;
     this.maxCapCount = maxCapCount;
-    this.supplyRate = supplyRate;
-    this.minSupplyRange = minHealRange;
-    this.maxSupplyRange = maxHealRange;
+    this.healRate = healRate;
     init();
   }
 
@@ -59,10 +63,6 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
     this.heals = Args.createEmptyListIfNull(heals);
     this.canBeCaptureBy = Args.createEmptyListIfNull(canBeCaptureBy);
     this.builds = Args.createEmptyListIfNull(builds);
-
-    Args.validate(maxSupplyRange < 0, "maxHealRange should be positive");
-    Args.validate(minSupplyRange < 0, "minHealRange should be positive");
-    Args.validate(maxSupplyRange < minSupplyRange, "minHealRange should be smaller then maxHealRange");
     Args.validate(maxCapCount < 0, "maxCapcount should be positive");
   }
 
@@ -75,9 +75,7 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
     this.canBeCaptureBy = otherCity.canBeCaptureBy;
     this.builds = otherCity.builds;
     this.maxCapCount = otherCity.maxCapCount;
-    this.supplyRate = otherCity.supplyRate;
-    this.minSupplyRange = otherCity.minSupplyRange;
-    this.maxSupplyRange = otherCity.maxSupplyRange;
+    this.healRate = otherCity.healRate;
 
     this.capturer = otherCity.capturer;
     this.capCount = otherCity.capCount;
@@ -145,13 +143,17 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
 
   public void heal(Unit unit) {
     if (canHeal(unit)) {
-      unit.addHp(supplyRate);
+      int oldHp = unit.getHp();
+      unit.heal(healRate);
+      logger.debug("Healed unit on city(" + location.getLocationString() + ") " + oldHp + " -> " + unit.getHp());
     }
   }
 
   public void supply(Unit unit) {
     if (canSupply(unit)) {
-      unit.addSupplies(supplyRate);
+      int oldSupply = unit.getSupplies();
+      unit.resupply();
+      logger.debug("Supplied unit on city(" + location.getLocationString() + ") " + oldSupply + " -> " + unit.getSupplies());
     }
   }
 
@@ -200,11 +202,11 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
   // Getters
   // ---------------------------------------------------------------------------
   public boolean canHeal(Unit unit) {
-    return unit != null && unit.getHp() != unit.getMaxHp() && heals.contains(unit.getArmyBranch());
+    return unit != null && heals.contains(unit.getArmyBranch());
   }
 
   public boolean canSupply(Unit unit) {
-    return unit != null && unit.getSupplies() != unit.getMaxSupplies() && heals.contains(unit.getArmyBranch());
+    return unit != null && heals.contains(unit.getArmyBranch());
   }
 
   public boolean canBeCapturedBy(Unit unit) {
@@ -227,18 +229,8 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
     return capCount == maxCapCount;
   }
 
-  public int getMinSupplyRange() {
-    return minSupplyRange;
-  }
-
-  public int getMaxSupplyRange() {
-    return maxSupplyRange;
-  }
-
   /**
-   * @return The capping process percentage,
-   *         100 is never returned instead
-   *         when the city is captured 0 is returned
+   * @return The capping process percentage
    */
   public int getCapCountPercentage() {
     int percentage;

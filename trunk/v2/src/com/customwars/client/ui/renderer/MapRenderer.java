@@ -349,6 +349,10 @@ public class MapRenderer extends TileMapRenderer {
     this.scroller = scroller;
   }
 
+  public void setNeutralColor(java.awt.Color neutralPlayerColor) {
+    spriteManager.setNeutralColor(neutralPlayerColor);
+  }
+
   public void setActiveUnit(Unit activeUnit) {
     this.activeUnit = activeUnit;
   }
