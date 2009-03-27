@@ -34,6 +34,7 @@ public class Main {
   private static Interpreter bsh;
   private static StateSession stateSession;
   private static int startStateID;
+  private static Config config;
 
   public static void main(String[] argv) {
     handleArgs(argv);
@@ -42,7 +43,7 @@ public class Main {
       LoadingList.setDeferredLoading(false);
       resources = new ResourceManager();
 
-      Config config = new Config(resources);
+      config = new Config(resources);
       config.configure();
       logger.info("Starting up");
       new Main();
@@ -86,10 +87,16 @@ public class Main {
     }
 
     logger.info("Starting Slick");
-    AppGameContainer appGameContainer = new AppGameContainer(new TestStates(startStateID, stateSession, resources));
-    appGameContainer.setDisplayMode(640, 480, false);
+    boolean fullScreen = Boolean.parseBoolean(System.getProperty("user.display.fullscreen", "false"));
+    int displayWidth = Integer.parseInt(System.getProperty("user.display.width", "640"));
+    int displayHeight = Integer.parseInt(System.getProperty("user.display.height", "480"));
+
+    AppGameContainer appGameContainer = new AppGameContainer(new TestStates(startStateID, stateSession, resources, config));
+    appGameContainer.setDisplayMode(displayWidth, displayHeight, fullScreen);
     appGameContainer.setTargetFrameRate(60);
+    appGameContainer.setForceExit(false);
     appGameContainer.start();
+    shutDownHook();
   }
 
   private JConsole initScript() {
@@ -131,5 +138,12 @@ public class Main {
     bsh.set("game", game);
     bsh.set("map", game.getMap());
     bsh.set("resources", resources);
+  }
+
+  private void shutDownHook() {
+    logger.info("Shutting down");
+    config.storeInputConfig();
+    config.storeProperties();
+    System.exit(0);
   }
 }

@@ -1,5 +1,6 @@
 package slick;
 
+import com.customwars.client.Config;
 import com.customwars.client.io.ResourceManager;
 import com.customwars.client.ui.state.CWInput;
 import com.customwars.client.ui.state.CWState;
@@ -19,17 +20,19 @@ import java.io.IOException;
 public class TestStates extends StateBasedGame implements InputProviderListener {
   private static final Logger logger = Logger.getLogger(TestStates.class);
   private ResourceManager resources;
+  private Config config;
   private StateSession stateSession;
   private GameContainer gameContainer;
   private CWInput cwInput;
   private StateLogic statelogic;
   private int startID;
 
-  public TestStates(int startID, StateSession stateSession, ResourceManager resources) {
+  public TestStates(int startID, StateSession stateSession, ResourceManager resources, Config config) {
     super(System.getProperty("game.name"));
     this.startID = startID;
     this.stateSession = stateSession;
     this.resources = resources;
+    this.config = config;
   }
 
   public void initStatesList(GameContainer container) throws SlickException {
@@ -49,6 +52,7 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
     buildStateList();
     mapStateIdsToName();
     statelogic.gotoState(startID);
+    config.configureAfterStartup(cwInput);
   }
 
   private void buildStateList() {
@@ -107,15 +111,19 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
 
   private void handleGlobalInput(Command command) {
     if (cwInput.isExitPressed(command)) {
-      logger.debug("Exit");
+      logger.info("Exit pressed");
       gameContainer.exit();
+    } else if (cwInput.isToggleMusicPressed(command)) {
+      gameContainer.setMusicOn(!gameContainer.isMusicOn());
     }
   }
 
   public void keyPressed(int key, char c) {
     super.keyPressed(key, c);
-    if (key == Input.KEY_SPACE) {
-      statelogic.changeToNext();
+    if (cwInput.isActive()) {
+      if (key == Input.KEY_SPACE) {
+        statelogic.changeToNext();
+      }
     }
 
     if (key == Input.KEY_ENTER) {

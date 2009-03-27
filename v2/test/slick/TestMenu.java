@@ -20,12 +20,10 @@ import org.newdawn.slick.state.StateBasedGame;
  */
 public class TestMenu extends CWState implements ComponentListener {
   private Music backgroundMusic;
-  private Sound menuTickSound;
   private Image image;
   private PopupMenu testmenu;
 
   public void init(GameContainer container, StateBasedGame stateBasedGame) throws SlickException {
-    menuTickSound = new Sound("res/sound/menutick.wav");
     backgroundMusic = new Music("res/sound/shortBackground.ogg");
     backgroundMusic.setVolume(0.5F);
 
@@ -44,8 +42,6 @@ public class TestMenu extends CWState implements ComponentListener {
     testmenu.addOptionImage(keyInput);
     //testmenu.addOption("Option 3: Game Test");
     testmenu.addOptionImage(gameOption);
-    //testmenu.addOption("Option 4: End Turn Test");
-    testmenu.addOptionImage(endTurn);
 
     testmenu.init();
     testmenu.setVerticalMargin(50);
@@ -53,7 +49,7 @@ public class TestMenu extends CWState implements ComponentListener {
 
     testmenu.setLocation(200, 150);
     //testmenu.setCursorImage(cursor);
-    testmenu.setOptionChangeSound(menuTickSound);
+    testmenu.setOptionChangeSound(new Sound("res/sound/menutick.wav"));
     testmenu.addListener(this);
     //testmenu.setVerticalMargin(50);   // Uncomment to show 50px vertical margin
     //testmenu.addOptionImage(image);   // Uncomment to show 4th menu option as image
@@ -69,7 +65,8 @@ public class TestMenu extends CWState implements ComponentListener {
     g.setColor(Color.white);
     g.drawString("ENTER: TO GO BACK TO MENU", 400, 10);
     testmenu.render(gameContainer, g);
-    g.setColor(new Color(Color.darkGray));
+
+    g.setColor(Color.darkGray);
     switch (testmenu.getCurrentOption()) {
       case 0:
         g.drawString("Scroll a mini-map and see the terrain up close", 210, 440);
@@ -80,9 +77,6 @@ public class TestMenu extends CWState implements ComponentListener {
       case 2:
         g.drawString("Play a test game between the main coders", 210, 440);
         break;
-      case 3:
-        g.drawString("Tests whether a turn can end", 210, 440);
-        break;
     }
     g.setColor(Color.white);
   }
@@ -91,17 +85,7 @@ public class TestMenu extends CWState implements ComponentListener {
   }
 
   public void controlPressed(Command command, CWInput cwInput) {
-    if (cwInput.isToggleMusicPressed(command)) {
-      super.toggleMusic(backgroundMusic);
-    }
-
     testmenu.controlPressed(command, cwInput);
-  }
-
-  public void mouseClicked(int button, int x, int y, int clickCount) {
-    if (button == 1) {
-      testmenu.setLocation(x, y);
-    }
   }
 
   public void leave(GameContainer container, StateBasedGame game) throws SlickException {
@@ -123,7 +107,6 @@ public class TestMenu extends CWState implements ComponentListener {
         changeGameState("keymenu");
         break;
       case 2:
-      case 3:
         changeGameState("IN_GAME");
         break;
     }
