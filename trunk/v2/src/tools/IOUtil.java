@@ -6,6 +6,8 @@ import javax.imageio.stream.ImageInputStream;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 
 /**
  * Try to simplify java IO calls by reducing them to 1 line.
@@ -62,5 +64,22 @@ public final class IOUtil {
       result = !dir.mkdir();
     }
     return result;
+  }
+
+  /**
+   * Load Properties from the inputstream without using defaults
+   */
+  public static Properties loadProperties(InputStream in) throws IOException {
+    return loadProperties(in, null);
+  }
+
+  /**
+   * Load Properties from the inputstream, backed by defaults
+   */
+  public static Properties loadProperties(InputStream in, Properties defaults) throws IOException {
+    Properties properties = new Properties(defaults);
+    properties.load(in);
+    closeStream(in);
+    return properties;
   }
 }

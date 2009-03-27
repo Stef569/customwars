@@ -13,10 +13,11 @@ import java.util.List;
 
 /**
  * The InputField class displays the keys mapped to a particular command and allows the user to
- * change the mapped keys. The user selects an InputField by clicking on it, then can press any key or todo mouse button
- * (Including the mouse wheel) to change the mapped value.
+ * change the mapped keys. The user selects an InputField by clicking on it, then can press any key or todo (Including the mouse wheel)
+ * to change the mapped value.
  */
 public class InputField extends TextField {
+  private static final int CLEAR_FIELD = Input.KEY_BACK;
   private CWInput cwInput;
   private Command command;
   private int bindingLimit;
@@ -72,8 +73,7 @@ public class InputField extends TextField {
   public void keyPressed(int key, char c) {
     if (!hasFocus()) return;
 
-    // if backspace is pressed clear all controls
-    if (key == Input.KEY_BACK && cwInput.getControlsFor(command).size() > 0) {
+    if (key == CLEAR_FIELD && cwInput.getControlsFor(command).size() > 0) {
       for (Object control : cwInput.getControlsFor(command)) {
         cwInput.unbindCommand((Control) control);
       }

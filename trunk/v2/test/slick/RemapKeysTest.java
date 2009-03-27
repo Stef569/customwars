@@ -21,10 +21,10 @@ import java.util.List;
  */
 public class RemapKeysTest extends CWState {
   private static final boolean DEBUG = false;
-  private static final int LBL_FIELD_WIDTH = 150;
-  private static final int INPUT_FIELD_WIDTH = 250;
+  private static final int LBL_FIELD_WIDTH = 120;
+  private static final int INPUT_FIELD_WIDTH = 430;
   private static final int FIELD_HEIGHT = 20;
-  private static final Point leftTop = new Point(50, 80);
+  private static final Point leftTop = new Point(10, 80);
   private static final List<TextField> fields = new ArrayList<TextField>();
 
   public void init(GameContainer container, StateBasedGame game) throws SlickException {
@@ -82,6 +82,7 @@ public class RemapKeysTest extends CWState {
 
   public void render(GameContainer container, Graphics g) throws SlickException {
     g.drawString("Click on a key to select, Press any key to change, backspace clears the selected mappings", 10, 45);
+    g.drawString("Limit = 10", 10, 60);
 
     for (TextField field : fields) {
       if (DEBUG) {

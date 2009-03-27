@@ -3,30 +3,35 @@ package com.customwars.client.ui.state;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.command.BasicCommand;
 import org.newdawn.slick.command.Command;
+import org.newdawn.slick.command.Control;
 import org.newdawn.slick.command.InputProvider;
 import org.newdawn.slick.command.KeyControl;
 import org.newdawn.slick.command.MouseButtonControl;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Contains all the input Commands used in cw(Select, Menu up,...)
  * Storing multiple controls into 1 Command object allows
  * to remap keys that activate a command
- * todo load input keys from a file.
  *
  * @author stefan
  */
 public class CWInput extends InputProvider {
   private Input input;
-  private Command select = new BasicCommand("Select");
-  private Command cancel = new BasicCommand("Cancel");
-  private Command exit = new BasicCommand("Exit");
-  private Command down = new BasicCommand("Down");
-  private Command up = new BasicCommand("Up");
-  private Command left = new BasicCommand("Left");
-  private Command right = new BasicCommand("Right");
-  private Command toggleMusic = new BasicCommand("Toggle Music");
-  private Command zoomIn = new BasicCommand("Zoom in");
-  private Command zoomOut = new BasicCommand("Zoom out");
+  public static Command select = new BasicCommand("Select");
+  public static Command cancel = new BasicCommand("Cancel");
+  public static Command exit = new BasicCommand("Exit");
+  public static Command down = new BasicCommand("Down");
+  public static Command up = new BasicCommand("Up");
+  public static Command left = new BasicCommand("Left");
+  public static Command right = new BasicCommand("Right");
+  public static Command toggleMusic = new BasicCommand("Toggle_Music");
+  public static Command zoomIn = new BasicCommand("Zoom_in");
+  public static Command zoomOut = new BasicCommand("Zoom_out");
+  private List<Command> commands;
 
   /**
    * Create a new input proider which will provide abstract input descriptions
@@ -37,7 +42,28 @@ public class CWInput extends InputProvider {
   public CWInput(Input input) {
     super(input);
     this.input = input;
-    initDefaults();
+    //initDefaults();
+    commands = new ArrayList<Command>(Arrays.asList(
+            select, cancel, exit,
+            down, up, left, right,
+            toggleMusic,
+            zoomIn, zoomOut));
+  }
+
+  @Override
+  public void bindCommand(Control control, Command command) {
+    if (!isControlAlreadyUsed(control))
+      super.bindCommand(control, command);
+  }
+
+  public boolean isControlAlreadyUsed(Control control) {
+    List commands = getUniqueCommands();
+    for (Object obj : commands) {
+      Command c = (Command) obj;
+      if (getControlsFor(c).contains(control))
+        return true;
+    }
+    return false;
   }
 
   private void initDefaults() {
@@ -103,6 +129,15 @@ public class CWInput extends InputProvider {
 
   public boolean isZoomOutPressed(Command command) {
     return zoomOut.equals(command);
+  }
+
+  public Command getCommandByName(String commandName) {
+    for (Command c : commands) {
+      BasicCommand command = (BasicCommand) c;
+      if (command.getName().equalsIgnoreCase(commandName))
+        return command;
+    }
+    throw new IllegalArgumentException("No command found for " + commandName + " " + commands);
   }
 
   public int getMouseX() {
