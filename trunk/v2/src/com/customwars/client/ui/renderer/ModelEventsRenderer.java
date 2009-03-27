@@ -146,7 +146,7 @@ public class ModelEventsRenderer implements PropertyChangeListener {
 
     if (evt.getSource() instanceof Unit) {
       Unit unit = (Unit) evt.getSource();
-      if (propertyName.equals("supplies") || propertyName.equals("hp")) {
+      if (propertyName.equals("supplies")) {
         if ((Integer) evt.getNewValue() > (Integer) evt.getOldValue()) {
           unitSuppliesChange(unit);
         }

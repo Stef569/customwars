@@ -3,7 +3,6 @@ package com.customwars.client.model.gameobject;
 import com.customwars.client.model.TurnHandler;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.map.Location;
-import org.apache.log4j.Logger;
 import tools.Args;
 
 import java.beans.PropertyChangeEvent;
@@ -19,18 +18,17 @@ import java.util.List;
  * can supply units of a specific ArmyBranch ID
  * can be captured by a Units of a specific unit ID
  * can build units of a specific ArmyBranch ID
- *
+ * <p/>
  * When a city is captured
  * getCapturePercentage == 100
  * isCaptured() == true
- *
+ * <p/>
  * Preparing for another capture is done when
  * another unit tries to capture this city, or manually through resetCapturing()
  *
  * @author stefan
  */
 public class City extends Terrain implements PropertyChangeListener, TurnHandler {
-  private static final Logger logger = Logger.getLogger(City.class);
   private int vision;         // Amount of tiles this terrain can 'see' in each direction
   private Location location;  // The location this City is on
   private Player owner;       // Player owning this City(never null)
@@ -143,17 +141,13 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
 
   public void heal(Unit unit) {
     if (canHeal(unit)) {
-      int oldHp = unit.getHp();
       unit.heal(healRate);
-      logger.debug("Healed unit on city(" + location.getLocationString() + ") " + oldHp + " -> " + unit.getHp());
     }
   }
 
   public void supply(Unit unit) {
     if (canSupply(unit)) {
-      int oldSupply = unit.getSupplies();
       unit.resupply();
-      logger.debug("Supplied unit on city(" + location.getLocationString() + ") " + oldSupply + " -> " + unit.getSupplies());
     }
   }
 
