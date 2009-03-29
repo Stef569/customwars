@@ -12,12 +12,15 @@
 
 #5 now the code should compile
 
-#6 attempt to run the main method will throw 
+#6 Make sure the src, res and test packages are included in the classpath.(Blue color in intelliJ)
+
+#7 attempt to run the main method will throw 
 Exception in thread "main" java.lang.UnsatisfiedLinkError: no lwjgl in java.library.path
 	at java.lang.ClassLoader.loadLibrary(ClassLoader.java:1682)
 That's a good thing, everything compiles, only 1 more step.
 
-#7 We are using native libraries and the virtual machine needs to know where to find them.
-Add '-Djava.library.path=lib/native/natives-(your os)' to the vm parameters.
+#8 We are using native libraries and the virtual machine needs to know where to find them.
+Add the relative path 
+-Djava.library.path=lib/native/natives-(your os) to the vm parameters. Replace your os with the directory of you os.
 
 You should now be greeted with a screen
