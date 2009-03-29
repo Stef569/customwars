@@ -15,7 +15,6 @@ import java.util.List;
 /**
  * CW Impl of a Turnbase game
  * The Players in the map will be replaced by players from the players list.
- *
  * Usage:
  * Game game = new Game(map,players,neutralPlayer,gameConfig)
  * game.init();
@@ -23,7 +22,6 @@ import java.util.List;
  * game.endTurn();
  * game.endTurn();
  * ...
- *
  * The game is over when
  * The turn or day limit is reached or
  * When the active players(not destroyed, not neutral) are allied or
@@ -153,12 +151,15 @@ public class Game extends TurnBasedGame implements PropertyChangeListener {
    */
   private void checkSupplyConditions(Player player) {
     for (Unit unit : player.getArmy()) {
-      Tile location = (Tile) unit.getLocation();
-      City city = map.getCityOn(location);
+      // Skip units located in an apc
+      if (unit.getLocation() instanceof Tile) {
+        Tile location = (Tile) unit.getLocation();
+        City city = map.getCityOn(location);
 
-      if (city != null && city.getOwner().isAlliedWith(player)) {
-        city.supply(unit);
-        city.heal(unit);
+        if (city != null && city.getOwner().isAlliedWith(player)) {
+          city.supply(unit);
+          city.heal(unit);
+        }
       }
     }
   }

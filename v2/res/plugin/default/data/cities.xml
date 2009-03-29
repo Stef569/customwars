@@ -1,0 +1,72 @@
+<!--
+id is a reference to the city image sheet
+  ArmyBranches(used in heals, builds):
+  GROUND = 0;
+  NAVAL = 1;
+  AIR = 2;
+-->
+<list>
+    <city id="0" name="City">
+        <defenseBonus>0</defenseBonus>
+        <height>0</height>
+        <moveCosts>
+            <int>1</int>
+            <int>1</int>
+            <int>1</int>
+            <int>2</int>
+            <int>1</int>
+            <int>127</int>
+        </moveCosts>
+        <vision>1</vision>
+        <maxCapCount>20</maxCapCount>
+        <heals>0</heals>
+        <healRate>1</healRate>
+        <funds>1000</funds>
+        <description>They give you money and heal units inside them.</description>
+    </city>
+    <city name="Factory" id="1">
+        <moveCosts/>
+        <funds>1000</funds>
+        <heals>0</heals>
+        <healRate>5</healRate>
+        <builds>0</builds>
+        <maxCapCount>20</maxCapCount>
+        <vision>1</vision>
+        <description>Factories heal, provide supplies and can create new ground units.</description>
+    </city>
+    <city name="Airport" id="2">
+        <moveCosts/>
+        <funds>1000</funds>
+        <heals>2</heals>
+        <healRate>5</healRate>
+        <builds>2</builds>
+        <maxCapCount>20</maxCapCount>
+        <vision>1</vision>
+        <description>empty</description>
+    </city>
+    <city name="Port" id="3">
+        <moveCosts/>
+        <funds>1000</funds>
+        <heals>1</heals>
+        <healRate>5</healRate>
+        <builds>1</builds>
+        <maxCapCount>20</maxCapCount>
+        <vision>1</vision>
+        <description>empty</description>
+    </city>
+    <city name="HQ" id="4">
+        <moveCosts/>
+        <funds>1000</funds>
+        <heals>0</heals>
+        <healRate>5</healRate>
+        <maxCapCount>20</maxCapCount>
+        <vision>1</vision>
+    </city>
+    <city name="Missle silo" id="5">
+        <moveCosts/>
+        <funds>500</funds>
+        <maxCapCount>20</maxCapCount>
+        <vision>1</vision>
+    </city>
+</list>
+

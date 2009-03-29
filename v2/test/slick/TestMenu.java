@@ -24,15 +24,15 @@ public class TestMenu extends CWState implements ComponentListener {
   private PopupMenu testmenu;
 
   public void init(GameContainer container, StateBasedGame stateBasedGame) throws SlickException {
-    backgroundMusic = new Music("res/sound/shortBackground.ogg");
+    backgroundMusic = new Music("testData/shortBackground.ogg");
     backgroundMusic.setVolume(0.5F);
 
-    image = new Image("res/image/MainMenu.png");
+    image = new Image("testData/MainMenu.png");
     //Image cursor = new Image("res/image/white.png");
-    Image mapOption = new Image("res/image/map.png");
-    Image gameOption = new Image("res/image/game.png");
-    Image keyInput = new Image("res/image/KeyInput.png");
-    Image endTurn = new Image("res/image/EndTurn.png");
+    Image mapOption = new Image("testData/map.png");
+    Image gameOption = new Image("testData/game.png");
+    Image keyInput = new Image("testData/KeyInput.png");
+    Image endTurn = new Image("testData/EndTurn.png");
 
     testmenu = new PopupMenu(container, "Test Menu");
 
@@ -49,7 +49,7 @@ public class TestMenu extends CWState implements ComponentListener {
 
     testmenu.setLocation(200, 150);
     //testmenu.setCursorImage(cursor);
-    testmenu.setOptionChangeSound(new Sound("res/sound/menutick.wav"));
+    testmenu.setOptionChangeSound(new Sound("testData/menutick.wav"));
     testmenu.addListener(this);
     //testmenu.setVerticalMargin(50);   // Uncomment to show 50px vertical margin
     //testmenu.addOptionImage(image);   // Uncomment to show 4th menu option as image

@@ -26,12 +26,12 @@ public class TestMenuMusic extends CWState implements ComponentListener {
   private PopupMenu testmenu;
 
   public void init(GameContainer container, StateBasedGame stateBasedGame) throws SlickException {
-    menuTickSound = new Sound("res/sound/menutick.wav");
-    backgroundMusic = new Music("res/sound/shortBackground.ogg");
+    menuTickSound = new Sound("testData/menutick.wav");
+    backgroundMusic = new Music("testData/shortBackground.ogg");
     backgroundMusic.setVolume(0.5F);
 
-    image = new Image("res/image/cliff.gif");
-    Image cursor = new Image("res/image/white.png");
+    image = new Image("testData/cliff.gif");
+    Image cursor = new Image("testData/white.png");
 
     testmenu = new PopupMenu(container, "Test Menu");
 

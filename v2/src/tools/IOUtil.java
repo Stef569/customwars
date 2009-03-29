@@ -10,7 +10,7 @@ import java.io.InputStream;
 import java.util.Properties;
 
 /**
- * Try to simplify java IO calls by reducing them to 1 line.
+ * Simplify java IO methods by reducing them to 1 line.
  *
  * @author Stefan
  */
@@ -25,7 +25,8 @@ public final class IOUtil {
 
   /**
    * Close a Stream
-   * Igores nulls, logs warnings when the stream could not be closed.
+   * Ignoring null streams,
+   * A warning is logged when the stream could not be closed.
    *
    * @param in The stream to close
    */

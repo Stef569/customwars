@@ -1,0 +1,115 @@
+<!--
+moveCosts have the following order
+  Infantry
+  Mech
+  Tread
+  Tires
+  Air
+  Transport
+-->
+<list>
+    <terrain name="Grass" id="0">
+        <defenseBonus>2</defenseBonus>
+        <height>0</height>
+        <description>Grass is easily traveled but offer little defense.</description>
+        <moveCosts>
+            <int>1</int>
+            <int>1</int>
+            <int>1</int>
+            <int>2</int>
+            <int>1</int>
+        </moveCosts>
+    </terrain>
+    <terrain name="Forest" id="1">
+        <defenseBonus>2</defenseBonus>
+        <height>0</height>
+        <description>The perfect place for an ambush, units that are placed within a forrest are not visible for any
+            unit
+            unless direct adjacent it.
+        </description>
+        <moveCosts>
+            <int>1</int>
+            <int>1</int>
+            <int>2</int>
+            <int>3</int>
+            <int>1</int>
+        </moveCosts>
+    </terrain>
+    <terrain name="Horizontal Road" id="2">
+        <defenseBonus>0</defenseBonus>
+        <height>0</height>
+        <description>Well-surface roads provide optimum mobility, but little cover.</description>
+        <moveCosts>
+            <int>1</int>
+            <int>1</int>
+            <int>1</int>
+            <int>1</int>
+            <int>1</int>
+        </moveCosts>
+    </terrain>
+
+    <!-- ROW 2 -->
+    <terrain name="Mountain" id="17">
+        <defenseBonus>4</defenseBonus>
+        <height>2</height>
+        <description>In Fog of War, these add 3 to the vision of int and int units.</description>
+        <moveCosts>
+            <int>3</int>
+            <int>2</int>
+            <int>1</int>
+        </moveCosts>
+    </terrain>
+    <terrain name="Plains" id="18">
+        <defenseBonus>0</defenseBonus>
+        <height>0</height>
+        <description>Plains are easily traveled but offer little defense.</description>
+        <moveCosts>
+            <int>1</int>
+            <int>1</int>
+            <int>1</int>
+            <int>2</int>
+            <int>1</int>
+        </moveCosts>
+    </terrain>
+    <terrain name="Horizontal River" id="19">
+        <defenseBonus>4</defenseBonus>
+        <height>-1</height>
+        <description>Fast flowing river, only int and int can pass</description>
+        <moveCosts>
+            <int>2</int>
+            <int>1</int>
+            <int>1</int>
+            <int>1</int>
+        </moveCosts>
+    </terrain>
+    <terrain name="Ocean" id="30">
+        <defenseBonus>0</defenseBonus>
+        <height>-2</height>
+        <description>Ocean</description>
+        <moveCosts>
+            <int>1</int>
+            <int>1</int>
+            <int>1</int>
+        </moveCosts>
+    </terrain>
+    <terrain name="Horizontal Cliff small canal" id="36">
+        <defenseBonus>0</defenseBonus>
+        <height>-1</height>
+        <description>Cliffs</description>
+        <moveCosts>
+            <int>1</int>
+        </moveCosts>
+    </terrain>
+    <terrain name="Shoal" id="63">
+        <defenseBonus>0</defenseBonus>
+        <height>0</height>
+        <moveCosts>
+            <int>1</int>
+            <int>1</int>
+            <int>1</int>
+            <int>1</int>
+            <int>1</int>
+            <int>1</int>
+        </moveCosts>
+    </terrain>
+</list>
