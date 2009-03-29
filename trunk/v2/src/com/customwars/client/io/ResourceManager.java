@@ -46,7 +46,7 @@ public class ResourceManager {
 
   /**
    * @param imageLib The cache to load the image to
-   * @param animLib  The cache to load the animations to
+   * @param animLib The cache to load the animations to
    */
   public ResourceManager(ImageLib imageLib, AnimLib animLib) {
     this.imageLib = imageLib;
@@ -86,6 +86,7 @@ public class ResourceManager {
     logger.info("Reading file " + imgPath + IMAGE_LOADER_FILE);
     ImageParser imgParser = new ImageParser(imageLib);
     InputStream in = ResourceLoader.getResourceAsStream(imgPath + IMAGE_LOADER_FILE);
+    imgParser.setImgPath(imgPath);
     imgParser.loadConfigFile(in);
   }
 

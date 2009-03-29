@@ -8,6 +8,7 @@ import com.customwars.client.io.img.slick.SpriteSheet;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import tools.IOUtil;
+import tools.StringUtil;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -31,6 +32,7 @@ public class ImageParser {
   private final static String COMMENT_PREFIX = "//";
 
   private ImageLib imageLib;
+  private String fullImgPath;
 
   public ImageParser(ImageLib imageLib) {
     this.imageLib = imageLib;
@@ -105,7 +107,7 @@ public class ImageParser {
     else {
       tokens.nextToken();    // skip command label
       String imgName = tokens.nextToken();
-      String imgPath = tokens.nextToken();
+      String imgPath = fullImgPath + tokens.nextToken();
       imageLib.addSlickImg(imgName, new Image(imgPath));
     }
   }
@@ -123,7 +125,7 @@ public class ImageParser {
     else {
       tokens.nextToken();    // skip command label
       String imgName = tokens.nextToken();
-      String imgPath = tokens.nextToken();
+      String imgPath = fullImgPath + tokens.nextToken();
       int tileWidth = Integer.parseInt(tokens.nextToken());
       int tileHeight = Integer.parseInt(tokens.nextToken());
       boolean storeAsAwt = false;
@@ -153,7 +155,7 @@ public class ImageParser {
     else {
       tokens.nextToken();    // skip command label
       String imgName = tokens.nextToken();
-      String imgPath = tokens.nextToken();
+      String imgPath = fullImgPath + tokens.nextToken();
       int tileWidth = Integer.parseInt(tokens.nextToken());
       int tileHeight = Integer.parseInt(tokens.nextToken());
       boolean storeAsAwt = false;
@@ -168,5 +170,10 @@ public class ImageParser {
         imageLib.addSlickImg(imgName, new SpriteSheet(imgPath, tileWidth, tileHeight));
       }
     }
+  }
+
+  public void setImgPath(String fullImgPath) {
+    fullImgPath = StringUtil.appendTrailingSuffix(fullImgPath, '/');
+    this.fullImgPath = fullImgPath;
   }
 }

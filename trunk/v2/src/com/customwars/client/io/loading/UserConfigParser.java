@@ -17,7 +17,7 @@ import java.util.StringTokenizer;
 
 /**
  * Read User preferences:
- * keys, display
+ * Input: keys, mouse scroll+buttons
  *
  * @author stefan
  */
@@ -31,9 +31,12 @@ public class UserConfigParser {
   }
 
   /**
-   * @param properties containing the user configuration ie:
+   * Read every key that starts with INPUT_PREFIX
+   * Parse the key into a command and controls, add each
+   * command/controls pair to the inputProvider
+   *
+   * @param properties containing the user Input configuration ie:
    * user.input.select -> a,b,c
-   * user.display.fullscreen -> boolean
    */
   public void readInputConfig(Properties properties) {
     for (Object o : properties.stringPropertyNames()) {
@@ -97,23 +100,23 @@ public class UserConfigParser {
   }
 
   /**
-   * Writes the current bindings to a Properties file
+   * Writes the current command bindings to a new Properties file
    */
   public Properties writeInputConfig() {
     Properties properties = new Properties();
     for (Object obj : inputProvider.getUniqueCommands()) {
       BasicCommand command = (BasicCommand) obj;
-      List<Control> controls = inputProvider.getControlsFor(command);
+      List controls = inputProvider.getControlsFor(command);
       writeLine(command, controls, properties);
     }
     return properties;
   }
 
-  private void writeLine(BasicCommand command, List<Control> controls, Properties properties) {
+  private void writeLine(BasicCommand command, List controls, Properties properties) {
     String commandName = command.getName();
     String controlList = "";
 
-    for (Control control : controls) {
+    for (Object control : controls) {
       String controlName;
       if (control instanceof KeyControl) {
         controlName = getKeyString((KeyControl) control);

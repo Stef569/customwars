@@ -7,14 +7,19 @@ import com.customwars.client.model.TestData;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.ui.debug.DebugEnvironment;
+import com.customwars.client.ui.state.CWStates;
 import com.customwars.client.ui.state.StateSession;
+import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.loading.LoadingList;
+import org.newdawn.slick.state.StateBasedGame;
 import slick.HardCodedGame;
 import slick.TestStates;
 import tools.ColorUtil;
+
+import java.util.Enumeration;
 
 /**
  * Starts The client
@@ -28,62 +33,21 @@ public class Main {
   private static boolean DEBUG = true;
   private static boolean DEBUG_GUI;
   private static ResourceManager resources;
-
-  // Script
   private static JConsole console;
   private static Interpreter bsh;
   private static StateSession stateSession;
   private static int startStateID;
   private static Config config;
 
-  public static void main(String[] argv) {
-    handleArgs(argv);
-
-    try {
-      LoadingList.setDeferredLoading(false);
-      resources = new ResourceManager();
-
-      config = new Config(resources);
-      config.configure();
-      logger.info("Starting up");
-      new Main();
-    } catch (Exception e) {
-      logger.fatal("Failure", e);
-      System.exit(-1);
-    }
-  }
-
-  private static void handleArgs(String[] args) {
-    int i = 0;
-    String arg;
-
-    while (i < args.length && args[i].startsWith("-")) {
-      arg = args[i++];
-
-      // use this type of check for "wordy" arguments
-      if (arg.equals("-showdebuggui")) {
-        DEBUG_GUI = true;
-      } else if (arg.equals("-debug")) {
-        DEBUG = true;
-      }
-
-      // use this type of check for arguments that require arguments
-      else if (arg.equals("-startstate")) {
-        if (i < args.length)
-          startStateID = Integer.parseInt(args[i++]);
-        else
-          startStateID = 0;
-      }
-    }
-  }
-
   public Main() throws SlickException {
-    logger.info("init script");
     console = initScript();
 
+    StateBasedGame stateBasedGame;
     if (DEBUG) {
-      logger.info("Init debug Mode");
       initDebugMode();
+      stateBasedGame = new TestStates(startStateID, stateSession, resources, config);
+    } else {
+      stateBasedGame = new CWStates(startStateID, stateSession, resources, config);
     }
 
     logger.info("Starting Slick");
@@ -91,21 +55,24 @@ public class Main {
     int displayWidth = Integer.parseInt(System.getProperty("user.display.width", "640"));
     int displayHeight = Integer.parseInt(System.getProperty("user.display.height", "480"));
 
-    AppGameContainer appGameContainer = new AppGameContainer(new TestStates(startStateID, stateSession, resources, config));
+    AppGameContainer appGameContainer = new AppGameContainer(stateBasedGame);
     appGameContainer.setDisplayMode(displayWidth, displayHeight, fullScreen);
     appGameContainer.setTargetFrameRate(60);
     appGameContainer.setForceExit(false);
     appGameContainer.start();
     shutDownHook();
+    System.exit(0);
   }
 
   private JConsole initScript() {
+    logger.info("init script");
     JConsole console = new JConsole();
     bsh = new Interpreter(console);
     return console;
   }
 
   private void initDebugMode() {
+    logger.info("Init debug Mode");
     TestData.storeTestData();
 
     logger.info("init hard coded game");
@@ -140,10 +107,72 @@ public class Main {
     bsh.set("resources", resources);
   }
 
+  /**
+   * Returns true if it appears that log4j have been previously configured. This code
+   * checks to see if there are any appenders defined for log4j which is the
+   * definitive way to tell if log4j is already initialized
+   */
+  private static boolean isLog4JConfigured() {
+    Enumeration appenders = Logger.getRoot().getAllAppenders();
+    if (appenders.hasMoreElements()) {
+      return true;
+    } else {
+      Enumeration loggers = LogManager.getCurrentLoggers();
+      while (loggers.hasMoreElements()) {
+        Logger c = (Logger) loggers.nextElement();
+        if (c.getAllAppenders().hasMoreElements())
+          return true;
+      }
+    }
+    return false;
+  }
+
   private void shutDownHook() {
     logger.info("Shutting down");
     config.storeInputConfig();
     config.storeProperties();
-    System.exit(0);
+  }
+
+  public static void main(String[] argv) {
+    handleArgs(argv);
+
+    try {
+      LoadingList.setDeferredLoading(!DEBUG);
+      resources = new ResourceManager();
+      config = new Config(resources);
+      config.configure();
+      logger.info("Starting up");
+      new Main();
+    } catch (Exception e) {
+      if (isLog4JConfigured())
+        logger.fatal("Failure", e);
+      else
+        e.printStackTrace();
+      System.exit(-1);
+    }
+  }
+
+  private static void handleArgs(String[] args) {
+    int i = 0;
+    String arg;
+
+    while (i < args.length && args[i].startsWith("-")) {
+      arg = args[i++];
+
+      // use this type of check for "wordy" arguments
+      if (arg.equals("-showdebuggui")) {
+        DEBUG_GUI = true;
+      } else if (arg.equals("-debug")) {
+        DEBUG = true;
+      }
+
+      // use this type of check for arguments that require arguments
+      else if (arg.equals("-startstate")) {
+        if (i < args.length)
+          startStateID = Integer.parseInt(args[i++]);
+        else
+          startStateID = 0;
+      }
+    }
   }
 }
