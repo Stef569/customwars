@@ -1,5 +1,6 @@
 package com.customwars.client.ui;
 
+import com.customwars.client.Config;
 import com.customwars.client.io.ResourceManager;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.map.Location;
@@ -57,9 +58,9 @@ public class HUD {
   }
 
   public void render(Graphics g) {
-    g.drawString("Day:" + game.getDay(), 150, 10);
-    g.drawString("Player:" + game.getActivePlayer().getName(), 150, 20);
-    g.drawString("Money:" + game.getActivePlayer().getBudget(), 150, 30);
+    g.drawString(Config.getMsg("day") + ":" + game.getDay(), 150, 10);
+    g.drawString(Config.getMsg("player") + ":" + game.getActivePlayer().getName(), 150, 20);
+    g.drawString(Config.getMsg("money") + ":" + game.getActivePlayer().getBudget(), 150, 30);
 
     popupMenu.render(guiContext, g);
 
