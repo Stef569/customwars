@@ -8,7 +8,7 @@
 
 #3 provide google username, your personal password can be found here http://code.google.com/hosting/settings
 
-#4 There will be many compile errors at this time fix that by adding each jar in the lib dir.
+#4 There will be many compile errors at this time fix that by adding each jar in the lib dir to the classpath.
 
 #5 now the code should compile
 
