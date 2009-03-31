@@ -1,5 +1,6 @@
 package slick;
 
+import com.customwars.client.ui.MenuItem;
 import com.customwars.client.ui.PopupMenu;
 import com.customwars.client.ui.state.CWInput;
 import com.customwars.client.ui.state.CWState;
@@ -33,18 +34,15 @@ public class TestMenuMusic extends CWState implements ComponentListener {
     image = new Image("testData/cliff.gif");
     Image cursor = new Image("testData/white.png");
 
-    testmenu = new PopupMenu(container, "Test Menu");
-
-    testmenu.addOption("Option 1: Test Map Terrain");
-    testmenu.addOption("Option 2: Key Input Change (Under Construction)");
-    testmenu.init();
-    testmenu.setVisible(true);
+    testmenu = new PopupMenu(container);
+    testmenu.addItem(new MenuItem("Option 1: Test Map Terrain", container));
+    testmenu.addItem(new MenuItem("Option 2: Key Input Change (Under Construction)", container));
 
     testmenu.setLocation(80, 100);
-    testmenu.setCursorImage(cursor);
-    testmenu.setOptionChangeSound(menuTickSound);
+    testmenu.setCursor(cursor);
+    testmenu.setMenuTickSound(menuTickSound);
     testmenu.addListener(this);
-    //testmenu.setVerticalMargin(50);   // Uncomment to show 50px vertical margin
+    //testmenu.setVerticalSpacing(50);  // Uncomment to show 50px vertical margin
     //testmenu.addOptionImage(image);   // Uncomment to show 4th menu option as image
   }
 
@@ -58,7 +56,7 @@ public class TestMenuMusic extends CWState implements ComponentListener {
     g.drawString("ENTER: TO GO BACK TO MENU", 400, 80);
     g.drawString("Now in Test Menu and Music state", 80, 80);
     testmenu.render(gameContainer, g);
-    switch (testmenu.getCurrentOption()) {
+    switch (testmenu.getCurrentItem()) {
       case 0:
         g.drawString("Scroll a mini-map and see the terrain up close. \n" +
                 "Use [1] and [2] to switch firing cursor.", 80, 200);
@@ -104,7 +102,7 @@ public class TestMenuMusic extends CWState implements ComponentListener {
 
   public void componentActivated(AbstractComponent source) {
     PopupMenu popupMenu = (PopupMenu) source;
-    switch (popupMenu.getCurrentOption()) {
+    switch (popupMenu.getCurrentItem()) {
       case 0:
         changeGameState("terrainmenu");
         break;

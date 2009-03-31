@@ -49,7 +49,7 @@ public class MouseOverArea extends BasicComponent {
   /**
    * The colour used in normal state
    */
-  private Color normalColor = Color.white;
+  private Color normalColor = new Color(1, 1, 1, 0.0f);
 
   /**
    * The colour used in mouseOver state
@@ -105,6 +105,10 @@ public class MouseOverArea extends BasicComponent {
    * True if the mouse has been up since last press
    */
   private boolean mouseUp;
+
+  public MouseOverArea(GUIContext container) {
+    this(container, null, 0, 0, 0, 0);
+  }
 
   /**
    * Create a new mouse selected area
@@ -204,6 +208,10 @@ public class MouseOverArea extends BasicComponent {
     }
   }
 
+  public void setArea(float x, float y, float width, float height) {
+    area = new Rectangle(x, y, width, height);
+  }
+
   /**
    * Returns the position in the X coordinate
    *
@@ -278,6 +286,14 @@ public class MouseOverArea extends BasicComponent {
 
   public void setSelected(boolean selected) {
     this.selected = selected;
+  }
+
+  public void setWidth(int width) {
+    area = new Rectangle(getX(), getY(), width, getHeight());
+  }
+
+  public void setHeight(int height) {
+    area = new Rectangle(getX(), getY(), getWidth(), height);
   }
 
   /**

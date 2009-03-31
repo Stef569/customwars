@@ -1,272 +1,183 @@
 package com.customwars.client.ui;
 
 import com.customwars.client.ui.slick.BasicComponent;
-import com.customwars.client.ui.slick.MouseOverArea;
 import com.customwars.client.ui.state.CWInput;
-import org.newdawn.slick.AngelCodeFont;
+import org.newdawn.slick.Animation;
 import org.newdawn.slick.Color;
-import org.newdawn.slick.Font;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
-import org.newdawn.slick.Input;
-import org.newdawn.slick.SlickException;
 import org.newdawn.slick.Sound;
 import org.newdawn.slick.command.Command;
 import org.newdawn.slick.gui.AbstractComponent;
-import org.newdawn.slick.gui.ComponentListener;
 import org.newdawn.slick.gui.GUIContext;
-import org.newdawn.slick.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Shows a menu on the screen, at location locX, locY
- * Menu Options can either be text or an image but not both
+ * A popup menu contains MenuItems
+ * When the mouse moves over a menuItem the menu item is selected
  *
- * @author JSR
+ * @author stefan
  */
-public class PopupMenu extends BasicComponent implements ComponentListener {
-  private static final float HOVER_TRANSPARANCY = 0.6f;
-  private List<String> txtOptions;
-  private List<Image> imgOptions;
-  private List<MouseOverArea> mouseOverAreas;
-  private Color baseColor;
-  private Color selectColor;
+public class PopupMenu extends BasicComponent {
+  private static final int MENU_BACKGROUND_MARGIN = 8;
 
-  private int spacingY;
-  private int spacingX;
-  private int curoptn;
-  private Sound optionChangeSound;
-  private Image cursor;
-  private Font font;
-  private String popUpName;
-  private Input input;
+  private static final Color BACKGOUND_COLOR = new Color(0, 0, 0, 0.4f);
+  private static final Color HOVER_COLOR = new Color(0, 0, 0, 0.20f);
+
+  private List<MenuItem> menuItems;
+  private int currItem;
+
   private boolean visible;
+  private boolean inited;
+  private boolean renderBackground;
+  private int spacingY = 0;                       // The space between menu Items
+  private Sound menuTickSound;                    // Sound to be played when the current menu item changes
+  private Animation cursorAnim;                   // Cursor animation to be shown on all menu items
 
-  public PopupMenu(GUIContext guiContext, Font font, String name) {
-    super(guiContext);
-    this.input = guiContext.getInput();
-    this.font = font != null ? font : getDefaultFont();
-    this.popUpName = name;
-    this.visible = false;
-    spacingY = 20;
-    spacingX = 10;
-    baseColor = Color.white;
-    selectColor = Color.black;
-    txtOptions = new ArrayList<String>();
-    imgOptions = new ArrayList<Image>();
-    mouseOverAreas = new ArrayList<MouseOverArea>();
+  public PopupMenu(GUIContext container) {
+    super(container);
+    menuItems = new ArrayList<MenuItem>();
+    visible = true;
+    renderBackground = true;
   }
 
-  public PopupMenu(GUIContext guiContext, String popUpName) {
-    this(guiContext, null, popUpName);
-  }
-
-  public PopupMenu(GUIContext guiContext) {
-    this(guiContext, "");
-  }
-
-  public void addOption(String popUpName) {
-    addMenuOption(popUpName, null);
-  }
-
-  public void addOptionImage(Image image) {
-    addMenuOption(null, image);
-  }
-
-  private void addMenuOption(String name, Image img) {
-    if (name != null || img != null) {
-      txtOptions.add(name);
-      imgOptions.add(img);
-
-      int optionWidth = getWidth(name, img);
-      if (optionWidth > width) {
-        width = optionWidth;
-      }
-    } else {
-      throw new IllegalArgumentException("null popUpName or img not allowed");
-    }
-  }
-
-  public void moveUp() {
-    setOption(curoptn - 1);
-  }
-
-  public void moveDown() {
-    setOption(curoptn + 1);
+  public void addItem(MenuItem menuItem) {
+    if (cursorAnim != null) menuItem.setCursorAnim(cursorAnim);
+    menuItems.add(menuItem);
   }
 
   /**
-   * Init mouse over areas once after all options are set
-   * this is because we need to know the widest option in the menu before we define the moa bounds
+   * Init menu items once after all menu items are added
+   * We need to know the widest menu item in the menu before we define the menu item bounds
    */
-  public void init() {
-    initMouseOverAreas();
-    height = txtOptions.size() * spacingY;
-    selectOption(0);
+  private void init() {
+    setWidth(getMaxWidth());
+    setHeight(getTotalHeight());
+    initMenuItems();
+    selectMenuItem(0);
+    inited = true;
   }
 
-  private void initMouseOverAreas() {
-    for (int i = 0; i < txtOptions.size(); i++) {
-      createMouseOverArea(i);
-      locateMouseOverArea(i);
+  private void initMenuItems() {
+    for (MenuItem menuItem : menuItems) {
+      menuItem.setLocation(getX(), getVerticalLocation(menuItem));
+      menuItem.setWidth(getWidth());
+      menuItem.initPositions();
+      menuItem.setMouseOverColor(HOVER_COLOR);
     }
   }
 
-  private void createMouseOverArea(int i) {
-    int optionHeight = getHeight(txtOptions.get(i), imgOptions.get(i));
-    MouseOverArea moa = new MouseOverArea(container, null, 0, 0, spacingX + width, optionHeight, this);
-    moa.setNormalColor(new Color(1, 1, 1, 0.0f));
-    moa.setMouseOverColor(new Color(1, 1, 1, HOVER_TRANSPARANCY));
-    mouseOverAreas.add(moa);
-  }
-
-  private void locateMouseOverArea(int i) {
-    if (mouseOverAreas != null) {
-      MouseOverArea moa = mouseOverAreas.get(i);
-      moa.setLocation(spacingX + x, y + (i * spacingY));
+  private int getVerticalLocation(MenuItem menuItem) {
+    int height = getY();
+    for (int i = 0; i < menuItems.size(); i++) {
+      if (i < menuItems.indexOf(menuItem)) {
+        height += menuItems.get(i).getHeight() + spacingY;
+      }
     }
+    return height;
   }
 
+  /**
+   * On the first invocation init this component
+   * Render the background
+   * When the mouse moves over a menu item the current selection is updated
+   * Render each menu item
+   */
   public void render(GUIContext container, Graphics g) {
-    if (visible) {
-      renderCursor(g);
-      renderMouseOverAreas(g);
+    Color origColor = g.getColor();
+    if (!inited)
+      init();
 
-      // Update current option when hovering over with the mouse
-      MouseOverArea selectedMoa = getSelectedMouseOverArea();
-      setOption(mouseOverAreas.indexOf(selectedMoa));
+    if (renderBackground)
+      renderBackground(g);
 
-      renderText(g);
-      renderImg(g);
-      resetToBaseColor(g);
-    }
-  }
+    MenuItem selectedMenuItem = getSelectedMenuItem();
+    setCurrentMenuItem(menuItems.indexOf(selectedMenuItem));
 
-  private void renderCursor(Graphics g) {
-    if (cursor != null) {
-      g.drawImage(cursor, x, (y + (curoptn * spacingY)));
-    }
-  }
+    for (MenuItem menuItem : menuItems) {
+      menuItem.render(container, g);
 
-  private void renderMouseOverAreas(Graphics g) {
-    for (MouseOverArea moa : mouseOverAreas) {
-      moa.render(container, g);
-
-      // moa.render can fire events!
-      // These events can modify the moa areas
+      // menuItem.render can fire events!
+      // These events can modify other menu item areas
       // Resulting in a ConcurrentMofication Exception
       // those events should set visible to false
-      // moa.render sets a rectangle to graphics
+      // menuItem.render sets a rectangle to graphics
       // resetting the color, removes that rectangle
       if (!isVisible()) {
-        resetToBaseColor(g);
+        g.setColor(origColor);
         return;
       }
     }
-  }
-
-  private void renderText(Graphics g) {
-    for (int i = 0; i < txtOptions.size(); i++) {
-      if (txtOptions.get(i) != null) {
-        int locX = spacingX + x;
-        int locY = y + (i * spacingY);
-        setCurrentColor(g, i);
-        g.drawString(txtOptions.get(i), locX, locY);
-        g.setColor(baseColor);
-      }
-    }
-  }
-
-  private void renderImg(Graphics g) {
-    for (int i = 0; i < imgOptions.size(); i++) {
-      if (imgOptions.get(i) != null) {
-        int locX = spacingX + x;
-        int locY = y + (i * spacingY);
-        setCurrentColor(g, i);
-        g.drawImage(imgOptions.get(i), locX, locY);
-        g.setColor(baseColor);
-      }
-    }
-  }
-
-  private void resetToBaseColor(Graphics g) {
-    g.setColor(baseColor);
-  }
-
-  public void setVerticalMargin(int verticalMargin) {
-    spacingY = verticalMargin;
-  }
-
-  public void setCursorImage(Image theImage) {
-    cursor = theImage;
-    calcHorizontalMargin();
-  }
-
-  private void calcHorizontalMargin() {
-    if (cursor != null)
-      this.spacingX = cursor.getWidth() + spacingX;
+    g.setColor(origColor);
   }
 
   /**
-   * New location of this popup
-   * This method will relocate all mouseover areas
+   * Render the menu background which is MENU_BACKGROUND_MARGIN bigger then the menu bounds
    */
-  public void setLocation(int x, int y) {
-    super.setLocation(x, y);
-    if (txtOptions != null) {
-      for (int i = 0; i < txtOptions.size(); i++) {
-        locateMouseOverArea(i);
-      }
+  private void renderBackground(Graphics g) {
+    g.setColor(BACKGOUND_COLOR);
+    g.fillRoundRect(getX() - MENU_BACKGROUND_MARGIN, getY() - MENU_BACKGROUND_MARGIN,
+            getWidth() + MENU_BACKGROUND_MARGIN * 2, getHeight() + MENU_BACKGROUND_MARGIN * 2, 8);
+  }
+
+  public void controlPressed(Command command, CWInput cwInput) {
+    if (cwInput.isDownPressed(command)) {
+      moveDown();
+    } else if (cwInput.isUpPressed(command)) {
+      moveUp();
+    } else if (cwInput.isSelectPressed(command)) {
+      selectMenuItem(currItem);
+      componentActivated(getSelectedMenuItem());
+    }
+    consumeEvent();
+  }
+
+  public void moveUp() {
+    int previousItem = currItem - 1;
+    if (isWithinBounds(previousItem))
+      setCurrentMenuItem(previousItem);
+    else
+      setCurrentMenuItem(menuItems.size() - 1);
+  }
+
+  public void moveDown() {
+    int nextItem = currItem + 1;
+    if (isWithinBounds(nextItem))
+      setCurrentMenuItem(currItem + 1);
+    else
+      setCurrentMenuItem(0);
+  }
+
+  private void setCurrentMenuItem(int item) {
+    if (item != currItem && isWithinBounds(item)) {
+      currItem = item;
+      selectMenuItem(currItem);
     }
   }
 
-  /**
-   * @param optionChangeSound The sound to play when the menu changes to another menu option
-   *                          null to disable that sound
-   */
-  public void setOptionChangeSound(Sound optionChangeSound) {
-    this.optionChangeSound = optionChangeSound;
+  private boolean isWithinBounds(int item) {
+    return item >= 0 && item < menuItems.size();
   }
 
-  public void setColor(Color base, Color selected) {
-    baseColor = base;
-    selectColor = selected;
-  }
-
-  private void setCurrentColor(Graphics g, int i) {
-    if (curoptn == i) {
-      g.setColor(selectColor);
-    } else {
-      g.setColor(baseColor);
-    }
-  }
-
-  private void setOption(int option) {
-    if (option != curoptn && option >= 0 && option < txtOptions.size()) {
-      curoptn = option;
-      playMenuTick();
-      selectOption(curoptn);
-    }
-  }
-
-  public void setName(String popUpName) {
-    this.popUpName = popUpName;
+  private void selectMenuItem(int item) {
+    currItem = item;
+    playMenuTick();
+    updateMenuItems(item);
   }
 
   private void playMenuTick() {
-    if (optionChangeSound != null)
-      optionChangeSound.play();
+    if (menuTickSound != null) menuTickSound.play();
   }
 
-  private void selectOption(int i) {
-    if (i >= 0 && i < mouseOverAreas.size()) {
-      for (MouseOverArea moa : mouseOverAreas) {
-        if (mouseOverAreas.get(i) == moa) {
-          moa.setSelected(true);
+  private void updateMenuItems(int item) {
+    if (item >= 0 && item < menuItems.size()) {
+      for (MenuItem menuItem : menuItems) {
+        if (menuItems.get(item) == menuItem) {
+          menuItem.setSelected(true);
         } else {
-          moa.setSelected(false);
+          menuItem.setSelected(false);
         }
       }
     }
@@ -276,97 +187,82 @@ public class PopupMenu extends BasicComponent implements ComponentListener {
     this.visible = visible;
   }
 
-  public boolean isVisible() {
-    return visible;
+  public void setMenuTickSound(Sound sound) {
+    this.menuTickSound = sound;
   }
 
-  public int getCurrentOption() {
-    return curoptn;
+  public void setCursorAnim(Animation cursorAnim) {
+    this.cursorAnim = cursorAnim;
   }
 
-  private int getWidth(String option, Image img) {
-    if (img != null) {
-      return img.getWidth();
-    } else {
-      return font.getWidth(option);
-    }
+  public void setVerticalSpacing(int margin) {
+    this.spacingY = margin;
   }
 
-  private int getHeight(String option, Image img) {
-    if (img != null) {
-      return img.getHeight();
-    } else {
-      return spacingY;
-    }
+  public int getCurrentItem() {
+    return currItem;
   }
 
-  private Font getDefaultFont() {
-    Font defaultFont = null;
-    try {
-      defaultFont = new AngelCodeFont(
-              "org/newdawn/slick/data/default.fnt",
-              "org/newdawn/slick/data/default_00.tga");
-    } catch (SlickException e) {
-      Log.error(e);
-    }
-    return defaultFont;
-  }
-
-  public void controlPressed(Command command, CWInput cwInput) {
-    if (cwInput.isDownPressed(command)) {
-      moveDown();
-    } else if (cwInput.isUpPressed(command)) {
-      moveUp();
-    } else if (cwInput.isSelectPressed(command)) {
-      selectOption(curoptn);
-      MouseOverArea moa = getSelectedMouseOverArea();
-      if (moa != null)
-        componentActivated(moa);
-    }
-    consumeEvent();
-  }
-
-  /**
-   * This method is invoked when a click has been made within a mouse over Area.
-   *
-   * @param source the mouse over area clicked on
-   */
-  public void componentActivated(AbstractComponent source) {
-    MouseOverArea clickedMoa = getClickedMouseOverArea(source);
-    setOption(mouseOverAreas.indexOf(clickedMoa));
-    clickedMoa.setFocus(false);
-    notifyListeners();
-  }
-
-  private MouseOverArea getClickedMouseOverArea(AbstractComponent source) {
-    for (MouseOverArea moa : mouseOverAreas) {
-      if (source == moa) {
-        return moa;
-      }
-    }
-    throw new IllegalStateException("Don't know about moa " + source);
-  }
-
-  private MouseOverArea getSelectedMouseOverArea() {
-    for (MouseOverArea moa : mouseOverAreas) {
-      if (moa.isSelected()) {
-        return moa;
+  private MenuItem getSelectedMenuItem() {
+    for (MenuItem menuItem : menuItems) {
+      if (menuItem.isSelected()) {
+        return menuItem;
       }
     }
     return null;
   }
 
+  public boolean isVisible() {
+    return visible;
+  }
+
+  private int getMaxWidth() {
+    int maxWidth = 0;
+    for (MenuItem menuItem : menuItems) {
+      int width = menuItem.getWidth();
+      if (width > maxWidth) maxWidth = width;
+    }
+    return maxWidth;
+  }
+
+  private int getTotalHeight() {
+    int totalHeight = 0;
+    for (MenuItem menuItem : menuItems) {
+      totalHeight += menuItem.getHeight() + spacingY;
+    }
+    return totalHeight;
+  }
+
+  /**
+   * This method is invoked when a click has been made within a menu item
+   *
+   * @param source the menu item clicked on
+   */
+  public void componentActivated(AbstractComponent source) {
+    MenuItem menuItem = (MenuItem) source;
+    setCurrentMenuItem(menuItems.indexOf(menuItem));
+    menuItem.setFocus(false);
+    notifyListeners();
+  }
+
   public void clear() {
     removeAllListener();
-    mouseOverAreas.clear();
-    txtOptions.clear();
-    imgOptions.clear();
+    menuItems.clear();
   }
 
   private void removeAllListener() {
-    for (MouseOverArea moa : mouseOverAreas) {
-      input.removeListener(moa);
+    for (MenuItem menuItem : menuItems) {
+      input.removeListener(menuItem);
     }
+
     this.listeners.clear();
+  }
+
+  public void setCursor(Image cursor) {
+    Image[] singleImg = new Image[1];
+    singleImg[0] = cursor;
+    Animation anim = new Animation(singleImg, 99);
+    anim.setAutoUpdate(false);
+    setCursorAnim(anim);
   }
 }
