@@ -29,7 +29,6 @@ import java.util.List;
  * @author stefan
  */
 public class City extends Terrain implements PropertyChangeListener, TurnHandler {
-  private int vision;         // Amount of tiles this terrain can 'see' in each direction
   private Location location;  // The location this City is on
   private Player owner;       // Player owning this City(never null)
 
@@ -46,8 +45,7 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
   public City(int id, String name, String description, int defenseBonus, int height, List<Integer> moveCosts,
               int vision, boolean hidden,
               List<Integer> heals, List<Integer> canBeCaptureBy, List<Integer> builds, int maxCapCount, int healRate) {
-    super(id, name, description, defenseBonus, height, hidden, moveCosts);
-    this.vision = vision;
+    super(id, name, description, defenseBonus, height, hidden, vision, moveCosts);
     this.heals = heals;
     this.canBeCaptureBy = canBeCaptureBy;
     this.builds = builds;
@@ -66,7 +64,6 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
 
   public City(City otherCity) {
     super(otherCity);
-    this.vision = otherCity.vision;
     this.location = otherCity.location;
     this.owner = otherCity.owner;
     this.heals = otherCity.heals;
@@ -237,10 +234,6 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
     return percentage;
   }
 
-  public int getVision() {
-    return vision;
-  }
-
   public Location getLocation() {
     return location;
   }
@@ -256,7 +249,7 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
   @Override
   public String toString() {
     StringBuilder strBuilder = new StringBuilder(
-            "[" + super.toString() + " capCount=" + capCount + "/" + maxCapCount + " vision=" + vision);
+            "[" + super.toString() + " capCount=" + capCount + "/" + maxCapCount);
     if (owner != null) strBuilder.append(" owner=").append(owner);
     return strBuilder.append("]").toString();
   }

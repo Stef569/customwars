@@ -60,9 +60,9 @@ public class TestData {
   public static List<Integer> mountainMoveCosts = Arrays.asList(3, 2, IMP, IMP, 1, IMP);
 
   // Terrains
-  private static Terrain plain = new Terrain(0, "plain", "", 0, 0, false, plainMoveCosts);
-  private static Terrain verticalRiver = new Terrain(20, "River", "", 0, -1, false, riverMoveCosts);
-  private static Terrain mountain = new Terrain(17, "Mountain", "", 4, 2, false, mountainMoveCosts);
+  private static Terrain plain = new Terrain(0, "plain", "", 0, 0, false, 0, plainMoveCosts);
+  private static Terrain verticalRiver = new Terrain(20, "River", "", 0, -1, false, 0, riverMoveCosts);
+  private static Terrain mountain = new Terrain(17, "Mountain", "", 4, 2, false, 3, mountainMoveCosts);
 
   // Units
   private static Unit infantry = new Unit(INF, "Infantry", "", 3000, 3, 3, UNIT_MAX_HP, MAX_UNIT_SUPPLIES, 0, 0, true, false, false, false, true, null, ARMY_BRANCH_GROUND, MOVE_INF, 0, 0);
