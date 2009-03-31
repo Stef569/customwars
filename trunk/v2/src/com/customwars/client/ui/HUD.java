@@ -27,7 +27,6 @@ public class HUD {
   public HUD(Game game, GUIContext guiContext) {
     this.game = game;
     this.guiContext = guiContext;
-    popupMenu = new PopupMenu(guiContext);
   }
 
   public void loadResources(ResourceManager resources) {
@@ -38,21 +37,19 @@ public class HUD {
     selectedTile = tile;
   }
 
-  public void showPopUp(Location popUpLocation, String popUpName, List<String> items, ComponentListener componentListener) {
+  public void showPopUp(Location popUpLocation, String popUpName, List<MenuItem> items, ComponentListener componentListener) {
     int tileSize = game.getMap().getTileSize();
     int x = popUpLocation.getCol() * tileSize + tileSize / 2;
     int y = popUpLocation.getRow() * tileSize + tileSize / 2;
     showPopUp(x, y, popUpName, items, componentListener);
   }
 
-  public void showPopUp(int x, int y, String popUpName, List<String> items, ComponentListener componentListener) {
-    popupMenu.setVisible(true);
-    popupMenu.clear();
+  public void showPopUp(int x, int y, String popUpName, List<MenuItem> items, ComponentListener componentListener) {
+    popupMenu = new PopupMenu(guiContext);
 
-    for (String item : items) {
-      popupMenu.addOption(item);
+    for (MenuItem item : items) {
+      popupMenu.addItem(item);
     }
-    popupMenu.init();
     popupMenu.setLocation(x, y);
     popupMenu.addListener(componentListener);
   }
@@ -62,7 +59,7 @@ public class HUD {
     g.drawString(Config.getMsg("player") + ":" + game.getActivePlayer().getName(), 150, 20);
     g.drawString(Config.getMsg("money") + ":" + game.getActivePlayer().getBudget(), 150, 30);
 
-    popupMenu.render(guiContext, g);
+    if (isPopupVisible()) popupMenu.render(guiContext, g);
 
     if (selectedTile != null)
       renderTileInfo(selectedTile.toString(), g);
@@ -83,7 +80,7 @@ public class HUD {
   }
 
   public void hidePopup() {
-    popupMenu.setVisible(false);
+    popupMenu = null;
   }
 
   public void setGame(Game game) {

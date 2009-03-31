@@ -298,6 +298,11 @@ public class MapRenderer extends TileMapRenderer {
     }
   }
 
+  public boolean canMoveCursor(int x, int y) {
+    Location newCursorLocation = pixelsToTile(x, y);
+    return canMoveCursor(newCursorLocation);
+  }
+
   private boolean canMoveCursor(Location location) {
     return !cursorLocked && (!isTraversing || limitedCursorLocations.contains(location));
   }

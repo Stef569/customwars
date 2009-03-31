@@ -3,6 +3,7 @@ package com.customwars.client.action;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.ui.HUD;
+import com.customwars.client.ui.MenuItem;
 import com.customwars.client.ui.PopupMenu;
 import com.customwars.client.ui.renderer.MapRenderer;
 import com.customwars.client.ui.state.InGameContext;
@@ -17,6 +18,7 @@ import java.util.List;
  * Show a popup to te screen
  * The popup is filled with CWAction objects
  * When a menu item is pressed then the CWAction behind that item is executed and the popup is hidden.
+ * If the CWAction behind a MenuItem is null then the menu is hidden.
  *
  * @author stefan
  */
@@ -27,7 +29,7 @@ public class ShowPopupMenu extends DirectAction implements ComponentListener {
   private HUD hud;
   private String popupName;
   private List<CWAction> actions;
-  private List<String> menuItemNames;
+  private List<MenuItem> menuItems;
   private int currentOption;
   private Location popupLocation;
 
@@ -40,7 +42,7 @@ public class ShowPopupMenu extends DirectAction implements ComponentListener {
     this.popupName = popupName;
     this.popupLocation = popupLocation;
     this.actions = new ArrayList<CWAction>();
-    this.menuItemNames = new ArrayList<String>();
+    this.menuItems = new ArrayList<MenuItem>();
   }
 
   protected void init(InGameContext context) {
@@ -57,7 +59,7 @@ public class ShowPopupMenu extends DirectAction implements ComponentListener {
       throw new IllegalArgumentException("Location is null");
     }
 
-    hud.showPopUp(popupLocation, popupName, menuItemNames, this);
+    hud.showPopUp(popupLocation, popupName, menuItems, this);
     mapRenderer.moveCursor(popupLocation);
 
     context.setMode(InGameContext.MODE.GUI);
@@ -70,26 +72,26 @@ public class ShowPopupMenu extends DirectAction implements ComponentListener {
     mapRenderer.setCursorLocked(false);
   }
 
-  public void addAction(CWAction action, String menuItemName) {
+  public void addAction(CWAction action, MenuItem menuItemName) {
     actions.add(action);
-    menuItemNames.add(menuItemName);
+    menuItems.add(menuItemName);
   }
 
   public void clear() {
     actions.clear();
-    menuItemNames.clear();
+    menuItems.clear();
   }
 
   public void componentActivated(AbstractComponent abstractComponent) {
     PopupMenu popupMenu = (PopupMenu) abstractComponent;
-    currentOption = popupMenu.getCurrentOption();
-    CWAction action = actions.get(popupMenu.getCurrentOption());
+    currentOption = popupMenu.getCurrentItem();
+    CWAction action = actions.get(popupMenu.getCurrentItem());
     this.undo();    // Hide the popup when clicked on a item
     context.doAction(action);
   }
 
   public boolean atLeastHasOneItem() {
-    return menuItemNames.size() > 0;
+    return menuItems.size() > 0;
   }
 
   public int getCurrentOption() {

@@ -1,5 +1,7 @@
 package slick;
 
+import com.customwars.client.io.img.slick.ImageStrip;
+import com.customwars.client.ui.MenuItem;
 import com.customwars.client.ui.PopupMenu;
 import com.customwars.client.ui.state.CWInput;
 import com.customwars.client.ui.state.CWState;
@@ -15,6 +17,9 @@ import org.newdawn.slick.gui.AbstractComponent;
 import org.newdawn.slick.gui.ComponentListener;
 import org.newdawn.slick.state.StateBasedGame;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * @author Crecen
  */
@@ -28,31 +33,28 @@ public class TestMenu extends CWState implements ComponentListener {
     backgroundMusic.setVolume(0.5F);
 
     image = new Image("testData/MainMenu.png");
-    //Image cursor = new Image("res/image/white.png");
+    Image whiteSquare = new Image("testData/white.png");
+    ImageStrip cursor = new ImageStrip("testData/point.png", 15, 11);
+
     Image mapOption = new Image("testData/map.png");
+    Image keyInputOption = new Image("testData/KeyInput.png");
     Image gameOption = new Image("testData/game.png");
-    Image keyInput = new Image("testData/KeyInput.png");
     Image endTurn = new Image("testData/EndTurn.png");
 
-    testmenu = new PopupMenu(container, "Test Menu");
+    testmenu = new PopupMenu(container);
+    List<MenuItem> items = Arrays.asList(
+            new MenuItem(mapOption, "Option 1: Test Map Terrain", container),
+            new MenuItem(keyInputOption, container),
+            new MenuItem(gameOption, "", container)
+    );
 
-    //testmenu.addOption("Option 1: Test Map Terrain");
-    testmenu.addOptionImage(mapOption);
-    //testmenu.addOption("Option 2: Key Input Change (Under Construction)");
-    testmenu.addOptionImage(keyInput);
-    //testmenu.addOption("Option 3: Game Test");
-    testmenu.addOptionImage(gameOption);
+    for (MenuItem item : items) {
+      testmenu.addItem(item);
+    }
 
-    testmenu.init();
-    testmenu.setVerticalMargin(50);
-    testmenu.setVisible(true);
-
-    testmenu.setLocation(200, 150);
-    //testmenu.setCursorImage(cursor);
-    testmenu.setOptionChangeSound(new Sound("testData/menutick.wav"));
+    testmenu.setLocation(250, 150);
+    testmenu.setMenuTickSound(new Sound("testData/menutick.wav"));
     testmenu.addListener(this);
-    //testmenu.setVerticalMargin(50);   // Uncomment to show 50px vertical margin
-    //testmenu.addOptionImage(image);   // Uncomment to show 4th menu option as image
   }
 
   public void enter(GameContainer container, StateBasedGame game) throws SlickException {
@@ -67,7 +69,7 @@ public class TestMenu extends CWState implements ComponentListener {
     testmenu.render(gameContainer, g);
 
     g.setColor(Color.darkGray);
-    switch (testmenu.getCurrentOption()) {
+    switch (testmenu.getCurrentItem()) {
       case 0:
         g.drawString("Scroll a mini-map and see the terrain up close", 210, 440);
         break;
@@ -99,7 +101,7 @@ public class TestMenu extends CWState implements ComponentListener {
 
   public void componentActivated(AbstractComponent source) {
     PopupMenu popupMenu = (PopupMenu) source;
-    switch (popupMenu.getCurrentOption()) {
+    switch (popupMenu.getCurrentItem()) {
       case 0:
         changeGameState("terrainmenu");
         break;

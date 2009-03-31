@@ -11,6 +11,7 @@ import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Tile;
+import com.customwars.client.ui.MenuItem;
 import com.customwars.client.ui.renderer.MapRenderer;
 import com.customwars.client.ui.state.InGameContext;
 
@@ -60,6 +61,7 @@ public class HumanUnitController extends UnitController {
         context.doAction(new SelectAction(selected));
       }
     } else {
+      context.playSound("cancel");
       context.undo();
     }
   }
@@ -133,7 +135,8 @@ public class HumanUnitController extends UnitController {
       // In drop mode the wait Button acts as the drop Action
       if (context.isUnitDropMode()) {
         CWAction dropAction = ActionFactory.buildDropAction(unit, from, to, context.getDropCount(), context.getUnitsToBeDropped());
-        showMenu.addAction(dropAction, "Wait");
+        MenuItem waitItem = new MenuItem("Wait", context.getContainer());
+        showMenu.addAction(dropAction, waitItem);
       }
     }
     return showMenu;
@@ -217,10 +220,11 @@ public class HumanUnitController extends UnitController {
   /**
    * Add a menu item to the menu backed by a CWAction
    *
-   * @param action   The action to perform when clicked on the menu item
-   * @param menuName The menu item name
+   * @param action       The action to perform when clicked on the menu item
+   * @param menuItemName The menu item name
    */
-  private void addToMenu(CWAction action, String menuName) {
-    showMenu.addAction(action, menuName);
+  private void addToMenu(CWAction action, String menuItemName) {
+    MenuItem menuItem = new MenuItem(menuItemName, context.getContainer());
+    showMenu.addAction(action, menuItem);
   }
 }

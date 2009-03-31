@@ -9,11 +9,13 @@ import com.customwars.client.model.game.Game;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Direction;
+import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.model.map.path.MoveTraverse;
 import com.customwars.client.ui.Camera2D;
 import com.customwars.client.ui.HUD;
+import com.customwars.client.ui.MenuItem;
 import com.customwars.client.ui.Scroller;
 import com.customwars.client.ui.renderer.MapRenderer;
 import com.customwars.client.ui.renderer.ModelEventsRenderer;
@@ -78,6 +80,8 @@ public class TestInGameState extends CWState implements PropertyChangeListener {
     context.setGame(game);
     context.setHud(hud);
     context.setMapRenderer(mapRenderer);
+    context.setResources(resources);
+    context.setContainer(container);
 
     ControllerManager controllerManager = new ControllerManager(context);
     context.setControllerManager(controllerManager);
@@ -161,6 +165,7 @@ public class TestInGameState extends CWState implements PropertyChangeListener {
     if (!context.isMoving()) {
       if (cwInput.isCancelPressed(command)) {
         if (context.canUndo()) {
+          context.playSound("cancel");
           context.undo();
           return;
         }
@@ -210,8 +215,9 @@ public class TestInGameState extends CWState implements PropertyChangeListener {
   }
 
   private ShowPopupMenu buildContextMenu() {
-    ShowPopupMenu showContextMenu = new ShowPopupMenu("Context menu", null);
-    showContextMenu.addAction(ActionFactory.buildEndTurnAction(statelogic), "End turn");
+    ShowPopupMenu showContextMenu = new ShowPopupMenu("Context menu");
+    MenuItem endTurnMenuItem = new MenuItem("End turn", gameContainer);
+    showContextMenu.addAction(ActionFactory.buildEndTurnAction(statelogic), endTurnMenuItem);
     return showContextMenu;
   }
 
@@ -222,6 +228,7 @@ public class TestInGameState extends CWState implements PropertyChangeListener {
   }
 
   private void moveCursor(Command command, CWInput cwInput) {
+    Location originalCursorLocation = mapRenderer.getCursorLocation();
     boolean traversing = mapRenderer.isTraversing();
 
     if (cwInput.isUpPressed(command)) {
@@ -251,6 +258,10 @@ public class TestInGameState extends CWState implements PropertyChangeListener {
       else
         mapRenderer.moveCursor(Direction.EAST);
     }
+
+    if (cursorMoved(originalCursorLocation)) {
+      context.playSound("maptick");
+    }
     hud.moveOverTile(mapRenderer.getCursorLocation(), true);
   }
 
@@ -274,10 +285,19 @@ public class TestInGameState extends CWState implements PropertyChangeListener {
   }
 
   public void mouseMoved(int oldx, int oldy, int newx, int newy) {
+    Location originalCursorLocation = mapRenderer.getCursorLocation();
     int gameX = camera.convertToGameX(newx);
     int gameY = camera.convertToGameY(newy);
     mapRenderer.moveCursor(gameX, gameY);
+
+    if (cursorMoved(originalCursorLocation)) {
+      context.playSound("maptick");
+    }
     hud.moveOverTile(mapRenderer.getCursorLocation(), true);
+  }
+
+  private boolean cursorMoved(Location oldLocation) {
+    return mapRenderer.getCursorLocation() != oldLocation;
   }
 
   public int getID() {

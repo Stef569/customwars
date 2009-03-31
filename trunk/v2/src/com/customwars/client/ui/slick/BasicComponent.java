@@ -6,10 +6,10 @@ import org.newdawn.slick.gui.AbstractComponent;
 import org.newdawn.slick.gui.GUIContext;
 
 public abstract class BasicComponent extends AbstractComponent {
-  protected int x;
-  protected int y;
-  protected int width;
-  protected int height;
+  private int x;
+  private int y;
+  private int width;
+  private int height;
   protected static Camera2D camera;
 
   /**
@@ -19,11 +19,20 @@ public abstract class BasicComponent extends AbstractComponent {
    */
   public BasicComponent(GUIContext container) {
     super(container);
+    consumeEvent();
   }
 
   public void setLocation(int x, int y) {
     this.x = x;
     this.y = y;
+  }
+
+  public void setWidth(int width) {
+    this.width = width;
+  }
+
+  public void setHeight(int height) {
+    this.height = height;
   }
 
   public int getHeight() {
