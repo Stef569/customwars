@@ -44,6 +44,7 @@ public class CaptureAction extends DirectAction {
         unit.setUnitState(UnitState.IDLE);
         controllerManager.addHumanCityController(city);
         city.resetCapturing();
+        context.playSound("captured");
       }
     }
   }

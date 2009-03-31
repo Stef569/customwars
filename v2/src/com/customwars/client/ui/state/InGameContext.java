@@ -2,6 +2,7 @@ package com.customwars.client.ui.state;
 
 import com.customwars.client.action.CWAction;
 import com.customwars.client.controller.ControllerManager;
+import com.customwars.client.io.ResourceManager;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Locatable;
@@ -11,6 +12,7 @@ import com.customwars.client.model.map.path.MoveTraverse;
 import com.customwars.client.ui.HUD;
 import com.customwars.client.ui.renderer.MapRenderer;
 import org.apache.log4j.Logger;
+import org.newdawn.slick.GameContainer;
 
 import javax.swing.undo.AbstractUndoableEdit;
 import javax.swing.undo.CannotRedoException;
@@ -61,6 +63,8 @@ public class InGameContext {
   private MapRenderer mapRenderer;
   private HUD hud;
   private ControllerManager controllerManager;
+  private ResourceManager resources;
+  private GameContainer container;
 
   public InGameContext() {
     undoManager = new UndoManager();
@@ -175,6 +179,10 @@ public class InGameContext {
     logger.debug("Undo history cleared");
   }
 
+  public void playSound(String soundName) {
+    resources.playSound(soundName);
+  }
+
   /**
    * @param index   base 1 index of the click(was it the first, second, ...) can't be higher then MAX_CLICK_HISTORY
    * @param clicked the tile that was clicked on
@@ -215,6 +223,14 @@ public class InGameContext {
     this.mapRenderer = mapRenderer;
   }
 
+  public void setResources(ResourceManager resources) {
+    this.resources = resources;
+  }
+
+  public void setContainer(GameContainer container) {
+    this.container = container;
+  }
+
   public Game getGame() {
     return game;
   }
@@ -233,6 +249,14 @@ public class InGameContext {
 
   public ControllerManager getControllerManager() {
     return controllerManager;
+  }
+
+  public ResourceManager getResourceManager() {
+    return resources;
+  }
+
+  public GameContainer getContainer() {
+    return container;
   }
 
   public boolean isTrapped() {

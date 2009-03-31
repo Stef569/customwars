@@ -4,7 +4,6 @@ import com.customwars.client.io.ResourceManager;
 import com.customwars.client.io.img.slick.SpriteSheet;
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Image;
-import tools.Args;
 import tools.ColorUtil;
 
 import java.awt.Color;
@@ -24,12 +23,13 @@ public class AnimLib {
   public static final String ANIM_UP = "UP";
   public static final String ANIM_DOWN = "DOWN";
   public static final String ANIM_INACTIVE = "INACTIVE";
+  private static final int NO_DURATION = 999;
 
   private static Map<String, Animation> animations = new HashMap<String, Animation>();
 
   public void addAnim(String animName, Animation anim) {
     String key = animName.toUpperCase();
-    Args.checkForNull(anim);
+
     if (anim.getFrameCount() > 0) {
       if (!isAnimLoaded(key)) {
         animations.put(key, anim);
@@ -41,7 +41,7 @@ public class AnimLib {
     String key = animName.toUpperCase();
     if (!isAnimLoaded(key)) {
       throw new IllegalArgumentException(
-              "Animation cache does not contain " + key + " animations: " + animations.keySet());
+              "Animation cache does not contain " + key + " " + animations.keySet());
     }
     return animations.get(key);
   }
@@ -80,7 +80,7 @@ public class AnimLib {
       addCityAnim(row, color, "", animActive);
 
       Animation animFogged = new Animation(false);
-      animFogged.addFrame(darkerCitySpriteSheet.getSubImage(0, row), 99);
+      animFogged.addFrame(darkerCitySpriteSheet.getSubImage(0, row), NO_DURATION);
       addCityAnim(row, color, ANIM_INACTIVE, animFogged);
     }
   }
@@ -120,9 +120,10 @@ public class AnimLib {
   /**
    * Retrieve images from each row of the unitSpriteSheet and create animations out of them.
    *
-   * @param baseColor       base color for a unit
-   * @param unitSpriteSheet the spritesheet to extract the images from
-   * @param color           the color of the unitSpriteSheet, used to store the animations ie UNIT_0_BLUE
+   * @param baseColor               base color for a unit
+   * @param unitSpriteSheet         the spritesheet to extract the images from
+   * @param inactiveUnitSpriteSheet the sprite sheet to extract the inactive images from
+   * @param color                   the color of the unitSpriteSheet, used to store the animations ie UNIT_0_BLUE
    */
   private void createUnitAnimationsNow(Color baseColor, SpriteSheet unitSpriteSheet, SpriteSheet inactiveUnitSpriteSheet, Color color) {
     // Read frame count and durations from the base animations
@@ -167,7 +168,7 @@ public class AnimLib {
 
       Animation animInActive = new Animation(false);
       Image img = inactiveUnitSpriteSheet.getSubImage(animLeftFrameCount + 1, row);
-      animInActive.addFrame(img, 99);
+      animInActive.addFrame(img, NO_DURATION);
       addUnitAnim(row, color, ANIM_INACTIVE, animInActive);
     }
   }
@@ -191,7 +192,6 @@ public class AnimLib {
     String colorName = ColorUtil.toString(color);
     return "unit_" + unitID + "_" + colorName + "_" + suffix;
   }
-
 
   private Animation createAnim(SpriteSheet sheet, int col, int cols, int row, int[] durations) {
     Animation anim = new Animation();

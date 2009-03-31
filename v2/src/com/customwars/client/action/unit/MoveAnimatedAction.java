@@ -14,7 +14,7 @@ import com.customwars.client.ui.state.InGameContext;
  * @author stefan
  */
 public class MoveAnimatedAction extends DelayedAction {
-  private static final int MOVE_DELAY = 150;
+  private static final int MOVE_DELAY = 80;
   InGameContext context;
   MoveTraverse moveTraverse;
   Game game;
@@ -62,7 +62,12 @@ public class MoveAnimatedAction extends DelayedAction {
   }
 
   void pathMoveComplete() {
-    context.setTrapped(moveTraverse.foundTrapper());
+    if (moveTraverse.foundTrapper()) {
+      context.playSound("trapped");
+      context.setTrapped(true);
+    } else {
+      context.setTrapped(false);
+    }
     mapRenderer.setCursorLocked(false);
   }
 

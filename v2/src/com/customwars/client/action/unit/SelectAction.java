@@ -34,6 +34,7 @@ public class SelectAction extends DirectAction {
   protected void invokeAction() {
     Locatable locatable = selectTile.getLastLocatable();
     selectUnit((Unit) locatable);
+    context.playSound("select");
     context.setMode(InGameContext.MODE.UNIT_SELECT);
   }
 

@@ -28,8 +28,7 @@ import java.util.Properties;
  */
 public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
   private static final Logger logger = Logger.getLogger(Map.class);
-  private static final int MOUNTAIN_VISION = 3;
-  private Properties properties = new Properties();  // The properties of the map
+  private Properties properties;  // The properties of the map
   private int numPlayers;           // Amount of players that can play on this map
   private boolean fogOfWarOn;       // Is fog of war in effect
   private PathFinder pathFinder;    // To builds paths within the map
@@ -37,12 +36,55 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
   public Map(int cols, int rows, int tileSize, int numPlayers) {
     super(cols, rows, tileSize);
     this.numPlayers = numPlayers;
-    pathFinder = new PathFinder(this);
+    this.pathFinder = new PathFinder(this);
+    this.properties = new Properties();
   }
 
   public Map(int cols, int rows, int tileSize, Properties properties, int numPlayers) {
     this(cols, rows, tileSize, numPlayers);
     this.properties = properties == null ? new Properties() : properties;
+  }
+
+  /**
+   * Copy Constructor
+   *
+   * @param otherMap map to copy
+   */
+  public Map(Map<Tile> otherMap) {
+    this(otherMap.getCols(), otherMap.getRows(), otherMap.getTileSize(), otherMap.numPlayers);
+    this.fogOfWarOn = otherMap.fogOfWarOn;
+    this.properties = new Properties(otherMap.properties);
+    copyMapData(otherMap);
+  }
+
+  private void copyMapData(Map<Tile> otherMap) {
+    for (Tile t : otherMap.getAllTiles()) {
+      int col = t.getCol();
+      int row = t.getRow();
+      boolean fogged = t.isFogged();
+
+      Tile tileCopy = new Tile(col, row, copyTerrain(t.getTerrain()), fogged);
+      copyUnits(t, tileCopy);
+      setTile((T) tileCopy);
+    }
+  }
+
+  private void copyUnits(Tile t, Tile newTile) {
+    for (int i = 0; i < t.getLocatableCount(); i++) {
+      Unit unit = (Unit) t.getLocatable(i);
+      Unit unitCopy = new Unit(unit);
+      newTile.add(unitCopy);
+    }
+  }
+
+  private Terrain copyTerrain(Terrain terrain) {
+    Terrain terrainCopy;
+    if (terrain instanceof City) {
+      terrainCopy = new City((City) terrain);
+    } else {
+      terrainCopy = terrain;
+    }
+    return terrainCopy;
   }
 
   protected void validateMapState(boolean validateTiles) throws IllegalStateException {
@@ -256,31 +298,18 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
     for (Tile t : getAllTiles()) {
       Unit unit = getUnitOn(t);
       City city = getCityOn(t);
-      int additionalVision = calcExtraVision(t);
+      int visionBonus = t.getTerrain().getVision();
 
       if (unit != null && unit.getOwner().isAlliedWith(player)) {
         int vision = unit.getVision();
-        clearSight(t, vision + additionalVision);
+        clearSight(t, vision + visionBonus);
       }
 
       if (city != null && city.getOwner().isAlliedWith(player)) {
         int vision = city.getVision();
-        clearSight(t, vision + additionalVision);
+        clearSight(t, vision + visionBonus);
       }
     }
-  }
-
-  public int calcExtraVision(Tile t) {
-    int additionalVision;
-    int terrainHeight = t.getTerrain().getHeight();
-
-    // When on higher terrain, Can see further...
-    if (terrainHeight > 2) {
-      additionalVision = MOUNTAIN_VISION;
-    } else {
-      additionalVision = 0;
-    }
-    return additionalVision;
   }
 
   /**
