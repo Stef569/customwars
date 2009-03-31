@@ -54,14 +54,13 @@ public class ImageParser {
    */
   public void loadConfigFile(InputStream stream) throws IOException {
     String line = "";
-
     BufferedReader br = new BufferedReader(new InputStreamReader(stream));
 
     try {
       while ((line = br.readLine()) != null) {
-        if (line.length() == 0)                         // blank line
+        if (line.length() == 0)
           continue;
-        if (line.startsWith(COMMENT_PREFIX))            // comment
+        if (line.startsWith(COMMENT_PREFIX))
           continue;
         parseCmd(line);
       }
@@ -73,10 +72,6 @@ public class ImageParser {
   }
 
   public void parseCmd(String line) throws IOException {
-    if (line == null) {
-      throw new IllegalArgumentException("Line is null");
-    }
-
     char ch = Character.toLowerCase(line.charAt(0));
     try {
       if (ch == SINGLE_IMAGE_SYMBOL) {                // 1 image, it's put into a strip
@@ -84,9 +79,7 @@ public class ImageParser {
       } else if (ch == STRIP_IMAGE_SYMBOL) {          // an images strip
         loadStripImages(line);
       } else if (ch == MATRIX_IMAGE_SYMBOL) {         // a Matrix images accessable by row, col
-
         loadSpriteSheet(line);
-
       } else
         throw new IllegalArgumentException(ERR_READING_LINE + line + ", unknown Char: " + ch);
     } catch (SlickException e) {

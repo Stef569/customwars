@@ -22,7 +22,7 @@ import java.util.Scanner;
 import java.util.StringTokenizer;
 
 /**
- * Create animations from a cmd, add the resulting animation to the animLib keyed by anim name.
+ * Create animations from a text command, add the resulting animation to the animLib keyed by anim name.
  *
  * @author stefan
  */
@@ -61,19 +61,12 @@ public class AnimationParser implements DeferredResource {
           continue;
         if (line.startsWith(COMMENT_PREFIX))
           continue;
-        parseCmd(line);
+        getAnim(line);
       }
     } finally {
       IOUtil.closeStream(stream);
       this.stream = null;
     }
-  }
-
-  public void parseCmd(String line) {
-    if (line == null) {
-      throw new IllegalArgumentException("Line is null");
-    }
-    getAnim(line);
   }
 
   /**
@@ -126,7 +119,7 @@ public class AnimationParser implements DeferredResource {
     for (int col = firstFrameCol; col < lastFrameCol && col < imgStrip.getCols(); col++) {
       result.add(imgStrip.getSubImage(col));
     }
-    Animation anim = new Animation(result.toArray(new Image[]{}), frameDuration);
+    Animation anim = new Animation(result.toArray(new Image[result.size()]), frameDuration);
     anim.setAutoUpdate(false);
     anim.setLooping(loop);
     return anim;
@@ -142,11 +135,10 @@ public class AnimationParser implements DeferredResource {
     Point startFrame = new Point(firstFrameCol, firstFrameRow);
     Point endFrame = new Point(lastFrameCol, lastFrameRow);
     List<Image> result = sheet.getInnerList(startFrame, endFrame);
-    Animation anim = new Animation(result.toArray(new Image[]{}), frameDuration);
+    Animation anim = new Animation(result.toArray(new Image[result.size()]), frameDuration);
     anim.setAutoUpdate(loop);
     return anim;
   }
-
 
   public void load() throws IOException {
     loadNow(stream);

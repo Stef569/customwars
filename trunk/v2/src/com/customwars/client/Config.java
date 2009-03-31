@@ -20,6 +20,8 @@ import java.util.ResourceBundle;
 
 /**
  * Load and apply configuration
+ * There is global configuration: game, user, log4J, language properties
+ * and plugin configuration plugin properties, sound, maps, images
  *
  * @author Stefan
  */
@@ -49,7 +51,9 @@ public class Config {
     loadProperties();
 
     resources.setImgPath(activePluginLocation + "/images/");
+    resources.setSoundPath(activePluginLocation + "/sound/");
     resources.setDataPath(activePluginLocation + "/data/");
+    resources.setMapPath(activePluginLocation + "/maps");
   }
 
   private void loadProperties() {

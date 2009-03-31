@@ -73,9 +73,9 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
     addState(gameOver);
 
     try {
-      resources.loadConfig();
+      resources.loadResources();
     } catch (IOException e) {
-      logger.fatal("Could not load resources config", e);
+      throw new RuntimeException(e);
     }
   }
 

@@ -44,9 +44,11 @@ public class AttackAction extends DirectAction {
 
     if (attacker.isDestroyed()) {
       controllerManager.removeUnitController(attacker);
+      context.playSound("explode");
     }
     if (defender.isDestroyed()) {
       controllerManager.removeUnitController(defender);
+      context.playSound("explode");
     }
   }
 }
