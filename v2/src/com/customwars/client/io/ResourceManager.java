@@ -166,11 +166,6 @@ public class ResourceManager {
     }
   }
 
-  public void clear() {
-    imageLib.clearImages();
-    modelLoader.clear();
-  }
-
   public void setImgPath(String path) {
     this.imgPath = path;
   }
