@@ -12,6 +12,7 @@ import com.customwars.client.model.map.Tile;
  * @author Stefan
  */
 public class UnitFight extends Fight {
+  private static final int NO_DAMAGE = 0;
   private static int[][] baseDMG;
   private static int[][] altDMG;
   private Map<Tile> map;
@@ -49,7 +50,7 @@ public class UnitFight extends Fight {
   }
 
   private int getBaseDamage(int attUnitID, int defUnitID) {
-    if (baseDMG[attUnitID][defUnitID] != -1) {
+    if (baseDMG[attUnitID][defUnitID] != NO_DAMAGE) {
       return baseDMG[attUnitID][defUnitID];
     } else {
       return altDMG[attUnitID][defUnitID];
