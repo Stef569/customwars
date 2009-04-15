@@ -11,6 +11,7 @@ import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.model.map.TileMap;
+import com.customwars.client.ui.slick.ImageStripFont;
 import org.apache.log4j.Logger;
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Graphics;
@@ -49,6 +50,7 @@ public class SpriteManager implements PropertyChangeListener {
 
   private TileSprite activeCursor;
   private Color neutralColor = Color.GRAY;
+  private ImageStripFont numbers;
 
   public SpriteManager() {
     cursorSprites = new HashMap<String, TileSprite>();
@@ -60,6 +62,8 @@ public class SpriteManager implements PropertyChangeListener {
   public void loadResources(ResourceManager resources) {
     this.resources = resources;
     unitDecorationStrip = resources.getSlickImgStrip("unitDecoration");
+    ImageStrip numberStrip = resources.getSlickImgStrip("numbers");
+    numbers = new ImageStripFont(numberStrip, '1');
   }
 
   /**
@@ -172,7 +176,7 @@ public class SpriteManager implements PropertyChangeListener {
       }
     }
 
-    resources.recolor(colorsInMap.toArray(new Color[]{}));
+    resources.recolor(colorsInMap.toArray(new Color[colorsInMap.size()]));
   }
 
   /**
@@ -196,7 +200,8 @@ public class SpriteManager implements PropertyChangeListener {
       }
     }
 
-    logger.info("Init map sprites, units=" + unitSprites.size() + " Cities=" + citySprites.size() + " Tiles=" + map.countTiles());
+    logger.info("Init map sprites, units=" + unitSprites.size() + " cities=" + citySprites.size() +
+            " tiles=" + map.countTiles() + " tileSize=" + map.getTileSize());
   }
 
   /**
@@ -232,6 +237,7 @@ public class SpriteManager implements PropertyChangeListener {
       animDying.stopAt(animDying.getFrameCount() - 1);
       unitSprite = new UnitSprite(t, map, unit, unitDecorationStrip);
       unitSprite.setAnimDying(animDying);
+      unitSprite.setFont(numbers);
     }
     return unitSprite;
   }
@@ -279,7 +285,7 @@ public class SpriteManager implements PropertyChangeListener {
     if (citySprites.containsKey(city)) {
       throw new IllegalArgumentException("City " + city + "  is already cached...");
     } else {
-      citySprite = new CitySprite(city.getLocation(), map, city, null);
+      citySprite = new CitySprite(city.getLocation(), map, city);
     }
     return citySprite;
   }
@@ -299,9 +305,9 @@ public class SpriteManager implements PropertyChangeListener {
   private Animation getFoggedCityAnim(boolean hq, Color c, int cityID) {
     Animation animFogged;
     if (hq) {
-      animFogged = resources.getCityAnim(cityID, c, AnimLib.ANIM_INACTIVE);
+      animFogged = resources.getCityAnim(cityID, c, AnimLib.ANIM_FOGGED);
     } else {
-      animFogged = resources.getCityAnim(cityID, neutralColor, AnimLib.ANIM_INACTIVE);
+      animFogged = resources.getCityAnim(cityID, neutralColor, AnimLib.ANIM_FOGGED);
     }
     return animFogged;
   }
@@ -498,5 +504,9 @@ public class SpriteManager implements PropertyChangeListener {
     logger.debug("Removing UnitSprite");
     unitSprites.remove(unit);
     animChange(sprite.anim, null);
+  }
+
+  public CitySprite getCitySprite(City city) {
+    return citySprites.get(city);
   }
 }

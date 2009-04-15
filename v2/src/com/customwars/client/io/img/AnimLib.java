@@ -23,6 +23,7 @@ public class AnimLib {
   public static final String ANIM_UP = "UP";
   public static final String ANIM_DOWN = "DOWN";
   public static final String ANIM_INACTIVE = "INACTIVE";
+  public static final String ANIM_FOGGED = "FOGGED";
   private static final int NO_DURATION = 999;
 
   private static Map<String, Animation> animations = new HashMap<String, Animation>();
@@ -81,7 +82,7 @@ public class AnimLib {
 
       Animation animFogged = new Animation(false);
       animFogged.addFrame(darkerCitySpriteSheet.getSubImage(0, row), NO_DURATION);
-      addCityAnim(row, color, ANIM_INACTIVE, animFogged);
+      addCityAnim(row, color, ANIM_FOGGED, animFogged);
     }
   }
 
