@@ -1,7 +1,8 @@
 package com.customwars.client;
 
 import com.customwars.client.model.TestData;
-import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.Logger;
+import org.apache.log4j.varia.NullAppender;
 import org.junit.Test;
 
 /**
@@ -10,7 +11,8 @@ import org.junit.Test;
 public class SetupTests {
 
   static {
-    BasicConfigurator.configure();
+    // Ignore any logging messages
+    Logger.getRootLogger().addAppender(new NullAppender());
     TestData.storeTestData();
   }
 
