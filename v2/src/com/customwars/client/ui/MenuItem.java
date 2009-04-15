@@ -1,40 +1,42 @@
 package com.customwars.client.ui;
 
+import com.customwars.client.ui.layout.AnimationBox;
+import com.customwars.client.ui.layout.Box;
+import com.customwars.client.ui.layout.ImageBox;
+import com.customwars.client.ui.layout.TextBox;
 import com.customwars.client.ui.slick.MouseOverArea;
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Color;
-import org.newdawn.slick.Font;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.gui.GUIContext;
 
-import java.awt.Point;
+import java.awt.Insets;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A single Menu item containing:
  * An animated cursor, Icon and text
  * Each of the above is optional and rendered centered in a box, each box is the dimension of the Image/text + the margins
- * The menu item height is put to the highest box height.
+ * The menu item height is set to the highest box height.
  *
  * @author stefan
  */
 public class MenuItem extends MouseOverArea {
   private static final int CURSOR_LEFT_MARGIN = 1, CURSOR_RIGHT_MARGIN = 5;
-  private static final int ICON_LEFT_MARGIN = 1, ICON_RIGHT_MARGIN = 5;
-  private static final int FONT_HORIZONTAL_MARGIN = 10;
-  private static final int FONT_VERTICAL_MARGIN = 3;
-  private static final int MENU_ITEM_MARGIN = 5;
+  private static final int ICON_LEFT_MARGIN = 2, ICON_RIGHT_MARGIN = 1;
+  private static final int FONT_HORIZONTAL_MARGIN = 15;
+  private static final int MENU_ITEM_MARGIN = 1;
   private Color textColor = Color.white;
 
-  private Animation cursorAnim;
-  private Image icon;
-  private String txt;
-
-  private Point cursorPoint, iconPoint, txtPoint;
-  private Font font;
+  private Box animBox = new AnimationBox();
+  private Box imgBox = new ImageBox();
+  private Box textBox = new TextBox("", container.getDefaultFont());
+  private List<Box> boxes = new ArrayList<Box>();
 
   public MenuItem(GUIContext container) {
-    super(container);
+    this(null, null, null, container);
   }
 
   public MenuItem(String txt, GUIContext container) {
@@ -55,7 +57,6 @@ public class MenuItem extends MouseOverArea {
 
   public MenuItem(Animation cursorAnim, Image icon, String txt, GUIContext container) {
     super(container);
-    this.font = container.getDefaultFont();
     init(cursorAnim, icon, txt);
   }
 
@@ -68,154 +69,102 @@ public class MenuItem extends MouseOverArea {
 
   /**
    * Set the area that this menu items covers
-   * used by the MouseOverArea
    */
   private void initArea() {
     int x = getX() - MENU_ITEM_MARGIN;
     int y = getY() - MENU_ITEM_MARGIN;
-    int width = getTotalWidth() + MENU_ITEM_MARGIN;
-    int height = getTotalHeight() + MENU_ITEM_MARGIN;
-    setArea(x, y, width, height);
+    int maxWidth = getMaxWidth() + MENU_ITEM_MARGIN;
+    int maxHeight = getMaxHeight() + MENU_ITEM_MARGIN;
+    setArea(x, y, maxWidth, maxHeight);
   }
 
   public void setCursorAnim(Animation cursorAnim) {
-    this.cursorAnim = cursorAnim;
+    if (cursorAnim != null) {
+      Insets insets = new Insets(0, CURSOR_LEFT_MARGIN, 0, CURSOR_RIGHT_MARGIN);
+      animBox = new AnimationBox(cursorAnim, insets);
+      boxes.add(animBox);
+    }
   }
 
   public void setIcon(Image icon) {
-    this.icon = icon;
+    if (icon != null) {
+      Insets insets = new Insets(0, ICON_LEFT_MARGIN, 0, ICON_RIGHT_MARGIN);
+      imgBox = new ImageBox(icon, insets);
+      boxes.add(imgBox);
+    }
   }
 
   public void setText(String text) {
-    this.txt = text;
+    if (text != null) {
+      Insets insets = new Insets(0, FONT_HORIZONTAL_MARGIN, 0, FONT_HORIZONTAL_MARGIN);
+      textBox = new TextBox(text, container.getDefaultFont(), insets);
+      boxes.add(textBox);
+    }
   }
 
   public void setTextColor(Color txtColor) {
     this.textColor = txtColor;
   }
 
-  /**
-   * Init the positions of the cursor, icon and text
-   */
-  public void initPositions() {
-    int cursorBoxWidth = getCursorBoxWith();
-    int iconBoxWidth = getIconBoxWith();
-    int textBoxWidth = getTextBoxWith();
-
-    int cursorCenterX = center(cursorBoxWidth, getCursorWidth());
-    int cursorCenterY = center(getHeight(), getCursorHeight());
-
-    int iconCenterX = center(iconBoxWidth, getIconWidth());
-    int iconCenterY = center(getHeight(), getIconHeight());
-
-    int txtCenterX = center(textBoxWidth, getTextWidth());
-    int txtCenterY = center(getHeight(), getTextHeight());
-
-    cursorPoint = new Point(getX() + cursorCenterX, getY() + cursorCenterY);
-    iconPoint = new Point(getX() + cursorBoxWidth + iconCenterX, getY() + iconCenterY);
-    txtPoint = new Point(getX() + cursorBoxWidth + iconBoxWidth + txtCenterX, getY() + txtCenterY);
+  public void initBoxes() {
+    initBoxSizes();
+    initBoxLocations();
   }
 
   /**
-   * Center inner inside total
-   *
-   * @return The left top point to render inner inside the box
+   * Excess horizontal space goes to the textbox
+   * All boxes have the same height as the menu item
    */
-  private int center(int box, int inner) {
-    if (inner < box) {
-      return box / 2 - inner / 2;
-    } else {
-      return 0;
+  private void initBoxSizes() {
+    textBox.setWidth(getWidth() - animBox.getWidth() - imgBox.getWidth());
+
+    for (Box b : boxes) {
+      b.setHeight(getHeight());
     }
   }
 
+  private void initBoxLocations() {
+    int x = getX();
+    int y = getY();
 
-  private int getTotalWidth() {
+    animBox.setLocation(x, y);
+    imgBox.setLocation(x + animBox.getWidth(), y);
+    textBox.setLocation(x + animBox.getWidth() + imgBox.getWidth(), y);
+  }
+
+  private int getMaxWidth() {
     int totalWidth = 0;
-    totalWidth += getCursorBoxWith();
-    totalWidth += getIconBoxWith();
-    totalWidth += getTextBoxWith();
+    for (Box b : boxes) {
+      totalWidth += b.getWidth();
+    }
     return totalWidth;
   }
 
-  private int getTotalHeight() {
-    return findHighestValue(getCursorHeight(), getIconHeight(), getTextHeight());
-  }
-
-  private int getCursorBoxWith() {
-    return CURSOR_LEFT_MARGIN + getCursorWidth() + CURSOR_RIGHT_MARGIN;
-  }
-
-  private int getIconBoxWith() {
-    return ICON_LEFT_MARGIN + getIconWidth() + ICON_RIGHT_MARGIN;
-  }
-
-  private int getTextBoxWith() {
-    return getTextWidth();
-  }
-
-  private int getCursorHeight() {
-    if (cursorAnim != null) {
-      return cursorAnim.getHeight();
-    } else {
-      return 0;
-    }
-  }
-
-  private int getIconHeight() {
-    if (icon != null) {
-      return icon.getHeight();
-    } else {
-      return 0;
-    }
-  }
-
-  private int getTextHeight() {
-    if (txt != null && font != null) {
-      return font.getLineHeight() + FONT_VERTICAL_MARGIN;
-    } else {
-      return 0;
-    }
-  }
-
-  private int getCursorWidth() {
-    if (cursorAnim != null) {
-      return cursorAnim.getWidth();
-    } else {
-      return 0;
-    }
-  }
-
-  private int getIconWidth() {
-    if (icon != null) {
-      return icon.getWidth();
-    } else {
-      return 0;
-    }
-  }
-
-  private int getTextWidth() {
-    if (txt != null) {
-      return font.getWidth(txt) + FONT_HORIZONTAL_MARGIN;
-    } else {
-      return 0;
-    }
-  }
-
-  private int findHighestValue(int... values) {
+  private int getMaxHeight() {
     int highest = 0;
 
-    for (int val : values) {
-      if (val > highest) highest = val;
+    for (Box b : boxes) {
+      if (b.getHeight() > highest) highest = b.getHeight();
     }
     return highest;
   }
 
-  public void render(GUIContext container, Graphics g) {
-    super.render(container, g);
+  public void renderimpl(GUIContext container, Graphics g) {
+    super.renderimpl(container, g);
+    renderBorder(g);
+    renderBoxes(g);
+  }
+
+  private void renderBoxes(Graphics g) {
     g.setColor(textColor);
-    if (cursorAnim != null && isSelected()) cursorAnim.draw(cursorPoint.x, cursorPoint.y);
-    if (icon != null) g.drawImage(icon, iconPoint.x, iconPoint.y);
-    if (txt != null) g.drawString(txt, txtPoint.x, txtPoint.y);
+    if (isSelected())
+      animBox.render(g);
+    imgBox.render(g);
+    textBox.render(g);
+  }
+
+  private void renderBorder(Graphics g) {
+    g.setColor(Color.black);
+    g.drawRect(getX(), getY(), getWidth(), getHeight());
   }
 }

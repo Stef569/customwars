@@ -49,46 +49,17 @@ public class PopupMenu extends BasicComponent {
   }
 
   /**
-   * Init menu items once after all menu items are added
-   * We need to know the widest menu item in the menu before we define the menu item bounds
-   */
-  private void init() {
-    setWidth(getMaxWidth());
-    setHeight(getTotalHeight());
-    initMenuItems();
-    selectMenuItem(0);
-    inited = true;
-  }
-
-  private void initMenuItems() {
-    for (MenuItem menuItem : menuItems) {
-      menuItem.setLocation(getX(), getVerticalLocation(menuItem));
-      menuItem.setWidth(getWidth());
-      menuItem.initPositions();
-      menuItem.setMouseOverColor(HOVER_COLOR);
-    }
-  }
-
-  private int getVerticalLocation(MenuItem menuItem) {
-    int height = getY();
-    for (int i = 0; i < menuItems.size(); i++) {
-      if (i < menuItems.indexOf(menuItem)) {
-        height += menuItems.get(i).getHeight() + spacingY;
-      }
-    }
-    return height;
-  }
-
-  /**
    * On the first invocation init this component
    * Render the background
    * When the mouse moves over a menu item the current selection is updated
    * Render each menu item
    */
-  public void render(GUIContext container, Graphics g) {
+  public void renderimpl(GUIContext container, Graphics g) {
     Color origColor = g.getColor();
-    if (!inited)
+    if (!inited) {
       init();
+      inited = true;
+    }
 
     if (renderBackground)
       renderBackground(g);
@@ -111,6 +82,37 @@ public class PopupMenu extends BasicComponent {
       }
     }
     g.setColor(origColor);
+  }
+
+  /**
+   * Init menu items once after all menu items are added
+   * We need to know the widest menu item in the menu before we define the menu item bounds
+   */
+  public void init() {
+    int widestMenuItem = getWidestMenuItem();
+    setWidth(widestMenuItem);
+    setHeight(getTotalMenuItemsHeight());
+    initMenuItems(widestMenuItem);
+    selectMenuItem(0);
+  }
+
+  private void initMenuItems(int widestMenuItem) {
+    for (MenuItem menuItem : menuItems) {
+      menuItem.setLocation(getX(), getVerticalLocation(menuItem));
+      menuItem.setWidth(widestMenuItem);
+      menuItem.initBoxes();
+      menuItem.setMouseOverColor(HOVER_COLOR);
+    }
+  }
+
+  private int getVerticalLocation(MenuItem menuItem) {
+    int height = getY();
+    for (int i = 0; i < menuItems.size(); i++) {
+      if (i < menuItems.indexOf(menuItem)) {
+        height += menuItems.get(i).getHeight() + spacingY;
+      }
+    }
+    return height;
   }
 
   /**
@@ -216,7 +218,7 @@ public class PopupMenu extends BasicComponent {
     return visible;
   }
 
-  private int getMaxWidth() {
+  private int getWidestMenuItem() {
     int maxWidth = 0;
     for (MenuItem menuItem : menuItems) {
       int width = menuItem.getWidth();
@@ -225,7 +227,7 @@ public class PopupMenu extends BasicComponent {
     return maxWidth;
   }
 
-  private int getTotalHeight() {
+  private int getTotalMenuItemsHeight() {
     int totalHeight = 0;
     for (MenuItem menuItem : menuItems) {
       totalHeight += menuItem.getHeight() + spacingY;
