@@ -21,20 +21,14 @@ public class UnitFight extends Fight {
     this.map = map;
   }
 
-  public int calcAttackDamage(Defender defender) {
-    Unit defendingUnit = (Unit) defender;
-    int attackDmgPercentage = calcAttackDamagePercentage();
-    return (int) Math.floor((attackDmgPercentage * defendingUnit.getMaxHp()) / 100);
-  }
-
-  public final int calcAttackDamagePercentage() {
-    Unit defendingUnit = (Unit) defender;
+  public final int calcAttackDamagePercentage(Defender defender) {
     Unit attackingUnit = (Unit) attacker;
+    Unit defendingUnit = (Unit) defender;
     int attackerHP = attackingUnit.getHp();
     int attackMaxHP = attackingUnit.getMaxHp();
 
     int terrainDef = calcTerrainDefense(defendingUnit);
-    int baseDmg = getBaseDamage(attackingUnit.getID(), defendingUnit.getID());
+    int baseDmg = getAttackDamagePercentage(attackingUnit, defendingUnit);
     int special = calcAdditionalDamageCases();
 
     return (int) Math.floor(attackerHP / (float) attackMaxHP * baseDmg - terrainDef - special);
@@ -49,17 +43,55 @@ public class UnitFight extends Fight {
     return 0;
   }
 
-  private int getBaseDamage(int attUnitID, int defUnitID) {
-    if (baseDMG[attUnitID][defUnitID] != NO_DAMAGE) {
-      return baseDMG[attUnitID][defUnitID];
+  /**
+   * Get the highest damage percentage that the attacker can cause to defender
+   *
+   * @return The highest damage percentage or N0_DAMAGE when the attacker cannot attack the defender
+   */
+  private int getAttackDamagePercentage(Unit attacker, Unit defender) {
+    int baseDmg = getBaseDamage(attacker, defender);
+    int altDmg = getAltDamage(attacker, defender);
+    int highestDamage = findHighestDamage(baseDmg, altDmg);
+
+    if (highestDamage == NO_DAMAGE) {
+      return NO_DAMAGE;
+    } else if (baseDmg == highestDamage) {
+      return baseDmg;
+    } else if (altDmg == highestDamage) {
+      return altDmg;
     } else {
-      return altDMG[attUnitID][defUnitID];
+      return NO_DAMAGE;
     }
+  }
+
+  private int getBaseDamage(Unit attacker, Unit defender) {
+    if (attacker.canFirePrimaryWeapon()) {
+      return baseDMG[attacker.getID()][defender.getID()];
+    } else {
+      return NO_DAMAGE;
+    }
+  }
+
+  private int getAltDamage(Unit attacker, Unit defender) {
+    if (attacker.canFireSecondaryWeapon()) {
+      return altDMG[attacker.getID()][defender.getID()];
+    } else {
+      return NO_DAMAGE;
+    }
+  }
+
+  private int findHighestDamage(int... values) {
+    int highest = 0;
+
+    for (int val : values) {
+      if (val > highest) highest = val;
+    }
+    return highest;
   }
 
   public boolean canCounterAttack(Attacker attacker, Defender defender) {
     return super.canCounterAttack(attacker, defender) && defender.canCounterAttack() &&
-            isDefenderInRangeOfAttacker((Attacker) defender, (Defender) attacker);
+            isDefenderAdjacentOfAttacker((Attacker) defender, (Defender) attacker);
   }
 
   public void counterAttack() {
@@ -67,9 +99,33 @@ public class UnitFight extends Fight {
     attacker.attack(defender, this);
   }
 
-  private boolean isDefenderInRangeOfAttacker(Attacker attacker, Defender defender) {
-    for (Unit enemyInRange : map.getEnemiesInRangeOf(attacker)) {
-      if (enemyInRange == defender) return true;
+  /**
+   * @return The WeaponType that will inflict the highest damage
+   *         null is returned when the inflicted damage == 0
+   */
+  public WeaponType getBestAttackWeaponType() {
+    Unit attackingUnit = (Unit) attacker;
+    Unit defendingUnit = (Unit) defender;
+
+    int baseDmg = getBaseDamage(attackingUnit, defendingUnit);
+    int altDmg = getAltDamage(attackingUnit, defendingUnit);
+    int highestDamage = findHighestDamage(baseDmg, altDmg);
+
+    if (highestDamage == NO_DAMAGE) {
+      return null;
+    } else if (baseDmg == highestDamage) {
+      return WeaponType.PRIMARY;
+    } else if (altDmg == highestDamage) {
+      return WeaponType.SECONDARY;
+    } else {
+      return null;
+    }
+  }
+
+  private boolean isDefenderAdjacentOfAttacker(Attacker attacker, Defender defender) {
+    for (Tile t : map.getSurroundingTiles(attacker.getLocation(), 1, 1)) {
+      Unit unit = map.getUnitOn(t);
+      if (unit != null && unit == defender) return true;
     }
     return false;
   }

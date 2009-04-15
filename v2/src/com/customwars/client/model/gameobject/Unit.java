@@ -10,6 +10,7 @@ import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.path.MoveStrategy;
 import com.customwars.client.model.map.path.Mover;
 import tools.Args;
+import tools.NumberUtil;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -19,6 +20,12 @@ import java.util.List;
  * Is a Location, meaning it can transport Locatables
  * It has a Facing direction, this is one of the compass Direction(N,S,E,W)
  * Units have 2 weapons(both are optional): 1 Primary and 1 Secundary
+ *
+ * The internal hp of a unit has a range of 0-maxHp instead of 0-10. This approach allows to take a small damage.
+ * and is easier then using a double. getHP and getMaxHP convert the internal hp back to the 0-10 range ie:
+ * hp=100, maxhp=100 getHP() = 10 -5% damage
+ * hp=95, maxhp=100 getHP() = 10 -5% damage
+ * hp=90, maxhp=100 getHP() = 9
  *
  * @author Stefan
  */
@@ -51,7 +58,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   private int hp;               // Health Points, if 0 the unit is dead
   private int supplies;         // Each unit has supplies, this can be in the form of rations(troops) or fuel(motorized vehicles)
   private int experience;       // Each time a unit wins a fight his Experience rises(starting from 0 to 10)
-  private int unitState;        // Current Unitstate (under water, capturing a property,...)
+  private UnitState unitState;  // Current Unitstate (submerged, capturing a property,...)
   private Player owner;         // Player owning this unit
   private Location location;    // current Location
   private List<Location> moveZone;  // A zone where this unit can move in
@@ -99,6 +106,9 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   void init() {
     this.transportTypes = Args.createEmptyListIfNull(transportTypes);
     this.transport = new LinkedList<Locatable>();
+    if (name == null) name = "";
+    if (description == null) description = "";
+    unitState = UnitState.IDLE;
   }
 
   /**
@@ -198,7 +208,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
    * ammo to max
    */
   public void resupply() {
-    setSupply(maxSupplies);
+    setSupplies(maxSupplies);
     restock();
   }
 
@@ -214,24 +224,6 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
     }
   }
 
-  public void fireWeapon() {
-    fireWeapon(1);
-  }
-
-  /**
-   * When a unit fires the shots are subtracted from the ammoCount in weapon.
-   * Some units cannot fire, they should have set primaryWeapon and secondaryWeapon to null.
-   *
-   * @param shots amount of bullets or misiles or shells the available weapon will fire
-   * @see Weapon
-   */
-  public void fireWeapon(int shots) {
-    Weapon weapon = getAvailableWeapon();
-    if (weapon != null) {
-      weapon.fire(shots);
-    }
-  }
-
   // ----------------------------------------------------------------------------
   // Actions :: Attack/Defend
   // ----------------------------------------------------------------------------
@@ -241,7 +233,9 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
    */
   public void attack(Defender defender, Fight fight) {
     if (canAttack(defender)) {
+      tryToFireWeapon(defender, fight);
       defender.defend(this, fight);
+
       if (defender.isDestroyed()) {
         if (++experience > MAX_EXP) {
           experience = MAX_EXP;
@@ -256,10 +250,33 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
             !defender.getOwner().isAlliedWith(owner);
   }
 
+  private void tryToFireWeapon(Defender defender, Fight fight) {
+    if (fight.calcAttackDamagePercentage(defender) > 0) {
+      Fight.WeaponType weaponType = fight.getBestAttackWeaponType();
+      fireWeapon(weaponType, 1);
+    }
+  }
+
+  /**
+   * When a unit fires the shots are subtracted from the ammoCount in weapon.
+   * Some units cannot fire, they should have set primaryWeapon and secondaryWeapon to null.
+   *
+   * @param weaponType The weapon type that was used to attack(Primary or Secondary)
+   * @param shots      amount of bullets, missiles or shells the weapon will fire
+   * @see Weapon
+   */
+  private void fireWeapon(Fight.WeaponType weaponType, int shots) {
+    if (weaponType == Fight.WeaponType.PRIMARY) {
+      primaryWeapon.fire(shots);
+    } else if (weaponType == Fight.WeaponType.SECONDARY) {
+      secondaryWeapon.fire(shots);
+    }
+  }
+
   public void defend(Attacker attacker, Fight fight) {
     receiveDamage(fight);
 
-    if (hp <= 0) {
+    if (getHp() <= 0) {
       destroy();
       return;
     }
@@ -272,14 +289,17 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   /**
    * This unit is the defender
    * and receives damage from a Fight.
+   *
+   * @param fight The fight context
    */
   public void receiveDamage(Fight fight) {
-    int attackValue = fight.calcAttackDamage(this);
+    int attackPercentage = fight.calcAttackDamagePercentage(this);
+    int attackValue = (int) (((double) attackPercentage / maxHp) * 10);
     addHp(-attackValue);
   }
 
   /**
-   * The unit can counter Attack when it didn't die from the attack.
+   * The unit can counter Attack when it didn't die from the attack and is armed.
    */
   public boolean canCounterAttack() {
     return canFire() && !isDestroyed();
@@ -344,6 +364,10 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
     }
   }
 
+  public boolean canTransport(int id) {
+    return canTransport && transportTypes.contains(id);
+  }
+
   /**
    * @return Amount of units in the transport
    */
@@ -359,8 +383,13 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
       unit.addHp(hp);
   }
 
+  /**
+   * This unit is the supplier
+   *
+   * @return Can this unit supply the given unit
+   */
   public boolean canSupply(Unit unit) {
-    return canSupply && unit != null && supplies != maxSupplies && owner == unit.getOwner();
+    return canSupply && unit != null && unit.getSuppliesPercentage() != 100 && owner == unit.getOwner();
   }
 
   public void heal(int healRate) {
@@ -376,7 +405,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   }
 
   private int getHealCost(int healRate) {
-    int healAmount = maxHp - hp;
+    int healAmount = getMaxHp() - getHp();
     if (healAmount > healRate) {
       healAmount = healRate;
     }
@@ -416,7 +445,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   }
 
   public void addHp(int additionalHp) {
-    setHp(hp + additionalHp);
+    setHp(hp + additionalHp * 10);
   }
 
   protected void setHp(int hp) {
@@ -426,10 +455,10 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   }
 
   public void addSupplies(int additionalSupplies) {
-    setSupply(supplies + additionalSupplies);
+    setSupplies(supplies + additionalSupplies);
   }
 
-  protected void setSupply(int amount) {
+  protected void setSupplies(int amount) {
     int oldVal = this.supplies;
     this.supplies = Args.getBetweenZeroMax(amount, maxSupplies);
     firePropertyChange("supplies", oldVal, this.supplies);
@@ -466,8 +495,8 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
     firePropertyChange("price", oldVal, price);
   }
 
-  public void setUnitState(int unitState) {
-    int oldVal = this.unitState;
+  public void setUnitState(UnitState unitState) {
+    UnitState oldVal = this.unitState;
     this.unitState = unitState;
     firePropertyChange("unitState", oldVal, unitState);
   }
@@ -488,9 +517,10 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   // Getters :: Weapon
   // ---------------------------------------------------------------------------
   /**
-   * @return The first available weapon
-   *         this means it is not null and has some ammo left
-   *         starting with the primary weapon
+   * Retrieve the first available weapon: Not null and some ammo left
+   * starting with the primary weapon
+   *
+   * @return The first available weapon, null when no weapons are available
    */
   public Weapon getAvailableWeapon() {
     if (hasPrimaryWeapon() && primaryWeapon.getAmmo() > 0) {
@@ -514,14 +544,15 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
    * @return if one of the two weapons can be fired
    */
   public boolean canFire() {
-    boolean canfire = false;
+    return canFirePrimaryWeapon() || canFireSecondaryWeapon();
+  }
 
-    if (hasPrimaryWeapon() && primaryWeapon.getAmmo() > 0) {
-      canfire = true;
-    } else if (hasSecondaryWeapon() && secondaryWeapon.getAmmo() > 0) {
-      canfire = true;
-    }
-    return canfire;
+  public boolean canFirePrimaryWeapon() {
+    return hasPrimaryWeapon() && primaryWeapon.canFire();
+  }
+
+  public boolean canFireSecondaryWeapon() {
+    return hasSecondaryWeapon() && secondaryWeapon.canFire();
   }
 
   public boolean hasPrimaryWeapon() {
@@ -562,41 +593,45 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   }
 
   public int getSuppliesPercentage() {
-    int percentage;
-    if (maxSupplies <= 0) {
-      percentage = 100;
-    } else {
-      double divide = (double) supplies / maxSupplies;
-      percentage = (int) Math.round(divide * 100);
-    }
-    return percentage;
+    return NumberUtil.calcPercentage(supplies, maxSupplies);
   }
 
   public boolean hasLowSupplies() {
     return getSuppliesPercentage() <= 20;
   }
 
+  /**
+   * Converts the internal hp to a number between 0 - 10 rounding up to the nearest absolute value.
+   * hp=25
+   * getHp() return 3
+   * hp=19
+   * getHp() return 2
+   *
+   * @return The Hp
+   */
   public int getHp() {
-    return hp;
+    return (int) Math.ceil((double) hp / 10);
   }
 
+  /**
+   * Converts the internal maxhp to a number between 0 - 10 rounding up to the nearest absolute value.
+   * maxhp=99
+   * getMaxHp() return 10
+   * maxhp=79
+   * getMaxHp() return 8
+   *
+   * @return The max Hp
+   */
   public int getMaxHp() {
-    return maxHp;
+    return (int) Math.ceil((double) maxHp / 10);
   }
 
   public int getHpPercentage() {
-    int percentage;
-    if (maxHp <= 0) {
-      percentage = 100;
-    } else {
-      double divide = (double) hp / maxHp;
-      percentage = (int) Math.round(divide * 100);
-    }
-    return percentage;
+    return NumberUtil.calcPercentage(hp, maxHp);
   }
 
   public boolean hasLowHp() {
-    return getHpPercentage() < 100;
+    return getHp() < getMaxHp();
   }
 
   // ---------------------------------------------------------------------------
@@ -641,6 +676,10 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
     return name;
   }
 
+  public String getDescription() {
+    return description;
+  }
+
   public int getArmyBranch() {
     return armyBranch;
   }
@@ -657,7 +696,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
     return owner;
   }
 
-  public int getUnitState() {
+  public UnitState getUnitState() {
     return unitState;
   }
 
@@ -669,14 +708,17 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
     return attZone.contains(location);
   }
 
+  /**
+   * @return True when one of the weapons has less then 33% ammo.
+   */
   public boolean hasLowAmmo() {
     boolean lowAmmo = false;
     if (hasPrimaryWeapon()) {
-      if (primaryWeapon.getAmmoPercentage() < 20) {
+      if (primaryWeapon.getAmmoPercentage() < 33) {
         lowAmmo = true;
       }
     } else if (hasSecondaryWeapon()) {
-      if (secondaryWeapon.getAmmoPercentage() < 20) {
+      if (secondaryWeapon.getAmmoPercentage() < 33) {
         lowAmmo = true;
       }
     }
@@ -695,12 +737,12 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
     return canDive;
   }
 
-  public boolean canTransport(int id) {
-    return canTransport && transportTypes.contains(id);
-  }
-
   public boolean canTransport() {
     return canTransport;
+  }
+
+  public boolean canJoin() {
+    return canJoin;
   }
 
   public int getMinSupplyRange() {
@@ -711,23 +753,17 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
     return maxSupplyRange;
   }
 
-  public boolean canJoin() {
-    return canJoin;
+  public int getCaptureRate() {
+    return getHp();
   }
 
   @Override
   public String toString() {
-    StringBuilder strBuilder = new StringBuilder("[name=" + name + " id=" + id);
-    if (location == null) {
-      strBuilder.append(" not located");
-    } else {
-      strBuilder.append(" location=(").append(location.getCol()).append(",").append(location.getRow()).append(")");
-    }
-    if (owner != null) strBuilder.append(" owner=").append(owner);
-    if (transport != null)
-      strBuilder.append(" transport=").append(transport);
-    strBuilder.append(" UnitState=").append(unitState).append(" state=").append(getState());
-    strBuilder.append("]");
-    return strBuilder.toString();
+    return String.format("[name=%s id=%s owner=%s location=%s transport=%s state=%s]",
+            name, id, owner, getLocationText(), transport, unitState);
+  }
+
+  private String getLocationText() {
+    return location == null ? "Not located" : location.getLocationString();
   }
 }
