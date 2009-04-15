@@ -1,5 +1,6 @@
 package com.customwars.client.io.loading;
 
+import com.customwars.client.io.converter.TerrainConverter;
 import com.customwars.client.io.converter.UnitWeaponConverter;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.CityFactory;
@@ -32,7 +33,8 @@ import java.util.Collection;
  * @author stefan
  */
 public class ModelLoader {
-  private static final String XML_DATA_TERRAIN_FILE = "terrains.xml";
+  private static final String XML_DATA_TERRAIN_FILE = "baseTerrains.xml";
+  private static final String XML_DATA_ALL_TERRAIN_FILE = "terrains.xml";
   private static final String XML_DATA_WEAPONS_FILE = "weapons.xml";
   private static final String XML_DATA_UNITS_FILE = "units.xml";
   private static final String XML_DATA_CITY_FILE = "cities.xml";
@@ -62,8 +64,13 @@ public class ModelLoader {
     xStream.alias("terrain", Terrain.class);
     xStream.useAttributeFor(Terrain.class, "id");
     xStream.useAttributeFor(Terrain.class, "name");
-    InputStream terrainStream = ResourceLoader.getResourceAsStream(modelResPath + XML_DATA_TERRAIN_FILE);
-    Collection<Terrain> terrains = (Collection<Terrain>) XStreamUtil.readObject(xStream, terrainStream);
+    xStream.useAttributeFor(Terrain.class, "type");
+    InputStream basicTerrainStream = ResourceLoader.getResourceAsStream(modelResPath + XML_DATA_TERRAIN_FILE);
+    Collection<Terrain> basicTerrains = (Collection<Terrain>) XStreamUtil.readObject(xStream, basicTerrainStream);
+
+    InputStream allTerrainStream = ResourceLoader.getResourceAsStream(modelResPath + XML_DATA_ALL_TERRAIN_FILE);
+    xStream.registerConverter(new TerrainConverter(basicTerrains));
+    Collection<Terrain> terrains = (Collection<Terrain>) XStreamUtil.readObject(xStream, allTerrainStream);
     TerrainFactory.addTerrains(terrains);
   }
 
@@ -92,6 +99,7 @@ public class ModelLoader {
     xStream.alias("city", City.class);
     xStream.useAttributeFor(Terrain.class, "id");
     xStream.useAttributeFor(Terrain.class, "name");
+    xStream.useAttributeFor(Terrain.class, "type");
     InputStream cityStream = ResourceLoader.getResourceAsStream(modelResPath + XML_DATA_CITY_FILE);
     Collection<City> cities = (Collection<City>) XStreamUtil.readObject(xStream, cityStream);
     CityFactory.addCities(cities);

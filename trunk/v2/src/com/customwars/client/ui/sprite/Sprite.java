@@ -208,6 +208,10 @@ public class Sprite {
     return anim.getCurrentFrame().getWidth();
   }
 
+  public Animation getAnim() {
+    return anim;
+  }
+
   // returns true if x and y is within the Sprite
   public boolean hasBeenClickedOn(int x, int y) {
     float xLimit = locX + anim.getCurrentFrame().getWidth();

@@ -40,7 +40,7 @@ public class TerrainFactory {
     if (terrains.containsKey(terrainID)) {
       terrain = terrains.get(terrainID);
     } else {
-      throw new IllegalArgumentException("Terrainid: " + terrainID + " is not in the cache " + terrains);
+      throw new IllegalArgumentException("Terrainid: " + terrainID + " is not in the cache " + terrains.keySet());
     }
     return terrain;
   }

@@ -32,9 +32,11 @@ import java.util.HashMap;
 import java.util.Set;
 
 /**
- * Handles and hides all kind of resources through 1 object
+ * Handles and stores all kind of resources through 1 object
  * ie Images, Sound, Music, Animations can be retrieved
- * Each of these resources is mapped to a string like "select sound" -> Sound
+ * Each of these resources is mapped to a string like "SELECT_SOUND" -> Sound
+ *
+ * Before loading the paths where the resources are located should be set
  *
  * @author stefan
  */

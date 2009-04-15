@@ -3,6 +3,7 @@ package com.customwars.client.model.map;
 import com.customwars.client.model.gameobject.GameObject;
 import com.customwars.client.model.gameobject.Locatable;
 import org.apache.log4j.Logger;
+import tools.Args;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -125,20 +126,19 @@ public class TileMap<T extends Location> extends GameObject {
 
   /**
    * Return all the tiles surrounding <tt>center</tt> within the <tt>min, max</tt> range.
-   * The center is not included.</p>
+   * The center is never included</p>
    * Based on the range an AdjacentIterator or CircleIterator is returned.
    * if center is not valid then an empty Iterator is returned
    *
    * @param center   The tile that is the center of the tiles to iterate over.
    * @param minRange How far away do we need to start iterating from the center tile.
    * @param maxRange How far away do we need to stop iterating from the center tile.
-   * @return The tiles surrounding the given tile.
+   * @return The tiles surrounding the given center tile.
    */
   public Iterable<T> getSurroundingTiles(Location center, int minRange, int maxRange) {
-    if (minRange > maxRange)
-      throw new IllegalArgumentException("minrange " + minRange + " > then " + maxRange);
+    Args.validate(minRange > maxRange, "minrange " + minRange + " > then " + maxRange);
 
-    if (!isValid(center)) {
+    if (!isValid(center) || minRange == 0 || maxRange == 0) {
       return emptyIterator();
     }
 
@@ -245,7 +245,8 @@ public class TileMap<T extends Location> extends GameObject {
      * Get the next tile as a T rather as an object.
      *
      * @return next T
-     * @throws java.util.NoSuchElementException if iterator is exhausted.
+     * @throws java.util.NoSuchElementException
+     *          if iterator is exhausted.
      */
     public abstract T nextTile() throws NoSuchElementException;
 
@@ -289,7 +290,8 @@ public class TileMap<T extends Location> extends GameObject {
 
     /**
      * @return Next tile
-     * @throws java.util.NoSuchElementException if we ran off the map bounds
+     * @throws java.util.NoSuchElementException
+     *          if the iterator ran off the map bounds
      */
     @Override
     public T nextTile() throws NoSuchElementException {

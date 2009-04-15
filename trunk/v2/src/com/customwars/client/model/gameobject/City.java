@@ -2,8 +2,10 @@ package com.customwars.client.model.gameobject;
 
 import com.customwars.client.model.TurnHandler;
 import com.customwars.client.model.game.Player;
+import com.customwars.client.model.map.Direction;
 import com.customwars.client.model.map.Location;
 import tools.Args;
+import tools.NumberUtil;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -11,20 +13,18 @@ import java.util.List;
 
 /**
  * Cities can be owned by 1 Player
- * in fog of war They have a vision aka line of sight,
  * are located on a Location
  * They have funds, The player that owns this city receives the funds on each turn start.
- * can heal units of a specific ArmyBranch ID
- * can supply units of a specific ArmyBranch ID
+ * can heal and supply units of a specific ArmyBranch ID
  * can be captured by a Units of a specific unit ID
  * can build units of a specific ArmyBranch ID
  * <p/>
  * When a city is captured
- * getCapturePercentage == 100
+ * getCapturePercentage() == 100
  * isCaptured() == true
  * <p/>
- * Preparing for another capture is done when
- * another unit tries to capture this city, or manually through resetCapturing()
+ * Preparing for another capture process is triggered when
+ * another unit tries to capture this city, or by invoking resetCapturing()
  *
  * @author stefan
  */
@@ -34,18 +34,18 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
 
   private List<Integer> heals;          // The ids this City can heal(Empty list means it cannot heal)
   private List<Integer> canBeCaptureBy; // The ids this City can be captured by(Empty list means it cannot be captured)
-  private List<Integer> builds;         // The ids this City can build (Empty list means it cannot heal)
-  private int maxCapCount;              // When capCount == max capCount this city is captured see capture().
+  private List<Integer> builds;         // The ids this City can build (Empty list means it cannot build)
+  private int maxCapCount;
   private int healRate;                 // Amount of healing/repairs this city can give to a Unit
 
-  private Unit capturer;      // Capturing unit that is capturing this city
+  private Unit capturer;      // Unit that is capturing this city
   private int capCount;       // The current capture count(if capCount==maxCapCount then this city is considered to be captured)
   private int funds;          // Amount of money that this city produces every turn
 
-  public City(int id, String name, String description, int defenseBonus, int height, List<Integer> moveCosts,
-              int vision, boolean hidden,
+  public City(int id, String type, String name, String description, int defenseBonus, int height, List<Integer> moveCosts,
+              int vision, boolean hidden, List<Direction> connectedDirections,
               List<Integer> heals, List<Integer> canBeCaptureBy, List<Integer> builds, int maxCapCount, int healRate) {
-    super(id, name, description, defenseBonus, height, hidden, vision, moveCosts);
+    super(id, type, name, description, defenseBonus, height, hidden, vision, moveCosts, connectedDirections);
     this.heals = heals;
     this.canBeCaptureBy = canBeCaptureBy;
     this.builds = builds;
@@ -54,7 +54,7 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
     init();
   }
 
-  void init() {
+  public void init() {
     super.init();
     this.heals = Args.createEmptyListIfNull(heals);
     this.canBeCaptureBy = Args.createEmptyListIfNull(canBeCaptureBy);
@@ -102,7 +102,7 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
 
   /**
    * Captures this city
-   * Adds the captureRate value to the capCount value on each invocation
+   * Adds the unit capture rate to the capCount value on each invocation
    * it remembers the capturing Unit, if another Unit attempts to capture
    * then the capcount will be reset to 0 again.
    * when capcount >= the maxCapcount
@@ -113,7 +113,7 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
    */
   public void capture(Unit capturer) {
     if (canBeCapturedBy(capturer)) {
-      int captureRate = capturer.getHp();
+      int captureRate = capturer.getCaptureRate();
       Player newOwner = capturer.getOwner();
 
       if (this.capturer == capturer) {    // Try to capture some more
@@ -136,12 +136,22 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
     setCapturer(null);
   }
 
+  /**
+   * Heal the unit with healRate
+   *
+   * @param unit unit to heal
+   */
   public void heal(Unit unit) {
     if (canHeal(unit)) {
       unit.heal(healRate);
     }
   }
 
+  /**
+   * Supply the unit to 100%
+   *
+   * @param unit unit to supply
+   */
   public void supply(Unit unit) {
     if (canSupply(unit)) {
       unit.resupply();
@@ -180,28 +190,41 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
   }
 
   private void setCapturer(Unit capturer) {
+    removeCapturingUnitListener();
     Unit oldVal = this.capturer;
-    if (oldVal != null)
-      oldVal.removePropertyChangeListener(this);
-
     this.capturer = capturer;
-    if (capturer != null) capturer.addPropertyChangeListener(this);
+    addCapturingUnitListener();
     firePropertyChange("capturer", oldVal, this.capturer);
+  }
+
+  private void removeCapturingUnitListener() {
+    if (capturer != null) capturer.removePropertyChangeListener(this);
+  }
+
+  private void addCapturingUnitListener() {
+    if (capturer != null) capturer.addPropertyChangeListener(this);
   }
 
   // ---------------------------------------------------------------------------
   // Getters
   // ---------------------------------------------------------------------------
   public boolean canHeal(Unit unit) {
-    return unit != null && heals.contains(unit.getArmyBranch());
+    return canSupply(unit);
   }
 
+  /**
+   * This city can supply and/or heal the given unit:
+   * #1 the unit is within the heals list
+   * #2 the unit owner is allied with the city owner
+   * #3 the unit is located on the city
+   */
   public boolean canSupply(Unit unit) {
-    return unit != null && heals.contains(unit.getArmyBranch());
+    return unit != null && heals.contains(unit.getArmyBranch()) &&
+            owner.isAlliedWith(unit.getOwner()) && unit.getLocation() == location;
   }
 
   public boolean canBeCapturedBy(Unit unit) {
-    return unit != null && canBeCaptureBy.contains(unit.getID());
+    return unit != null && canBeCaptureBy.contains(unit.getID()) && unit.getLocation() == location;
   }
 
   public boolean canBuild(Unit unit) {
@@ -212,6 +235,11 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
     return !builds.isEmpty();
   }
 
+  /**
+   * This function can only be used before resetCapturing() is invoked
+   *
+   * @return if this city is captured by the given unit
+   */
   public boolean isCapturedBy(Unit unit) {
     return isCaptured() && this.capturer == unit;
   }
@@ -224,14 +252,7 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
    * @return The capping process percentage
    */
   public int getCapCountPercentage() {
-    int percentage;
-    if (maxCapCount <= 0) {
-      percentage = 100;
-    } else {
-      double divide = (double) capCount / maxCapCount;
-      percentage = (int) Math.round(divide * 100);
-    }
-    return percentage;
+    return NumberUtil.calcPercentage(capCount, maxCapCount);
   }
 
   public Location getLocation() {
@@ -256,12 +277,18 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
 
   /**
    * Listen for changes of the capturing unit
+   * Reset the capturing process:
+   * if the unit dies or when the unit moves off this city
    */
   public void propertyChange(PropertyChangeEvent evt) {
     assert capturer != null && evt.getSource() == capturer : "Only interested in events from the unit that is capturing";
     String propertyName = evt.getPropertyName();
     if (propertyName.equalsIgnoreCase("state")) {
       if (evt.getNewValue() == GameObjectState.DESTROYED) {
+        resetCapturing();
+      }
+    } else if (propertyName.equalsIgnoreCase("location")) {
+      if (evt.getNewValue() != location) {
         resetCapturing();
       }
     }

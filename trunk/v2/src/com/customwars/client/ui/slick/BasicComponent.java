@@ -1,6 +1,8 @@
 package com.customwars.client.ui.slick;
 
+import com.customwars.client.io.ResourceManager;
 import com.customwars.client.ui.Camera2D;
+import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.gui.AbstractComponent;
 import org.newdawn.slick.gui.GUIContext;
@@ -10,6 +12,7 @@ public abstract class BasicComponent extends AbstractComponent {
   private int y;
   private int width;
   private int height;
+  private boolean visible = true;
   protected static Camera2D camera;
 
   /**
@@ -22,6 +25,17 @@ public abstract class BasicComponent extends AbstractComponent {
     consumeEvent();
   }
 
+  public void loadResources(ResourceManager resources) {
+  }
+
+  public final void render(GUIContext container, Graphics g) {
+    if (visible) {
+      renderimpl(container, g);
+    }
+  }
+
+  public abstract void renderimpl(GUIContext container, Graphics g);
+
   public void setLocation(int x, int y) {
     this.x = x;
     this.y = y;
@@ -33,6 +47,10 @@ public abstract class BasicComponent extends AbstractComponent {
 
   public void setHeight(int height) {
     this.height = height;
+  }
+
+  public void setVisible(boolean visible) {
+    this.visible = visible;
   }
 
   public int getHeight() {
@@ -49,6 +67,10 @@ public abstract class BasicComponent extends AbstractComponent {
 
   public int getY() {
     return y;
+  }
+
+  public boolean isVisible() {
+    return visible;
   }
 
   /**

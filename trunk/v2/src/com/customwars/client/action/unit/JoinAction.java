@@ -2,7 +2,6 @@ package com.customwars.client.action.unit;
 
 import com.customwars.client.action.DirectAction;
 import com.customwars.client.controller.ControllerManager;
-import com.customwars.client.model.game.Game;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.ui.state.InGameContext;
 
@@ -12,7 +11,6 @@ import com.customwars.client.ui.state.InGameContext;
  * @author stefan
  */
 public class JoinAction extends DirectAction {
-  private Game game;
   private ControllerManager controllerManager;
   private Unit target, unit;
 
@@ -23,7 +21,6 @@ public class JoinAction extends DirectAction {
   }
 
   protected void init(InGameContext context) {
-    game = context.getGame();
     controllerManager = context.getControllerManager();
   }
 
@@ -32,7 +29,7 @@ public class JoinAction extends DirectAction {
     int excessHP = unit.getHp() + target.getHp() - target.getMaxHp();
 
     if (excessHP > 0)
-      game.getActivePlayer().addToBudget((excessHP * unit.getPrice()) / unit.getMaxHp());
+      target.getOwner().addToBudget((excessHP * unit.getPrice()) / unit.getMaxHp());
 
     // add HP, supplies, ammo to target
     target.addHp(unit.getHp());
@@ -46,6 +43,7 @@ public class JoinAction extends DirectAction {
     unit.getOwner().removeUnit(unit);
     unit.getLocation().remove(unit);
     unit.setLocation(null);
+    unit.setOwner(null);
     controllerManager.removeUnitController(unit);
   }
 }

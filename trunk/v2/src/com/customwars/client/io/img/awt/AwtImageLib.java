@@ -1,8 +1,10 @@
 package com.customwars.client.io.img.awt;
 
+import org.apache.log4j.Logger;
 import org.newdawn.slick.loading.DeferredResource;
 import org.newdawn.slick.loading.LoadingList;
 import org.newdawn.slick.util.ResourceLoader;
+import tools.ColorUtil;
 import tools.ImageUtil;
 
 import javax.imageio.ImageIO;
@@ -24,6 +26,7 @@ import java.util.Set;
  * @author stefan
  */
 public class AwtImageLib {
+  private static final Logger logger = Logger.getLogger(AwtImageLib.class);
   private Map<String, BufferedImage> bufferedImgCache;  // Contains the base images that can be recolored by a filter
   private static Map<String, ImgFilter> imgFilters;     // Can recolor a base image from base color to replacement color
   private static Set<Color> supportedColors;            // The colors supported by each filter
@@ -128,6 +131,7 @@ public class AwtImageLib {
   public void buildColorsFromImgFilters() {
     for (ImgFilter imgFilter : imgFilters.values()) {
       Set<java.awt.Color> replacementColors = imgFilter.getReplacementColors();
+
       for (Color c : replacementColors) {
         addColor(c);
       }
@@ -135,18 +139,21 @@ public class AwtImageLib {
   }
 
   public void addColor(Color c) {
+    if (supportedByAllImageFilters(c)) {
+      supportedColors.add(c);
+    } else {
+      logger.warn("Color " + ColorUtil.toString(c) + " is not supported by all Image filters.");
+    }
+  }
+
+  private boolean supportedByAllImageFilters(Color c) {
     boolean supportedByAllImgFilters = true;
     for (ImgFilter imgFilter : imgFilters.values()) {
       if (!imgFilter.canRecolorTo(c)) {
         supportedByAllImgFilters = false;
       }
     }
-
-    if (supportedByAllImgFilters) {
-      supportedColors.add(c);
-    } else {
-      throw new RuntimeException("Color " + c + " is not supported by all ImgFilters.");
-    }
+    return supportedByAllImgFilters;
   }
 
   //----------------------------------------------------------------------------

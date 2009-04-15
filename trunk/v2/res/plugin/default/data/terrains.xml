@@ -1,115 +1,154 @@
 <!--
-moveCosts have the following order
-  Infantry
-  Mech
-  Tread
-  Tires
-  Air
-  Transport
+ Links a terrain to an image(using the ID) and
+ provide extra information for specific terrain types ie there is only 1 road base terrain
+ but there are many road types(Vertical, horizontal, bends). Type referes to a baseTerrain inside terrains.xml
 -->
 <list>
-    <terrain name="Grass" id="0">
-        <defenseBonus>2</defenseBonus>
-        <height>0</height>
-        <description>Grass is easily traveled but offer little defense.</description>
-        <moveCosts>
-            <int>1</int>
-            <int>1</int>
-            <int>1</int>
-            <int>2</int>
-            <int>1</int>
-        </moveCosts>
+    <terrain id="0" type="Grass"/>
+    <terrain id="1" type="Forest"/>
+    <terrain id="2" type="Road">
+        <connect>East, West</connect>
     </terrain>
-    <terrain name="Forest" id="1">
-        <defenseBonus>2</defenseBonus>
-        <height>0</height>
-        <description>The perfect place for an ambush, units that are placed within a forrest are not visible for any
-            unit
-            unless direct adjacent it.
-        </description>
-        <moveCosts>
-            <int>1</int>
-            <int>1</int>
-            <int>2</int>
-            <int>3</int>
-            <int>1</int>
-        </moveCosts>
+    <terrain id="3" type="Road">
+        <connect>North, South</connect>
     </terrain>
-    <terrain name="Horizontal Road" id="2">
-        <defenseBonus>0</defenseBonus>
-        <height>0</height>
-        <description>Well-surface roads provide optimum mobility, but little cover.</description>
-        <moveCosts>
-            <int>1</int>
-            <int>1</int>
-            <int>1</int>
-            <int>1</int>
-            <int>1</int>
-        </moveCosts>
+    <terrain id="4" type="Road">
+        <connect>North, East</connect>
+    </terrain>
+    <terrain id="5" type="Road">
+        <connect>South, East</connect>
+    </terrain>
+    <terrain id="6" type="Road">
+        <connect>South, West</connect>
+    </terrain>
+    <terrain id="7" type="Road">
+        <connect>North, West</connect>
+    </terrain>
+    <terrain id="8" type="Road">
+        <connect>West, North, East</connect>
+    </terrain>
+    <terrain id="9" type="Road">
+        <connect>North, East, South</connect>
+    </terrain>
+    <terrain id="10" type="Road">
+        <connect>West, South, East</connect>
+    </terrain>
+    <terrain id="11" type="Road">
+        <connect>North, West, South</connect>
+    </terrain>
+    <terrain id="12" type="Road">
+        <connect>North, East, South, West</connect>
+    </terrain>
+    <terrain name="Bridge" id="13" type="Road">
+        <connect>West, East</connect>
+        <spansOverRiver>True</spansOverRiver>
+    </terrain>
+    <terrain name="Bridge" id="14" type="Road">
+        <connect>North, South</connect>
+        <spansOverRiver>True</spansOverRiver>
+    </terrain>
+    <terrain name="Suspension" id="15" type="Road">
+        <connect>West, East</connect>
+        <spansOverOcean>True</spansOverOcean>
+    </terrain>
+    <terrain name="Suspension" id="16" type="Road">
+        <connect>North, South</connect>
+        <spansOverOcean>True</spansOverOcean>
     </terrain>
 
-    <!-- ROW 2 -->
-    <terrain name="Mountain" id="17">
-        <defenseBonus>4</defenseBonus>
-        <height>2</height>
-        <description>In Fog of War, these add 3 to the vision of int and int units.</description>
-        <moveCosts>
-            <int>3</int>
-            <int>2</int>
-            <int>1</int>
-        </moveCosts>
+    <!-- Row 2 -->
+    <terrain id="17" type="Mountain"/>
+    <terrain id="18" type="Plain"/>
+    <terrain id="19" type="River">
+        <connect>West, East</connect>
     </terrain>
-    <terrain name="Plains" id="18">
-        <defenseBonus>0</defenseBonus>
-        <height>0</height>
-        <description>Plains are easily traveled but offer little defense.</description>
-        <moveCosts>
-            <int>1</int>
-            <int>1</int>
-            <int>1</int>
-            <int>2</int>
-            <int>1</int>
-        </moveCosts>
+    <terrain id="20" type="River">
+        <connect>North, South</connect>
     </terrain>
-    <terrain name="Horizontal River" id="19">
-        <defenseBonus>4</defenseBonus>
-        <height>-1</height>
-        <description>Fast flowing river, only int and int can pass</description>
-        <moveCosts>
-            <int>2</int>
-            <int>1</int>
-            <int>1</int>
-            <int>1</int>
-        </moveCosts>
+    <terrain id="21" type="River">
+        <connect>North, East</connect>
     </terrain>
-    <terrain name="Ocean" id="30">
-        <defenseBonus>0</defenseBonus>
-        <height>-2</height>
-        <description>Ocean</description>
-        <moveCosts>
-            <int>1</int>
-            <int>1</int>
-            <int>1</int>
-        </moveCosts>
+    <terrain id="22" type="River">
+        <connect>South, East</connect>
     </terrain>
-    <terrain name="Horizontal Cliff small canal" id="36">
-        <defenseBonus>0</defenseBonus>
-        <height>-1</height>
-        <description>Cliffs</description>
-        <moveCosts>
-            <int>1</int>
-        </moveCosts>
+    <terrain id="23" type="River">
+        <connect>South, West</connect>
     </terrain>
-    <terrain name="Shoal" id="63">
-        <defenseBonus>0</defenseBonus>
-        <height>0</height>
-        <moveCosts>
-            <int>1</int>
-            <int>1</int>
-            <int>1</int>
-            <int>1</int>
-            <int>1</int>
-            <int>1</int>
-        </moveCosts>
+    <terrain id="24" type="River">
+        <connect>North, West</connect>
+    </terrain>
+    <terrain id="25" type="River">
+        <connect>West, North, East</connect>
+    </terrain>
+    <terrain id="26" type="River">
+        <connect>North, East, South</connect>
+    </terrain>
+    <terrain id="27" type="River">
+        <connect>West, South, East</connect>
+    </terrain>
+    <terrain id="28" type="River">
+        <connect>north, West, South</connect>
+    </terrain>
+    <terrain id="29" type="River">
+        <connect>North, East, South, West</connect>
+    </terrain>
+    <terrain id="30" type="Ocean"/>
+    <terrain name="Delta" id="31" type="River">
+        <delta>True</delta>
+    </terrain>
+    <terrain name="Delta" id="32" type="River">
+        <delta>True</delta>
+    </terrain>
+    <terrain name="Delta" id="33" type="River">
+        <delta>True</delta>
+    </terrain>
+
+    <!-- Row 3 -->
+    <terrain name="Delta" id="34" type="River">
+        <delta>True</delta>
+    </terrain>
+    <terrain id="35" type="Ocean"/>
+    <terrain name="Coast" id="36" type="Ocean">
+        <connect>East, West</connect>
+    </terrain>
+    <terrain name="Coast" id="37" type="Ocean">
+        <connect>North, South</connect>
+    </terrain>
+    <terrain name="Coast" id="38" type="Ocean">
+        <connect>North, East</connect>
+    </terrain>
+    <terrain name="Coast" id="39" type="Ocean">
+        <connect>East, South</connect>
+    </terrain>
+    <terrain name="Coast" id="40" type="Ocean">
+        <connect>West, South</connect>
+    </terrain>
+    <terrain name="Coast" id="41" type="Ocean">
+        <connect>North, West</connect>
+    </terrain>
+    <terrain name="Coast" id="42" type="Ocean">
+        <connect>North</connect>
+    </terrain>
+    <terrain name="Coast" id="43" type="Ocean">
+        <connect>East</connect>
+    </terrain>
+    <terrain name="Coast" id="44" type="Ocean">
+        <connect>South</connect>
+    </terrain>
+    <terrain name="Coast" id="45" type="Ocean">
+        <connect>West</connect>
+    </terrain>
+    <terrain id="46" type="Ocean"/>
+    <terrain name="Coast" id="47" type="Ocean">
+        <connect>North, East,West</connect>
+    </terrain>
+    <terrain name="Coast" id="48" type="Ocean">
+        <connect>North, East, South</connect>
+    </terrain>
+    <terrain name="Coast" id="49" type="Ocean">
+        <connect>East, South, West</connect>
+    </terrain>
+    <terrain name="Coast" id="50" type="Ocean">
+        <connect>North, South, West</connect>
     </terrain>
 </list>

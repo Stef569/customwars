@@ -3,7 +3,6 @@ import bsh.Interpreter;
 import bsh.util.JConsole;
 import com.customwars.client.Config;
 import com.customwars.client.io.ResourceManager;
-import com.customwars.client.model.TestData;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.ui.debug.DebugEnvironment;
@@ -73,9 +72,7 @@ public class Main {
 
   private void initDebugMode() {
     logger.info("Init debug Mode");
-    TestData.storeTestData();
-
-    logger.info("init hard coded game");
+    resources.loadModel();
     Game game = HardCodedGame.getGame();
 
     stateSession = new StateSession();

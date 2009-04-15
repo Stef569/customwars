@@ -140,13 +140,14 @@ public abstract class UnitController {
     return game.getMap().getUnitOn(selected) != null;
   }
 
-  //The join conditions are:
-  //
-  // Our unit is on the same tile as the target, both units are of the same type
-  // The two units must have the same owner
-  // The target unit must have 50% or less HP
-  // Both units can use the join command
-  // If the unit-type of the units is Transport, the two unit must not have any units loaded
+  /**
+   * The join conditions are:
+   * Our unit is on the same tile as the target, both units are of the same type
+   * The two units must have the same owner
+   * The target unit must have 50% or less HP
+   * Both units can use the join command
+   * If the unit-type of the units is Transport, the two unit must not have any units loaded
+   */
   boolean canJoin(Tile selected) {
     // Get the target we want to join with
     Unit target = (Unit) selected.getLocatable(0);

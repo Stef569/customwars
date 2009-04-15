@@ -28,7 +28,7 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
   private int startID;
 
   public TestStates(int startID, StateSession stateSession, ResourceManager resources, Config config) {
-    super(System.getProperty("game.name") + " - Slick Tests");
+    super(System.getProperty("game.name") + " - " + System.getProperty("plugin.name"));
     this.startID = startID;
     this.stateSession = stateSession;
     this.resources = resources;

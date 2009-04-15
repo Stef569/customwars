@@ -9,7 +9,9 @@ import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.model.map.TileMap;
 import org.newdawn.slick.Animation;
+import org.newdawn.slick.Font;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Image;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -21,22 +23,14 @@ import java.beans.PropertyChangeListener;
  */
 public class UnitSprite extends TileSprite implements PropertyChangeListener {
   // Image Position in the decorations ImageStrip
-  private static final int CAPTURE = 0;
+  private static final int CAPTURED = 0;
   private static final int SUBMERGED = 1;
   private static final int LOAD = 2;
   private static final int LOW_AMMO = 3;
   private static final int LOW_SUPPLIES = 4;
 
-  // Image Positions within a tile
-  // Unit Decoration = 16px width
-  private static final int UNIT_DECOR_LOWER_LEFT_X = 1;
-  private static final int UNIT_DECOR_LOWER_LEFT_Y = 24;
-  private static final int UNIT_DECOR_LOWER_RIGHT_X = 16;
-  private static final int UNIT_DECOR_LOWER_RIGHT_Y = 28;
-  private static final int UNIT_DECOR_MIDDLE_RIGHT_X = 14;
-  private static final int UNIT_DECOR_MIDDLE_RIGHT_Y = 14;
-
   private ImageStrip decorations;
+  private Font font;
 
   private Animation animLeft;
   private Animation animRight;
@@ -56,9 +50,13 @@ public class UnitSprite extends TileSprite implements PropertyChangeListener {
     lowHp = unit.hasLowHp();
     lowAmmo = unit.hasLowAmmo();
     lowSupplies = unit.hasLowSupplies();
-    unit.addPropertyChangeListener(this);
-
+    addUnitListeners();
     assert tile == unit.getLocation() : "Unitsprite should have same location as the unit";
+  }
+
+  private void addUnitListeners() {
+    unit.addPropertyChangeListener(this);
+    if (unit.hasPrimaryWeapon()) unit.getPrimaryWeapon().addPropertyChangeListener(this);
   }
 
   private void setOrientation(Direction dir) {
@@ -149,39 +147,72 @@ public class UnitSprite extends TileSprite implements PropertyChangeListener {
 
   public void render(int x, int y, Graphics g) {
     super.render(x, y, g);
-
     if (isVisible() && !unit.isDestroyed()) {
-      translateOffset(g, false);
-      if (lowHp) {
-        g.drawString(unit.getHp() + "", x + locX + UNIT_DECOR_LOWER_RIGHT_X, y + locY + UNIT_DECOR_LOWER_RIGHT_Y);
-      }
+      translate(x, y, g);
 
-      if (lowAmmo) {
-        g.drawImage(decorations.getSubImage(LOW_AMMO), x + locX + UNIT_DECOR_MIDDLE_RIGHT_X, y + locY + UNIT_DECOR_MIDDLE_RIGHT_Y);
+      if (lowHp) {
+        renderLowerRight(unit.getHp() + "");
+      } else if (lowAmmo) {
+        renderLowerRight(decorations.getSubImage(LOW_AMMO), g);
       }
 
       if (lowSupplies) {
-        g.drawImage(decorations.getSubImage(LOW_SUPPLIES), x + locX + UNIT_DECOR_MIDDLE_RIGHT_X, y + locY + UNIT_DECOR_MIDDLE_RIGHT_Y);
+        renderLowerLeft(decorations.getSubImage(LOW_SUPPLIES), g);
       }
 
-      renderUnitState(x + locX, y + locY, g, unit.getUnitState());
-      undoTranslateOffset(g);
+      renderUnitState(unit.getUnitState(), g);
+      undoTranslate(x, y, g);
     }
   }
 
-  private void renderUnitState(int x, int y, Graphics g, int unitState) {
+  private void translate(int x, int y, Graphics g) {
+    g.translate(x, y);
+    translateOffset(g, false);
+  }
+
+
+  private void renderUnitState(UnitState unitState, Graphics g) {
     if (unit.getLocatableCount() > 0) {
-      g.drawImage(decorations.getSubImage(LOAD), x + UNIT_DECOR_LOWER_LEFT_X, y + UNIT_DECOR_LOWER_LEFT_Y);
+      renderLowerLeft(decorations.getSubImage(LOAD), g);
     }
 
     switch (unitState) {
-      case UnitState.CAPTURING:
-        g.drawImage(decorations.getSubImage(CAPTURE), x + UNIT_DECOR_LOWER_LEFT_X, y + UNIT_DECOR_LOWER_LEFT_Y);
+      case CAPTURING:
+        renderLowerLeft(decorations.getSubImage(CAPTURED), g);
         break;
-      case UnitState.SUBMERGED:
-        g.drawImage(decorations.getSubImage(SUBMERGED), x + UNIT_DECOR_LOWER_LEFT_X, y + UNIT_DECOR_LOWER_LEFT_Y);
+      case SUBMERGED:
+        renderLowerLeft(decorations.getSubImage(SUBMERGED), g);
         break;
     }
+  }
+
+  private void undoTranslate(int x, int y, Graphics g) {
+    undoTranslateOffset(g);
+    g.translate(-x, -y);
+  }
+
+  private void renderLowerLeft(String txt) {
+    int x = 2;
+    int y = getHeight() - font.getLineHeight();
+    font.drawString(locX + x, locY + y, txt);
+  }
+
+  private void renderLowerLeft(Image img, Graphics g) {
+    int x = 2;
+    int y = getHeight() - img.getHeight();
+    g.drawImage(img, locX + x, locY + y);
+  }
+
+  private void renderLowerRight(String txt) {
+    int x = getWidth() - font.getWidth(txt);
+    int y = getHeight() - font.getLineHeight();
+    font.drawString(locX + x, locY + y, txt);
+  }
+
+  private void renderLowerRight(Image img, Graphics g) {
+    int x = getWidth() - img.getWidth();
+    int y = getHeight() - img.getHeight();
+    g.drawImage(img, locX + x, locY + y);
   }
 
   public void propertyChange(PropertyChangeEvent evt) {
@@ -197,8 +228,6 @@ public class UnitSprite extends TileSprite implements PropertyChangeListener {
         lowHp = unit.hasLowHp();
       } else if (propertyName.equals("supplies")) {
         lowSupplies = unit.hasLowSupplies();
-      } else if (propertyName.equals("ammo")) {
-        lowAmmo = unit.hasLowAmmo();
       } else if (propertyName.equals("state")) {
         changeState((GameObjectState) evt.getNewValue());
       } else if (propertyName.equals("orientation")) {
@@ -206,10 +235,18 @@ public class UnitSprite extends TileSprite implements PropertyChangeListener {
       } else if (propertyName.equals("location")) {
         setLocation((Location) evt.getNewValue());
       }
+    } else if (evt.getSource() == unit.getPrimaryWeapon()) {
+      if (propertyName.equals("ammo")) {
+        lowAmmo = unit.hasLowAmmo();
+      }
     }
   }
 
   public boolean canBeRemoved() {
     return remove;
+  }
+
+  public void setFont(Font font) {
+    this.font = font;
   }
 }

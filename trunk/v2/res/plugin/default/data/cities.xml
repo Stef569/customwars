@@ -6,9 +6,7 @@ id is a reference to the city image sheet
   AIR = 2;
 -->
 <list>
-    <city id="0" name="City">
-        <defenseBonus>0</defenseBonus>
-        <height>0</height>
+    <city name="City" id="0" type='Road'>
         <moveCosts>
             <int>1</int>
             <int>1</int>
@@ -18,55 +16,128 @@ id is a reference to the city image sheet
             <int>127</int>
         </moveCosts>
         <vision>1</vision>
+
+        <heals>
+            <int>0</int>
+        </heals>
+        <healRate>2</healRate>
+        <canBeCaptureBy>
+            <int>0</int>
+            <int>1</int>
+        </canBeCaptureBy>
         <maxCapCount>20</maxCapCount>
-        <heals>0</heals>
-        <healRate>1</healRate>
-        <funds>1000</funds>
         <description>They give you money and heal units inside them.</description>
     </city>
-    <city name="Factory" id="1">
-        <moveCosts/>
-        <funds>1000</funds>
-        <heals>0</heals>
-        <healRate>5</healRate>
-        <builds>0</builds>
-        <maxCapCount>20</maxCapCount>
+    <city name="Factory" id="1" type='Road'>
+        <moveCosts>
+            <int>1</int>
+            <int>1</int>
+            <int>1</int>
+            <int>2</int>
+            <int>1</int>
+            <int>127</int>
+        </moveCosts>
         <vision>1</vision>
+
+        <heals>
+            <int>0</int>
+        </heals>
+        <healRate>2</healRate>
+        <canBeCaptureBy>
+            <int>0</int>
+            <int>1</int>
+        </canBeCaptureBy>
+        <builds>
+            <int>0</int>
+        </builds>
+        <maxCapCount>20</maxCapCount>
         <description>Factories heal, provide supplies and can create new ground units.</description>
     </city>
-    <city name="Airport" id="2">
-        <moveCosts/>
-        <funds>1000</funds>
-        <heals>2</heals>
-        <healRate>5</healRate>
-        <builds>2</builds>
-        <maxCapCount>20</maxCapCount>
+    <city name="Airport" id="2" type='Road'>
+        <moveCosts>
+            <int>1</int>
+            <int>1</int>
+            <int>1</int>
+            <int>2</int>
+            <int>1</int>
+            <int>127</int>
+        </moveCosts>
         <vision>1</vision>
+
+        <heals>
+            <int>0</int>
+        </heals>
+        <healRate>2</healRate>
+        <canBeCaptureBy>
+            <int>0</int>
+            <int>1</int>
+        </canBeCaptureBy>
+        <builds>
+            <int>2</int>
+        </builds>
+        <maxCapCount>20</maxCapCount>
         <description>empty</description>
     </city>
-    <city name="Port" id="3">
-        <moveCosts/>
-        <funds>1000</funds>
-        <heals>1</heals>
-        <healRate>5</healRate>
-        <builds>1</builds>
-        <maxCapCount>20</maxCapCount>
+    <city name="Port" id="3" type='Road'>
+        <moveCosts>
+            <int>1</int>
+            <int>1</int>
+            <int>1</int>
+            <int>2</int>
+            <int>1</int>
+            <int>127</int>
+        </moveCosts>
         <vision>1</vision>
-        <description>empty</description>
+
+        <heals>
+            <int>0</int>
+        </heals>
+        <healRate>2</healRate>
+        <canBeCaptureBy>
+            <int>0</int>
+            <int>1</int>
+        </canBeCaptureBy>
+        <builds>
+            <int>1</int>
+        </builds>
+        <maxCapCount>20</maxCapCount>
     </city>
-    <city name="HQ" id="4">
-        <moveCosts/>
-        <funds>1000</funds>
-        <heals>0</heals>
-        <healRate>5</healRate>
-        <maxCapCount>20</maxCapCount>
+    <city name="HQ" id="4" type='Road'>
+        <moveCosts>
+            <int>1</int>
+            <int>1</int>
+            <int>1</int>
+            <int>2</int>
+            <int>1</int>
+            <int>127</int>
+        </moveCosts>
         <vision>1</vision>
+
+        <heals>
+            <int>0</int>
+        </heals>
+        <healRate>2</healRate>
+        <canBeCaptureBy>
+            <int>0</int>
+            <int>1</int>
+        </canBeCaptureBy>
+        <maxCapCount>20</maxCapCount>
     </city>
-    <city name="Missle silo" id="5">
-        <moveCosts/>
-        <funds>500</funds>
-        <maxCapCount>20</maxCapCount>
+    <city name="Missle silo" id="5" type='Road'>
+        <moveCosts>
+            <int>1</int>
+            <int>1</int>
+            <int>1</int>
+            <int>2</int>
+            <int>1</int>
+            <int>127</int>
+        </moveCosts>
         <vision>1</vision>
+
+        <canBeCaptureBy>
+            <int>0</int>
+            <int>1</int>
+        </canBeCaptureBy>
+        <maxCapCount>20</maxCapCount>
     </city>
 </list>
-

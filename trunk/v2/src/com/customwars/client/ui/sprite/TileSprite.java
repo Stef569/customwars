@@ -66,7 +66,7 @@ public class TileSprite extends Sprite implements Locatable {
    * Calculate and store the image offsets, translate the graphics
    *
    * @param center True -> Center on the tile
-   *               Default False -> Images that don't fit to the tile are drawn higher,
+   *               False -> Images that don't fit to the tile are drawn higher,
    *               so that the image base is equal with the tile base
    */
   void translateOffset(Graphics g, boolean center) {
@@ -77,7 +77,7 @@ public class TileSprite extends Sprite implements Locatable {
         frameWidthOffset = (img.getWidth() - tileSize) / 2;
       } else {
         frameHeightOffset = img.getHeight() - tileSize;
-        frameWidthOffset = img.getWidth() - tileSize;
+        frameWidthOffset = (img.getWidth() - tileSize) / 2;
       }
       g.translate(-frameWidthOffset, -frameHeightOffset);
     }

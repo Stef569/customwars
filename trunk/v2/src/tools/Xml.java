@@ -40,8 +40,8 @@ import java.util.StringTokenizer;
  */
 public final class Xml {
   public static final int FIRST_N0DE = 0;
-  private static final String DEFAULT_STRING_REPLACE_VAL = null;
-  private static final Number DEFAULT_NUMBER_REPLACE_VAL = null;
+  private static final String DEFAULT_STRING_REPLACE_VAL = "";
+  private static final Number DEFAULT_NUMBER_REPLACE_VAL = 0;
   private static final String DEFAULT_TOKEN = ",";
 
   /**
@@ -291,7 +291,7 @@ public final class Xml {
    * @param xmlRootElement The root ellement to retrieve.
    * @return a NodeList of ellements.
    * @throws java.io.IOException when the xml document could not be found/IO Error
-   * @throws RuntimeException When the xml document could not be parsed/ Parserconfig error
+   * @throws RuntimeException    When the xml document could not be parsed/ Parserconfig error
    */
   public static NodeList parseXmlStreamToNodeList(InputStream stream, String xmlRootElement) throws IOException {
     Document doc;
