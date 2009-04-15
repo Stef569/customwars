@@ -8,7 +8,7 @@ import com.customwars.client.model.gameobject.UnitState;
 import com.customwars.client.ui.state.InGameContext;
 
 /**
- * Capture a City with the unit
+ * Capture the given City with the given unit
  *
  * @author stefan
  */
@@ -31,21 +31,18 @@ public class CaptureAction extends DirectAction {
 
   protected void invokeAction() {
     if (context.isTrapped()) return;
-
     capture();
   }
 
   private void capture() {
-    if (city.canBeCapturedBy(unit)) {
-      unit.setUnitState(UnitState.CAPTURING);
-      city.capture(unit);
+    unit.setUnitState(UnitState.CAPTURING);
+    city.capture(unit);
 
-      if (city.isCapturedBy(unit)) {
-        unit.setUnitState(UnitState.IDLE);
-        controllerManager.addHumanCityController(city);
-        city.resetCapturing();
-        context.playSound("captured");
-      }
+    if (city.isCapturedBy(unit)) {
+      unit.setUnitState(UnitState.IDLE);
+      controllerManager.addHumanCityController(city);
+      city.resetCapturing();
+      context.playSound("captured");
     }
   }
 }
