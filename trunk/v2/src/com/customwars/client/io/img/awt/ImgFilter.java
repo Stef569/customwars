@@ -1,6 +1,5 @@
 package com.customwars.client.io.img.awt;
 
-import org.apache.log4j.Logger;
 import tools.ColorUtil;
 
 import java.awt.Color;
@@ -45,15 +44,14 @@ import java.util.Set;
  *
  * Transparant pixels are ignored by default
  * HashMap<Integer, Integer> knownColors RGB values are used instead of Color objects because
- * They are expensive to create. A Color object for each pixel in an image?
+ * They are expensive to create. A new Color object for each pixel?
  *
  * @author Stefan
  */
 public class ImgFilter extends RGBImageFilter {
-  private final static Logger logger = Logger.getLogger(ImgFilter.class);
   private Color baseColor;
   private Color replacementColor;
-  private Set<Integer> ignoredPixels;      // Pixels that will not be Filtered
+  private Set<Integer> ignoredPixels;                 // Pixels that will not be Filtered
   private Map<Integer, Integer> knownColors;          // Key=known Color value from the image, Val=index position
   private Map<Color, List<Color>> replacementColors;  // Key=ReplacementColor, Val=replacement colors
   private int darkenPercentage;   // The percentage that each px should be darkened
@@ -69,6 +67,10 @@ public class ImgFilter extends RGBImageFilter {
   private void initDefaults() {
     ignoredPixels.add(0);
     ignoredPixels.add(0xFF000000);
+    // The filter's operation does not depend on the
+    // pixel's location, so IndexColorModels can be
+    // filtered directly.
+    canFilterIndexColorModel = true;
   }
 
   public int filterRGB(int x, int y, int rgb) {
@@ -100,7 +102,6 @@ public class ImgFilter extends RGBImageFilter {
       int knownColorPos = knownColors.get(rgb);
       return replaceColors.get(knownColorPos).getRGB();
     } else {
-      logger.warn("Unknown rgb: " + rgb + " hex: " + Integer.toHexString(rgb));
       return rgb;
     }
   }
@@ -161,26 +162,35 @@ public class ImgFilter extends RGBImageFilter {
   // ---------------------------------------------------------------------------
   public void addIgnoredPixels(int[] rgbs) {
     for (int rgb : rgbs) {
-      this.ignoredPixels.add(rgb);
+      addIgnoredPixel(rgb);
     }
   }
 
   public void addIgnoredPixels(Color[] colors) {
     for (Color color : colors) {
-      this.ignoredPixels.add(color.getRGB());
+      addIgnoredPixel(color.getRGB());
     }
+  }
+
+  private void addIgnoredPixel(int rgb) {
+    ignoredPixels.add(rgb);
   }
 
   public void addKnownColors(Color[] colors) {
     for (int i = 0; i < colors.length; i++) {
-      knownColors.put(colors[i].getRGB(), i);
+      int rgb = colors[i].getRGB();
+      addKnownColor(rgb, i);
     }
   }
 
   public void addKnownColors(Integer[] rgbs) {
     for (int i = 0; i < rgbs.length; i++) {
-      knownColors.put(rgbs[i], i);
+      addKnownColor(rgbs[i], i);
     }
+  }
+
+  private void addKnownColor(int rgb, int index) {
+    knownColors.put(rgb, index);
   }
 
   public void addReplacementColors(Color color, Integer[] rgbValues) {
@@ -196,9 +206,9 @@ public class ImgFilter extends RGBImageFilter {
     replacementColors.put(color, colorLst);
   }
 
-  private void knownColorsSizeCheck(int colorListSize) {
-    if (colorListSize != knownColors.size()) {
-      throw new IllegalArgumentException("The replacement colors list(" + colorListSize + ") does not have the same size as the knownColors(" + knownColors.size() + ").");
+  private void knownColorsSizeCheck(int replacementColors) {
+    if (replacementColors != knownColors.size()) {
+      throw new IllegalArgumentException("The replacement colors list(" + replacementColors + ") does not have the same size as the knownColors(" + knownColors.size() + ").");
     }
   }
 

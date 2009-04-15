@@ -1,7 +1,5 @@
 package tools;
 
-import org.apache.log4j.Logger;
-
 import java.awt.Color;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -21,7 +19,6 @@ import java.util.Scanner;
  */
 public final class ColorUtil {
   private static final Map<String, Color> colorMap = buildNameToColorMap();
-  private static Logger logger = Logger.getLogger(ColorUtil.class);
 
   /**
    * This is a static utility class. It cannot be constructed.
@@ -66,7 +63,7 @@ public final class ColorUtil {
 
   public static Color toColor(String name) {
     if (!colorMap.containsKey(name)) {
-      logger.warn("colorMap does not contain " + name);
+      throw new IllegalArgumentException("ColorMap does not contain " + name);
     }
     return colorMap.get(name);
   }
@@ -102,17 +99,20 @@ public final class ColorUtil {
    * if it is hex create a color from it
    * else looks for a defined Name in the colorMap
    * else return null
+   *
+   * @param color a numeric hex value or a color name
    */
   public static Color getColorFromText(String color) {
-    Color c;
-    Integer hex;
-    try {
-      hex = Integer.parseInt(color, 16);
-      c = new Color(hex);
-    } catch (NumberFormatException ex) {
-      c = toColor(color);
+    if (colorMap.containsKey(color)) {
+      return toColor(color);
     }
-    return c;
+
+    try {
+      int hex = Integer.parseInt(color, 16);
+      return new Color(hex);
+    } catch (NumberFormatException ex) {
+      return null;
+    }
   }
 
   /**
