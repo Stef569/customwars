@@ -4,23 +4,13 @@ import com.customwars.client.action.ActionFactory;
 import com.customwars.client.action.ClearInGameStateAction;
 import com.customwars.client.action.ShowPopupMenu;
 import com.customwars.client.controller.ControllerManager;
-import com.customwars.client.io.img.slick.ImageStrip;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Unit;
-import com.customwars.client.model.map.Direction;
-import com.customwars.client.model.map.Location;
-import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.model.map.path.MoveTraverse;
-import com.customwars.client.ui.Camera2D;
-import com.customwars.client.ui.HUD;
 import com.customwars.client.ui.MenuItem;
-import com.customwars.client.ui.Scroller;
-import com.customwars.client.ui.renderer.MapRenderer;
-import com.customwars.client.ui.renderer.ModelEventsRenderer;
-import com.customwars.client.ui.slick.BasicComponent;
-import com.customwars.client.ui.sprite.TileSprite;
+import com.customwars.client.ui.renderer.GameRenderer;
 import com.customwars.client.ui.state.CWInput;
 import com.customwars.client.ui.state.CWState;
 import com.customwars.client.ui.state.InGameContext;
@@ -32,7 +22,6 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.command.Command;
 import org.newdawn.slick.state.StateBasedGame;
 
-import java.awt.Dimension;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -40,28 +29,17 @@ public class TestInGameState extends CWState implements PropertyChangeListener {
   private static final Logger logger = Logger.getLogger(TestInGameState.class);
   private InGameContext context;
   private GameContainer gameContainer;
-
-  // GUI
-  private Camera2D camera;
-  private MapRenderer mapRenderer;
-  private ModelEventsRenderer modelEventsRenderer;
-  private HUD hud;
-
-  // MODEL
+  private GameRenderer gameRenderer;
   private Game game;
 
   public TestInGameState() {
-    this.mapRenderer = new MapRenderer();
-    this.modelEventsRenderer = new ModelEventsRenderer();
+    this.gameRenderer = new GameRenderer();
   }
 
   public void init(GameContainer container, StateBasedGame stateBasedGame) throws SlickException {
-    mapRenderer.setTerrainStrip(resources.getSlickImgStrip("terrains"));
-    mapRenderer.loadResources(resources);
-    modelEventsRenderer.loadResources(resources);
-    hud = new HUD(game, container);
-    hud.loadResources(resources);
     gameContainer = container;
+    gameRenderer.init(container);
+    gameRenderer.loadResources(resources);
   }
 
   public void enter(GameContainer container, StateBasedGame stateBasedGame) throws SlickException {
@@ -73,33 +51,26 @@ public class TestInGameState extends CWState implements PropertyChangeListener {
   }
 
   private void setGame(Game game, GameContainer container) {
+    this.game = game;
+    game.init();
     MoveTraverse moveTraverse = new MoveTraverse(game.getMap());
 
-    this.context = new InGameContext();
+    context = new InGameContext();
     context.setMoveTraverse(moveTraverse);
     context.setGame(game);
-    context.setHud(hud);
-    context.setMapRenderer(mapRenderer);
     context.setResources(resources);
     context.setContainer(container);
+
+    gameRenderer.setInGameContext(context);
+    context.setHud(gameRenderer.getHud());
+    context.setMapRenderer(gameRenderer.getMapRenderer());
 
     ControllerManager controllerManager = new ControllerManager(context);
     context.setControllerManager(controllerManager);
 
-    this.game = game;
-    game.init();
+    initGameListeners(game);
     controllerManager.initCityControllers();
     controllerManager.initUnitControllers();
-    initGameListeners(game);
-    modelEventsRenderer.setGame(game);
-    modelEventsRenderer.setMoveTraverse(moveTraverse);
-    hud.setGame(game);
-
-    Map<Tile> map = game.getMap();
-    setMap(map);
-
-    initCamera(map, container);
-    mapRenderer.setScroller(new Scroller(camera));
 
     game.startGame();
   }
@@ -112,53 +83,13 @@ public class TestInGameState extends CWState implements PropertyChangeListener {
     game.addPropertyChangeListener(this);
   }
 
-  private void setMap(Map<Tile> map) {
-    // Create & add Cursors
-    ImageStrip cursor1 = resources.getSlickImgStrip("selectCursor");
-    ImageStrip cursor2 = resources.getSlickImgStrip("aimCursor");
-    TileSprite selectCursor = new TileSprite(cursor1, 250, map.getRandomTile(), map);
-    TileSprite aimCursor = new TileSprite(cursor2, map.getRandomTile(), map);
-
-    mapRenderer.addCursor("SELECT", selectCursor);
-    mapRenderer.addCursor("ATTACK", aimCursor);
-    mapRenderer.activateCursor("SELECT");
-    mapRenderer.setNeutralColor(game.getNeutralColor());
-    mapRenderer.setMap(map);
-    hud.moveOverTile(mapRenderer.getCursorLocation(), true);
-  }
-
-  private void initCamera(Map<Tile> map, GameContainer container) {
-    Dimension worldSize = new Dimension(map.getWidth(), map.getHeight());
-    Dimension screenSize = new Dimension(container.getWidth(), container.getHeight());
-    camera = new Camera2D(screenSize, worldSize, map.getTileSize());
-    BasicComponent.setCamera(camera);
-  }
-
   public void update(GameContainer container, int delta) throws SlickException {
-    mapRenderer.update(delta);
-    camera.update(delta);
-    modelEventsRenderer.update(delta);
+    gameRenderer.update(delta);
     context.update(delta);
   }
 
   public void render(GameContainer container, Graphics g) throws SlickException {
-    if (camera != null) {
-      g.scale(camera.getZoomLvl(), camera.getZoomLvl());
-      mapRenderer.render(-camera.getX(), -camera.getY(), g);
-      renderDropLocations(g);
-      modelEventsRenderer.render(-camera.getX(), -camera.getY(), g);
-      hud.render(g);
-    }
-  }
-
-  private void renderDropLocations(Graphics g) {
-    for (Tile t : context.getDropLocations()) {
-      Tile transportLocation = context.getClick(2);
-      if (transportLocation != null) {
-        Direction dir = game.getMap().getDirectionTo(transportLocation, t);
-        mapRenderer.renderArrowHead(g, dir, t);
-      }
-    }
+    gameRenderer.render(g);
   }
 
   public void controlPressed(Command command, CWInput cwInput) {
@@ -172,9 +103,9 @@ public class TestInGameState extends CWState implements PropertyChangeListener {
       }
 
       if (context.isGUIMode()) {
-        hud.controlPressed(command, cwInput);
+        gameRenderer.controlPressed(command, cwInput);
       } else {
-        Tile cursorLocation = (Tile) mapRenderer.getCursorLocation();
+        Tile cursorLocation = gameRenderer.getCursorLocation();
         Unit activeUnit = game.getActiveUnit();
         Unit selectedUnit = game.getMap().getUnitOn(cursorLocation);
         City city = game.getMap().getCityOn(cursorLocation);
@@ -186,7 +117,7 @@ public class TestInGameState extends CWState implements PropertyChangeListener {
           unit = selectedUnit;
         }
 
-        moveCursor(command, cwInput);
+        gameRenderer.moveCursor(command, cwInput);
         if (cwInput.isSelectPressed(command)) {
           handleA(unit, city, cursorLocation);
         }
@@ -227,49 +158,8 @@ public class TestInGameState extends CWState implements PropertyChangeListener {
     }
   }
 
-  private void moveCursor(Command command, CWInput cwInput) {
-    Location originalCursorLocation = mapRenderer.getCursorLocation();
-    boolean traversing = mapRenderer.isTraversing();
-
-    if (cwInput.isUpPressed(command)) {
-      if (traversing)
-        mapRenderer.moveCursorToNextLocation();
-      else
-        mapRenderer.moveCursor(Direction.NORTH);
-    }
-
-    if (cwInput.isDownPressed(command)) {
-      if (traversing)
-        mapRenderer.moveCursorToPreviousLocation();
-      else
-        mapRenderer.moveCursor(Direction.SOUTH);
-    }
-
-    if (cwInput.isLeftPressed(command)) {
-      if (traversing)
-        mapRenderer.moveCursorToPreviousLocation();
-      else
-        mapRenderer.moveCursor(Direction.WEST);
-    }
-
-    if (cwInput.isRightPressed(command)) {
-      if (traversing)
-        mapRenderer.moveCursorToNextLocation();
-      else
-        mapRenderer.moveCursor(Direction.EAST);
-    }
-
-    if (cursorMoved(originalCursorLocation)) {
-      context.playSound("maptick");
-    }
-    hud.moveOverTile(mapRenderer.getCursorLocation(), true);
-  }
-
   public void keyReleased(int key, char c) {
     if (!context.isMoving()) {
-      if (key == Input.KEY_R) {
-        setGame(stateSession.getGame(), gameContainer);
-      }
       if (key == Input.KEY_E) {
         context.doAction(ActionFactory.buildEndTurnAction(statelogic));
       }
@@ -278,26 +168,14 @@ public class TestInGameState extends CWState implements PropertyChangeListener {
 
   public void mouseWheelMoved(int newValue) {
     if (newValue > 0) {
-      camera.zoomIn();
+      gameRenderer.zoomIn();
     } else {
-      camera.zoomOut();
+      gameRenderer.zoomOut();
     }
   }
 
   public void mouseMoved(int oldx, int oldy, int newx, int newy) {
-    Location originalCursorLocation = mapRenderer.getCursorLocation();
-    int gameX = camera.convertToGameX(newx);
-    int gameY = camera.convertToGameY(newy);
-    mapRenderer.moveCursor(gameX, gameY);
-
-    if (cursorMoved(originalCursorLocation)) {
-      context.playSound("maptick");
-    }
-    hud.moveOverTile(mapRenderer.getCursorLocation(), true);
-  }
-
-  private boolean cursorMoved(Location oldLocation) {
-    return mapRenderer.getCursorLocation() != oldLocation;
+    gameRenderer.mouseMoved(newx, newy);
   }
 
   public int getID() {
