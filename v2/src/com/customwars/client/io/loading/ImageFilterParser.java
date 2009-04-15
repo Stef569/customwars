@@ -19,19 +19,18 @@ import java.util.List;
 /**
  * Handles xml for 1 ImgFilter class
  * Only loading is supported
- * ImgFilters recolor awt images and store the results in the AwtImageLib
  *
  * @author stefan
  */
 public class ImageFilterParser {
-  public static final String ROOT_ELEMENT_TAGNAME = "ColorFilters";
-  private static final String XML_EL_COLOR_FILTER = "ColorFilter";
-  private static final String XML_EL_NAME = "Name";
-  private static final String XML_EL_BASE_COLOR = "BaseColor";
-  private static final String XML_EL_ORIGINAL_COLORS = "OriginalColors";
-  private static final String XML_EL_IGNORED_COLORS = "IgnoredColors";
-  private static final String XML_EL_REPLACEMENT_COLOR = "ReplacementColor";
-  private static final String XML_EL_REPLACEMENT_COLORS = "ReplacementColors";
+  public static final String ROOT_ELEMENT_TAGNAME = "colorFilters";
+  private static final String XML_EL_COLOR_FILTER = "colorFilter";
+  private static final String XML_EL_NAME = "name";
+  private static final String XML_EL_BASE_COLOR = "baseColor";
+  private static final String XML_EL_ORIGINAL_COLORS = "originalColors";
+  private static final String XML_EL_IGNORED_COLORS = "ignoredColors";
+  private static final String XML_EL_REPLACEMENT_COLOR = "replacementColor";
+  private static final String XML_EL_REPLACEMENT_COLORS = "replacementColors";
 
   public void loadConfigFile(InputStream colorStream) throws IOException {
     try {
@@ -52,13 +51,13 @@ public class ImageFilterParser {
     List<Color> ignoredColors = Xml.getColorListFromHex(element, XML_EL_IGNORED_COLORS);
 
     ImgFilter filter = new ImgFilter(baseColor);
-    filter.addIgnoredPixels(ignoredColors.toArray(new Color[]{}));
-    filter.addKnownColors(originalColors.toArray(new Color[]{}));
+    filter.addIgnoredPixels(ignoredColors.toArray(new Color[ignoredColors.size()]));
+    filter.addKnownColors(originalColors.toArray(new Color[originalColors.size()]));
 
     XPath xPath = XPathFactory.newInstance().newXPath();
     NodeList replaceColorNodes;
     try {
-      String expr = "/" + ROOT_ELEMENT_TAGNAME + "/" + XML_EL_COLOR_FILTER + "[Name='" + imgFilterName + "']/" + XML_EL_REPLACEMENT_COLOR;
+      String expr = "/" + ROOT_ELEMENT_TAGNAME + "/" + XML_EL_COLOR_FILTER + "[" + XML_EL_NAME + "='" + imgFilterName + "']/" + XML_EL_REPLACEMENT_COLOR;
       replaceColorNodes = (NodeList) xPath.evaluate(expr, element, XPathConstants.NODESET);
     } catch (XPathExpressionException e) {
       throw new RuntimeException(e);
