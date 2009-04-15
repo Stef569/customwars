@@ -13,7 +13,6 @@ import com.customwars.client.ui.Scroller;
 import com.customwars.client.ui.sprite.SpriteManager;
 import com.customwars.client.ui.sprite.TileSprite;
 import org.newdawn.slick.Animation;
-import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 
 import java.util.List;
@@ -25,9 +24,6 @@ import java.util.List;
 public class MapRenderer extends TileMapRenderer {
   // The dynamic position within the limitedcursorLocations list, used to manually iterator over them
   private static int cursorTraversalPos;
-  private static final int ZONE_ANIM_DURATION = 250;
-  // Change the last number to change transparency
-  private static final Color ZONE_TRANSPARENCY = new Color(255, 255, 255, 128);
 
   // Control
   private boolean renderTerrain = true;
@@ -51,13 +47,17 @@ public class MapRenderer extends TileMapRenderer {
   private Unit activeUnit;
 
   public MapRenderer() {
-    spriteManager = new SpriteManager();
+    this.spriteManager = new SpriteManager();
+  }
+
+  public MapRenderer(SpriteManager spriteManager) {
+    this.spriteManager = spriteManager;
   }
 
   public void loadResources(ResourceManager resources) {
     spriteManager.loadResources(resources);
-    moveZoneAnim = new Animation(resources.getSlickImgStrip("moveZone").toArray(), ZONE_ANIM_DURATION);
-    attackZoneAnim = new Animation(resources.getSlickImgStrip("attackZone").toArray(), ZONE_ANIM_DURATION);
+    moveZoneAnim = resources.getAnim("movezone");
+    attackZoneAnim = resources.getAnim("attackzone");
     arrowImages = resources.getSlickImgStrip("arrows");
   }
 
@@ -84,17 +84,13 @@ public class MapRenderer extends TileMapRenderer {
   private void renderzones(int x, int y, Graphics g) {
     if (moveZone != null) {
       for (Location location : moveZone) {
-        g.setColor(ZONE_TRANSPARENCY);
         renderImgOnTile(g, moveZoneAnim.getCurrentFrame(), location, x, y);
-        g.setColor(Color.white);
       }
     }
 
     if (attackZone != null) {
       for (Location location : attackZone) {
-        g.setColor(ZONE_TRANSPARENCY);
         renderImgOnTile(g, attackZoneAnim.getCurrentFrame(), location, x, y);
-        g.setColor(Color.white);
       }
     }
 
