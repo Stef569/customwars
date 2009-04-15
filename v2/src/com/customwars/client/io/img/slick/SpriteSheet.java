@@ -198,25 +198,25 @@ public class SpriteSheet extends Image {
    */
   public List<Image> getInnerList(Point startPoint, Point endPoint) {
     final List<Image> result = new ArrayList<Image>();
-    if (isOnSameColumn(startPoint, endPoint)) {
-      for (int rowIndex = startPoint.y; rowIndex <= endPoint.y; rowIndex++) {
-        result.add(getSubImage(rowIndex, startPoint.x));
-      }
-    } else {
+    if (isOnSameRow(startPoint, endPoint)) {
       for (int colIndex = startPoint.x; colIndex <= endPoint.x; colIndex++) {
         result.add(getSubImage(colIndex, startPoint.y));
+      }
+    } else {
+      for (int rowIndex = startPoint.y; rowIndex <= endPoint.y; rowIndex++) {
+        result.add(getSubImage(rowIndex, startPoint.x));
       }
     }
     return result;
   }
 
   /**
-   * 2 points are in the same column if their x value are the same
+   * 2 points are in the same row if their y value are the same
    *
-   * @return if 2 points are in the same column
+   * @return if 2 points are in the same row
    */
-  private boolean isOnSameColumn(Point a, Point b) {
-    return a.x == b.x;
+  private boolean isOnSameRow(Point a, Point b) {
+    return a.y == b.y;
   }
 
   /**

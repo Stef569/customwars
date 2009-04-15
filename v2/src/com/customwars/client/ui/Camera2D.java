@@ -10,6 +10,7 @@ import java.awt.Dimension;
  * In reality there is no camera, the components x and y coordinates are just translated.
  *
  * Further improvements can be shaking the screen throught the update method.
+ * todo when zooming the camera size should be changed
  *
  * @author stefan
  */
@@ -23,9 +24,9 @@ public class Camera2D {
   private int tileSize;
 
   public Camera2D(Dimension cameraSize, Dimension screenSize, Dimension worldSize, int tileSize) {
-    this.camera = new Dimension(cameraSize.width, cameraSize.height);
-    this.screen = screenSize;
-    this.world = worldSize;
+    this.camera = new Dimension(cameraSize);
+    this.screen = new Dimension(screenSize);
+    this.world = new Dimension(worldSize);
     this.tileSize = tileSize;
   }
 
@@ -110,11 +111,12 @@ public class Camera2D {
    * Make sure the camera doesn't scroll off the map
    *
    * @param cameraX the new camera position on the x axis
+   *                todo off the map scroll + camera can be smaller or larger then the world size...
    */
   private void setX(int cameraX) {
     if (cameraX < 0) cameraX = 0;
-    if (cameraX >= world.getWidth() - screen.getWidth()) {
-      cameraX = (int) (world.getWidth() - screen.getWidth());
+    if (cameraX >= 0) {
+      cameraX = 0;
     }
     this.cameraX = cameraX;
   }
@@ -126,8 +128,8 @@ public class Camera2D {
    */
   private void setY(int cameraY) {
     if (cameraY < 0) cameraY = 0;
-    if (cameraY >= world.getWidth() - screen.getWidth()) {
-      cameraY = (int) (world.getWidth() - screen.getWidth());
+    if (cameraY >= 0) {
+      cameraY = 0;
     }
     this.cameraY = cameraY;
   }
@@ -174,5 +176,13 @@ public class Camera2D {
   private boolean canMove() {
     return camera.getWidth() < world.getWidth() &&
             camera.getHeight() < world.getHeight();
+  }
+
+  public int getWidth() {
+    return (int) camera.getWidth();
+  }
+
+  public int getHeight() {
+    return (int) camera.getHeight();
   }
 }

@@ -5,8 +5,8 @@ ArmyBranches:
   NAVAL = 1;
   AIR = 2;
 
-MovementTypes  
-	INF = 0;
+MovementTypes:  
+  INF = 0;
   MECH = 1;
   TREAD = 2;
   TIRES = 3;
@@ -19,176 +19,191 @@ MovementTypes
         <price>1000</price>
         <movement>3</movement>
         <vision>2</vision>
-        <canCapture>True</canCapture>
 
-        <maxHp>10</maxHp>
-        <maxSupplies>10</maxSupplies>
+        <canCapture>True</canCapture>
+        <canJoin>true</canJoin>
+
+        <maxHp>100</maxHp>
+        <maxSupplies>99</maxSupplies>
 
         <armyBranch>0</armyBranch>
         <movementType>0</movementType>
-        <primaryWeapon id="SMG">
-            <Ammo>99</Ammo>
-        </primaryWeapon>
+        <secondaryWeapon id="SMG">
+            <ammo>99</ammo>
+        </secondaryWeapon>
     </unit>
     <unit name="Mech" id="1">
         <price>3000</price>
         <movement>2</movement>
         <vision>2</vision>
-        <canCapture>True</canCapture>
 
-        <maxHp>10</maxHp>
-        <maxSupplies>100</maxSupplies>
+        <canCapture>True</canCapture>
+        <canJoin>true</canJoin>
+
+        <maxHp>100</maxHp>
+        <maxSupplies>99</maxSupplies>
 
         <armyBranch>0</armyBranch>
         <movementType>1</movementType>
-        <primaryWeapon id="1">
-            <Ammo>5</Ammo>
+        <primaryWeapon id="BAZOOKA">
+            <Ammo>3</Ammo>
         </primaryWeapon>
-        <secondaryWeapon id="0">
-            <Ammo>99</Ammo>
+        <secondaryWeapon id="SMG">
+            <ammo>99</ammo>
         </secondaryWeapon>
         <description>Infantry units that are equiped to take out Tanks, they have a machin gun as secondary weapon.
         </description>
     </unit>
-    <unit name="Reckon" id="2">
-        <price>4000</price>
-        <movement>8</movement>
-        <vision>5</vision>
-
-        <maxHp>10</maxHp>
-        <maxSupplies>80</maxSupplies>
-
-        <armyBranch>0</armyBranch>
-        <movementType>3</movementType>
-        <primaryWeapon id="2">
-            <Ammo>5</Ammo>
-        </primaryWeapon>
-        <description>Useful in fog of war.</description>
-    </unit>
-    <unit name="Apc" id="3">
-        <price>5000</price>
-        <movement>7</movement>
-        <vision>1</vision>
-
-        <canSupply>True</canSupply>
-        <transportTypes>0, 1</transportTypes>
-
-        <maxHp>10</maxHp>
-        <maxSupplies>70</maxSupplies>
-
-        <armyBranch>0</armyBranch>
-        <movementType>2</movementType>
-        <description>APC units can transport units they also have the ability to supply other units providing ammo
-            and fuel.
-        </description>
-    </unit>
-    <unit name="Tank" id="4">
+    <unit name="Tank" id="2">
         <price>7000</price>
         <movement>6</movement>
         <vision>3</vision>
 
-        <maxHp>10</maxHp>
+        <canJoin>true</canJoin>
+
+        <maxHp>100</maxHp>
         <maxSupplies>70</maxSupplies>
 
         <armyBranch>0</armyBranch>
         <movementType>2</movementType>
-        <primaryWeapon id="3">
-            <Ammo>9</Ammo>
+        <primaryWeapon id="TANK_MAIN_GUN">
+            <ammo>9</ammo>
         </primaryWeapon>
+        <secondaryWeapon id="TANK_MACHIN_GUN">
+            <ammo>99</ammo>
+        </secondaryWeapon>
         <description>Fast Armoured unit, great for scouting.</description>
     </unit>
-    <unit name="Medium Tank" id="5">
+    <unit name="Medium Tank" id="3">
         <price>16000</price>
         <movement>5</movement>
         <vision>1</vision>
 
-        <maxHp>10</maxHp>
+        <canJoin>true</canJoin>
+
+        <maxHp>100</maxHp>
         <maxSupplies>50</maxSupplies>
 
         <armyBranch>0</armyBranch>
         <movementType>2</movementType>
-        <primaryWeapon id="3">
-            <Ammo>9</Ammo>
+        <primaryWeapon id="TANK_MAIN_GUN">
+            <ammo>8</ammo>
         </primaryWeapon>
-        <description>A tank :o</description>
+        <secondaryWeapon id="TANK_MACHIN_GUN">
+            <ammo>99</ammo>
+        </secondaryWeapon>
+        <description>A tank</description>
     </unit>
-    <unit name="Mega Tank" id="6">
-        <price>22000</price>
-        <movement>6</movement>
-        <vision>1</vision>
+    <unit name="Reckon" id="4">
+        <price>4000</price>
+        <movement>8</movement>
+        <vision>5</vision>
 
-        <maxHp>10</maxHp>
-        <maxSupplies>99</maxSupplies>
+        <canJoin>true</canJoin>
+
+        <maxHp>100</maxHp>
+        <maxSupplies>80</maxSupplies>
 
         <armyBranch>0</armyBranch>
-        <movementType>2</movementType>
-        <primaryWeapon id="3">
-            <Ammo>10</Ammo>
+        <movementType>3</movementType>
+        <primaryWeapon id="TANK_MAIN_GUN">
+            <ammo>5</ammo>
         </primaryWeapon>
-        <description>Heavy tank, performs well against other tanks and against infantry units, it can only be stopped by
-            a
-            bomber or artillery.
-        </description>
+        <secondaryWeapon id="TANK_MACHIN_GUN">
+            <ammo>99</ammo>
+        </secondaryWeapon>
+        <description>Useful against Infantry and Mech, and for providing sight in fog of war.</description>
     </unit>
-    <unit name="Anti Tank" id="7">
-        <price>6000</price>
-        <movement>5</movement>
-        <vision>1</vision>
-
-        <maxHp>10</maxHp>
-        <maxSupplies>50</maxSupplies>
-
-        <armyBranch>0</armyBranch>
-        <movementType>1</movementType>
-        <primaryWeapon id="3">
-            <Ammo>9</Ammo>
-        </primaryWeapon>
-        <description>Short range unit, use them to backup your units on the frontline.</description>
-    </unit>
-    <unit name="Rockets" id="8">
-        <price>15000</price>
-        <movement>5</movement>
-        <vision>1</vision>
-
-        <maxHp>10</maxHp>
-        <maxSupplies>50</maxSupplies>
-
-        <armyBranch>0</armyBranch>
-        <movementType>2</movementType>
-        <primaryWeapon id="5">
-            <Ammo>9</Ammo>
-        </primaryWeapon>
-        <description>Rocket units are the best long range units you have. They can fire on both land and sea list.
-        </description>
-    </unit>
-    <unit name="Anti Air" id="9">
+    <unit name="Anti Air" id="5">
         <price>8000</price>
         <movement>6</movement>
         <vision>2</vision>
 
-        <maxHp>10</maxHp>
+        <canJoin>true</canJoin>
+
+        <maxHp>100</maxHp>
         <maxSupplies>60</maxSupplies>
 
         <armyBranch>0</armyBranch>
         <movementType>2</movementType>
-        <primaryWeapon id="5">
-            <Ammo>9</Ammo>
+        <primaryWeapon id="ANTI_AIR">
+            <ammo>9</ammo>
         </primaryWeapon>
         <description>For popping airplanes out of the sky</description>
     </unit>
-    <unit name="Artillery" id="10">
-        <price>4000</price>
-        <movement>6</movement>
-        <vision>2</vision>
+    <unit name="Missles" id="6">
+        <price>22000</price>
+        <movement>4</movement>
+        <vision>5</vision>
 
-        <maxHp>10</maxHp>
-        <maxSupplies>60</maxSupplies>
+        <canJoin>true</canJoin>
+
+        <maxHp>100</maxHp>
+        <maxSupplies>99</maxSupplies>
 
         <armyBranch>0</armyBranch>
         <movementType>2</movementType>
-        <primaryWeapon id="5">
-            <Ammo>9</Ammo>
+        <primaryWeapon id="ANTI AIR ROCKETS">
+            <ammo>6</ammo>
         </primaryWeapon>
-        <description>Artillery to bombard stuff in short range</description>
+        <description>To pop airplanes out of the sky</description>
+    </unit>
+    <unit name="Artillery" id="7">
+        <price>6000</price>
+        <movement>5</movement>
+        <vision>2</vision>
+
+        <canJoin>true</canJoin>
+
+        <maxHp>100</maxHp>
+        <maxSupplies>50</maxSupplies>
+
+        <armyBranch>0</armyBranch>
+        <movementType>2</movementType>
+        <primaryWeapon id="LONG_RANGE_CANNON">
+            <ammo>9</ammo>
+        </primaryWeapon>
+        <description>To bombard stuff in short range</description>
+    </unit>
+    <unit name="Rockets" id="8">
+        <price>15000</price>
+        <movement>2</movement>
+        <vision>1</vision>
+
+        <canJoin>true</canJoin>
+
+        <maxHp>100</maxHp>
+        <maxSupplies>50</maxSupplies>
+
+        <armyBranch>0</armyBranch>
+        <movementType>2</movementType>
+        <primaryWeapon id="ROCKETS">
+            <ammo>6</ammo>
+        </primaryWeapon>
+        <description>Rocket units are the best long range units you have. They can fire on both land and sea units.
+        </description>
+    </unit>
+    <unit name="Apc" id="9">
+        <price>5000</price>
+        <movement>6</movement>
+        <vision>1</vision>
+
+        <canJoin>true</canJoin>
+        <canSupply>True</canSupply>
+        <canTransport>true</canTransport>
+        <transportTypes>
+            <int>0</int>
+            <int>1</int>
+        </transportTypes>
+
+        <maxHp>100</maxHp>
+        <minSupplyRange>1</minSupplyRange>
+        <maxSupplyRange>1</maxSupplyRange>
+        <maxSupplies>70</maxSupplies>
+        <maxTransportCount>3</maxTransportCount>
+
+        <armyBranch>0</armyBranch>
+        <movementType>2</movementType>
+        <description>Can transport other units they also have the ability to supply.</description>
     </unit>
 </list>

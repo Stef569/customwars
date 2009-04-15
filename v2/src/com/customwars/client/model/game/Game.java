@@ -156,7 +156,7 @@ public class Game extends TurnBasedGame implements PropertyChangeListener {
         Tile location = (Tile) unit.getLocation();
         City city = map.getCityOn(location);
 
-        if (city != null && city.getOwner().isAlliedWith(player)) {
+        if (city != null) {
           city.supply(unit);
           city.heal(unit);
         }

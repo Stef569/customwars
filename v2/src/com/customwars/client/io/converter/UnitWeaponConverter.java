@@ -5,11 +5,14 @@ import com.customwars.client.model.gameobject.WeaponFactory;
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
+import com.thoughtworks.xstream.core.util.Fields;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
+import java.lang.reflect.Field;
+
 /**
- * Read a weapon ID + ammo from a xml element
+ * Read a weapon ID + max ammo from an xml element
  *
  * @author stefan
  */
@@ -22,8 +25,9 @@ public class UnitWeaponConverter implements Converter {
   public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext unmarshallingContext) {
     Weapon weapon = WeaponFactory.getWeapon(reader.getAttribute("id"));
     reader.moveDown();
-    int ammo = Integer.valueOf(reader.getValue());
-    weapon.setAmmo(ammo);
+    int maxAmmo = Integer.valueOf(reader.getValue());
+    Field field = Fields.find(Weapon.class, "maxAmmo");
+    Fields.write(field, weapon, maxAmmo);
     reader.moveUp();
     return weapon;
   }

@@ -294,8 +294,8 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
    */
   public void receiveDamage(Fight fight) {
     int attackPercentage = fight.calcAttackDamagePercentage(this);
-    int attackValue = (int) (((double) attackPercentage / maxHp) * 10);
-    addHp(-attackValue);
+    int attackValue = (int) (((double) attackPercentage / maxHp) * 100);
+    setHp(hp - attackValue);
   }
 
   /**

@@ -1,6 +1,5 @@
 package com.customwars.client.ui.sprite;
 
-import com.customwars.client.io.img.slick.ImageStrip;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Tile;
@@ -15,12 +14,10 @@ public class CitySprite extends TileSprite implements PropertyChangeListener {
   private Animation animActive;
   private Animation animFogged;
   private boolean renderFogged;
-  private ImageStrip decorations;
 
-  public CitySprite(Location tile, TileMap map, City city, ImageStrip decorations) {
+  public CitySprite(Location tile, TileMap map, City city) {
     super(tile, map);
     this.city = city;
-    this.decorations = decorations;
     city.addPropertyChangeListener(this);
   }
 

@@ -148,10 +148,10 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
   }
 
   /**
-   * Retrieve a list of units in supply range of the supplier
+   * Retrieve a list of visible units in supply range of the supplier
    *
    * @param supplier The supplier of which we want to retrieve the suppliables units in range for
-   * @return units in supply range of supplier that can be supplied
+   * @return units in supply range of supplier that can be supplied and are not fogged
    */
   public List<Unit> getSuppliablesInRange(Unit supplier) {
     List<Unit> units = new ArrayList<Unit>();
@@ -162,7 +162,7 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
       Unit unitInRange = getUnitOn(t);
 
       if (unitInRange != null) {
-        if (supplier.canSupply(unitInRange)) {
+        if (!t.isFogged() && supplier.canSupply(unitInRange)) {
           units.add(unitInRange);
         }
       }

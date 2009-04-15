@@ -44,7 +44,8 @@ public class HardCodedGame {
   }
 
   public static Map<Tile> getMap() {
-    map = new Map<Tile>(10, 15, 32, 3);
+    int tileSize = Integer.parseInt(System.getProperty("plugin.tilesize", "32"));
+    map = new Map<Tile>(10, 15, tileSize, 3);
     map.setFogOfWarOn(true);
     initMapProperties();
     MapUtil.fillWithTiles(map, TerrainFactory.getTerrain(TestData.PLAIN));

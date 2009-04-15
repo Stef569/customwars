@@ -33,6 +33,7 @@ public final class Args {
   }
 
   public static void checkForContent(String text, String errMsg) {
+    checkForNull(text, errMsg);
     if (text.trim().length() < 0) {
       throw new IllegalArgumentException(errMsg);
     }
