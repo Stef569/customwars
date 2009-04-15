@@ -12,30 +12,34 @@ public abstract class Fight {
   protected Defender defender;
 
   public enum FightType {
-    Attack, CounterAttack
+    ATTACK, COUNTER_ATTACK
+  }
+
+  public enum WeaponType {
+    PRIMARY, SECONDARY
   }
 
   private FightType type;
 
   public void initAttack(Attacker attacker, Defender defender) {
-    this.type = FightType.Attack;
+    this.type = FightType.ATTACK;
     this.attacker = attacker;
     this.defender = defender;
   }
 
-  public abstract int calcAttackDamage(Defender defender);
+  public abstract int calcAttackDamagePercentage(Defender defender);
 
   /**
    * Attacker has performed an attack, can the defender counter attack?
    */
   public boolean canCounterAttack(Attacker attacker, Defender defender) {
     return defender instanceof Attacker && attacker instanceof Defender &&
-            type != FightType.CounterAttack;
+            type != FightType.COUNTER_ATTACK;
   }
 
   public void counterAttack() {
     swap();
-    setType(FightType.CounterAttack);
+    setType(FightType.COUNTER_ATTACK);
   }
 
   /**
@@ -56,4 +60,6 @@ public abstract class Fight {
   public FightType getType() {
     return type;
   }
+
+  public abstract WeaponType getBestAttackWeaponType();
 }
