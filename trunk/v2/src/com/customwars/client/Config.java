@@ -34,13 +34,12 @@ public class Config {
   private static final String USER_DEFAULTS_PROPERTIES_FILE = "userDefaults.properties";
   private static final String PLUGIN_PROPERTIES_FILE = "plugin.properties";
   private static final String LANG_BUNDLE_PATH = "data.lang.Languages";
-  private String activePluginLocation;                   // The active plugin, read from user.plugin
+  private String pluginLocation;
 
   private ResourceManager resources;
   private Properties userProperties;
   private Map<String, Properties> persistenceProperties; // Location -> Properties, Properties that can be stored
   private UserConfigParser userConfigParser;             // Parses and applies user configuration
-  private static ResourceBundle messages;                // Contains A Bundle of Translated strings in 1 language
 
   public Config(ResourceManager resources) {
     this.resources = resources;
@@ -50,10 +49,12 @@ public class Config {
   public void configure() {
     loadProperties();
 
-    resources.setImgPath(activePluginLocation + "/images/");
-    resources.setSoundPath(activePluginLocation + "/sound/");
-    resources.setDataPath(activePluginLocation + "/data/");
-    resources.setMapPath(activePluginLocation + "/maps");
+    resources.setImgPath(pluginLocation + "/images/");
+    resources.setSoundPath(pluginLocation + "/sound/");
+    resources.setDataPath(pluginLocation + "/data/");
+    resources.setMapPath(pluginLocation + "/maps/");
+    resources.setFontPath("res/data/fonts/");
+    resources.setDarkPercentage(App.getInt("display.darkpercentage"));
   }
 
   private void loadProperties() {
@@ -62,11 +63,11 @@ public class Config {
       loadGameProperties();
       loadUserProperties();
 
-      String activeLang = userProperties.getProperty("user.lang");
-      String activePlugin = userProperties.getProperty("user.activeplugin", "default");
-      activePluginLocation = "res/plugin/" + activePlugin;
+      String language = userProperties.getProperty("user.lang");
+      String pluginName = userProperties.getProperty("user.activeplugin", "default");
+      pluginLocation = "res/plugin/" + pluginName;
 
-      loadLang(activeLang);
+      loadLang(language);
       loadPluginProperties();
     } catch (IOException e) {
       throw new RuntimeException("Error reading file", e);
@@ -84,8 +85,8 @@ public class Config {
   }
 
   private void loadGameProperties() throws IOException {
-    Properties gameProperties = loadProperties(configPath + GAME_PROPERTIES_FILE, System.getProperties());
-    System.setProperties(gameProperties);
+    Properties gameProperties = loadProperties(configPath + GAME_PROPERTIES_FILE, App.getProperties());
+    App.setProperties(gameProperties);
   }
 
   private void loadUserProperties() throws IOException {
@@ -94,21 +95,23 @@ public class Config {
     persistenceProperties.put(configPath + USER_PROPERTIES_FILE, userProperties);
   }
 
-  public void loadLang(String languageCode) {
+  public void loadLang(String languageCode) throws IOException {
     if (languageCode == null) languageCode = "EN";
     Locale locale = new Locale(languageCode);
     loadLangProperties(locale);
   }
 
-  private void loadLangProperties(Locale locale) {
+  private void loadLangProperties(Locale locale) throws IOException {
     ClassLoader loader = Thread.currentThread().getContextClassLoader();
-    messages = PropertyResourceBundle.getBundle(LANG_BUNDLE_PATH, locale, loader);
+    ResourceBundle bundle = PropertyResourceBundle.getBundle(LANG_BUNDLE_PATH, locale, loader);
+    App.setLocaleResourceBundle(bundle);
     logger.info("Lang=" + locale);
   }
 
   private void loadPluginProperties() throws IOException {
-    Properties pluginProperties = loadProperties(activePluginLocation + "/data/" + PLUGIN_PROPERTIES_FILE, System.getProperties());
-    System.setProperties(pluginProperties);
+    Properties pluginProperties = loadProperties(pluginLocation + "/data/" + PLUGIN_PROPERTIES_FILE, App.getProperties());
+    App.setProperties(pluginProperties);
+    logger.info("Plugin=" + pluginLocation);
   }
 
   private Properties loadProperties(String location, Properties defaults) throws IOException {
@@ -143,15 +146,5 @@ public class Config {
     } catch (IOException e) {
       logger.warn("Could not save property file to " + location + " ", e);
     }
-  }
-
-  /**
-   * Get a translated String for msg
-   *
-   * @param msg lower case key definded in the language properties file
-   * @return msg translated to the current language
-   */
-  public static String getMsg(String msg) {
-    return (String) messages.getObject(msg);
   }
 }
