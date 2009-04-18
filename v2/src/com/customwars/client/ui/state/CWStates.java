@@ -1,5 +1,6 @@
 package com.customwars.client.ui.state;
 
+import com.customwars.client.App;
 import com.customwars.client.Config;
 import com.customwars.client.io.ResourceManager;
 import org.apache.log4j.Logger;
@@ -26,7 +27,7 @@ public class CWStates extends StateBasedGame implements InputProviderListener {
   private int startID;
 
   public CWStates(int startID, StateSession stateSession, ResourceManager resources, Config config) {
-    super(System.getProperty("game.name") + " - " + System.getProperty("plugin.name"));
+    super(App.get("game.name") + " - " + App.get("plugin.name"));
     this.startID = startID;
     this.stateSession = stateSession;
     this.resources = resources;
@@ -93,10 +94,10 @@ public class CWStates extends StateBasedGame implements InputProviderListener {
   }
 
   private void handleGlobalInput(Command command) {
-    if (cwInput.isExitPressed(command)) {
+    if (cwInput.isExit(command)) {
       logger.info("Exit pressed");
       gameContainer.exit();
-    } else if (cwInput.isToggleMusicPressed(command)) {
+    } else if (cwInput.isToggleMusic(command)) {
       gameContainer.setMusicOn(!gameContainer.isMusicOn());
     }
   }

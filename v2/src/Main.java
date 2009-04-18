@@ -1,6 +1,7 @@
 import bsh.EvalError;
 import bsh.Interpreter;
 import bsh.util.JConsole;
+import com.customwars.client.App;
 import com.customwars.client.Config;
 import com.customwars.client.io.ResourceManager;
 import com.customwars.client.model.game.Game;
@@ -50,9 +51,9 @@ public class Main {
     }
 
     logger.info("Starting Slick");
-    boolean fullScreen = Boolean.parseBoolean(System.getProperty("user.display.fullscreen", "false"));
-    int displayWidth = Integer.parseInt(System.getProperty("user.display.width", "640"));
-    int displayHeight = Integer.parseInt(System.getProperty("user.display.height", "480"));
+    boolean fullScreen = App.getBoolean("user.display.fullscreen", false);
+    int displayWidth = App.getInt("user.display.width", 640);
+    int displayHeight = App.getInt("user.display.height", 480);
 
     AppGameContainer appGameContainer = new AppGameContainer(stateBasedGame);
     appGameContainer.setDisplayMode(displayWidth, displayHeight, fullScreen);
