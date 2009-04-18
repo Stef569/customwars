@@ -90,7 +90,7 @@ public class UnitFight extends Fight {
   }
 
   public boolean canCounterAttack(Attacker attacker, Defender defender) {
-    return super.canCounterAttack(attacker, defender) && defender.canCounterAttack() &&
+    return super.canCounterAttack(attacker, defender) && defender.canCounterAttack(attacker) &&
             isDefenderAdjacentOfAttacker((Attacker) defender, (Defender) attacker);
   }
 
