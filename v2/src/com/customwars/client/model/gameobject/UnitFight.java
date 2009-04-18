@@ -89,9 +89,15 @@ public class UnitFight extends Fight {
     return highest;
   }
 
-  public boolean canCounterAttack(Attacker attacker, Defender defender) {
-    return super.canCounterAttack(attacker, defender) && defender.canCounterAttack(attacker) &&
-            isDefenderAdjacentOfAttacker((Attacker) defender, (Defender) attacker);
+  public boolean canCounterAttack(Attacker att, Defender def) {
+    if (super.canCounterAttack(att, def) && def.canCounterAttack(att)) {
+      // Swap attacker and defender
+      Attacker attacker = (Attacker) def;
+      Defender defender = (Defender) att;
+      return isDefenderAdjacentOfAttacker(attacker, defender) && attacker.getMinAttackRange() == 1;
+    } else {
+      return false;
+    }
   }
 
   public void counterAttack() {
