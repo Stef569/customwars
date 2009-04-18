@@ -25,7 +25,6 @@ public class TestMapParser extends CWState {
     mapParser = new MapParser();
     mapRenderer = new MapRenderer();
     mapRenderer.loadResources(resources);
-    mapRenderer.setTerrainStrip(resources.getSlickImgStrip("terrains"));
   }
 
   public void render(GameContainer container, Graphics g) throws SlickException {

@@ -23,7 +23,10 @@ import java.awt.Dimension;
 
 public class GameRenderer {
   private InGameContext context;
+  private GUIContext guiContext;
+
   private Game game;
+  private Map<Tile> map;
 
   private ModelEventsRenderer modelEventsRenderer;
   private MapRenderer mapRenderer;
@@ -34,16 +37,16 @@ public class GameRenderer {
   private boolean renderEvents = true;
   private ResourceManager resources;
 
-  public void init(GUIContext guiContext) {
+  public GameRenderer(GUIContext guiContext) {
     SpriteManager spriteManager = new SpriteManager();
     this.hud = new HUD(guiContext, spriteManager);
     this.mapRenderer = new MapRenderer(spriteManager);
     this.modelEventsRenderer = new ModelEventsRenderer();
+    this.guiContext = guiContext;
   }
 
   public void loadResources(ResourceManager resources) {
     this.resources = resources;
-    mapRenderer.setTerrainStrip(resources.getSlickImgStrip("terrains"));
     mapRenderer.loadResources(resources);
     modelEventsRenderer.loadResources(resources);
   }
@@ -60,8 +63,28 @@ public class GameRenderer {
     setMap(game.getMap());
   }
 
-  private void setMap(Map<Tile> map) {
-    // Create & add Cursors
+  public void setMap(Map<Tile> map) {
+    this.map = map;
+    initMapRenderer();
+
+    Tile cursorLocation = getCursorLocation();
+    hud.moveOverTile(cursorLocation, isOnLeftSide(cursorLocation));
+
+    initCamera();
+    mapRenderer.setScroller(new Scroller(camera));
+    hud.setCamera(camera);
+    BasicComponent.setCamera(camera);
+  }
+
+  private void initMapRenderer() {
+    initCursors();
+    if (game != null) {
+      mapRenderer.setNeutralColor(game.getNeutralColor());
+    }
+    mapRenderer.setMap(map);
+  }
+
+  private void initCursors() {
     ImageStrip selectCursorImgs = resources.getSlickImgStrip("selectCursor");
     ImageStrip aimCursorImgs = resources.getSlickImgStrip("aimCursor");
     TileSprite selectCursor = new TileSprite(selectCursorImgs, 250, map.getRandomTile(), map);
@@ -70,24 +93,12 @@ public class GameRenderer {
     mapRenderer.addCursor("SELECT", selectCursor);
     mapRenderer.addCursor("ATTACK", aimCursor);
     mapRenderer.activateCursor("SELECT");
-    mapRenderer.setNeutralColor(game.getNeutralColor());
-    mapRenderer.setMap(map);
-
-    Tile cursorLocation = getCursorLocation();
-    hud.moveOverTile(cursorLocation, isOnLeftSide(cursorLocation));
-
-    // Create Camera & scroller
-    initCamera(map);
-    mapRenderer.setScroller(new Scroller(camera));
-    hud.setCamera(camera);
   }
 
-  private void initCamera(Map<Tile> map) {
-    GUIContext gui = context.getContainer();
+  private void initCamera() {
     Dimension worldSize = new Dimension(map.getWidth(), map.getHeight());
-    Dimension screenSize = new Dimension(gui.getWidth(), gui.getHeight());
+    Dimension screenSize = new Dimension(guiContext.getWidth(), guiContext.getHeight());
     camera = new Camera2D(screenSize, worldSize, map.getTileSize());
-    BasicComponent.setCamera(camera);
   }
 
   public void render(Graphics g) {
@@ -105,11 +116,13 @@ public class GameRenderer {
   }
 
   private void renderDropLocations(Graphics g) {
-    for (Tile t : context.getDropLocations()) {
-      Tile transportLocation = context.getClick(2);
-      if (transportLocation != null) {
-        Direction dir = game.getMap().getDirectionTo(transportLocation, t);
-        mapRenderer.renderArrowHead(g, dir, t);
+    if (context != null) {
+      for (Tile t : context.getDropLocations()) {
+        Tile transportLocation = context.getClick(2);
+        if (transportLocation != null) {
+          Direction dir = game.getMap().getDirectionTo(transportLocation, t);
+          mapRenderer.renderArrowHead(g, dir, t);
+        }
       }
     }
   }
@@ -128,28 +141,28 @@ public class GameRenderer {
     Location originalCursorLocation = mapRenderer.getCursorLocation();
     boolean traversing = mapRenderer.isTraversing();
 
-    if (cwInput.isUpPressed(command)) {
+    if (cwInput.isUp(command)) {
       if (traversing)
         mapRenderer.moveCursorToNextLocation();
       else
         mapRenderer.moveCursor(Direction.NORTH);
     }
 
-    if (cwInput.isDownPressed(command)) {
+    if (cwInput.isDown(command)) {
       if (traversing)
         mapRenderer.moveCursorToPreviousLocation();
       else
         mapRenderer.moveCursor(Direction.SOUTH);
     }
 
-    if (cwInput.isLeftPressed(command)) {
+    if (cwInput.isLeft(command)) {
       if (traversing)
         mapRenderer.moveCursorToPreviousLocation();
       else
         mapRenderer.moveCursor(Direction.WEST);
     }
 
-    if (cwInput.isRightPressed(command)) {
+    if (cwInput.isRight(command)) {
       if (traversing)
         mapRenderer.moveCursorToNextLocation();
       else
@@ -157,7 +170,7 @@ public class GameRenderer {
     }
 
     if (cursorMoved(originalCursorLocation)) {
-      context.playSound("maptick");
+      resources.playSound("maptick");
     }
     Tile cursorLocation = getCursorLocation();
     hud.moveOverTile(cursorLocation, isOnLeftSide(cursorLocation));
@@ -170,15 +183,23 @@ public class GameRenderer {
     mapRenderer.moveCursor(gameX, gameY);
 
     if (cursorMoved(originalCursorLocation)) {
-      context.playSound("maptick");
+      resources.playSound("maptick");
     }
 
     Tile cursorLocation = getCursorLocation();
     hud.moveOverTile(cursorLocation, isOnLeftSide(cursorLocation));
   }
 
+  public void setRenderHUD(boolean renderHUD) {
+    this.renderHUD = renderHUD;
+  }
+
+  public void setRenderEvents(boolean renderEvents) {
+    this.renderEvents = renderEvents;
+  }
+
   public boolean isOnLeftSide(Location location) {
-    return location != null && (location.getCol() < game.getMap().getCols() / 2);
+    return location != null && (location.getCol() < map.getCols() / 2);
   }
 
   private boolean cursorMoved(Location oldLocation) {

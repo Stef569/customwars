@@ -43,16 +43,6 @@ public class StartupTest extends BasicGame {
     appGameContainer.setTitle(System.getProperty("game.name"));
   }
 
-  //MapParser map = new MapParser();
-  //try {
-  //    map.writeMap("res/map/cool.txt","[yeah][its][cool][but]");
-  //    map.printMap("res/map/cool.txt");
-  //} catch (FileNotFoundException ex) {
-  //    ex.printStackTrace();
-  //} catch (IOException ex) {
-  //    ex.printStackTrace();
-  //}
-
   public void update(GameContainer container, int delta) throws SlickException {
     updateLoadingProgress();
   }

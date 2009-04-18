@@ -41,34 +41,48 @@ public class TerrainConverter implements Converter {
 
     // Use the type to get the base terrain ie
     // Horizontal road has as type road
-    // Init the base terrain to make sure it doesn't contain illegal data
+    // Init the base terrain to make sure it does not contain illegal data
     // and make a copy
     Terrain baseTerrain = getBaseTerrain(type);
     baseTerrain.init();
     Terrain terrainCopy = new Terrain(baseTerrain);
-    List<Direction> connections = readConnections(reader);
+    boolean spansOverRiver = false, spansOverOcean = false, delta = false;
+    List<Direction> connections = null;
+
+    while (reader.hasMoreChildren()) {
+      reader.moveDown();
+      final String nodeName = reader.getNodeName();
+
+      if (nodeName.equals("connect")) {
+        connections = readDirections(reader.getValue());
+        reader.moveUp();
+      } else if (nodeName.equals("spansOverRiver")) {
+        spansOverRiver = readBoolean(reader.getValue(), unmarshallingContext);
+        reader.moveUp();
+      } else if (nodeName.equals("spansOverOcean")) {
+        spansOverOcean = readBoolean(reader.getValue(), unmarshallingContext);
+        reader.moveUp();
+      } else if (nodeName.equals("delta")) {
+        delta = readBoolean(reader.getValue(), unmarshallingContext);
+        reader.moveUp();
+      } else {
+        throw new IllegalArgumentException("Unknown child in terrain xml");
+      }
+    }
 
     // Use reflection to set the new values to the terrain copy
     writeField("id", terrainCopy, terrainID);
     writeField("name", terrainCopy, terrainName == null ? baseTerrain.getName() : terrainName);
     writeField("type", terrainCopy, baseTerrain.getName());
     writeField("connectedDirections", terrainCopy, connections);
+    writeField("spansOverRiver", terrainCopy, spansOverRiver);
+    writeField("spansOverOcean", terrainCopy, spansOverOcean);
+    writeField("delta", terrainCopy, delta);
     return terrainCopy;
   }
 
-  /**
-   * Read connections for this terrain(if any)
-   */
-  private List<Direction> readConnections(HierarchicalStreamReader reader) {
-    List<Direction> connections = null;
-    if (reader.hasMoreChildren()) {
-      reader.moveDown();
-      if (reader.getNodeName().equals("connect")) {
-        connections = readDirections(reader.getValue());
-      }
-      reader.moveUp();
-    }
-    return connections;
+  private boolean readBoolean(Object value, UnmarshallingContext unmarshallingContext) {
+    return (Boolean) unmarshallingContext.convertAnother(value, Boolean.class);
   }
 
   private Terrain getBaseTerrain(String type) {

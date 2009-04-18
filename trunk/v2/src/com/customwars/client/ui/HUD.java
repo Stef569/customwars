@@ -74,16 +74,19 @@ public class HUD {
   }
 
   public void moveOverTile(Tile tile, boolean leftSide) {
-    terrainInfoBox.setTile(tile);
-    Locatable locatable = tile.getLastLocatable();
-    if (locatable instanceof Unit && !tile.isFogged()) {
-      unitInfoBox.setVisible(true);
-      unitInfoBox.setUnit((Unit) locatable);
-    } else {
-      unitInfoBox.setVisible(false);
-    }
-    if (camera != null)
+    if (terrainInfoBox != null && camera != null) {
+      terrainInfoBox.setTile(tile);
+      Locatable locatable = tile.getLastLocatable();
+
+      if (locatable instanceof Unit && !tile.isFogged()) {
+        unitInfoBox.setVisible(true);
+        unitInfoBox.setUnit((Unit) locatable);
+      } else {
+        unitInfoBox.setVisible(false);
+      }
+
       locateInfoBoxes(leftSide);
+    }
   }
 
   /**
