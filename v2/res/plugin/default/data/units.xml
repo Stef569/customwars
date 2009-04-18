@@ -94,7 +94,7 @@ MovementTypes:
         </secondaryWeapon>
         <description>A tank</description>
     </unit>
-    <unit name="Reckon" id="4">
+    <unit name="Recon" id="4">
         <price>4000</price>
         <movement>8</movement>
         <vision>5</vision>
@@ -114,7 +114,7 @@ MovementTypes:
         </secondaryWeapon>
         <description>Useful against Infantry and Mech, and for providing sight in fog of war.</description>
     </unit>
-    <unit name="Anti Air" id="5">
+    <unit name="Anti-Air" id="5">
         <price>8000</price>
         <movement>6</movement>
         <vision>2</vision>
@@ -131,7 +131,7 @@ MovementTypes:
         </primaryWeapon>
         <description>For popping airplanes out of the sky</description>
     </unit>
-    <unit name="Missles" id="6">
+    <unit name="Missiles" id="6">
         <price>22000</price>
         <movement>4</movement>
         <vision>5</vision>
@@ -183,7 +183,7 @@ MovementTypes:
         <description>Rocket units are the best long range units you have. They can fire on both land and sea units.
         </description>
     </unit>
-    <unit name="Apc" id="9">
+    <unit name="APC" id="9">
         <price>5000</price>
         <movement>6</movement>
         <vision>1</vision>
