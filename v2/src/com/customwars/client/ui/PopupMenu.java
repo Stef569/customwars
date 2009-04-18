@@ -125,11 +125,11 @@ public class PopupMenu extends BasicComponent {
   }
 
   public void controlPressed(Command command, CWInput cwInput) {
-    if (cwInput.isDownPressed(command)) {
+    if (cwInput.isDown(command)) {
       moveDown();
-    } else if (cwInput.isUpPressed(command)) {
+    } else if (cwInput.isUp(command)) {
       moveUp();
-    } else if (cwInput.isSelectPressed(command)) {
+    } else if (cwInput.isSelect(command)) {
       selectMenuItem(currItem);
       componentActivated(getSelectedMenuItem());
     }

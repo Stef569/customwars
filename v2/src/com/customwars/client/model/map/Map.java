@@ -206,7 +206,16 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
   }
 
   /**
-   * Build a zone in which the Unit can attack
+   * Build a zone in which the mover can make a move
+   * and set it to the mover
+   */
+  public void buildMovementZone(Mover mover) {
+    mover.setMoveZone(pathFinder.getMovementZone(mover));
+  }
+
+  /**
+   * Build a zone in which the Attacker can attack
+   * and set it to the attacker
    */
   public void buildAttackZone(Attacker attacker) {
     List<Location> attackZone = new ArrayList<Location>();
@@ -240,13 +249,6 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
       }
     }
     return false;
-  }
-
-  /**
-   * Build a zone in which the mover can make a move
-   */
-  public void buildMovementZone(Mover mover) {
-    mover.setMoveZone(pathFinder.getMovementZone(mover));
   }
 
   /**

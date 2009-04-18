@@ -52,15 +52,17 @@ public class TerrainInfoBox extends BasicComponent {
   }
 
   public void renderimpl(GUIContext container, Graphics g) {
-    Color origColor = g.getColor();
-    int x = getX();
-    int y = getY();
+    if (tile != null) {
+      Color origColor = g.getColor();
+      int x = getX();
+      int y = getY();
 
-    renderBackground(g, x, y);
-    initBoxes(tile.getTerrain());
-    locateBoxes(x, y);
-    renderBoxes(g);
-    g.setColor(origColor);
+      renderBackground(g, x, y);
+      initBoxes(tile.getTerrain());
+      locateBoxes(x, y);
+      renderBoxes(g);
+      g.setColor(origColor);
+    }
   }
 
   private void renderBackground(Graphics g, int x, int y) {

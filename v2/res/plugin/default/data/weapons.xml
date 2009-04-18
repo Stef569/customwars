@@ -10,7 +10,6 @@ ArmyBranches:
         <attacks>
             <int>0</int>
         </attacks>
-        <description>For close Combat</description>
     </weapon>
     <weapon name="BAZOOKA" id="1">
         <minFireRange>1</minFireRange>
@@ -50,7 +49,6 @@ ArmyBranches:
             <int>0</int>
             <int>2</int>
         </attacks>
-        <description>Shoot airplanes out of the sky</description>
     </weapon>
     <weapon name="ROCKETS" id="6">
         <minFireRange>3</minFireRange>
@@ -64,8 +62,8 @@ ArmyBranches:
     <weapon name="ANTI AIR ROCKETS" id="7">
         <minFireRange>3</minFireRange>
         <maxFireRange>5</maxFireRange>
-        <attacks><int>2</int>>
+        <attacks>
+            <int>2</int>
         </attacks>
-        <description>none</description>
     </weapon>
 </list>

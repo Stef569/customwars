@@ -18,7 +18,7 @@ public class SupplyAction extends DirectAction {
   private Unit supplier;
 
   public SupplyAction(Unit unit) {
-    super("Supply & Heal", false);
+    super("Supply", false);
     this.supplier = unit;
   }
 
