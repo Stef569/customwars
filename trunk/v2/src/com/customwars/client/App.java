@@ -8,7 +8,7 @@ import java.util.ResourceBundle;
 /**
  * Handles Application wide settings by Wrapping Properties functions like
  * get(String key, String def) into functions that return primitives. This reduces the line
- * Integer.parse(App.get("user.age", "10")) to App.getInt("user.age",10)
+ * Integer.parse(System.get("user.age", "10")) to App.getInt("user.age",10)
  *
  * @author stefan
  */

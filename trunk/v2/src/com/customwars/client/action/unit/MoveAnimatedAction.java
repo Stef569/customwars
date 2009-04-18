@@ -1,5 +1,6 @@
 package com.customwars.client.action.unit;
 
+import com.customwars.client.App;
 import com.customwars.client.action.DelayedAction;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.gameobject.Unit;
@@ -9,12 +10,12 @@ import com.customwars.client.ui.renderer.MapRenderer;
 import com.customwars.client.ui.state.InGameContext;
 
 /**
- * Moves the unit from the 'from' location to the 'to' location
+ * Moves the unit animated from the 'from' location to the 'to' location
+ * by stepping on each tile between those locations.
  *
  * @author stefan
  */
 public class MoveAnimatedAction extends DelayedAction {
-  private static final int MOVE_DELAY = 80;
   InGameContext context;
   MoveTraverse moveTraverse;
   Game game;
@@ -24,7 +25,7 @@ public class MoveAnimatedAction extends DelayedAction {
   Unit unit;
 
   public MoveAnimatedAction(Unit unit, Location from, Location to) {
-    super("Move Animated", MOVE_DELAY);
+    super("Move Animated", App.getInt("unit.movedelay"));
     this.unit = unit;
     this.from = from;
     this.to = to;

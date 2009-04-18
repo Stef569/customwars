@@ -5,10 +5,7 @@ import org.newdawn.slick.command.BasicCommand;
 import org.newdawn.slick.command.Command;
 import org.newdawn.slick.command.Control;
 import org.newdawn.slick.command.InputProvider;
-import org.newdawn.slick.command.KeyControl;
-import org.newdawn.slick.command.MouseButtonControl;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -29,8 +26,9 @@ public class CWInput extends InputProvider {
   public static Command left = new BasicCommand("Left");
   public static Command right = new BasicCommand("Right");
   public static Command toggleMusic = new BasicCommand("Toggle_Music");
-  public static Command zoomIn = new BasicCommand("Zoom_in");
-  public static Command zoomOut = new BasicCommand("Zoom_out");
+  public static Command zoomIn = new BasicCommand("Zoom_In");
+  public static Command zoomOut = new BasicCommand("Zoom_Out");
+  public static Command fillMap = new BasicCommand("Fill_Map");
   private List<Command> commands;
 
   /**
@@ -42,12 +40,11 @@ public class CWInput extends InputProvider {
   public CWInput(Input input) {
     super(input);
     this.input = input;
-    //initDefaults();
-    commands = new ArrayList<Command>(Arrays.asList(
+    commands = Arrays.asList(
             select, cancel, exit,
             down, up, left, right,
             toggleMusic,
-            zoomIn, zoomOut));
+            zoomIn, zoomOut, fillMap);
   }
 
   @Override
@@ -66,69 +63,48 @@ public class CWInput extends InputProvider {
     return false;
   }
 
-  private void initDefaults() {
-    initGameCommands();
-    initMoveCommands();
-  }
-
-  private void initGameCommands() {
-    bindCommand(new KeyControl(Input.KEY_W), select);
-    bindCommand(new KeyControl(Input.KEY_A), select);
-    bindCommand(new MouseButtonControl(Input.MOUSE_LEFT_BUTTON), select);
-    bindCommand(new KeyControl(Input.KEY_B), cancel);
-    bindCommand(new KeyControl(Input.KEY_X), cancel);
-    bindCommand(new MouseButtonControl(Input.MOUSE_RIGHT_BUTTON), cancel);
-    bindCommand(new KeyControl(Input.KEY_ESCAPE), exit);
-    bindCommand(new KeyControl(Input.KEY_S), toggleMusic);
-    bindCommand(new KeyControl(Input.KEY_COMMA), zoomIn);
-    bindCommand(new KeyControl(Input.KEY_COLON), zoomOut);
-  }
-
-  private void initMoveCommands() {
-    bindCommand(new KeyControl(Input.KEY_UP), up);
-    bindCommand(new KeyControl(Input.KEY_DOWN), down);
-    bindCommand(new KeyControl(Input.KEY_LEFT), left);
-    bindCommand(new KeyControl(Input.KEY_RIGHT), right);
-  }
-
-  public boolean isSelectPressed(Command command) {
+  public boolean isSelect(Command command) {
     return select.equals(command);
   }
 
-  public boolean isCancelPressed(Command command) {
+  public boolean isCancel(Command command) {
     return cancel.equals(command);
   }
 
-  public boolean isExitPressed(Command command) {
+  public boolean isExit(Command command) {
     return exit.equals(command);
   }
 
-  public boolean isUpPressed(Command command) {
+  public boolean isUp(Command command) {
     return up.equals(command);
   }
 
-  public boolean isDownPressed(Command command) {
+  public boolean isDown(Command command) {
     return down.equals(command);
   }
 
-  public boolean isLeftPressed(Command command) {
+  public boolean isLeft(Command command) {
     return left.equals(command);
   }
 
-  public boolean isRightPressed(Command command) {
+  public boolean isRight(Command command) {
     return right.equals(command);
   }
 
-  public boolean isToggleMusicPressed(Command command) {
+  public boolean isToggleMusic(Command command) {
     return toggleMusic.equals(command);
   }
 
-  public boolean isZoomInPressed(Command command) {
+  public boolean isZoomIn(Command command) {
     return zoomIn.equals(command);
   }
 
-  public boolean isZoomOutPressed(Command command) {
+  public boolean isZoomOut(Command command) {
     return zoomOut.equals(command);
+  }
+
+  public boolean isFillMap(Command command) {
+    return fillMap.equals(command);
   }
 
   public Command getCommandByName(String commandName) {

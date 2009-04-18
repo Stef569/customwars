@@ -16,13 +16,12 @@ import java.util.List;
  * Allows Movers to traverse within a TileMap
  *
  * Usage:
- * moveSystem.prepareMove(mover, destination)
- * Then repeatedly call moveSystem.update() to do 1 step in the path
+ * moveTraverse.prepareMove(mover, destination)
+ * Then repeatedly call moveTraverse.update() to do 1 step in the path
  *
  * There can only be one mover moving through the map at any time.
  * The pathFinder creates the shortest path from the mover location to the destination.
- * The calculation is based on the MovementCost to move from 1 location to another,
- * This is defined by getMovementCost(int col, int row) in the movers MoveCost.
+ * The calculation is based on the MovementCost to move from 1 location to another.
  *
  * When the move is completed(trapper on the path or destination reached)
  * isPathMoveComplete() will return true
@@ -150,7 +149,7 @@ public class MoveTraverse {
   }
 
   /**
-   * Inside movePath bounds check, 0 based
+   * @return if index is within the movePath bounds, 0 based
    */
   private boolean withinPath(int index) {
     return index >= 0 && index <= movePath.size() - 1;

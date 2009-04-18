@@ -48,7 +48,7 @@ public class UnitInfoBox extends BasicComponent {
 
   @Override
   public void renderimpl(GUIContext container, Graphics g) {
-    if (!unit.isDestroyed()) {
+    if (unit != null && !unit.isDestroyed()) {
       Color origColor = g.getColor();
       int x = getX();
       int y = getY();
