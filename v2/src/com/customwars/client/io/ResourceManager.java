@@ -14,12 +14,16 @@ import com.customwars.client.io.loading.SoundParser;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
 import org.apache.log4j.Logger;
+import org.newdawn.slick.AngelCodeFont;
 import org.newdawn.slick.Animation;
+import org.newdawn.slick.Font;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.Music;
+import org.newdawn.slick.SlickException;
 import org.newdawn.slick.Sound;
 import org.newdawn.slick.loading.LoadingList;
 import org.newdawn.slick.util.ResourceLoader;
+import tools.Args;
 import tools.ColorUtil;
 
 import java.awt.Color;
@@ -32,11 +36,12 @@ import java.util.HashMap;
 import java.util.Set;
 
 /**
- * Handles and stores all kind of resources through 1 object
- * ie Images, Sound, Music, Animations can be retrieved
- * Each of these resources is mapped to a string like "SELECT_SOUND" -> Sound
+ * Handles and stores all kind of resources: Images, Sounds, Music, Animations
+ * Each of these resources is mapped to a string ie "SELECT_SOUND" -> Sound object
+ * Other classes can now ask this class to play the sound
+ * ie resourceManager.playSound("SELECT_SOUND")
  *
- * Before loading the paths where the resources are located should be set
+ * Before loading, the paths where the resources are located should be set
  *
  * @author stefan
  */
@@ -46,16 +51,18 @@ public class ResourceManager {
   private static final String ANIM_LOADER_FILE = "animLoader.txt";
   private static final String SOUND_LOADER_FILE = "soundLoader.txt";
   private static final String COLORS_FILE = "colors.xml";
-  private static final int DARK_PERCENTAGE = 30;
   private static final ModelLoader modelLoader = new ModelLoader();
+  private static final MapParser mapParser = new MapParser();
+  private int darkPercentage;
 
   private ImageLib imageLib;
   private AnimLib animLib;
-  private MapParser mapParser = new MapParser();
+
   private HashMap<String, Sound> sounds = new HashMap<String, Sound>();
   private HashMap<String, Music> music = new HashMap<String, Music>();
   private HashMap<String, Map<Tile>> maps = new HashMap<String, Map<Tile>>();
-  private String imgPath, soundPath, mapPath, dataPath;
+  private HashMap<String, Font> fonts = new HashMap<String, Font>();
+  private String imgPath, soundPath, mapPath, dataPath, fontPath;
 
   public ResourceManager() {
     this(new ImageLib(), new AnimLib());
@@ -92,6 +99,7 @@ public class ResourceManager {
     loadAnimationsFromFile();
     loadSoundFromFile();
     loadAllMaps();
+    loadFonts();
   }
 
   private void loadColorsFromFile() throws IOException {
@@ -122,6 +130,22 @@ public class ResourceManager {
     soundParser.loadConfigFile(in);
   }
 
+  private void loadFonts() throws IOException {
+    Font defaultFont;
+    try {
+      defaultFont = new AngelCodeFont(fontPath + "default.fnt", fontPath + "default_00.tga");
+    } catch (SlickException ex) {
+      throw new IOException(ex);
+    }
+    addFont("DEFAULT", defaultFont);
+  }
+
+  public void addFont(String fontID, Font font) {
+    Args.checkForNull(fontID);
+    Args.checkForNull(font);
+    fonts.put(fontID.toUpperCase(), font);
+  }
+
   // todo mapParser not accepting file as param?
   private void loadAllMaps() throws IOException {
     FileSystemManager fsm = new FileSystemManager(mapPath);
@@ -145,8 +169,8 @@ public class ResourceManager {
     }
 
     for (Color color : colors) {
-      imageLib.recolorImg(color, "unit", "darker", "unit", DARK_PERCENTAGE);
-      imageLib.recolorImg(color, "city", "darker", "city", DARK_PERCENTAGE);
+      imageLib.recolorImg(color, "unit", "darker", "unit", darkPercentage);
+      imageLib.recolorImg(color, "city", "darker", "city", darkPercentage);
     }
   }
 
@@ -168,6 +192,10 @@ public class ResourceManager {
     }
   }
 
+  public void setDarkPercentage(int darkPercentage) {
+    this.darkPercentage = darkPercentage;
+  }
+
   public void setImgPath(String path) {
     this.imgPath = path;
   }
@@ -182,6 +210,10 @@ public class ResourceManager {
 
   public void setMapPath(String mapPath) {
     this.mapPath = mapPath;
+  }
+
+  public void setFontPath(String fontPath) {
+    this.fontPath = fontPath;
   }
 
   public boolean isSlickImgLoaded(String slickImgName) {
@@ -242,6 +274,14 @@ public class ResourceManager {
     return animLib.getAllAnimations();
   }
 
+  public Font getFont(String fontName) {
+    String key = fontName.toUpperCase();
+    if (!fonts.containsKey(key)) {
+      throw new IllegalArgumentException("no font stored for " + key);
+    }
+    return fonts.get(key);
+  }
+
   public Music getMusic(String musicName) {
     return music.get(musicName.toUpperCase());
   }
@@ -269,6 +309,9 @@ public class ResourceManager {
    * @return a copy of the Map with mapName
    */
   public Map<Tile> getMap(String mapName) {
+    if (!maps.containsKey(mapName)) {
+      throw new IllegalArgumentException("no map stored for " + mapName);
+    }
     return new Map<Tile>(maps.get(mapName));
   }
 
