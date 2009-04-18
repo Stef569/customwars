@@ -1,41 +1,71 @@
+<!--
+ArmyBranches:
+  GROUND = 0, NAVAL = 1, AIR = 2
+  used in attacks
+ -->
 <list>
     <weapon name="SMG" id="0">
         <minFireRange>1</minFireRange>
         <maxFireRange>1</maxFireRange>
+        <attacks>
+            <int>0</int>
+        </attacks>
         <description>For close Combat</description>
     </weapon>
     <weapon name="BAZOOKA" id="1">
         <minFireRange>1</minFireRange>
         <maxFireRange>1</maxFireRange>
+        <attacks>
+            <int>0</int>
+        </attacks>
         <description>For taking out tanks in close Combat</description>
     </weapon>
     <weapon name="TANK_MACHIN_GUN" id="2">
         <minFireRange>1</minFireRange>
         <maxFireRange>1</maxFireRange>
+        <attacks>
+            <int>0</int>
+        </attacks>
         <description>For taking out units in close Combat</description>
     </weapon>
     <weapon name="TANK_MAIN_GUN" id="3">
         <minFireRange>1</minFireRange>
         <maxFireRange>1</maxFireRange>
+        <attacks>
+            <int>0</int>
+        </attacks>
     </weapon>
     <weapon name="LONG_RANGE_CANNON" id="4">
         <minFireRange>2</minFireRange>
         <maxFireRange>5</maxFireRange>
+        <attacks>
+            <int>0</int>
+        </attacks>
         <description>none</description>
     </weapon>
     <weapon name="ANTI_AIR" id="5">
         <minFireRange>1</minFireRange>
         <maxFireRange>1</maxFireRange>
+        <attacks>
+            <int>0</int>
+            <int>2</int>
+        </attacks>
         <description>Shoot airplanes out of the sky</description>
     </weapon>
     <weapon name="ROCKETS" id="6">
         <minFireRange>3</minFireRange>
         <maxFireRange>5</maxFireRange>
+        <attacks>
+            <int>0</int>
+            <int>1</int>
+        </attacks>
         <description>none</description>
     </weapon>
-        <weapon name="ANTI AIR ROCKETS" id="7">
+    <weapon name="ANTI AIR ROCKETS" id="7">
         <minFireRange>3</minFireRange>
         <maxFireRange>5</maxFireRange>
+        <attacks><int>2</int>>
+        </attacks>
         <description>none</description>
     </weapon>
 </list>

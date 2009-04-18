@@ -245,9 +245,8 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   }
 
   public boolean canAttack(Defender defender) {
-    return canFire() && !isDestroyed() &&
-            defender != null && !defender.isDestroyed() &&
-            !defender.getOwner().isAlliedWith(owner);
+    return defender != null && canFire(defender.getArmyBranch()) && !isDestroyed() &&
+            !defender.isDestroyed() && !defender.getOwner().isAlliedWith(owner);
   }
 
   private void tryToFireWeapon(Defender defender, Fight fight) {
@@ -299,10 +298,12 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   }
 
   /**
-   * The unit can counter Attack when it didn't die from the attack and is armed.
+   * The unit can counter Attack when
+   * it didn't die from the attack
+   * has a weapon that can return fire.
    */
-  public boolean canCounterAttack() {
-    return canFire() && !isDestroyed();
+  public boolean canCounterAttack(Attacker attacker) {
+    return canFire(attacker.getArmyBranch()) && !isDestroyed();
   }
 
   // ---------------------------------------------------------------------------
@@ -380,7 +381,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   // ----------------------------------------------------------------------------
   public void supply(Unit unit) {
     if (canSupply(unit))
-      unit.addHp(hp);
+      unit.resupply();
   }
 
   /**
@@ -541,18 +542,26 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   }
 
   /**
-   * @return if one of the two weapons can be fired
+   * @return if this unit can fire on the given armyBranch
+   */
+  public boolean canFire(int armyBranch) {
+    return hasPrimaryWeapon() && primaryWeapon.canFire(armyBranch) ||
+            hasSecondaryWeapon() && secondaryWeapon.canFire(armyBranch);
+  }
+
+  /**
+   * @return if one of the two weapons has enough ammo
    */
   public boolean canFire() {
     return canFirePrimaryWeapon() || canFireSecondaryWeapon();
   }
 
   public boolean canFirePrimaryWeapon() {
-    return hasPrimaryWeapon() && primaryWeapon.canFire();
+    return hasPrimaryWeapon() && primaryWeapon.hasAmmoLeft();
   }
 
   public boolean canFireSecondaryWeapon() {
-    return hasSecondaryWeapon() && secondaryWeapon.canFire();
+    return hasSecondaryWeapon() && secondaryWeapon.hasAmmoLeft();
   }
 
   public boolean hasPrimaryWeapon() {
@@ -588,7 +597,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
     return supplies;
   }
 
-  public int getMaxSupplies() {
+  protected int getMaxSupplies() {
     return maxSupplies;
   }
 
@@ -630,7 +639,11 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
     return NumberUtil.calcPercentage(hp, maxHp);
   }
 
+  /**
+   * @return if the hp dropped under the max hp
+   */
   public boolean hasLowHp() {
+    // Don't use the internal hp because 99/100 is not low hp, 9/10 is
     return getHp() < getMaxHp();
   }
 

@@ -15,6 +15,8 @@ public interface Attacker {
 
   boolean canAttack(Defender defender);
 
+  int getArmyBranch();
+
   int getMinAttackRange();
 
   int getMaxAttackRange();
@@ -29,5 +31,8 @@ public interface Attacker {
 
   boolean isWithinMoveZone(Location location);
 
+  /**
+   * @return A list of locations where this unit can move in
+   */
   List<Location> getMoveZone();
 }

@@ -11,9 +11,11 @@ import com.customwars.client.model.game.Player;
 public interface Defender {
   void defend(Attacker attacker, Fight fight);
 
-  boolean canCounterAttack();
+  boolean canCounterAttack(Attacker attacker);
 
   boolean isDestroyed();
 
   Player getOwner();
+
+  int getArmyBranch();
 }

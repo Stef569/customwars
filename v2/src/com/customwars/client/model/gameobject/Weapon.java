@@ -3,8 +3,12 @@ package com.customwars.client.model.gameobject;
 import tools.Args;
 import tools.NumberUtil;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * A weapon has an amount of ammo, it can fire within a fire range
+ * It can only attack ArmyBranches defined in attacks
  *
  * @author Stefan
  */
@@ -16,10 +20,11 @@ public class Weapon extends GameObject {
   private int minFireRange;
   private int maxFireRange;
   private int maxAmmo;
-  private boolean balistic;   // Gives this weapon indirect firing ability even after moving
+  private boolean balistic;         // Gives this weapon indirect firing ability even after moving
+  private List<Integer> attacks;    // The Armybranches this weapon can attack
   private int ammo;
 
-  public Weapon(int id, String name, String description, int minRange, int maxRange, int maxAmmo, boolean balistic) {
+  public Weapon(int id, String name, String description, int minRange, int maxRange, int maxAmmo, boolean balistic, List<Integer> attacks) {
     this.id = id;
     this.name = name;
     this.description = description;
@@ -27,10 +32,13 @@ public class Weapon extends GameObject {
     this.maxFireRange = maxRange;
     this.maxAmmo = maxAmmo;
     this.balistic = balistic;
+    this.attacks = attacks;
     init();
   }
 
   public void init() {
+    Args.checkForNull(attacks, "Weapon " + name + " cannot attack any armybranch");
+    Args.validate(attacks.size() == 0, "Weapon " + name + " cannot attack any armybranch");
     Args.validate(minFireRange < 0, "minRange should be positive");
     Args.validate(maxFireRange < 0, "maxRange should be positive");
     Args.validate(maxFireRange < minFireRange, "minRange should be smaller then maxRange");
@@ -50,6 +58,7 @@ public class Weapon extends GameObject {
     maxFireRange = otherWeapon.maxFireRange;
     maxAmmo = otherWeapon.maxAmmo;
     balistic = otherWeapon.balistic;
+    attacks = new ArrayList<Integer>(otherWeapon.attacks);
     ammo = otherWeapon.ammo;
   }
 
@@ -103,10 +112,11 @@ public class Weapon extends GameObject {
     return ammo;
   }
 
-  /**
-   * @return true if this weapon has some ammo left
-   */
-  public boolean canFire() {
+  public boolean canFire(int armyBranch) {
+    return hasAmmoLeft() && attacks.contains(armyBranch);
+  }
+
+  public boolean hasAmmoLeft() {
     return ammo > 0;
   }
 
