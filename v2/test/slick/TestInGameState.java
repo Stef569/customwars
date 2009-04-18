@@ -33,12 +33,11 @@ public class TestInGameState extends CWState implements PropertyChangeListener {
   private Game game;
 
   public TestInGameState() {
-    this.gameRenderer = new GameRenderer();
   }
 
   public void init(GameContainer container, StateBasedGame stateBasedGame) throws SlickException {
     gameContainer = container;
-    gameRenderer.init(container);
+    gameRenderer = new GameRenderer(container);
     gameRenderer.loadResources(resources);
   }
 
@@ -94,7 +93,7 @@ public class TestInGameState extends CWState implements PropertyChangeListener {
 
   public void controlPressed(Command command, CWInput cwInput) {
     if (!context.isMoving()) {
-      if (cwInput.isCancelPressed(command)) {
+      if (cwInput.isCancel(command)) {
         if (context.canUndo()) {
           context.playSound("cancel");
           context.undo();
@@ -118,11 +117,11 @@ public class TestInGameState extends CWState implements PropertyChangeListener {
         }
 
         gameRenderer.moveCursor(command, cwInput);
-        if (cwInput.isSelectPressed(command)) {
+        if (cwInput.isSelect(command)) {
           handleA(unit, city, cursorLocation);
         }
 
-        if (cwInput.isCancelPressed(command)) {
+        if (cwInput.isCancel(command)) {
           handleB(activeUnit, selectedUnit);
         }
       }

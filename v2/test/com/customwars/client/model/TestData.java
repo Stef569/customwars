@@ -76,11 +76,11 @@ public class TestData {
   private static Unit artillery = new Unit(ARTILLERY, "Artillery", "", 6000, 5, 1, UNIT_MAX_HP, 50, 0, 0, false, false, false, false, true, null, ARMY_BRANCH_GROUND, MOVE_TREAD, 0, 0);
 
   // Weapons
-  private static Weapon smg = new Weapon(0, "smg", "", 1, 1, Weapon.UNLIMITED_AMMO, false);
-  private static Weapon tankCannon = new Weapon(1, "Tank Cannon", "nonee", 1, 1, 9, false);
-  private static Weapon cannon = new Weapon(2, "Cannon", "nonee", 2, 3, 9, false);
-  private static Weapon rockets = new Weapon(3, "rockets", "nonee", 3, 5, 6, false);
-  private static Weapon artilleryCannon = new Weapon(4, "Cannon", "nonee", 2, 3, 9, false);
+  private static Weapon smg = new Weapon(0, "smg", "", 1, 1, Weapon.UNLIMITED_AMMO, false, ARMY_BRANCH_GROUND_ONLY);
+  private static Weapon tankCannon = new Weapon(1, "Tank Cannon", "nonee", 1, 1, 9, false, ARMY_BRANCH_GROUND_ONLY);
+  private static Weapon cannon = new Weapon(2, "Cannon", "nonee", 2, 3, 9, false, ARMY_BRANCH_GROUND_ONLY);
+  private static Weapon rockets = new Weapon(3, "rockets", "nonee", 3, 5, 6, false, ARMY_BRANCH_GROUND_ONLY);
+  private static Weapon artilleryCannon = new Weapon(4, "Cannon", "nonee", 2, 3, 9, false, ARMY_BRANCH_GROUND_ONLY);
 
   // City
   private static City base = new City(0, "Road", "Base", "", 0, 0, plainMoveCosts, 1, true, cityRoadConnection, ARMY_BRANCH_GROUND_ONLY, Arrays.asList(INF, MECH), null, 20, CITY_HEAL_RATE);

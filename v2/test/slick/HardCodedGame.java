@@ -1,5 +1,6 @@
 package slick;
 
+import com.customwars.client.App;
 import com.customwars.client.model.TestData;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.game.GameConfig;
@@ -44,7 +45,7 @@ public class HardCodedGame {
   }
 
   public static Map<Tile> getMap() {
-    int tileSize = Integer.parseInt(System.getProperty("plugin.tilesize", "32"));
+    int tileSize = App.getInt("plugin.tilesize", 32);
     map = new Map<Tile>(10, 15, tileSize, 3);
     map.setFogOfWarOn(true);
     initMapProperties();

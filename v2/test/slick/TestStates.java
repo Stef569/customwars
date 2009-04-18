@@ -1,10 +1,12 @@
 package slick;
 
+import com.customwars.client.App;
 import com.customwars.client.Config;
 import com.customwars.client.io.ResourceManager;
 import com.customwars.client.ui.state.CWInput;
 import com.customwars.client.ui.state.CWState;
 import com.customwars.client.ui.state.GameOverState;
+import com.customwars.client.ui.state.MapMakerState;
 import com.customwars.client.ui.state.StateLogic;
 import com.customwars.client.ui.state.StateSession;
 import org.apache.log4j.Logger;
@@ -28,7 +30,7 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
   private int startID;
 
   public TestStates(int startID, StateSession stateSession, ResourceManager resources, Config config) {
-    super(System.getProperty("game.name") + " - " + System.getProperty("plugin.name"));
+    super(App.get("game.name") + " - " + App.get("plugin.name"));
     this.startID = startID;
     this.stateSession = stateSession;
     this.resources = resources;
@@ -48,7 +50,7 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
     CWState.setResources(resources);
     CWState.setStateSession(stateSession);
 
-    // Create and map states to a string
+    // Create and map states
     buildStateList();
     mapStateIdsToName();
     statelogic.gotoState(startID);
@@ -63,6 +65,7 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
     CWState endTurnState = new EndTurnState();
     CWState mapParser = new TestMapParser();
     CWState gameOver = new GameOverState();
+    CWState mapMaker = new MapMakerState();
 
     addState(testMenu);
     addState(testMapRenderer);
@@ -71,7 +74,9 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
     addState(endTurnState);
     addState(mapParser);
     addState(gameOver);
+    addState(mapMaker);
 
+    logger.info("Loading resources");
     try {
       resources.loadResources();
     } catch (IOException e) {
@@ -89,6 +94,7 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
     statelogic.addState("END_TURN", 4);
     statelogic.addState("MAP_PARSER", 6);
     statelogic.addState("GAME_OVER", 10);
+    statelogic.addState("MAP_EDITOR", 50);
     CWState.setStatelogic(statelogic);
   }
 
@@ -110,10 +116,10 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
   }
 
   private void handleGlobalInput(Command command) {
-    if (cwInput.isExitPressed(command)) {
+    if (cwInput.isExit(command)) {
       logger.info("Exit pressed");
       gameContainer.exit();
-    } else if (cwInput.isToggleMusicPressed(command)) {
+    } else if (cwInput.isToggleMusic(command)) {
       gameContainer.setMusicOn(!gameContainer.isMusicOn());
     }
   }

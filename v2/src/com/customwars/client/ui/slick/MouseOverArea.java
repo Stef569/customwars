@@ -110,6 +110,16 @@ public class MouseOverArea extends BasicComponent {
     this(container, null, 0, 0, 0, 0);
   }
 
+  public MouseOverArea(GUIContext container, Image img) {
+    this(container, img, 0, 0);
+  }
+
+  public MouseOverArea(GUIContext container, Image img, ComponentListener listener) {
+    this(container, img, 0, 0);
+    addListener(listener);
+    consumeEvent();
+  }
+
   /**
    * Create a new mouse selected area
    *

@@ -45,7 +45,8 @@ public class TestMenu extends CWState implements ComponentListener {
     List<MenuItem> items = Arrays.asList(
             new MenuItem(mapOption, "Option 1: Test Map Terrain", container),
             new MenuItem(keyInputOption, container),
-            new MenuItem(gameOption, "", container)
+            new MenuItem(gameOption, "", container),
+            new MenuItem("Map Editor", container)
     );
 
     for (MenuItem item : items) {
@@ -79,6 +80,9 @@ public class TestMenu extends CWState implements ComponentListener {
       case 2:
         g.drawString("Play a test game between the main coders", 210, 440);
         break;
+      case 3:
+        g.drawString("Create a map", 210, 440);
+        break;
     }
     g.setColor(Color.white);
   }
@@ -110,6 +114,9 @@ public class TestMenu extends CWState implements ComponentListener {
         break;
       case 2:
         changeGameState("IN_GAME");
+        break;
+      case 3:
+        changeGameState("MAP_EDITOR");
         break;
     }
   }

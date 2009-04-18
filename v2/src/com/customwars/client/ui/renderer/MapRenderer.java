@@ -59,6 +59,7 @@ public class MapRenderer extends TileMapRenderer {
     moveZoneAnim = resources.getAnim("movezone");
     attackZoneAnim = resources.getAnim("attackzone");
     arrowImages = resources.getSlickImgStrip("arrows");
+    setTerrainStrip(resources.getSlickImgStrip("terrains"));
   }
 
   public void update(int elapsedTime) {

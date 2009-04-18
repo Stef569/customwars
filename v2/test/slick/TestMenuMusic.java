@@ -72,7 +72,7 @@ public class TestMenuMusic extends CWState implements ComponentListener {
   }
 
   public void controlPressed(Command command, CWInput cwInput) {
-    if (cwInput.isSelectPressed(command)) {
+    if (cwInput.isSelect(command)) {
       menuTickSound.play();
     }
 

@@ -92,7 +92,9 @@
     <terrain id="29" type="River">
         <connect>North, East, South, West</connect>
     </terrain>
-    <terrain id="30" type="Ocean"/>
+    <terrain id="30" type="Ocean">
+        <connect>North, East, South, West</connect>
+    </terrain>
     <terrain name="Delta" id="31" type="River">
         <delta>True</delta>
     </terrain>

@@ -22,7 +22,6 @@ public class InGameState extends CWState {
 
   public void init(GameContainer container, StateBasedGame game) throws SlickException {
     mapRenderer = new MapRenderer();
-    mapRenderer.setTerrainStrip(resources.getSlickImgStrip("terrains"));
     mapRenderer.loadResources(resources);
   }
 
@@ -76,22 +75,22 @@ public class InGameState extends CWState {
 
   public void controlPressed(Command command, CWInput cwInput) {
     moveCursor(command, cwInput);
-    if (cwInput.isSelectPressed(command)) {
+    if (cwInput.isSelect(command)) {
       System.out.println("Clicked on " + mapRenderer.getCursorLocation());
     }
   }
 
   private void moveCursor(Command command, CWInput cwInput) {
-    if (cwInput.isUpPressed(command)) {
+    if (cwInput.isUp(command)) {
       mapRenderer.moveCursor(Direction.NORTH);
     }
-    if (cwInput.isDownPressed(command)) {
+    if (cwInput.isDown(command)) {
       mapRenderer.moveCursor(Direction.SOUTH);
     }
-    if (cwInput.isLeftPressed(command)) {
+    if (cwInput.isLeft(command)) {
       mapRenderer.moveCursor(Direction.WEST);
     }
-    if (cwInput.isRightPressed(command)) {
+    if (cwInput.isRight(command)) {
       mapRenderer.moveCursor(Direction.EAST);
     }
   }
