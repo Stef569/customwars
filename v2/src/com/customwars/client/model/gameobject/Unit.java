@@ -306,6 +306,10 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
     return canFire(attacker.getArmyBranch()) && !isDestroyed();
   }
 
+  public List<Location> getAttackZone() {
+    return attZone;
+  }
+
   // ---------------------------------------------------------------------------
   // Actions :: Transport
   // ---------------------------------------------------------------------------
@@ -670,12 +674,29 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
     addSupplies(-moveCost);
   }
 
-  public List<Location> getMoveZone() {
-    return moveZone;
+  public boolean canMove() {
+    return supplies != 0;
   }
 
-  public List<Location> getAttackZone() {
-    return attZone;
+  /**
+   * Units can move through allied units, they cannot move through enemy units
+   *
+   * @param location The location that can contain a 'trapper'
+   * @return if the location contains a trapper
+   */
+  public boolean hasTrapperOn(Location location) {
+    Locatable locatable = location.getLastLocatable();
+
+    if (locatable instanceof Unit) {
+      Unit trapper = (Unit) locatable;
+      return !trapper.getOwner().isAlliedWith(owner);
+    } else {
+      return false;
+    }
+  }
+
+  public List<Location> getMoveZone() {
+    return moveZone;
   }
 
   // ---------------------------------------------------------------------------
