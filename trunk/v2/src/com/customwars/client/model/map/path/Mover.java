@@ -1,6 +1,5 @@
 package com.customwars.client.model.map.path;
 
-import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.Locatable;
 import com.customwars.client.model.map.Direction;
 import com.customwars.client.model.map.Location;
@@ -27,9 +26,7 @@ public interface Mover extends Locatable {
   int getMovePoints();
 
   /**
-   * Adds the total cost to move over the path to this mover
-   *
-   * @param cost the total cost to move over the path
+   * @param cost the cost to make a move in a path
    */
   void addPathMoveCost(int cost);
 
@@ -49,5 +46,10 @@ public interface Mover extends Locatable {
 
   boolean isWithinMoveZone(Location location);
 
-  Player getOwner();
+  boolean canMove();
+
+  /**
+   * @return if the location contains a trapper
+   */
+  boolean hasTrapperOn(Location location);
 }

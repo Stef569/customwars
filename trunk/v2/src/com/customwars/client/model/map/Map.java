@@ -15,6 +15,7 @@ import org.apache.log4j.Logger;
 import tools.Args;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -206,11 +207,17 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
   }
 
   /**
-   * Build a zone in which the mover can make a move
-   * and set it to the mover
+   * Build a zone in which the mover can make a move and set it to the mover
+   * If the mover cannot move set the mover location as the moveZone
    */
   public void buildMovementZone(Mover mover) {
-    mover.setMoveZone(pathFinder.getMovementZone(mover));
+    List<Location> moveZone;
+    if (mover.canMove()) {
+      moveZone = pathFinder.getMovementZone(mover);
+    } else {
+      moveZone = Arrays.asList(mover.getLocation());
+    }
+    mover.setMoveZone(moveZone);
   }
 
   /**
