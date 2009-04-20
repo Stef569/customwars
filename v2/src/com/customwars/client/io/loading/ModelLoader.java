@@ -72,6 +72,7 @@ public class ModelLoader {
     xStream.registerConverter(new TerrainConverter(basicTerrains));
     Collection<Terrain> terrains = (Collection<Terrain>) XStreamUtil.readObject(xStream, allTerrainStream);
     TerrainFactory.addTerrains(terrains);
+    TerrainFactory.addBaseTerrains(basicTerrains);
   }
 
   private void loadWeapons() {

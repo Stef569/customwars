@@ -1,8 +1,10 @@
 package com.customwars.client.model.gameobject;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * A Cache of Terrain Objects
@@ -11,6 +13,8 @@ import java.util.HashMap;
  */
 public class TerrainFactory {
   private static HashMap<Integer, Terrain> terrains = new HashMap<Integer, Terrain>();
+  private static List<Terrain> baseTerrains = new ArrayList<Terrain>();
+
 
   public static void addTerrains(Collection<Terrain> terrains) {
     for (Terrain terrain : terrains) {
@@ -28,6 +32,17 @@ public class TerrainFactory {
       throw new IllegalArgumentException("Terrain ID " + terrainID + " is already used by " + terrains.get(terrainID));
     }
     terrains.put(terrainID, terrain);
+  }
+
+  /**
+   * Add the terrains from the terrains Map by using the baseTerrain keys
+   * to the baseTerrains Map
+   */
+  public static void addBaseTerrains(Collection<Terrain> baseTerrains) {
+    for (Terrain baseTerrain : baseTerrains) {
+      Terrain terrain = terrains.get(baseTerrain.getID());
+      TerrainFactory.baseTerrains.add(terrain);
+    }
   }
 
   public static Terrain getTerrain(int terrainID) {
@@ -73,5 +88,9 @@ public class TerrainFactory {
 
   public static Collection<Terrain> getTerrains() {
     return Collections.unmodifiableCollection(terrains.values());
+  }
+
+  public static List<Terrain> getBaseTerrains() {
+    return Collections.unmodifiableList(baseTerrains);
   }
 }
