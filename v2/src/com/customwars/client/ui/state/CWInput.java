@@ -17,7 +17,6 @@ import java.util.List;
  * @author stefan
  */
 public class CWInput extends InputProvider {
-  private Input input;
   public static Command select = new BasicCommand("Select");
   public static Command cancel = new BasicCommand("Cancel");
   public static Command exit = new BasicCommand("Exit");
@@ -29,7 +28,13 @@ public class CWInput extends InputProvider {
   public static Command zoomIn = new BasicCommand("Zoom_In");
   public static Command zoomOut = new BasicCommand("Zoom_Out");
   public static Command fillMap = new BasicCommand("Fill_Map");
-  private List<Command> commands;
+  private static final int KEY_REPEAT_DELAY = 250;
+  private Input input;
+  private List<Command> commands = Arrays.asList(
+          select, cancel, exit,
+          down, up, left, right,
+          toggleMusic,
+          zoomIn, zoomOut, fillMap);
 
   /**
    * Create a new input proider which will provide abstract input descriptions
@@ -40,11 +45,7 @@ public class CWInput extends InputProvider {
   public CWInput(Input input) {
     super(input);
     this.input = input;
-    commands = Arrays.asList(
-            select, cancel, exit,
-            down, up, left, right,
-            toggleMusic,
-            zoomIn, zoomOut, fillMap);
+    input.enableKeyRepeat(0, KEY_REPEAT_DELAY);
   }
 
   @Override
