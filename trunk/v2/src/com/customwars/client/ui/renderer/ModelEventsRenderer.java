@@ -28,8 +28,8 @@ public class ModelEventsRenderer implements PropertyChangeListener {
   private MoveTraverse moveTraverse;
   private Image trappedImg, suppliedImg;
   private boolean renderTrapped, renderSupply;
-  private int time, TRAPPED_DELAY = 800, SUPPLY_DELAY = 800;
-  private int moveTime, moveX, MOVING_DELAY = 50;
+  private int time, TRAPPED_DELAY = 350, SUPPLY_DELAY = 350;
+  private int moveTime, moveX, MOVING_DELAY = 30;
   private List<Location> renderLocations;
 
   public ModelEventsRenderer() {
@@ -88,7 +88,6 @@ public class ModelEventsRenderer implements PropertyChangeListener {
       updateTrapped();
     }
 
-
     if (renderSupply) {
       updateSupply();
     }
@@ -115,9 +114,7 @@ public class ModelEventsRenderer implements PropertyChangeListener {
     if (time >= SUPPLY_DELAY) {
       if (!renderLocations.isEmpty()) {
         renderLocations.remove(0);
-      }
-
-      if (renderLocations.isEmpty()) {
+      } else {
         renderSupply = false;
       }
       time = 0;
@@ -130,8 +127,7 @@ public class ModelEventsRenderer implements PropertyChangeListener {
 
     int tileSize = map.getTileSize();
     Location location = renderLocations.get(0);
-    int moveOffset = 50;
-    int px = (location.getCol() * tileSize) + moveOffset;
+    int px = (location.getCol() * tileSize) + tileSize;
     int py = (location.getRow() * tileSize);
 
     if (renderTrapped) {
@@ -171,9 +167,7 @@ public class ModelEventsRenderer implements PropertyChangeListener {
   }
 
   private void trapperFound() {
-    Location moverLocation = moveTraverse.getTrapper().getLocation();
-    Location trappedLocation = map.getAdjacent(moverLocation, moveTraverse.getTrappedDirection());
-    renderLocations.add(trappedLocation);
+    renderLocations.add(moveTraverse.getTrapperLocation());
     renderTrapped = true;
     time = 0;
     moveTime = 0;

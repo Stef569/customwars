@@ -41,7 +41,6 @@ public class MoveTraverse {
   private int pathIndex;              // The current position in the move path
   private boolean pathMoveComplete;
   private boolean foundTrapper;       // Indicates that a trapper was found on the movepath
-  private Direction trappedDirection; // if a trapper was found, in what direction relative to the mover was it.
 
   public MoveTraverse(TileMap<Tile> map) {
     this.map = map;
@@ -64,9 +63,8 @@ public class MoveTraverse {
               " to " + destination.getCol() + "," + destination.getRow() +
               " for " + mover);
 
-      pathMoveComplete = true;
-      setTrapped(true);
-      trappedDirection = map.getDirectionTo(mover.getLocation(), destination);
+      setPathMoveComplete();
+      setTrapped();
     }
   }
 
@@ -78,8 +76,7 @@ public class MoveTraverse {
     movePath = null;
     pathIndex = 0;
     pathMoveComplete = false;
-    setTrapped(false);
-    trappedDirection = Direction.STILL;
+    foundTrapper = false;
   }
 
   /**
@@ -98,13 +95,17 @@ public class MoveTraverse {
   }
 
   private boolean canMoveFurther() {
-    return mover.canMove() && withinPath(pathIndex) && withinPath(pathIndex + 1) &&
-            !trapperOnNextLocation();
+    return withinPath(pathIndex) && withinPath(pathIndex + 1) &&
+            mover.canMove() && !trapperOnNextLocation();
   }
 
   private boolean trapperOnNextLocation() {
-    Location nextLocation = movePath.get(pathIndex + 1);
-    return mover.hasTrapperOn(nextLocation);
+    if (withinPath(pathIndex + 1)) {
+      Location nextLocation = movePath.get(pathIndex + 1);
+      return mover.hasTrapperOn(nextLocation);
+    } else {
+      return false;
+    }
   }
 
   private void moveToNextLocation() {
@@ -131,30 +132,10 @@ public class MoveTraverse {
   }
 
   private void pathMoveComplete() {
-    if (trapperFound()) {
-      setTrapped(true);
-      trappedDirection = getNextDirection();
+    if (trapperOnNextLocation()) {
+      setTrapped();
     }
-
-    pathMoveComplete = true;
-    changeSupport.firePropertyChange("pathMoveComplete", false, true);
-  }
-
-  private boolean trapperFound() {
-    Location trappedLocation = movePath.get(pathIndex);
-    return mover.hasTrapperOn(trappedLocation);
-  }
-
-  private Direction getNextDirection() {
-    Location location = movePath.get(pathIndex);
-    Location nextLocation = movePath.get(pathIndex + 1);
-
-    return map.getDirectionTo(location, nextLocation);
-  }
-
-  private void setTrapped(boolean foundTrapper) {
-    this.foundTrapper = foundTrapper;
-    changeSupport.firePropertyChange("trapped", null, foundTrapper);
+    setPathMoveComplete();
   }
 
   /**
@@ -162,6 +143,16 @@ public class MoveTraverse {
    */
   private boolean withinPath(int index) {
     return index >= 0 && index <= movePath.size() - 1;
+  }
+
+  private void setTrapped() {
+    this.foundTrapper = true;
+    changeSupport.firePropertyChange("trapped", false, true);
+  }
+
+  private void setPathMoveComplete() {
+    pathMoveComplete = true;
+    changeSupport.firePropertyChange("pathMoveComplete", false, true);
   }
 
   public boolean isPathMoveComplete() {
@@ -172,21 +163,17 @@ public class MoveTraverse {
     return foundTrapper;
   }
 
-  public void reset() {
-    foundTrapper = false;
-    pathMoveComplete = false;
+  public Location getTrapperLocation() {
+    Location moverLocation = mover.getLocation();
+    Direction nextDirection = getNextDirection();
+    return map.getAdjacent(moverLocation, nextDirection);
   }
 
-  public Mover getTrapper() {
-    return mover;
-  }
+  private Direction getNextDirection() {
+    Location location = movePath.get(pathIndex);
+    Location nextLocation = movePath.get(pathIndex + 1);
 
-  public Direction getTrappedDirection() {
-    if (foundTrapper) {
-      return trappedDirection;
-    } else {
-      return Direction.STILL;
-    }
+    return map.getDirectionTo(location, nextLocation);
   }
 
   public synchronized void removePropertyChangeListener(PropertyChangeListener listener) {
