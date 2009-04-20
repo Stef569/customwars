@@ -73,6 +73,11 @@ public abstract class BasicComponent extends AbstractComponent {
     return visible;
   }
 
+  public boolean isWithinComponent(int x, int y) {
+    return y >= getY() && y <= getY() + getHeight() &&
+            x >= getX() && x <= getX() + getWidth();
+  }
+
   /**
    * Gives the focus to this component with a click of the mouse.
    *

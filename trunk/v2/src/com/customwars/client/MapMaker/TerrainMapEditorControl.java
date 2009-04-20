@@ -30,7 +30,7 @@ public class TerrainMapEditorControl implements MapEditorControl {
   }
 
   private Terrain getTerrain(int terrainID) {
-    return TerrainFactory.getTerrain(terrainID);
+    return TerrainFactory.getBaseTerrains().get(terrainID);
   }
 
   public boolean isTypeOf(Class c) {
