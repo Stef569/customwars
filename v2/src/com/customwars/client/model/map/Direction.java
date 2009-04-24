@@ -9,29 +9,9 @@ import java.util.Scanner;
  * @author Stefan
  */
 public enum Direction {
-  NORTH, EAST, SOUTH, WEST, STILL;
-
-  public static Direction getReverseDirection(Direction dir) {
-    Direction reverseDir = null;
-    switch (dir) {
-      case EAST:
-        reverseDir = Direction.WEST;
-        break;
-      case NORTH:
-        reverseDir = Direction.SOUTH;
-        break;
-      case SOUTH:
-        reverseDir = Direction.NORTH;
-        break;
-      case STILL:
-        reverseDir = Direction.STILL;
-        break;
-      case WEST:
-        reverseDir = Direction.EAST;
-        break;
-    }
-    return reverseDir;
-  }
+  NORTH, EAST, SOUTH, WEST,
+  NORTHEAST, SOUTHEAST, NORTHWEST, SOUTHWEST,
+  STILL;
 
   /**
    * Try to get an enum constant based on it's String value

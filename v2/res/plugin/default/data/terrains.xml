@@ -41,19 +41,15 @@
     </terrain>
     <terrain name="Bridge" id="13" type="Road">
         <connect>West, East</connect>
-        <spansOverRiver>True</spansOverRiver>
     </terrain>
     <terrain name="Bridge" id="14" type="Road">
         <connect>North, South</connect>
-        <spansOverRiver>True</spansOverRiver>
     </terrain>
     <terrain name="Suspension" id="15" type="Road">
         <connect>West, East</connect>
-        <spansOverOcean>True</spansOverOcean>
     </terrain>
     <terrain name="Suspension" id="16" type="Road">
         <connect>North, South</connect>
-        <spansOverOcean>True</spansOverOcean>
     </terrain>
 
     <!-- Row 2 -->
@@ -93,23 +89,17 @@
         <connect>North, East, South, West</connect>
     </terrain>
     <terrain id="30" type="Ocean">
-        <connect>North, East, South, West</connect>
+        <connect>North, NorthEast, East, SouthEast, South, SouthWest, West, NorthWest</connect>
     </terrain>
-    <terrain name="Delta" id="31" type="River">
-        <delta>True</delta>
-    </terrain>
-    <terrain name="Delta" id="32" type="River">
-        <delta>True</delta>
-    </terrain>
-    <terrain name="Delta" id="33" type="River">
-        <delta>True</delta>
-    </terrain>
+    <terrain name="Delta" id="31" type="River"/>
+    <terrain name="Delta" id="32" type="River"/>
+    <terrain name="Delta" id="33" type="River"/>
 
     <!-- Row 3 -->
-    <terrain name="Delta" id="34" type="River">
-        <delta>True</delta>
+    <terrain name="Delta" id="34" type="River"/>
+    <terrain id="35" type="Ocean">
+        <connect>North, NorthEast, East, South, SouthEast, West, NorthWest</connect>
     </terrain>
-    <terrain id="35" type="Ocean"/>
     <terrain name="Coast" id="36" type="Ocean">
         <connect>East, West</connect>
     </terrain>
@@ -140,9 +130,9 @@
     <terrain name="Coast" id="45" type="Ocean">
         <connect>West</connect>
     </terrain>
-    <terrain id="46" type="Ocean"/>
+    <terrain name="Ocean" id="46" type="Ocean"/>
     <terrain name="Coast" id="47" type="Ocean">
-        <connect>North, East,West</connect>
+        <connect>North, East, West</connect>
     </terrain>
     <terrain name="Coast" id="48" type="Ocean">
         <connect>North, East, South</connect>
@@ -152,5 +142,62 @@
     </terrain>
     <terrain name="Coast" id="50" type="Ocean">
         <connect>North, South, West</connect>
+    </terrain>
+
+    <!-- Row 4 -->
+    <terrain name="Coast" id="51" type="Ocean">
+        <connect>North, East, SouthEast, South, SouthWest, West, NorthWest</connect>
+    </terrain>
+    <terrain name="Coast" id="52" type="Ocean">
+        <connect>North, East, South, SouthWest, West, NorthWest</connect>
+    </terrain>
+    <terrain name="Coast" id="53" type="Ocean">
+        <connect>North, NorthEast, East, South, West, NorthWest</connect>
+    </terrain>
+    <terrain name="Coast" id="54" type="Ocean">
+        <connect>North, East, South, SouthWest, West, NorthWest</connect>
+    </terrain>
+
+    <!-- Skipping 4 shoals -->
+    <terrain name="Coast" id="59" type="Ocean">
+        <connect>North, East, SouthEast, South, SouthWest, West, NorthWest</connect>
+    </terrain>
+    <terrain name="Coast" id="60" type="Ocean">
+        <connect>North, NorthEast, East, South, SouthWest, West, NorthWest</connect>
+    </terrain>
+    <terrain name="Coast" id="61" type="Ocean">
+        <connect>North, NorthEast, East, SouthEast, South, West, NorthWest</connect>
+    </terrain>
+    <terrain name="Coast" id="62" type="Ocean">
+        <connect>North, NorthEast, East, SouthEast, South, SouthWest, West</connect>
+    </terrain>
+    <terrain name="Coast" id="63" type="Ocean">
+        <connect>North, East, SouthEast, South, SouthWest, West</connect>
+    </terrain>
+    <!-- Skipping 4 shoals --><!-- Row 4 -->
+    <terrain name="Coast" id="68" type="Ocean">
+        <connect>North, NorthEast, East, SouthEast, South, West</connect>
+    </terrain>
+    <terrain name="Coast" id="69" type="Ocean">
+        <connect>North, NorthEast, East, South, West</connect>
+    </terrain>
+    <terrain name="Coast" id="70" type="Ocean">
+        <connect>North, East, SouthEast, South, West</connect>
+    </terrain>
+    <terrain name="Coast" id="71" type="Ocean">
+        <connect>North, East, South, West, NorthWest</connect>
+    </terrain>
+    <terrain name="Coast" id="72" type="Ocean">
+        <connect>North, East, South, West</connect>
+    </terrain>
+    <terrain name="Coast" id="73" type="Ocean">
+        <connect>North, East, SouthEast, South, West, NorthWest</connect>
+    </terrain>
+    <terrain name="Coast" id="74" type="Ocean">
+        <connect>North, NorthEast, East, South, SouthWest, West</connect>
+    </terrain>
+    <terrain name="Reef" id="75" type="Ocean"/>
+    <terrain name="Coast" id="76" type="Ocean">
+        <connect>North, NorthEast, East, South, SouthWest, West, NorthWest</connect>
     </terrain>
 </list>

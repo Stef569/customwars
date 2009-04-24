@@ -46,7 +46,6 @@ public class TerrainConverter implements Converter {
     Terrain baseTerrain = getBaseTerrain(type);
     baseTerrain.init();
     Terrain terrainCopy = new Terrain(baseTerrain);
-    boolean spansOverRiver = false, spansOverOcean = false, delta = false;
     List<Direction> connections = null;
 
     while (reader.hasMoreChildren()) {
@@ -55,15 +54,6 @@ public class TerrainConverter implements Converter {
 
       if (nodeName.equals("connect")) {
         connections = readDirections(reader.getValue());
-        reader.moveUp();
-      } else if (nodeName.equals("spansOverRiver")) {
-        spansOverRiver = readBoolean(reader.getValue(), unmarshallingContext);
-        reader.moveUp();
-      } else if (nodeName.equals("spansOverOcean")) {
-        spansOverOcean = readBoolean(reader.getValue(), unmarshallingContext);
-        reader.moveUp();
-      } else if (nodeName.equals("delta")) {
-        delta = readBoolean(reader.getValue(), unmarshallingContext);
         reader.moveUp();
       } else {
         throw new IllegalArgumentException("Unknown child in terrain xml");
@@ -75,14 +65,7 @@ public class TerrainConverter implements Converter {
     writeField("name", terrainCopy, terrainName == null ? baseTerrain.getName() : terrainName);
     writeField("type", terrainCopy, baseTerrain.getName());
     writeField("connectedDirections", terrainCopy, connections);
-    writeField("spansOverRiver", terrainCopy, spansOverRiver);
-    writeField("spansOverOcean", terrainCopy, spansOverOcean);
-    writeField("delta", terrainCopy, delta);
     return terrainCopy;
-  }
-
-  private boolean readBoolean(Object value, UnmarshallingContext unmarshallingContext) {
-    return (Boolean) unmarshallingContext.convertAnother(value, Boolean.class);
   }
 
   private Terrain getBaseTerrain(String type) {

@@ -29,7 +29,6 @@ public class Terrain extends GameObject {
   private int height;
   private boolean hidden;
   private int vision;
-  private boolean spansOverRiver, spansOverOcean, delta;
   private List<Integer> moveCosts;
   private List<Direction> connectedDirections;
 
@@ -102,8 +101,6 @@ public class Terrain extends GameObject {
     this.height = otherTerrain.height;
     this.hidden = otherTerrain.hidden;
     this.vision = otherTerrain.vision;
-    this.spansOverRiver = otherTerrain.spansOverRiver;
-    this.spansOverOcean = otherTerrain.spansOverOcean;
     this.moveCosts = new ArrayList<Integer>(otherTerrain.moveCosts);
     this.connectedDirections = new ArrayList<Direction>(otherTerrain.connectedDirections);
   }
@@ -146,18 +143,6 @@ public class Terrain extends GameObject {
 
   public boolean isOcean() {
     return height == -2;
-  }
-
-  public boolean isDelta() {
-    return delta;
-  }
-
-  public boolean spansOverRiver() {
-    return spansOverRiver;
-  }
-
-  public boolean spansOverOcean() {
-    return spansOverOcean;
   }
 
   /**

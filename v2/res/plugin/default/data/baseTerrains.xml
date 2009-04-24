@@ -100,4 +100,16 @@ moveCosts have the following order
             <int>1</int>
         </moveCosts>
     </terrain>
+    <terrain name="Reef" id="75">
+        <defenseBonus>2</defenseBonus>
+        <height>-2</height>
+        <moveCosts>
+            <int>127</int>
+            <int>127</int>
+            <int>127</int>
+            <int>127</int>
+            <int>1</int>
+            <int>1</int>
+        </moveCosts>
+    </terrain>
 </list>

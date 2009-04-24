@@ -141,6 +141,15 @@ public class TileMapTest {
   }
 
   @Test
+  public void testIllegalAdjacentDirection() {
+    Tile from = map.getTile(0, 0);
+    Tile to = map.getTile(-1, -1);      // null tile out of map bounds!
+
+    Direction dir = map.getDirectionTo(from, to);
+    Assert.assertEquals(Direction.STILL, dir);
+  }
+
+  @Test
   public void teleportTest() {
     Tile from = map.getTile(0, 0);
     Tile to = map.getTile(2, 0);
@@ -150,7 +159,131 @@ public class TileMapTest {
     map.teleport(from, to, mover);
 
     // Make sure that the unit moved to the location
+    Assert.assertNull(from.getLastLocatable());
+    Assert.assertEquals(0, from.getLocatableCount());
+
     Assert.assertEquals(to, mover.getLocation());
     Assert.assertEquals(to.getLastLocatable(), mover);
+  }
+
+  @Test
+  public void testDiagonalDirection() {
+    Tile from = map.getTile(0, 0);
+    Tile to = map.getTile(1, 1);      // South east relative to from
+
+    Direction dir = map.getDiagonalDirectionTo(from, to);
+    Assert.assertEquals(Direction.SOUTHEAST, dir);
+  }
+
+  @Test
+  public void testIllegalDiagonalDirection() {
+    Tile from = map.getTile(0, 0);
+    Tile to = map.getTile(-1, -1);      // Nort West relative to from but out of map bounds!
+
+    Direction dir = map.getDiagonalDirectionTo(from, to);
+    Assert.assertEquals(Direction.STILL, dir);
+  }
+
+  @Test
+  public void testSquareIterator() {
+    Tile center = map.getTile(1, 1);
+    int surroundingTilesCount = 0;
+
+    for (Location t : map.getSquareIterator(center, 1)) {
+      surroundingTilesCount++;
+      Assert.assertNotNull(t);
+    }
+
+    Assert.assertEquals(8, surroundingTilesCount);
+  }
+
+  @Test
+  /**
+   * 3 tiles are skipped because they are outside the map bounds
+   */
+  public void testSquareIteratorAtMapEdge() {
+    Tile center = map.getTile(0, 1);
+
+    int surroundingTilesCount = 0;
+    for (Location t : map.getSquareIterator(center, 1)) {
+      surroundingTilesCount++;
+    }
+
+    Assert.assertEquals(5, surroundingTilesCount);
+  }
+
+  @Test
+  /**
+   * 3 tiles are skipped because they are outside the map bounds
+   */
+  public void testSquareIteratorAtMapEdge2() {
+    Tile center = map.getTile(map.getCols() - 1, 1);
+
+    int surroundingTilesCount = 0;
+    for (Location t : map.getSquareIterator(center, 1)) {
+      surroundingTilesCount++;
+    }
+
+    Assert.assertEquals(5, surroundingTilesCount);
+  }
+
+  @Test
+  /**
+   * 5 tiles are skipped because they are outside the map bounds
+   */
+  public void testSquareIteratorAtMapEdge3() {
+    Tile center = map.getTile(0, map.getRows() - 1);
+
+    int surroundingTilesCount = 0;
+    for (Location t : map.getSquareIterator(center, 1)) {
+      surroundingTilesCount++;
+    }
+
+    Assert.assertEquals(3, surroundingTilesCount);
+  }
+
+  @Test
+  /**
+   * 3 tiles are skipped because they are outside the map bounds
+   */
+  public void testSquareIteratorAtMapEdge4() {
+    Tile center = map.getTile(1, map.getRows() - 1);
+
+    int surroundingTilesCount = 0;
+    for (Location t : map.getSquareIterator(center, 1)) {
+      surroundingTilesCount++;
+    }
+
+    Assert.assertEquals(5, surroundingTilesCount);
+  }
+
+  @Test
+  /**
+   * 0 tiles are skipped, there are 24 tiles(excluding the center) around 2,2
+   */
+  public void testSquareIteratorWithBiggerRange() {
+    Tile center = map.getTile(2, 2);
+
+    int surroundingTilesCount = 0;
+    for (Location t : map.getSquareIterator(center, 2)) {
+      surroundingTilesCount++;
+    }
+
+    Assert.assertEquals(24, surroundingTilesCount);
+  }
+
+  @Test
+  /**
+   * 1 row of tiles(5) are skipped, there are 19 tiles(excluding the center) around 2,2
+   */
+  public void testSquareIteratorWithBiggerRange2() {
+    Tile center = map.getTile(2, 1);
+
+    int surroundingTilesCount = 0;
+    for (Location t : map.getSquareIterator(center, 2)) {
+      surroundingTilesCount++;
+    }
+
+    Assert.assertEquals(19, surroundingTilesCount);
   }
 }

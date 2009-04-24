@@ -7,6 +7,7 @@ import tools.Args;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -374,84 +375,95 @@ public class TileMap<T extends Location> extends GameObject {
    * The center tile is included, and all returned positions are valid.
    */
   private final class SquareIterator extends MapIterator {
-    private final Location startTile;
+    private final Location center;
+    private final int range;
 
-    // The square can be bigger or smaller then the range due map bounds.
     private final int totalSquareRows, totalSquareCols;
+    private final Location leftTopTile;
+    private final int rowOffset, colOffset;
     private int row, col;
+    private LinkedList<T> square;
+
 
     /**
      * @param center The location to Iterate around
      * @param range  The amount of tiles to move away from the center
      */
     public SquareIterator(Location center, int range) {
-      if (center == null) {
-        throw new IllegalArgumentException("Center Location cannot be null");
-      }
+      this.center = center;
+      this.range = range;
 
+      // The square can be smaller then the range due map bounds.
+      rowOffset = countTiles(Direction.NORTH);
+      colOffset = countTiles(Direction.WEST);
+
+      leftTopTile = getTile(center.getCol() - colOffset, center.getRow() - rowOffset);
+
+      // The size of the square
+      // range 1 == 3, range 2 == 5, range 3 == 7...
+      totalSquareCols = leftTopTile.getCol() + range + 1 + range - (range - colOffset);
+      totalSquareRows = leftTopTile.getRow() + range + 1 + range - (range - rowOffset);
+
+      // loop vars
+      col = leftTopTile.getCol();
+      row = leftTopTile.getRow();
+
+      buildSquare();
+    }
+
+    // Move range Tiles to the direction relative to center
+    // until we run of the map bounds
+    private int countTiles(Direction direction) {
       Location tile = center;
-      // Move maxRange Tiles up
-      int rowOffset;
-      for (rowOffset = 0; rowOffset < range; rowOffset++) {
-        tile = getAdjacent(tile, Direction.NORTH);
-        // We reached the map limit
-        if (tile == null) {
+      int offset;
+
+      for (offset = 0; offset < range; offset++) {
+        tile = getAdjacent(tile, direction);
+
+        if (!isWithinMapBounds(tile)) {
           break;
         }
       }
-
-      tile = center;
-      // Move maxRange Tiles left
-      int colOffset;
-      for (colOffset = 0; colOffset < range; colOffset++) {
-        tile = getAdjacent(tile, Direction.WEST);
-        // We reached the map limit
-        if (tile == null) {
-          break;
-        }
-      }
-
-      // Get startTile(left Top position)
-      int startRow = center.getRow() - rowOffset;
-      int startCol = center.getCol() - colOffset;
-      startTile = getTile(startCol, startRow);
-
-      // Loop Vars
-      totalSquareCols = startTile.getCol() + range - (range - colOffset) + range;
-      totalSquareRows = startTile.getRow() + range - (range - rowOffset) + range;
-      col = startTile.getCol();
-      row = startTile.getRow();
+      return offset;
     }
 
-    /**
-     * Determine if the iterator has another Location Within
-     * Square bounds and map bounds.
-     *
-     * @return <code>true</code> if there is another tile and
-     *         <code>false</code> otherwise.
-     */
+    private void buildSquare() {
+      square = new LinkedList<T>();
+      while (hasNextRow()) {
+        T tile = tiles.get(col++).get(row);
+
+        if (tile != null && tile != center) {
+          square.add(tile);
+        }
+
+        if (!hasNextCol()) {
+          gotoNextRow();
+        }
+      }
+    }
+
+    private boolean hasNextRow() {
+      return row < totalSquareRows && row < rows;
+    }
+
+    private boolean hasNextCol() {
+      return col < totalSquareCols && col < cols;
+    }
+
+    private void gotoNextRow() {
+      col = leftTopTile.getCol();
+      row++;
+    }
+
     public boolean hasNext() {
-      return row <= totalSquareRows && row < rows;
+      return !square.isEmpty();
     }
 
     /**
-     * Obtains the next tile.
-     *
-     * @return The next Tile.
-     *
-     *         This Tile is guaranteed to be valid(not null, within map bounds)
+     * @return The next Tile. This tile is guaranteed to be valid(not null, within map bounds)
      */
     public T nextTile() {
-      T tile = null;
-      if (row <= totalSquareRows) {
-        tile = tiles.get(col).get(row);
-        col++;                  // 1 col to the right
-        if (col > totalSquareCols || col >= cols) {  // Reached Last Column
-          col = startTile.getCol();  // Reset Col
-          row++;                     // Next Row
-        }
-      }
-      return tile;
+      return square.removeLast();
     }
   }
 
@@ -638,15 +650,61 @@ public class TileMap<T extends Location> extends GameObject {
     return getTile(col, row);
   }
 
+  public T getDiagonal(Location baseTile, Direction direction) {
+    int row = baseTile.getRow();
+    int col = baseTile.getCol();
+
+    switch (direction) {
+      case NORTHEAST:
+        col = baseTile.getCol() + 1;
+        row = baseTile.getRow() - 1;
+        break;
+      case SOUTHEAST:
+        col = baseTile.getCol() + 1;
+        row = baseTile.getRow() + 1;
+        break;
+      case SOUTHWEST:
+        col = baseTile.getCol() - 1;
+        row = baseTile.getRow() + 1;
+        break;
+      case NORTHWEST:
+        col = baseTile.getCol() - 1;
+        row = baseTile.getRow() - 1;
+        break;
+      case STILL:
+        break;
+    }
+    return getTile(col, row);
+  }
+
+  /**
+   * What direction is the baseTile relative to the tile.
+   * if <code>tile</code> has no relative direction to the baseTile or is null then Direction.STILL is returned.
+   *
+   * @return The Direction of the given tile relative to baseTile.
+   * @see Direction
+   */
+  public Direction getDirectionTo(Location baseTile, Location tile) {
+    Direction direction;
+    direction = getAdjacentDirectionTo(baseTile, tile);
+
+    if (direction == Direction.STILL) {
+      direction = getDiagonalDirectionTo(baseTile, tile);
+    }
+    return direction;
+  }
+
   /**
    * What direction is the baseTile relative to the adjacentTile.
    * if <code>adjacentTile</code> is not adjacent or null Direction.STILL is returned.
    *
    * @return The Direction of adjacentTile relative to baseTile.
    */
-  public Direction getDirectionTo(Location baseTile, Location adjacentTile) {
+  public Direction getAdjacentDirectionTo(Location baseTile, Location adjacentTile) {
     Direction direction;
-    if (getAdjacent(baseTile, Direction.NORTH) == adjacentTile) {
+    if (adjacentTile == null) {
+      direction = Direction.STILL;
+    } else if (getAdjacent(baseTile, Direction.NORTH) == adjacentTile) {
       direction = Direction.NORTH;
     } else if (getAdjacent(baseTile, Direction.EAST) == adjacentTile) {
       direction = Direction.EAST;
@@ -654,6 +712,24 @@ public class TileMap<T extends Location> extends GameObject {
       direction = Direction.SOUTH;
     } else if (getAdjacent(baseTile, Direction.WEST) == adjacentTile) {
       direction = Direction.WEST;
+    } else {
+      direction = Direction.STILL;
+    }
+    return direction;
+  }
+
+  public Direction getDiagonalDirectionTo(Location baseTile, Location diagonalTile) {
+    Direction direction;
+    if (diagonalTile == null) {
+      direction = Direction.STILL;
+    } else if (getDiagonal(baseTile, Direction.NORTHEAST) == diagonalTile) {
+      direction = Direction.NORTHEAST;
+    } else if (getDiagonal(baseTile, Direction.NORTHWEST) == diagonalTile) {
+      direction = Direction.NORTHWEST;
+    } else if (getDiagonal(baseTile, Direction.SOUTHEAST) == diagonalTile) {
+      direction = Direction.SOUTHEAST;
+    } else if (getDiagonal(baseTile, Direction.SOUTHWEST) == diagonalTile) {
+      direction = Direction.SOUTHWEST;
     } else {
       direction = Direction.STILL;
     }
