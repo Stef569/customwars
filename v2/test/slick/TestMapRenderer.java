@@ -31,7 +31,7 @@ public class TestMapRenderer extends CWState {
 
   public void enter(GameContainer container, StateBasedGame game) throws SlickException {
     super.enter(container, game);
-    Map<Tile> map = stateSession.getMap();
+    Map<Tile> map = stateSession.map;
     mapRenderer.setMap(map);
 
     // Create Camera & scroller
@@ -122,7 +122,7 @@ public class TestMapRenderer extends CWState {
       camera.centerOnTile(9, 9);
     }
     if (key == Input.KEY_R) {
-      mapRenderer.setMap(stateSession.getMap());
+      mapRenderer.setMap(stateSession.map);
     }
     if (key == Input.KEY_U) {
       scroller.toggleAutoUpdate();

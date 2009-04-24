@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Render on top of everything in the inGameState this includes:
+ * Render following components:
  * Popups, tile info, unitInfo,...
  *
  * @author stefan
@@ -63,7 +63,7 @@ public class HUD {
     bottomComponents.add(terrainInfoBox);
 
     unitInfoBox = new UnitInfoBox(guiContext);
-    unitInfoBox.setWidth(56);
+    unitInfoBox.setWidth(60);
     unitInfoBox.setHeight(INFO_BOX_HEIGH);
     bottomComponents.add(unitInfoBox);
 
@@ -90,24 +90,26 @@ public class HUD {
   }
 
   /**
-   * Sets the (x, y) coordinates of the bottom info boxes, depending on where the cursor is
+   * Sets the (x, y) coordinates of the info boxes, depending on where the cursor is
    * currently on the screen. If the cursor is half-way or more toward the right side
    * of the screen, the info boxes will be set to display on the left side. Otherwise,
    * the info boxes will be set to display on the right side.
    */
   public final void locateInfoBoxes(boolean leftSide) {
     if (leftSide) {
-      locateRightToLeft();
+      locateRightToLeft(topComponents, 10);
+      locateRightToLeft(bottomComponents, camera.getHeight() - INFO_BOX_HEIGH);
     } else {
-      locateLeftToRight();
+      locateLeftToRight(topComponents, 10);
+      locateLeftToRight(bottomComponents, camera.getHeight() - INFO_BOX_HEIGH);
     }
   }
 
-  private void locateRightToLeft() {
-    Point topLeft = new Point(camera.getWidth(), camera.getHeight() - INFO_BOX_HEIGH);
+  private void locateRightToLeft(List<BasicComponent> components, int topLeftY) {
+    Point topLeft = new Point(camera.getWidth(), topLeftY);
 
-    for (int i = 0; i < bottomComponents.size(); i++) {
-      BasicComponent comp = bottomComponents.get(i);
+    for (int i = 0; i < components.size(); i++) {
+      BasicComponent comp = components.get(i);
       BasicComponent nextComp;
 
       if (i == 0) {
@@ -115,16 +117,16 @@ public class HUD {
         continue;
       }
 
-      nextComp = bottomComponents.get(i - 1);
+      nextComp = components.get(i - 1);
       comp.setLocation(topLeft.x - nextComp.getWidth() - comp.getWidth(), topLeft.y);
     }
   }
 
-  private void locateLeftToRight() {
-    Point topLeft = new Point(0, camera.getHeight() - INFO_BOX_HEIGH);
+  private void locateLeftToRight(List<BasicComponent> components, int topLeftY) {
+    Point topLeft = new Point(0, topLeftY);
 
-    for (int i = 0; i < bottomComponents.size(); i++) {
-      BasicComponent comp = bottomComponents.get(i);
+    for (int i = 0; i < components.size(); i++) {
+      BasicComponent comp = components.get(i);
       BasicComponent nextComp;
 
       if (i == 0) {
@@ -132,7 +134,7 @@ public class HUD {
         continue;
       }
 
-      nextComp = bottomComponents.get(i - 1);
+      nextComp = components.get(i - 1);
       comp.setLocation(topLeft.x + nextComp.getWidth(), topLeft.y);
     }
   }

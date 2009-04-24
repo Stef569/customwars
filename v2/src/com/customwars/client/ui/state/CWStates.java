@@ -24,11 +24,11 @@ public class CWStates extends StateBasedGame implements InputProviderListener {
   private GameContainer gameContainer;
   private CWInput cwInput;
   private StateLogic statelogic;
-  private int startID;
+  private String startStateName;
 
-  public CWStates(int startID, StateSession stateSession, ResourceManager resources, Config config) {
+  public CWStates(String startStateName, StateSession stateSession, ResourceManager resources, Config config) {
     super(App.get("game.name") + " - " + App.get("plugin.name"));
-    this.startID = startID;
+    this.startStateName = startStateName;
     this.stateSession = stateSession;
     this.resources = resources;
     this.config = config;
@@ -50,7 +50,7 @@ public class CWStates extends StateBasedGame implements InputProviderListener {
     buildStateList();
     mapStateIdsToName();
 
-    statelogic.gotoState(startID);
+    statelogic.changeTo(startStateName);
     config.configureAfterStartup(cwInput);
   }
 

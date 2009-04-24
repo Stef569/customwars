@@ -403,6 +403,8 @@ public class SpriteManager implements PropertyChangeListener {
     } else if (evt.getSource() instanceof Tile) {
       if (propertyName.equals("locatable")) {
         unitOnTileChange(evt);
+      } else if (propertyName.equals("terrain")) {
+        terrainOnTileChange(evt);
       }
     }
   }
@@ -432,6 +434,18 @@ public class SpriteManager implements PropertyChangeListener {
       Unit unit = (Unit) evt.getSource();
       UnitSprite sprite = unitSprites.get(unit);
       recolorUnitSprite(sprite, newColor, unit.getID());
+    }
+  }
+
+  /**
+   * When the location of a unit changes to null, remove the unit sprite
+   */
+  private void unitLocationchange(PropertyChangeEvent evt) {
+    Unit unit = (Unit) evt.getSource();
+    Location newLocation = (Location) evt.getNewValue();
+
+    if (newLocation == null && unitSprites.containsKey(unit)) {
+      removeUnitSprite(unit);
     }
   }
 
@@ -480,28 +494,30 @@ public class SpriteManager implements PropertyChangeListener {
     }
   }
 
-  /**
-   * When the location of a unit changes to null, remove the unit sprite
-   */
-  private void unitLocationchange(PropertyChangeEvent evt) {
-    Unit unit = (Unit) evt.getSource();
-    Location newLocation = (Location) evt.getNewValue();
+  private void terrainOnTileChange(PropertyChangeEvent evt) {
+    Location newLocation = (Location) evt.getSource();
+    Terrain terrain = (Terrain) evt.getNewValue();
 
-    if (newLocation == null && unitSprites.containsKey(unit)) {
-      removeUnitSprite(unit);
+    if (terrain instanceof City) {
+      City city = (City) terrain;
+      if (newLocation == null && citySprites.containsKey(city)) {
+        removeCitySprite(city);
+      } else {
+        loadCitySprite(city);
+      }
     }
   }
 
   public void removeCitySprite(City city) {
     Sprite sprite = citySprites.get(city);
-    logger.debug("Removing CitySprite");
+    logger.debug("Removing CitySprite @ " + city.getLocation().getLocationString());
     citySprites.remove(city);
     animChange(sprite.anim, null);
   }
 
   public void removeUnitSprite(Unit unit) {
     Sprite sprite = unitSprites.get(unit);
-    logger.debug("Removing UnitSprite");
+    logger.debug("Removing UnitSprite" + unit.getLocation().getLocationString());
     unitSprites.remove(unit);
     animChange(sprite.anim, null);
   }

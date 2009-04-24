@@ -17,9 +17,9 @@ public class PlayerInfoBox extends BasicComponent {
   @Override
   public void renderimpl(GUIContext container, Graphics g) {
     if (game != null) {
-      g.drawString(App.getMsg("day") + ":" + game.getDay(), 150, 10);
-      g.drawString(App.getMsg("player") + ":" + game.getActivePlayer().getName(), 150, 20);
-      g.drawString(App.getMsg("money") + ":" + game.getActivePlayer().getBudget(), 150, 30);
+      g.drawString(App.getMsg("day") + ":" + game.getDay(), getX(), getY() + 10);
+      g.drawString(App.getMsg("player") + ":" + game.getActivePlayer().getName(), getX(), getY() + 20);
+      g.drawString(App.getMsg("money") + ":" + game.getActivePlayer().getBudget(), getX(), getY() + 30);
     }
   }
 }

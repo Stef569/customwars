@@ -29,21 +29,21 @@ import java.util.Properties;
  */
 public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
   private static final Logger logger = Logger.getLogger(Map.class);
-  private Properties properties;  // The properties of the map
+  private Properties properties;    // The properties of the map
   private int numPlayers;           // Amount of players that can play on this map
   private boolean fogOfWarOn;       // Is fog of war in effect
   private PathFinder pathFinder;    // To builds paths within the map
+
+  public Map(int cols, int rows, int tileSize, Properties properties, int numPlayers) {
+    this(cols, rows, tileSize, numPlayers);
+    this.properties = properties == null ? new Properties() : properties;
+  }
 
   public Map(int cols, int rows, int tileSize, int numPlayers) {
     super(cols, rows, tileSize);
     this.numPlayers = numPlayers;
     this.pathFinder = new PathFinder(this);
     this.properties = new Properties();
-  }
-
-  public Map(int cols, int rows, int tileSize, Properties properties, int numPlayers) {
-    this(cols, rows, tileSize, numPlayers);
-    this.properties = properties == null ? new Properties() : properties;
   }
 
   /**
@@ -102,18 +102,18 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
   }
 
   /**
-   * Start the turn by resetting the map to the new player
+   * Start the turn by resetting the map to the given player
    */
-  public void startTurn(Player currentPlayer) {
-    resetMap(currentPlayer);
+  public void startTurn(Player player) {
+    resetMap(player);
   }
 
-  public void endTurn(Player currentPlayer) {
+  public void endTurn(Player player) {
   }
 
   /**
    * Set all units to Idle and the units of this player to active.
-   * if fog is enabled we apply the los for each active unit.
+   * if fog is enabled we apply the los for each owned unit.
    *
    * @param player The player who's units should be made active and fog applied to.
    */
@@ -126,23 +126,21 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
   }
 
   /**
-   * Reset the map so that the player can
-   * control his units by setting the unit Game Object state to ACTIVE
-   * unit state is put to IDLE, so that a unit is
-   * ready to perform another unit action (ie Capture)
+   * #1 set Game Object State: not owned units -> IDLE, owned unit -> ACTIVE.
+   * #2 Reset the action the owned unit was performing one turn ago.
    *
-   * @param player The player who's units should be made active
+   * @param player The player who's units should be reset
    */
   private void resetUnits(Player player) {
     for (Location t : getAllTiles()) {
       Unit unit = getUnitOn(t);
 
       if (unit != null) {
-        unit.setState(GameObjectState.IDLE);
-
         if (unit.getOwner() == player) {
-          unit.setUnitState(UnitState.IDLE);
           unit.setState(GameObjectState.ACTIVE);
+          unit.setUnitState(UnitState.IDLE);
+        } else {
+          unit.setState(GameObjectState.IDLE);
         }
       }
     }
@@ -156,10 +154,10 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
    */
   public List<Unit> getSuppliablesInRange(Unit supplier) {
     List<Unit> units = new ArrayList<Unit>();
-    int minHealSupplyRange = supplier.getMinSupplyRange();
-    int maxHealSupplyRange = supplier.getMaxSupplyRange();
+    int minSupplyRange = supplier.getMinSupplyRange();
+    int maxSupplyRange = supplier.getMaxSupplyRange();
 
-    for (Tile t : getSurroundingTiles(supplier.getLocation(), minHealSupplyRange, maxHealSupplyRange)) {
+    for (Tile t : getSurroundingTiles(supplier.getLocation(), minSupplyRange, maxSupplyRange)) {
       Unit unitInRange = getUnitOn(t);
 
       if (unitInRange != null) {
@@ -172,8 +170,10 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
   }
 
   /**
+   * Retrieve a list of visible units in attack range of the attacker
+   *
    * @param attacker The Attacker of which we want to retrieve the enemies in range for
-   * @return units in attackRange of attacker.
+   * @return units in attackRange of attacker that can be attacked and are not fogged
    */
   public List<Unit> getEnemiesInRangeOf(Attacker attacker) {
     return getEnemiesInRangeOf(attacker, attacker.getLocation());
@@ -182,7 +182,7 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
   /**
    * @param attacker The Attacker of which we want to retrieve the enemies in range for
    * @param center   The center to iterate around
-   * @return units in attackRange of attacker.
+   * @return units in attackRange of attacker that can be attacked and are not fogged
    */
   public List<Unit> getEnemiesInRangeOf(Attacker attacker, Location center) {
     List<Unit> units = new ArrayList<Unit>();
@@ -299,7 +299,6 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
   /**
    * Resets the map fog of war.
    * This is done by setting all the tiles within a Unit and City Line of sight to fogged=false.
-   * special vision cases(mountains,...) are handled in the calcExtraVision method
    *
    * @param player The player and his allies to apply the los for
    */
@@ -355,7 +354,8 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
 
   /**
    * If a tile is within the unit los
-   * then there are some terrains and properties that remain fogged.
+   * then there are some gameObjects that remain fogged until directly next to it.
+   * See the isHidden() function.
    *
    * They can only be made clear if the unit is directly next to it
    * The sameTile and adjacent tile are always visible.
@@ -368,8 +368,6 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
     City city = getCityOn(tileToBeFogged);
     Unit unit = getUnitOn(tileToBeFogged);
 
-    // If unit/City is hidden(remain fogged until directly next to it)
-    // we cannot clear the fog.
     boolean hiddenUnit = unit != null && unit.isHidden();
     boolean hiddenCity = city != null && city.isHidden();
 

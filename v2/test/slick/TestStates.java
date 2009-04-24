@@ -27,11 +27,11 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
   private GameContainer gameContainer;
   private CWInput cwInput;
   private StateLogic statelogic;
-  private int startID;
+  private String startStateName;
 
-  public TestStates(int startID, StateSession stateSession, ResourceManager resources, Config config) {
+  public TestStates(String startStateName, StateSession stateSession, ResourceManager resources, Config config) {
     super(App.get("game.name") + " - " + App.get("plugin.name"));
-    this.startID = startID;
+    this.startStateName = startStateName;
     this.stateSession = stateSession;
     this.resources = resources;
     this.config = config;
@@ -53,7 +53,9 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
     // Create and map states
     buildStateList();
     mapStateIdsToName();
-    statelogic.gotoState(startID);
+    loadResources();
+    CWState.setDefaultFont(resources.getFont("DEFAULT"));
+    statelogic.changeTo(startStateName);
     config.configureAfterStartup(cwInput);
   }
 
@@ -75,13 +77,6 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
     addState(mapParser);
     addState(gameOver);
     addState(mapMaker);
-
-    logger.info("Loading resources");
-    try {
-      resources.loadResources();
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
   }
 
   private void mapStateIdsToName() {
@@ -96,6 +91,15 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
     statelogic.addState("GAME_OVER", 10);
     statelogic.addState("MAP_EDITOR", 50);
     CWState.setStatelogic(statelogic);
+  }
+
+  private void loadResources() {
+    logger.info("Loading resources");
+    try {
+      resources.loadResources();
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   /**
