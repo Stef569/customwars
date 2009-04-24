@@ -90,9 +90,9 @@ public class ActionFactory {
     return attackActions;
   }
 
-  public static CWAction buildAddUnitToTileAction(Unit unit, Tile selected, boolean noCostDeployement, boolean canUndo) {
+  public static CWAction buildAddUnitToTileAction(Unit unit, Tile selected, boolean canUndo) {
     ActionBag addToTileAction = new ActionBag("Add unit to tile");
-    addToTileAction.add(new AddUnitToTileAction(unit, selected, noCostDeployement, canUndo));
+    addToTileAction.add(new AddUnitToTileAction(unit, selected, canUndo));
     addToTileAction.add(new WaitAction(unit));
     addToTileAction.add(new ClearInGameStateAction());
     return addToTileAction;

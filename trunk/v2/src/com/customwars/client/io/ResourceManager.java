@@ -318,4 +318,14 @@ public class ResourceManager {
   public Set<String> getAllMapNames() {
     return Collections.unmodifiableSet(maps.keySet());
   }
+
+  public SpriteSheet getUnitSpriteSheet(Color color) {
+    String colorName = ColorUtil.toString(color);
+    return getSlickSpriteSheet("Unit_" + colorName);
+  }
+
+  public SpriteSheet getCitySpriteSheet(Color color) {
+    String colorName = ColorUtil.toString(color);
+    return getSlickSpriteSheet("CITY_" + colorName);
+  }
 }

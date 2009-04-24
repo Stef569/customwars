@@ -1,6 +1,7 @@
 package com.customwars.client.ui.state;
 
 import com.customwars.client.io.ResourceManager;
+import org.newdawn.slick.Font;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Music;
@@ -24,6 +25,7 @@ public abstract class CWState extends BasicGameState implements InputProviderLis
   protected static ResourceManager resources;   // All the resources
   protected static CWInput cwInput;             // Handles input
   protected static StateSession stateSession;   // Handles Data between states
+  protected static Font defaultFont;
   private boolean entered;
 
   public final void controlPressed(Command command) {
@@ -49,7 +51,7 @@ public abstract class CWState extends BasicGameState implements InputProviderLis
   }
 
   public final void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
-    g.setFont(resources.getFont("DEFAULT"));
+    g.setFont(defaultFont);
     render(container, g);
   }
 
@@ -87,5 +89,9 @@ public abstract class CWState extends BasicGameState implements InputProviderLis
 
   public static void setStateSession(StateSession stateSession) {
     CWState.stateSession = stateSession;
+  }
+
+  public static void setDefaultFont(Font defaultFont) {
+    CWState.defaultFont = defaultFont;
   }
 }

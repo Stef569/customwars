@@ -27,7 +27,7 @@ public class InGameState extends CWState {
 
   public void enter(GameContainer container, StateBasedGame game) throws SlickException {
     super.enter(container, game);
-    Map<Tile> map = stateSession.getMap();
+    Map<Tile> map = stateSession.map;
     mapRenderer.setMap(map);
 
     // Create Camera & Scroller

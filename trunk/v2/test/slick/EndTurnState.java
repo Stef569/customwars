@@ -15,14 +15,14 @@ import org.newdawn.slick.state.StateBasedGame;
  */
 public class EndTurnState extends CWState {
   private static final int END_TURN_DELAY = 250;
-  private int time;
+  private int timeTaken;
   private Game game;
 
   public void init(GameContainer gameContainer, StateBasedGame stateBasedGame) throws SlickException {
   }
 
   public void render(GameContainer container, Graphics g) throws SlickException {
-    game = stateSession.getGame();
+    game = stateSession.game;
     g.setColor(Color.white);
 
     Player nextActivePlayer = game.getNextActivePlayer(game.getActivePlayer());
@@ -31,11 +31,11 @@ public class EndTurnState extends CWState {
   }
 
   public void update(GameContainer container, int delta) throws SlickException {
-    time += delta;
-    if (time >= END_TURN_DELAY) {
+    timeTaken += delta;
+    if (timeTaken >= END_TURN_DELAY) {
       changeGameState("IN_GAME");
       game.endTurn();
-      time = 0;
+      timeTaken = 0;
     }
   }
 

@@ -32,6 +32,7 @@ public class TestData {
 
   public static final int PLAIN = 0;
   public static final int VERTICAL_RIVER = 20;
+  public static final int SEA = 4;
 
   public static final int INF = 0;
   public static final int MECH = 1;
@@ -61,11 +62,13 @@ public class TestData {
   public static List<Integer> plainMoveCosts = Arrays.asList(1, 1, 1, 2, 1, IMP);
   public static List<Integer> riverMoveCosts = Arrays.asList(1, 1, IMP, IMP, 1, IMP);
   public static List<Integer> mountainMoveCosts = Arrays.asList(3, 2, IMP, IMP, 1, IMP);
+  public static List<Integer> seaMoveCosts = Arrays.asList(IMP, IMP, IMP, IMP, 1, 1);
 
   // Terrains
   private static Terrain plain = new Terrain(0, "plain", "plain", "", 0, 0, false, 0, plainMoveCosts);
   private static Terrain verticalRiver = new Terrain(20, "River", "Vertical River", "", 0, -1, false, 0, riverMoveCosts);
   private static Terrain mountain = new Terrain(17, "Mountain", "Mountain", "", 4, 2, false, 3, mountainMoveCosts);
+  private static Terrain sea = new Terrain(SEA, "Ocean", "Sea", "", 0, -2, false, 0, seaMoveCosts);
 
   // Units
   private static Unit infantry = new Unit(INF, "Infantry", "", 3000, 3, 3, UNIT_MAX_HP, MAX_UNIT_SUPPLIES, 0, 0, true, false, false, false, true, null, ARMY_BRANCH_GROUND, MOVE_INF, 0, 0);
@@ -92,6 +95,7 @@ public class TestData {
     TerrainFactory.addTerrain(plain);
     TerrainFactory.addTerrain(verticalRiver);
     TerrainFactory.addTerrain(mountain);
+    TerrainFactory.addTerrain(sea);
 
     WeaponFactory.addWeapon(smg);
     WeaponFactory.addWeapon(cannon);

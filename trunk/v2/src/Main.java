@@ -36,7 +36,7 @@ public class Main {
   private static JConsole console;
   private static Interpreter bsh;
   private static StateSession stateSession;
-  private static int startStateID;
+  private static String startStateName;
   private static Config config;
 
   public Main() throws SlickException {
@@ -45,9 +45,9 @@ public class Main {
     StateBasedGame stateBasedGame;
     if (DEBUG) {
       initDebugMode();
-      stateBasedGame = new TestStates(startStateID, stateSession, resources, config);
+      stateBasedGame = new TestStates(startStateName, stateSession, resources, config);
     } else {
-      stateBasedGame = new CWStates(startStateID, stateSession, resources, config);
+      stateBasedGame = new CWStates(startStateName, stateSession, resources, config);
     }
 
     logger.info("Starting Slick");
@@ -77,8 +77,8 @@ public class Main {
     Game game = HardCodedGame.getGame();
 
     stateSession = new StateSession();
-    stateSession.setGame(game);
-    stateSession.setMap(game.getMap());  // Later set by a mapSelectState
+    stateSession.game = game;
+    stateSession.map = game.getMap();  // Later set by a mapSelectState
 
     if (DEBUG_GUI) {
       DebugEnvironment debugEnvironment = new DebugEnvironment(console, bsh, game);
@@ -165,11 +165,11 @@ public class Main {
       }
 
       // use this type of check for arguments that require arguments
-      else if (arg.equals("-startstate")) {
+      else if (arg.equals("-startstateID")) {
         if (i < args.length)
-          startStateID = Integer.parseInt(args[i++]);
+          startStateName = args[i++];
         else
-          startStateID = 0;
+          startStateName = null;
       }
     }
   }

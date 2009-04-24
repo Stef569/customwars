@@ -55,12 +55,12 @@ public class HumanCityController extends CityController {
 
     for (Unit unit : UnitFactory.getAllUnits()) {
       if (city.canBuild(unit)) {
-        boolean canAfford = city.getOwner().isWithinBudget(unit.getPrice());
-        MenuItem menuItem = buildMenuItem(unit, canAfford);
+        boolean canAffordUnit = city.getOwner().isWithinBudget(unit.getPrice());
+        MenuItem menuItem = buildMenuItem(unit, canAffordUnit);
 
-        if (canAfford) {
+        if (canAffordUnit) {
           unit.setOwner(city.getOwner());
-          CWAction action = ActionFactory.buildAddUnitToTileAction(unit, selected, false, false);
+          CWAction action = ActionFactory.buildAddUnitToTileAction(unit, selected, false);
           showCityPopupMenu.addAction(action, menuItem);
         } else {
           showCityPopupMenu.addAction(null, menuItem);
