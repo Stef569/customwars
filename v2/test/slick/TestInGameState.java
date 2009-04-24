@@ -1,5 +1,6 @@
 package slick;
 
+import com.customwars.client.Statistics;
 import com.customwars.client.action.ActionFactory;
 import com.customwars.client.action.ClearInGameStateAction;
 import com.customwars.client.action.ShowPopupMenu;
@@ -44,8 +45,9 @@ public class TestInGameState extends CWState implements PropertyChangeListener {
   public void enter(GameContainer container, StateBasedGame stateBasedGame) throws SlickException {
     super.enter(container, stateBasedGame);
 
-    if (game == null || game != stateSession.getGame()) {
-      setGame(stateSession.getGame(), container);
+    if (game == null || game != stateSession.game) {
+      setGame(stateSession.game, container);
+      stateSession.stats = new Statistics(game);
     }
   }
 
