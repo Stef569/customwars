@@ -18,7 +18,7 @@ public class ActionBag implements CWAction {
   private static final int CHECK_ACTION_COMPLETE_DELAY = 250;
   private int time;
   private int index;
-  private boolean doAll, undoAll, started;
+  private boolean doAll, started;
   private List<CWAction> actions;
   private String actionName;
   private InGameContext context;
@@ -35,8 +35,9 @@ public class ActionBag implements CWAction {
   }
 
   public void undo() {
-    undoAll = true;
-    started = true;
+    for (CWAction action : actions) {
+      action.undo();
+    }
   }
 
   /**
@@ -65,8 +66,6 @@ public class ActionBag implements CWAction {
   private void performAction(CWAction action) {
     if (doAll) {
       action.invoke(context);
-    } else if (undoAll) {
-      action.undo();
     }
   }
 
@@ -75,7 +74,6 @@ public class ActionBag implements CWAction {
     if (index >= actions.size()) {
       index = 0;
       doAll = false;
-      undoAll = false;
       started = false;
     }
   }

@@ -50,6 +50,7 @@ public class TestData {
   public static final int AIRPORT = 2;
   public static final int PORT = 3;
   public static final int HQ = 4;
+  public static final int MISSILE_SILO = 5;
 
   public static final int CITY_HEAL_RATE = 2;
   public static final int UNIT_MAX_HP = 100;

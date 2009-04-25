@@ -387,6 +387,14 @@ public class MapRenderer extends TileMapRenderer {
     }
   }
 
+  public List<Location> getCursorEffectRange() {
+    if (spriteManager.isCursorSet()) {
+      return spriteManager.getCursorEffectRange();
+    } else {
+      return null;
+    }
+  }
+
   public boolean isRenderingSprites() {
     return renderSprites;
   }

@@ -7,6 +7,7 @@ id is a reference to the city image sheet
 -->
 <list>
     <city name="City" id="0" type='Road'>
+        <defenseBonus>3</defenseBonus>
         <moveCosts>
             <int>1</int>
             <int>1</int>
@@ -29,6 +30,7 @@ id is a reference to the city image sheet
         <description>They give you money and heal units inside them.</description>
     </city>
     <city name="Factory" id="1" type='Road'>
+        <defenseBonus>3</defenseBonus>
         <moveCosts>
             <int>1</int>
             <int>1</int>
@@ -54,6 +56,7 @@ id is a reference to the city image sheet
         <description>Factories heal, provide supplies and can create new ground units.</description>
     </city>
     <city name="Airport" id="2" type='Road'>
+        <defenseBonus>3</defenseBonus>
         <moveCosts>
             <int>1</int>
             <int>1</int>
@@ -79,6 +82,7 @@ id is a reference to the city image sheet
         <description>empty</description>
     </city>
     <city name="Port" id="3" type='Road'>
+        <defenseBonus>3</defenseBonus>
         <moveCosts>
             <int>1</int>
             <int>1</int>
@@ -103,6 +107,7 @@ id is a reference to the city image sheet
         <maxCapCount>20</maxCapCount>
     </city>
     <city name="HQ" id="4" type='Road'>
+        <defenseBonus>3</defenseBonus>
         <moveCosts>
             <int>1</int>
             <int>1</int>
@@ -124,6 +129,7 @@ id is a reference to the city image sheet
         <maxCapCount>20</maxCapCount>
     </city>
     <city name="Missle_silo" id="5" type='Road'>
+        <defenseBonus>3</defenseBonus>
         <moveCosts>
             <int>1</int>
             <int>1</int>
@@ -134,10 +140,10 @@ id is a reference to the city image sheet
         </moveCosts>
         <vision>1</vision>
 
-        <canBeCaptureBy>
+        <canBeLaunchedBy>
             <int>0</int>
             <int>1</int>
-        </canBeCaptureBy>
+        </canBeLaunchedBy>
         <maxCapCount>20</maxCapCount>
     </city>
 </list>

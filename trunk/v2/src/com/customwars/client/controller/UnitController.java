@@ -137,7 +137,7 @@ public abstract class UnitController {
   }
 
   boolean canAttack(Tile selected) {
-    return game.getMap().getUnitOn(selected) != null;
+    return map.getUnitOn(selected) != null;
   }
 
   /**
@@ -168,6 +168,11 @@ public abstract class UnitController {
       }
     }
     return false;
+  }
+
+  boolean canLaunchRocket(Tile selected) {
+    City city = map.getCityOn(selected);
+    return city != null && city.canLaunchRocket(unit) && isUnitOn(city.getLocation());
   }
 
   boolean isActiveUnitInGame() {

@@ -67,6 +67,7 @@ public class HardCodedGame {
     addCityToMap(3, 3, TestData.BASE, neutral);
     addCityToMap(0, 0, TestData.FACTORY, p1);
     addCityToMap(7, 8, TestData.FACTORY, p2);
+    addCityToMap(8, 8, TestData.MISSILE_SILO, neutral);
 
     addUnitToMap(0, 5, TestData.INF, p1);
     addUnitToMap(0, 4, TestData.ROCKETS, p1);

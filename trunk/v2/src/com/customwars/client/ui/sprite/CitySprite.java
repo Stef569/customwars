@@ -12,8 +12,9 @@ import java.beans.PropertyChangeListener;
 public class CitySprite extends TileSprite implements PropertyChangeListener {
   private City city;
   private Animation animActive;
+  private Animation animInActive;
   private Animation animFogged;
-  private boolean renderFogged;
+  private boolean renderFogged, renderActive = true;
 
   public CitySprite(Location tile, TileMap map, City city) {
     super(tile, map);
@@ -23,6 +24,10 @@ public class CitySprite extends TileSprite implements PropertyChangeListener {
 
   public void setAnimActive(Animation animActive) {
     this.animActive = animActive;
+  }
+
+  public void setAnimInActive(Animation animInActive) {
+    this.animInActive = animInActive;
   }
 
   public void setAnimFogged(Animation animFogged) {
@@ -43,7 +48,13 @@ public class CitySprite extends TileSprite implements PropertyChangeListener {
   }
 
   public void updateAnim() {
-    setAnim(renderFogged ? animFogged : animActive);
+    if (renderFogged) {
+      setAnim(animFogged);
+    } else if (renderActive) {
+      setAnim(animActive);
+    } else {
+      setAnim(animInActive);
+    }
   }
 
   public boolean isHQ() {
@@ -61,11 +72,14 @@ public class CitySprite extends TileSprite implements PropertyChangeListener {
     }
 
     if (evt.getSource() == city) {
-      if (propertyName.equalsIgnoreCase("location")) {
+      if (propertyName.equals("location")) {
         Tile newLocation = (Tile) evt.getNewValue();
         if (newLocation != null) {
           super.setLocation(newLocation);
         }
+      } else if (propertyName.equals("launched")) {
+        renderActive = false;
+        updateAnim();
       }
     }
   }

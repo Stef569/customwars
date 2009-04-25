@@ -1,8 +1,10 @@
 package com.customwars.client.controller;
 
+import com.customwars.client.App;
 import com.customwars.client.action.ActionFactory;
 import com.customwars.client.action.CWAction;
 import com.customwars.client.action.ShowPopupMenu;
+import com.customwars.client.action.city.StartLaunchRocketAction;
 import com.customwars.client.action.unit.SelectAction;
 import com.customwars.client.action.unit.ShowAttackZoneAction;
 import com.customwars.client.action.unit.StartAttackAction;
@@ -31,6 +33,7 @@ public class HumanUnitController extends UnitController {
   private List<Unit> unitsInTransport;
   private ShowPopupMenu showMenu;
   private boolean canStartDrop, canCapture, canSupply, canStartAttack, canWait, canJoin, canLoad;
+  private boolean canLaunchRocketFromCity;
 
   public HumanUnitController(Unit unit, InGameContext inGameContext) {
     super(unit, inGameContext);
@@ -50,6 +53,11 @@ public class HumanUnitController extends UnitController {
       Location to = context.getClick(2);
       CWAction attackAction = ActionFactory.buildAttackAction(unit, defender, to);
       context.doAction(attackAction);
+    } else if (context.isRocketLaunchMode()) {
+      City city = map.getCityOn(context.getClick(2));
+      Tile to = context.getClick(2);
+      CWAction launchRocket = ActionFactory.buildLaunchRocketAction(unit, city, to);
+      context.doAction(launchRocket);
     } else if (unit.getMoveZone().contains(selected)) {
       if (canShowMenu()) {
         context.setClick(2, selected);
@@ -160,6 +168,7 @@ public class HumanUnitController extends UnitController {
       canCapture = canCapture(selected);
       canSupply = canSupply(selected);
       canStartAttack = canStartAttack(from, selected);
+      canLaunchRocketFromCity = canLaunchRocket(selected);
       canWait = canWait(selected);
     } else {
       // Actions where the active and selected unit are on the same tile.
@@ -185,34 +194,39 @@ public class HumanUnitController extends UnitController {
 
     if (canCapture) {
       CWAction captureAction = ActionFactory.buildCaptureAction(unit, (City) to.getTerrain());
-      addToMenu(captureAction, "Capture");
+      addToMenu(captureAction, App.translate("capture"));
     }
 
     if (canSupply) {
       CWAction supplyAction = ActionFactory.buildSupplyAction(unit, to);
-      addToMenu(supplyAction, "Supply");
+      addToMenu(supplyAction, App.translate("supply"));
     }
 
     if (canStartAttack) {
       CWAction startAttackAction = new StartAttackAction(unit, to);
-      addToMenu(startAttackAction, "Fire");
+      addToMenu(startAttackAction, App.translate("fire"));
     }
 
     if (canWait) {
       CWAction waitAction = ActionFactory.buildWaitAction(unit, to);
-      addToMenu(waitAction, "Wait");
+      addToMenu(waitAction, App.translate("wait"));
     }
 
     if (canJoin) {
       Unit unitToJoin = (Unit) to.getLastLocatable();
       CWAction joinAction = ActionFactory.buildJoinAction(unit, unitToJoin);
-      addToMenu(joinAction, "Join");
+      addToMenu(joinAction, App.translate("join"));
     }
 
     if (canLoad) {
       Unit transport = (Unit) to.getLastLocatable();
       CWAction loadAction = ActionFactory.buildLoadAction(unit, transport);
-      addToMenu(loadAction, "Load");
+      addToMenu(loadAction, App.translate("load"));
+    }
+
+    if (canLaunchRocketFromCity) {
+      CWAction startLaunchAction = new StartLaunchRocketAction();
+      addToMenu(startLaunchAction, App.translate("launch"));
     }
     return showMenu;
   }
