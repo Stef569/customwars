@@ -1,5 +1,6 @@
 package com.customwars.client.ui.hud;
 
+import com.customwars.client.App;
 import com.customwars.client.io.ResourceManager;
 import com.customwars.client.io.img.slick.ImageStrip;
 import com.customwars.client.model.gameobject.City;
@@ -108,7 +109,7 @@ public class TerrainInfoBox extends BasicComponent {
   private void renderTerrainName(Graphics g) {
     g.setColor(textColor);
     Terrain terrain = tile.getTerrain();
-    g.drawString(terrain.getName(), getX() + TERRAIN_NAME_LEFT_MARGIN, getY());
+    g.drawString(App.translate(terrain.getName().toLowerCase()), getX() + TERRAIN_NAME_LEFT_MARGIN, getY());
   }
 
   public void setTile(Tile tile) {
