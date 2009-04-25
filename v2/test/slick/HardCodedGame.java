@@ -96,10 +96,10 @@ public class HardCodedGame {
   }
 
   private static void initMapProperties() {
-    map.addProperty("NAME", "test map");
-    map.addProperty("VERSION", "1.0");
-    map.addProperty("CREATOR", "Joe");
-    map.addProperty("DESCRIPTION", "A small [10x10] test map containing a couple of units and some cities.");
+    map.putProperty("NAME", "test map");
+    map.putProperty("VERSION", "1.0");
+    map.putProperty("CREATOR", "Joe");
+    map.putProperty("DESCRIPTION", "A small [10x10] test map containing a couple of units and some cities.");
   }
 
   private static City addCityToMap(int col, int row, int cityID, Player owner) {

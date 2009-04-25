@@ -383,7 +383,11 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
     firePropertyChange("fogOfWar", oldVal, fogOfWarOn);
   }
 
-  public void addProperty(String key, String value) {
+  public void setNumPlayers(int numPlayers) {
+    this.numPlayers = numPlayers;
+  }
+
+  public void putProperty(String key, String value) {
     properties.put(key, value);
   }
 
