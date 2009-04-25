@@ -36,7 +36,7 @@ public class UserConfigParser {
    * command/controls pair to the inputProvider
    *
    * @param properties containing the user Input configuration ie:
-   * user.input.select -> a,b,c
+   *                   user.input.select -> a,b,c
    */
   public void readInputConfig(Properties properties) {
     for (Object o : properties.stringPropertyNames()) {
@@ -63,7 +63,7 @@ public class UserConfigParser {
 
     for (StringTokenizer tok = new StringTokenizer(controls, ","); tok.hasMoreTokens();) {
       String controlName = tok.nextToken().toUpperCase();
-      Control control = getControlByName(controlName);
+      Control control = getControlByName(controlName.trim());
       Args.checkForNull(control, "control is null");
 
       if (!controlList.contains(control))

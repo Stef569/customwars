@@ -62,10 +62,11 @@ public final class ColorUtil {
   }
 
   public static Color toColor(String name) {
-    if (!colorMap.containsKey(name)) {
-      throw new IllegalArgumentException("ColorMap does not contain " + name);
+    String key = name.toUpperCase();
+    if (!colorMap.containsKey(key)) {
+      throw new IllegalArgumentException("ColorMap does not contain " + key);
     }
-    return colorMap.get(name);
+    return colorMap.get(key);
   }
 
   public static String toString(Color color) {

@@ -6,7 +6,9 @@ import org.newdawn.slick.command.Command;
 import org.newdawn.slick.command.Control;
 import org.newdawn.slick.command.InputProvider;
 
-import java.util.Arrays;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -17,24 +19,49 @@ import java.util.List;
  * @author stefan
  */
 public class CWInput extends InputProvider {
-  public static Command select = new BasicCommand("Select");
-  public static Command cancel = new BasicCommand("Cancel");
-  public static Command exit = new BasicCommand("Exit");
-  public static Command down = new BasicCommand("Down");
-  public static Command up = new BasicCommand("Up");
-  public static Command left = new BasicCommand("Left");
-  public static Command right = new BasicCommand("Right");
-  public static Command toggleMusic = new BasicCommand("Toggle_Music");
-  public static Command zoomIn = new BasicCommand("Zoom_In");
-  public static Command zoomOut = new BasicCommand("Zoom_Out");
-  public static Command fillMap = new BasicCommand("Fill_Map");
+  public static final Command select = new BasicCommand("Select");
+  public static final Command cancel = new BasicCommand("Cancel");
+  public static final Command exit = new BasicCommand("Exit");
+  public static final Command down = new BasicCommand("Down");
+  public static final Command up = new BasicCommand("Up");
+  public static final Command left = new BasicCommand("Left");
+  public static final Command right = new BasicCommand("Right");
+  public static final Command toggleMusic = new BasicCommand("Toggle_Music");
+  public static final Command zoomIn = new BasicCommand("Zoom_In");
+  public static final Command zoomOut = new BasicCommand("Zoom_Out");
+  public static final Command fillMap = new BasicCommand("Fill_Map");
+  public static final Command nextPage = new BasicCommand("Next_Page");
+  public static final Command prevPage = new BasicCommand("Prev_Page");
+  public static final Command recolor = new BasicCommand("Recolor");
+  public static final Command delete = new BasicCommand("Delete");
+
   private static final int KEY_REPEAT_DELAY = 250;
   private Input input;
-  private List<Command> commands = Arrays.asList(
-          select, cancel, exit,
-          down, up, left, right,
-          toggleMusic,
-          zoomIn, zoomOut, fillMap);
+  private static List<Command> commands = buildCommandList();
+
+  private static List<Command> buildCommandList() {
+    List<Command> commands = new ArrayList<Command>();
+    Field[] fields = CWInput.class.getDeclaredFields();
+    for (Field field : fields) {
+      if (isCommandField(field)) {
+        try {
+          Command command = (Command) field.get(null);
+          commands.add(command);
+        }
+        catch (IllegalAccessException ex) {
+          throw new AssertionError(ex.getMessage() + " Should not occur because the field is public and static");
+        }
+      }
+    }
+    return commands;
+  }
+
+  private static boolean isCommandField(Field field) {
+    return Modifier.isPublic(field.getModifiers())
+            && Modifier.isStatic(field.getModifiers())
+            && Modifier.isFinal(field.getModifiers())
+            && Command.class == field.getType();
+  }
 
   /**
    * Create a new input proider which will provide abstract input descriptions
@@ -106,6 +133,18 @@ public class CWInput extends InputProvider {
 
   public boolean isFillMap(Command command) {
     return fillMap.equals(command);
+  }
+
+  public boolean isNextPage(Command command) {
+    return nextPage.equals(command);
+  }
+
+  public boolean isRecolor(Command command) {
+    return recolor.equals(command);
+  }
+
+  public boolean isDelete(Command command) {
+    return delete.equals(command);
   }
 
   public Command getCommandByName(String commandName) {

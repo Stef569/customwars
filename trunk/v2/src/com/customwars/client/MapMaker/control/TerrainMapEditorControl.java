@@ -1,5 +1,7 @@
-package com.customwars.client.MapMaker;
+package com.customwars.client.MapMaker.control;
 
+import com.customwars.client.MapMaker.TerrainConnector;
+import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.Terrain;
 import com.customwars.client.model.gameobject.TerrainFactory;
 import com.customwars.client.model.map.Map;
@@ -15,10 +17,11 @@ public class TerrainMapEditorControl implements MapEditorControl {
   }
 
   @Override
-  public void addToTile(Tile t, int id) {
+  public void addToTile(Tile t, int id, Player player) {
     Terrain userChosenTerrain = getTerrain(id);
     Terrain bestFittingTerrain = terrainConnector.connectTerrain(t, userChosenTerrain);
     t.setTerrain(bestFittingTerrain);
+    terrainConnector.turnSurroundingTerrains();
   }
 
   public void removeFromTile(Tile t) {

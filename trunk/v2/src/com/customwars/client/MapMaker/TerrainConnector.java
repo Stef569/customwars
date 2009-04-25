@@ -28,7 +28,7 @@ public class TerrainConnector {
   };
 
   private TileMap<Tile> map;
-  private Terrain userChosenTerrain;
+  private Terrain baseTerrain;
   private List<Terrain> terrains;
 
   // Calculated values
@@ -53,15 +53,29 @@ public class TerrainConnector {
   public Terrain connectTerrain(Tile baseTile, Terrain baseTerrain) {
     Args.checkForNull(baseTile);
     Args.checkForNull(baseTerrain);
-    this.userChosenTerrain = baseTerrain;
+    this.baseTerrain = baseTerrain;
 
     if (baseTerrain.getName().equalsIgnoreCase("Reef"))
-      return userChosenTerrain;
+      return baseTerrain;
 
-    tileData = new SurroundingTileData(baseTile, baseTerrain);
-    tileData.calcSurroundingTileInformation();
     terrains = new ArrayList<Terrain>(TerrainFactory.getTerrains());
     Collections.sort(terrains, TERRAIN_SORT_ON_ID);
+
+    return getBestMatchingTerrain(baseTile);
+  }
+
+  public void turnSurroundingTerrains() {
+    for (Tile t : tileData.touchingTerrains) {
+      Terrain bestMatchingTerrain = getBestMatchingTerrain(t);
+      if (bestMatchingTerrain != null) {
+        t.setTerrain(bestMatchingTerrain);
+      }
+    }
+  }
+
+  private Terrain getBestMatchingTerrain(Tile baseTile) {
+    tileData = new SurroundingTileData(baseTile, baseTerrain);
+    tileData.calcSurroundingTileInformation();
 
     perfectMatchingTerrains = getTerrainsThatConnectsToAllDirections(tileData.allDirections);
     perfectAdjacentMatchingTerrains = getTerrainsThatConnectsToAllDirections(tileData.adjacentDirections);
@@ -87,7 +101,7 @@ public class TerrainConnector {
 
     // If at this point no match has been found, default back to the user chosen terrain
     if (bestMatch == null) {
-      bestMatch = userChosenTerrain;
+      bestMatch = baseTerrain;
     }
     return bestMatch;
   }
@@ -99,7 +113,7 @@ public class TerrainConnector {
   private List<Terrain> getTerrainsThatConnectsToAllDirections(List<Direction> directions) {
     List<Terrain> result = new LinkedList<Terrain>();
     for (Terrain terrain : terrains) {
-      if (terrain.isSameType(userChosenTerrain) && terrain.canConnectToAll(directions)) {
+      if (terrain.isSameType(baseTerrain) && terrain.canConnectToAll(directions)) {
         result.add(terrain);
       }
     }
@@ -113,7 +127,7 @@ public class TerrainConnector {
   private List<Terrain> getTerrainsThatConnectsToOneofDirections() {
     List<Terrain> result = new LinkedList<Terrain>();
     for (Terrain terrain : terrains) {
-      if (terrain.isSameType(userChosenTerrain) && terrain.canConnectToOneOf(tileData.allDirections)) {
+      if (terrain.isSameType(baseTerrain) && terrain.canConnectToOneOf(tileData.allDirections)) {
         result.add(terrain);
       }
     }
@@ -134,7 +148,7 @@ public class TerrainConnector {
    * Are the adjacent Terrains(Horizontal or vertical) an ocean
    */
   private boolean isOverOcean() {
-    return !userChosenTerrain.isOcean() && (isOcean(tileData.horizontalTerrains) || isOcean(tileData.verticalTerrains));
+    return !baseTerrain.isOcean() && (isOcean(tileData.horizontalTerrains) || isOcean(tileData.verticalTerrains));
   }
 
   /**
@@ -151,7 +165,7 @@ public class TerrainConnector {
    * Are the adjacent Terrains(Horizontal or vertical) a river
    */
   private boolean isOverRiver() {
-    return !userChosenTerrain.isRiver() && (isRiver(tileData.horizontalTerrains) || isRiver(tileData.verticalTerrains));
+    return !baseTerrain.isRiver() && (isRiver(tileData.horizontalTerrains) || isRiver(tileData.verticalTerrains));
 
   }
 
