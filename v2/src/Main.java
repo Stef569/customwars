@@ -165,7 +165,7 @@ public class Main {
       }
 
       // use this type of check for arguments that require arguments
-      else if (arg.equals("-startstateID")) {
+      else if (arg.equals("-startstate")) {
         if (i < args.length)
           startStateName = args[i++];
         else

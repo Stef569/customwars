@@ -64,7 +64,7 @@ public class TestInGameState extends CWState implements PropertyChangeListener {
 
     gameRenderer.setInGameContext(context);
     context.setHud(gameRenderer.getHud());
-    context.setMapRenderer(gameRenderer.getMapRenderer());
+    context.setGameRenderer(gameRenderer);
 
     ControllerManager controllerManager = new ControllerManager(context);
     context.setControllerManager(controllerManager);

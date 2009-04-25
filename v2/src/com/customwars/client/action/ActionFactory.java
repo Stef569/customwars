@@ -1,5 +1,6 @@
 package com.customwars.client.action;
 
+import com.customwars.client.action.city.LaunchRocketAction;
 import com.customwars.client.action.game.EndTurnAction;
 import com.customwars.client.action.unit.AddUnitToTileAction;
 import com.customwars.client.action.unit.AttackAction;
@@ -103,5 +104,14 @@ public class ActionFactory {
     endTurnAction.add(new EndTurnAction(statelogic));
     endTurnAction.add(new ClearInGameStateAction());
     return endTurnAction;
+  }
+
+  public static CWAction buildLaunchRocketAction(Unit unit, City city, Tile to) {
+    ActionBag launchRocketAction = new ActionBag("Launch Rocket");
+    launchRocketAction.add(new MoveAnimatedAction(unit.getLocation(), to));
+    launchRocketAction.add(new WaitAction(unit));
+    launchRocketAction.add(new LaunchRocketAction(city, unit));
+    launchRocketAction.add(new ClearInGameStateAction());
+    return launchRocketAction;
   }
 }

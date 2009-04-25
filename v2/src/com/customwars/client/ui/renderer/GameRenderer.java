@@ -15,11 +15,14 @@ import com.customwars.client.ui.sprite.SpriteManager;
 import com.customwars.client.ui.sprite.TileSprite;
 import com.customwars.client.ui.state.CWInput;
 import com.customwars.client.ui.state.InGameContext;
+import org.newdawn.slick.Animation;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Image;
 import org.newdawn.slick.command.Command;
 import org.newdawn.slick.gui.GUIContext;
 
 import java.awt.Dimension;
+import java.util.List;
 
 public class GameRenderer {
   private InGameContext context;
@@ -32,6 +35,8 @@ public class GameRenderer {
   private MapRenderer mapRenderer;
   private Camera2D camera;
   private HUD hud;
+  private Animation explosionAnim;
+  private List<Location> explosionArea;
 
   private boolean renderHUD = true;
   private boolean renderEvents = true;
@@ -49,6 +54,7 @@ public class GameRenderer {
     this.resources = resources;
     mapRenderer.loadResources(resources);
     modelEventsRenderer.loadResources(resources);
+    explosionAnim = resources.getAnim("explosion_1");
   }
 
   public void setInGameContext(InGameContext inGameContext) {
@@ -87,11 +93,21 @@ public class GameRenderer {
   private void initCursors() {
     ImageStrip selectCursorImgs = resources.getSlickImgStrip("selectCursor");
     ImageStrip aimCursorImgs = resources.getSlickImgStrip("aimCursor");
-    TileSprite selectCursor = new TileSprite(selectCursorImgs, 250, map.getRandomTile(), map);
-    TileSprite aimCursor = new TileSprite(aimCursorImgs, map.getRandomTile(), map);
+    Image siloCursorImg = resources.getSlickImg("siloCursor");
+
+    Tile randomTile = map.getRandomTile();
+    TileSprite selectCursor = new TileSprite(selectCursorImgs, 250, randomTile, map);
+    TileSprite aimCursor = new TileSprite(aimCursorImgs, randomTile, map);
+    TileSprite siloCursor = new TileSprite(siloCursorImg, randomTile, map);
+
+    // Use the silo cursor Image height to calculate the effect Range ie
+    // If the image has a height of 160/32 is 5 tiles high/2 rounded to int becomes 2.
+    int effectRange = siloCursorImg.getHeight() / map.getTileSize() / 2;
+    siloCursor.setEffectRange(effectRange);
 
     mapRenderer.addCursor("SELECT", selectCursor);
     mapRenderer.addCursor("ATTACK", aimCursor);
+    mapRenderer.addCursor("SILO", siloCursor);
     mapRenderer.activateCursor("SELECT");
   }
 
@@ -110,8 +126,21 @@ public class GameRenderer {
       g.scale(zoomLvl, zoomLvl);
       mapRenderer.render(-cameraX, -cameraY, g);
       renderDropLocations(g);
+      renderExplosionArea();
       if (renderEvents) modelEventsRenderer.render(-cameraX, -cameraY, g);
       if (renderHUD) hud.render(g);
+    }
+  }
+
+  private void renderExplosionArea() {
+    if (context != null && explosionArea != null) {
+      if (explosionAnim.isStopped()) {
+        explosionArea = null;
+      } else {
+        for (Location t : explosionArea) {
+          explosionAnim.getCurrentFrame().draw(t.getCol() * map.getTileSize(), t.getRow() * map.getTileSize());
+        }
+      }
     }
   }
 
@@ -128,6 +157,7 @@ public class GameRenderer {
   }
 
   public void update(int elapsedTime) {
+    explosionAnim.update(elapsedTime);
     mapRenderer.update(elapsedTime);
     camera.update(elapsedTime);
     modelEventsRenderer.update(elapsedTime);
@@ -198,6 +228,11 @@ public class GameRenderer {
     this.renderEvents = renderEvents;
   }
 
+  public void setExplosionArea(List<Location> explosionArea) {
+    this.explosionArea = explosionArea;
+    if (explosionAnim.isStopped()) explosionAnim.restart();
+  }
+
   public boolean isOnLeftSide(Location location) {
     return location != null && (location.getCol() < map.getCols() / 2);
   }
@@ -216,6 +251,10 @@ public class GameRenderer {
 
   public Tile getCursorLocation() {
     return (Tile) mapRenderer.getCursorLocation();
+  }
+
+  public List<Location> getCursorEffectRange() {
+    return mapRenderer.getCursorEffectRange();
   }
 
   public HUD getHud() {

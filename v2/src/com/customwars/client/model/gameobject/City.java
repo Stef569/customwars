@@ -26,6 +26,8 @@ import java.util.List;
  * Preparing for another capture process is triggered when
  * another unit tries to capture this city, or by invoking resetCapturing()
  *
+ * A City can fire a rocket once
+ *
  * @author stefan
  */
 public class City extends Terrain implements PropertyChangeListener, TurnHandler {
@@ -35,6 +37,8 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
   private List<Integer> heals;          // The ids this City can heal(Empty list means it cannot heal)
   private List<Integer> canBeCaptureBy; // The ids this City can be captured by(Empty list means it cannot be captured)
   private List<Integer> builds;         // The ids this City can build (Empty list means it cannot build)
+  private List<Integer> canBeLaunchedBy;// The ids that can launch a rocket (Empty list means it cannot launch rockets)
+  private boolean launched;             // If this city already launched a rocket
   private int maxCapCount;
   private int healRate;                 // Amount of healing/repairs this city can give to a Unit
 
@@ -59,6 +63,7 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
     this.heals = Args.createEmptyListIfNull(heals);
     this.canBeCaptureBy = Args.createEmptyListIfNull(canBeCaptureBy);
     this.builds = Args.createEmptyListIfNull(builds);
+    this.canBeLaunchedBy = Args.createEmptyListIfNull(canBeLaunchedBy);
     Args.validate(maxCapCount < 0, "maxCapcount should be positive");
   }
 
@@ -69,6 +74,8 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
     this.heals = otherCity.heals;
     this.canBeCaptureBy = otherCity.canBeCaptureBy;
     this.builds = otherCity.builds;
+    this.canBeLaunchedBy = otherCity.canBeLaunchedBy;
+
     this.maxCapCount = otherCity.maxCapCount;
     this.healRate = otherCity.healRate;
 
@@ -155,6 +162,13 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
   public void supply(Unit unit) {
     if (canSupply(unit)) {
       unit.resupply();
+    }
+  }
+
+  public void launchRocket(Unit unit) {
+    if (canLaunchRocket(unit)) {
+      launched = true;
+      firePropertyChange("launched", false, true);
     }
   }
 
@@ -246,6 +260,14 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
 
   protected boolean isCaptured() {
     return capCount == maxCapCount;
+  }
+
+  public boolean canLaunchRocket(Unit unit) {
+    return unit != null && canBeLaunchedBy.contains(unit.getID()) && canLaunchRocket();
+  }
+
+  public boolean canLaunchRocket() {
+    return !canBeLaunchedBy.isEmpty() && !launched;
   }
 
   /**

@@ -10,6 +10,7 @@ import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.model.map.path.MoveTraverse;
 import com.customwars.client.ui.HUD;
+import com.customwars.client.ui.renderer.GameRenderer;
 import com.customwars.client.ui.renderer.MapRenderer;
 import org.apache.log4j.Logger;
 import org.newdawn.slick.GameContainer;
@@ -42,7 +43,8 @@ public class InGameContext {
     GUI,            // Input is handled by the GUI
     UNIT_SELECT,    // Clicking on a unit will select it
     UNIT_ATTACK,    // Clicking on a unit will attack it
-    UNIT_DROP       // Clicking on empty space drops the unit
+    UNIT_DROP,      // Clicking on empty space drops the unit
+    LAUNCH_ROCKET   // Clicking on tile fires the rocket
   }
 
   private static final int MAX_CLICK_HISTORY = 3;
@@ -60,7 +62,7 @@ public class InGameContext {
 
   private Game game;
   private MoveTraverse moveTraverse;
-  private MapRenderer mapRenderer;
+  private GameRenderer gameRenderer;
   private HUD hud;
   private ControllerManager controllerManager;
   private ResourceManager resources;
@@ -219,8 +221,8 @@ public class InGameContext {
     this.moveTraverse = moveTraverse;
   }
 
-  public void setMapRenderer(MapRenderer mapRenderer) {
-    this.mapRenderer = mapRenderer;
+  public void setGameRenderer(GameRenderer gameRenderer) {
+    this.gameRenderer = gameRenderer;
   }
 
   public void setResources(ResourceManager resources) {
@@ -244,7 +246,11 @@ public class InGameContext {
   }
 
   public MapRenderer getMapRenderer() {
-    return mapRenderer;
+    return gameRenderer.getMapRenderer();
+  }
+
+  public GameRenderer getGameRenderer() {
+    return gameRenderer;
   }
 
   public ControllerManager getControllerManager() {
@@ -275,7 +281,7 @@ public class InGameContext {
   }
 
   public boolean isInUnitMode() {
-    return isUnitSelectMode() || isUnitAttackMode() || isUnitDropMode();
+    return isUnitSelectMode() || isUnitAttackMode() || isUnitDropMode() || isRocketLaunchMode();
   }
 
   public boolean isDefaultMode() {
@@ -296,6 +302,10 @@ public class InGameContext {
 
   public boolean isUnitDropMode() {
     return mode == MODE.UNIT_DROP;
+  }
+
+  public boolean isRocketLaunchMode() {
+    return mode == MODE.LAUNCH_ROCKET;
   }
 
   public boolean isUnitDropped(Locatable unit) {

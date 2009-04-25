@@ -3,10 +3,15 @@ package com.customwars.client.ui.sprite;
 import com.customwars.client.io.img.slick.ImageStrip;
 import com.customwars.client.model.gameobject.Locatable;
 import com.customwars.client.model.map.Location;
+import com.customwars.client.model.map.Tile;
 import com.customwars.client.model.map.TileMap;
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * TiledSprite extends Sprite adding a tile Location.
@@ -16,42 +21,44 @@ import org.newdawn.slick.Image;
  * A TiledSprite moves from one Location to another. It cannot move out of the map bounds
  */
 public class TileSprite extends Sprite implements Locatable {
-  private TileMap map;
+  private TileMap<Tile> map;
   private int tileSize;
   private Location location;
   private int frameHeightOffset;
   private int frameWidthOffset;
   private boolean renderInCenter;
+  private int effectRange;
 
   public TileSprite(Location location, TileMap map) {
     super(null);
-    setMap(map);
-    setLocation(location);
+    init(map, location, null);
   }
 
   public TileSprite(int x, int y, Location location, TileMap map) {
     super(x, y);
-    this.location = location;
-    setMap(map);
+    init(map, location, null);
   }
 
   public TileSprite(Animation anim, Location location, TileMap map) {
     super(anim);
-    this.location = location;
-    setMap(map);
+    init(map, location, anim);
   }
 
   public TileSprite(Image img, Location location, TileMap map) {
     super(img, 0, 0);
-    setMap(map);
-    setLocation(location);
+    init(map, location, null);
   }
 
   public TileSprite(ImageStrip imageStrip, int delay, Location location, TileMap map) {
     super(null, 0, 0);
+    init(map, location, new Animation(imageStrip.toArray(), delay));
+  }
+
+  private void init(TileMap map, Location location, Animation anim) {
     setMap(map);
     setLocation(location);
-    setAnim(new Animation(imageStrip.toArray(), delay));
+    if (anim != null) setAnim(anim);
+    effectRange = 0;
   }
 
   public void render(int x, int y, Graphics g) {
@@ -114,7 +121,22 @@ public class TileSprite extends Sprite implements Locatable {
     this.renderInCenter = renderInCenter;
   }
 
+  public void setEffectRange(int effectRange) {
+    this.effectRange = effectRange;
+  }
+
   public Location getLocation() {
     return location;
+  }
+
+  public List<Location> getEffectRange() {
+    List<Location> effectRange = new ArrayList<Location>();
+    // Effect range always includes the current location
+    effectRange.add(location);
+
+    for (Location tile : map.getSurroundingTiles(this.location, 1, this.effectRange)) {
+      effectRange.add(tile);
+    }
+    return Collections.unmodifiableList(effectRange);
   }
 }

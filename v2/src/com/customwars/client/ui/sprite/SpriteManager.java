@@ -3,6 +3,7 @@ package com.customwars.client.ui.sprite;
 import com.customwars.client.io.ResourceManager;
 import com.customwars.client.io.img.AnimLib;
 import com.customwars.client.io.img.slick.ImageStrip;
+import com.customwars.client.io.img.slick.SpriteSheet;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Locatable;
@@ -15,6 +16,7 @@ import com.customwars.client.ui.slick.ImageStripFont;
 import org.apache.log4j.Logger;
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Image;
 
 import java.awt.Color;
 import java.beans.PropertyChangeEvent;
@@ -22,6 +24,7 @@ import java.beans.PropertyChangeListener;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -272,7 +275,7 @@ public class SpriteManager implements PropertyChangeListener {
   public void loadCitySprite(City city) {
     Color cityColor = city.getOwner().getColor();
     CitySprite sprite = createCitySprite(city);
-    recolorCitySprite(sprite, cityColor, city.getID());
+    recolorCitySprite(city, sprite, cityColor, city.getID());
     sprite.setUpdateAnim(false);
     addCitySprite(city, sprite);
     sprite.addPropertyChangeListener(this);
@@ -290,20 +293,52 @@ public class SpriteManager implements PropertyChangeListener {
     return citySprite;
   }
 
-  private void recolorCitySprite(CitySprite sprite, Color c, int cityID) {
-    Animation animActive = resources.getCityAnim(cityID, c);
-    Animation animFogged = getFoggedCityAnim(sprite.isHQ(), c, cityID);
+  /**
+   * Launch platforms are always neutral and don't animate
+   */
+  private void recolorCitySprite(City city, CitySprite sprite, Color c, int cityID) {
+    Animation animActive = getActiveCityAnim(city, c, cityID);
+    Animation animInActive = getInActiveCityAnim(city, c, cityID);
+    Animation animFogged = getFoggedCityAnim(city, sprite.isHQ(), c, cityID);
     sprite.setAnimActive(animActive);
+    sprite.setAnimInActive(animInActive);
     sprite.setAnimFogged(animFogged);
     sprite.updateAnim();
   }
 
+  private Animation getInActiveCityAnim(City city, Color c, int cityID) {
+    if (city.canLaunchRocket()) {
+      // Grab the last Image of the city silo image row in the city spritesheet.
+      SpriteSheet citySpriteSheet = resources.getCitySpriteSheet(neutralColor);
+      Image lastImg = citySpriteSheet.getSubImage(citySpriteSheet.getHorizontalCount() - 1, cityID);
+      Image[] images = new Image[]{lastImg};
+      return new Animation(images, 1);
+    } else {
+      return null;
+    }
+  }
+
+  private Animation getActiveCityAnim(City city, Color c, int cityID) {
+    if (city.canLaunchRocket()) {
+      // Grab the first Image of the city silo image row in the city spritesheet.
+      SpriteSheet citySpriteSheet = resources.getCitySpriteSheet(neutralColor);
+      Image firstImg = citySpriteSheet.getSubImage(0, cityID);
+      Image[] images = new Image[]{firstImg};
+      return new Animation(images, 1);
+    }
+    return resources.getCityAnim(cityID, c);
+  }
+
   /**
    * The HQ owner color is always visible, even in fow
-   * all other cities are neutral until the city is within the player vision range.
+   * all other cities are neutral.
    */
-  private Animation getFoggedCityAnim(boolean hq, Color c, int cityID) {
+  private Animation getFoggedCityAnim(City city, boolean hq, Color c, int cityID) {
     Animation animFogged;
+    if (city.canLaunchRocket()) {
+      c = neutralColor;
+    }
+
     if (hq) {
       animFogged = resources.getCityAnim(cityID, c, AnimLib.ANIM_FOGGED);
     } else {
@@ -346,6 +381,10 @@ public class SpriteManager implements PropertyChangeListener {
 
   public Location getCursorLocation() {
     return activeCursor.getLocation();
+  }
+
+  public List<Location> getCursorEffectRange() {
+    return activeCursor.getEffectRange();
   }
 
   public boolean isCursorSet() {
@@ -418,7 +457,7 @@ public class SpriteManager implements PropertyChangeListener {
     if (!oldColor.equals(newColor)) {
       City city = (City) evt.getSource();
       CitySprite sprite = citySprites.get(city);
-      recolorCitySprite(sprite, newColor, city.getID());
+      recolorCitySprite(city, sprite, newColor, city.getID());
     }
   }
 
