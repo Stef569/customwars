@@ -1,7 +1,9 @@
 package com.customwars.client;
 
 import tools.Args;
+import tools.ColorUtil;
 
+import java.awt.Color;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
@@ -72,6 +74,15 @@ public class App {
     return result;
   }
 
+  public static Color getColor(String key, Color def) {
+    Color result = def;
+    String value = get(key, null);
+    if (value != null) {
+      result = ColorUtil.toColor(value);
+    }
+    return result;
+  }
+
   public static boolean getBoolean(String key) {
     return getBoolean(key, false);
   }
@@ -92,7 +103,7 @@ public class App {
    * @param msg lower case key definded in the language properties file
    * @return msg translated to the current language
    */
-  public static String getMsg(String msg) {
+  public static String translate(String msg) {
     return localeResourceBundle.getString(msg);
   }
 

@@ -123,7 +123,7 @@ id is a reference to the city image sheet
         </canBeCaptureBy>
         <maxCapCount>20</maxCapCount>
     </city>
-    <city name="Missle silo" id="5" type='Road'>
+    <city name="Missle_silo" id="5" type='Road'>
         <moveCosts>
             <int>1</int>
             <int>1</int>
