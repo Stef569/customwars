@@ -59,6 +59,7 @@ public class Main {
     appGameContainer.setDisplayMode(displayWidth, displayHeight, fullScreen);
     appGameContainer.setTargetFrameRate(60);
     appGameContainer.setForceExit(false);
+    appGameContainer.setShowFPS(false);
     appGameContainer.start();
     shutDownHook();
     System.exit(0);
