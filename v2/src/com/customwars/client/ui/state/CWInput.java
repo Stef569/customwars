@@ -34,6 +34,7 @@ public class CWInput extends InputProvider {
   public static final Command prevPage = new BasicCommand("Prev_Page");
   public static final Command recolor = new BasicCommand("Recolor");
   public static final Command delete = new BasicCommand("Delete");
+  public static final Command toggleFPS = new BasicCommand("Toggle_FPS");
 
   private static final int KEY_REPEAT_DELAY = 250;
   private Input input;
@@ -145,6 +146,10 @@ public class CWInput extends InputProvider {
 
   public boolean isDelete(Command command) {
     return delete.equals(command);
+  }
+
+  public boolean isToggleFPS(Command command) {
+    return toggleFPS.equals(command);
   }
 
   public Command getCommandByName(String commandName) {

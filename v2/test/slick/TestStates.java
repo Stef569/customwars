@@ -125,6 +125,8 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
       gameContainer.exit();
     } else if (cwInput.isToggleMusic(command)) {
       gameContainer.setMusicOn(!gameContainer.isMusicOn());
+    } else if (cwInput.isToggleFPS(command)) {
+      gameContainer.setShowFPS(!gameContainer.isShowingFPS());
     }
   }
 
