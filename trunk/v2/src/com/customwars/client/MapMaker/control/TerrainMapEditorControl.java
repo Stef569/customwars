@@ -16,16 +16,15 @@ public class TerrainMapEditorControl implements MapEditorControl {
     terrainConnector = new TerrainConnector(map);
   }
 
-  @Override
   public void addToTile(Tile t, int id, Player player) {
     Terrain userChosenTerrain = getTerrain(id);
-    Terrain bestFittingTerrain = terrainConnector.connectTerrain(t, userChosenTerrain);
-    t.setTerrain(bestFittingTerrain);
-    terrainConnector.turnSurroundingTerrains();
+    Terrain newTerrain = terrainConnector.connectTerrain(t, userChosenTerrain);
+    t.setTerrain(newTerrain);
+    terrainConnector.turnSurroundingTerrains(t, newTerrain);
   }
 
   public void removeFromTile(Tile t) {
-    // Terrains can't be removed, they are overwriten.
+    t.setTerrain(TerrainFactory.getTerrain(0));
   }
 
   public void fillMap(Map<Tile> map, int terrainID) {

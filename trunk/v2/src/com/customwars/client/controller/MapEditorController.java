@@ -7,7 +7,9 @@ import com.customwars.client.MapMaker.control.TerrainMapEditorControl;
 import com.customwars.client.MapMaker.control.UnitMapEditorControl;
 import com.customwars.client.io.ResourceManager;
 import com.customwars.client.model.game.Player;
+import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.TerrainFactory;
+import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.ui.mapMaker.CitySelectPanel;
@@ -24,7 +26,8 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * Handles input for the Map Editor, the current selected Panel/Control
+ * Handles input for the Map Editor,
+ * Unit City and terrain each have their own control object.
  *
  * @author stefan
  */
@@ -42,15 +45,13 @@ public class MapEditorController {
 
   public MapEditorController(GameRenderer gameRenderer, GUIContext guiContext) {
     this.gameRenderer = gameRenderer;
-    createEmptyMap(10, 10);
-    buildControls();
     buildPanels(guiContext);
   }
 
   private void buildControls() {
     controls = new ArrayList<MapEditorControl>();
     controls.add(new TerrainMapEditorControl(map));
-    controls.add(new CityMapEditorControl());
+    controls.add(new CityMapEditorControl(map));
     controls.add(new UnitMapEditorControl());
   }
 
@@ -137,7 +138,14 @@ public class MapEditorController {
 
   public void delete() {
     Tile t = gameRenderer.getCursorLocation();
-    getActiveControl().removeFromTile(t);
+
+    if (t.getLocatableCount() > 0) {
+      getControl(Unit.class).removeFromTile(t);
+    } else {
+      if (t.getTerrain() instanceof City) {
+        getControl(City.class).removeFromTile(t);
+      }
+    }
   }
 
   public void fill() {
@@ -190,6 +198,15 @@ public class MapEditorController {
 
   public SelectPanel getActivePanel() {
     return panels.get(activeID);
+  }
+
+  private MapEditorControl getControl(Class c) {
+    for (MapEditorControl control : controls) {
+      if (control.isTypeOf(c)) {
+        return control;
+      }
+    }
+    throw new IllegalArgumentException("No control for " + c);
   }
 
   private MapEditorControl getActiveControl() {
