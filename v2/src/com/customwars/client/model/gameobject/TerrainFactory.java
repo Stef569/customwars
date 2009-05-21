@@ -60,9 +60,13 @@ public class TerrainFactory {
     return terrain;
   }
 
-  public static Terrain getTerrain(String terrainID) {
-    Integer id = Integer.parseInt(terrainID);
-    return getTerrain(id);
+  public static Terrain getTerrain(String terrainName) {
+    for (Terrain terrain : terrains.values()) {
+      if (terrain.getName().equalsIgnoreCase(terrainName)) {
+        return terrain;
+      }
+    }
+    throw new IllegalArgumentException("Terrain with name: " + terrainName + " is not in the cache");
   }
 
   public static Terrain getRandomTerrain() {

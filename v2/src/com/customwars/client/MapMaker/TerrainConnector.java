@@ -1,5 +1,6 @@
 package com.customwars.client.MapMaker;
 
+import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Terrain;
 import com.customwars.client.model.gameobject.TerrainFactory;
 import com.customwars.client.model.map.Direction;
@@ -32,15 +33,32 @@ public class TerrainConnector {
   private List<Terrain> terrains;
 
   // Calculated values
-  SurroundingTileData tileData;
+  private SurroundingTileData tileData;
   private List<Terrain> perfectMatchingTerrains;
   private List<Terrain> perfectAdjacentMatchingTerrains;
   private List<Terrain> matchingTerrains;
   private Terrain specialMatchingTerrain;
 
   public TerrainConnector(TileMap<Tile> map) {
-    Args.checkForNull(map);
     this.map = map;
+    this.terrains = new ArrayList<Terrain>(TerrainFactory.getTerrains());
+    Collections.sort(terrains, TERRAIN_SORT_ON_ID);
+  }
+
+  /**
+   * Connect each surrounding terrain that is equal to the baseTerrain
+   * around the the baseTile.
+   */
+  public void turnSurroundingTerrains(Tile baseTile, Terrain baseTerrain) {
+    validate(baseTile, baseTerrain);
+
+    tileData = new SurroundingTileData(baseTile, baseTerrain);
+    tileData.calcSurroundingTileInformation();
+
+    for (Tile t : tileData.touchingTilesWithSameTerrain) {
+      Terrain bestMatchingTerrain = connectTerrain(t, baseTerrain);
+      t.setTerrain(bestMatchingTerrain);
+    }
   }
 
   /**
@@ -51,26 +69,24 @@ public class TerrainConnector {
    * @param baseTerrain The base terrain type that is used to calculate the best matching terrain.
    */
   public Terrain connectTerrain(Tile baseTile, Terrain baseTerrain) {
-    Args.checkForNull(baseTile);
-    Args.checkForNull(baseTerrain);
+    validate(baseTile, baseTerrain);
     this.baseTerrain = baseTerrain;
 
+    // Cities can't be overwritten by other terrains, but do connect
+    if (baseTile.getTerrain() instanceof City) {
+      return baseTile.getTerrain();
+    }
+
+    // Reefs don't connect at all, return it
     if (baseTerrain.getName().equalsIgnoreCase("Reef"))
       return baseTerrain;
-
-    terrains = new ArrayList<Terrain>(TerrainFactory.getTerrains());
-    Collections.sort(terrains, TERRAIN_SORT_ON_ID);
 
     return getBestMatchingTerrain(baseTile);
   }
 
-  public void turnSurroundingTerrains() {
-    for (Tile t : tileData.touchingTerrains) {
-      Terrain bestMatchingTerrain = getBestMatchingTerrain(t);
-      if (bestMatchingTerrain != null) {
-        t.setTerrain(bestMatchingTerrain);
-      }
-    }
+  private void validate(Tile baseTile, Terrain baseTerrain) {
+    Args.checkForNull(baseTile);
+    Args.checkForNull(baseTerrain);
   }
 
   private Terrain getBestMatchingTerrain(Tile baseTile) {
@@ -135,13 +151,13 @@ public class TerrainConnector {
   }
 
   private Terrain getSpecialTerrain() {
-    Terrain bridge = null;
+    Terrain specialTerrain = null;
     if (isOverRiver()) {
-      bridge = getBridge(true, false, perfectMatchingTerrains, matchingTerrains);
+      specialTerrain = getBridge(true, false, perfectMatchingTerrains, matchingTerrains);
     } else if (isOverOcean()) {
-      bridge = getBridge(false, true, perfectMatchingTerrains, matchingTerrains);
+      specialTerrain = getBridge(false, true, perfectMatchingTerrains, matchingTerrains);
     }
-    return bridge;
+    return specialTerrain;
   }
 
   /**
@@ -216,7 +232,7 @@ public class TerrainConnector {
     private Terrain terrain;
 
     private List<Tile> allTouchingTiles;
-    private List<Tile> touchingTerrains;
+    private List<Tile> touchingTilesWithSameTerrain;
     private List<Direction> allDirections;
     private List<Direction> adjacentDirections;
     private List<Terrain> horizontalTerrains;
@@ -229,9 +245,9 @@ public class TerrainConnector {
 
     public void calcSurroundingTileInformation() {
       allTouchingTiles = calcAllSurroundingTiles();
-      touchingTerrains = calcTerrainsOfTheSameType(allTouchingTiles);
-      allDirections = calcSurroundingDirections(touchingTerrains);
-      adjacentDirections = calcAjacentDirections(touchingTerrains);
+      touchingTilesWithSameTerrain = calcTerrainsOfTheSameType(allTouchingTiles);
+      allDirections = calcSurroundingDirections(touchingTilesWithSameTerrain);
+      adjacentDirections = calcAjacentDirections(touchingTilesWithSameTerrain);
       horizontalTerrains = calcHorizontalTerrains();
       verticalTerrains = calcVerticalTerrains();
     }
@@ -240,17 +256,19 @@ public class TerrainConnector {
      * Returns all tiles around the center
      */
     private List<Tile> calcAllSurroundingTiles() {
-      List<Tile> adjacentTiles = new ArrayList<Tile>();
-      for (Tile t : map.getSquareIterator(center, 1)) {
-        adjacentTiles.add(t);
+      List<Tile> surroundingTiles = new ArrayList<Tile>();
+      if (map.isValid(center)) {
+        for (Tile t : map.getSquareIterator(center, 1)) {
+          surroundingTiles.add(t);
+        }
       }
-      return adjacentTiles;
+      return surroundingTiles;
     }
 
     /**
      * Search around the center for the same Terrain types ie (Road, River, ...)
      */
-    private List<Tile> calcTerrainsOfTheSameType(List<Tile> surroundingTiles) {
+    public List<Tile> calcTerrainsOfTheSameType(List<Tile> surroundingTiles) {
       List<Tile> terrains = new ArrayList<Tile>();
       for (Tile t : surroundingTiles) {
         if (t.getTerrain().isSameType(terrain)) {

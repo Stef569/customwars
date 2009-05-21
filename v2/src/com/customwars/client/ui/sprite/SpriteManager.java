@@ -33,7 +33,7 @@ import java.util.Set;
  * cursors, units, cities
  *
  * Each unique animation is stored and updated.
- * Gui classes are not allowed to change the model, They only listen for changes.
+ * It listens for changes from the model and updates the graphical representation(the Sprite)
  *
  * For example when a city is captured a new Player is set.
  * This class receives a PropertyChangeEvent and recolors the city to the new owner color.
@@ -101,6 +101,10 @@ public class SpriteManager implements PropertyChangeListener {
     for (Sprite sprite : unitSprites.values()) {
       sprite.render(x, y, g);
     }
+    renderCursor(x, y, g);
+  }
+
+  public void renderCursor(int x, int y, Graphics g) {
     if (isCursorSet()) {
       activeCursor.render(x, y, g);
     }
@@ -535,15 +539,19 @@ public class SpriteManager implements PropertyChangeListener {
 
   private void terrainOnTileChange(PropertyChangeEvent evt) {
     Location newLocation = (Location) evt.getSource();
-    Terrain terrain = (Terrain) evt.getNewValue();
+    Terrain newTerrain = (Terrain) evt.getNewValue();
+    Terrain oldTerrain = (Terrain) evt.getOldValue();
 
-    if (terrain instanceof City) {
-      City city = (City) terrain;
+    if (newTerrain instanceof City) {
+      City city = (City) newTerrain;
       if (newLocation == null && citySprites.containsKey(city)) {
         removeCitySprite(city);
       } else {
         loadCitySprite(city);
       }
+    } else if (oldTerrain instanceof City) {
+      City city = (City) oldTerrain;
+      removeCitySprite(city);
     }
   }
 
@@ -556,7 +564,7 @@ public class SpriteManager implements PropertyChangeListener {
 
   public void removeUnitSprite(Unit unit) {
     Sprite sprite = unitSprites.get(unit);
-    logger.debug("Removing UnitSprite" + unit.getLocation().getLocationString());
+    logger.debug("Removing UnitSprite @ " + unit.getLocation().getLocationString());
     unitSprites.remove(unit);
     animChange(sprite.anim, null);
   }

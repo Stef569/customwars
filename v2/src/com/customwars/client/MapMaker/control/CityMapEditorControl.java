@@ -1,33 +1,38 @@
 package com.customwars.client.MapMaker.control;
 
+import com.customwars.client.MapMaker.TerrainConnector;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.CityFactory;
+import com.customwars.client.model.gameobject.TerrainFactory;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
+import com.customwars.client.model.map.TileMap;
 
 public class CityMapEditorControl implements MapEditorControl {
+  private TerrainConnector terrainConnector;
 
-  @Override
+  public CityMapEditorControl(TileMap<Tile> map) {
+    terrainConnector = new TerrainConnector(map);
+  }
+
   public void addToTile(Tile t, int id, Player player) {
     City city = CityFactory.getCity(id);
     city.setOwner(player);
     player.addCity(city);
     city.setLocation(t);
     t.setTerrain(city);
+    terrainConnector.turnSurroundingTerrains(t, city);
   }
 
-  @Override
   public void removeFromTile(Tile t) {
-    t.setTerrain(CityFactory.getCity(0));
+    t.setTerrain(TerrainFactory.getTerrain(0));
   }
 
-  @Override
   public void fillMap(Map<Tile> map, int id) {
     // map can't be filled with cities
   }
 
-  @Override
   public boolean isTypeOf(Class c) {
     return c == City.class;
   }

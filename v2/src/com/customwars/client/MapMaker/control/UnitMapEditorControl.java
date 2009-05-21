@@ -8,7 +8,6 @@ import com.customwars.client.model.map.Tile;
 
 public class UnitMapEditorControl implements MapEditorControl {
 
-  @Override
   public void addToTile(Tile t, int id, Player player) {
     Unit unit = UnitFactory.getUnit(id);
     player.addUnit(unit);
@@ -16,19 +15,15 @@ public class UnitMapEditorControl implements MapEditorControl {
     t.add(unit);
   }
 
-  @Override
   public void removeFromTile(Tile t) {
     Unit unit = (Unit) t.getLastLocatable();
-    t.remove(unit);
-    unit.getOwner().removeUnit(unit);
+    unit.destroy();
   }
 
-  @Override
   public void fillMap(Map<Tile> map, int id) {
     // map can't be filled with units
   }
 
-  @Override
   public boolean isTypeOf(Class c) {
     return c == Unit.class;
   }
