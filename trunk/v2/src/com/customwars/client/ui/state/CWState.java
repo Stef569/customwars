@@ -28,7 +28,7 @@ public abstract class CWState extends BasicGameState implements InputProviderLis
   protected static StateSession stateSession;   // Handles Data between states
   protected static Font defaultFont;
   protected static Color defaultColor = Color.white;
-  private boolean entered;
+  protected boolean entered;
 
   public final void controlPressed(Command command) {
     if (entered) controlPressed(command, cwInput);
