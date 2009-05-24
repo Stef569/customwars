@@ -44,7 +44,8 @@ public class InGameContext {
     UNIT_SELECT,    // Clicking on a unit will select it
     UNIT_ATTACK,    // Clicking on a unit will attack it
     UNIT_DROP,      // Clicking on empty space drops the unit
-    LAUNCH_ROCKET   // Clicking on tile fires the rocket
+    LAUNCH_ROCKET,  // Clicking on a tile fires the rocket
+    UNIT_FLARE      // Clicking on a tile fires a flare
   }
 
   private static final int MAX_CLICK_HISTORY = 3;
@@ -306,6 +307,10 @@ public class InGameContext {
 
   public boolean isRocketLaunchMode() {
     return mode == MODE.LAUNCH_ROCKET;
+  }
+
+  public boolean isUnitFlareMode() {
+    return mode == MODE.UNIT_FLARE;
   }
 
   public boolean isUnitDropped(Locatable unit) {

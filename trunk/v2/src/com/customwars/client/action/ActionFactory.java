@@ -5,12 +5,16 @@ import com.customwars.client.action.game.EndTurnAction;
 import com.customwars.client.action.unit.AddUnitToTileAction;
 import com.customwars.client.action.unit.AttackAction;
 import com.customwars.client.action.unit.CaptureAction;
+import com.customwars.client.action.unit.ConstructCityAction;
 import com.customwars.client.action.unit.DropAction;
+import com.customwars.client.action.unit.FireFlareAction;
 import com.customwars.client.action.unit.JoinAction;
 import com.customwars.client.action.unit.LoadAction;
 import com.customwars.client.action.unit.MoveAnimatedAction;
 import com.customwars.client.action.unit.SupplyAction;
+import com.customwars.client.action.unit.TransformTerrainAction;
 import com.customwars.client.action.unit.WaitAction;
+import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Location;
@@ -92,7 +96,7 @@ public class ActionFactory {
   }
 
   public static CWAction buildAddUnitToTileAction(Unit unit, Tile selected, boolean canUndo) {
-    ActionBag addToTileAction = new ActionBag("Add unit to tile");
+    ActionBag addToTileAction = new ActionBag("Add unit to tile actions");
     addToTileAction.add(new AddUnitToTileAction(unit, selected, canUndo));
     addToTileAction.add(new WaitAction(unit));
     addToTileAction.add(new ClearInGameStateAction());
@@ -100,18 +104,45 @@ public class ActionFactory {
   }
 
   public static CWAction buildEndTurnAction(StateLogic statelogic) {
-    ActionBag endTurnAction = new ActionBag("End Turn");
+    ActionBag endTurnAction = new ActionBag("End Turn actions");
     endTurnAction.add(new EndTurnAction(statelogic));
     endTurnAction.add(new ClearInGameStateAction());
     return endTurnAction;
   }
 
   public static CWAction buildLaunchRocketAction(Unit unit, City city, Tile to) {
-    ActionBag launchRocketAction = new ActionBag("Launch Rocket");
+    ActionBag launchRocketAction = new ActionBag("Launch Rocket actions");
     launchRocketAction.add(new MoveAnimatedAction(unit.getLocation(), to));
     launchRocketAction.add(new WaitAction(unit));
     launchRocketAction.add(new LaunchRocketAction(city, unit));
     launchRocketAction.add(new ClearInGameStateAction());
     return launchRocketAction;
+  }
+
+  public static CWAction buildTransformTerrainAction(Unit unit, Tile to) {
+    ActionBag transformTerrainAction = new ActionBag("Transform terrain actions");
+    transformTerrainAction.add(new MoveAnimatedAction(unit.getLocation(), to));
+    transformTerrainAction.add(new WaitAction(unit));
+    transformTerrainAction.add(new TransformTerrainAction(unit, to));
+    transformTerrainAction.add(new ClearInGameStateAction());
+    return transformTerrainAction;
+  }
+
+  public static CWAction buildFireFlareAction(Unit unit, Tile to, Tile flareCenter) {
+    ActionBag transformTerrainAction = new ActionBag("Fire Flare actions");
+    transformTerrainAction.add(new MoveAnimatedAction(unit.getLocation(), to));
+    transformTerrainAction.add(new WaitAction(unit));
+    transformTerrainAction.add(new FireFlareAction(flareCenter));
+    transformTerrainAction.add(new ClearInGameStateAction());
+    return transformTerrainAction;
+  }
+
+  public static CWAction buildCityAction(Unit unit, City city, Tile to, Player cityOwner) {
+    ActionBag buildCityAction = new ActionBag("Build City actions");
+    buildCityAction.add(new MoveAnimatedAction(unit.getLocation(), to));
+    buildCityAction.add(new WaitAction(unit));
+    buildCityAction.add(new ConstructCityAction(unit, city, to, cityOwner));
+    buildCityAction.add(new ClearInGameStateAction());
+    return buildCityAction;
   }
 }

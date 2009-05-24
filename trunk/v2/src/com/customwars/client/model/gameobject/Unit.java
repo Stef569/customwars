@@ -460,7 +460,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
    */
   public void construct(City city) {
     Args.checkForNull(city);
-    if (constructingCity != city) {
+    if (constructingCity == null || constructingCity.getID() != city.getID()) {
       constructingCity = city;
     }
 
