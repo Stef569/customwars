@@ -11,6 +11,7 @@ import com.customwars.client.model.gameobject.UnitFactory;
 import com.customwars.client.model.gameobject.UnitFight;
 import com.customwars.client.model.gameobject.Weapon;
 import com.customwars.client.model.gameobject.WeaponFactory;
+import com.customwars.client.model.map.Range;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 import org.newdawn.slick.loading.DeferredResource;
@@ -79,6 +80,7 @@ public class ModelLoader {
     xStream.alias("weapon", Weapon.class);
     xStream.useAttributeFor(Weapon.class, "id");
     xStream.useAttributeFor(Weapon.class, "name");
+    xStream.alias("fireRange", Range.class);
     InputStream weaponStream = ResourceLoader.getResourceAsStream(modelResPath + XML_DATA_WEAPONS_FILE);
     Collection<Weapon> weapons = (Collection<Weapon>) XStreamUtil.readObject(xStream, weaponStream);
     WeaponFactory.addWeapons(weapons);
@@ -91,6 +93,7 @@ public class ModelLoader {
     xStream.alias("secondaryWeapon", Weapon.class);
     xStream.useAttributeFor(Unit.class, "id");
     xStream.useAttributeFor(Unit.class, "name");
+    xStream.alias("supplyRange", Range.class);
     InputStream unitStream = ResourceLoader.getResourceAsStream(modelResPath + XML_DATA_UNITS_FILE);
     Collection<Unit> units = (Collection<Unit>) XStreamUtil.readObject(xStream, unitStream);
     UnitFactory.addUnits(units);

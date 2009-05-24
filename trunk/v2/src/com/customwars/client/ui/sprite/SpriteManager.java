@@ -557,14 +557,14 @@ public class SpriteManager implements PropertyChangeListener {
 
   public void removeCitySprite(City city) {
     Sprite sprite = citySprites.get(city);
-    logger.debug("Removing CitySprite @ " + city.getLocation().getLocationString());
+    logger.debug("Removing CitySprite");
     citySprites.remove(city);
     animChange(sprite.anim, null);
   }
 
   public void removeUnitSprite(Unit unit) {
     Sprite sprite = unitSprites.get(unit);
-    logger.debug("Removing UnitSprite @ " + unit.getLocation().getLocationString());
+    logger.debug("Removing UnitSprite");
     unitSprites.remove(unit);
     animChange(sprite.anim, null);
   }

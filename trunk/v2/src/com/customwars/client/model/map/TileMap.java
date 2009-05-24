@@ -3,32 +3,37 @@ package com.customwars.client.model.map;
 import com.customwars.client.model.gameobject.GameObject;
 import com.customwars.client.model.gameobject.Locatable;
 import org.apache.log4j.Logger;
-import tools.Args;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
 /**
- * Data is stored as a 2-dimensional array containing references to Location objects
- * A List is used because it has generic support.
- * The map consists of a grid of rectangular tiles. Tiles have 4 neighbours(North, East, South, West).
+ * The map consists of a grid of rectangular tiles,
+ * stored as a 2-dimensional array represented by Locations.
+ * </p>
+ * A Tile has 8 neighbours:
+ * 4 adjacent (North, East, South, West) and 4 diagonal(NorthEast, SouthEast, SouthWest, NorthWest)
  * Each tile has a height and width in pixels of tileSize.
+ * A Tile is always in one of the 4 quadrants(NE, NW, SE, SW)
+ * </p>
  * There are various ways to iterate over the tiles:
- * All tiles of this map, surrounding tiles around a center tile within a range
- * surrounding tiles in a square around a center within a range.
- * This class should not contain game specific logic, it only knows about Location objects.
+ * All tiles, surrounding tiles in a spiral and in a square.
+ * This class does not contain game specific logic.
  *
  * @author Stefan
  * @see Location
+ * @see Locatable
+ * @see Direction
  */
 public class TileMap<T extends Location> extends GameObject {
   private static final Logger logger = Logger.getLogger(TileMap.class);
   private int tileSize;             // The square size in pixels
   private int cols, rows;           // The map size in tiles
-  private List<List<T>> tiles;
+  private List<List<T>> tiles;      // The map data, A List is used because it has generic support.
 
   /**
    * Create a Map with all tiles set to null.
@@ -91,8 +96,9 @@ public class TileMap<T extends Location> extends GameObject {
 
   /**
    * Teleports the locatable from Location <tt>from</tt> to Location <tt>to</tt>
-   * <tt>from</tt> should contain the locatable, else the teleport action will not be executed
-   * if <tt>to</tt> already contains a Locatable then locatable is added to <tt>to</tt>.
+   * </p>
+   * <tt>from</tt> should contain the locatable else the teleport action will not be executed
+   * <tt>to</tt> can already contain a Locatable, in this case the locatable is added to the <tt>to</tt> tile.
    */
   public void teleport(Location from, Location to, Locatable locatable) {
     if (from.contains(locatable)) {
@@ -103,6 +109,10 @@ public class TileMap<T extends Location> extends GameObject {
     }
   }
 
+  /**
+   * Iterate over each tile in the map
+   * The returned tiles can be null if the map has not been initialised yet.
+   */
   public Iterable<T> getAllTiles() {
     return new Iterable<T>() {
       public Iterator<T> iterator() {
@@ -125,28 +135,30 @@ public class TileMap<T extends Location> extends GameObject {
     };
   }
 
+  public Iterable<T> getSurroundingTiles(Location center, int minRange, int maxRange) {
+    Range range = new Range(minRange, maxRange);
+    return getSurroundingTiles(center, range);
+  }
+
   /**
-   * Return all the tiles surrounding <tt>center</tt> within the <tt>min, max</tt> range.
+   * Return all the valid tiles surrounding <tt>center</tt> within the <tt>min, max</tt> range.
    * The center is never included</p>
    * Based on the range an AdjacentIterator or CircleIterator is returned.
    * if center is not valid then an empty Iterator is returned
    *
-   * @param center   The tile that is the center of the tiles to iterate over.
-   * @param minRange How far away do we need to start iterating from the center tile.
-   * @param maxRange How far away do we need to stop iterating from the center tile.
+   * @param center The tile that is the center of the tiles to iterate over.
+   * @param range  The range in which we need to start iterating relative to the center tile.
    * @return The tiles surrounding the given center tile.
    */
-  public Iterable<T> getSurroundingTiles(Location center, int minRange, int maxRange) {
-    Args.validate(minRange > maxRange, "minrange " + minRange + " > then " + maxRange);
-
-    if (!isValid(center) || minRange == 0 || maxRange == 0) {
-      return emptyIterator();
+  public Iterable<T> getSurroundingTiles(Location center, Range range) {
+    if (!isValid(center) || range.getMinRange() == 0 || range.getMaxRange() == 0) {
+      return Collections.emptyList();
     }
 
-    if (maxRange == 1) {
+    if (range.getMaxRange() == 1) {
       return getAdjacentIterator(center);
     } else {
-      return getCircleIterator(center, minRange, maxRange);
+      return getCircleIterator(center, range);
     }
   }
 
@@ -172,22 +184,22 @@ public class TileMap<T extends Location> extends GameObject {
     };
   }
 
-  private Iterable<T> getCircleIterator(final Location center, final int minRange, final int maxRange) {
+  private Iterable<T> getCircleIterator(final Location center, final Range range) {
     return new Iterable<T>() {
       public Iterator<T> iterator() {
-        final CircleIterator circleIterator = new CircleIterator(center, minRange, maxRange);
+        final SpiralIterator spiralIterator = new SpiralIterator(center, range);
 
         return new Iterator<T>() {
           public boolean hasNext() {
-            return circleIterator.hasNext();
+            return spiralIterator.hasNext();
           }
 
           public T next() {
-            return circleIterator.next();
+            return spiralIterator.next();
           }
 
           public void remove() {
-            circleIterator.remove();
+            spiralIterator.remove();
           }
         };
       }
@@ -210,26 +222,6 @@ public class TileMap<T extends Location> extends GameObject {
 
           public void remove() {
             squareIterator.remove();
-          }
-        };
-      }
-    };
-  }
-
-  private Iterable<T> emptyIterator() {
-    return new Iterable<T>() {
-      public Iterator<T> iterator() {
-
-        return new Iterator<T>() {
-          public boolean hasNext() {
-            return false;
-          }
-
-          public T next() {
-            return null;
-          }
-
-          public void remove() {
           }
         };
       }
@@ -271,6 +263,7 @@ public class TileMap<T extends Location> extends GameObject {
 
   /**
    * Loop through all columns for every row
+   * The center tile is never included, and all returned positions are valid {@link TileMap#isValid(Location)}
    */
   private final class WholeMapIterator extends MapIterator {
     private int col, row;
@@ -311,9 +304,9 @@ public class TileMap<T extends Location> extends GameObject {
 
   /**
    * Loop through Tiles around the Center Location
-   * This will only return tiles at the 4 compass Directions
+   * This will only return tiles at the 4 compass Directions(N,E,S,W)
    * relative to the center.
-   * if a tile is found to be out of the map bounds it is skipped
+   * The center tile is never included, and all returned positions are valid {@link TileMap#isValid(Location)}
    */
   private final class AdjacentIterator extends MapIterator {
     private final int MAX_SURROUNDING_TILE_COUNT = 4;
@@ -341,7 +334,7 @@ public class TileMap<T extends Location> extends GameObject {
       // loop through the 4 tiles around center starting at 0.
       while (index < MAX_SURROUNDING_TILE_COUNT) {
         Direction dir = Direction.values()[index];
-        nextTile = getAdjacent(center, dir);
+        nextTile = getRelativeTile(center, dir);
 
         // Skip null tiles
         if (nextTile == null) {
@@ -371,8 +364,8 @@ public class TileMap<T extends Location> extends GameObject {
   }
 
   /**
-   * An interator returning Tiles in the form of a square around the center tile within a given range.
-   * The center tile is included, and all returned positions are valid.
+   * An iterator returning Tiles in the form of a square around the center tile within a given range.
+   * The center tile is never included, and all returned positions are valid {@link TileMap#isValid(Location)}
    */
   private final class SquareIterator extends MapIterator {
     private final Location center;
@@ -383,7 +376,6 @@ public class TileMap<T extends Location> extends GameObject {
     private final int rowOffset, colOffset;
     private int row, col;
     private LinkedList<T> square;
-
 
     /**
      * @param center The location to Iterate around
@@ -418,7 +410,7 @@ public class TileMap<T extends Location> extends GameObject {
       int offset;
 
       for (offset = 0; offset < range; offset++) {
-        tile = getAdjacent(tile, direction);
+        tile = getRelativeTile(tile, direction);
 
         if (!isWithinMapBounds(tile)) {
           break;
@@ -459,9 +451,6 @@ public class TileMap<T extends Location> extends GameObject {
       return !square.isEmpty();
     }
 
-    /**
-     * @return The next Tile. This tile is guaranteed to be valid(not null, within map bounds)
-     */
     public T nextTile() {
       return square.removeLast();
     }
@@ -469,24 +458,21 @@ public class TileMap<T extends Location> extends GameObject {
 
   /**
    * An iterator returning tiles in a spiral starting at a center tile
-   * The center tile is never included
+   * The center tile is never included, and all returned positions are valid {@link TileMap#isValid(Location)}
    */
-  private final class CircleIterator extends MapIterator {
-    private final int minRange;
-    private final int maxRange;
+  private final class SpiralIterator extends MapIterator {
+    private final Range range;
     private final Location center;
     private final List<T> circleTileList = new ArrayList<T>();
     private int index;
     private T nextTile;
 
     /**
-     * @param center   The center location of the circle
-     * @param minRange min Radius of the circle
-     * @param maxRange max radius of the circle
+     * @param center The center location of the spiral
+     * @param range  min, max Radius of the spiral
      */
-    public CircleIterator(Location center, int minRange, int maxRange) {
-      this.minRange = minRange;
-      this.maxRange = maxRange;
+    public SpiralIterator(Location center, Range range) {
+      this.range = range;
       this.center = center;
 
       if (center == null) {
@@ -494,7 +480,7 @@ public class TileMap<T extends Location> extends GameObject {
       }
 
       // Get All tiles within Range.
-      for (T tile : getSquareIterator(center, maxRange)) {
+      for (T tile : getSquareIterator(center, range.getMaxRange())) {
         if (isValid(tile) && inRange(tile)) {
           circleTileList.add(tile);
         }
@@ -523,9 +509,9 @@ public class TileMap<T extends Location> extends GameObject {
       return nextTile;
     }
 
-    public boolean inRange(Location tileToCheck) {
-      int valid = Math.abs(tileToCheck.getRow() - center.getRow()) + Math.abs(tileToCheck.getCol() - center.getCol());
-      return valid >= minRange && valid <= maxRange;
+    public boolean inRange(Location tile) {
+      int distance = getDistanceBetween(tile, center);
+      return range.isInRange(distance);
     }
   }
 
@@ -587,7 +573,7 @@ public class TileMap<T extends Location> extends GameObject {
   }
 
   /**
-   * The height in pixels
+   * @return The height in pixels
    */
   public int getHeight() {
     return rows * tileSize;
@@ -600,17 +586,25 @@ public class TileMap<T extends Location> extends GameObject {
   }
 
   /**
-   * @param loc the location(col,row) to retrieve the tile
-   * @return the tile @ col, row or null if the location col, row coordinates are outside the map bounds
+   * @param loc the location(col,row) to retrieve the tile from
+   * @return the tile @ the location or
+   *         null if
+   *         the location is outside the map bounds or
+   *         the map has not yet been filled with tiles.
    */
   public T getTile(Location loc) {
     return getTile(loc.getCol(), loc.getRow());
   }
 
   /**
-   * @param col column to retrieve the tile from
-   * @param row row to retrieve the tile from
-   * @return the tile @ col, row or null if the col, row coordinates are outside the map bounds
+   * Returns the Location at the specified position in this list.
+   *
+   * @param col column coordinate in range of 0 - getCols()-1
+   * @param row row coordinate in range of 0 - getRows()-1
+   * @return the tile @ (col, row) or
+   *         null if
+   *         the location is outside the map bounds or
+   *         the map has not yet been filled with tiles.
    */
   public T getTile(int col, int row) {
     if (isWithinMapBounds(col, row)) {
@@ -621,13 +615,13 @@ public class TileMap<T extends Location> extends GameObject {
   }
 
   /**
-   * Gets the tile adjacent to the baseTile in a given direction.
+   * Get the tile relative to the baseTile in a given direction.
    *
    * @param direction A Direction where a tile should be retrieved from relative to baseTile.
-   * @param baseTile  The tile of which we want to retrieve the adjacent tile.
-   * @return Adjacent Tile or baseTile if direction == STILL.
+   * @param baseTile  The tile of which we want to retrieve the relative tile from.
+   * @return The relative Tile or baseTile if direction is Direction.STILL
    */
-  public T getAdjacent(Location baseTile, Direction direction) {
+  public T getRelativeTile(Location baseTile, Direction direction) {
     int row = baseTile.getRow();
     int col = baseTile.getCol();
 
@@ -644,17 +638,6 @@ public class TileMap<T extends Location> extends GameObject {
       case WEST:
         col = baseTile.getCol() - 1;
         break;
-      case STILL:
-        break;
-    }
-    return getTile(col, row);
-  }
-
-  public T getDiagonal(Location baseTile, Direction direction) {
-    int row = baseTile.getRow();
-    int col = baseTile.getCol();
-
-    switch (direction) {
       case NORTHEAST:
         col = baseTile.getCol() + 1;
         row = baseTile.getRow() - 1;
@@ -678,62 +661,46 @@ public class TileMap<T extends Location> extends GameObject {
   }
 
   /**
-   * What direction is the baseTile relative to the tile.
-   * if <code>tile</code> has no relative direction to the baseTile or is null then Direction.STILL is returned.
+   * Get the direction of the baseTile relative to the tile.
+   * This method never returns null, instead Direction.still is returned when the direction could not be found.
    *
-   * @return The Direction of the given tile relative to baseTile.
-   * @see Direction
+   * @return The Direction of the given tile relative to the baseTile.
+   *         if tile has no relative direction to the baseTile Direction.STILL is returned.
+   *         if baseTile or tile is null Direction.STILL is returned.
    */
   public Direction getDirectionTo(Location baseTile, Location tile) {
-    Direction direction;
-    direction = getAdjacentDirectionTo(baseTile, tile);
+    Direction direction = Direction.STILL;
 
-    if (direction == Direction.STILL) {
-      direction = getDiagonalDirectionTo(baseTile, tile);
+    if (baseTile == null || tile == null) {
+      return Direction.STILL;
+    }
+
+    if (getRelativeTile(baseTile, Direction.NORTH) == tile) {
+      direction = Direction.NORTH;
+    } else if (getRelativeTile(baseTile, Direction.EAST) == tile) {
+      direction = Direction.EAST;
+    } else if (getRelativeTile(baseTile, Direction.SOUTH) == tile) {
+      direction = Direction.SOUTH;
+    } else if (getRelativeTile(baseTile, Direction.WEST) == tile) {
+      direction = Direction.WEST;
+    } else if (getRelativeTile(baseTile, Direction.NORTHEAST) == tile) {
+      direction = Direction.NORTHEAST;
+    } else if (getRelativeTile(baseTile, Direction.NORTHWEST) == tile) {
+      direction = Direction.NORTHWEST;
+    } else if (getRelativeTile(baseTile, Direction.SOUTHEAST) == tile) {
+      direction = Direction.SOUTHEAST;
+    } else if (getRelativeTile(baseTile, Direction.SOUTHWEST) == tile) {
+      direction = Direction.SOUTHWEST;
     }
     return direction;
   }
 
   /**
-   * What direction is the baseTile relative to the adjacentTile.
-   * if <code>adjacentTile</code> is not adjacent or null Direction.STILL is returned.
-   *
-   * @return The Direction of adjacentTile relative to baseTile.
+   * @return The amount of tiles to traverse to go from a to b.
    */
-  public Direction getAdjacentDirectionTo(Location baseTile, Location adjacentTile) {
-    Direction direction;
-    if (adjacentTile == null) {
-      direction = Direction.STILL;
-    } else if (getAdjacent(baseTile, Direction.NORTH) == adjacentTile) {
-      direction = Direction.NORTH;
-    } else if (getAdjacent(baseTile, Direction.EAST) == adjacentTile) {
-      direction = Direction.EAST;
-    } else if (getAdjacent(baseTile, Direction.SOUTH) == adjacentTile) {
-      direction = Direction.SOUTH;
-    } else if (getAdjacent(baseTile, Direction.WEST) == adjacentTile) {
-      direction = Direction.WEST;
-    } else {
-      direction = Direction.STILL;
-    }
-    return direction;
-  }
-
-  public Direction getDiagonalDirectionTo(Location baseTile, Location diagonalTile) {
-    Direction direction;
-    if (diagonalTile == null) {
-      direction = Direction.STILL;
-    } else if (getDiagonal(baseTile, Direction.NORTHEAST) == diagonalTile) {
-      direction = Direction.NORTHEAST;
-    } else if (getDiagonal(baseTile, Direction.NORTHWEST) == diagonalTile) {
-      direction = Direction.NORTHWEST;
-    } else if (getDiagonal(baseTile, Direction.SOUTHEAST) == diagonalTile) {
-      direction = Direction.SOUTHEAST;
-    } else if (getDiagonal(baseTile, Direction.SOUTHWEST) == diagonalTile) {
-      direction = Direction.SOUTHWEST;
-    } else {
-      direction = Direction.STILL;
-    }
-    return direction;
+  public int getDistanceBetween(Location a, Location b) {
+    return Math.abs(a.getRow() - b.getRow()) +
+            Math.abs(a.getCol() - b.getCol());
   }
 
   /**
@@ -745,6 +712,25 @@ public class TileMap<T extends Location> extends GameObject {
     int deltaRow = Math.abs(a.getRow() - b.getRow());
     int deltaCol = Math.abs(a.getCol() - b.getCol());
     return (deltaRow <= 1) && (deltaCol <= 1) && (deltaRow != deltaCol);
+  }
+
+  /**
+   * Get the quadrant for the given location
+   * Each tilemap has 4 quadrants, a Location within this tilemap is always within 1 quadrant
+   *
+   * @param tile The tile that is located in one of the 4 quadrants
+   * @return The quadrant as a Compass direction (NE, SE, SW or NW)
+   */
+  public Direction getQuadrantFor(Location tile) {
+    int col = tile.getCol();
+    int row = tile.getRow();
+
+    if (row < rows / 2 && col > cols / 2) return Direction.NORTHEAST;
+    if (row < rows / 2 && col < cols / 2) return Direction.NORTHWEST;
+    if (row > rows / 2 && col > cols / 2) return Direction.SOUTHEAST;
+    if (row > rows / 2 && col < cols / 2) return Direction.SOUTHWEST;
+
+    throw new AssertionError("A location is always in one of the 4 quadrants");
   }
 
   public boolean isValid(Location tile) {

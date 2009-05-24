@@ -119,22 +119,20 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
    * @param capturer The Unit that will perform the capture action
    */
   public void capture(Unit capturer) {
-    if (canBeCapturedBy(capturer)) {
-      int captureRate = capturer.getCaptureRate();
-      Player newOwner = capturer.getOwner();
+    int captureRate = capturer.getCaptureRate();
+    Player newOwner = capturer.getOwner();
 
-      if (this.capturer == capturer) {    // Try to capture some more
-        addCapCount(captureRate);
-      } else {                            // Not capturing with same unit, restart capping again with the new Unit
-        setCapCount(captureRate);
-        setCapturer(capturer);
-      }
+    if (this.capturer == capturer) {    // Try to capture some more
+      addCapCount(captureRate);
+    } else {                            // Not capturing with same unit, restart capping again with the new Unit
+      setCapCount(captureRate);
+      setCapturer(capturer);
+    }
 
-      if (isCaptured()) {
-        owner.removeCity(this);
-        newOwner.addCity(this);
-        firePropertyChange("captured", null, true);
-      }
+    if (isCaptured()) {
+      owner.removeCity(this);
+      newOwner.addCity(this);
+      firePropertyChange("captured", null, true);
     }
   }
 
@@ -263,7 +261,7 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
   }
 
   public boolean canLaunchRocket(Unit unit) {
-    return unit != null && canBeLaunchedBy.contains(unit.getID()) && canLaunchRocket();
+    return unit != null && canLaunchRocket() && canBeLaunchedBy.contains(unit.getID());
   }
 
   public boolean canLaunchRocket() {

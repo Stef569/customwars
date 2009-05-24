@@ -35,6 +35,7 @@ moveCosts have the following order
         </moveCosts>
     </terrain>
     <terrain name="Forest" id="1">
+        <hidden>True</hidden>
         <defenseBonus>2</defenseBonus>
         <height>0</height>
         <moveCosts>
@@ -64,6 +65,7 @@ moveCosts have the following order
     </terrain>
     <terrain name="Mountain" id="17">
         <defenseBonus>4</defenseBonus>
+        <vision>3</vision>
         <height>2</height>
         <moveCosts>
             <int>3</int>
@@ -101,6 +103,7 @@ moveCosts have the following order
         </moveCosts>
     </terrain>
     <terrain name="Reef" id="75">
+        <hidden>True</hidden>
         <defenseBonus>2</defenseBonus>
         <height>-2</height>
         <moveCosts>

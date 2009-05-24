@@ -1,5 +1,6 @@
 package com.customwars.client.model.gameobject;
 
+import com.customwars.client.model.map.Range;
 import tools.Args;
 import tools.NumberUtil;
 
@@ -17,19 +18,17 @@ public class Weapon extends GameObject {
   private int id;
   private String name;
   private String description;
-  private int minFireRange;
-  private int maxFireRange;
+  private Range fireRange;
   private int maxAmmo;
   private boolean balistic;         // Gives this weapon indirect firing ability even after moving
   private List<Integer> attacks;    // The Armybranches this weapon can attack
   private int ammo;
 
-  public Weapon(int id, String name, String description, int minRange, int maxRange, int maxAmmo, boolean balistic, List<Integer> attacks) {
+  public Weapon(int id, String name, String description, Range fireRange, int maxAmmo, boolean balistic, List<Integer> attacks) {
     this.id = id;
     this.name = name;
     this.description = description;
-    this.minFireRange = minRange;
-    this.maxFireRange = maxRange;
+    this.fireRange = fireRange;
     this.maxAmmo = maxAmmo;
     this.balistic = balistic;
     this.attacks = attacks;
@@ -39,9 +38,9 @@ public class Weapon extends GameObject {
   public void init() {
     Args.checkForNull(attacks, "Weapon " + name + " cannot attack any armybranch");
     Args.validate(attacks.size() == 0, "Weapon " + name + " cannot attack any armybranch");
-    Args.validate(minFireRange < 0, "minRange should be positive");
-    Args.validate(maxFireRange < 0, "maxRange should be positive");
-    Args.validate(maxFireRange < minFireRange, "minRange should be smaller then maxRange");
+    if (fireRange == null) fireRange = new Range(0, 0);
+    Args.validate(fireRange.getMinRange() < 0, "minRange should be positive");
+    Args.validate(fireRange.getMaxRange() < 0, "maxRange should be positive");
     Args.validate(maxAmmo < 0, "maxAmmo should be positive");
   }
 
@@ -54,8 +53,7 @@ public class Weapon extends GameObject {
     id = otherWeapon.id;
     name = otherWeapon.name;
     description = otherWeapon.description;
-    minFireRange = otherWeapon.minFireRange;
-    maxFireRange = otherWeapon.maxFireRange;
+    fireRange = otherWeapon.fireRange;
     maxAmmo = otherWeapon.maxAmmo;
     balistic = otherWeapon.balistic;
     attacks = new ArrayList<Integer>(otherWeapon.attacks);
@@ -96,12 +94,8 @@ public class Weapon extends GameObject {
     return description;
   }
 
-  public int getMinRange() {
-    return minFireRange;
-  }
-
-  public int getMaxRange() {
-    return maxFireRange;
+  public Range getRange() {
+    return fireRange;
   }
 
   public int getMaxAmmo() {
@@ -120,8 +114,8 @@ public class Weapon extends GameObject {
     return ammo > 0;
   }
 
-  public boolean isWithinRange(int range) {
-    return range >= minFireRange && range <= maxFireRange;
+  public boolean isWithinRange(int x) {
+    return fireRange.isInRange(x);
   }
 
   public int getAmmoPercentage() {
@@ -134,6 +128,6 @@ public class Weapon extends GameObject {
 
   @Override
   public String toString() {
-    return String.format("[name=%s id=%s ammo=%s/%s range=%s/%s]", name, id, ammo, maxAmmo, minFireRange, maxFireRange);
+    return String.format("[name=%s id=%s ammo=%s/%s range=%s]", name, id, ammo, maxAmmo, fireRange);
   }
 }

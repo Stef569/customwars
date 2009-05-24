@@ -27,11 +27,11 @@ public abstract class UnitController {
   Unit unit;
   MoveTraverse moveTraverse;
 
-  protected UnitController(Unit unit, InGameContext inGameContext) {
-    this.game = inGameContext.getGame();
+  protected UnitController(Unit unit, InGameContext gameContext) {
+    this.game = gameContext.getGame();
     this.map = game.getMap();
     this.unit = unit;
-    this.moveTraverse = inGameContext.getMoveTraverse();
+    this.moveTraverse = gameContext.getMoveTraverse();
   }
 
   boolean canSelect(Location selected) {
@@ -175,6 +175,19 @@ public abstract class UnitController {
     return city != null && city.canLaunchRocket(unit) && isUnitOn(city.getLocation());
   }
 
+  boolean canTransformTerrain(Tile selected) {
+    return unit.canTransformTerrain(selected.getTerrain());
+  }
+
+  boolean canFireFlare(Tile from) {
+    return unit.canFlare() && map.isFogOfWarOn() &&
+            !isDirectUnitMoved(from) && unit.getAvailableWeapon().hasAmmoLeft();
+  }
+
+  boolean canBuildCity(Tile selected) {
+    return unit.canBuildCityOn(selected.getTerrain());
+  }
+
   boolean isActiveUnitInGame() {
     return game.getActiveUnit() == unit;
   }
@@ -187,12 +200,11 @@ public abstract class UnitController {
   }
 
   /**
-   * @param originalLocation original unit location
    * @return if this unit is a direct fire type and has it moved
    */
   boolean isDirectUnitMoved(Location originalLocation) {
     boolean moved = originalLocation != unit.getLocation();
-    return moved && unit.getMinAttackRange() > 1;
+    return moved && unit.getAttackRange().getMinRange() > 1;
   }
 
   /**

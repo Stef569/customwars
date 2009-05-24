@@ -1,6 +1,7 @@
 package com.customwars.client.model;
 
 import com.customwars.client.model.map.Location;
+import com.customwars.client.model.map.Range;
 
 import java.util.List;
 
@@ -17,9 +18,7 @@ public interface Attacker {
 
   int getArmyBranch();
 
-  int getMinAttackRange();
-
-  int getMaxAttackRange();
+  Range getAttackRange();
 
   List<Location> getAttackZone();
 

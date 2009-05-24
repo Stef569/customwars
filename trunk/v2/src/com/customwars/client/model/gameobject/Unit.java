@@ -7,13 +7,16 @@ import com.customwars.client.model.TurnHandler;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.map.Direction;
 import com.customwars.client.model.map.Location;
+import com.customwars.client.model.map.Range;
 import com.customwars.client.model.map.path.MoveStrategy;
 import com.customwars.client.model.map.path.Mover;
 import tools.Args;
 import tools.NumberUtil;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Is a Mover meaning it has the ability to be put on and removed from a Location.
@@ -31,7 +34,6 @@ import java.util.List;
  */
 public class Unit extends GameObject implements Mover, Location, TurnHandler, Attacker, Defender {
   public static final Direction DEFAULT_ORIENTATION = Direction.EAST;
-  private static final int MAX_EXP = 10;
   private int id;               // The unit Type ie(1->INF, 2->APC,...)
   private String name;          // Full name ie Infantry, Tank, ...
   private String description;   // Information about this Unit
@@ -39,8 +41,9 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   private int movement;         // The move points
   private int vision;           // The amount of tiles this unit can see in all directions aka line of sight
 
+  private int maxExperience;      // The maximum experience this unit can have
   private int maxHp;              // The value when this unit is 100% Healthy
-  private int minSupplyRange, maxSupplyRange; // Range in which the unit can supply
+  private Range supplyRange;      // Range in which the unit can supply
   private int maxSupplies;        // The value when this unit has 100% supplies
   private int maxTransportCount;  // Amount of units that can be transported
   private int dailyUse;           // Amount of supplies that are subtracted each turn from supplies
@@ -50,31 +53,37 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   private boolean canSupply;
   private boolean canTransport;
   private boolean canJoin;
+  private boolean canFlare;
+
+  private Map<Integer, Integer> transformTerrains;  // Terrain Ids this unit can transform to for a given TerrainId
+  private Map<Integer, Integer> buildCities;        // City Ids this unit can build on given terrains
+  private List<Integer> buildUnits;      // Units that can be build
 
   private int armyBranch;       // Naval, Ground, Air
   private int movementType;     // Inf, Mech, Tires, Tread, Air, Naval ...
   private MoveStrategy moveStrategy;
 
-  private int hp;               // Health Points, if 0 the unit is dead
-  private int supplies;         // Each unit has supplies, this can be in the form of rations(troops) or fuel(motorized vehicles)
-  private int experience;       // Each time a unit wins a fight his Experience rises(starting from 0 to 10)
-  private UnitState unitState;  // Current Unitstate (submerged, capturing a property,...)
+  private City constructingCity; // A City that is being build by this unit
+  private int hp;               // Health Points, if 0 the unit is destroyed
+  private int supplies;         // Supplies, this can be in the form of rations(troops) or fuel(motorized vehicles)
+  private int experience;       // Each time a unit wins a fight his Experience rises(starting from 0)
+  private UnitState unitState;  // Current Unitstate (submerged, capturing a city,...)
   private Player owner;         // Player owning this unit
-  private Location location;    // current Location
+  private Location location;    // Current Location
   private List<Location> moveZone;  // A zone where this unit can move in
   private List<Location> attZone;   // A zone where this unit can attack in
   private Direction orientation;    // The direction this unit is looking at
-  private boolean hidden;           // In fog of war, is this unit visible within enemy moveZone
+  private boolean hidden;           // In fog of war, is this unit hidden within enemy los
 
   private Weapon primaryWeapon, secondaryWeapon;
-  private List<Locatable> transport;      // Units that are within this Transport (empty when this unit can't transport)
-  private List<Integer> transportTypes;   // Movement Types that can be transported (empty when this unit can't transport)
+  private List<Locatable> transport;  // Locatables that are within this Transport
+  private List<Integer> transports;   // Ids that can be transported (empty when this unit can't transport)
 
   public Unit(int id, String name, String description,
               int cost, int movement, int vision,
               int maxHp, int maxSupplies, int maxTransportCount, int suppliesPerTurn,
-              boolean canCapture, boolean canDive, boolean canSupply, boolean canTransport, boolean canJoin, List<Integer> transportTypes,
-              int armyBranch, int movementType, int minSupplyRange, int maxSupplyRange) {
+              boolean canCapture, boolean canDive, boolean canSupply, boolean canTransport, boolean canJoin, List<Integer> transports,
+              int armyBranch, int movementType, Range supplyRange) {
     super(GameObjectState.ACTIVE);
     this.id = id;
     this.name = name;
@@ -93,19 +102,22 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
     this.canSupply = canSupply;
     this.canTransport = canTransport;
     this.canJoin = canJoin;
-    this.transportTypes = transportTypes;
+    this.transports = transports;
 
     this.armyBranch = armyBranch;
     this.movementType = movementType;
-    this.minSupplyRange = minSupplyRange;
-    this.maxSupplyRange = maxSupplyRange;
+    this.supplyRange = supplyRange;
     init();
     reset();
   }
 
   void init() {
-    this.transportTypes = Args.createEmptyListIfNull(transportTypes);
+    this.transports = Args.createEmptyListIfNull(transports);
+    this.transformTerrains = transformTerrains == null ? new HashMap<Integer, Integer>() : transformTerrains;
+    this.buildCities = buildCities == null ? new HashMap<Integer, Integer>() : buildCities;
+    this.buildUnits = Args.createEmptyListIfNull(buildUnits);
     this.transport = new LinkedList<Locatable>();
+    this.supplyRange = supplyRange == null ? new Range(0, 0) : supplyRange;
     if (name == null) name = "";
     if (description == null) description = "";
     unitState = UnitState.IDLE;
@@ -130,9 +142,9 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
     movement = otherUnit.movement;
     vision = otherUnit.vision;
 
+    maxExperience = otherUnit.maxExperience;
     maxHp = otherUnit.maxHp;
-    minSupplyRange = otherUnit.minSupplyRange;
-    maxSupplyRange = otherUnit.maxSupplyRange;
+    supplyRange = otherUnit.supplyRange;
     maxSupplies = otherUnit.maxSupplies;
     maxTransportCount = otherUnit.maxTransportCount;
     dailyUse = otherUnit.dailyUse;
@@ -142,7 +154,11 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
     canSupply = otherUnit.canSupply;
     canTransport = otherUnit.canTransport;
     canJoin = otherUnit.canJoin;
-    transportTypes = new LinkedList<Integer>(otherUnit.transportTypes);
+    canFlare = otherUnit.canFlare;
+    transformTerrains = otherUnit.transformTerrains;
+    buildCities = otherUnit.buildCities;
+    buildUnits = otherUnit.buildUnits;
+    transports = new LinkedList<Integer>(otherUnit.transports);
 
     armyBranch = otherUnit.armyBranch;
     movementType = otherUnit.movementType;
@@ -173,8 +189,9 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   }
 
   /**
-   * Removes all references to this unit
-   * so that it can be garbage collected
+   * Destroy this unit
+   * The unit fires 1 event GameObjectState -> destroyed
+   * This allows listeners to take an action when this unit is destroyed.
    */
   public void destroy() {
     clearTransport();
@@ -186,12 +203,28 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   }
 
   /**
+   * Removes all references to this unit
+   * so that it can be garbage collected
+   */
+  public void removeSelf() {
+    clearTransport();
+    location.remove(this);
+    setLocation(null);
+    owner.removeUnit(this);
+    setOwner(null);
+  }
+
+  /**
    * Destroy each unit in the transport
    */
   private void clearTransport() {
     while (transport.size() > 0) {
-      Unit unit = (Unit) transport.get(transport.size() - 1);
-      unit.destroy();
+      Locatable locatable = transport.get(transport.size() - 1);
+
+      if (locatable instanceof Unit) {
+        Unit unit = (Unit) locatable;
+        unit.destroy();
+      }
     }
   }
 
@@ -200,28 +233,6 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
 
   public void endTurn(Player invoker) {
     addSupplies(-dailyUse);
-  }
-
-  /**
-   * Restore
-   * supplies to max
-   * ammo to max
-   */
-  public void resupply() {
-    setSupplies(maxSupplies);
-    restock();
-  }
-
-  // ----------------------------------------------------------------------------
-  // Actions :: weapons
-  // ----------------------------------------------------------------------------
-  public void restock() {
-    if (hasPrimaryWeapon()) {
-      primaryWeapon.restock();
-    }
-    if (hasSecondaryWeapon()) {
-      secondaryWeapon.restock();
-    }
   }
 
   // ----------------------------------------------------------------------------
@@ -237,8 +248,8 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
       defender.defend(this, fight);
 
       if (defender.isDestroyed()) {
-        if (++experience > MAX_EXP) {
-          experience = MAX_EXP;
+        if (++experience > maxExperience) {
+          experience = maxExperience;
         }
       }
     }
@@ -274,11 +285,6 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
 
   public void defend(Attacker attacker, Fight fight) {
     receiveDamage(fight);
-
-    if (getHp() <= 0) {
-      destroy();
-      return;
-    }
 
     if (fight.canCounterAttack(attacker, this)) {
       fight.counterAttack();
@@ -370,7 +376,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   }
 
   public boolean canTransport(int id) {
-    return canTransport && transportTypes.contains(id);
+    return canTransport && transports.contains(id);
   }
 
   /**
@@ -383,6 +389,25 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   // ----------------------------------------------------------------------------
   // Actions :: supply, heal, capture
   // ----------------------------------------------------------------------------
+  /**
+   * Restore
+   * supplies to max
+   * ammo to max
+   */
+  public void resupply() {
+    setSupplies(maxSupplies);
+    restock();
+  }
+
+  public void restock() {
+    if (hasPrimaryWeapon()) {
+      primaryWeapon.restock();
+    }
+    if (hasSecondaryWeapon()) {
+      secondaryWeapon.restock();
+    }
+  }
+
   public void supply(Unit unit) {
     if (canSupply(unit))
       unit.resupply();
@@ -415,6 +440,47 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
       healAmount = healRate;
     }
     return healAmount * (price / maxHp);
+  }
+
+  public boolean canBuildCityOn(Terrain terrain) {
+    return buildCities.containsKey(terrain.getID());
+  }
+
+  public int getCityToBuildOnTerrain(Terrain terrain) {
+    return buildCities.get(terrain.getID());
+  }
+
+  // ----------------------------------------------------------------------------
+  // Actions :: Construction of City, Transform terrains
+  // ----------------------------------------------------------------------------
+  /**
+   * Construct city, This might take more then one invocation
+   * isConstructionComplete() will return true when the city is constructed.
+   * When the city construction is completed call stopConstructing() on this unit
+   */
+  public void construct(City city) {
+    Args.checkForNull(city);
+    if (constructingCity != city) {
+      constructingCity = city;
+    }
+
+    constructingCity.capture(this);
+  }
+
+  public boolean isConstructionComplete() {
+    return constructingCity.isCapturedBy(this);
+  }
+
+  public void stopConstructing() {
+    constructingCity = null;
+  }
+
+  public boolean canTransformTerrain(Terrain terrain) {
+    return transformTerrains.containsKey(terrain.getID());
+  }
+
+  public int getTransformTerrainFor(Terrain terrain) {
+    return transformTerrains.get(terrain.getID());
   }
 
   // ---------------------------------------------------------------------------
@@ -454,6 +520,9 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   }
 
   protected void setHp(int hp) {
+    if (hp <= 0)
+      destroy();
+
     int oldVal = this.hp;
     this.hp = Args.getBetweenZeroMax(hp, maxHp);
     firePropertyChange("hp", oldVal, this.hp);
@@ -576,21 +645,12 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
     return secondaryWeapon != null;
   }
 
-  public int getMinAttackRange() {
+  public Range getAttackRange() {
     Weapon weapon = getAvailableWeapon();
     if (weapon != null) {
-      return weapon.getMinRange();
+      return weapon.getRange();
     } else {
-      return 0;
-    }
-  }
-
-  public int getMaxAttackRange() {
-    Weapon weapon = getAvailableWeapon();
-    if (weapon != null) {
-      return weapon.getMaxRange();
-    } else {
-      return 0;
+      return new Range(0, 0);
     }
   }
 
@@ -613,6 +673,10 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
     return getSuppliesPercentage() <= 20;
   }
 
+  public Range getSupplyRange() {
+    return supplyRange;
+  }
+
   /**
    * Converts the internal hp to a number between 0 - 10 rounding up to the nearest absolute value.
    * hp=25
@@ -620,7 +684,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
    * hp=19
    * getHp() return 2
    *
-   * @return The Hp
+   * @return The rounded Hp between 0 - 10
    */
   public int getHp() {
     return (int) Math.ceil((double) hp / 10);
@@ -633,7 +697,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
    * maxhp=79
    * getMaxHp() return 8
    *
-   * @return The max Hp
+   * @return The max Hp between 0 - 10
    */
   public int getMaxHp() {
     return (int) Math.ceil((double) maxHp / 10);
@@ -644,7 +708,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   }
 
   /**
-   * @return if the hp dropped under the max hp
+   * @return if the hp dropped at least 10 under the max hp
    */
   public boolean hasLowHp() {
     // Don't use the internal hp because 99/100 is not low hp, 9/10 is
@@ -779,16 +843,16 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
     return canJoin;
   }
 
-  public int getMinSupplyRange() {
-    return minSupplyRange;
-  }
-
-  public int getMaxSupplyRange() {
-    return maxSupplyRange;
+  public boolean canFlare() {
+    return canFlare;
   }
 
   public int getCaptureRate() {
     return getHp();
+  }
+
+  public boolean canBuildUnit(Unit unit) {
+    return buildUnits.contains(unit.id);
   }
 
   @Override

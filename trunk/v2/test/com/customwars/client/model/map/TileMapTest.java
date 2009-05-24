@@ -171,7 +171,7 @@ public class TileMapTest {
     Tile from = map.getTile(0, 0);
     Tile to = map.getTile(1, 1);      // South east relative to from
 
-    Direction dir = map.getDiagonalDirectionTo(from, to);
+    Direction dir = map.getDirectionTo(from, to);
     Assert.assertEquals(Direction.SOUTHEAST, dir);
   }
 
@@ -180,7 +180,7 @@ public class TileMapTest {
     Tile from = map.getTile(0, 0);
     Tile to = map.getTile(-1, -1);      // Nort West relative to from but out of map bounds!
 
-    Direction dir = map.getDiagonalDirectionTo(from, to);
+    Direction dir = map.getDirectionTo(from, to);
     Assert.assertEquals(Direction.STILL, dir);
   }
 
@@ -192,6 +192,7 @@ public class TileMapTest {
     for (Location t : map.getSquareIterator(center, 1)) {
       surroundingTilesCount++;
       Assert.assertNotNull(t);
+      Assert.assertNotSame("The center is never included", t, center);
     }
 
     Assert.assertEquals(8, surroundingTilesCount);

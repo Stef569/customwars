@@ -90,14 +90,21 @@ public class UnitFight extends Fight {
   }
 
   public boolean canCounterAttack(Attacker att, Defender def) {
+    boolean canCounterAttack = false;
     if (super.canCounterAttack(att, def) && def.canCounterAttack(att)) {
-      // Swap attacker and defender
-      Attacker attacker = (Attacker) def;
-      Defender defender = (Defender) att;
-      return isDefenderAdjacentOfAttacker(attacker, defender) && attacker.getMinAttackRange() == 1;
+      // temporarely swap attacker and defender
+      swap();
+      canCounterAttack = !attackerDiesAgainst(defender) && isDefenderAdjacentOfAttacker(attacker, defender) && attacker.getAttackRange().getMinRange() == 1;
+      swap();
     } else {
       return false;
     }
+    return canCounterAttack;
+  }
+
+  private boolean attackerDiesAgainst(Defender defender) {
+    int attDmgPerc = calcAttackDamagePercentage(defender);
+    return attDmgPerc >= 100;
   }
 
   public void counterAttack() {

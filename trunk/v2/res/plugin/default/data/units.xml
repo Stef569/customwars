@@ -5,7 +5,7 @@ ArmyBranches:
   NAVAL = 1;
   AIR = 2;
 
-MovementTypes:  
+MovementTypes:
   INF = 0;
   MECH = 1;
   TREAD = 2;
@@ -23,6 +23,7 @@ MovementTypes:
         <canCapture>True</canCapture>
         <canJoin>true</canJoin>
 
+        <maxExperience>10</maxExperience>
         <maxHp>100</maxHp>
         <maxSupplies>99</maxSupplies>
 
@@ -40,6 +41,7 @@ MovementTypes:
         <canCapture>True</canCapture>
         <canJoin>true</canJoin>
 
+        <maxExperience>10</maxExperience>
         <maxHp>100</maxHp>
         <maxSupplies>99</maxSupplies>
 
@@ -61,6 +63,7 @@ MovementTypes:
 
         <canJoin>true</canJoin>
 
+        <maxExperience>10</maxExperience>
         <maxHp>100</maxHp>
         <maxSupplies>70</maxSupplies>
 
@@ -81,6 +84,7 @@ MovementTypes:
 
         <canJoin>true</canJoin>
 
+        <maxExperience>10</maxExperience>
         <maxHp>100</maxHp>
         <maxSupplies>50</maxSupplies>
 
@@ -100,7 +104,25 @@ MovementTypes:
         <vision>5</vision>
 
         <canJoin>true</canJoin>
+        <canFlare>true</canFlare>
 
+        <!-- a recon can Transform grass to forest -->
+        <transformTerrains>
+            <map>
+                <int>0</int>
+                <int>1</int>
+            </map>
+        </transformTerrains>
+
+        <!-- a recon can build a city on grass terrains -->
+        <buildCities>
+            <map>
+                <int>0</int>
+                <int>1</int>
+            </map>
+        </buildCities>
+
+        <maxExperience>10</maxExperience>
         <maxHp>100</maxHp>
         <maxSupplies>80</maxSupplies>
 
@@ -121,6 +143,7 @@ MovementTypes:
 
         <canJoin>true</canJoin>
 
+        <maxExperience>10</maxExperience>
         <maxHp>100</maxHp>
         <maxSupplies>60</maxSupplies>
 
@@ -138,6 +161,7 @@ MovementTypes:
 
         <canJoin>true</canJoin>
 
+        <maxExperience>10</maxExperience>
         <maxHp>100</maxHp>
         <maxSupplies>99</maxSupplies>
 
@@ -155,6 +179,7 @@ MovementTypes:
 
         <canJoin>true</canJoin>
 
+        <maxExperience>10</maxExperience>
         <maxHp>100</maxHp>
         <maxSupplies>50</maxSupplies>
 
@@ -172,6 +197,7 @@ MovementTypes:
 
         <canJoin>true</canJoin>
 
+        <maxExperience>10</maxExperience>
         <maxHp>100</maxHp>
         <maxSupplies>50</maxSupplies>
 
@@ -191,14 +217,16 @@ MovementTypes:
         <canJoin>true</canJoin>
         <canSupply>True</canSupply>
         <canTransport>true</canTransport>
-        <transportTypes>
+        <transports>
             <int>0</int>
             <int>1</int>
-        </transportTypes>
+        </transports>
 
         <maxHp>100</maxHp>
-        <minSupplyRange>1</minSupplyRange>
-        <maxSupplyRange>1</maxSupplyRange>
+        <supplyRange>
+            <minRange>1</minRange>
+            <maxRange>1</maxRange>
+        </supplyRange>
         <maxSupplies>70</maxSupplies>
         <maxTransportCount>3</maxTransportCount>
 
