@@ -22,8 +22,19 @@ import java.util.List;
 import java.util.Properties;
 
 /**
- * A Game map, contains game specific fields
- * Handles Fog, paths
+ * A Game map extends tileMap adding game specific fields
+ * Handles Fog, paths, units,
+ * Zones: move zone, attack zone
+ * Surrounding information: suppliables, enemies in a Range
+ *
+ * Properties contains user specific text eg:
+ * NAME -> the map name
+ * VERSION -> for what version is this map made
+ * AUTHOR -> who made this map
+ * DESCRIPTION -> Small text describing what this map is all about
+ *
+ * Each time the turn starts each tile fog value is reset to the Players vision.
+ * Each unit that the player controls is made active.
  *
  * @author stefan
  */
@@ -154,10 +165,8 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
    */
   public List<Unit> getSuppliablesInRange(Unit supplier) {
     List<Unit> units = new ArrayList<Unit>();
-    int minSupplyRange = supplier.getMinSupplyRange();
-    int maxSupplyRange = supplier.getMaxSupplyRange();
 
-    for (Tile t : getSurroundingTiles(supplier.getLocation(), minSupplyRange, maxSupplyRange)) {
+    for (Tile t : getSurroundingTiles(supplier.getLocation(), supplier.getSupplyRange())) {
       Unit unitInRange = getUnitOn(t);
 
       if (unitInRange != null) {
@@ -186,10 +195,8 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
    */
   public List<Unit> getEnemiesInRangeOf(Attacker attacker, Location center) {
     List<Unit> units = new ArrayList<Unit>();
-    int minAttackRange = attacker.getMinAttackRange();
-    int maxAttackRange = attacker.getMaxAttackRange();
 
-    for (Tile t : getSurroundingTiles(center, minAttackRange, maxAttackRange)) {
+    for (Tile t : getSurroundingTiles(center, attacker.getAttackRange())) {
       Unit unit = getUnitOn(t);
 
       if (!t.isFogged() && attacker.canAttack(unit)) {
@@ -226,11 +233,10 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
    */
   public void buildAttackZone(Attacker attacker) {
     List<Location> attackZone = new ArrayList<Location>();
-    int minAttRange = attacker.getMinAttackRange();
-    int maxAttRange = attacker.getMaxAttackRange();
+    Range attackRange = attacker.getAttackRange();
 
     for (Tile t : getAllTiles()) {
-      if (inFireRange(attacker, t, minAttRange, maxAttRange)) {
+      if (inFireRange(attacker, t, attackRange)) {
         attackZone.add(t);
       }
     }
@@ -238,22 +244,26 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
   }
 
   /**
-   * Determines if a Location is in the attacker's firing range
+   * Determines if a Location is in the attacker's attack range
    */
-  public boolean inFireRange(Attacker attacker, Location mapLocation, int minAttackRange, int maxAttackRange) {
-    if (maxAttackRange <= 0) return false;
-    int t = Math.abs(mapLocation.getRow() - attacker.getLocation().getRow()) +
-            Math.abs(mapLocation.getCol() - attacker.getLocation().getCol());
+  public boolean inFireRange(Attacker attacker, Location location, Range attackRange) {
+    if (attackRange.getMaxRange() <= 0) return false;
+    int distance = getDistanceBetween(location, attacker.getLocation());
+    boolean indirect = attackRange.getMinRange() > 1;
 
-    //Indirects
-    if (minAttackRange > 1) {
-      return t >= minAttackRange && t <= maxAttackRange;
+    if (indirect) {
+      return attackRange.isInRange(distance);
     } else {
-      //Directs
-      if (attacker.isWithinMoveZone(mapLocation)) return true;
-      for (Location moveZoneLocation : attacker.getMoveZone()) {
-        if (isAdjacent(mapLocation, moveZoneLocation)) return true;
+      if (attacker.isWithinMoveZone(location) || isAdjacentOfLocations(attacker.getMoveZone(), location)) {
+        return true;
       }
+    }
+    return false;
+  }
+
+  private boolean isAdjacentOfLocations(List<Location> locations, Location location) {
+    for (Location moveZoneLocation : locations) {
+      if (isAdjacent(location, moveZoneLocation)) return true;
     }
     return false;
   }
@@ -358,23 +368,23 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
    * See the isHidden() function.
    *
    * They can only be made clear if the unit is directly next to it
-   * The sameTile and adjacent tile are always visible.
+   * The base and adjacent tiles are always visible.
    *
    * @param tileToBeFogged The tile to check relative to the baseTile
    * @param baseTile       The tile the unit is on
    * @return If the tile can be cleared of fog.
    */
   public boolean canClearFog(Tile baseTile, Tile tileToBeFogged) {
-    City city = getCityOn(tileToBeFogged);
     Unit unit = getUnitOn(tileToBeFogged);
+    Terrain terrain = tileToBeFogged.getTerrain();
 
     boolean hiddenUnit = unit != null && unit.isHidden();
-    boolean hiddenCity = city != null && city.isHidden();
+    boolean hiddenTerrain = terrain.isHidden();
 
     // If directly next to the tile we can see everything
     boolean adjacent = isAdjacent(tileToBeFogged, baseTile);
 
-    return (!hiddenUnit && !hiddenCity) || adjacent;
+    return (!hiddenUnit && !hiddenTerrain) || adjacent;
   }
 
   public void setFogOfWarOn(boolean fogOfWarOn) {
@@ -414,6 +424,10 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
       return (City) terrain;
     }
     return null;
+  }
+
+  public boolean isFogOfWarOn() {
+    return fogOfWarOn;
   }
 
   public int getNumPlayers() {

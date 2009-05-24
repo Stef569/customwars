@@ -5,54 +5,68 @@ ArmyBranches:
  -->
 <list>
     <weapon name="SMG" id="0">
-        <minFireRange>1</minFireRange>
-        <maxFireRange>1</maxFireRange>
+        <fireRange>
+            <minRange>1</minRange>
+            <maxRange>1</maxRange>
+        </fireRange>
         <attacks>
             <int>0</int>
         </attacks>
     </weapon>
     <weapon name="BAZOOKA" id="1">
-        <minFireRange>1</minFireRange>
-        <maxFireRange>1</maxFireRange>
+        <fireRange>
+            <minRange>1</minRange>
+            <maxRange>1</maxRange>
+        </fireRange>
         <attacks>
             <int>0</int>
         </attacks>
         <description>For taking out tanks in close Combat</description>
     </weapon>
     <weapon name="TANK_MACHIN_GUN" id="2">
-        <minFireRange>1</minFireRange>
-        <maxFireRange>1</maxFireRange>
+        <fireRange>
+            <minRange>1</minRange>
+            <maxRange>1</maxRange>
+        </fireRange>
         <attacks>
             <int>0</int>
         </attacks>
         <description>For taking out units in close Combat</description>
     </weapon>
     <weapon name="TANK_MAIN_GUN" id="3">
-        <minFireRange>1</minFireRange>
-        <maxFireRange>1</maxFireRange>
+        <fireRange>
+            <minRange>1</minRange>
+            <maxRange>1</maxRange>
+        </fireRange>
         <attacks>
             <int>0</int>
         </attacks>
     </weapon>
     <weapon name="LONG_RANGE_CANNON" id="4">
-        <minFireRange>2</minFireRange>
-        <maxFireRange>5</maxFireRange>
+        <fireRange>
+            <minRange>2</minRange>
+            <maxRange>5</maxRange>
+        </fireRange>
         <attacks>
             <int>0</int>
         </attacks>
         <description>none</description>
     </weapon>
     <weapon name="ANTI_AIR" id="5">
-        <minFireRange>1</minFireRange>
-        <maxFireRange>1</maxFireRange>
+        <fireRange>
+            <minRange>1</minRange>
+            <maxRange>1</maxRange>
+        </fireRange>
         <attacks>
             <int>0</int>
             <int>2</int>
         </attacks>
     </weapon>
     <weapon name="ROCKETS" id="6">
-        <minFireRange>3</minFireRange>
-        <maxFireRange>5</maxFireRange>
+        <fireRange>
+            <minRange>3</minRange>
+            <maxRange>5</maxRange>
+        </fireRange>
         <attacks>
             <int>0</int>
             <int>1</int>
@@ -60,8 +74,10 @@ ArmyBranches:
         <description>none</description>
     </weapon>
     <weapon name="ANTI AIR ROCKETS" id="7">
-        <minFireRange>3</minFireRange>
-        <maxFireRange>5</maxFireRange>
+        <fireRange>
+            <minRange>3</minRange>
+            <maxRange>5</maxRange>
+        </fireRange>
         <attacks>
             <int>2</int>
         </attacks>

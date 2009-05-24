@@ -166,14 +166,18 @@ public class MoveTraverse {
   public Location getTrapperLocation() {
     Location moverLocation = mover.getLocation();
     Direction nextDirection = getNextDirection();
-    return map.getAdjacent(moverLocation, nextDirection);
+    return map.getRelativeTile(moverLocation, nextDirection);
   }
 
   private Direction getNextDirection() {
-    Location location = movePath.get(pathIndex);
-    Location nextLocation = movePath.get(pathIndex + 1);
+    if (movePath == null) {
+      return Direction.STILL;
+    } else {
+      Location location = movePath.get(pathIndex);
+      Location nextLocation = movePath.get(pathIndex + 1);
 
-    return map.getDirectionTo(location, nextLocation);
+      return map.getDirectionTo(location, nextLocation);
+    }
   }
 
   public synchronized void removePropertyChangeListener(PropertyChangeListener listener) {

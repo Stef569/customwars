@@ -113,10 +113,10 @@ public class MapRenderer extends TileMapRenderer {
 
   /**
    * To render an arrow we need a current and next direction
-   * So we read 1 Direction ahead. When the loop is at the last item in the path we render an arrowHead
+   * Read 1 Direction ahead, When the loop is at the last item in the path we render an arrowHead
    * The arrowHead only needs 1 direction(the arrow base)
    *
-   * nextLocation starts at the unit location and is set to the next location on each loop
+   * nextLocation starts at the unit location and is set to the next location in the path in each loop
    */
   public void renderArrowPath(Graphics g, List<Direction> directionPath) {
     Location nextLocation = activeUnit.getLocation();
@@ -126,7 +126,7 @@ public class MapRenderer extends TileMapRenderer {
       Direction nextDirection = i + 1 < directionPath.size() ? directionPath.get(i + 1) : null;
 
       // Get the next location to render the arrow on.
-      nextLocation = map.getAdjacent(nextLocation, currentDirection);
+      nextLocation = map.getRelativeTile(nextLocation, currentDirection);
 
       if (i == directionPath.size() - 1) {
         renderArrowHead(g, currentDirection, nextLocation);
@@ -284,7 +284,7 @@ public class MapRenderer extends TileMapRenderer {
 
   public void moveCursor(Direction direction) {
     Location cursorLocation = getCursorLocation();
-    Location newLocation = map.getAdjacent(cursorLocation, direction);
+    Location newLocation = map.getRelativeTile(cursorLocation, direction);
     moveCursor(newLocation);
   }
 

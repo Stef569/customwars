@@ -39,11 +39,8 @@ public class JoinAction extends DirectAction {
     // todo make the dived state of the unit being moved onto the same as the one moving
     //    target.setDived(activeUnit.isDived());
 
-    // Remove Unit manually, unit.destroy() will trigger an explosion.
-    unit.getOwner().removeUnit(unit);
-    unit.getLocation().remove(unit);
-    unit.setLocation(null);
-    unit.setOwner(null);
+    // Remove Unit, unit.destroy() will trigger an unwanted explosion.
+    unit.removeSelf();
     controllerManager.removeUnitController(unit);
   }
 }

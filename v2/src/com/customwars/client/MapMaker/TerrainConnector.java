@@ -295,7 +295,7 @@ public class TerrainConnector {
       List<Direction> directions = new ArrayList<Direction>();
       for (Tile t : surroundingTiles) {
         if (map.isAdjacent(t, center)) {
-          Direction direction = map.getAdjacentDirectionTo(center, t);
+          Direction direction = map.getDirectionTo(center, t);
           if (direction != Direction.STILL)
             directions.add(direction);
         }
@@ -310,8 +310,8 @@ public class TerrainConnector {
      */
     private List<Terrain> calcVerticalTerrains() {
       List<Terrain> verticalTerrains = new ArrayList<Terrain>();
-      Tile north = map.getAdjacent(center, Direction.NORTH);
-      Tile south = map.getAdjacent(center, Direction.SOUTH);
+      Tile north = map.getRelativeTile(center, Direction.NORTH);
+      Tile south = map.getRelativeTile(center, Direction.SOUTH);
       if (north != null) verticalTerrains.add(north.getTerrain());
       if (south != null) verticalTerrains.add(south.getTerrain());
       return verticalTerrains;
@@ -324,8 +324,8 @@ public class TerrainConnector {
      */
     private List<Terrain> calcHorizontalTerrains() {
       List<Terrain> horizontalTerrains = new ArrayList<Terrain>();
-      Tile east = map.getAdjacent(center, Direction.EAST);
-      Tile west = map.getAdjacent(center, Direction.WEST);
+      Tile east = map.getRelativeTile(center, Direction.EAST);
+      Tile west = map.getRelativeTile(center, Direction.WEST);
       if (east != null) horizontalTerrains.add(east.getTerrain());
       if (west != null) horizontalTerrains.add(west.getTerrain());
       return horizontalTerrains;
