@@ -9,7 +9,11 @@ import com.customwars.client.action.unit.SelectAction;
 import com.customwars.client.action.unit.ShowAttackZoneAction;
 import com.customwars.client.action.unit.StartAttackAction;
 import com.customwars.client.action.unit.StartDropAction;
+import com.customwars.client.action.unit.StartFlareAction;
 import com.customwars.client.model.gameobject.City;
+import com.customwars.client.model.gameobject.CityFactory;
+import com.customwars.client.model.gameobject.Terrain;
+import com.customwars.client.model.gameobject.TerrainFactory;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Tile;
@@ -33,31 +37,35 @@ public class HumanUnitController extends UnitController {
   private List<Unit> unitsInTransport;
   private ShowPopupMenu showMenu;
   private boolean canStartDrop, canCapture, canSupply, canStartAttack, canWait, canJoin, canLoad;
-  private boolean canLaunchRocketFromCity;
+  private boolean canLaunchRocketFromCity, canTransformTerrain;
+  private boolean canFireFlare;
+  private boolean canBuildCity;
 
-  public HumanUnitController(Unit unit, InGameContext inGameContext) {
-    super(unit, inGameContext);
-    this.context = inGameContext;
-    this.mapRenderer = inGameContext.getMapRenderer();
+  public HumanUnitController(Unit unit, InGameContext gameContext) {
+    super(unit, gameContext);
+    this.context = gameContext;
+    this.mapRenderer = gameContext.getMapRenderer();
     unitsInTransport = new LinkedList<Unit>();
   }
 
   public void handleAPress() {
     Tile selected = (Tile) mapRenderer.getCursorLocation();
+    Tile to = context.getClick(2);
 
     if (context.isUnitDropMode() && canDrop(selected)) {
       addDropLocation(selected);
       initUnitActionMenu(selected);
     } else if (context.isUnitAttackMode() && canAttack(selected)) {
       Unit defender = (Unit) selected.getLastLocatable();
-      Location to = context.getClick(2);
       CWAction attackAction = ActionFactory.buildAttackAction(unit, defender, to);
       context.doAction(attackAction);
     } else if (context.isRocketLaunchMode()) {
       City city = map.getCityOn(context.getClick(2));
-      Tile to = context.getClick(2);
       CWAction launchRocket = ActionFactory.buildLaunchRocketAction(unit, city, to);
       context.doAction(launchRocket);
+    } else if (context.isUnitFlareMode() && unit.getAttackZone().contains(selected)) {
+      CWAction fireFlare = ActionFactory.buildFireFlareAction(unit, to, selected);
+      context.doAction(fireFlare);
     } else if (unit.getMoveZone().contains(selected)) {
       if (canShowMenu()) {
         context.setClick(2, selected);
@@ -135,7 +143,7 @@ public class HumanUnitController extends UnitController {
           unitsInTransport.add(unitInTransport);
           if (canStartDrop(to, selected, dropCount + 1)) {
             CWAction dropAction = new StartDropAction(to);
-            addToMenu(dropAction, "Drop " + unitInTransport.getName());
+            addToMenu(dropAction, App.translate("drop") + " " + unitInTransport.getName());
           }
         }
       }
@@ -143,7 +151,7 @@ public class HumanUnitController extends UnitController {
       // In drop mode the wait Button acts as the drop Action
       if (context.isUnitDropMode()) {
         CWAction dropAction = ActionFactory.buildDropAction(unit, from, to, context.getDropCount(), context.getUnitsToBeDropped());
-        MenuItem waitItem = new MenuItem("Wait", context.getContainer());
+        MenuItem waitItem = new MenuItem(App.translate("wait"), context.getContainer());
         showMenu.addAction(dropAction, waitItem);
       }
     }
@@ -161,6 +169,9 @@ public class HumanUnitController extends UnitController {
     canWait = false;
     canJoin = false;
     canLoad = false;
+    canTransformTerrain = false;
+    canFireFlare = false;
+    canBuildCity = false;
     Tile from = context.getClick(1);
 
     if (canWait(selected)) {
@@ -170,6 +181,9 @@ public class HumanUnitController extends UnitController {
       canStartAttack = canStartAttack(from, selected);
       canLaunchRocketFromCity = canLaunchRocket(selected);
       canWait = canWait(selected);
+      canTransformTerrain = canTransformTerrain(selected);
+      canFireFlare = canFireFlare(from);
+      canBuildCity = canBuildCity(selected);
     } else {
       // Actions where the active and selected unit are on the same tile.
       canJoin = canJoin(selected);
@@ -207,11 +221,6 @@ public class HumanUnitController extends UnitController {
       addToMenu(startAttackAction, App.translate("fire"));
     }
 
-    if (canWait) {
-      CWAction waitAction = ActionFactory.buildWaitAction(unit, to);
-      addToMenu(waitAction, App.translate("wait"));
-    }
-
     if (canJoin) {
       Unit unitToJoin = (Unit) to.getLastLocatable();
       CWAction joinAction = ActionFactory.buildJoinAction(unit, unitToJoin);
@@ -228,7 +237,38 @@ public class HumanUnitController extends UnitController {
       CWAction startLaunchAction = new StartLaunchRocketAction();
       addToMenu(startLaunchAction, App.translate("launch"));
     }
+
+    if (canTransformTerrain) {
+      CWAction transformAction = ActionFactory.buildTransformTerrainAction(unit, to);
+      addToMenu(transformAction, App.translate("build") + " " + getTransformToTerrain(to).getName());
+    }
+
+    if (canFireFlare) {
+      CWAction fireFlareAction = new StartFlareAction();
+      addToMenu(fireFlareAction, App.translate("flare"));
+    }
+
+    if (canBuildCity) {
+      City city = getCityThatCanBeBuildOn(to);
+      CWAction buildCityAction = ActionFactory.buildCityAction(unit, city, to, unit.getOwner());
+      addToMenu(buildCityAction, App.translate("build") + " " + city.getName());
+    }
+
+    if (canWait) {
+      CWAction waitAction = ActionFactory.buildWaitAction(unit, to);
+      addToMenu(waitAction, App.translate("wait"));
+    }
     return showMenu;
+  }
+
+  private Terrain getTransformToTerrain(Tile tile) {
+    int tranformID = unit.getTransformTerrainFor(tile.getTerrain());
+    return TerrainFactory.getTerrain(tranformID);
+  }
+
+  private City getCityThatCanBeBuildOn(Tile tile) {
+    int cityID = unit.getCityToBuildOnTerrain(tile.getTerrain());
+    return CityFactory.getCity(cityID);
   }
 
   /**
