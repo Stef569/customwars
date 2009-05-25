@@ -10,17 +10,17 @@ import org.junit.Test;
 import tools.MapUtil;
 
 /**
- * Test functions in the TileMap2D class
+ * Test functions in the TileMap class
  *
  * @author Stefan
  */
 public class TileMapTest {
-  private Map<Tile> map;
+  private TileMap<Tile> map;
 
   @Before
   public void beforeEachTest() {
-    map = new Map<Tile>(10, 15, 32, 3);
-    map.setFogOfWarOn(true);
+    map = new TileMap<Tile>(10, 15, 32);
+    // Fill the map with tiles that contain a plain terrain.
     MapUtil.fillWithTiles(map, TerrainFactory.getTerrain(TestData.PLAIN));
   }
 
@@ -286,5 +286,62 @@ public class TileMapTest {
     }
 
     Assert.assertEquals(19, surroundingTilesCount);
+  }
+
+  @Test
+  public void distanceTest() {
+    Location a = map.getTile(0, 0);
+    Location b = map.getTile(1, 1);
+
+    // One down one to the right makes 2
+    Assert.assertEquals(2, map.getDistanceBetween(a, b));
+  }
+
+  @Test
+  public void distanceTest2() {
+    Location a = map.getTile(2, 2);
+    Location b = map.getTile(4, 5);
+
+    // 2 down 3 to the right makes 5
+    Assert.assertEquals(5, map.getDistanceBetween(a, b));
+  }
+
+  @Test
+  public void quadrantTest() {
+    Location topLeft = map.getTile(0, 0);
+    Assert.assertEquals("Top left tile is always in the NW quadrant.",
+            Direction.NORTHWEST, map.getQuadrantFor(topLeft));
+  }
+
+  @Test
+  public void quadrantTest2() {
+    Location topLeft = map.getTile(0, map.getRows() - 1);
+    Assert.assertEquals("Down left tile is always in the SW quadrant.",
+            Direction.SOUTHWEST, map.getQuadrantFor(topLeft));
+  }
+
+  @Test
+  public void quadrantTest3() {
+    Location topLeft = map.getTile(map.getCols() - 1, 0);
+    Assert.assertEquals("Top right tile is always in the NE quadrant.",
+            Direction.NORTHEAST, map.getQuadrantFor(topLeft));
+  }
+
+  @Test
+  public void testRandomTile() {
+    Tile random = map.getRandomTile();
+
+    Assert.assertTrue(random != null);
+    Assert.assertTrue(map.isValid(random));
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void illegalMapInitialisation() {
+    new TileMap(-2, -1, 5);
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void illegalMapInitialisation2() {
+    new TileMap(1, 1, -5);
   }
 }
