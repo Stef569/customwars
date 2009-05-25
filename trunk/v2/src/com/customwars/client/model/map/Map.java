@@ -27,7 +27,7 @@ import java.util.Properties;
  * Zones: move zone, attack zone
  * Surrounding information: suppliables, enemies in a Range
  *
- * Properties contains user specific text eg:
+ * Properties contains game specific text eg:
  * NAME -> the map name
  * VERSION -> for what version is this map made
  * AUTHOR -> who made this map
@@ -52,6 +52,8 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
 
   public Map(int cols, int rows, int tileSize, int numPlayers) {
     super(cols, rows, tileSize);
+    Args.validateBetweenZeroMax(numPlayers, Integer.MAX_VALUE, "numplayers");
+
     this.numPlayers = numPlayers;
     this.pathFinder = new PathFinder(this);
     this.properties = new Properties();
@@ -99,14 +101,16 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
     return terrainCopy;
   }
 
-  protected void validateMapState(boolean validateTiles) throws IllegalStateException {
-    super.validateMapState(validateTiles);
-    Args.validateBetweenZeroMax(numPlayers, Integer.MAX_VALUE, "numplayers");
+  private void validateMapState() throws IllegalStateException {
+    for (int row = 0; row < getRows(); row++) {
+      for (int col = 0; col < getCols(); col++) {
+        T tile = getTile(col, row);
+        if (tile == null) {
+          throw new IllegalStateException("Tile @ col:" + col + ", Row:" + row + " is null");
+        }
 
-    if (validateTiles) {
-      for (Tile t : getAllTiles()) {
-        if (t.getTerrain() == null) {
-          throw new IllegalStateException("Tile " + t + " has no terrain.");
+        if (tile.getTerrain() == null) {
+          throw new IllegalStateException("Tile @ col:" + col + ", Row:" + row + " has no terrain.");
         }
       }
     }
@@ -129,7 +133,7 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
    * @param player The player who's units should be made active and fog applied to.
    */
   public void resetMap(Player player) {
-    validateMapState(true);
+    validateMapState();
     resetUnits(player);
     if (fogOfWarOn) {
       resetFogMap(player);
@@ -247,23 +251,24 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
    * Determines if a Location is in the attacker's attack range
    */
   public boolean inFireRange(Attacker attacker, Location location, Range attackRange) {
-    if (attackRange.getMaxRange() <= 0) return false;
-    int distance = getDistanceBetween(location, attacker.getLocation());
-    boolean indirect = attackRange.getMinRange() > 1;
+    if (attackRange.getMaxRange() >= 0) {
+      int distance = getDistanceBetween(location, attacker.getLocation());
+      boolean indirect = attackRange.getMinRange() > 1;
 
-    if (indirect) {
-      return attackRange.isInRange(distance);
-    } else {
-      if (attacker.isWithinMoveZone(location) || isAdjacentOfLocations(attacker.getMoveZone(), location)) {
-        return true;
+      if (indirect) {
+        return attackRange.isInRange(distance);
+      } else {
+        if (attacker.isWithinMoveZone(location) || isAdjacentOfLocations(location, attacker.getMoveZone())) {
+          return true;
+        }
       }
     }
     return false;
   }
 
-  private boolean isAdjacentOfLocations(List<Location> locations, Location location) {
-    for (Location moveZoneLocation : locations) {
-      if (isAdjacent(location, moveZoneLocation)) return true;
+  private boolean isAdjacentOfLocations(Location location, List<Location> locations) {
+    for (Location loc : locations) {
+      if (isAdjacent(location, loc)) return true;
     }
     return false;
   }
@@ -402,7 +407,7 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
   }
 
   /**
-   * Retrieves the last unit from location
+   * Retrieves the last added unit from location
    * if location doesn't contain a unit <b>NULL</b> is returned
    */
   public Unit getUnitOn(Location location) {

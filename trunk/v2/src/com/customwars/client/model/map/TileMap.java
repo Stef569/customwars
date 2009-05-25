@@ -44,12 +44,19 @@ public class TileMap<T extends Location> extends GameObject {
    * @param tileSize square size of 1 tile
    */
   public TileMap(int cols, int rows, int tileSize) {
+    if (cols <= 0 || rows <= 0) {
+      throw new IllegalArgumentException("Map cols:" + cols + ", rows:" + rows + " is not valid");
+    }
+
+    if (tileSize <= 0) {
+      throw new IllegalArgumentException("TileSize: " + tileSize + " is <=0");
+    }
+
     this.cols = cols;
     this.rows = rows;
     this.tileSize = tileSize;
     this.tiles = new ArrayList<List<T>>(cols);
     initTiles();
-    validateMapState(false);
   }
 
   /**
@@ -63,34 +70,6 @@ public class TileMap<T extends Location> extends GameObject {
         rowList.add(null);
       }
       tiles.add(rowList);
-    }
-  }
-
-  /**
-   * Validate this map
-   *
-   * @param validateTiles if all the tiles in the map should be checked
-   * @throws IllegalStateException when the map is not valid
-   */
-  void validateMapState(boolean validateTiles) throws IllegalStateException {
-    if (cols <= 0 || rows <= 0) {
-      throw new IllegalStateException("Map cols:" + cols + ", rows:" + rows + " is not valid");
-    }
-
-    if (tileSize <= 0) {
-      throw new IllegalStateException("TileSize: " + tileSize + " is <=0");
-    }
-
-    if (validateTiles) {
-      // Each map position needs a non null tile object
-      for (int row = 0; row < rows; row++) {
-        for (int col = 0; col < cols; col++) {
-          T tile = tiles.get(col).get(row);
-          if (tile == null) {
-            throw new IllegalStateException("Map Location @ col:" + col + ", Row:" + row + " is null");
-          }
-        }
-      }
     }
   }
 
@@ -707,8 +686,9 @@ public class TileMap<T extends Location> extends GameObject {
    * @return True if the two tiles are next to each other
    */
   public boolean isAdjacent(Location a, Location b) {
-    if (a == b)
+    if (a == b || a == null || b == null)
       return false;
+
     int deltaRow = Math.abs(a.getRow() - b.getRow());
     int deltaCol = Math.abs(a.getCol() - b.getCol());
     return (deltaRow <= 1) && (deltaCol <= 1) && (deltaRow != deltaCol);
@@ -733,6 +713,9 @@ public class TileMap<T extends Location> extends GameObject {
     throw new AssertionError("A location is always in one of the 4 quadrants");
   }
 
+  /**
+   * A tile is valid when it is not null and within the map bounds
+   */
   public boolean isValid(Location tile) {
     return isWithinMapBounds(tile);
   }
