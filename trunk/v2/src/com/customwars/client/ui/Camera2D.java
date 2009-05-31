@@ -18,20 +18,14 @@ public class Camera2D {
   private static final float ZOOM_STEP = 0.05f;
   private float zoomLvl = 1;
   private Dimension world;
-  private Dimension screen;
   private Dimension camera;
   private int cameraX, cameraY;
   private int tileSize;
 
-  public Camera2D(Dimension cameraSize, Dimension screenSize, Dimension worldSize, int tileSize) {
+  public Camera2D(Dimension cameraSize, Dimension worldSize, int tileSize) {
     this.camera = new Dimension(cameraSize);
-    this.screen = new Dimension(screenSize);
     this.world = new Dimension(worldSize);
     this.tileSize = tileSize;
-  }
-
-  public Camera2D(Dimension screenSize, Dimension worldSize, int tileSize) {
-    this(screenSize, screenSize, worldSize, tileSize);
   }
 
   public void update(int elapsedTime) {
@@ -43,8 +37,9 @@ public class Camera2D {
   }
 
   public void centerOnTile(int col, int row) {
-    if (canMove()) {
+    if (canMoveHorizontal()) {
       setX((int) (col * tileSize - camera.getWidth() / 2));
+    } else if (canMoveVertical()) {
       setY((int) (row * tileSize - camera.getHeight() / 2));
     }
   }
@@ -65,12 +60,18 @@ public class Camera2D {
     setZoomLvl(zoomLvl - ZOOM_STEP);
   }
 
+  private void setZoomLvl(float newZoomLvl) {
+    if (newZoomLvl > 0.3 && newZoomLvl < 1.6) {
+      this.zoomLvl = newZoomLvl;
+    }
+  }
+
   public void moveLeft() {
     moveLeft(tileSize);
   }
 
   private void moveLeft(int amount) {
-    if (canMove())
+    if (canMoveHorizontal())
       setX(cameraX - amount);
   }
 
@@ -79,7 +80,7 @@ public class Camera2D {
   }
 
   private void moveRight(int amount) {
-    if (canMove())
+    if (canMoveHorizontal())
       setX(cameraX + amount);
   }
 
@@ -88,7 +89,7 @@ public class Camera2D {
   }
 
   private void moveUp(int amount) {
-    if (canMove())
+    if (canMoveVertical())
       setY(cameraY - amount);
   }
 
@@ -97,26 +98,19 @@ public class Camera2D {
   }
 
   private void moveDown(int amount) {
-    if (canMove())
+    if (canMoveVertical())
       setY(cameraY + amount);
-  }
-
-  private void setZoomLvl(float newZoomLvl) {
-    if (newZoomLvl > 0.3 && newZoomLvl < 1.6) {
-      this.zoomLvl = newZoomLvl;
-    }
   }
 
   /**
    * Make sure the camera doesn't scroll off the map
    *
    * @param cameraX the new camera position on the x axis
-   *                todo off the map scroll + camera can be smaller or larger then the world size...
    */
   private void setX(int cameraX) {
     if (cameraX < 0) cameraX = 0;
-    if (cameraX >= 0) {
-      cameraX = 0;
+    if (cameraX + camera.width >= world.getWidth()) {
+      cameraX = (int) (world.getWidth() - getWidth());
     }
     this.cameraX = cameraX;
   }
@@ -128,8 +122,8 @@ public class Camera2D {
    */
   private void setY(int cameraY) {
     if (cameraY < 0) cameraY = 0;
-    if (cameraY >= 0) {
-      cameraY = 0;
+    if (cameraY + camera.height >= world.getHeight()) {
+      cameraY = (int) (world.getHeight() - getHeight());
     }
     this.cameraY = cameraY;
   }
@@ -142,11 +136,19 @@ public class Camera2D {
     return cameraY + camera.height;
   }
 
-  public int getCols() {
+  /**
+   * @return The maximum width in tiles relative to the left map edge
+   *         The return value rises when moving to the right
+   */
+  public int getMaxCols() {
     return getMaxX() / tileSize;
   }
 
-  public int getRows() {
+  /**
+   * @return The maximum height in tiles relative to the top map edge
+   *         The return value rises when moving down
+   */
+  public int getMaxRows() {
     return getMaxY() / tileSize;
   }
 
@@ -170,12 +172,12 @@ public class Camera2D {
     return zoomLvl;
   }
 
-  /**
-   * @return True when the camera is larger then the game world
-   */
-  private boolean canMove() {
-    return camera.getWidth() < world.getWidth() &&
-            camera.getHeight() < world.getHeight();
+  private boolean canMoveHorizontal() {
+    return getMaxX() <= world.getWidth();
+  }
+
+  private boolean canMoveVertical() {
+    return getMaxY() <= world.getHeight();
   }
 
   public int getWidth() {
