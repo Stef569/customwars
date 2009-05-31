@@ -18,14 +18,13 @@ import java.awt.Color;
 
 
 public class UnitTest {
-  private Player player1, player2;
+  private Player player1;
   private Map<Tile> map;
   private InGameContext inGameContext;
 
   @Before
   public void beforeEachTest() {
     player1 = new Player(0, Color.RED, false, null, "John", 1500, 0, false);
-    player2 = new Player(1, Color.BLUE, false, null, "Bob", 2800, 1, false);
     inGameContext = new InGameContext();
     Game game = HardCodedGame.getGame();
     inGameContext.setGame(game);
@@ -72,31 +71,5 @@ public class UnitTest {
 
     int expectedHP = UNIT_HP + TARGET_HP;
     Assert.assertEquals(expectedHP, target.getHp());
-  }
-
-  /**
-   * When an Artillery unit(indirect) attacks any other unit,
-   * then they cannot counter attack unless directly adjacent.
-   */
-  @Test
-  public void attackTest() {
-    Unit artillery = UnitFactory.getUnit(TestData.ARTILLERY);
-    artillery.setOwner(player1);
-    Tile attackTile = map.getTile(0, 0);
-    attackTile.add(artillery);
-    artillery.setLocation(attackTile);
-
-    Unit target = UnitFactory.getUnit(TestData.MECH);
-    target.setOwner(player2);
-    Tile defTile = map.getTile(2, 0);
-    defTile.add(target);
-    target.setLocation(defTile);
-    int expectedHP = artillery.getHpPercentage();
-
-    UnitFight fight = new UnitFight(map);
-    fight.initAttack(artillery, target);
-    artillery.attack(target, fight);
-
-    Assert.assertEquals(expectedHP, artillery.getHpPercentage());
   }
 }
