@@ -62,6 +62,10 @@ public class TestMapRenderer extends CWState {
       g.scale(camera.getZoomLvl(), camera.getZoomLvl());
       mapRenderer.render(-camera.getX(), -camera.getY(), g);
       renderTileInfo(mapRenderer.getCursorLocation().toString(), g, container);
+      g.drawString(String.format("Camera pos: %s,%s max cols: %s/%s max rows: %s/%s",
+              camera.getCol(), camera.getRow(),
+              camera.getMaxCols(), stateSession.map.getCols(),
+              camera.getMaxRows(), stateSession.map.getRows()), 10, 10);
     }
   }
 
@@ -116,16 +120,19 @@ public class TestMapRenderer extends CWState {
       camera.centerOnTile(0, 0);
     }
     if (key == Input.KEY_4) {
-      camera.centerOnTile(5, 5);
+      camera.centerOnTile(9, 9);
     }
     if (key == Input.KEY_5) {
-      camera.centerOnTile(9, 9);
+      camera.centerOnTile(10, 13);
+    }
+    if (key == Input.KEY_6) {
+      camera.centerOnTile(stateSession.map.getCols() - 1, stateSession.map.getRows() - 1);
     }
     if (key == Input.KEY_R) {
       mapRenderer.setMap(stateSession.map);
     }
     if (key == Input.KEY_U) {
-      scroller.toggleAutoUpdate();
+      scroller.setAutoScroll(scroller.isAutoScrollOn());
     }
     if (key == Input.KEY_L) {
       mapRenderer.toggleCursorLock();
