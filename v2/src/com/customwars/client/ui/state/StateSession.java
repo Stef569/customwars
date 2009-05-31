@@ -1,6 +1,6 @@
 package com.customwars.client.ui.state;
 
-import com.customwars.client.Statistics;
+import com.customwars.client.model.Statistics;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;

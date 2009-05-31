@@ -1,6 +1,7 @@
 package com.customwars.client.controller;
 
 import com.customwars.client.App;
+import com.customwars.client.SFX;
 import com.customwars.client.action.ActionFactory;
 import com.customwars.client.action.CWAction;
 import com.customwars.client.action.ShowPopupMenu;
@@ -80,7 +81,7 @@ public class HumanUnitController extends UnitController {
         context.doAction(new SelectAction(selected));
       }
     } else {
-      context.playSound("cancel");
+      SFX.playSound("cancel");
       context.undo();
     }
   }

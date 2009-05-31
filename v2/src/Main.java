@@ -3,6 +3,7 @@ import bsh.Interpreter;
 import bsh.util.JConsole;
 import com.customwars.client.App;
 import com.customwars.client.Config;
+import com.customwars.client.SFX;
 import com.customwars.client.io.ResourceManager;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.game.Player;
@@ -56,6 +57,9 @@ public class Main {
     int displayHeight = App.getInt("user.display.height", 480);
 
     AppGameContainer appGameContainer = new AppGameContainer(stateBasedGame);
+    SFX.setResources(resources);
+    SFX.setGameContainer(appGameContainer);
+
     appGameContainer.setDisplayMode(displayWidth, displayHeight, fullScreen);
     appGameContainer.setTargetFrameRate(60);
     appGameContainer.setForceExit(false);

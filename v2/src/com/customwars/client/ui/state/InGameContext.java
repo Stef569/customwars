@@ -186,10 +186,6 @@ public class InGameContext {
     if (DEBUG_UNDO) logger.debug("Undo history cleared");
   }
 
-  public void playSound(String soundName) {
-    resources.playSound(soundName);
-  }
-
   /**
    * @param index   base 1 index of the click(was it the first, second, ...) can't be higher then MAX_CLICK_HISTORY
    * @param clicked the tile that was clicked on

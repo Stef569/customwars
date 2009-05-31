@@ -1,5 +1,6 @@
 package com.customwars.client.ui.renderer;
 
+import com.customwars.client.SFX;
 import com.customwars.client.io.ResourceManager;
 import com.customwars.client.io.img.slick.ImageStrip;
 import com.customwars.client.model.game.Game;
@@ -200,7 +201,7 @@ public class GameRenderer {
     }
 
     if (cursorMoved(originalCursorLocation)) {
-      resources.playSound("maptick");
+      SFX.playSound("maptick");
     }
     Tile cursorLocation = getCursorLocation();
     hud.moveOverTile(cursorLocation, isOnLeftSide(cursorLocation));
@@ -213,7 +214,7 @@ public class GameRenderer {
     mapRenderer.moveCursor(gameX, gameY);
 
     if (cursorMoved(originalCursorLocation)) {
-      resources.playSound("maptick");
+      SFX.playSound("maptick");
     }
 
     Tile cursorLocation = getCursorLocation();

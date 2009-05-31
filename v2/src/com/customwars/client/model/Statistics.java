@@ -1,4 +1,4 @@
-package com.customwars.client;
+package com.customwars.client.model;
 
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.game.Player;

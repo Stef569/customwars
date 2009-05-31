@@ -290,20 +290,6 @@ public class ResourceManager {
     return sounds.get(soundName.toUpperCase());
   }
 
-  public void playSound(String soundName) {
-    Sound s = getSound(soundName);
-    if (s != null) {
-      s.play();
-    }
-  }
-
-  public void playMusic(String musicName) {
-    Music music = getMusic(musicName);
-    if (music != null) {
-      music.play();
-    }
-  }
-
   /**
    * @param mapName the exact name of the map, case sensitive
    * @return a copy of the Map with mapName
