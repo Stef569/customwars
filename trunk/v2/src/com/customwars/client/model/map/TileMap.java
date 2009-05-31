@@ -705,10 +705,10 @@ public class TileMap<T extends Location> extends GameObject {
     int col = tile.getCol();
     int row = tile.getRow();
 
-    if (row < rows / 2 && col > cols / 2) return Direction.NORTHEAST;
-    if (row < rows / 2 && col < cols / 2) return Direction.NORTHWEST;
-    if (row > rows / 2 && col > cols / 2) return Direction.SOUTHEAST;
-    if (row > rows / 2 && col < cols / 2) return Direction.SOUTHWEST;
+    if (row <= rows / 2 && col >= cols / 2) return Direction.NORTHEAST;
+    if (row <= rows / 2 && col <= cols / 2) return Direction.NORTHWEST;
+    if (row >= rows / 2 && col >= cols / 2) return Direction.SOUTHEAST;
+    if (row >= rows / 2 && col <= cols / 2) return Direction.SOUTHWEST;
 
     throw new AssertionError("A location is always in one of the 4 quadrants");
   }
