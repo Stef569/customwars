@@ -97,10 +97,10 @@ public class HUD {
    * the info boxes will be set to display on the right side.
    */
   public final void locateInfoBoxes(Direction quadrant) {
-    if (quadrant == Direction.WEST) {
+    if (quadrant == Direction.NORTHWEST || quadrant == Direction.SOUTHWEST) {
       locateRightToLeft(topComponents, 10);
       locateRightToLeft(bottomComponents, camera.getHeight() - INFO_BOX_HEIGH);
-    } else if (quadrant == Direction.EAST) {
+    } else {
       locateLeftToRight(topComponents, 10);
       locateLeftToRight(bottomComponents, camera.getHeight() - INFO_BOX_HEIGH);
     }

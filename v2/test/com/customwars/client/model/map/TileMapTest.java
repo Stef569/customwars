@@ -328,6 +328,18 @@ public class TileMapTest {
   }
 
   @Test
+  /**
+   * Should not throw an exception or return null.
+   */
+  public void quadrantWithUnEvenMapSize() {
+    Location middle = map.getTile(5, 7);
+    Map<Tile> map = new Map<Tile>(10, 15, 32, 1);
+    MapUtil.fillWithTiles(map, TerrainFactory.getTerrain(0));
+    Direction quadrant = map.getQuadrantFor(middle);
+    Assert.assertNotNull(quadrant);
+  }
+
+  @Test
   public void testRandomTile() {
     Tile random = map.getRandomTile();
 
