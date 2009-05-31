@@ -1,4 +1,4 @@
-package com.customwars.client.model;
+package com.customwars.client.model.fight;
 
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Range;
@@ -7,7 +7,6 @@ import java.util.List;
 
 /**
  * Defines objects that can attack defenders
- * an attack can result in an counter attack
  *
  * @author stefan
  */

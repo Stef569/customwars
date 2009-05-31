@@ -1,10 +1,10 @@
-package com.customwars.client.model;
+package com.customwars.client.model.fight;
 
 import com.customwars.client.model.game.Player;
+import com.customwars.client.model.map.Location;
 
 /**
- * Defines objects that can take damage and can defend themselfs from an attack
- * when canCounterAttack return true a counter attack is performed.
+ * Defines objects that can take damage and can counter attack
  *
  * @author stefan
  */
@@ -18,4 +18,6 @@ public interface Defender {
   Player getOwner();
 
   int getArmyBranch();
+
+  Location getLocation();
 }

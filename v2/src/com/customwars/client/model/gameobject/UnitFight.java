@@ -1,74 +1,50 @@
 package com.customwars.client.model.gameobject;
 
-import com.customwars.client.model.Attacker;
-import com.customwars.client.model.Defender;
-import com.customwars.client.model.Fight;
-import com.customwars.client.model.map.Map;
+import com.customwars.client.model.fight.BasicFight;
 import com.customwars.client.model.map.Tile;
+import tools.NumberUtil;
 
 /**
  * Handles Fights between 2 units
  *
  * @author Stefan
  */
-public class UnitFight extends Fight {
-  private static final int NO_DAMAGE = 0;
+public class UnitFight extends BasicFight {
   private static int[][] baseDMG;
   private static int[][] altDMG;
-  private Map<Tile> map;
 
-  public UnitFight(Map<Tile> map) {
-    this.map = map;
-  }
-
-  public final int calcAttackDamagePercentage(Defender defender) {
+  public int getAttackDamagePercentage() {
     Unit attackingUnit = (Unit) attacker;
     Unit defendingUnit = (Unit) defender;
-    int attackerHP = attackingUnit.getHp();
-    int attackMaxHP = attackingUnit.getMaxHp();
+    int attackerHP = attackingUnit.getInternalHp();
+    int attackMaxHP = attackingUnit.getInternalMaxHp();
 
-    int terrainDef = calcTerrainDefense(defendingUnit);
+    int terrainDef = getTerrainDefense(defendingUnit);
     int baseDmg = getAttackDamagePercentage(attackingUnit, defendingUnit);
-    int special = calcAdditionalDamageCases();
-
-    return (int) Math.floor(attackerHP / (float) attackMaxHP * baseDmg - terrainDef - special);
+    return (int) Math.floor(attackerHP / (float) attackMaxHP * baseDmg - terrainDef);
   }
 
-  public int calcTerrainDefense(Unit unit) {
+  private int getTerrainDefense(Unit unit) {
     Tile t = (Tile) unit.getLocation();
     return t.getTerrain().getDefenseBonus();
-  }
-
-  protected int calcAdditionalDamageCases() {
-    return 0;
   }
 
   /**
    * Get the highest damage percentage that the attacker can cause to defender
    *
-   * @return The highest damage percentage or N0_DAMAGE when the attacker cannot attack the defender
+   * @return The highest damage percentage or 0 when the attacker cannot attack the defender
    */
   private int getAttackDamagePercentage(Unit attacker, Unit defender) {
     int baseDmg = getBaseDamage(attacker, defender);
     int altDmg = getAltDamage(attacker, defender);
-    int highestDamage = findHighestDamage(baseDmg, altDmg);
-
-    if (highestDamage == NO_DAMAGE) {
-      return NO_DAMAGE;
-    } else if (baseDmg == highestDamage) {
-      return baseDmg;
-    } else if (altDmg == highestDamage) {
-      return altDmg;
-    } else {
-      return NO_DAMAGE;
-    }
+    return NumberUtil.findHighest(baseDmg, altDmg);
   }
 
   private int getBaseDamage(Unit attacker, Unit defender) {
     if (attacker.canFirePrimaryWeapon()) {
       return baseDMG[attacker.getID()][defender.getID()];
     } else {
-      return NO_DAMAGE;
+      return 0;
     }
   }
 
@@ -76,45 +52,13 @@ public class UnitFight extends Fight {
     if (attacker.canFireSecondaryWeapon()) {
       return altDMG[attacker.getID()][defender.getID()];
     } else {
-      return NO_DAMAGE;
+      return 0;
     }
-  }
-
-  private int findHighestDamage(int... values) {
-    int highest = 0;
-
-    for (int val : values) {
-      if (val > highest) highest = val;
-    }
-    return highest;
-  }
-
-  public boolean canCounterAttack(Attacker att, Defender def) {
-    boolean canCounterAttack = false;
-    if (super.canCounterAttack(att, def) && def.canCounterAttack(att)) {
-      // temporarely swap attacker and defender
-      swap();
-      canCounterAttack = !attackerDiesAgainst(defender) && isDefenderAdjacentOfAttacker(attacker, defender) && attacker.getAttackRange().getMinRange() == 1;
-      swap();
-    } else {
-      return false;
-    }
-    return canCounterAttack;
-  }
-
-  private boolean attackerDiesAgainst(Defender defender) {
-    int attDmgPerc = calcAttackDamagePercentage(defender);
-    return attDmgPerc >= 100;
-  }
-
-  public void counterAttack() {
-    super.counterAttack();
-    attacker.attack(defender, this);
   }
 
   /**
-   * @return The WeaponType that will inflict the highest damage
-   *         null is returned when the inflicted damage == 0
+   * @return The WeaponType that will do the highest damage
+   *         WeaponType.NONE is returned when the damage == 0
    */
   public WeaponType getBestAttackWeaponType() {
     Unit attackingUnit = (Unit) attacker;
@@ -122,25 +66,17 @@ public class UnitFight extends Fight {
 
     int baseDmg = getBaseDamage(attackingUnit, defendingUnit);
     int altDmg = getAltDamage(attackingUnit, defendingUnit);
-    int highestDamage = findHighestDamage(baseDmg, altDmg);
+    int highestDamage = NumberUtil.findHighest(baseDmg, altDmg);
 
-    if (highestDamage == NO_DAMAGE) {
-      return null;
+    if (highestDamage == 0) {
+      return WeaponType.NONE;
     } else if (baseDmg == highestDamage) {
       return WeaponType.PRIMARY;
     } else if (altDmg == highestDamage) {
       return WeaponType.SECONDARY;
     } else {
-      return null;
+      return WeaponType.NONE;
     }
-  }
-
-  private boolean isDefenderAdjacentOfAttacker(Attacker attacker, Defender defender) {
-    for (Tile t : map.getSurroundingTiles(attacker.getLocation(), 1, 1)) {
-      Unit unit = map.getUnitOn(t);
-      if (unit != null && unit == defender) return true;
-    }
-    return false;
   }
 
   public static void setBaseDMG(int[][] baseDMG) {

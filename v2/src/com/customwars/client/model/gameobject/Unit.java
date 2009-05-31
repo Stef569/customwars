@@ -1,9 +1,9 @@
 package com.customwars.client.model.gameobject;
 
-import com.customwars.client.model.Attacker;
-import com.customwars.client.model.Defender;
-import com.customwars.client.model.Fight;
 import com.customwars.client.model.TurnHandler;
+import com.customwars.client.model.fight.Attacker;
+import com.customwars.client.model.fight.Defender;
+import com.customwars.client.model.fight.Fight;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.map.Direction;
 import com.customwars.client.model.map.Location;
@@ -243,73 +243,61 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
    * and attacking the defender
    */
   public void attack(Defender defender, Fight fight) {
-    if (canAttack(defender)) {
-      tryToFireWeapon(defender, fight);
-      defender.defend(this, fight);
+    tryToFireWeapon(fight);
+    defender.defend(this, fight);
 
-      if (defender.isDestroyed()) {
-        if (++experience > maxExperience) {
-          experience = maxExperience;
-        }
+    if (defender.isDestroyed()) {
+      if (++experience > maxExperience) {
+        experience = maxExperience;
       }
     }
   }
 
   public boolean canAttack(Defender defender) {
-    return defender != null && canFire(defender.getArmyBranch()) && !isDestroyed() &&
+    return defender != null && canFireOn(defender) && !isDestroyed() &&
             !defender.isDestroyed() && !defender.getOwner().isAlliedWith(owner);
   }
 
-  private void tryToFireWeapon(Defender defender, Fight fight) {
-    if (fight.calcAttackDamagePercentage(defender) > 0) {
-      Fight.WeaponType weaponType = fight.getBestAttackWeaponType();
-      fireWeapon(weaponType, 1);
-    }
+  private void tryToFireWeapon(Fight fight) {
+    Fight.WeaponType weaponType = fight.getBestAttackWeaponType();
+    fireWeapon(weaponType, 1);
   }
 
   /**
    * When a unit fires the shots are subtracted from the ammoCount in weapon.
-   * Some units cannot fire, they should have set primaryWeapon and secondaryWeapon to null.
+   * Some units cannot fire, they should have primaryWeapon and secondaryWeapon set to null.
    *
    * @param weaponType The weapon type that was used to attack(Primary or Secondary)
    * @param shots      amount of bullets, missiles or shells the weapon will fire
    * @see Weapon
    */
   private void fireWeapon(Fight.WeaponType weaponType, int shots) {
-    if (weaponType == Fight.WeaponType.PRIMARY) {
-      primaryWeapon.fire(shots);
-    } else if (weaponType == Fight.WeaponType.SECONDARY) {
-      secondaryWeapon.fire(shots);
+    switch (weaponType) {
+      case PRIMARY:
+        primaryWeapon.fire(shots);
+        break;
+      case SECONDARY:
+        secondaryWeapon.fire(shots);
+        break;
     }
   }
 
   public void defend(Attacker attacker, Fight fight) {
-    receiveDamage(fight);
-
-    if (fight.canCounterAttack(attacker, this)) {
-      fight.counterAttack();
-    }
-  }
-
-  /**
-   * This unit is the defender
-   * and receives damage from a Fight.
-   *
-   * @param fight The fight context
-   */
-  public void receiveDamage(Fight fight) {
-    int attackPercentage = fight.calcAttackDamagePercentage(this);
+    int attackPercentage = fight.getAttackDamagePercentage();
     int attackValue = (int) (((double) attackPercentage / maxHp) * 100);
     setHp(hp - attackValue);
   }
 
   /**
-   * The unit can counter Attack when
-   * it didn't die from the attack
-   * has a weapon that can return fire.
+   * This unit can counter Attack when:
+   * #1 it is not destroyed
+   * #2 it has a min attack range of 1
+   * #3 the Attacker is also a defender
+   * #4 it has a weapon that can return fire to the attacker
    */
   public boolean canCounterAttack(Attacker attacker) {
-    return canFire(attacker.getArmyBranch()) && !isDestroyed();
+    return !isDestroyed() && getAttackRange().getMinRange() == 1 &&
+            attacker instanceof Defender && canFireOn((Defender) attacker);
   }
 
   public List<Location> getAttackZone() {
@@ -615,9 +603,10 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   }
 
   /**
-   * @return if this unit can fire on the given armyBranch
+   * @return if this unit can fire on the defender
    */
-  public boolean canFire(int armyBranch) {
+  public boolean canFireOn(Defender defender) {
+    int armyBranch = defender.getArmyBranch();
     return hasPrimaryWeapon() && primaryWeapon.canFire(armyBranch) ||
             hasSecondaryWeapon() && secondaryWeapon.canFire(armyBranch);
   }
@@ -701,6 +690,14 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
    */
   public int getMaxHp() {
     return (int) Math.ceil((double) maxHp / 10);
+  }
+
+  public int getInternalHp() {
+    return hp;
+  }
+
+  public int getInternalMaxHp() {
+    return maxHp;
   }
 
   public int getHpPercentage() {
@@ -858,10 +855,14 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   @Override
   public String toString() {
     return String.format("[name=%s id=%s owner=%s location=%s transport=%s state=%s]",
-            name, id, owner, getLocationText(), transport, unitState);
+            name, id, getOwnerText(), getLocationText(), transport, unitState);
   }
 
   private String getLocationText() {
     return location == null ? "Not located" : location.getLocationString();
+  }
+
+  private String getOwnerText() {
+    return owner == null ? "Not owned" : owner.toString();
   }
 }
