@@ -677,7 +677,7 @@ public class TileMap<T extends Location> extends GameObject {
   /**
    * @return The amount of tiles to traverse to go from a to b.
    */
-  public int getDistanceBetween(Location a, Location b) {
+  public static int getDistanceBetween(Location a, Location b) {
     return Math.abs(a.getRow() - b.getRow()) +
             Math.abs(a.getCol() - b.getCol());
   }
@@ -685,7 +685,7 @@ public class TileMap<T extends Location> extends GameObject {
   /**
    * @return True if the two tiles are next to each other
    */
-  public boolean isAdjacent(Location a, Location b) {
+  public static boolean isAdjacent(Location a, Location b) {
     if (a == b || a == null || b == null)
       return false;
 

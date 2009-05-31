@@ -1,7 +1,7 @@
 package com.customwars.client.model.map;
 
-import com.customwars.client.model.Attacker;
 import com.customwars.client.model.TurnHandler;
+import com.customwars.client.model.fight.Attacker;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.GameObjectState;

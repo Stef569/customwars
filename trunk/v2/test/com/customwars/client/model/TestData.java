@@ -114,6 +114,7 @@ public class TestData {
     UnitFactory.addUnit(apc);
 
     tank.setPrimaryWeapon(tankCannon);
+    tank.setSecondaryWeapon(smg);
     UnitFactory.addUnit(tank);
 
     artillery.setPrimaryWeapon(artilleryCannon);

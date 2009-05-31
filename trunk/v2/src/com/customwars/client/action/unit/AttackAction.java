@@ -25,7 +25,7 @@ public class AttackAction extends DirectAction {
 
   protected void init(InGameContext context) {
     this.context = context;
-    unitFight = new UnitFight(context.getGame().getMap());
+    unitFight = new UnitFight();
     controllerManager = context.getControllerManager();
   }
 
@@ -39,8 +39,8 @@ public class AttackAction extends DirectAction {
    * @param defender The Unit that is under attack
    */
   public void attackUnit(Unit attacker, Unit defender) {
-    unitFight.initAttack(attacker, defender);
-    attacker.attack(defender, unitFight);
+    unitFight.initFight(attacker, defender);
+    unitFight.startFight();
 
     if (attacker.isDestroyed()) {
       controllerManager.removeUnitController(attacker);
