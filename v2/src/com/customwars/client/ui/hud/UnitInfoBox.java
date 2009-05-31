@@ -9,6 +9,7 @@ import com.customwars.client.ui.layout.ImageBox;
 import com.customwars.client.ui.layout.TextBox;
 import com.customwars.client.ui.slick.BasicComponent;
 import org.newdawn.slick.Color;
+import org.newdawn.slick.Font;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.gui.GUIContext;
@@ -24,7 +25,7 @@ public class UnitInfoBox extends BasicComponent {
   private Unit unit;
   private ResourceManager resources;
   private ImageBox unitBox;
-  private Row suppliesRow, ammoRow;
+  private Row suppliesRow, ammoRow, hpRow;
 
   public UnitInfoBox(GUIContext container) {
     super(container);
@@ -34,16 +35,20 @@ public class UnitInfoBox extends BasicComponent {
   @Override
   public void loadResources(ResourceManager resources) {
     this.resources = resources;
-    unitBox.setWidth(getWidth());
     ImageStrip unitDecorations = resources.getSlickImgStrip("unitDecoration");
-    Image suppliesImage = unitDecorations.getSubImage(4);
     Image ammoImage = unitDecorations.getSubImage(3);
+    Image suppliesImage = unitDecorations.getSubImage(4);
+    Font defaultFont = container.getDefaultFont();
 
-    suppliesRow = new Row(new ImageBox(suppliesImage), new TextBox("", container.getDefaultFont()));
+    unitBox.setWidth(getWidth());
+    suppliesRow = new Row(new ImageBox(suppliesImage), new TextBox("", defaultFont));
     suppliesRow.setHorizontalSpacing(5);
 
-    ammoRow = new Row(new ImageBox(ammoImage), new TextBox("", container.getDefaultFont()));
+    ammoRow = new Row(new ImageBox(ammoImage), new TextBox("", defaultFont));
     ammoRow.setHorizontalSpacing(5);
+
+    hpRow = new Row(new TextBox("hp:", defaultFont), new TextBox("", defaultFont));
+    hpRow.setHorizontalSpacing(5);
   }
 
   @Override
@@ -69,6 +74,7 @@ public class UnitInfoBox extends BasicComponent {
   private void initBoxes() {
     unitBox.setImage(getUnitImg(unit));
     suppliesRow.setText(unit.getSupplies() + "");
+    hpRow.setText(unit.getInternalHp() + "");
 
     Weapon weapon = unit.getAvailableWeapon();
     if (weapon != null) {
@@ -84,9 +90,14 @@ public class UnitInfoBox extends BasicComponent {
   }
 
   private void locateBoxes(int x, int y) {
+    int height = 0;
     unitBox.setLocation(x, y);
-    ammoRow.setLocation(x + INFO_BOXES_LEFT_MARGIN, y + unitBox.getHeight());
-    suppliesRow.setLocation(x + INFO_BOXES_LEFT_MARGIN, y + unitBox.getHeight() + ammoRow.getHeight());
+    height += unitBox.getHeight();
+    ammoRow.setLocation(x + INFO_BOXES_LEFT_MARGIN, y + height);
+    height += ammoRow.getHeight();
+    suppliesRow.setLocation(x + INFO_BOXES_LEFT_MARGIN, y + height);
+    height += suppliesRow.getHeight();
+    hpRow.setLocation(x + INFO_BOXES_LEFT_MARGIN, y + height);
   }
 
   private void renderBoxes(Graphics g) {
@@ -94,6 +105,7 @@ public class UnitInfoBox extends BasicComponent {
     renderUnitName(g);
     ammoRow.render(g);
     suppliesRow.render(g);
+    hpRow.render(g);
   }
 
   private void renderUnitName(Graphics g) {
@@ -107,15 +119,15 @@ public class UnitInfoBox extends BasicComponent {
 
   /**
    * A Row contains 2 boxes
-   * an Image box and a text box with horizontalSpacing between them.
-   * The row always has the  height of the tallest box
+   * a generic box and a text box with horizontalSpacing between them.
+   * The row always has the height of the tallest box
    */
   private class Row extends Box {
-    private ImageBox imageBox;
+    private Box imageBox;
     private TextBox textBox;
     private int horizontalSpacing;
 
-    private Row(ImageBox imageBox, TextBox textBox) {
+    private Row(Box imageBox, TextBox textBox) {
       this.imageBox = imageBox;
       this.textBox = textBox;
     }

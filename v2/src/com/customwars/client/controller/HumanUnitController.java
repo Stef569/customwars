@@ -20,6 +20,7 @@ import com.customwars.client.model.map.Tile;
 import com.customwars.client.ui.MenuItem;
 import com.customwars.client.ui.renderer.MapRenderer;
 import com.customwars.client.ui.state.InGameContext;
+import org.apache.log4j.Logger;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -31,6 +32,7 @@ import java.util.List;
  * @author stefan
  */
 public class HumanUnitController extends UnitController {
+  private static final Logger logger = Logger.getLogger(HumanUnitController.class);
   private static final int DROP_LIMIT = 4;
   private InGameContext context;
   private MapRenderer mapRenderer;
@@ -71,6 +73,7 @@ public class HumanUnitController extends UnitController {
         context.setClick(2, selected);
         initUnitActionMenu(selected);
       } else if (canSelect(selected)) {
+        logger.debug("Selecting " + unit);
         context.clearClicks();
         context.discartAllEdits();
         context.setClick(1, selected);
@@ -133,7 +136,7 @@ public class HumanUnitController extends UnitController {
   }
 
   private ShowPopupMenu buildDropModeMenu(Tile from, Tile to, Tile selected) {
-    showMenu = new ShowPopupMenu("Unit actions", selected);
+    showMenu = new ShowPopupMenu("Unit drop menu", selected);
     unitsInTransport.clear();
 
     if (canWait(to)) {
@@ -196,7 +199,7 @@ public class HumanUnitController extends UnitController {
    * The unit is on the from Tile
    */
   private ShowPopupMenu buildUnitActionMenu(Tile selected) {
-    showMenu = new ShowPopupMenu("Unit actions", selected);
+    showMenu = new ShowPopupMenu("Unit context menu", selected);
     Tile from = context.getClick(1);
     Tile to = context.getClick(2);
 
