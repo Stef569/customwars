@@ -42,7 +42,7 @@ public class StartAttackAction extends DirectAction {
     mapRenderer.activateCursor("ATTACK");
     mapRenderer.startCursorTraversal(enemyLocationsInRange);
     mapRenderer.setAttackZone(enemyLocationsInRange);
-    context.setMode(InGameContext.MODE.UNIT_ATTACK);
+    context.setInputMode(InGameContext.INPUT_MODE.UNIT_ATTACK);
   }
 
   private List<Location> getEnemyLocations(List<Unit> enemies) {

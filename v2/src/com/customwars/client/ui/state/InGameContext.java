@@ -1,6 +1,7 @@
 package com.customwars.client.ui.state;
 
 import com.customwars.client.action.CWAction;
+import com.customwars.client.action.UndoManager;
 import com.customwars.client.controller.ControllerManager;
 import com.customwars.client.io.ResourceManager;
 import com.customwars.client.model.game.Game;
@@ -15,9 +16,6 @@ import com.customwars.client.ui.renderer.MapRenderer;
 import org.apache.log4j.Logger;
 import org.newdawn.slick.GameContainer;
 
-import javax.swing.undo.AbstractUndoableEdit;
-import javax.swing.undo.CannotRedoException;
-import javax.swing.undo.CannotUndoException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -35,10 +33,9 @@ import java.util.List;
  */
 public class InGameContext {
   private static final Logger logger = Logger.getLogger(InGameContext.class);
-  private static final boolean DEBUG_UNDO = false;
 
   // Input mode:
-  public enum MODE {
+  public enum INPUT_MODE {
     DEFAULT,        // Clicking shows a Menu or selects a unit
     GUI,            // Input is handled by the GUI
     UNIT_SELECT,    // Clicking on a unit will select it
@@ -49,17 +46,16 @@ public class InGameContext {
   }
 
   private static final int MAX_CLICK_HISTORY = 3;
-  private Tile[] clicks = new Tile[MAX_CLICK_HISTORY];
+  private static final Tile[] clicks = new Tile[MAX_CLICK_HISTORY];
 
   private final UndoManager undoManager;
   private CWAction action;
 
-  private MODE mode;
+  private INPUT_MODE inputMode;
   private boolean trapped;
   private boolean moving;
   private final LinkedList<Tile> dropLocations;
   private final LinkedList<Unit> unitsToBeDropped;
-  private int undoCount = 0;
 
   private Game game;
   private MoveTraverse moveTraverse;
@@ -73,7 +69,7 @@ public class InGameContext {
     undoManager = new UndoManager();
     unitsToBeDropped = new LinkedList<Unit>();
     dropLocations = new LinkedList<Tile>();
-    setMode(MODE.DEFAULT);
+    setInputMode(INPUT_MODE.DEFAULT);
   }
 
   public void handleUnitAPress(Unit unit) {
@@ -110,29 +106,11 @@ public class InGameContext {
   }
 
   public void undo() {
-    if (undoManager.canUndo()) {
-      if (DEBUG_UNDO) logger.debug(" << " + undoManager.getUndoPresentationName() + " >> ");
-      undoManager.undo();
-      redoLast();
-    }
+    undoManager.undo();
   }
 
-  private void redoLast() {
-    if (undoManager.canUndo()) {
-      undoManager.undo();
-    } else {
-      // Last action
-      if (DEBUG_UNDO)
-        logger.debug(undoCount-- + ". Removing " + undoManager.getPresentationName() + " from undo list");
-      undoManager.removeLastEdit();
-    }
-
-    if (undoManager.canRedo()) {
-      undoManager.redo();
-      if (DEBUG_UNDO)
-        logger.debug(undoCount-- + ". Removing " + undoManager.getPresentationName() + " from undo list");
-      undoManager.removeLastEdit();
-    }
+  public void discartAllEdits() {
+    undoManager.discartAllEdits();
   }
 
   public void doAction(String actionCommand) {
@@ -150,23 +128,15 @@ public class InGameContext {
     }
 
     if (this.action == null) {
-      logger.debug("Launching action ->" + action.getName());
+      logger.debug("Launching action -> " + action.getName());
       this.action = action;
       action.invoke(this);
 
       if (action.canUndo()) {
-        addUndoAction(action);
+        undoManager.addUndoAction(action, this);
       }
     } else {
-      logger.warn("Skipping action -> " + action.getName() + " other action still executing " + this.action.getName());
-    }
-  }
-
-  private void addUndoAction(CWAction action) {
-    if (action.canUndo()) {
-      undoManager.addEdit(new UndoWrapper(action, this));
-      if (DEBUG_UNDO)
-        logger.debug(++undoCount + ". Adding " + undoManager.getPresentationName() + " to undo list");
+      logger.warn("Skipping action -> " + action.getName() + " other action " + this.action.getName() + " is still executing.");
     }
   }
 
@@ -180,12 +150,6 @@ public class InGameContext {
     }
   }
 
-  public void discartAllEdits() {
-    undoCount = 0;
-    undoManager.discardAllEdits();
-    if (DEBUG_UNDO) logger.debug("Undo history cleared");
-  }
-
   /**
    * @param index   base 1 index of the click(was it the first, second, ...) can't be higher then MAX_CLICK_HISTORY
    * @param clicked the tile that was clicked on
@@ -194,8 +158,8 @@ public class InGameContext {
     clicks[index - 1] = clicked;
   }
 
-  public void setMode(MODE mode) {
-    this.mode = mode;
+  public void setInputMode(INPUT_MODE inputMode) {
+    this.inputMode = inputMode;
   }
 
   public void setControllerManager(ControllerManager controllerManager) {
@@ -290,31 +254,31 @@ public class InGameContext {
   }
 
   public boolean isDefaultMode() {
-    return mode == MODE.DEFAULT;
+    return inputMode == INPUT_MODE.DEFAULT;
   }
 
   public boolean isGUIMode() {
-    return mode == MODE.GUI;
+    return inputMode == INPUT_MODE.GUI;
   }
 
   public boolean isUnitSelectMode() {
-    return mode == MODE.UNIT_SELECT;
+    return inputMode == INPUT_MODE.UNIT_SELECT;
   }
 
   public boolean isUnitAttackMode() {
-    return mode == MODE.UNIT_ATTACK;
+    return inputMode == INPUT_MODE.UNIT_ATTACK;
   }
 
   public boolean isUnitDropMode() {
-    return mode == MODE.UNIT_DROP;
+    return inputMode == INPUT_MODE.UNIT_DROP;
   }
 
   public boolean isRocketLaunchMode() {
-    return mode == MODE.LAUNCH_ROCKET;
+    return inputMode == INPUT_MODE.LAUNCH_ROCKET;
   }
 
   public boolean isUnitFlareMode() {
-    return mode == MODE.UNIT_FLARE;
+    return inputMode == INPUT_MODE.UNIT_FLARE;
   }
 
   public boolean isUnitDropped(Locatable unit) {
@@ -358,52 +322,11 @@ public class InGameContext {
   }
 
   public String toString() {
-    String toString = "Mode=" + mode + " [clicks=";
+    String toString = "Mode=" + inputMode + " [clicks=";
 
     for (Tile clicked : clicks) {
       toString += clicked + ", ";
     }
     return toString + "]";
-  }
-
-  /**
-   * Wrap a CWAction in a AbstractUndoableEdit
-   * so it can be used by the undoManager
-   */
-  class UndoWrapper extends AbstractUndoableEdit {
-    private CWAction action;
-    private InGameContext inGameContext;
-
-    public UndoWrapper(CWAction action, InGameContext inGameContext) {
-      this.action = action;
-      this.inGameContext = inGameContext;
-    }
-
-    public String getPresentationName() {
-      return action.getName();
-    }
-
-    public void undo() throws CannotUndoException {
-      super.undo();
-      action.undo();
-    }
-
-    public void redo() throws CannotRedoException {
-      super.redo();
-      action.invoke(inGameContext);
-    }
-  }
-
-  /**
-   * Extend the swing undo manager
-   * so we can access the protected methods/fields.
-   */
-  private class UndoManager extends javax.swing.undo.UndoManager {
-    public void removeLastEdit() {
-      int last = edits.size() - 1;
-
-      if (last >= 0)
-        trimEdits(last, last);
-    }
   }
 }

@@ -36,7 +36,7 @@ public class SelectAction extends DirectAction {
     Locatable locatable = selectTile.getLastLocatable();
     selectUnit((Unit) locatable);
     SFX.playSound("select");
-    context.setMode(InGameContext.MODE.UNIT_SELECT);
+    context.setInputMode(InGameContext.INPUT_MODE.UNIT_SELECT);
   }
 
   private void selectUnit(Unit unit) {
@@ -49,7 +49,7 @@ public class SelectAction extends DirectAction {
 
   public void undo() {
     deselectActiveUnit();
-    context.setMode(InGameContext.MODE.DEFAULT);
+    context.setInputMode(InGameContext.INPUT_MODE.DEFAULT);
   }
 
   private void deselectActiveUnit() {

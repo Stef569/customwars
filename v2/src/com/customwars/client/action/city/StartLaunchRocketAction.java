@@ -25,13 +25,13 @@ public class StartLaunchRocketAction extends DirectAction {
 
   @Override
   protected void invokeAction() {
-    context.setMode(InGameContext.MODE.LAUNCH_ROCKET);
+    context.setInputMode(InGameContext.INPUT_MODE.LAUNCH_ROCKET);
     mapRenderer.activateCursor("SILO");
   }
 
   @Override
   public void undo() {
-    context.setMode(InGameContext.MODE.DEFAULT);
+    context.setInputMode(InGameContext.INPUT_MODE.DEFAULT);
     mapRenderer.activateCursor("SELECT");
   }
 }
