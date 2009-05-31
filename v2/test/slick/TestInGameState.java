@@ -5,9 +5,12 @@ import com.customwars.client.action.ActionFactory;
 import com.customwars.client.action.ClearInGameStateAction;
 import com.customwars.client.action.ShowPopupMenu;
 import com.customwars.client.controller.ControllerManager;
+import com.customwars.client.model.fight.Fight;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Unit;
+import com.customwars.client.model.gameobject.UnitFight;
+import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.model.map.path.MoveTraverse;
 import com.customwars.client.ui.MenuItem;
@@ -32,6 +35,8 @@ public class TestInGameState extends CWState implements PropertyChangeListener {
   private GameContainer gameContainer;
   private GameRenderer gameRenderer;
   private Game game;
+  private Fight fight = new UnitFight();
+  private boolean gameOver;
 
   public TestInGameState() {
   }
@@ -87,45 +92,61 @@ public class TestInGameState extends CWState implements PropertyChangeListener {
   public void update(GameContainer container, int delta) throws SlickException {
     gameRenderer.update(delta);
     context.update(delta);
+
+    if (gameOver && context.isActionCompleted()) {
+      changeGameState("GAME_OVER");
+    }
   }
 
   public void render(GameContainer container, Graphics g) throws SlickException {
     gameRenderer.render(g);
+    if (context != null && context.isUnitAttackMode()) {
+      Location cursorLocation = gameRenderer.getCursorLocation();
+      Unit attacker = game.getActiveUnit();
+      Unit defender = game.getMap().getUnitOn(cursorLocation);
+      if (defender != null) {
+        fight.initFight(attacker, defender);
+        int tileSize = game.getMap().getTileSize();
+        int x = cursorLocation.getCol() * tileSize;
+        int y = cursorLocation.getRow() * tileSize;
+
+        // Draw The damage percentage at the top right of the cursorlocation
+        g.drawString("Damage:" + fight.getAttackDamagePercentage() + "", x + 50, y - 50);
+      }
+    }
   }
 
   public void controlPressed(Command command, CWInput cwInput) {
-    if (!context.isMoving()) {
-      if (cwInput.isCancel(command)) {
-        if (context.canUndo()) {
-          context.playSound("cancel");
-          context.undo();
-          return;
-        }
+    if (cwInput.isCancel(command)) {
+      if (context.canUndo()) {
+        context.playSound("cancel");
+        context.undo();
+        return;
+      }
+    }
+
+    if (context.isGUIMode()) {
+      gameRenderer.controlPressed(command, cwInput);
+    } else {
+      Tile cursorLocation = gameRenderer.getCursorLocation();
+      Unit activeUnit = game.getActiveUnit();
+      Unit selectedUnit = game.getMap().getUnitOn(cursorLocation);
+      City city = game.getMap().getCityOn(cursorLocation);
+
+      Unit unit;
+      if (activeUnit != null) {
+        unit = activeUnit;
+      } else {
+        unit = selectedUnit;
       }
 
-      if (context.isGUIMode()) {
-        gameRenderer.controlPressed(command, cwInput);
-      } else {
-        Tile cursorLocation = gameRenderer.getCursorLocation();
-        Unit activeUnit = game.getActiveUnit();
-        Unit selectedUnit = game.getMap().getUnitOn(cursorLocation);
-        City city = game.getMap().getCityOn(cursorLocation);
+      gameRenderer.moveCursor(command, cwInput);
+      if (cwInput.isSelect(command)) {
+        handleA(unit, city, cursorLocation);
+      }
 
-        Unit unit;
-        if (activeUnit != null) {
-          unit = activeUnit;
-        } else {
-          unit = selectedUnit;
-        }
-
-        gameRenderer.moveCursor(command, cwInput);
-        if (cwInput.isSelect(command)) {
-          handleA(unit, city, cursorLocation);
-        }
-
-        if (cwInput.isCancel(command)) {
-          handleB(activeUnit, selectedUnit);
-        }
+      if (cwInput.isCancel(command)) {
+        handleB(activeUnit, selectedUnit);
       }
     }
   }
@@ -137,7 +158,7 @@ public class TestInGameState extends CWState implements PropertyChangeListener {
             city != null && city.getOwner() == game.getActivePlayer() && city.canBuild()) {
       context.handleCityAPress(city);
     } else if (context.isDefaultMode()) {
-      context.doAction(new ClearInGameStateAction());
+      new ClearInGameStateAction().invoke(context);
       ShowPopupMenu showContextMenu = buildContextMenu();
       showContextMenu.setLocation(cursorLocation);
       context.doAction(showContextMenu);
@@ -188,7 +209,7 @@ public class TestInGameState extends CWState implements PropertyChangeListener {
 
     if (propertyName.equals("state")) {
       if (game.isGameOver()) {
-        changeGameState("GAME_OVER");
+        gameOver = true;
       }
     }
   }

@@ -18,7 +18,6 @@ import org.newdawn.slick.GameContainer;
 import javax.swing.undo.AbstractUndoableEdit;
 import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -36,6 +35,7 @@ import java.util.List;
  */
 public class InGameContext {
   private static final Logger logger = Logger.getLogger(InGameContext.class);
+  private static final boolean DEBUG_UNDO = false;
 
   // Input mode:
   public enum MODE {
@@ -52,7 +52,7 @@ public class InGameContext {
   private Tile[] clicks = new Tile[MAX_CLICK_HISTORY];
 
   private final UndoManager undoManager;
-  private final List<CWAction> actionQueue;
+  private CWAction action;
 
   private MODE mode;
   private boolean trapped;
@@ -73,7 +73,6 @@ public class InGameContext {
     undoManager = new UndoManager();
     unitsToBeDropped = new LinkedList<Unit>();
     dropLocations = new LinkedList<Tile>();
-    actionQueue = new LinkedList<CWAction>();
     setMode(MODE.DEFAULT);
   }
 
@@ -112,7 +111,7 @@ public class InGameContext {
 
   public void undo() {
     if (undoManager.canUndo()) {
-      logger.debug(" << " + undoManager.getUndoPresentationName() + " >> ");
+      if (DEBUG_UNDO) logger.debug(" << " + undoManager.getUndoPresentationName() + " >> ");
       undoManager.undo();
       redoLast();
     }
@@ -123,13 +122,15 @@ public class InGameContext {
       undoManager.undo();
     } else {
       // Last action
-      logger.debug(undoCount-- + ". Removing " + undoManager.getPresentationName() + " from undo list");
+      if (DEBUG_UNDO)
+        logger.debug(undoCount-- + ". Removing " + undoManager.getPresentationName() + " from undo list");
       undoManager.removeLastEdit();
     }
 
     if (undoManager.canRedo()) {
       undoManager.redo();
-      logger.debug(undoCount-- + ". Removing " + undoManager.getPresentationName() + " from undo list");
+      if (DEBUG_UNDO)
+        logger.debug(undoCount-- + ". Removing " + undoManager.getPresentationName() + " from undo list");
       undoManager.removeLastEdit();
     }
   }
@@ -138,40 +139,43 @@ public class InGameContext {
     // todo parse an actionCommand into a CWAction
   }
 
+  /**
+   * Convenient method to executes an action
+   * If the action can be undone then it is added to the undo manager.
+   */
   public void doAction(CWAction action) {
     if (action == null) {
       logger.warn("Trying to execute null action");
       return;
     }
 
-    action.invoke(this);
-    if (action.canUndo()) {
-      addUndoAction(action);
-    }
+    if (this.action == null) {
+      logger.debug("Launching action ->" + action.getName());
+      this.action = action;
+      action.invoke(this);
 
-    actionQueue.add(action);
+      if (action.canUndo()) {
+        addUndoAction(action);
+      }
+    } else {
+      logger.warn("Skipping action -> " + action.getName() + " other action still executing " + this.action.getName());
+    }
   }
 
   private void addUndoAction(CWAction action) {
     if (action.canUndo()) {
       undoManager.addEdit(new UndoWrapper(action, this));
-      logger.debug(++undoCount + ". Adding " + undoManager.getPresentationName() + " to undo list");
+      if (DEBUG_UNDO)
+        logger.debug(++undoCount + ". Adding " + undoManager.getPresentationName() + " to undo list");
     }
   }
 
-  /**
-   * Update the actions in the queue, until they are all completed
-   */
   public void update(int elapsedTime) {
-    if (actionQueue.isEmpty()) return;
-    Iterator it = actionQueue.iterator();
-
-    while (it.hasNext()) {
-      CWAction action = (CWAction) it.next();
+    if (action != null) {
       action.update(elapsedTime);
 
       if (action.isCompleted()) {
-        it.remove();
+        action = null;
       }
     }
   }
@@ -179,7 +183,7 @@ public class InGameContext {
   public void discartAllEdits() {
     undoCount = 0;
     undoManager.discardAllEdits();
-    logger.debug("Undo history cleared");
+    if (DEBUG_UNDO) logger.debug("Undo history cleared");
   }
 
   public void playSound(String soundName) {
@@ -272,6 +276,10 @@ public class InGameContext {
 
   public boolean isMoving() {
     return moving;
+  }
+
+  public boolean isActionCompleted() {
+    return action == null;
   }
 
   /**
