@@ -104,4 +104,13 @@ public class ActionBag implements CWAction {
   public boolean isCompleted() {
     return !started;
   }
+
+  @Override
+  public String toString() {
+    StringBuilder strBuilder = new StringBuilder(getName() + ":");
+    for (CWAction action : actions) {
+      strBuilder.append(action.getName() + " - ");
+    }
+    return strBuilder.toString();
+  }
 }

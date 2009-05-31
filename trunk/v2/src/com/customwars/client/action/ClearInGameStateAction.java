@@ -34,6 +34,7 @@ public class ClearInGameStateAction extends DirectAction {
     context.setMoving(false);
     context.setTrapped(false);
     context.clearDropLocations();
+    context.getContainer().getInput().resume();
 
     mapRenderer.activateCursor("Select");
     mapRenderer.stopCursorTraversal();
