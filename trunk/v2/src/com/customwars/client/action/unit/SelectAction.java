@@ -1,5 +1,6 @@
 package com.customwars.client.action.unit;
 
+import com.customwars.client.SFX;
 import com.customwars.client.action.DirectAction;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.gameobject.Locatable;
@@ -34,7 +35,7 @@ public class SelectAction extends DirectAction {
   protected void invokeAction() {
     Locatable locatable = selectTile.getLastLocatable();
     selectUnit((Unit) locatable);
-    context.playSound("select");
+    SFX.playSound("select");
     context.setMode(InGameContext.MODE.UNIT_SELECT);
   }
 

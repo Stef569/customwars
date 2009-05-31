@@ -1,6 +1,7 @@
 package com.customwars.client.action.unit;
 
 import com.customwars.client.App;
+import com.customwars.client.SFX;
 import com.customwars.client.action.DelayedAction;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.gameobject.Unit;
@@ -64,7 +65,7 @@ public class MoveAnimatedAction extends DelayedAction {
 
   void pathMoveComplete() {
     if (moveTraverse.foundTrapper()) {
-      context.playSound("trapped");
+      SFX.playSound("trapped");
       context.setTrapped(true);
     } else {
       context.setTrapped(false);

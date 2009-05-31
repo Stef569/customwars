@@ -1,5 +1,6 @@
 package com.customwars.client.action.unit;
 
+import com.customwars.client.SFX;
 import com.customwars.client.action.DirectAction;
 import com.customwars.client.controller.ControllerManager;
 import com.customwars.client.model.gameobject.Unit;
@@ -44,11 +45,11 @@ public class AttackAction extends DirectAction {
 
     if (attacker.isDestroyed()) {
       controllerManager.removeUnitController(attacker);
-      context.playSound("explode");
+      SFX.playSound("explode");
     }
     if (defender.isDestroyed()) {
       controllerManager.removeUnitController(defender);
-      context.playSound("explode");
+      SFX.playSound("explode");
     }
   }
 }

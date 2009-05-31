@@ -1,6 +1,6 @@
 package com.customwars.client.ui.state;
 
-import com.customwars.client.Statistics;
+import com.customwars.client.model.Statistics;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.ui.layout.TextBox;
 import org.apache.log4j.Logger;

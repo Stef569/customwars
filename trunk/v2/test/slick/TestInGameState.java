@@ -1,10 +1,11 @@
 package slick;
 
-import com.customwars.client.Statistics;
+import com.customwars.client.SFX;
 import com.customwars.client.action.ActionFactory;
 import com.customwars.client.action.ClearInGameStateAction;
 import com.customwars.client.action.ShowPopupMenu;
 import com.customwars.client.controller.ControllerManager;
+import com.customwars.client.model.Statistics;
 import com.customwars.client.model.fight.Fight;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.gameobject.City;
@@ -119,7 +120,7 @@ public class TestInGameState extends CWState implements PropertyChangeListener {
   public void controlPressed(Command command, CWInput cwInput) {
     if (cwInput.isCancel(command)) {
       if (context.canUndo()) {
-        context.playSound("cancel");
+        SFX.playSound("cancel");
         context.undo();
         return;
       }

@@ -1,5 +1,6 @@
 package com.customwars.client.action.unit;
 
+import com.customwars.client.SFX;
 import com.customwars.client.action.DirectAction;
 import com.customwars.client.controller.ControllerManager;
 import com.customwars.client.model.gameobject.City;
@@ -42,7 +43,7 @@ public class CaptureAction extends DirectAction {
       unit.setUnitState(UnitState.IDLE);
       controllerManager.addHumanCityController(city);
       city.resetCapturing();
-      context.playSound("captured");
+      SFX.playSound("captured");
     }
   }
 }
