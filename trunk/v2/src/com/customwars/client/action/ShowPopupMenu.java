@@ -62,13 +62,13 @@ public class ShowPopupMenu extends DirectAction implements ComponentListener {
     hud.showPopUp(popupLocation, popupName, menuItems, this);
     mapRenderer.moveCursor(popupLocation);
 
-    context.setMode(InGameContext.MODE.GUI);
+    context.setInputMode(InGameContext.INPUT_MODE.GUI);
     mapRenderer.setCursorLocked(true);
   }
 
   public void undo() {
     hud.hidePopup();
-    context.setMode(InGameContext.MODE.DEFAULT);
+    context.setInputMode(InGameContext.INPUT_MODE.DEFAULT);
     mapRenderer.setCursorLocked(false);
   }
 

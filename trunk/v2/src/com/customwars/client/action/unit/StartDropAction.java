@@ -43,7 +43,7 @@ public class StartDropAction extends DirectAction {
     // show the tiles as a movezone
     mapRenderer.startCursorTraversal(adjacentTiles);
     mapRenderer.setMoveZone(adjacentTiles);
-    context.setMode(InGameContext.MODE.UNIT_DROP);
+    context.setInputMode(InGameContext.INPUT_MODE.UNIT_DROP);
   }
 
   private List<Location> getEmptyAjacentTiles(Location center) {

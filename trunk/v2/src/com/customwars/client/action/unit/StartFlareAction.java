@@ -22,13 +22,13 @@ public class StartFlareAction extends DirectAction {
   protected void invokeAction() {
     mapRenderer.showAttackZone();
     mapRenderer.activateCursor("SILO");
-    context.setMode(InGameContext.MODE.UNIT_FLARE);
+    context.setInputMode(InGameContext.INPUT_MODE.UNIT_FLARE);
   }
 
   @Override
   public void undo() {
     mapRenderer.removeZones();
     mapRenderer.activateCursor("SELECT");
-    context.setMode(InGameContext.MODE.DEFAULT);
+    context.setInputMode(InGameContext.INPUT_MODE.DEFAULT);
   }
 }
