@@ -75,7 +75,7 @@ public class GameRenderer {
     initMapRenderer();
 
     Tile cursorLocation = getCursorLocation();
-    hud.moveOverTile(cursorLocation, isOnLeftSide(cursorLocation));
+    hud.moveOverTile(cursorLocation);
 
     initCamera();
     mapRenderer.setScroller(new Scroller(camera));
@@ -204,7 +204,7 @@ public class GameRenderer {
       SFX.playSound("maptick");
     }
     Tile cursorLocation = getCursorLocation();
-    hud.moveOverTile(cursorLocation, isOnLeftSide(cursorLocation));
+    hud.moveOverTile(cursorLocation);
   }
 
   public void mouseMoved(int x, int y) {
@@ -218,7 +218,7 @@ public class GameRenderer {
     }
 
     Tile cursorLocation = getCursorLocation();
-    hud.moveOverTile(cursorLocation, isOnLeftSide(cursorLocation));
+    hud.moveOverTile(cursorLocation);
   }
 
   public void setRenderHUD(boolean renderHUD) {
@@ -232,10 +232,6 @@ public class GameRenderer {
   public void setExplosionArea(List<Location> explosionArea) {
     this.explosionArea = explosionArea;
     if (explosionAnim.isStopped()) explosionAnim.restart();
-  }
-
-  public boolean isOnLeftSide(Location location) {
-    return location != null && (location.getCol() < map.getCols() / 2);
   }
 
   private boolean cursorMoved(Location oldLocation) {

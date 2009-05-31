@@ -4,6 +4,7 @@ import com.customwars.client.io.ResourceManager;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.gameobject.Locatable;
 import com.customwars.client.model.gameobject.Unit;
+import com.customwars.client.model.map.Direction;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.ui.hud.PlayerInfoBox;
@@ -63,7 +64,7 @@ public class HUD {
     bottomComponents.add(terrainInfoBox);
 
     unitInfoBox = new UnitInfoBox(guiContext);
-    unitInfoBox.setWidth(60);
+    unitInfoBox.setWidth(65);
     unitInfoBox.setHeight(INFO_BOX_HEIGH);
     bottomComponents.add(unitInfoBox);
 
@@ -73,7 +74,7 @@ public class HUD {
     topComponents.add(playerInfoBox);
   }
 
-  public void moveOverTile(Tile tile, boolean leftSide) {
+  public void moveOverTile(Tile tile) {
     if (terrainInfoBox != null && camera != null) {
       terrainInfoBox.setTile(tile);
       Locatable locatable = tile.getLastLocatable();
@@ -84,8 +85,8 @@ public class HUD {
       } else {
         unitInfoBox.setVisible(false);
       }
-
-      locateInfoBoxes(leftSide);
+      Direction quadrant = game.getMap().getQuadrantFor(tile);
+      locateInfoBoxes(quadrant);
     }
   }
 
@@ -95,11 +96,11 @@ public class HUD {
    * of the screen, the info boxes will be set to display on the left side. Otherwise,
    * the info boxes will be set to display on the right side.
    */
-  public final void locateInfoBoxes(boolean leftSide) {
-    if (leftSide) {
+  public final void locateInfoBoxes(Direction quadrant) {
+    if (quadrant == Direction.WEST) {
       locateRightToLeft(topComponents, 10);
       locateRightToLeft(bottomComponents, camera.getHeight() - INFO_BOX_HEIGH);
-    } else {
+    } else if (quadrant == Direction.EAST) {
       locateLeftToRight(topComponents, 10);
       locateLeftToRight(bottomComponents, camera.getHeight() - INFO_BOX_HEIGH);
     }
