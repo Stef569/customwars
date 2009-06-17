@@ -33,7 +33,7 @@ public class Config {
   private static final String USER_PROPERTIES_FILE = "user.properties";
   private static final String USER_DEFAULTS_PROPERTIES_FILE = "userDefaults.properties";
   private static final String PLUGIN_PROPERTIES_FILE = "plugin.properties";
-  private static final String LANG_BUNDLE_PATH = "data.lang.Languages";
+  private static final String LANG_BUNDLE_PATH = "res.data.lang.Languages";
   private String pluginLocation;
 
   private ResourceManager resources;
