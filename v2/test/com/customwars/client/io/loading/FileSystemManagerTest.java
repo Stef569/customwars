@@ -11,40 +11,62 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * Test the FileSystemManager by creating some maps in testData/map
+ * Test the FileSystemManager by creating some maps in maps/test and maps/versus
  * when the test is done delete the maps files, so they don't end up on svn.
  *
  * @author stefan
  */
 public class FileSystemManagerTest {
-  private String parentDir = "testData/map/";
+  private static String parentDir = "maps/";
+  private static String versusDir = "versus/";
+  private static String testDir = "test/";
+
   private String testMap1 = "testMap1.map";
   private String testMap2 = "testMap2.map";
   private String testMap3 = "testMap3.map";
+  private String versusMap1 = "versus.map";
 
-  private File expectedTestMap1 = new File(parentDir + testMap1);
-  private File expectedTestMap2 = new File(parentDir + testMap2);
-  private File expectedTestMap3 = new File(parentDir + testMap3);
   private static FileSystemManager fsm;
 
   @Before
   public void beforeEachTest() throws IOException {
     fsm = new FileSystemManager(parentDir);
-    fsm.createFile(testMap1);
-    fsm.createFile(testMap2);
-    fsm.createFile(testMap3);
+    new File(parentDir + testDir).mkdirs();
+    new File(parentDir + versusDir).mkdirs();
   }
 
   @AfterClass
   public static void afterAllTests() {
-    fsm.clearFiles();
+    File test = new File(parentDir + testDir);
+    fsm.clearFiles(test);
+    test.delete();
+    File versus = new File(parentDir + versusDir);
+    fsm.clearFiles(versus);
+    versus.delete();
+    new File(parentDir).delete();
   }
 
   @Test
-  public void readAllMaps() {
-    List<File> maps = fsm.getFiles();
-    Assert.assertTrue(maps.contains(expectedTestMap1));
-    Assert.assertTrue(maps.contains(expectedTestMap2));
-    Assert.assertTrue(maps.contains(expectedTestMap3));
+  public void readAllTestMaps() throws IOException {
+    // Create some empty files in the test dir
+    Assert.assertTrue(fsm.createFile(testDir + testMap1));
+    Assert.assertTrue(fsm.createFile(testDir + testMap2));
+    Assert.assertTrue(fsm.createFile(testDir + testMap3));
+
+    // Check if they are really created
+    List<File> maps = fsm.getFiles(testDir);
+    Assert.assertTrue(maps.contains(new File(parentDir, testDir + testMap1)));
+    Assert.assertTrue(maps.contains(new File(parentDir, testDir + testMap2)));
+    Assert.assertTrue(maps.contains(new File(parentDir, testDir + testMap3)));
+  }
+
+  @Test
+  public void readAllVersusMaps() throws IOException {
+    // Create some empty files in the versus dir
+    Assert.assertTrue(fsm.createFile(versusDir + versusMap1));
+
+    // Check if they are really created
+    List<File> maps = fsm.getFiles(versusDir);
+    Assert.assertTrue(maps.contains(new File(parentDir + versusDir, versusMap1)));
   }
 }
