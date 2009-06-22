@@ -1,5 +1,6 @@
 package com.customwars.client.model.gameobject;
 
+import com.customwars.client.model.ArmyBranch;
 import com.customwars.client.model.TurnHandler;
 import com.customwars.client.model.fight.Attacker;
 import com.customwars.client.model.fight.Defender;
@@ -59,7 +60,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   private Map<Integer, Integer> buildCities;        // City Ids this unit can build on given terrains
   private List<Integer> buildUnits;      // Units that can be build
 
-  private int armyBranch;       // Naval, Ground, Air
+  private ArmyBranch armyBranch;       // Naval, Ground, Air
   private int movementType;     // Inf, Mech, Tires, Tread, Air, Naval ...
   private MoveStrategy moveStrategy;
 
@@ -83,7 +84,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
               int cost, int movement, int vision,
               int maxHp, int maxSupplies, int maxTransportCount, int suppliesPerTurn,
               boolean canCapture, boolean canDive, boolean canSupply, boolean canTransport, boolean canJoin, List<Integer> transports,
-              int armyBranch, int movementType, Range supplyRange) {
+              ArmyBranch armyBranch, int movementType, Range supplyRange) {
     super(GameObjectState.ACTIVE);
     this.id = id;
     this.name = name;
@@ -255,7 +256,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
 
   public boolean canAttack(Defender defender) {
     return defender != null && canFireOn(defender) && !isDestroyed() &&
-            !defender.isDestroyed() && !defender.getOwner().isAlliedWith(owner);
+      !defender.isDestroyed() && !defender.getOwner().isAlliedWith(owner);
   }
 
   private void tryToFireWeapon(Fight fight) {
@@ -297,7 +298,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
    */
   public boolean canCounterAttack(Attacker attacker) {
     return !isDestroyed() && getAttackRange().getMinRange() == 1 &&
-            attacker instanceof Defender && canFireOn((Defender) attacker);
+      attacker instanceof Defender && canFireOn((Defender) attacker);
   }
 
   public List<Location> getAttackZone() {
@@ -404,6 +405,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   /**
    * This unit is the supplier
    *
+   * @param unit the unit that is going to be supplied by this unit
    * @return Can this unit supply the given unit
    */
   public boolean canSupply(Unit unit) {
@@ -445,6 +447,8 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
    * Construct city, This might take more then one invocation
    * isConstructionComplete() will return true when the city is constructed.
    * When the city construction is completed call stopConstructing() on this unit
+   *
+   * @param city The city to construct
    */
   public void construct(City city) {
     Args.checkForNull(city);
@@ -606,9 +610,9 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
    * @return if this unit can fire on the defender
    */
   public boolean canFireOn(Defender defender) {
-    int armyBranch = defender.getArmyBranch();
+    ArmyBranch armyBranch = defender.getArmyBranch();
     return hasPrimaryWeapon() && primaryWeapon.canFire(armyBranch) ||
-            hasSecondaryWeapon() && secondaryWeapon.canFire(armyBranch);
+      hasSecondaryWeapon() && secondaryWeapon.canFire(armyBranch);
   }
 
   /**
@@ -775,7 +779,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
     return description;
   }
 
-  public int getArmyBranch() {
+  public ArmyBranch getArmyBranch() {
     return armyBranch;
   }
 
@@ -855,7 +859,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   @Override
   public String toString() {
     return String.format("[name=%s id=%s owner=%s location=%s transport=%s state=%s]",
-            name, id, getOwnerText(), getLocationText(), transport, unitState);
+      name, id, getOwnerText(), getLocationText(), transport, unitState);
   }
 
   private String getLocationText() {

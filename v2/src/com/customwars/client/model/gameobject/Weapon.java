@@ -1,5 +1,6 @@
 package com.customwars.client.model.gameobject;
 
+import com.customwars.client.model.ArmyBranch;
 import com.customwars.client.model.map.Range;
 import tools.Args;
 import tools.NumberUtil;
@@ -21,10 +22,10 @@ public class Weapon extends GameObject {
   private Range fireRange;
   private int maxAmmo;
   private boolean balistic;         // Gives this weapon indirect firing ability even after moving
-  private List<Integer> attacks;    // The Armybranches this weapon can attack
+  private List<ArmyBranch> attacks;    // The Armybranches this weapon can attack
   private int ammo;
 
-  public Weapon(int id, String name, String description, Range fireRange, int maxAmmo, boolean balistic, List<Integer> attacks) {
+  public Weapon(int id, String name, String description, Range fireRange, int maxAmmo, boolean balistic, List<ArmyBranch> attacks) {
     this.id = id;
     this.name = name;
     this.description = description;
@@ -56,7 +57,7 @@ public class Weapon extends GameObject {
     fireRange = otherWeapon.fireRange;
     maxAmmo = otherWeapon.maxAmmo;
     balistic = otherWeapon.balistic;
-    attacks = new ArrayList<Integer>(otherWeapon.attacks);
+    attacks = new ArrayList<ArmyBranch>(otherWeapon.attacks);
     ammo = otherWeapon.ammo;
   }
 
@@ -82,12 +83,12 @@ public class Weapon extends GameObject {
     firePropertyChange("ammo", oldAmmo, this.ammo);
   }
 
-  public String getName() {
-    return name;
-  }
-
   public int getID() {
     return id;
+  }
+
+  public String getName() {
+    return name;
   }
 
   public String getDescription() {
@@ -106,7 +107,7 @@ public class Weapon extends GameObject {
     return ammo;
   }
 
-  public boolean canFire(int armyBranch) {
+  public boolean canFire(ArmyBranch armyBranch) {
     return hasAmmoLeft() && attacks.contains(armyBranch);
   }
 
@@ -124,6 +125,21 @@ public class Weapon extends GameObject {
 
   public boolean isBalistic() {
     return balistic;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof Weapon)) return false;
+
+    Weapon weapon = (Weapon) o;
+
+    return id == weapon.id;
+  }
+
+  @Override
+  public int hashCode() {
+    return id;
   }
 
   @Override

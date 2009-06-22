@@ -1,6 +1,7 @@
 package com.customwars.client.model.gameobject;
 
 import com.customwars.client.io.converter.UnitWeaponConverter;
+import com.customwars.client.model.ArmyBranch;
 import com.customwars.client.model.TestData;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
@@ -45,31 +46,32 @@ public class UnitXStreamTest {
   @Test
   public void validUnitXml() {
     String unitXml = "<unit id='0' name='Inf'>" +
-            "  <description></description>" +
-            "  <price>3000</price>" +
-            "  <movement>3</movement>" +
-            "  <vision>5</vision>" +
-            "  <maxHp>20</maxHp>" +
-            "  <maxSupplies>20</maxSupplies>" +
-            "  <dailyUse>0</dailyUse>" +
-            "  <canCapture>true</canCapture>" +
-            "  <armyBranch>1</armyBranch>" +
-            "  <movementType>0</movementType>" +
-            "</unit>";
+      "  <description></description>" +
+      "  <price>3000</price>" +
+      "  <movement>3</movement>" +
+      "  <vision>5</vision>" +
+      "  <maxHp>20</maxHp>" +
+      "  <maxSupplies>20</maxSupplies>" +
+      "  <dailyUse>0</dailyUse>" +
+      "  <canCapture>true</canCapture>" +
+      "  <armyBranch>LAND</armyBranch>" +
+      "  <movementType>0</movementType>" +
+      "</unit>";
     Unit unit = (Unit) xStream.fromXML(unitXml);
     UnitFactory.addUnit(unit);
     Unit unitCopy = UnitFactory.getRandomUnit();
 
     Assert.assertEquals(true, unitCopy.canCapture());
+    Assert.assertTrue(unitCopy.getArmyBranch() == ArmyBranch.LAND);
   }
 
   @Test
   public void unitWithWeapon() {
     String unitXml = "<unit id='0' name='Infantry'>" +
-            "<primaryWeapon id='0'>" +
-            "<ammo>99</ammo>" +
-            "</primaryWeapon>" +
-            "</unit>";
+      "<primaryWeapon id='0'>" +
+      "<ammo>99</ammo>" +
+      "</primaryWeapon>" +
+      "</unit>";
 
     // Magic! the weapon is retrieved from the UnitFactory and added to the unit as primaryWeapon
     Unit unit = (Unit) xStream.fromXML(unitXml);
@@ -81,13 +83,13 @@ public class UnitXStreamTest {
   @Test
   public void unitWithPrimaryandSecondaryWeapon() {
     String unitXml = "<unit id='0' name='Infantry'>" +
-            "<primaryWeapon id='0'>" +
-            "<ammo>99</ammo>" +
-            "</primaryWeapon>" +
-            "<secondaryWeapon id='0'>" +
-            "<ammo>12</ammo>" +
-            "</secondaryWeapon>" +
-            "</unit>";
+      "<primaryWeapon id='0'>" +
+      "<ammo>99</ammo>" +
+      "</primaryWeapon>" +
+      "<secondaryWeapon id='0'>" +
+      "<ammo>12</ammo>" +
+      "</secondaryWeapon>" +
+      "</unit>";
 
     // Magic! the weapon is retrieved from the Weaponfactory and added to the unit as primaryWeapon
     Unit unit = (Unit) xStream.fromXML(unitXml);
@@ -114,7 +116,7 @@ public class UnitXStreamTest {
    */
   public void unitWithNoInfo() {
     String unitXml = "<unit id='0'>" +
-            "</unit>";
+      "</unit>";
     Unit unit = (Unit) xStream.fromXML(unitXml);
     UnitFactory.addUnit(unit);
     Unit unitCopy = UnitFactory.getUnit(0);

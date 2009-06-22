@@ -1,5 +1,6 @@
 package com.customwars.client.model.fight;
 
+import com.customwars.client.model.ArmyBranch;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Range;
 
@@ -15,7 +16,7 @@ public interface Attacker {
 
   boolean canAttack(Defender defender);
 
-  int getArmyBranch();
+  ArmyBranch getArmyBranch();
 
   Range getAttackRange();
 
