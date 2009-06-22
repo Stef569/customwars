@@ -7,6 +7,7 @@ moveCosts have the following order
   Tires
   Air
   Naval
+  Transport
 -->
 <list>
     <terrain name="Grass" id="0">

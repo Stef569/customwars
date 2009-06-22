@@ -1,5 +1,6 @@
 package com.customwars.client.model.gameobject;
 
+import com.customwars.client.model.ArmyBranch;
 import com.customwars.client.model.TestData;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.ConversionException;
@@ -30,6 +31,7 @@ public class CityXStreamTest {
     // id and name are read from attributes, not elements
     xStream.useAttributeFor(Terrain.class, "id");
     xStream.useAttributeFor(Terrain.class, "name");
+    xStream.alias("armyBranch", ArmyBranch.class);
   }
 
   @Before
@@ -48,23 +50,26 @@ public class CityXStreamTest {
   @Test
   public void cityFromXml() {
     String validCityXml = "<city id='0' name='Factory'>" +
-            "  <description>Can produce units</description>" +
-            "  <defenseBonus>0</defenseBonus>" +
-            "  <height>0</height>" +
-            "  <moveCosts>" +
-            "    <int>1</int>" +
-            "    <int>1</int>" +
-            "    <int>1</int>" +
-            "    <int>2</int>" +
-            "    <int>1</int>" +
-            "    <int>127</int>" +
-            "  </moveCosts>" +
-            "  <vision>1</vision>" +
-            "  <maxCapCount>20</maxCapCount>" +
-            "  <healRate>1</healRate>" +
-            "  <capCount>10</capCount>" +
-            "  <funds>0</funds>" +
-            "</city>";
+      "  <description>Can produce units</description>" +
+      "  <defenseBonus>0</defenseBonus>" +
+      "  <height>0</height>" +
+      "  <moveCosts>" +
+      "    <int>1</int>" +
+      "    <int>1</int>" +
+      "    <int>1</int>" +
+      "    <int>2</int>" +
+      "    <int>1</int>" +
+      "    <int>127</int>" +
+      "  </moveCosts>" +
+      "  <vision>1</vision>" +
+      "  <maxCapCount>20</maxCapCount>" +
+      "  <healRate>1</healRate>" +
+      "  <capCount>10</capCount>" +
+      "  <builds>" +
+      "   <armyBranch>LAND</armyBranch>" +
+      "  </builds>" +
+      "  <funds>0</funds>" +
+      "</city>";
     // Parse xml data into City object
     City city = (City) xStream.fromXML(validCityXml);
     // Add the city to the factory, invoking init and reset on it
@@ -85,8 +90,8 @@ public class CityXStreamTest {
   @Test(expected = ConversionException.class)
   public void inValidcityFromXml() {
     String inValidCityXml = "<city id='0' name='Factory'>" +
-            "  <height>999999999999999999999999</height>" +
-            "</city>";
+      "  <height>999999999999999999999999</height>" +
+      "</city>";
     City city = (City) xStream.fromXML(inValidCityXml);
     CityFactory.addCity(city);
     CityFactory.getRandomCity();

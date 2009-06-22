@@ -1,5 +1,6 @@
 package com.customwars.client.model.fight;
 
+import com.customwars.client.model.ArmyBranch;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.map.Location;
 
@@ -17,7 +18,7 @@ public interface Defender {
 
   Player getOwner();
 
-  int getArmyBranch();
+  ArmyBranch getArmyBranch();
 
   Location getLocation();
 }

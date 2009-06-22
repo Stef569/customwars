@@ -10,7 +10,7 @@ ArmyBranches:
             <maxRange>1</maxRange>
         </fireRange>
         <attacks>
-            <int>0</int>
+            <armyBranch>LAND</armyBranch>
         </attacks>
     </weapon>
     <weapon name="BAZOOKA" id="1">
@@ -19,7 +19,7 @@ ArmyBranches:
             <maxRange>1</maxRange>
         </fireRange>
         <attacks>
-            <int>0</int>
+            <armyBranch>LAND</armyBranch>
         </attacks>
         <description>For taking out tanks in close Combat</description>
     </weapon>
@@ -29,7 +29,7 @@ ArmyBranches:
             <maxRange>1</maxRange>
         </fireRange>
         <attacks>
-            <int>0</int>
+            <armyBranch>LAND</armyBranch>
         </attacks>
         <description>For taking out units in close Combat</description>
     </weapon>
@@ -39,7 +39,7 @@ ArmyBranches:
             <maxRange>1</maxRange>
         </fireRange>
         <attacks>
-            <int>0</int>
+            <armyBranch>LAND</armyBranch>
         </attacks>
     </weapon>
     <weapon name="LONG_RANGE_CANNON" id="4">
@@ -48,7 +48,7 @@ ArmyBranches:
             <maxRange>5</maxRange>
         </fireRange>
         <attacks>
-            <int>0</int>
+            <armyBranch>LAND</armyBranch>
         </attacks>
         <description>none</description>
     </weapon>
@@ -58,8 +58,8 @@ ArmyBranches:
             <maxRange>1</maxRange>
         </fireRange>
         <attacks>
-            <int>0</int>
-            <int>2</int>
+            <armyBranch>LAND</armyBranch>
+            <armyBranch>AIR</armyBranch>
         </attacks>
     </weapon>
     <weapon name="ROCKETS" id="6">
@@ -68,8 +68,8 @@ ArmyBranches:
             <maxRange>5</maxRange>
         </fireRange>
         <attacks>
-            <int>0</int>
-            <int>1</int>
+            <armyBranch>LAND</armyBranch>
+            <armyBranch>NAVAL</armyBranch>
         </attacks>
         <description>none</description>
     </weapon>
@@ -79,7 +79,7 @@ ArmyBranches:
             <maxRange>5</maxRange>
         </fireRange>
         <attacks>
-            <int>2</int>
+            <armyBranch>AIR</armyBranch>
         </attacks>
     </weapon>
 </list>

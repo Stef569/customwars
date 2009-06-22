@@ -2,6 +2,7 @@ package com.customwars.client.io.loading;
 
 import com.customwars.client.io.converter.TerrainConverter;
 import com.customwars.client.io.converter.UnitWeaponConverter;
+import com.customwars.client.model.ArmyBranch;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.CityFactory;
 import com.customwars.client.model.gameobject.Terrain;
@@ -17,6 +18,7 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
 import org.newdawn.slick.loading.DeferredResource;
 import org.newdawn.slick.loading.LoadingList;
 import org.newdawn.slick.util.ResourceLoader;
+import tools.IOUtil;
 import tools.XStreamUtil;
 
 import java.io.IOException;
@@ -81,6 +83,7 @@ public class ModelLoader {
     xStream.useAttributeFor(Weapon.class, "id");
     xStream.useAttributeFor(Weapon.class, "name");
     xStream.alias("fireRange", Range.class);
+    xStream.alias("armyBranch", ArmyBranch.class);
     InputStream weaponStream = ResourceLoader.getResourceAsStream(modelResPath + XML_DATA_WEAPONS_FILE);
     Collection<Weapon> weapons = (Collection<Weapon>) XStreamUtil.readObject(xStream, weaponStream);
     WeaponFactory.addWeapons(weapons);
@@ -104,20 +107,26 @@ public class ModelLoader {
     xStream.useAttributeFor(Terrain.class, "id");
     xStream.useAttributeFor(Terrain.class, "name");
     xStream.useAttributeFor(Terrain.class, "type");
+    xStream.alias("armyBranch", ArmyBranch.class);
     InputStream cityStream = ResourceLoader.getResourceAsStream(modelResPath + XML_DATA_CITY_FILE);
     Collection<City> cities = (Collection<City>) XStreamUtil.readObject(xStream, cityStream);
     CityFactory.addCities(cities);
   }
 
   private void loadDamageTables() {
-    InputStream baseDamageStream = ResourceLoader.getResourceAsStream(modelResPath + BASE_DMG_FILE);
-    InputStream altDamageStream = ResourceLoader.getResourceAsStream(modelResPath + ALT_DMG_FILE);
+    InputStream baseDamageStream = null, altDamageStream = null;
 
     try {
+      baseDamageStream = ResourceLoader.getResourceAsStream(modelResPath + BASE_DMG_FILE);
+      altDamageStream = ResourceLoader.getResourceAsStream(modelResPath + ALT_DMG_FILE);
+
       UnitFight.setBaseDMG(damageParser.read(baseDamageStream));
       UnitFight.setAltDMG(damageParser.read(altDamageStream));
     } catch (IOException e) {
       throw new RuntimeException("Could not read damage table", e);
+    } finally {
+      IOUtil.closeStream(baseDamageStream);
+      IOUtil.closeStream(altDamageStream);
     }
   }
 

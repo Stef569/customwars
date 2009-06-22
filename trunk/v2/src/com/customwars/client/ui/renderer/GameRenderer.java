@@ -55,7 +55,7 @@ public class GameRenderer {
     this.resources = resources;
     mapRenderer.loadResources(resources);
     modelEventsRenderer.loadResources(resources);
-    explosionAnim = resources.getAnim("explosion_1");
+    explosionAnim = resources.getAnim("explosion_LAND");
   }
 
   public void setInGameContext(InGameContext inGameContext) {

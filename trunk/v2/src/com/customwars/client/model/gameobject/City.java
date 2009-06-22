@@ -1,5 +1,6 @@
 package com.customwars.client.model.gameobject;
 
+import com.customwars.client.model.ArmyBranch;
 import com.customwars.client.model.TurnHandler;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.map.Direction;
@@ -34,9 +35,9 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
   private Location location;  // The location this City is on
   private Player owner;       // Player owning this City(never null)
 
-  private List<Integer> heals;          // The ids this City can heal(Empty list means it cannot heal)
+  private List<ArmyBranch> heals;       // The army branches this City can heal(Empty list means it cannot heal)
   private List<Integer> canBeCaptureBy; // The ids this City can be captured by(Empty list means it cannot be captured)
-  private List<Integer> builds;         // The ids this City can build (Empty list means it cannot build)
+  private List<ArmyBranch> builds;      // The army branches this City can build (Empty list means it cannot build)
   private List<Integer> canBeLaunchedBy;// The ids that can launch a rocket (Empty list means it cannot launch rockets)
   private boolean launched;             // If this city already launched a rocket
   private int maxCapCount;
@@ -48,7 +49,7 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
 
   public City(int id, String type, String name, String description, int defenseBonus, int height, List<Integer> moveCosts,
               int vision, boolean hidden, List<Direction> connectedDirections,
-              List<Integer> heals, List<Integer> canBeCaptureBy, List<Integer> builds, int maxCapCount, int healRate) {
+              List<ArmyBranch> heals, List<Integer> canBeCaptureBy, List<ArmyBranch> builds, int maxCapCount, int healRate) {
     super(id, type, name, description, defenseBonus, height, hidden, vision, moveCosts, connectedDirections);
     this.heals = heals;
     this.canBeCaptureBy = canBeCaptureBy;
@@ -232,7 +233,7 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
    */
   public boolean canSupply(Unit unit) {
     return unit != null && heals.contains(unit.getArmyBranch()) &&
-            owner.isAlliedWith(unit.getOwner()) && unit.getLocation() == location;
+      owner.isAlliedWith(unit.getOwner()) && unit.getLocation() == location;
   }
 
   public boolean canBeCapturedBy(Unit unit) {
@@ -290,7 +291,7 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
   @Override
   public String toString() {
     StringBuilder strBuilder = new StringBuilder(
-            "[" + super.toString() + " capCount=" + capCount + "/" + maxCapCount);
+      "[" + super.toString() + " capCount=" + capCount + "/" + maxCapCount);
     if (owner != null) strBuilder.append(" owner=").append(owner);
     return strBuilder.append("]").toString();
   }

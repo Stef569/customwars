@@ -27,7 +27,7 @@ MovementTypes:
         <maxHp>100</maxHp>
         <maxSupplies>99</maxSupplies>
 
-        <armyBranch>0</armyBranch>
+        <armyBranch>LAND</armyBranch>
         <movementType>0</movementType>
         <secondaryWeapon id="SMG">
             <ammo>99</ammo>
@@ -45,7 +45,7 @@ MovementTypes:
         <maxHp>100</maxHp>
         <maxSupplies>99</maxSupplies>
 
-        <armyBranch>0</armyBranch>
+        <armyBranch>LAND</armyBranch>
         <movementType>1</movementType>
         <primaryWeapon id="BAZOOKA">
             <Ammo>3</Ammo>
@@ -67,7 +67,7 @@ MovementTypes:
         <maxHp>100</maxHp>
         <maxSupplies>70</maxSupplies>
 
-        <armyBranch>0</armyBranch>
+        <armyBranch>LAND</armyBranch>
         <movementType>2</movementType>
         <primaryWeapon id="TANK_MAIN_GUN">
             <ammo>9</ammo>
@@ -88,7 +88,7 @@ MovementTypes:
         <maxHp>100</maxHp>
         <maxSupplies>50</maxSupplies>
 
-        <armyBranch>0</armyBranch>
+        <armyBranch>LAND</armyBranch>
         <movementType>2</movementType>
         <primaryWeapon id="TANK_MAIN_GUN">
             <ammo>8</ammo>
@@ -126,7 +126,7 @@ MovementTypes:
         <maxHp>100</maxHp>
         <maxSupplies>80</maxSupplies>
 
-        <armyBranch>0</armyBranch>
+        <armyBranch>LAND</armyBranch>
         <movementType>3</movementType>
         <primaryWeapon id="TANK_MAIN_GUN">
             <ammo>5</ammo>
@@ -147,7 +147,7 @@ MovementTypes:
         <maxHp>100</maxHp>
         <maxSupplies>60</maxSupplies>
 
-        <armyBranch>0</armyBranch>
+        <armyBranch>LAND</armyBranch>
         <movementType>2</movementType>
         <primaryWeapon id="ANTI_AIR">
             <ammo>9</ammo>
@@ -165,7 +165,7 @@ MovementTypes:
         <maxHp>100</maxHp>
         <maxSupplies>99</maxSupplies>
 
-        <armyBranch>0</armyBranch>
+        <armyBranch>LAND</armyBranch>
         <movementType>2</movementType>
         <primaryWeapon id="ANTI AIR ROCKETS">
             <ammo>6</ammo>
@@ -183,7 +183,7 @@ MovementTypes:
         <maxHp>100</maxHp>
         <maxSupplies>50</maxSupplies>
 
-        <armyBranch>0</armyBranch>
+        <armyBranch>LAND</armyBranch>
         <movementType>2</movementType>
         <primaryWeapon id="LONG_RANGE_CANNON">
             <ammo>9</ammo>
@@ -201,7 +201,7 @@ MovementTypes:
         <maxHp>100</maxHp>
         <maxSupplies>50</maxSupplies>
 
-        <armyBranch>0</armyBranch>
+        <armyBranch>LAND</armyBranch>
         <movementType>2</movementType>
         <primaryWeapon id="ROCKETS">
             <ammo>6</ammo>
@@ -230,7 +230,7 @@ MovementTypes:
         <maxSupplies>70</maxSupplies>
         <maxTransportCount>3</maxTransportCount>
 
-        <armyBranch>0</armyBranch>
+        <armyBranch>LAND</armyBranch>
         <movementType>2</movementType>
         <description>Can transport other units they also have the ability to supply.</description>
     </unit>

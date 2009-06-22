@@ -20,7 +20,7 @@ id is a reference to the city image sheet
         <vision>1</vision>
 
         <heals>
-            <int>0</int>
+            <armyBranch>LAND</armyBranch>
         </heals>
         <healRate>2</healRate>
         <canBeCaptureBy>
@@ -44,7 +44,7 @@ id is a reference to the city image sheet
         <vision>1</vision>
 
         <heals>
-            <int>0</int>
+            <armyBranch>LAND</armyBranch>
         </heals>
         <healRate>2</healRate>
         <canBeCaptureBy>
@@ -52,7 +52,7 @@ id is a reference to the city image sheet
             <int>1</int>
         </canBeCaptureBy>
         <builds>
-            <int>0</int>
+            <armyBranch>LAND</armyBranch>
         </builds>
         <maxCapCount>20</maxCapCount>
         <description>Factories heal, provide supplies and can create new ground units.</description>
@@ -71,7 +71,7 @@ id is a reference to the city image sheet
         <vision>1</vision>
 
         <heals>
-            <int>0</int>
+            <armyBranch>LAND</armyBranch>
         </heals>
         <healRate>2</healRate>
         <canBeCaptureBy>
@@ -79,7 +79,7 @@ id is a reference to the city image sheet
             <int>1</int>
         </canBeCaptureBy>
         <builds>
-            <int>2</int>
+            <armyBranch>AIR</armyBranch>
         </builds>
         <maxCapCount>20</maxCapCount>
         <description>empty</description>
@@ -98,7 +98,7 @@ id is a reference to the city image sheet
         <vision>1</vision>
 
         <heals>
-            <int>0</int>
+            <armyBranch>LAND</armyBranch>
         </heals>
         <healRate>2</healRate>
         <canBeCaptureBy>
@@ -106,7 +106,7 @@ id is a reference to the city image sheet
             <int>1</int>
         </canBeCaptureBy>
         <builds>
-            <int>1</int>
+            <armyBranch>NAVAL</armyBranch>
         </builds>
         <maxCapCount>20</maxCapCount>
     </city>
@@ -124,7 +124,7 @@ id is a reference to the city image sheet
         <vision>1</vision>
 
         <heals>
-            <int>0</int>
+            <armyBranch>LAND</armyBranch>
         </heals>
         <healRate>2</healRate>
         <canBeCaptureBy>
