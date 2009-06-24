@@ -1,19 +1,17 @@
 package com.customwars.client.model.gameobject;
 
+import com.customwars.client.model.Observable;
+
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
-/**
- * The base class for each game object
- * Game objects are the subject in the observer pattern, they fire
- * PropertyChangeEvents when a bound field changes.
- * When the field value did not change no event is fired.
- *
- * @author stefan
- */
-public class GameObject {
-  private PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
+public class GameObject implements Observable {
+  protected PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
+
+  /**
+   * The different states a gameObject can be in, at all times a gameObject is in one of these states
+   */
   private GameObjectState state;
 
   public GameObject(GameObjectState state) {
@@ -31,7 +29,7 @@ public class GameObject {
   public void setState(GameObjectState state) {
     GameObjectState oldVal = this.state;
     this.state = state;
-    firePropertyChange("state", oldVal, state);
+    changeSupport.firePropertyChange("state", oldVal, state);
   }
 
   public boolean isIdle() {
@@ -50,35 +48,27 @@ public class GameObject {
     return state;
   }
 
-  public void firePropertyChange(String propertyName, int oldValue, int newValue) {
+  protected void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
     changeSupport.firePropertyChange(propertyName, oldValue, newValue);
   }
 
-  public void firePropertyChange(String propertyName, boolean oldValue, boolean newValue) {
-    changeSupport.firePropertyChange(propertyName, oldValue, newValue);
-  }
-
-  public void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
-    changeSupport.firePropertyChange(propertyName, oldValue, newValue);
-  }
-
-  public void firePropertyChange(PropertyChangeEvent evt) {
+  protected void firePropertyChange(PropertyChangeEvent evt) {
     changeSupport.firePropertyChange(evt);
   }
 
-  public synchronized void addPropertyChangeListener(PropertyChangeListener listener) {
+  public void addPropertyChangeListener(PropertyChangeListener listener) {
     changeSupport.addPropertyChangeListener(listener);
   }
 
-  public synchronized void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+  public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
     changeSupport.addPropertyChangeListener(propertyName, listener);
   }
 
-  public synchronized void removePropertyChangeListener(PropertyChangeListener listener) {
-    changeSupport.removePropertyChangeListener(listener);
+  public void removePropertyChangeListener(PropertyChangeListener listener) {
+    changeSupport.addPropertyChangeListener(listener);
   }
 
-  public synchronized void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
-    changeSupport.removePropertyChangeListener(propertyName, listener);
+  public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+    changeSupport.removePropertyChangeListener(listener);
   }
 }

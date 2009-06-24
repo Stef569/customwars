@@ -8,12 +8,12 @@ import com.customwars.client.model.game.Player;
 import com.customwars.client.model.game.Turn;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.CityFactory;
+import com.customwars.client.model.gameobject.Terrain;
 import com.customwars.client.model.gameobject.TerrainFactory;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.gameobject.UnitFactory;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
-import tools.MapUtil;
 
 import java.awt.Color;
 import java.util.Arrays;
@@ -24,7 +24,6 @@ import java.util.List;
  */
 public class HardCodedGame {
   // 3 Game Players
-  public static final Player neutral = new Player(Player.NEUTRAL_PLAYER_ID, Color.GRAY, true, null, "Neutral", 0, -1, false);
   public static Player p_RED = new Player(0, Color.RED, false, null, "Stef", 3800, 0, false);
   public static Player p_BLUE = new Player(1, Color.BLUE, false, null, "JSR", 8500, 1, false);
   public static Player p_GREEN = new Player(2, Color.GREEN, false, null, "Kiwi", 10000, 2, false);
@@ -41,15 +40,15 @@ public class HardCodedGame {
     gc.setDayLimit(Turn.UNLIMITED);
     gc.setCityfunds(1000);
 
-    return new Game(getMap(), players, neutral, gc);
+    return new Game(getMap(), players, gc);
   }
 
   public static Map<Tile> getMap() {
     int tileSize = App.getInt("plugin.tilesize", 32);
-    map = new Map<Tile>(15, 20, tileSize, 3);
+    Terrain plain = TerrainFactory.getTerrain(TestData.PLAIN);
+    map = new Map<Tile>(15, 20, tileSize, 3, false, plain);
     map.setFogOfWarOn(true);
     initMapProperties();
-    MapUtil.fillWithTiles(map, TerrainFactory.getTerrain(TestData.PLAIN));
     map.getTile(2, 1).setTerrain(TerrainFactory.getTerrain(TestData.VERTICAL_RIVER));
 
     // 3 Map Players, colors are suggestions game players overwrite them
@@ -85,7 +84,7 @@ public class HardCodedGame {
     addUnitToMap(4, 2, TestData.INF, p2);
     addUnitToMap(3, 2, TestData.TANK, p2);
     addUnitToMap(5, 2, TestData.ROCKETS, p2);
-    addUnitToMap(6, 2, TestData.APC, p2);
+    addAPCToMap(6, 2, TestData.MECH, p2);
     addUnitToMap(0, 10, TestData.MECH, p3);
     addUnitToMap(2, 9, TestData.ROCKETS, p3);
     addUnitToMap(2, 10, TestData.TANK, p3);
@@ -117,5 +116,14 @@ public class HardCodedGame {
     Unit unit = UnitFactory.getUnit(unitID);
     unit.setOwner(owner);
     t.add(unit);
+  }
+
+  private static void addAPCToMap(int col, int row, int unitInsideAPC, Player owner) {
+    addUnitToMap(col, row, TestData.APC, owner);
+
+    Unit unitInApc = UnitFactory.getUnit(unitInsideAPC);
+    unitInApc.setOwner(owner);
+    Unit apc = (Unit) map.getTile(col, row).getLastLocatable();
+    apc.add(unitInApc);
   }
 }

@@ -8,6 +8,7 @@ import com.customwars.client.MapMaker.control.UnitMapEditorControl;
 import com.customwars.client.io.ResourceManager;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.City;
+import com.customwars.client.model.gameobject.Terrain;
 import com.customwars.client.model.gameobject.TerrainFactory;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Map;
@@ -18,7 +19,6 @@ import com.customwars.client.ui.mapMaker.TerrainSelectPanel;
 import com.customwars.client.ui.mapMaker.UnitSelectPanel;
 import com.customwars.client.ui.renderer.GameRenderer;
 import org.newdawn.slick.gui.GUIContext;
-import tools.MapUtil;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -97,8 +97,8 @@ public class MapEditorController {
     int tileSize = App.getInt("plugin.tilesize");
     String version = App.get("game.version");
 
-    Map<Tile> map = new Map<Tile>(cols, rows, tileSize, 4);
-    MapUtil.fillWithTiles(map, TerrainFactory.getTerrain(0));
+    Terrain plain = TerrainFactory.getTerrain(0);
+    Map<Tile> map = new Map<Tile>(cols, rows, tileSize, 4, false, plain);
     map.putProperty("VERSION", version);
     setMap(map);
   }

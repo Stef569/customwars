@@ -1,9 +1,11 @@
 package com.customwars.client.model.map;
 
-import com.customwars.client.model.gameobject.GameObject;
+import com.customwars.client.model.Observable;
 import com.customwars.client.model.gameobject.Locatable;
 import org.apache.log4j.Logger;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -29,11 +31,12 @@ import java.util.NoSuchElementException;
  * @see Locatable
  * @see Direction
  */
-public class TileMap<T extends Location> extends GameObject {
+public class TileMap<T extends Location> implements Observable {
   private static final Logger logger = Logger.getLogger(TileMap.class);
-  private int tileSize;             // The square size in pixels
-  private int cols, rows;           // The map size in tiles
-  private List<List<T>> tiles;      // The map data, A List is used because it has generic support.
+  private final PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
+  private final int tileSize;             // The square size in pixels
+  private final int cols, rows;           // The map size in tiles
+  private final List<List<T>> tiles;      // The map data, A List is used because it has generic support.
 
   /**
    * Create a Map with all tiles set to null.
@@ -269,7 +272,7 @@ public class TileMap<T extends Location> extends GameObject {
     @Override
     public T nextTile() throws NoSuchElementException {
       if (row < rows) {
-        T tile = tiles.get(col).get(row);
+        T tile = getTile(col, row);
         col++;                  // 1 col to the right
         if (col == cols) {      // Reached Last Column
           col = 0;              // Reset Col
@@ -520,7 +523,7 @@ public class TileMap<T extends Location> extends GameObject {
    * @param newTile the tile to add to the map
    */
   public void setTile(int col, int row, T newTile) {
-    T oldVal = tiles.get(col).get(row);
+    T oldVal = getTile(col, row);
     tiles.get(col).set(row, newTile);
     firePropertyChange("tile", oldVal, newTile);
   }
@@ -679,7 +682,7 @@ public class TileMap<T extends Location> extends GameObject {
    */
   public static int getDistanceBetween(Location a, Location b) {
     return Math.abs(a.getRow() - b.getRow()) +
-            Math.abs(a.getCol() - b.getCol());
+      Math.abs(a.getCol() - b.getCol());
   }
 
   /**
@@ -726,5 +729,25 @@ public class TileMap<T extends Location> extends GameObject {
 
   private boolean isWithinMapBounds(int col, int row) {
     return col >= 0 && col < cols && row >= 0 && row < rows;
+  }
+
+  void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
+    changeSupport.firePropertyChange(propertyName, oldValue, newValue);
+  }
+
+  public void addPropertyChangeListener(PropertyChangeListener listener) {
+    changeSupport.addPropertyChangeListener(listener);
+  }
+
+  public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+    changeSupport.addPropertyChangeListener(propertyName, listener);
+  }
+
+  public void removePropertyChangeListener(PropertyChangeListener listener) {
+    changeSupport.removePropertyChangeListener(listener);
+  }
+
+  public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+    changeSupport.removePropertyChangeListener(propertyName, listener);
   }
 }

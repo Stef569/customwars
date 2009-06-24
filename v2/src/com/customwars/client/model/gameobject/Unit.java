@@ -35,7 +35,7 @@ import java.util.Map;
  */
 public class Unit extends GameObject implements Mover, Location, TurnHandler, Attacker, Defender {
   public static final Direction DEFAULT_ORIENTATION = Direction.EAST;
-  private int id;               // The unit Type ie(1->INF, 2->APC,...)
+  private final int id;         // The unit Type ie(1->INF, 2->APC,...)
   private String name;          // Full name ie Infantry, Tank, ...
   private String description;   // Information about this Unit
   private int price;            // The price for buying this Unit
