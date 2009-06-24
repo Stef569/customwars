@@ -6,7 +6,6 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.Sound;
 import org.newdawn.slick.geom.Rectangle;
-import org.newdawn.slick.geom.Shape;
 import org.newdawn.slick.gui.ComponentListener;
 import org.newdawn.slick.gui.GUIContext;
 
@@ -74,7 +73,7 @@ public class MouseOverArea extends BasicComponent {
   /**
    * The shape defining the area
    */
-  private Shape area;
+  private Rectangle area;
 
   /**
    * The current normalImage being displayed
@@ -187,7 +186,7 @@ public class MouseOverArea extends BasicComponent {
    * @param image     The normalImage to display
    * @param shape     The shape defining the area of the mouse sensitive zone
    */
-  public MouseOverArea(GUIContext container, Image image, Shape shape) {
+  public MouseOverArea(GUIContext container, Image image, Rectangle shape) {
     super(container);
 
     area = shape;
@@ -299,11 +298,11 @@ public class MouseOverArea extends BasicComponent {
   }
 
   public void setWidth(int width) {
-    area = new Rectangle(getX(), getY(), width, getHeight());
+    area.setWidth(width);
   }
 
   public void setHeight(int height) {
-    area = new Rectangle(getX(), getY(), getWidth(), height);
+    area.setHeight(height);
   }
 
   /**
