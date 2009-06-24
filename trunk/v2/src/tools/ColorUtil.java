@@ -45,8 +45,8 @@ public final class ColorUtil {
 
   private static boolean isConstantColorField(Field field) {
     return Modifier.isPublic(field.getModifiers())
-            && Modifier.isStatic(field.getModifiers())
-            && Color.class == field.getType();
+      && Modifier.isStatic(field.getModifiers())
+      && Color.class == field.getType();
   }
 
   public static List<Color> getColorListFromHex(List<Integer> intList) {
@@ -55,10 +55,6 @@ public final class ColorUtil {
       colorList.add(new Color(intVal));
     }
     return colorList;
-  }
-
-  public static Color toColor(int hex) {
-    return new Color(hex);
   }
 
   public static Color toColor(String name) {

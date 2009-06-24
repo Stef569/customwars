@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Properties;
 
 /**
- * Test reading user properties from a file
+ * Test reading user properties
  * starting with keys,
  * mouse btn and mouse clicks can't be tested since they require a display...
  *
