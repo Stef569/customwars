@@ -8,9 +8,9 @@ import com.customwars.client.io.img.slick.SpriteSheet;
 import com.customwars.client.io.loading.AnimationParser;
 import com.customwars.client.io.loading.ImageFilterParser;
 import com.customwars.client.io.loading.ImageParser;
-import com.customwars.client.io.loading.MapParser;
 import com.customwars.client.io.loading.ModelLoader;
 import com.customwars.client.io.loading.SoundParser;
+import com.customwars.client.io.loading.map.BinaryCW2MapParser;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
 import org.apache.log4j.Logger;
@@ -52,7 +52,7 @@ public class ResourceManager {
   private static final String SOUND_LOADER_FILE = "soundLoader.txt";
   private static final String COLORS_FILE = "colors.xml";
   private static final ModelLoader modelLoader = new ModelLoader();
-  private static final MapParser mapParser = new MapParser();
+  private static final BinaryCW2MapParser mapParser = new BinaryCW2MapParser();
   private int darkPercentage;
 
   private ImageLib imageLib;
@@ -146,13 +146,14 @@ public class ResourceManager {
     fonts.put(fontID.toUpperCase(), font);
   }
 
-  // todo mapParser not accepting file as param?
   private void loadAllMaps() throws IOException {
     FileSystemManager fsm = new FileSystemManager(mapPath);
-    for (File mapFile : fsm.getFiles()) {
-      Map<Tile> map = mapParser.loadMap("");
-      String mapName = map.getProperty("MAP_NAME");
-      maps.put(mapName, map);
+    for (File category : fsm.getDirs()) {
+      for (File mapFile : fsm.getFiles(category)) {
+        Map<Tile> map = mapParser.readMap(mapFile);
+        String mapName = map.getProperty("MAP_NAME");
+        maps.put(mapName, map);
+      }
     }
   }
 
@@ -188,7 +189,7 @@ public class ResourceManager {
   private void checkIsColorSupported(Color color) {
     if (!imageLib.getSupportedColors().contains(color)) {
       throw new IllegalArgumentException(
-              "Color " + color + " is not supported, add the color info to " + COLORS_FILE);
+        "Color " + color + " is not supported, add the color info to " + COLORS_FILE);
     }
   }
 

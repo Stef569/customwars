@@ -49,7 +49,7 @@ public final class Args {
 
   public static void validateBetweenMinMax(int amount, int min, int max, String errField) {
     if (!isWithinRange(amount, min, max)) {
-      throw new IllegalArgumentException(errField + " " + amount + " is not in range >0 <" + max);
+      throw new IllegalArgumentException(errField + " " + amount + " is not in range >=0 <" + max);
     }
   }
 
