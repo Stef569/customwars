@@ -1,6 +1,6 @@
 package slick;
 
-import com.customwars.client.io.loading.MapParser;
+import com.customwars.client.io.loading.map.BinaryCW2MapParser;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.ui.renderer.MapRenderer;
@@ -10,19 +10,18 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
 
+import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author stefan
  */
 public class TestMapParser extends CWState {
-  private MapParser mapParser;
+  private BinaryCW2MapParser mapParser;
   private MapRenderer mapRenderer;
 
   public void init(GameContainer gameContainer, StateBasedGame stateBasedGame) throws SlickException {
-    mapParser = new MapParser();
+    mapParser = new BinaryCW2MapParser();
     mapRenderer = new MapRenderer();
     mapRenderer.loadResources(resources);
   }
@@ -36,22 +35,15 @@ public class TestMapParser extends CWState {
   }
 
   public void keyPressed(int col, char c) {
-    Map<Tile> hardCodedMap = HardCodedGame.getMap();
-    List<String> mapProperties = new ArrayList<String>();
     Map<Tile> loadedMap;  // the resulting map read from disk
 
-    for (String key : hardCodedMap.getPropertyKeys()) {
-      mapProperties.add("[" + key + " " + hardCodedMap.getProperty(key) + "]");
-    }
-
     try {
-      mapParser.writeMap("testData/test.map", mapProperties.toArray(new String[]{}), hardCodedMap);
-      loadedMap = mapParser.loadMapAsResource("testdata/test.map");
+      mapParser.writeMap(HardCodedGame.getMap(), new File("testmap.map"));
+      loadedMap = mapParser.readMap(new File("testmap.map"));
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
 
-    // Change to loadedMap causes null pointer exception due all tiles being null.
     mapRenderer.setMap(loadedMap);
   }
 
