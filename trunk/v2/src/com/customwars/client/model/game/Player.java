@@ -259,7 +259,7 @@ public class Player extends GameObject {
 
   @Override
   public String toString() {
-    return "[name=" + name + " id=" + id + " state=" + getState() + " color=" + ColorUtil.toString(color) +
-            " budget=" + budget + " team=" + team + "]";
+    return String.format("[name=%s id=%s state=%s color=%s budget=%s team=%s]",
+      name, id, getState(), ColorUtil.toString(color), budget, team);
   }
 }

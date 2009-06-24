@@ -1,10 +1,12 @@
 package com.customwars.client.model.map;
 
-import com.customwars.client.model.gameobject.GameObject;
+import com.customwars.client.model.Observable;
 import com.customwars.client.model.gameobject.Locatable;
 import com.customwars.client.model.gameobject.Terrain;
 import tools.Args;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,22 +16,23 @@ import java.util.List;
  *
  * @author stefan
  */
-public class Tile extends GameObject implements Location {
-  private int col, row;
+public class Tile implements Location, Observable {
+  private final PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
+  private final int col, row;
   private boolean fogged;
   private Terrain terrain;
   private List<Locatable> locatables;
+
+  public Tile(int col, int row, Terrain terrain, boolean fogged) {
+    this(col, row, terrain);
+    this.fogged = fogged;
+  }
 
   public Tile(int col, int row, Terrain terrain) {
     this.col = col;
     this.row = row;
     setTerrain(terrain);
     locatables = new ArrayList<Locatable>();
-  }
-
-  public Tile(int col, int row, Terrain terrain, boolean fogged) {
-    this(col, row, terrain);
-    this.fogged = fogged;
   }
 
   public boolean canAdd(Locatable locatable) {
@@ -110,13 +113,26 @@ public class Tile extends GameObject implements Location {
   }
 
   public String toString() {
-    String toString = "[(" + getCol() + "," + getRow() + ") fog=" + fogged;
-    if (terrain != null) {
-      toString += " Terrain=" + terrain;
-    }
-    if (!locatables.isEmpty()) {
-      toString += " Locatables=" + locatables;
-    }
-    return toString + "]";
+    return String.format("[(%s) fog=%s terrain=%s locatables=%s", getLocationString(), fogged, terrain, locatables);
+  }
+
+  void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
+    changeSupport.firePropertyChange(propertyName, oldValue, newValue);
+  }
+
+  public void addPropertyChangeListener(PropertyChangeListener listener) {
+    changeSupport.addPropertyChangeListener(listener);
+  }
+
+  public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+    changeSupport.addPropertyChangeListener(propertyName, listener);
+  }
+
+  public void removePropertyChangeListener(PropertyChangeListener listener) {
+    changeSupport.addPropertyChangeListener(listener);
+  }
+
+  public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+    changeSupport.removePropertyChangeListener(listener);
   }
 }

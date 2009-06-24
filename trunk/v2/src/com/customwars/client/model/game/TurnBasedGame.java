@@ -1,6 +1,6 @@
 package com.customwars.client.model.game;
 
-import com.customwars.client.model.gameobject.GameObject;
+import com.customwars.client.model.Observable;
 import com.customwars.client.model.gameobject.GameObjectState;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
@@ -8,6 +8,8 @@ import org.apache.log4j.Logger;
 import tools.Args;
 
 import java.awt.Color;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -16,32 +18,46 @@ import java.util.Set;
 
 /**
  * A basic game that has
- * a state, map, players and the current turn.
- * It can be in 3 states:
- * not started(IDLE), started(ACTIVE), Gameover(DESTROYED)
+ * a Game state[not started, started, Gameover], map, players and the current turn.
  *
+ * The players list contains the players that are in the game, excluding the neutral player.
  * Neutral players are always in the IDLE state
  * Human and AI players are ACTIVE or DESTROYED.
  *
  * @author Stefan
  */
-public class TurnBasedGame extends GameObject {
+public class TurnBasedGame implements Observable {
   private static final Logger logger = Logger.getLogger(TurnBasedGame.class);
-  Map<Tile> map;                // The map containing all the units/cities
+  private final PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
+
+  static enum GameState {
+    IDLE, STARTED, GAME_OVER
+  }
+
+  Map<Tile> map;                // The map containing all the tiles
   Turn turn;                    // The current turn+turn limit
   Player neutralPlayer;         // Idle neutral player for cities that are not owned.
   private List<Player> players; // The Human and AI players that are in this game
   private Player activePlayer;  // There can only be one active player in a game at any time
+  private GameState state;      // Current State
 
-  public TurnBasedGame(Map<Tile> map, List<Player> players, Player neutralPlayer, Turn turn) {
+  public TurnBasedGame(Map<Tile> map, List<Player> players, int turnLimit, int dayLimit) {
+    Args.checkForNull(map);
+    Args.checkForNull(players);
+    Args.validateBetweenMinMax(turnLimit, -1, Integer.MAX_VALUE, "turn limit");
+    Args.validateBetweenMinMax(dayLimit, -1, Integer.MAX_VALUE, "day limit");
+
     this.map = map;
     this.players = players;
-    this.neutralPlayer = neutralPlayer;
-    this.turn = turn;
+    this.neutralPlayer = new Player(Player.NEUTRAL_PLAYER_ID, Color.GRAY, true, null, "Neutral", 0, -1, false);
+    this.turn = new Turn(0, 1, turnLimit, dayLimit);
+    this.state = GameState.IDLE;
   }
 
   /**
    * @param gameStarter The player that starts this game
+   * @throws IllegalStateException if the game is not in the IDLE state
+   *                               When the turn limit is reached
    */
   public void startGame(Player gameStarter) {
     validateStartGame(gameStarter);
@@ -51,8 +67,9 @@ public class TurnBasedGame extends GameObject {
     }
 
     setActivePlayer(gameStarter);
-    setState(GameObjectState.ACTIVE);
+    setState(GameState.STARTED);
     startTurn(activePlayer);
+    logger.debug("Game with map " + map.getProperty("MAP_NAME") + " has started");
   }
 
   public void endTurn() throws NotYourTurnException {
@@ -84,7 +101,7 @@ public class TurnBasedGame extends GameObject {
 
     if (turn.isTurnLimitReached()) {
       logger.debug("Turn limit reached " + turn);
-      setState(GameObjectState.DESTROYED);
+      setState(GameState.GAME_OVER);
     }
 
     if (getTurn() % getActivePlayerCount() == 0) {
@@ -93,7 +110,7 @@ public class TurnBasedGame extends GameObject {
 
     if (turn.isDayLimitReached()) {
       logger.debug("Day limit reached " + turn);
-      setState(GameObjectState.DESTROYED);
+      setState(GameState.GAME_OVER);
     }
     firePropertyChange("turn", oldVal, turn);
   }
@@ -107,6 +124,12 @@ public class TurnBasedGame extends GameObject {
   public void changePlayerName(String from, String to) {
     Player p = getPlayerByName(from);
     p.setName(to);
+  }
+
+  void setState(GameState newState) {
+    GameState oldState = this.state;
+    this.state = newState;
+    firePropertyChange("state", oldState, newState);
   }
 
   private void setActivePlayer(Player p) {
@@ -139,7 +162,15 @@ public class TurnBasedGame extends GameObject {
   }
 
   public boolean isGameOver() {
-    return isDestroyed();
+    return state == GameState.GAME_OVER;
+  }
+
+  public boolean isStarted() {
+    return state == GameState.STARTED;
+  }
+
+  public boolean isIdle() {
+    return state == GameState.IDLE;
   }
 
   int getActivePlayerCount() {
@@ -186,8 +217,7 @@ public class TurnBasedGame extends GameObject {
       nextActivePlayer = getNextPlayer(nextActivePlayer);
 
       if (!isWithinPlayerBounds(++playerSkipCount)) {
-        logger.warn("All players skipped");
-        return null;
+        throw new AssertionError("All players skipped");
       }
     }
     return nextActivePlayer;
@@ -261,15 +291,11 @@ public class TurnBasedGame extends GameObject {
 
   private void validateStartGame(Player gameStarter) {
     if (!isIdle()) {
-      throw new IllegalStateException("Game is in a Illegal state " + getState() + " to start, a game cannot be started 2X.");
+      throw new IllegalStateException("Game is in a Illegal state " + state + " to start, a game cannot be started 2X.");
     }
 
-    if (map == null) {
-      throw new IllegalStateException("No map set");
-    }
-
-    if (turn == null || turn.isTurnLimitReached()) {
-      throw new IllegalStateException("Turn is null or turn limit reached");
+    if (turn.isTurnLimitReached()) {
+      throw new IllegalStateException("Turn limit reached");
     }
 
     if (!players.contains(gameStarter)) {
@@ -286,7 +312,7 @@ public class TurnBasedGame extends GameObject {
     // game players must be equal to num players in map
     if (map.getNumPlayers() != players.size()) {
       throw new IllegalStateException("The amount of players in the map (" + map.getNumPlayers() + ") " +
-              "does not equal the amount of players given (" + (players.size()) + ")");
+        "does not equal the amount of players given (" + (players.size()) + ")");
     }
 
     // Each player must be unique
@@ -298,6 +324,10 @@ public class TurnBasedGame extends GameObject {
     for (Player p : getAllPlayers()) {
       if (p == null) {
         throw new IllegalStateException("A player is null");
+      }
+
+      if (p.isNeutral()) {
+        throw new IllegalStateException("A neutral player cannot be included in the player list");
       }
 
       // Compare this player p with the other players
@@ -324,10 +354,10 @@ public class TurnBasedGame extends GameObject {
   private void validateEndTurn(Player invoker) throws NotYourTurnException {
     Args.checkForNull(invoker, "End turn invoker cannot be null");
 
-    if (isIdle())
+    if (!isStarted())
       throw new IllegalStateException("Trying to endTurn on a not started Game");
 
-    if (isDestroyed())
+    if (isGameOver())
       throw new IllegalStateException("Trying to endTurn on a ended Game");
 
     Args.checkForNull(activePlayer, "No active Player");
@@ -336,7 +366,27 @@ public class TurnBasedGame extends GameObject {
 
     if (invoker != activePlayer) {
       throw new NotYourTurnException("Player " + invoker + " cannot end his turn , because it is not the Active player in the Game\n" +
-              "Expected=" + getActivePlayer().getName());
+        "Expected=" + getActivePlayer().getName());
     }
+  }
+
+  void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
+    changeSupport.firePropertyChange(propertyName, oldValue, newValue);
+  }
+
+  public void addPropertyChangeListener(PropertyChangeListener listener) {
+    changeSupport.addPropertyChangeListener(listener);
+  }
+
+  public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+    changeSupport.addPropertyChangeListener(propertyName, listener);
+  }
+
+  public void removePropertyChangeListener(PropertyChangeListener listener) {
+    changeSupport.addPropertyChangeListener(listener);
+  }
+
+  public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+    changeSupport.removePropertyChangeListener(listener);
   }
 }

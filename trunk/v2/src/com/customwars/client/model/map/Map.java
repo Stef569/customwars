@@ -45,18 +45,39 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
   private boolean fogOfWarOn;       // Is fog of war in effect
   private PathFinder pathFinder;    // To builds paths within the map
 
-  public Map(int cols, int rows, int tileSize, Properties properties, int numPlayers) {
-    this(cols, rows, tileSize, numPlayers);
+  public Map(int cols, int rows, int tileSize, int numPlayers, boolean fogOfWar, Terrain startTerrain, Properties properties) {
+    this(cols, rows, tileSize, numPlayers, fogOfWar, startTerrain);
     this.properties = properties == null ? new Properties() : properties;
   }
 
-  public Map(int cols, int rows, int tileSize, int numPlayers) {
+  /**
+   * Create a new Map
+   *
+   * @param cols         width in tiles
+   * @param rows         height in tiles
+   * @param tileSize     square size of 1 tile in pixels
+   * @param numPlayers   Amount of players that can play on this map
+   * @param fogOfWar     indicates if fow is on
+   * @param startTerrain the terrain that is used to fill the map
+   */
+  public Map(int cols, int rows, int tileSize, int numPlayers, boolean fogOfWar, Terrain startTerrain) {
     super(cols, rows, tileSize);
     Args.validateBetweenZeroMax(numPlayers, Integer.MAX_VALUE, "numplayers");
 
     this.numPlayers = numPlayers;
+    this.fogOfWarOn = fogOfWar;
     this.pathFinder = new PathFinder(this);
     this.properties = new Properties();
+    fillMap(cols, rows, startTerrain);
+  }
+
+  private void fillMap(int cols, int rows, Terrain terrain) {
+    for (int row = 0; row < rows; row++) {
+      for (int col = 0; col < cols; col++) {
+        Tile t = new Tile(col, row, terrain);
+        setTile(col, row, (T) t);
+      }
+    }
   }
 
   /**
@@ -65,8 +86,7 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
    * @param otherMap map to copy
    */
   public Map(Map<Tile> otherMap) {
-    this(otherMap.getCols(), otherMap.getRows(), otherMap.getTileSize(), otherMap.numPlayers);
-    this.fogOfWarOn = otherMap.fogOfWarOn;
+    this(otherMap.getCols(), otherMap.getRows(), otherMap.getTileSize(), otherMap.numPlayers, otherMap.fogOfWarOn, otherMap.getTile(0, 0).getTerrain());
     this.properties = new Properties(otherMap.properties);
     copyMapData(otherMap);
   }
@@ -83,14 +103,6 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
     }
   }
 
-  private void copyUnits(Tile t, Tile newTile) {
-    for (int i = 0; i < t.getLocatableCount(); i++) {
-      Unit unit = (Unit) t.getLocatable(i);
-      Unit unitCopy = new Unit(unit);
-      newTile.add(unitCopy);
-    }
-  }
-
   private Terrain copyTerrain(Terrain terrain) {
     Terrain terrainCopy;
     if (terrain instanceof City) {
@@ -101,18 +113,10 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
     return terrainCopy;
   }
 
-  private void validateMapState() throws IllegalStateException {
-    for (int row = 0; row < getRows(); row++) {
-      for (int col = 0; col < getCols(); col++) {
-        T tile = getTile(col, row);
-        if (tile == null) {
-          throw new IllegalStateException("Tile @ col:" + col + ", Row:" + row + " is null");
-        }
-
-        if (tile.getTerrain() == null) {
-          throw new IllegalStateException("Tile @ col:" + col + ", Row:" + row + " has no terrain.");
-        }
-      }
+  private void copyUnits(Tile oldTile, Tile newTile) {
+    for (int i = 0; i < oldTile.getLocatableCount(); i++) {
+      Unit unitCopy = new Unit(getUnitOn(oldTile));
+      newTile.add(unitCopy);
     }
   }
 
@@ -133,7 +137,6 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
    * @param player The player who's units should be made active and fog applied to.
    */
   public void resetMap(Player player) {
-    validateMapState();
     resetUnits(player);
     if (fogOfWarOn) {
       resetFogMap(player);

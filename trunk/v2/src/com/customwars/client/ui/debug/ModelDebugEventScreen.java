@@ -101,18 +101,18 @@ public class ModelDebugEventScreen implements PropertyChangeListener {
   }
 
   public void propertyChange(PropertyChangeEvent evt) {
-    if (!isFiltered(evt.getSource().getClass(), evt.getPropertyName()) && game != null && game.isActive()
-            && evt.getPropertyName() != null && evt.getPropertyName().trim().length() != 0) {
+    if (!isFiltered(evt.getSource().getClass(), evt.getPropertyName()) && game != null && game.isStarted()
+      && evt.getPropertyName() != null && evt.getPropertyName().trim().length() != 0) {
       showEvent(evt);
     }
   }
 
   private void showEvent(PropertyChangeEvent event) {
     listModel.addElement(
-            "[" + event.getSource().getClass().getSimpleName() +
-                    "] Change=" + event.getPropertyName() +
-                    " oldVal=" + event.getOldValue() +
-                    " newVal=" + event.getNewValue());
+      "[" + event.getSource().getClass().getSimpleName() +
+        "] Change=" + event.getPropertyName() +
+        " oldVal=" + event.getOldValue() +
+        " newVal=" + event.getNewValue());
     list.ensureIndexIsVisible(listModel.size() - 1);
   }
 

@@ -3,7 +3,7 @@ package com.customwars.client.model.game;
 import com.customwars.client.model.TestData;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.CityFactory;
-import com.customwars.client.model.gameobject.GameObjectState;
+import com.customwars.client.model.gameobject.Terrain;
 import com.customwars.client.model.gameobject.TerrainFactory;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.gameobject.UnitFactory;
@@ -12,7 +12,6 @@ import com.customwars.client.model.map.Tile;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import tools.MapUtil;
 
 import java.awt.Color;
 import java.util.Arrays;
@@ -21,17 +20,15 @@ import java.util.List;
 public class GameTest {
   private Game game;
   private Map<Tile> map;
-  private Player neutral;
   private Player p1, p2, p3, p4;
 
   @Before
   public void beforeEachTest() {
     game = null;
-    map = new Map<Tile>(10, 10, 32, 4);
+    Terrain plain = TerrainFactory.getTerrain(TestData.PLAIN);
+    map = new Map<Tile>(10, 10, 32, 4, false, plain);
     map.setFogOfWarOn(true);
-    MapUtil.fillWithTiles(map, TerrainFactory.getTerrain(TestData.PLAIN));
 
-    neutral = new Player(Player.NEUTRAL_PLAYER_ID, Color.GRAY, true, null, "Neutral", 0, -1, false);
     p1 = new Player(0, Color.RED, false, null, "Stef", Integer.MAX_VALUE, 0, false);
     p2 = new Player(1, Color.BLUE, false, null, "JSR", 8500, 0, false);
     p3 = new Player(2, Color.GREEN, false, null, "Ben", 500, 1, false);
@@ -53,8 +50,7 @@ public class GameTest {
     if (gc.getDayLimit() == 0)
       gc.setDayLimit(Turn.UNLIMITED);
 
-    game = new Game(map, players, neutral, gc);
-    game.init();
+    game = new Game(map, players, gc);
     game.startGame(gameStarter);
   }
 
@@ -86,8 +82,8 @@ public class GameTest {
     gc.setCityfunds(CITY_FUNDS);
     startGame(gc, p4);
 
-    // Game is now started (active)
-    Assert.assertEquals(GameObjectState.ACTIVE, game.getState());
+    // Game is now started
+    Assert.assertTrue(game.isStarted());
     Assert.assertEquals(0, game.getTurn());
     Assert.assertEquals(p4, game.getActivePlayer());
 
@@ -178,14 +174,6 @@ public class GameTest {
 
     // Game is now over
     Assert.assertTrue(game.isGameOver());
-  }
-
-  /**
-   * Starting a game with a neutral player results in an exception
-   */
-  @Test(expected = IllegalStateException.class)
-  public void testStartGameWithNeutralPlayer() {
-    startGame(new GameConfig(), neutral, Arrays.asList(p1, p2, p3, p4));
   }
 
   /**

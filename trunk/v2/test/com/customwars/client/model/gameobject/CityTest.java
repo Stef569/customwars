@@ -7,7 +7,6 @@ import com.customwars.client.model.map.Tile;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import tools.MapUtil;
 
 import java.awt.Color;
 
@@ -21,9 +20,9 @@ public class CityTest {
     city = CityFactory.getCity(TestData.BASE);
     player1 = new Player(0, Color.RED, false, null, "Stef", Integer.MAX_VALUE, 0, false);
     player2 = new Player(1, Color.BLUE, false, null, "JSR", 8500, 1, false);
-    map = new Map<Tile>(10, 10, 32, 4);
+    Terrain plain = TerrainFactory.getTerrain(TestData.PLAIN);
+    map = new Map<Tile>(10, 10, 32, 4, false, plain);
     map.setFogOfWarOn(true);
-    MapUtil.fillWithTiles(map, TerrainFactory.getTerrain(TestData.PLAIN));
   }
 
   @Test

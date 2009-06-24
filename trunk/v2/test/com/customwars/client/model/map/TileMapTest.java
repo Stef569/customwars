@@ -1,13 +1,13 @@
 package com.customwars.client.model.map;
 
 import com.customwars.client.model.TestData;
+import com.customwars.client.model.gameobject.Terrain;
 import com.customwars.client.model.gameobject.TerrainFactory;
 import com.customwars.client.model.gameobject.UnitFactory;
 import com.customwars.client.model.map.path.Mover;
 import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import tools.MapUtil;
 
 /**
  * Test functions in the TileMap class
@@ -16,12 +16,12 @@ import tools.MapUtil;
  */
 public class TileMapTest {
   private TileMap<Tile> map;
+  private Terrain plain;
 
   @Before
   public void beforeEachTest() {
-    map = new TileMap<Tile>(10, 15, 32);
-    // Fill the map with tiles that contain a plain terrain.
-    MapUtil.fillWithTiles(map, TerrainFactory.getTerrain(TestData.PLAIN));
+    plain = TerrainFactory.getTerrain(TestData.PLAIN);
+    map = new Map<Tile>(10, 15, 32, 3, false, plain);
   }
 
   // Check If getAllTiles realy Returns AllTiles
@@ -310,21 +310,21 @@ public class TileMapTest {
   public void quadrantTest() {
     Location topLeft = map.getTile(0, 0);
     Assert.assertEquals("Top left tile is always in the NW quadrant.",
-            Direction.NORTHWEST, map.getQuadrantFor(topLeft));
+      Direction.NORTHWEST, map.getQuadrantFor(topLeft));
   }
 
   @Test
   public void quadrantTest2() {
     Location topLeft = map.getTile(0, map.getRows() - 1);
     Assert.assertEquals("Down left tile is always in the SW quadrant.",
-            Direction.SOUTHWEST, map.getQuadrantFor(topLeft));
+      Direction.SOUTHWEST, map.getQuadrantFor(topLeft));
   }
 
   @Test
   public void quadrantTest3() {
     Location topLeft = map.getTile(map.getCols() - 1, 0);
     Assert.assertEquals("Top right tile is always in the NE quadrant.",
-            Direction.NORTHEAST, map.getQuadrantFor(topLeft));
+      Direction.NORTHEAST, map.getQuadrantFor(topLeft));
   }
 
   @Test
@@ -333,8 +333,7 @@ public class TileMapTest {
    */
   public void quadrantWithUnEvenMapSize() {
     Location middle = map.getTile(5, 7);
-    Map<Tile> map = new Map<Tile>(10, 15, 32, 1);
-    MapUtil.fillWithTiles(map, TerrainFactory.getTerrain(0));
+    Map<Tile> map = new Map<Tile>(10, 15, 32, 1, false, plain);
     Direction quadrant = map.getQuadrantFor(middle);
     Assert.assertNotNull(quadrant);
   }

@@ -59,7 +59,6 @@ public class TestInGameState extends CWState implements PropertyChangeListener {
 
   private void setGame(Game game, GameContainer container) {
     this.game = game;
-    game.init();
     MoveTraverse moveTraverse = new MoveTraverse(game.getMap());
 
     context = new InGameContext();
@@ -156,7 +155,7 @@ public class TestInGameState extends CWState implements PropertyChangeListener {
     if (unit != null && unit.isActive() || context.isInUnitMode()) {
       context.handleUnitAPress(unit);
     } else if (!cursorLocation.isFogged() && cursorLocation.getLocatableCount() == 0 &&
-            city != null && city.getOwner() == game.getActivePlayer() && city.canBuild()) {
+      city != null && city.getOwner() == game.getActivePlayer() && city.canBuild()) {
       context.handleCityAPress(city);
     } else if (context.isDefaultMode()) {
       new ClearInGameStateAction().invoke(context);

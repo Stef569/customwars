@@ -52,7 +52,7 @@ public class Statistics implements PropertyChangeListener {
 
   public void propertyChange(PropertyChangeEvent evt) {
     // Only gather statistics when the game has started
-    if (!game.isActive()) return;
+    if (!game.isStarted()) return;
     String propertyName = evt.getPropertyName();
 
     if (evt.getSource() instanceof Player) {

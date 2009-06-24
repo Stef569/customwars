@@ -1,11 +1,9 @@
 package com.customwars.client.model.game;
 
 import com.customwars.client.model.gameobject.City;
-import com.customwars.client.model.gameobject.GameObjectState;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
-import org.apache.log4j.Logger;
 import tools.Args;
 
 import java.beans.PropertyChangeEvent;
@@ -28,32 +26,31 @@ import java.util.List;
  * When there is only 1 player left
  */
 public class Game extends TurnBasedGame implements PropertyChangeListener {
-  private static final Logger logger = Logger.getLogger(Game.class);
   private Unit activeUnit;        // There can only be one active unit in a game at any time
   private int weather;            // The current weather in effect
   private int cityFunds;          // The amount of money each City produces each turn
   private boolean inited;         // Has this game been inited (map players replaced by game players)
 
-  public Game(Map<Tile> map, List<Player> players, Player neutral, GameConfig gameConfig) {
-    super(map, players, neutral, null);
+  public Game(Map<Tile> map, List<Player> players, GameConfig gameConfig) {
+    super(map, players, gameConfig.getTurnLimit(), gameConfig.getDayLimit());
     applyGameConfig(gameConfig);
+    init();
   }
 
   public void applyGameConfig(GameConfig gameConfig) {
     this.weather = gameConfig.getStartWeather();
     this.cityFunds = gameConfig.getCityFunds();
-    super.turn = new Turn(0, 1, gameConfig.getTurnLimit(), gameConfig.getDayLimit());
   }
 
   /**
-   * replace mapPlayers with GamePlayers
+   * Replace mapPlayers with GamePlayers
    * Get all cities, Units from the map
    * Read their id,
    * Overwrite the dummy map owner of the city/Unit by
    * comparing their id to a real player in the Game
    * add the unit/city to their army/cities
    */
-  public void init() {
+  private void init() {
     if (!inited) {
       for (Tile t : map.getAllTiles()) {
         City city = map.getCityOn(t);
@@ -67,6 +64,8 @@ public class Game extends TurnBasedGame implements PropertyChangeListener {
         }
       }
       inited = true;
+    } else {
+      throw new AssertionError("Can only init a game once");
     }
   }
 
@@ -166,7 +165,7 @@ public class Game extends TurnBasedGame implements PropertyChangeListener {
 
   public void propertyChange(PropertyChangeEvent evt) {
     String propertyName = evt.getPropertyName();
-    if (!isActive()) return;
+    if (!isStarted()) return;
 
     if (evt.getSource() instanceof City) {
       if (propertyName.equals("owner")) {
@@ -179,7 +178,7 @@ public class Game extends TurnBasedGame implements PropertyChangeListener {
     }
 
     if (isTheGameOver()) {
-      setState(GameObjectState.DESTROYED);
+      setState(GameState.GAME_OVER);
     }
   }
 
@@ -237,9 +236,5 @@ public class Game extends TurnBasedGame implements PropertyChangeListener {
 
   public int getWeather() {
     return weather;
-  }
-
-  public boolean isInited() {
-    return inited;
   }
 }
