@@ -13,11 +13,10 @@ import org.newdawn.slick.state.StateBasedGame;
  * end the current turn when the delay has passed
  */
 public class EndTurnState extends CWState {
-  private static final int END_TURN_DELAY = 250;
-  private int timeTaken;
   private Game game;
   private Player nextPlayer;
   private int nextDay;
+  private boolean endTurnPressed;
 
   public void init(GameContainer gameContainer, StateBasedGame stateBasedGame) throws SlickException {
   }
@@ -29,6 +28,7 @@ public class EndTurnState extends CWState {
     nextPlayer = game.getNextActivePlayer(game.getActivePlayer());
     int turnCount = game.getTurn() + 1;
     nextDay = game.getDay(turnCount);
+    endTurnPressed = false;
   }
 
   public void render(GameContainer container, Graphics g) throws SlickException {
@@ -38,11 +38,23 @@ public class EndTurnState extends CWState {
   }
 
   public void update(GameContainer container, int delta) throws SlickException {
-    timeTaken += delta;
-    if (timeTaken >= END_TURN_DELAY) {
+  }
+
+  @Override
+  public void keyPressed(int key, char c) {
+    endTurn();
+  }
+
+  @Override
+  public void mousePressed(int button, int x, int y) {
+    endTurn();
+  }
+
+  private void endTurn() {
+    if (!endTurnPressed) {
+      endTurnPressed = true;
       changeGameState("IN_GAME");
       game.endTurn();
-      timeTaken = 0;
     }
   }
 
