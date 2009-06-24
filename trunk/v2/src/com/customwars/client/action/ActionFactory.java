@@ -113,9 +113,8 @@ public class ActionFactory {
 
   public static CWAction buildEndTurnAction(StateLogic statelogic) {
     ActionBag endTurnAction = new ActionBag("End Turn actions");
-    endTurnAction.add(new InitAction());
-    endTurnAction.add(new EndTurnAction(statelogic));
     endTurnAction.add(new ClearInGameStateAction());
+    endTurnAction.add(new EndTurnAction(statelogic));
     return endTurnAction;
   }
 
