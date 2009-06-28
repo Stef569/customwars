@@ -10,7 +10,6 @@ import java.awt.Dimension;
  * In reality there is no camera, the components x and y coordinates are just translated.
  *
  * Further improvements can be shaking the screen throught the update method.
- * todo when zooming the camera size should be changed
  *
  * @author stefan
  */
@@ -42,14 +41,6 @@ public class Camera2D {
     } else if (canMoveVertical()) {
       setY((int) (row * tileSize - camera.getHeight() / 2));
     }
-  }
-
-  public int convertToGameX(int x) {
-    return (int) (x / zoomLvl) + cameraX;
-  }
-
-  public int convertToGameY(int y) {
-    return (int) (y / zoomLvl) + cameraY;
   }
 
   public void zoomIn() {

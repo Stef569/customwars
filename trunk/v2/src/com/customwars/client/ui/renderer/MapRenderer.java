@@ -75,23 +75,23 @@ public class MapRenderer extends TileMapRenderer {
     }
   }
 
-  public void render(int x, int y, Graphics g) {
-    if (renderTerrain) super.render(x, y, g);
-    if (renderSprites) spriteManager.render(x, y, g);
-    if (renderZones) renderzones(x, y, g);
-    if (activeUnit != null) spriteManager.renderUnit(x, y, g, activeUnit);
+  public void render(Graphics g) {
+    if (renderTerrain) super.render(g);
+    if (renderSprites) spriteManager.render(g);
+    if (renderZones) renderzones(g);
+    if (activeUnit != null) spriteManager.renderUnit(g, activeUnit);
   }
 
-  private void renderzones(int x, int y, Graphics g) {
+  private void renderzones(Graphics g) {
     if (moveZone != null) {
       for (Location location : moveZone) {
-        renderImgOnTile(g, moveZoneAnim.getCurrentFrame(), location, x, y);
+        renderImgOnTile(g, moveZoneAnim.getCurrentFrame(), location);
       }
     }
 
     if (attackZone != null) {
       for (Location location : attackZone) {
-        renderImgOnTile(g, attackZoneAnim.getCurrentFrame(), location, x, y);
+        renderImgOnTile(g, attackZoneAnim.getCurrentFrame(), location);
       }
     }
 

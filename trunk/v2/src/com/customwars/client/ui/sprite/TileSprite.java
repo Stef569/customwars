@@ -61,10 +61,11 @@ public class TileSprite extends Sprite implements Locatable {
     effectRange = 0;
   }
 
-  public void render(int x, int y, Graphics g) {
+  @Override
+  public void render(Graphics g) {
     if (super.canRenderAnim(g)) {
       translateOffset(g, renderInCenter);
-      super.render(x, y, g);
+      super.render(g);
       undoTranslateOffset(g);
     }
   }

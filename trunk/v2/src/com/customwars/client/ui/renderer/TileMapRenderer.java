@@ -31,35 +31,31 @@ public class TileMapRenderer {
     setMap(map);
   }
 
-  public void render(int x, int y, Graphics g) {
+  public void render(Graphics g) {
     if (map == null) return;
 
     for (Tile t : map.getAllTiles()) {
-      renderTile(g, t, x, y, t.isFogged());
+      renderTile(g, t, t.isFogged());
     }
   }
 
-  public void renderTile(Graphics g, Tile tile, int x, int y, boolean fogged) {
+  public void renderTile(Graphics g, Tile tile, boolean fogged) {
     if (tile.getTerrain() instanceof City) return;
 
     Image terrainImg = terrainStrip.getSubImage(tile.getTerrain().getID());
 
     if (fogged) {
-      renderImgOnTile(g, terrainImg, tile, x, y, fogColor);
+      renderImgOnTile(g, terrainImg, tile, fogColor);
     } else {
-      renderImgOnTile(g, terrainImg, tile, x, y);
+      renderImgOnTile(g, terrainImg, tile);
     }
   }
 
   void renderImgOnTile(Graphics g, Image img, Location location) {
-    renderImgOnTile(g, img, location, 0, 0);
+    renderImgOnTile(g, img, location, null);
   }
 
-  void renderImgOnTile(Graphics g, Image img, Location location, int x, int y) {
-    renderImgOnTile(g, img, location, x, y, null);
-  }
-
-  void renderImgOnTile(Graphics g, Image img, Location location, int x, int y, Color color) {
+  void renderImgOnTile(Graphics g, Image img, Location location, Color color) {
     int tileWidth, tileHeight;
     int imgWidthOffset, imgHeightOffset;
 
@@ -81,8 +77,8 @@ public class TileMapRenderer {
       imgWidthOffset = 0;
     }
 
-    int px = x + (location.getCol() * tileWidth) - imgWidthOffset;
-    int py = y + (location.getRow() * tileHeight) - imgHeightOffset;
+    int px = (location.getCol() * tileWidth) - imgWidthOffset;
+    int py = (location.getRow() * tileHeight) - imgHeightOffset;
 
     g.drawImage(img, px, py, color);
   }

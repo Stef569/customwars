@@ -94,31 +94,31 @@ public class SpriteManager implements PropertyChangeListener {
     }
   }
 
-  public void render(int x, int y, Graphics g) {
+  public void render(Graphics g) {
     for (Sprite sprite : citySprites.values()) {
-      sprite.render(x, y, g);
+      sprite.render(g);
     }
     for (Sprite sprite : unitSprites.values()) {
-      sprite.render(x, y, g);
+      sprite.render(g);
     }
-    renderCursor(x, y, g);
+    renderCursor(g);
   }
 
-  public void renderCursor(int x, int y, Graphics g) {
+  public void renderCursor(Graphics g) {
     if (isCursorSet()) {
-      activeCursor.render(x, y, g);
+      activeCursor.render(g);
     }
   }
 
-  public void renderUnit(int x, int y, Graphics g, Unit unit) {
+  public void renderUnit(Graphics g, Unit unit) {
     if (unitSprites.containsKey(unit)) {
-      unitSprites.get(unit).render(x, y, g);
+      unitSprites.get(unit).render(g);
     }
   }
 
-  public void renderCity(int x, int y, Graphics g, City city) {
+  public void renderCity(Graphics g, City city) {
     if (citySprites.containsKey(city)) {
-      citySprites.get(city).render(x, y, g);
+      citySprites.get(city).render(g);
     }
   }
 
@@ -208,7 +208,7 @@ public class SpriteManager implements PropertyChangeListener {
     }
 
     logger.info("Init map sprites, units=" + unitSprites.size() + " cities=" + citySprites.size() +
-            " tiles=" + map.countTiles() + " tileSize=" + map.getTileSize());
+      " tiles=" + map.countTiles() + " tileSize=" + map.getTileSize());
   }
 
   /**

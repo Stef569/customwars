@@ -85,9 +85,9 @@ public class Sprite {
    *
    * @param g slick graphics to render the image on
    */
-  public void render(int x, int y, Graphics g) {
+  public void render(Graphics g) {
     if (canRenderAnim(g) && visible) {
-      anim.getCurrentFrame().draw(x + locX, y + locY);
+      anim.getCurrentFrame().draw(locX, locY);
     }
   }
 

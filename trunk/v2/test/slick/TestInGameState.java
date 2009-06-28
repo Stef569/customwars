@@ -14,6 +14,7 @@ import com.customwars.client.model.gameobject.UnitFight;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.model.map.path.MoveTraverse;
+import com.customwars.client.ui.Camera2D;
 import com.customwars.client.ui.MenuItem;
 import com.customwars.client.ui.renderer.GameRenderer;
 import com.customwars.client.ui.state.CWInput;
@@ -90,6 +91,9 @@ public class TestInGameState extends CWState implements PropertyChangeListener {
   }
 
   public void update(GameContainer container, int delta) throws SlickException {
+    Camera2D camera = gameRenderer.getCamera();
+    container.getInput().setOffset(camera.getX(), camera.getY());
+
     gameRenderer.update(delta);
     context.update(delta);
 

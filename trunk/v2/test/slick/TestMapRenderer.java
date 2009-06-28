@@ -55,17 +55,19 @@ public class TestMapRenderer extends CWState {
   public void update(GameContainer container, int delta) throws SlickException {
     mapRenderer.update(delta);
     camera.update(delta);
+    container.getInput().setOffset(camera.getX(), camera.getY());
   }
 
   public void render(GameContainer container, Graphics g) throws SlickException {
     if (camera != null) {
       g.scale(camera.getZoomLvl(), camera.getZoomLvl());
-      mapRenderer.render(-camera.getX(), -camera.getY(), g);
+      g.translate(-camera.getX(), -camera.getY());
+      mapRenderer.render(g);
       renderTileInfo(mapRenderer.getCursorLocation().toString(), g, container);
       g.drawString(String.format("Camera pos: %s,%s max cols: %s/%s max rows: %s/%s",
-              camera.getCol(), camera.getRow(),
-              camera.getMaxCols(), stateSession.map.getCols(),
-              camera.getMaxRows(), stateSession.map.getRows()), 10, 10);
+        camera.getCol(), camera.getRow(),
+        camera.getMaxCols(), stateSession.map.getCols(),
+        camera.getMaxRows(), stateSession.map.getRows()), 10, 10);
     }
   }
 
@@ -151,9 +153,7 @@ public class TestMapRenderer extends CWState {
   }
 
   public void mouseMoved(int oldx, int oldy, int newx, int newy) {
-    int gameX = camera.convertToGameX(newx);
-    int gameY = camera.convertToGameY(newy);
-    mapRenderer.moveCursor(gameX, gameY);
+    mapRenderer.moveCursor(newx, newy);
   }
 
   public int getID() {
