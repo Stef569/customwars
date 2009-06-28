@@ -54,7 +54,8 @@ public class InGameState extends CWState {
 
   public void render(GameContainer container, Graphics g) throws SlickException {
     g.scale(camera.getZoomLvl(), camera.getZoomLvl());
-    mapRenderer.render(-camera.getX(), -camera.getY(), g);
+    g.translate(-camera.getX(), -camera.getY());
+    mapRenderer.render(g);
     renderTileInfo(mapRenderer.getCursorLocation().toString(), g, container);
   }
 
@@ -104,9 +105,7 @@ public class InGameState extends CWState {
   }
 
   public void mouseMoved(int oldx, int oldy, int newx, int newy) {
-    int gameX = camera.convertToGameX(newx);
-    int gameY = camera.convertToGameY(newy);
-    mapRenderer.moveCursor(gameX, gameY);
+    mapRenderer.moveCursor(newx, newy);
   }
 
   public int getID() {

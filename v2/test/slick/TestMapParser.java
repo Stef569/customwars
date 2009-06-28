@@ -27,7 +27,7 @@ public class TestMapParser extends CWState {
   }
 
   public void render(GameContainer container, Graphics g) throws SlickException {
-    mapRenderer.render(0, 0, g);
+    mapRenderer.render(g);
   }
 
   public void update(GameContainer container, int delta) throws SlickException {
@@ -38,8 +38,9 @@ public class TestMapParser extends CWState {
     Map<Tile> loadedMap;  // the resulting map read from disk
 
     try {
-      mapParser.writeMap(HardCodedGame.getMap(), new File("testmap.map"));
-      loadedMap = mapParser.readMap(new File("testmap.map"));
+      File mapFile = new File("testmap.map");
+      mapParser.writeMap(HardCodedGame.getMap(), mapFile);
+      loadedMap = mapParser.readMap(mapFile);
     } catch (IOException e) {
       throw new RuntimeException(e);
     }

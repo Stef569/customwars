@@ -11,7 +11,6 @@ import com.customwars.client.model.map.Tile;
 import com.customwars.client.ui.Camera2D;
 import com.customwars.client.ui.HUD;
 import com.customwars.client.ui.Scroller;
-import com.customwars.client.ui.slick.BasicComponent;
 import com.customwars.client.ui.sprite.SpriteManager;
 import com.customwars.client.ui.sprite.TileSprite;
 import com.customwars.client.ui.state.CWInput;
@@ -80,7 +79,6 @@ public class GameRenderer {
     initCamera();
     mapRenderer.setScroller(new Scroller(camera));
     hud.setCamera(camera);
-    BasicComponent.setCamera(camera);
   }
 
   private void initMapRenderer() {
@@ -123,13 +121,19 @@ public class GameRenderer {
       int cameraX = camera.getX();
       int cameraY = camera.getY();
       float zoomLvl = camera.getZoomLvl();
-
       g.scale(zoomLvl, zoomLvl);
-      mapRenderer.render(-cameraX, -cameraY, g);
+
+      // Map moves up
+      g.translate(-camera.getX(), -camera.getY());
+      mapRenderer.render(g);
       renderDropLocations(g);
       renderExplosionArea();
       if (renderEvents) modelEventsRenderer.render(-cameraX, -cameraY, g);
-      if (renderHUD) hud.render(g);
+      if (hud != null) hud.renderPopUp(g);
+
+      // Hud moves down
+      g.translate(camera.getX(), camera.getY());
+      if (renderHUD) hud.renderComponents(g);
     }
   }
 
@@ -209,9 +213,7 @@ public class GameRenderer {
 
   public void mouseMoved(int x, int y) {
     Location originalCursorLocation = mapRenderer.getCursorLocation();
-    int gameX = camera.convertToGameX(x);
-    int gameY = camera.convertToGameY(y);
-    mapRenderer.moveCursor(gameX, gameY);
+    mapRenderer.moveCursor(x, y);
 
     if (cursorMoved(originalCursorLocation)) {
       SFX.playSound("maptick");
@@ -260,5 +262,9 @@ public class GameRenderer {
 
   public MapRenderer getMapRenderer() {
     return mapRenderer;
+  }
+
+  public Camera2D getCamera() {
+    return camera;
   }
 }

@@ -176,15 +176,17 @@ public class HUD {
     popupMenu.addListener(componentListener);
   }
 
-  public void render(Graphics g) {
-    if (isPopupVisible()) popupMenu.render(guiContext, g);
-
+  public void renderComponents(Graphics g) {
     for (BasicComponent comp : topComponents) {
       comp.render(guiContext, g);
     }
     for (BasicComponent comp : bottomComponents) {
       comp.render(guiContext, g);
     }
+  }
+
+  public void renderPopUp(Graphics g) {
+    if (isPopupVisible()) popupMenu.render(guiContext, g);
   }
 
   public void hidePopup() {

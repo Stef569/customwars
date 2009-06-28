@@ -408,11 +408,7 @@ public class MouseOverArea extends BasicComponent {
   }
 
   private boolean isWithinArea(int x, int y) {
-    if (camera != null) {
-      return area.contains(camera.convertToGameX(x), camera.convertToGameY(y));
-    } else {
-      return area.contains(x, y);
-    }
+    return area.contains(x, y);
   }
 
   /**

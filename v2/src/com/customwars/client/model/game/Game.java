@@ -65,7 +65,7 @@ public class Game extends TurnBasedGame implements PropertyChangeListener {
 
   private void initCity(City city) {
     Tile t = (Tile) city.getLocation();
-    Args.checkForNull(city.getLocation(), "City @ " + t.getLocationString() + " has no location");
+    Args.checkForNull(city.getLocation(), "City has no location");
     Args.checkForNull(city.getOwner(), "City @ " + t.getLocationString() + " has no owner");
 
     Player mapPlayer = city.getOwner();
@@ -83,11 +83,16 @@ public class Game extends TurnBasedGame implements PropertyChangeListener {
   private void initUnit(Unit unit) {
     Tile t = (Tile) unit.getLocation();
     Args.validate(t.getLocatableCount() != 1, "Tile @ " + t.getLocationString() + " contains " + t.getLocatableCount() + " units, limit=1");
-    Args.checkForNull(unit.getLocation(), "Unit @ " + t.getLocationString() + " has no location");
+    Args.checkForNull(unit.getLocation(), "Unit has no location");
     Args.checkForNull(unit.getOwner(), "Unit @ " + t.getLocationString() + " has no owner");
 
     Player newOwner = getGamePlayer(unit.getOwner());
     newOwner.addUnit(unit);
+
+    for (int i = 0; i < unit.getLocatableCount(); i++) {
+      Unit unitInTransport = (Unit) unit.getLocatable(i);
+      newOwner.addUnit(unitInTransport);
+    }
   }
 
   private Player getGamePlayer(Player dummy) {

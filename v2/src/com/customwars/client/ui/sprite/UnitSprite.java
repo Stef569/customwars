@@ -136,6 +136,7 @@ public class UnitSprite extends TileSprite implements PropertyChangeListener {
     }
   }
 
+  @Override
   public void update(long elapsedTime) {
     super.update(elapsedTime);
 
@@ -145,10 +146,11 @@ public class UnitSprite extends TileSprite implements PropertyChangeListener {
     }
   }
 
-  public void render(int x, int y, Graphics g) {
-    super.render(x, y, g);
+  @Override
+  public void render(Graphics g) {
+    super.render(g);
     if (isVisible() && !unit.isDestroyed()) {
-      translate(x, y, g);
+      translateOffset(g, false);
 
       if (lowHp) {
         renderLowerRight(unit.getHp() + "");
@@ -161,15 +163,9 @@ public class UnitSprite extends TileSprite implements PropertyChangeListener {
       }
 
       renderUnitState(unit.getUnitState(), g);
-      undoTranslate(x, y, g);
+      undoTranslateOffset(g);
     }
   }
-
-  private void translate(int x, int y, Graphics g) {
-    g.translate(x, y);
-    translateOffset(g, false);
-  }
-
 
   private void renderUnitState(UnitState unitState, Graphics g) {
     if (unit.getLocatableCount() > 0) {
@@ -184,11 +180,6 @@ public class UnitSprite extends TileSprite implements PropertyChangeListener {
         renderLowerLeft(decorations.getSubImage(SUBMERGED), g);
         break;
     }
-  }
-
-  private void undoTranslate(int x, int y, Graphics g) {
-    undoTranslateOffset(g);
-    g.translate(-x, -y);
   }
 
   private void renderLowerLeft(String txt) {
