@@ -25,11 +25,12 @@ public class Player extends GameObject {
   private int id;           // Unique Number
   private String name;      // Name for this player,not unique
   private Color color;      // Unique Color
-  private int budget;       // Amount of money that can be spend
   private int team;         // The team this player is in
   private boolean ai;       // Is this a human or an AI player
   private boolean neutral;  // Is this player passive of active
   private City hq;          // Headquarters
+
+  private int budget;         // Amount of money that can be spend
   private List<Unit> army;    // All the units of this player
   private List<City> cities;  // All the cities of this player
   private boolean createdFirstUnit; // Has this player created his first unit
@@ -53,10 +54,10 @@ public class Player extends GameObject {
     this.hq = hq;
   }
 
-  public Player(int id, Color color, boolean neutral, City hq, String name, int budget, int team, boolean ai) {
+  public Player(int id, Color color, boolean neutral, City hq, String name, int startBudget, int team, boolean ai) {
     this(id, color, neutral, hq);
     this.name = name;
-    this.budget = budget;
+    this.budget = startBudget;
     this.team = team;
     this.ai = ai;
   }

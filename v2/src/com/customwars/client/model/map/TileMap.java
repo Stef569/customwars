@@ -731,6 +731,21 @@ public class TileMap<T extends Location> implements Observable {
     return col >= 0 && col < cols && row >= 0 && row < rows;
   }
 
+  /**
+   * Converts pixel coordinates into a Tile within the map
+   *
+   * @param x pixel position in the game (where x is relative to the map 0,0 coordinates)
+   * @param y pixel position in the game (where y is relative to the map 0,0 coordinates)
+   * @return The tile at the pixel location, or null if x,y is not valid.
+   */
+  public T pixelsToTile(int x, int y) {
+    if (x < 0 || y < 0) return null;
+
+    int col = x / tileSize;
+    int row = y / tileSize;
+    return getTile(col, row);
+  }
+
   void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
     changeSupport.firePropertyChange(propertyName, oldValue, newValue);
   }

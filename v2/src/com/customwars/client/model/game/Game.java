@@ -14,8 +14,7 @@ import java.util.List;
  * CW Impl of a Turnbase game
  * The Players in the map will be replaced by players from the players list.
  * Usage:
- * Game game = new Game(map,players,neutralPlayer,gameConfig)
- * game.init();
+ * Game game = new Game(map,players,gameConfig)
  * game.startGame();
  * game.endTurn();
  * game.endTurn();
@@ -26,10 +25,10 @@ import java.util.List;
  * When there is only 1 player left
  */
 public class Game extends TurnBasedGame implements PropertyChangeListener {
-  private Unit activeUnit;        // There can only be one active unit in a game at any time
   private int weather;            // The current weather in effect
   private int cityFunds;          // The amount of money each City produces each turn
-  private boolean inited;         // Has this game been inited (map players replaced by game players)
+
+  private Unit activeUnit;        // There can only be one active unit in a game at any time
 
   public Game(Map<Tile> map, List<Player> players, GameConfig gameConfig) {
     super(map, players, gameConfig.getTurnLimit(), gameConfig.getDayLimit());
@@ -51,21 +50,16 @@ public class Game extends TurnBasedGame implements PropertyChangeListener {
    * add the unit/city to their army/cities
    */
   private void init() {
-    if (!inited) {
-      for (Tile t : map.getAllTiles()) {
-        City city = map.getCityOn(t);
-        Unit unit = map.getUnitOn(t);
+    for (Tile t : map.getAllTiles()) {
+      City city = map.getCityOn(t);
+      Unit unit = map.getUnitOn(t);
 
-        if (city != null) {
-          initCity(city);
-        }
-        if (unit != null) {
-          initUnit(unit);
-        }
+      if (city != null) {
+        initCity(city);
       }
-      inited = true;
-    } else {
-      throw new AssertionError("Can only init a game once");
+      if (unit != null) {
+        initUnit(unit);
+      }
     }
   }
 

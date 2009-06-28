@@ -12,7 +12,7 @@ import java.util.List;
 
 /**
  * A Tile is a location that contains a Terrain(required) and
- * can can be fogged. It can contain multiple locatables
+ * can be fogged. It can contain multiple locatables
  *
  * @author stefan
  */
@@ -113,7 +113,7 @@ public class Tile implements Location, Observable {
   }
 
   public String toString() {
-    return String.format("[(%s) fog=%s terrain=%s locatables=%s", getLocationString(), fogged, terrain, locatables);
+    return String.format("[(%s) fog=%s terrain=%s locatables=%s]", getLocationString(), fogged, terrain, locatables);
   }
 
   void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
