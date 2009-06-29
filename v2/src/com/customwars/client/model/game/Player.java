@@ -107,7 +107,7 @@ public class Player extends GameObject {
 
   public void changeCityOwnersTo(Player newOwner) {
     for (City city : getAllCities()) {
-      city.setOwner(newOwner);
+      newOwner.addCity(city);
     }
   }
 
