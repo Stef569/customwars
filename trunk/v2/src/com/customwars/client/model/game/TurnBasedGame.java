@@ -18,7 +18,7 @@ import java.util.Set;
 
 /**
  * A basic game that has
- * a Game state[not started, started, Gameover], map, players and the current turn.
+ * a Game state[Idle, Started, Gameover], a map, players and the current turn.
  *
  * The players list contains the players that are in the game, excluding the neutral player.
  * Neutral players are always in the IDLE state
@@ -39,7 +39,7 @@ public class TurnBasedGame implements Observable {
   Player neutralPlayer;         // Idle neutral player for cities that are not owned.
   private List<Player> players; // The Human and AI players that are in this game
   private Player activePlayer;  // There can only be one active player in a game at any time
-  private GameState state;      // Current State
+  private GameState state;
 
   public TurnBasedGame(Map<Tile> map, List<Player> players, int turnLimit, int dayLimit) {
     Args.checkForNull(map);
@@ -69,7 +69,7 @@ public class TurnBasedGame implements Observable {
     setActivePlayer(gameStarter);
     setState(GameState.STARTED);
     startTurn(activePlayer);
-    logger.debug("Game with map " + map.getProperty("MAP_NAME") + " has started");
+    logger.debug("Game with map " + map.getProperty("NAME") + " has started");
   }
 
   public void endTurn() throws NotYourTurnException {
@@ -242,7 +242,8 @@ public class TurnBasedGame implements Observable {
   /**
    * Get a game player by his playerName
    * playerName is case sensitive
-   * if the player could not be found an IllegalArgumentException is thrown
+   *
+   * @throws IllegalArgumentException if the player could not be found
    */
   public Player getPlayerByName(String playerName) {
     Player result = null;
@@ -263,7 +264,8 @@ public class TurnBasedGame implements Observable {
   /**
    * Get a player by his ID
    * The ID can be of a game player or of the neutral player
-   * if the player could not be found an IllegalArgumentException is thrown
+   *
+   * @throws IllegalArgumentException if the player could not be found
    */
   public Player getPlayerByID(int playerID) {
     Player result = null;
@@ -358,7 +360,7 @@ public class TurnBasedGame implements Observable {
       throw new IllegalStateException("Trying to endTurn on a not started Game");
 
     if (isGameOver())
-      throw new IllegalStateException("Trying to endTurn on a ended Game");
+      throw new IllegalStateException("Trying to endTurn on an ended Game");
 
     Args.checkForNull(activePlayer, "No active Player");
     Player nextPlayer = getNextActivePlayer(activePlayer);
