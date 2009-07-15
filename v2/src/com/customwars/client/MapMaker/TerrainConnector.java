@@ -52,11 +52,13 @@ public class TerrainConnector {
   public void turnSurroundingTerrains(Tile baseTile, Terrain baseTerrain) {
     validate(baseTile, baseTerrain);
 
-    tileData = new SurroundingTileData(baseTile, baseTerrain);
-    tileData.calcSurroundingTileInformation();
+    tileData = new SurroundingTileData(baseTile);
+    List<Tile> allTouchingTiles = tileData.calcAllSurroundingTiles();
 
-    for (Tile t : tileData.touchingTilesWithSameTerrain) {
-      Terrain bestMatchingTerrain = connectTerrain(t, baseTerrain);
+    for (Tile t : allTouchingTiles) {
+      tileData = new SurroundingTileData(t, t.getTerrain());
+      tileData.calcSurroundingTileInformation();
+      Terrain bestMatchingTerrain = connectTerrain(t, t.getTerrain());
       t.setTerrain(bestMatchingTerrain);
     }
   }
@@ -237,6 +239,10 @@ public class TerrainConnector {
     private List<Direction> adjacentDirections;
     private List<Terrain> horizontalTerrains;
     private List<Terrain> verticalTerrains;
+
+    private SurroundingTileData(Tile center) {
+      this.center = center;
+    }
 
     private SurroundingTileData(Tile center, Terrain terrain) {
       this.center = center;
