@@ -1,5 +1,6 @@
 package com.customwars.client.ui.sprite;
 
+import com.customwars.client.ui.renderer.Renderable;
 import org.apache.log4j.Logger;
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Color;
@@ -17,7 +18,7 @@ import java.beans.PropertyChangeSupport;
  *
  * @author Stefan
  */
-public class Sprite {
+public class Sprite implements Renderable {
   private static final Logger logger = Logger.getLogger(Sprite.class);
   private static final int ONE_SECOND = 1000;
   private boolean illegalRenderingLogged;
@@ -25,12 +26,11 @@ public class Sprite {
   PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
 
   // Position (pixels)
-  int locX;
-  int locY;
+  private Point position;
 
   // Velocity (pixels per second)
-  float dx;
-  float dy;
+  private float dx;
+  private float dy;
 
   Animation anim;
 
@@ -40,8 +40,7 @@ public class Sprite {
    * Animation should be set manually, before update or render is invoked.
    */
   public Sprite(int x, int y) {
-    locX = x;
-    locY = y;
+    position = new Point(x, y);
   }
 
   /**
@@ -73,8 +72,8 @@ public class Sprite {
    * @param elapsedTime the time that this frame took
    */
   public void update(long elapsedTime) {
-    locX += dx * elapsedTime / ONE_SECOND;
-    locY += dy * elapsedTime / ONE_SECOND;
+    position.x += dx * elapsedTime / ONE_SECOND;
+    position.y += dy * elapsedTime / ONE_SECOND;
     if (anim != null && updateAnim) anim.update(elapsedTime);
   }
 
@@ -87,7 +86,7 @@ public class Sprite {
    */
   public void render(Graphics g) {
     if (canRenderAnim(g) && visible) {
-      anim.getCurrentFrame().draw(locX, locY);
+      anim.getCurrentFrame().draw(position.x, position.y);
     }
   }
 
@@ -116,7 +115,7 @@ public class Sprite {
   private void renderYellowOval(Graphics g) {
     Color originalColor = g.getColor();
     g.setColor(Color.yellow);
-    g.fillOval(locX, locY, 20, 20);
+    g.fillOval(position.x, position.y, 20, 20);
     g.setColor(originalColor);
   }
 
@@ -128,28 +127,6 @@ public class Sprite {
     illegalRenderingLogged = true;
   }
 
-  //----------------------------------------------------------------------------
-  // EVENTS
-  // ---------------------------------------------------------------------------
-  public synchronized void addPropertyChangeListener(PropertyChangeListener listener) {
-    changeSupport.addPropertyChangeListener(listener);
-  }
-
-  public synchronized void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
-    changeSupport.addPropertyChangeListener(propertyName, listener);
-  }
-
-  public synchronized void removePropertyChangeListener(PropertyChangeListener listener) {
-    changeSupport.removePropertyChangeListener(listener);
-  }
-
-  public synchronized void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
-    changeSupport.removePropertyChangeListener(propertyName, listener);
-  }
-
-  //----------------------------------------------------------------------------
-  // SETTERS
-  // ---------------------------------------------------------------------------
   public void setAnim(Animation anim) {
     Animation oldVal = this.anim;
     this.anim = anim;
@@ -157,16 +134,17 @@ public class Sprite {
   }
 
   public void setLocation(int x, int y) {
-    locX = x;
-    locY = y;
+    Point oldPosition = this.position;
+    position = new Point(x, y);
+    changeSupport.firePropertyChange("position", oldPosition, this.position);
   }
 
-  public void setX(int locX) {
-    this.locX = locX;
+  public void setX(int x) {
+    setLocation(x, position.y);
   }
 
-  public void setY(int locY) {
-    this.locY = locY;
+  public void setY(int y) {
+    setLocation(position.x, y);
   }
 
   public void setDx(float dx) {
@@ -185,19 +163,16 @@ public class Sprite {
     this.updateAnim = updateAnim;
   }
 
-  //----------------------------------------------------------------------------
-  // GETTERS
-  // ---------------------------------------------------------------------------
   public int getX() {
-    return locX;
+    return position.x;
   }
 
   public int getY() {
-    return locY;
+    return position.y;
   }
 
   public Point getPixelLocation() {
-    return new Point(locX, locY);
+    return new Point(position);
   }
 
   public int getHeight() {
@@ -212,11 +187,13 @@ public class Sprite {
     return anim;
   }
 
-  // returns true if x and y is within the Sprite
+  /**
+   * returns true if x and y is within the Sprite
+   */
   public boolean hasBeenClickedOn(int x, int y) {
-    float xLimit = locX + anim.getCurrentFrame().getWidth();
-    float yLimit = locY + anim.getCurrentFrame().getHeight();
-    return ((x >= locX) && (x <= xLimit)) && ((y >= locY) && (y <= yLimit));
+    float xLimit = position.x + anim.getCurrentFrame().getWidth();
+    float yLimit = position.y + anim.getCurrentFrame().getHeight();
+    return ((x >= position.x) && (x <= xLimit)) && ((y >= position.y) && (y <= yLimit));
   }
 
   public boolean isRenderingAnim(Animation animation) {
@@ -229,5 +206,21 @@ public class Sprite {
 
   public boolean isVisible() {
     return visible;
+  }
+
+  public synchronized void addPropertyChangeListener(PropertyChangeListener listener) {
+    changeSupport.addPropertyChangeListener(listener);
+  }
+
+  public synchronized void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+    changeSupport.addPropertyChangeListener(propertyName, listener);
+  }
+
+  public synchronized void removePropertyChangeListener(PropertyChangeListener listener) {
+    changeSupport.removePropertyChangeListener(listener);
+  }
+
+  public synchronized void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+    changeSupport.removePropertyChangeListener(propertyName, listener);
   }
 }

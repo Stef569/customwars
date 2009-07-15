@@ -1,12 +1,13 @@
 package com.customwars.client.ui.state;
 
+import com.customwars.client.controller.CursorController;
 import com.customwars.client.io.img.slick.ImageStrip;
 import com.customwars.client.model.map.Direction;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.ui.Camera2D;
-import com.customwars.client.ui.Scroller;
 import com.customwars.client.ui.renderer.MapRenderer;
+import com.customwars.client.ui.sprite.SpriteManager;
 import com.customwars.client.ui.sprite.TileSprite;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -18,23 +19,24 @@ import java.awt.Dimension;
 
 public class InGameState extends CWState {
   private MapRenderer mapRenderer;
+  private CursorController cursorControl;
   private Camera2D camera;
 
   public void init(GameContainer container, StateBasedGame game) throws SlickException {
-    mapRenderer = new MapRenderer();
-    mapRenderer.loadResources(resources);
   }
 
   public void enter(GameContainer container, StateBasedGame game) throws SlickException {
     super.enter(container, game);
     Map<Tile> map = stateSession.map;
-    mapRenderer.setMap(map);
+    SpriteManager spriteManager = new SpriteManager(map);
+    mapRenderer = new MapRenderer(map, spriteManager);
+    mapRenderer.loadResources(resources);
+    cursorControl = new CursorController(map, spriteManager);
 
     // Create Camera & Scroller
     Dimension worldSize = new Dimension(map.getWidth(), map.getHeight());
     Dimension screenSize = new Dimension(container.getWidth(), container.getHeight());
     camera = new Camera2D(screenSize, worldSize, map.getTileSize());
-    mapRenderer.setScroller(new Scroller(camera));
 
     // Create & add Cursors
     ImageStrip cursor1 = resources.getSlickImgStrip("selectCursor");
@@ -83,16 +85,16 @@ public class InGameState extends CWState {
 
   private void moveCursor(Command command, CWInput cwInput) {
     if (cwInput.isUp(command)) {
-      mapRenderer.moveCursor(Direction.NORTH);
+      cursorControl.moveCursor(Direction.NORTH);
     }
     if (cwInput.isDown(command)) {
-      mapRenderer.moveCursor(Direction.SOUTH);
+      cursorControl.moveCursor(Direction.SOUTH);
     }
     if (cwInput.isLeft(command)) {
-      mapRenderer.moveCursor(Direction.WEST);
+      cursorControl.moveCursor(Direction.WEST);
     }
     if (cwInput.isRight(command)) {
-      mapRenderer.moveCursor(Direction.EAST);
+      cursorControl.moveCursor(Direction.EAST);
     }
   }
 
@@ -105,7 +107,7 @@ public class InGameState extends CWState {
   }
 
   public void mouseMoved(int oldx, int oldy, int newx, int newy) {
-    mapRenderer.moveCursor(newx, newy);
+    cursorControl.moveCursor(newx, newy);
   }
 
   public int getID() {

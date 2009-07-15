@@ -1,12 +1,15 @@
 package slick;
 
+import com.customwars.client.controller.CursorController;
 import com.customwars.client.io.img.slick.ImageStrip;
 import com.customwars.client.model.map.Direction;
+import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.ui.Camera2D;
 import com.customwars.client.ui.Scroller;
 import com.customwars.client.ui.renderer.MapRenderer;
+import com.customwars.client.ui.sprite.SpriteManager;
 import com.customwars.client.ui.sprite.TileSprite;
 import com.customwars.client.ui.state.CWInput;
 import com.customwars.client.ui.state.CWState;
@@ -15,31 +18,40 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.command.Command;
+import org.newdawn.slick.gui.GUIContext;
 import org.newdawn.slick.state.StateBasedGame;
 
 import java.awt.Dimension;
 
 public class TestMapRenderer extends CWState {
+  private GUIContext guiContext;
   private MapRenderer mapRenderer;
+  private Map<Tile> map;
   private Camera2D camera;
   private Scroller scroller;
+  private CursorController cursorControl;
 
   public void init(GameContainer container, StateBasedGame game) throws SlickException {
-    mapRenderer = new MapRenderer();
-    mapRenderer.loadResources(resources);
+    guiContext = container;
   }
 
   public void enter(GameContainer container, StateBasedGame game) throws SlickException {
     super.enter(container, game);
-    Map<Tile> map = stateSession.map;
-    mapRenderer.setMap(map);
+    this.map = stateSession.map;
+    initMap(map);
+  }
+
+  public void initMap(Map<Tile> map) {
+    SpriteManager spriteManager = new SpriteManager(map);
+    mapRenderer = new MapRenderer(map, spriteManager);
+    mapRenderer.loadResources(resources);
+    cursorControl = new CursorController(map, spriteManager);
 
     // Create Camera & scroller
     Dimension worldSize = new Dimension(map.getWidth(), map.getHeight());
-    Dimension screenSize = new Dimension(container.getWidth(), container.getHeight());
+    Dimension screenSize = new Dimension(guiContext.getWidth(), guiContext.getHeight());
     camera = new Camera2D(screenSize, worldSize, map.getTileSize());
     scroller = new Scroller(camera);
-    mapRenderer.setScroller(scroller);
 
     // Create & add Cursors
     ImageStrip cursor1 = resources.getSlickImgStrip("selectCursor");
@@ -55,6 +67,7 @@ public class TestMapRenderer extends CWState {
   public void update(GameContainer container, int delta) throws SlickException {
     mapRenderer.update(delta);
     camera.update(delta);
+    scroller.update(delta);
     container.getInput().setOffset(camera.getX(), camera.getY());
   }
 
@@ -63,11 +76,15 @@ public class TestMapRenderer extends CWState {
       g.scale(camera.getZoomLvl(), camera.getZoomLvl());
       g.translate(-camera.getX(), -camera.getY());
       mapRenderer.render(g);
-      renderTileInfo(mapRenderer.getCursorLocation().toString(), g, container);
+
+      g.translate(camera.getX(), camera.getY());
+      Location cursorLocation = mapRenderer.getCursorLocation();
+      renderTileInfo(cursorLocation.toString(), g, container);
       g.drawString(String.format("Camera pos: %s,%s max cols: %s/%s max rows: %s/%s",
         camera.getCol(), camera.getRow(),
-        camera.getMaxCols(), stateSession.map.getCols(),
-        camera.getMaxRows(), stateSession.map.getRows()), 10, 10);
+        camera.getMaxCols(), map.getCols(),
+        camera.getMaxRows(), map.getRows()),
+        10, 10);
     }
   }
 
@@ -95,17 +112,18 @@ public class TestMapRenderer extends CWState {
 
   private void moveCursor(Command command, CWInput cwInput) {
     if (cwInput.isUp(command)) {
-      mapRenderer.moveCursor(Direction.NORTH);
+      cursorControl.moveCursor(Direction.NORTH);
     }
     if (cwInput.isDown(command)) {
-      mapRenderer.moveCursor(Direction.SOUTH);
+      cursorControl.moveCursor(Direction.SOUTH);
     }
     if (cwInput.isLeft(command)) {
-      mapRenderer.moveCursor(Direction.WEST);
+      cursorControl.moveCursor(Direction.WEST);
     }
     if (cwInput.isRight(command)) {
-      mapRenderer.moveCursor(Direction.EAST);
+      cursorControl.moveCursor(Direction.EAST);
     }
+    scroller.setCursorLocation(mapRenderer.getCursorLocation());
   }
 
   public void keyReleased(int key, char c) {
@@ -128,16 +146,16 @@ public class TestMapRenderer extends CWState {
       camera.centerOnTile(10, 13);
     }
     if (key == Input.KEY_6) {
-      camera.centerOnTile(stateSession.map.getCols() - 1, stateSession.map.getRows() - 1);
+      camera.centerOnTile(map.getCols() - 1, map.getRows() - 1);
     }
     if (key == Input.KEY_R) {
-      mapRenderer.setMap(stateSession.map);
+
     }
     if (key == Input.KEY_U) {
       scroller.setAutoScroll(scroller.isAutoScrollOn());
     }
     if (key == Input.KEY_L) {
-      mapRenderer.toggleCursorLock();
+      cursorControl.toggleCursorLock();
     }
     if (key == Input.KEY_J) {
       mapRenderer.setRenderSprites(!mapRenderer.isRenderingSprites());
@@ -153,7 +171,8 @@ public class TestMapRenderer extends CWState {
   }
 
   public void mouseMoved(int oldx, int oldy, int newx, int newy) {
-    mapRenderer.moveCursor(newx, newy);
+    cursorControl.moveCursor(newx, newy);
+    scroller.setCursorLocation(mapRenderer.getCursorLocation());
   }
 
   public int getID() {

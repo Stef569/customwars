@@ -32,7 +32,9 @@ import java.util.Set;
  * Handles all sprites in the game
  * cursors, units, cities
  *
- * Each unique animation is stored and updated.
+ * Each unique animation is stored and updated, if we would update each sprite animation
+ * there would be a small interval between other sprite animations.
+ *
  * It listens for changes from the model and updates the graphical representation(the Sprite)
  *
  * For example when a city is captured a new Player is set.
@@ -42,24 +44,26 @@ import java.util.Set;
  */
 public class SpriteManager implements PropertyChangeListener {
   private static final Logger logger = Logger.getLogger(SpriteManager.class);
-  private TileMap<Tile> map;
+  private final TileMap<Tile> map;
   private ResourceManager resources;
 
-  private Map<String, TileSprite> cursorSprites;
-  private Map<Unit, UnitSprite> unitSprites;
-  private Map<City, CitySprite> citySprites;
-  private Set<Animation> uniqueAnimations;
+  private final Map<String, TileSprite> cursorSprites;
+  private final Map<Unit, UnitSprite> unitSprites;
+  private final Map<City, CitySprite> citySprites;
+  private final Set<Animation> uniqueAnimations;
   private ImageStrip unitDecorationStrip;
 
   private TileSprite activeCursor;
   private Color neutralColor = Color.GRAY;
   private ImageStripFont numbers;
+  private boolean renderSprites = true;
 
-  public SpriteManager() {
-    cursorSprites = new HashMap<String, TileSprite>();
-    unitSprites = new HashMap<Unit, UnitSprite>();
-    citySprites = new HashMap<City, CitySprite>();
-    uniqueAnimations = new HashSet<Animation>();
+  public SpriteManager(TileMap<Tile> map) {
+    this.map = map;
+    this.cursorSprites = new HashMap<String, TileSprite>();
+    this.unitSprites = new HashMap<Unit, UnitSprite>();
+    this.citySprites = new HashMap<City, CitySprite>();
+    this.uniqueAnimations = new HashSet<Animation>();
   }
 
   public void loadResources(ResourceManager resources) {
@@ -70,7 +74,8 @@ public class SpriteManager implements PropertyChangeListener {
   }
 
   /**
-   * Only update animations in uniqueAnimations this is because Animations are shared between sprites
+   * Only update animations in the uniqueAnimations collection
+   * this is because Animations are shared between sprites
    * updating a sprite will not update the sprite animation
    */
   public void update(int elapsedTime) {
@@ -94,42 +99,40 @@ public class SpriteManager implements PropertyChangeListener {
     }
   }
 
-  public void render(Graphics g) {
-    for (Sprite sprite : citySprites.values()) {
-      sprite.render(g);
-    }
-    for (Sprite sprite : unitSprites.values()) {
-      sprite.render(g);
-    }
-    renderCursor(g);
-  }
-
   public void renderCursor(Graphics g) {
-    if (isCursorSet()) {
+    if (renderSprites && isCursorSet()) {
       activeCursor.render(g);
     }
   }
 
   public void renderUnit(Graphics g, Unit unit) {
-    if (unitSprites.containsKey(unit)) {
+    if (renderSprites && unit != null && unitSprites.containsKey(unit)) {
       unitSprites.get(unit).render(g);
     }
   }
 
+  public void renderDyingUnits(Graphics g) {
+    if (renderSprites) {
+      for (UnitSprite sprite : unitSprites.values()) {
+        if (sprite.isDying()) {
+          sprite.render(g);
+        }
+      }
+    }
+  }
+
   public void renderCity(Graphics g, City city) {
-    if (citySprites.containsKey(city)) {
+    if (renderSprites && citySprites.containsKey(city)) {
       citySprites.get(city).render(g);
     }
   }
 
-  public void moveCursorTo(Location location) {
+  public void moveCursorTo(Location newLocation) {
     if (isCursorSet()) {
-      activeCursor.setLocation(location);
+      activeCursor.setLocation(newLocation);
+    } else {
+      logger.warn("Cannot move cursor, no active cursor set");
     }
-  }
-
-  public void setMap(TileMap<Tile> map) {
-    this.map = map;
   }
 
   //----------------------------------------------------------------------------
@@ -263,7 +266,7 @@ public class SpriteManager implements PropertyChangeListener {
     sprite.updateAnim();
   }
 
-  public void addUnitSprite(Unit unit, UnitSprite unitSprite) {
+  private void addUnitSprite(Unit unit, UnitSprite unitSprite) {
     checkTileSprites(unitSprite, unitSprites.values().iterator());
     unitSprites.put(unit, unitSprite);
     uniqueAnimations.add(unitSprite.anim);
@@ -276,7 +279,7 @@ public class SpriteManager implements PropertyChangeListener {
    * have a location to set the sprite position
    * have an id, this is used to retrieve the image
    */
-  public void loadCitySprite(City city) {
+  private void loadCitySprite(City city) {
     Color cityColor = city.getOwner().getColor();
     CitySprite sprite = createCitySprite(city);
     recolorCitySprite(city, sprite, cityColor, city.getID());
@@ -351,7 +354,7 @@ public class SpriteManager implements PropertyChangeListener {
     return animFogged;
   }
 
-  public void addCitySprite(City city, CitySprite citySprite) {
+  private void addCitySprite(City city, CitySprite citySprite) {
     checkTileSprites(citySprite, citySprites.values().iterator());
     citySprites.put(city, citySprite);
     uniqueAnimations.add(citySprite.anim);
@@ -363,15 +366,21 @@ public class SpriteManager implements PropertyChangeListener {
    * @param cursorName case insensitive name of the cursor ie 'Select' and 'SELECT' both return the same cursor
    */
   public void setActiveCursor(String cursorName) {
-    if (isCursorSet(cursorName)) {
+    if (hasCursor(cursorName)) {
       if (activeCursor != null) {
         uniqueAnimations.remove(activeCursor.anim);
       }
-      activeCursor = cursorSprites.get(cursorName.toUpperCase());
-      uniqueAnimations.add(activeCursor.anim);
+      TileSprite cursor = cursorSprites.get(cursorName.toUpperCase());
+      cursor.activate();
+      uniqueAnimations.add(cursor.anim);
+      this.activeCursor = cursor;
     } else {
       logger.warn(cursorName + " is not available, cursors:" + cursorSprites.keySet());
     }
+  }
+
+  public void setRenderSprites(boolean renderSprites) {
+    this.renderSprites = renderSprites;
   }
 
   public void addCursor(String name, TileSprite cursorSprite) {
@@ -384,7 +393,11 @@ public class SpriteManager implements PropertyChangeListener {
   }
 
   public Location getCursorLocation() {
-    return activeCursor.getLocation();
+    if (isCursorSet()) {
+      return activeCursor.getLocation();
+    } else {
+      throw new IllegalStateException("no active cursor set");
+    }
   }
 
   public List<Location> getCursorEffectRange() {
@@ -395,7 +408,7 @@ public class SpriteManager implements PropertyChangeListener {
     return activeCursor != null;
   }
 
-  public boolean isCursorSet(String cursorName) {
+  public boolean hasCursor(String cursorName) {
     return cursorSprites.containsKey(cursorName.toUpperCase());
   }
 
@@ -571,5 +584,9 @@ public class SpriteManager implements PropertyChangeListener {
 
   public CitySprite getCitySprite(City city) {
     return citySprites.get(city);
+  }
+
+  public boolean isRenderingSprites() {
+    return renderSprites;
   }
 }

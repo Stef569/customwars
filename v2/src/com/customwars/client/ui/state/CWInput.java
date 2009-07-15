@@ -35,6 +35,7 @@ public class CWInput extends InputProvider {
   public static final Command recolor = new BasicCommand("Recolor");
   public static final Command delete = new BasicCommand("Delete");
   public static final Command toggleFPS = new BasicCommand("Toggle_FPS");
+  public static final Command endTurn = new BasicCommand("End_Turn");
 
   private static final int KEY_REPEAT_DELAY = 250;
   private Input input;
@@ -59,9 +60,9 @@ public class CWInput extends InputProvider {
 
   private static boolean isCommandField(Field field) {
     return Modifier.isPublic(field.getModifiers())
-            && Modifier.isStatic(field.getModifiers())
-            && Modifier.isFinal(field.getModifiers())
-            && Command.class == field.getType();
+      && Modifier.isStatic(field.getModifiers())
+      && Modifier.isFinal(field.getModifiers())
+      && Command.class == field.getType();
   }
 
   /**
@@ -150,6 +151,10 @@ public class CWInput extends InputProvider {
 
   public boolean isToggleFPS(Command command) {
     return toggleFPS.equals(command);
+  }
+
+  public boolean isEndTurn(Command command) {
+    return endTurn.equals(command);
   }
 
   public Command getCommandByName(String commandName) {

@@ -1,6 +1,7 @@
 package com.customwars.client.action.unit;
 
 import com.customwars.client.action.DirectAction;
+import com.customwars.client.controller.CursorController;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Location;
@@ -11,7 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Allow to select a unit to attack (Attack mode)
+ * This action searches for units in attack range that can be attacked(enemies)
+ * The cursor is limited to the enemy locations
+ * The enemies are rendered behind an attack animation
  *
  * @author stefan
  */
@@ -21,6 +24,7 @@ public class StartAttackAction extends DirectAction {
   private Game game;
   private Unit unit;
   private Location to;
+  private CursorController cursorControl;
 
   public StartAttackAction(Unit unit, Location to) {
     super("Start Attack mode");
@@ -32,6 +36,7 @@ public class StartAttackAction extends DirectAction {
     this.context = context;
     this.game = context.getGame();
     this.mapRenderer = context.getMapRenderer();
+    this.cursorControl = context.getCursorController();
   }
 
   protected void invokeAction() {
@@ -40,7 +45,7 @@ public class StartAttackAction extends DirectAction {
 
     mapRenderer.removeMoveZone();
     mapRenderer.activateCursor("ATTACK");
-    mapRenderer.startCursorTraversal(enemyLocationsInRange);
+    cursorControl.startCursorTraversal(enemyLocationsInRange);
     mapRenderer.setAttackZone(enemyLocationsInRange);
     context.setInputMode(InGameContext.INPUT_MODE.UNIT_ATTACK);
   }
@@ -55,8 +60,7 @@ public class StartAttackAction extends DirectAction {
 
   public void undo() {
     mapRenderer.removeAttackZone();
-    mapRenderer.stopCursorTraversal();
-
+    cursorControl.stopCursorTraversal();
     mapRenderer.activateCursor("SELECT");
   }
 }

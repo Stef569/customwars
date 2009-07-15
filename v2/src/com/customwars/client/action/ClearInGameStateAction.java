@@ -1,5 +1,6 @@
 package com.customwars.client.action;
 
+import com.customwars.client.controller.CursorController;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.ui.HUD;
 import com.customwars.client.ui.renderer.MapRenderer;
@@ -15,6 +16,7 @@ public class ClearInGameStateAction extends DirectAction {
   private MapRenderer mapRenderer;
   private Game game;
   private HUD hud;
+  private CursorController cursorControl;
 
   public ClearInGameStateAction() {
     super("Clear in game state", false);
@@ -25,6 +27,7 @@ public class ClearInGameStateAction extends DirectAction {
     this.game = context.getGame();
     this.mapRenderer = context.getMapRenderer();
     this.hud = context.getHud();
+    this.cursorControl = context.getCursorController();
   }
 
   protected void invokeAction() {
@@ -37,8 +40,8 @@ public class ClearInGameStateAction extends DirectAction {
     context.getContainer().getInput().resume();
 
     mapRenderer.activateCursor("Select");
-    mapRenderer.stopCursorTraversal();
-    mapRenderer.setCursorLocked(false);
+    cursorControl.stopCursorTraversal();
+    cursorControl.setCursorLocked(false);
     mapRenderer.removeZones();
     mapRenderer.showArrows(false);
     mapRenderer.setActiveUnit(null);

@@ -3,6 +3,7 @@ package com.customwars.client.action.unit;
 import com.customwars.client.App;
 import com.customwars.client.SFX;
 import com.customwars.client.action.DelayedAction;
+import com.customwars.client.controller.CursorController;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Location;
@@ -20,7 +21,7 @@ public class MoveAnimatedAction extends DelayedAction {
   InGameContext context;
   MoveTraverse moveTraverse;
   Game game;
-  private MapRenderer mapRenderer;
+  private CursorController cursorControl;
   Location from;
   Location to;
   Unit unit;
@@ -45,12 +46,13 @@ public class MoveAnimatedAction extends DelayedAction {
     this.context = context;
     game = context.getGame();
     moveTraverse = context.getMoveTraverse();
-    mapRenderer = context.getMapRenderer();
+    cursorControl = context.getCursorController();
+    cursorControl.setCursorLocked(true);
     context.setMoving(true);
 
+    MapRenderer mapRenderer = context.getMapRenderer();
     mapRenderer.removeZones();
     mapRenderer.showArrows(false);
-    mapRenderer.setCursorLocked(true);
     moveTraverse.prepareMove(unit, to);
   }
 
@@ -70,7 +72,7 @@ public class MoveAnimatedAction extends DelayedAction {
     } else {
       context.setTrapped(false);
     }
-    mapRenderer.setCursorLocked(false);
+    cursorControl.setCursorLocked(false);
   }
 
   public void undo() {

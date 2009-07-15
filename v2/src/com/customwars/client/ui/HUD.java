@@ -30,6 +30,7 @@ import java.util.List;
  */
 public class HUD {
   private static final int INFO_BOX_HEIGH = 100;
+  private static final int TOP_MARGIN = 10;
   private Game game;
   private SpriteManager spriteManager;
   private Camera2D camera;
@@ -40,9 +41,8 @@ public class HUD {
   private TerrainInfoBox terrainInfoBox;
   private UnitInfoBox unitInfoBox;
 
-  public HUD(GUIContext guiContext, SpriteManager spriteManager) {
+  public HUD(GUIContext guiContext) {
     this.guiContext = guiContext;
-    this.spriteManager = spriteManager;
     topComponents = new ArrayList<BasicComponent>();
     bottomComponents = new ArrayList<BasicComponent>();
   }
@@ -74,6 +74,9 @@ public class HUD {
     topComponents.add(playerInfoBox);
   }
 
+  /**
+   * Updates the info boxes with information from the tile
+   */
   public void moveOverTile(Tile tile) {
     if (terrainInfoBox != null && camera != null) {
       terrainInfoBox.setTile(tile);
@@ -98,45 +101,49 @@ public class HUD {
    */
   public final void locateInfoBoxes(Direction quadrant) {
     if (quadrant == Direction.NORTHWEST || quadrant == Direction.SOUTHWEST) {
-      locateRightToLeft(topComponents, 10);
+      locateRightToLeft(topComponents, TOP_MARGIN);
       locateRightToLeft(bottomComponents, camera.getHeight() - INFO_BOX_HEIGH);
     } else {
-      locateLeftToRight(topComponents, 10);
+      locateLeftToRight(topComponents, TOP_MARGIN);
       locateLeftToRight(bottomComponents, camera.getHeight() - INFO_BOX_HEIGH);
     }
   }
 
-  private void locateRightToLeft(List<BasicComponent> components, int topLeftY) {
-    Point topLeft = new Point(camera.getWidth(), topLeftY);
+  private void locateRightToLeft(List<BasicComponent> components, int topMargin) {
+    Point startPoint = new Point(camera.getWidth(), topMargin);
 
     for (int i = 0; i < components.size(); i++) {
       BasicComponent comp = components.get(i);
       BasicComponent nextComp;
+      int componentLeftTop;
 
       if (i == 0) {
-        comp.setLocation(topLeft.x - comp.getWidth(), topLeft.y);
-        continue;
+        componentLeftTop = startPoint.x - comp.getWidth();
+      } else {
+        nextComp = components.get(i - 1);
+        componentLeftTop = startPoint.x - comp.getWidth() - nextComp.getWidth();
       }
 
-      nextComp = components.get(i - 1);
-      comp.setLocation(topLeft.x - nextComp.getWidth() - comp.getWidth(), topLeft.y);
+      comp.setLocation(componentLeftTop, startPoint.y);
     }
   }
 
-  private void locateLeftToRight(List<BasicComponent> components, int topLeftY) {
-    Point topLeft = new Point(0, topLeftY);
+  private void locateLeftToRight(List<BasicComponent> components, int topMargin) {
+    Point startPoint = new Point(0, topMargin);
 
     for (int i = 0; i < components.size(); i++) {
       BasicComponent comp = components.get(i);
       BasicComponent nextComp;
+      int componentLeftTop;
 
       if (i == 0) {
-        comp.setLocation(topLeft.x, topLeft.y);
-        continue;
+        componentLeftTop = startPoint.x;
+      } else {
+        nextComp = components.get(i - 1);
+        componentLeftTop = startPoint.x + nextComp.getWidth();
       }
 
-      nextComp = components.get(i - 1);
-      comp.setLocation(topLeft.x + nextComp.getWidth(), topLeft.y);
+      comp.setLocation(componentLeftTop, startPoint.y);
     }
   }
 
@@ -176,7 +183,7 @@ public class HUD {
     popupMenu.addListener(componentListener);
   }
 
-  public void renderComponents(Graphics g) {
+  public void render(Graphics g) {
     for (BasicComponent comp : topComponents) {
       comp.render(guiContext, g);
     }
@@ -185,7 +192,7 @@ public class HUD {
     }
   }
 
-  public void renderPopUp(Graphics g) {
+  public void renderPopup(Graphics g) {
     if (isPopupVisible()) popupMenu.render(guiContext, g);
   }
 
@@ -199,6 +206,10 @@ public class HUD {
 
   public void setCamera(Camera2D camera) {
     this.camera = camera;
+  }
+
+  public void setSpriteManager(SpriteManager spriteManager) {
+    this.spriteManager = spriteManager;
   }
 
   public boolean isPopupVisible() {

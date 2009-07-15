@@ -6,7 +6,7 @@ import com.customwars.client.io.ResourceManager;
 import com.customwars.client.ui.state.CWInput;
 import com.customwars.client.ui.state.CWState;
 import com.customwars.client.ui.state.GameOverState;
-import com.customwars.client.ui.state.MapMakerState;
+import com.customwars.client.ui.state.MapEditorState;
 import com.customwars.client.ui.state.StateLogic;
 import com.customwars.client.ui.state.StateSession;
 import org.apache.log4j.Logger;
@@ -67,7 +67,7 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
     CWState endTurnState = new EndTurnState();
     CWState mapParser = new TestMapParser();
     CWState gameOver = new GameOverState();
-    CWState mapMaker = new MapMakerState();
+    CWState mapEditorState = new MapEditorState();
 
     addState(testMenu);
     addState(testMapRenderer);
@@ -76,7 +76,7 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
     addState(endTurnState);
     addState(mapParser);
     addState(gameOver);
-    addState(mapMaker);
+    addState(mapEditorState);
   }
 
   private void mapStateIdsToName() {

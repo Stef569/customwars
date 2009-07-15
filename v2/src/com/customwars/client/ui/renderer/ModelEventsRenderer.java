@@ -22,7 +22,7 @@ import java.util.List;
  *
  * @author stefan
  */
-public class ModelEventsRenderer implements PropertyChangeListener {
+public class ModelEventsRenderer implements PropertyChangeListener, Renderable {
   private Game game;
   private Map<Tile> map;
   private MoveTraverse moveTraverse;
@@ -32,16 +32,18 @@ public class ModelEventsRenderer implements PropertyChangeListener {
   private int moveTime, moveX, MOVING_DELAY = 30;
   private List<Location> renderLocations;
 
-  public ModelEventsRenderer() {
+  public ModelEventsRenderer(MoveTraverse moveTraverse, Game game) {
     renderLocations = new LinkedList<Location>();
+    setMoveTraverse(moveTraverse);
+    setGame(game);
   }
 
-  public void loadResources(ResourceManager resources) {
-    trappedImg = resources.getSlickImg("TRAPPED");
-    suppliedImg = resources.getSlickImg("SUPPLIED");
+  private void setMoveTraverse(MoveTraverse moveTraverse) {
+    this.moveTraverse = moveTraverse;
+    moveTraverse.addPropertyChangeListener(this);
   }
 
-  public void setGame(Game game) {
+  private void setGame(Game game) {
     if (this.game != null) {
       removeModelEventListeners(this.game);
     }
@@ -79,6 +81,11 @@ public class ModelEventsRenderer implements PropertyChangeListener {
       City city = map.getCityOn(t);
       if (city != null) city.removePropertyChangeListener(this);
     }
+  }
+
+  public void loadResources(ResourceManager resources) {
+    trappedImg = resources.getSlickImg("TRAPPED");
+    suppliedImg = resources.getSlickImg("SUPPLIED");
   }
 
   public void update(int elapsedTime) {
@@ -122,7 +129,7 @@ public class ModelEventsRenderer implements PropertyChangeListener {
     }
   }
 
-  public void render(int x, int y, Graphics g) {
+  public void render(Graphics g) {
     if (renderLocations.isEmpty()) return;
 
     int tileSize = map.getTileSize();
@@ -131,9 +138,9 @@ public class ModelEventsRenderer implements PropertyChangeListener {
     int py = (location.getRow() * tileSize);
 
     if (renderTrapped) {
-      g.drawImage(trappedImg, (x + px) + moveX, y + py);
+      g.drawImage(trappedImg, (px) + moveX, py);
     } else if (renderSupply) {
-      g.drawImage(suppliedImg, (x + px) + moveX, y + py);
+      g.drawImage(suppliedImg, (px) + moveX, py);
     }
   }
 
@@ -171,10 +178,5 @@ public class ModelEventsRenderer implements PropertyChangeListener {
     renderTrapped = true;
     time = 0;
     moveTime = 0;
-  }
-
-  public void setMoveTraverse(MoveTraverse moveTraverse) {
-    this.moveTraverse = moveTraverse;
-    moveTraverse.addPropertyChangeListener(this);
   }
 }
