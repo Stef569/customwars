@@ -14,6 +14,14 @@ import java.io.File;
 import java.io.IOException;
 
 /**
+ * Test the map parser by writing the hard coded map to a file testmap.map
+ * then read that map back in and start rendering it.
+ *
+ * This ensures that the map parser does not return an invalid map
+ * eg.: if a city has a null player then the maprenderer will throw an exception.
+ *
+ * The test starts when a key is pressed
+ *
  * @author stefan
  */
 public class TestMapParser extends CWState {
@@ -22,16 +30,21 @@ public class TestMapParser extends CWState {
 
   public void init(GameContainer gameContainer, StateBasedGame stateBasedGame) throws SlickException {
     mapParser = new BinaryCW2MapParser();
-    mapRenderer = new MapRenderer();
-    mapRenderer.loadResources(resources);
+  }
+
+  @Override
+  public void enter(GameContainer container, StateBasedGame game) throws SlickException {
+    super.enter(container, game);
   }
 
   public void render(GameContainer container, Graphics g) throws SlickException {
-    mapRenderer.render(g);
+    if (mapRenderer != null)
+      mapRenderer.render(g);
   }
 
   public void update(GameContainer container, int delta) throws SlickException {
-    mapRenderer.update(delta);
+    if (mapRenderer != null)
+      mapRenderer.update(delta);
   }
 
   public void keyPressed(int col, char c) {
@@ -44,8 +57,8 @@ public class TestMapParser extends CWState {
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
-
-    mapRenderer.setMap(loadedMap);
+    mapRenderer = new MapRenderer(loadedMap);
+    mapRenderer.loadResources(resources);
   }
 
   public int getID() {
