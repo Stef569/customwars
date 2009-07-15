@@ -119,6 +119,10 @@ public class UnitSprite extends TileSprite implements PropertyChangeListener {
     }
   }
 
+  public void setFont(Font font) {
+    this.font = font;
+  }
+
   private void changeState(GameObjectState gameObjectState) {
     switch (gameObjectState) {
       case IDLE:
@@ -185,25 +189,33 @@ public class UnitSprite extends TileSprite implements PropertyChangeListener {
   private void renderLowerLeft(String txt) {
     int x = 2;
     int y = getHeight() - font.getLineHeight();
-    font.drawString(locX + x, locY + y, txt);
+    font.drawString(getX() + x, getY() + y, txt);
   }
 
   private void renderLowerLeft(Image img, Graphics g) {
     int x = 2;
     int y = getHeight() - img.getHeight();
-    g.drawImage(img, locX + x, locY + y);
+    g.drawImage(img, getX() + x, getY() + y);
   }
 
   private void renderLowerRight(String txt) {
     int x = getWidth() - font.getWidth(txt);
     int y = getHeight() - font.getLineHeight();
-    font.drawString(locX + x, locY + y, txt);
+    font.drawString(getX() + x, getY() + y, txt);
   }
 
   private void renderLowerRight(Image img, Graphics g) {
     int x = getWidth() - img.getWidth();
     int y = getHeight() - img.getHeight();
-    g.drawImage(img, locX + x, locY + y);
+    g.drawImage(img, getX() + x, getY() + y);
+  }
+
+  public boolean canBeRemoved() {
+    return remove;
+  }
+
+  public boolean isDying() {
+    return unit.isDestroyed();
   }
 
   public void propertyChange(PropertyChangeEvent evt) {
@@ -231,13 +243,5 @@ public class UnitSprite extends TileSprite implements PropertyChangeListener {
         lowAmmo = unit.hasLowAmmo();
       }
     }
-  }
-
-  public boolean canBeRemoved() {
-    return remove;
-  }
-
-  public void setFont(Font font) {
-    this.font = font;
   }
 }

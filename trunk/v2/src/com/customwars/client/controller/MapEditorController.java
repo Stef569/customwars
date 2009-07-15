@@ -13,12 +13,7 @@ import com.customwars.client.model.gameobject.TerrainFactory;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
-import com.customwars.client.ui.mapMaker.CitySelectPanel;
-import com.customwars.client.ui.mapMaker.SelectPanel;
-import com.customwars.client.ui.mapMaker.TerrainSelectPanel;
-import com.customwars.client.ui.mapMaker.UnitSelectPanel;
-import com.customwars.client.ui.renderer.GameRenderer;
-import org.newdawn.slick.gui.GUIContext;
+import com.customwars.client.ui.state.MapEditorState;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -26,61 +21,47 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * Handles input for the Map Editor,
- * Unit City and terrain each have their own control object.
+ * Handles input in Map Editor mode
+ * Unit City and terrain each have their own control object
  *
  * @author stefan
  */
 public class MapEditorController {
+  private static final int STARTUP_MAP_COLS = 10;
+  private static final int STARTUP_MAP_ROWS = 10;
   private HashMap<Color, Player> players;
-  private List<SelectPanel> panels;
   private List<MapEditorControl> controls;
-
   private List<Color> colors;
   private Map<Tile> map;
 
   private int activeID, colorID;
 
-  private GameRenderer gameRenderer;
+  private MapEditorState mapEditorView;
+  private final int panelCount;
 
-  public MapEditorController(GameRenderer gameRenderer, GUIContext guiContext) {
-    this.gameRenderer = gameRenderer;
-    buildPanels(guiContext);
+  public MapEditorController(MapEditorState mapEditorState, ResourceManager resources, int panelCount) {
+    this.mapEditorView = mapEditorState;
+    this.panelCount = panelCount;
+    loadResources(resources);
+    init();
   }
 
-  private void buildControls() {
-    controls = new ArrayList<MapEditorControl>();
-    controls.add(new TerrainMapEditorControl(map));
-    controls.add(new CityMapEditorControl(map));
-    controls.add(new UnitMapEditorControl());
-  }
-
-  private void buildPanels(GUIContext guiContex) {
-    panels = new ArrayList<SelectPanel>();
-    panels.add(new TerrainSelectPanel(guiContex));
-    panels.add(new CitySelectPanel(guiContex));
-    panels.add(new UnitSelectPanel(guiContex));
-  }
-
-  public void loadResources(ResourceManager resources) {
+  private void loadResources(ResourceManager resources) {
     colors = new ArrayList<Color>(resources.getSupportedColors());
     resources.recolor(colors.toArray(new Color[colors.size()]));
-
-    for (SelectPanel panel : panels) {
-      panel.loadResources(resources);
-    }
   }
 
-  public void init() {
+  private void init() {
+    createEmptyMap(STARTUP_MAP_COLS, STARTUP_MAP_ROWS);
     buildPlayers();
-    nextPanel();
+    changeToPanel(0);
     nextColor();
   }
 
   private void buildPlayers() {
     players = new HashMap<Color, Player>();
     Color neutralColor = App.getColor("plugin.neutral_color", Color.GRAY);
-    int nextID = 0;
+    int nextPlayerID = 0;
 
     for (Color color : colors) {
       boolean neutral = false;
@@ -88,7 +69,7 @@ public class MapEditorController {
         neutral = true;
       }
 
-      Player player = new Player(nextID++, color, neutral, null);
+      Player player = new Player(nextPlayerID++, color, neutral, null);
       players.put(color, player);
     }
   }
@@ -124,21 +105,24 @@ public class MapEditorController {
 
   private void setMap(Map<Tile> map) {
     this.map = map;
-    gameRenderer.setMap(map);
+    mapEditorView.setMap(map);
     buildControls();
   }
 
-  public void add() {
+  private void buildControls() {
+    controls = new ArrayList<MapEditorControl>();
+    controls.add(new TerrainMapEditorControl(map));
+    controls.add(new CityMapEditorControl(map));
+    controls.add(new UnitMapEditorControl());
+  }
+
+  public void add(Tile t, int selectedIndex) {
     Color color = getActiveColor();
     Player player = players.get(color);
-    Tile t = gameRenderer.getCursorLocation();
-    int selectedIndex = getActivePanel().getSelectedIndex();
     getActiveControl().addToTile(t, selectedIndex, player);
   }
 
-  public void delete() {
-    Tile t = gameRenderer.getCursorLocation();
-
+  public void delete(Tile t) {
     if (t.getLocatableCount() > 0) {
       getControl(Unit.class).removeFromTile(t);
     } else {
@@ -148,8 +132,7 @@ public class MapEditorController {
     }
   }
 
-  public void fill() {
-    int selectedIndex = getActivePanel().getSelectedIndex();
+  public void fill(int selectedIndex) {
     getActiveControl().fillMap(map, selectedIndex);
   }
 
@@ -162,42 +145,38 @@ public class MapEditorController {
   }
 
   private void changeToColor(int newColorID) {
-    if (newColorID >= panels.size()) {
+    if (newColorID >= colors.size()) {
       newColorID = 0;
     } else if (newColorID <= -1) {
-      newColorID = panels.size();
+      newColorID = colors.size();
     }
 
     this.colorID = newColorID;
-    recolor(colorID);
+    recolor();
   }
 
-  private void recolor(int colorID) {
+  public void recolor() {
     Color color = colors.get(colorID);
-    getActivePanel().recolor(color);
+    mapEditorView.recolor(color);
   }
 
-  public void nextPanel() {
-    changeToPanel(activeID + 1);
+  public int nextPanel() {
+    return changeToPanel(activeID + 1);
   }
 
-  public void previousPanel() {
-    changeToPanel(activeID - 1);
+  public int previousPanel() {
+    return changeToPanel(activeID - 1);
   }
 
-  private void changeToPanel(int newPanelID) {
-    if (newPanelID >= panels.size()) {
+  private int changeToPanel(int newPanelID) {
+    if (newPanelID >= panelCount) {
       newPanelID = 0;
     } else if (newPanelID <= -1) {
-      newPanelID = panels.size();
+      newPanelID = panelCount;
     }
 
     activeID = newPanelID;
-    changeToColor(colorID);
-  }
-
-  public SelectPanel getActivePanel() {
-    return panels.get(activeID);
+    return activeID;
   }
 
   private MapEditorControl getControl(Class c) {

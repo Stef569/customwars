@@ -3,6 +3,8 @@ package com.customwars.client.ui.state;
 import com.customwars.client.action.CWAction;
 import com.customwars.client.action.UndoManager;
 import com.customwars.client.controller.ControllerManager;
+import com.customwars.client.controller.CursorController;
+import com.customwars.client.controller.GameController;
 import com.customwars.client.io.ResourceManager;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.gameobject.City;
@@ -60,6 +62,7 @@ public class InGameContext {
   private Game game;
   private MoveTraverse moveTraverse;
   private GameRenderer gameRenderer;
+  private GameController gameControl;
   private HUD hud;
   private ControllerManager controllerManager;
   private ResourceManager resources;
@@ -198,6 +201,10 @@ public class InGameContext {
     this.container = container;
   }
 
+  public void setGameController(GameController gameControl) {
+    this.gameControl = gameControl;
+  }
+
   public Game getGame() {
     return game;
   }
@@ -228,6 +235,14 @@ public class InGameContext {
 
   public GameContainer getContainer() {
     return container;
+  }
+
+  public GameController getGameController() {
+    return gameControl;
+  }
+
+  public CursorController getCursorController() {
+    return gameControl.getCursorController();
   }
 
   public boolean isTrapped() {

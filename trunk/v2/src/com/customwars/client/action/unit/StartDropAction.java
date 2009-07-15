@@ -2,6 +2,7 @@ package com.customwars.client.action.unit;
 
 import com.customwars.client.action.ClearInGameStateAction;
 import com.customwars.client.action.DirectAction;
+import com.customwars.client.controller.CursorController;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.model.map.TileMap;
@@ -18,6 +19,7 @@ import java.util.List;
  */
 public class StartDropAction extends DirectAction {
   private InGameContext context;
+  private CursorController cursorControl;
   private MapRenderer mapRenderer;
   private TileMap<Tile> map;
   private Location center;
@@ -30,6 +32,7 @@ public class StartDropAction extends DirectAction {
   protected void init(InGameContext context) {
     this.context = context;
     this.map = context.getGame().getMap();
+    this.cursorControl = context.getCursorController();
     this.mapRenderer = context.getMapRenderer();
   }
 
@@ -39,9 +42,9 @@ public class StartDropAction extends DirectAction {
     mapRenderer.removeZones();
     mapRenderer.showArrows(false);
 
-    // Only allow the cursor to move within the empty adjacent tiles,
+    // Only allow the cursor to move within the empty adjacent tiles
     // show the tiles as a movezone
-    mapRenderer.startCursorTraversal(adjacentTiles);
+    cursorControl.startCursorTraversal(adjacentTiles);
     mapRenderer.setMoveZone(adjacentTiles);
     context.setInputMode(InGameContext.INPUT_MODE.UNIT_DROP);
   }
@@ -61,7 +64,7 @@ public class StartDropAction extends DirectAction {
   }
 
   /**
-   * Undo will reset everything to default,
+   * Undo will reset the in game state
    * undoing start drop is too hard
    */
   public void undo() {

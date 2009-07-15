@@ -7,15 +7,15 @@ import com.customwars.client.model.gameobject.Locatable;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Tile;
-import com.customwars.client.ui.renderer.GameRenderer;
+import com.customwars.client.ui.renderer.MapRenderer;
 import com.customwars.client.ui.state.InGameContext;
 
 import java.util.List;
 
 public class LaunchRocketAction extends DirectAction {
+  private MapRenderer mapRenderer;
   private City city;
   private Unit unit;
-  private GameRenderer gameRenderer;
 
   public LaunchRocketAction(City city, Unit unit) {
     super("Launch Rocket", false);
@@ -25,14 +25,14 @@ public class LaunchRocketAction extends DirectAction {
 
   @Override
   protected void init(InGameContext context) {
-    gameRenderer = context.getGameRenderer();
+    mapRenderer = context.getMapRenderer();
   }
 
   @Override
   public void invokeAction() {
     city.launchRocket(unit);
-    List<Location> effectRange = gameRenderer.getCursorEffectRange();
-    gameRenderer.setExplosionArea(effectRange);
+    List<Location> effectRange = mapRenderer.getCursorEffectRange();
+    mapRenderer.setExplosionArea(effectRange);
 
     for (Location location : effectRange) {
       if (location instanceof Tile) {
