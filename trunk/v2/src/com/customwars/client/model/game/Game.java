@@ -22,7 +22,7 @@ import java.util.List;
  * The game is over when
  * The turn or day limit is reached or
  * When the active players(not destroyed, not neutral) are allied or
- * When there is only 1 player left
+ * When there is only 1 player left see {@link #isTheGameOver()}
  */
 public class Game extends TurnBasedGame implements PropertyChangeListener {
   private int weather;            // The current weather in effect
@@ -151,8 +151,8 @@ public class Game extends TurnBasedGame implements PropertyChangeListener {
     for (Unit unit : player.getArmy()) {
       // Skip units located in an apc
       if (unit.getLocation() instanceof Tile) {
-        Tile location = (Tile) unit.getLocation();
-        City city = map.getCityOn(location);
+        Tile tile = (Tile) unit.getLocation();
+        City city = map.getCityOn(tile);
 
         if (city != null) {
           city.supply(unit);
@@ -181,14 +181,31 @@ public class Game extends TurnBasedGame implements PropertyChangeListener {
     }
   }
 
+  /**
+   * A HQ was captured by newOwner
+   * the oldOwner is destroyed
+   *
+   * @param evt Event send by a hq
+   */
   private void hqOwnerChange(PropertyChangeEvent evt) {
     Player oldOwner = (Player) evt.getOldValue();
     Player newOwner = (Player) evt.getNewValue();
-    oldOwner.destroy(newOwner);
+
+    // Only destroy the old hq owner if that player is still playing
+    if (oldOwner.isActive()) {
+      oldOwner.destroy(newOwner);
+    }
   }
 
+  /**
+   * A unit is added or removed from a player
+   *
+   * @param evt Event send by a player
+   */
   private void playerUnitChange(PropertyChangeEvent evt) {
     Player player = (Player) evt.getSource();
+
+    // If the player is still playing and lost all of his units destroy it.
     if (player.isActive() && player.areAllUnitsDestroyed()) {
       player.destroy(neutralPlayer);
     }

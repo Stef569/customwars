@@ -89,9 +89,9 @@ public class Player extends GameObject {
    * @param conquerer the player that has conquered this player
    */
   public void destroy(Player conquerer) {
+    setState(GameObjectState.DESTROYED);
     destroyAllUnits();
     changeCityOwnersTo(conquerer);
-    setState(GameObjectState.DESTROYED);
   }
 
   /**
@@ -105,10 +105,14 @@ public class Player extends GameObject {
     }
   }
 
+  /**
+   * Change the owner of each city owned by this player to newOwner
+   */
   public void changeCityOwnersTo(Player newOwner) {
     for (City city : getAllCities()) {
       newOwner.addCity(city);
     }
+    cities.clear();
   }
 
   public void addToBudget(int amount) {
