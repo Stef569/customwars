@@ -11,17 +11,16 @@ import com.customwars.client.model.gameobject.UnitFactory;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
-import tools.Args;
+import org.apache.log4j.Logger;
 import tools.IOUtil;
 
 import java.awt.Color;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.EOFException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -45,7 +44,7 @@ import java.util.Set;
  * <MAX_PLAYERS> byte
  *
  * PLAYER HEADER:
- * for each player
+ * for each player (excluding the neutral player)
  * <PlAYER_ID> byte
  * <PLAYER_RGB> int
  * <PLAYER_HQ_COL> int
@@ -78,33 +77,22 @@ import java.util.Set;
  *
  * @author stefan
  */
-public class BinaryCW2MapParser {
+public class BinaryCW2MapParser implements MapParser {
+  private static final Logger logger = Logger.getLogger(BinaryCW2MapParser.class);
   private static final String CW2_HEADER_START = "CW2.map";
   private static final byte TERRAIN_START = 0;
   private static final byte CITY_START = 1;
   private static final byte UNIT_START = 2;
   private static final byte NO_UNIT = 3;
 
-  public Map<Tile> readMap(File file) throws IOException {
-    Args.checkForNull(file);
-    if (file.exists()) {
-      BinaryMapReader reader = new BinaryMapReader();
-      return reader.read(file);
-    } else {
-      throw new IllegalArgumentException("the file " + file + " does not exist");
-    }
+  public Map<Tile> readMap(InputStream in) throws IOException {
+    BinaryMapReader reader = new BinaryMapReader(new DataInputStream(in));
+    return reader.read();
   }
 
-  public void writeMap(Map<Tile> map, File file) throws IOException {
-    Args.checkForNull(map);
-    Args.checkForNull(file);
-
-    if (file.createNewFile()) {
-      BinaryMapWriter binMapParser = new BinaryMapWriter(map);
-      binMapParser.write(file);
-    } else {
-      throw new IOException("Could not create file " + file);
-    }
+  public void writeMap(Map<Tile> map, OutputStream out) throws IOException {
+    BinaryMapWriter binMapParser = new BinaryMapWriter(map, new DataOutputStream(out));
+    binMapParser.write();
   }
 
   private class BinaryMapReader {
@@ -112,41 +100,41 @@ public class BinaryCW2MapParser {
     private java.util.Map<Integer, Player> players = new HashMap<Integer, Player>();
     private java.util.Map<Player, Location2D> hqLocations = new HashMap<Player, Location2D>();
 
-    public Map<Tile> read(File file) throws IOException {
+    public BinaryMapReader(DataInputStream in) {
+      this.in = in;
+    }
+
+    public Map<Tile> read() throws IOException {
       Map<Tile> map = null;
 
       try {
-        this.in = new DataInputStream(new FileInputStream(file));
-        try {
-          validateFile(in, file);
-          map = readMap();
-        } catch (IOException ex) {
-          throw new MapFormatException(ex);
-        }
+        validateStream(in);
+        map = readMap();
+      } catch (IOException ex) {
+        throw new MapFormatException(ex);
       } finally {
         IOUtil.closeStream(in);
       }
       return map;
     }
 
-    private void validateFile(DataInputStream in, File file) throws IOException {
+    private void validateStream(DataInputStream in) throws IOException {
       String headerStart = in.readUTF();
 
       if (!headerStart.equals(CW2_HEADER_START)) {
         throw new MapFormatException("Header doesn't match " + CW2_HEADER_START +
-          " File " + file.getName() + " is not a CW2 bin file");
+          " not a CW2 binary map file");
       }
     }
 
     private Map<Tile> readMap() throws IOException {
       Map<Tile> map = readHeader();
-      Map<Tile> loadedMap = readMapData(map);
-      return loadedMap;
+      return readMapData(map);
     }
 
     private Map<Tile> readHeader() throws IOException {
       Map<Tile> map = readStaticHeader();
-      readPlayers(map);
+      readMapPlayers(map);
       readDynamicHeader(map);
       return map;
     }
@@ -162,7 +150,7 @@ public class BinaryCW2MapParser {
       return new Map<Tile>(cols, rows, tileSize, maxPlayers, fogOn, plain);
     }
 
-    private void readPlayers(Map<Tile> map) throws IOException {
+    private void readMapPlayers(Map<Tile> map) throws IOException {
       for (int i = 0; i < map.getNumPlayers(); i++) {
         int id = in.readByte();
         Color color = new Color(in.readInt());
@@ -170,10 +158,22 @@ public class BinaryCW2MapParser {
         int hqRow = in.readInt();
 
         Location2D hqLocation = new Location2D(hqCol, hqRow);
-        Player player = new Player(id, color, false, null, "Map player " + id, 0, 0, false);
+        Player mapPlayer = new Player(id, color, false, null, "Map player " + id, 0, 0, false);
 
-        players.put(id, player);
-        hqLocations.put(player, hqLocation);
+        addPlayer(mapPlayer);
+        hqLocations.put(mapPlayer, hqLocation);
+      }
+
+      // Always add the neutral player so neutral cities can be looked up
+      Player neutral = new Player(Player.NEUTRAL_PLAYER_ID, Color.GRAY, true, null, "neutral map player", 0, -1, false);
+      addPlayer(neutral);
+    }
+
+    private void addPlayer(Player player) {
+      if (players.containsKey(player.getId())) {
+        throw new MapFormatException("Duplicate player ID(" + player.getId() + ")");
+      } else {
+        players.put(player.getId(), player);
       }
     }
 
@@ -193,15 +193,6 @@ public class BinaryCW2MapParser {
       while (true) {
         try {
           Tile t = readTile();
-          Unit unit;
-
-          if (nextBytesIsUnit()) {
-            unit = readUnit();
-            t.add(unit);
-
-            // Search for units in transport
-            addUnitsToTransport(unit);
-          }
           map.setTile(t);
         } catch (EOFException ex) {
           break;
@@ -213,11 +204,13 @@ public class BinaryCW2MapParser {
       // if the player doesn't have a hq then the hqLocation will be off the map.
       for (Player p : players.values()) {
         Location2D hqLocation = hqLocations.get(p);
-        Tile hqLoc = map.getTile(hqLocation);
+        if (hqLocation != null) {
+          Tile hqLoc = map.getTile(hqLocation);
 
-        if (hqLoc != null) {
-          City hq = map.getCityOn(hqLoc);
-          p.setHq(hq);
+          if (hqLoc != null) {
+            City hq = map.getCityOn(hqLoc);
+            p.setHq(hq);
+          }
         }
       }
       return map;
@@ -237,7 +230,7 @@ public class BinaryCW2MapParser {
       } else if (terrainBaseID == TERRAIN_START) {
         terrain = readTerrain();
       } else {
-        throw new RuntimeException("tile @ " + col + "," + row + " has an invalid terrain base id " + terrainBaseID);
+        throw new MapFormatException("tile @ " + col + "," + row + " has an invalid terrain base id " + terrainBaseID);
       }
 
       Tile tile = new Tile(col, row, terrain);
@@ -245,6 +238,14 @@ public class BinaryCW2MapParser {
       if (city != null) {
         city.setLocation(tile);
       }
+
+      Unit unit;
+      if (nextBytesIsUnit()) {
+        unit = readUnit();
+        tile.add(unit);
+        addUnitsToTransport(unit);
+      }
+
       return tile;
     }
 
@@ -255,7 +256,7 @@ public class BinaryCW2MapParser {
       } else if (unitBaseID == NO_UNIT) {
         return false;
       } else {
-        throw new RuntimeException("unit has an invalid unit base id " + unitBaseID);
+        throw new MapFormatException("unit has an invalid unit base id " + unitBaseID);
       }
     }
 
@@ -283,17 +284,14 @@ public class BinaryCW2MapParser {
       return unit;
     }
 
-    private void addUnitsToTransport(Unit transport) throws RuntimeException, IOException {
+    private void addUnitsToTransport(Unit transport) throws IOException {
       int unitsInTransportCount = in.readByte();
 
       for (int i = 0; i < unitsInTransportCount; i++) {
-        int unitBaseID = in.readByte();
-        if (unitBaseID == UNIT_START) {
+        if (nextBytesIsUnit()) {
           Unit unit = readUnit();
-          in.readByte();  // Skip unit in transport in transport count
+          addUnitsToTransport(unit);  // handle transports in transports in transports...
           transport.add(unit);
-        } else {
-          throw new RuntimeException("unit in transport @ " + transport.getLocationString() + " has an invalid unit base id " + unitBaseID);
         }
       }
     }
@@ -303,13 +301,13 @@ public class BinaryCW2MapParser {
     private Map<Tile> map;
     private DataOutputStream out;
 
-    public BinaryMapWriter(Map<Tile> map) {
+    public BinaryMapWriter(Map<Tile> map, DataOutputStream out) {
       this.map = map;
+      this.out = out;
     }
 
-    public void write(File file) throws IOException {
+    public void write() throws IOException {
       try {
-        this.out = new DataOutputStream(new FileOutputStream(file));
         writeMap();
       } finally {
         IOUtil.closeStream(out);
@@ -328,7 +326,7 @@ public class BinaryCW2MapParser {
     }
 
     /**
-     * The static header includes data that is always included in each map file
+     * The static header includes data that is always included
      */
     private void writeStaticHeader() throws IOException {
       writeTxt(out, CW2_HEADER_START);
@@ -341,7 +339,7 @@ public class BinaryCW2MapParser {
 
     /**
      * Write the players to the outputstream
-     * including: playerID, color, hq
+     * playerID, color and hq location
      */
     private void writePlayers() throws IOException {
       Set<Player> players = getUniquePlayers();
@@ -364,6 +362,10 @@ public class BinaryCW2MapParser {
       }
     }
 
+    /**
+     * Get each unique player in the map
+     * excluding the neutral player
+     */
     private Set<Player> getUniquePlayers() {
       Set<Player> players = new HashSet<Player>();
       for (Tile t : map.getAllTiles()) {
@@ -472,15 +474,17 @@ public class BinaryCW2MapParser {
     private void writeTxt(DataOutputStream out, String txt) throws IOException {
       if (txt == null) {
         txt = "";
-        System.out.println("Writing empty txt!");
+        logger.warn("Writing empty txt");
       }
       out.writeUTF(txt);
     }
   }
 
+  /**
+   * A Location that has a Col and Row
+   */
   private class Location2D implements Location {
-
-    int col, row;
+    private int col, row;
 
     public Location2D(int col, int row) {
       this.col = col;

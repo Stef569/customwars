@@ -11,6 +11,7 @@ import com.customwars.client.io.loading.ImageParser;
 import com.customwars.client.io.loading.ModelLoader;
 import com.customwars.client.io.loading.SoundParser;
 import com.customwars.client.io.loading.map.BinaryCW2MapParser;
+import com.customwars.client.io.loading.map.MapParser;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
 import org.apache.log4j.Logger;
@@ -30,9 +31,11 @@ import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -52,7 +55,7 @@ public class ResourceManager {
   private static final String SOUND_LOADER_FILE = "soundLoader.txt";
   private static final String COLORS_FILE = "colors.xml";
   private static final ModelLoader modelLoader = new ModelLoader();
-  private static final BinaryCW2MapParser mapParser = new BinaryCW2MapParser();
+  private List<MapParser> mapParsers = new ArrayList<MapParser>();
   private int darkPercentage;
 
   private ImageLib imageLib;
@@ -76,6 +79,12 @@ public class ResourceManager {
     this.imageLib = imageLib;
     this.animLib = animLib;
     SlickImageFactory.setDeferredLoading(LoadingList.isDeferredLoading());
+    initMapParsers();
+  }
+
+  private void initMapParsers() {
+    MapParser binaryCW2MapParser = new BinaryCW2MapParser();
+    mapParsers.add(binaryCW2MapParser);
   }
 
   public void loadAll() {
@@ -146,12 +155,18 @@ public class ResourceManager {
     fonts.put(fontID.toUpperCase(), font);
   }
 
+  /**
+   * Load all the maps from the map path using the CW2 binary map parser
+   */
   private void loadAllMaps() throws IOException {
     FileSystemManager fsm = new FileSystemManager(mapPath);
+    MapParser mapParser = mapParsers.get(0);
+
     for (File category : fsm.getDirs()) {
       for (File mapFile : fsm.getFiles(category)) {
-        Map<Tile> map = mapParser.readMap(mapFile);
-        String mapName = map.getProperty("MAP_NAME");
+        InputStream in = ResourceLoader.getResourceAsStream(mapFile.getPath());
+        Map<Tile> map = mapParser.readMap(in);
+        String mapName = map.getProperty("NAME");
         maps.put(mapName, map);
       }
     }
