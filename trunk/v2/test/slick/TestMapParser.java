@@ -11,7 +11,11 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
  * Test the map parser by writing the hard coded map to a file testmap.map
@@ -32,14 +36,11 @@ public class TestMapParser extends CWState {
     mapParser = new BinaryCW2MapParser();
   }
 
-  @Override
-  public void enter(GameContainer container, StateBasedGame game) throws SlickException {
-    super.enter(container, game);
-  }
-
   public void render(GameContainer container, Graphics g) throws SlickException {
     if (mapRenderer != null)
       mapRenderer.render(g);
+    else
+      g.drawString("Startup complete, press any key to write/read and render the map", 10, 10);
   }
 
   public void update(GameContainer container, int delta) throws SlickException {
@@ -49,16 +50,31 @@ public class TestMapParser extends CWState {
 
   public void keyPressed(int col, char c) {
     Map<Tile> loadedMap;  // the resulting map read from disk
+    File mapFile = new File("testmap.map");
 
     try {
-      File mapFile = new File("testmap.map");
-      mapParser.writeMap(HardCodedGame.getMap(), mapFile);
-      loadedMap = mapParser.readMap(mapFile);
+      writeMapToFile(mapFile);
+      loadedMap = readMapFromFile(mapFile);
     } catch (IOException e) {
       throw new RuntimeException(e);
+    } finally {
+      assert mapFile.delete();
     }
+
     mapRenderer = new MapRenderer(loadedMap);
     mapRenderer.loadResources(resources);
+  }
+
+  private void writeMapToFile(File mapFile) throws IOException {
+    assert mapFile.createNewFile();
+
+    OutputStream out = new FileOutputStream(mapFile);
+    mapParser.writeMap(HardCodedGame.getMap(), out);
+  }
+
+  private Map<Tile> readMapFromFile(File mapFile) throws IOException {
+    InputStream in = new FileInputStream(mapFile);
+    return mapParser.readMap(in);
   }
 
   public int getID() {

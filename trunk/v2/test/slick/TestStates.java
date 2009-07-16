@@ -57,6 +57,8 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
     CWState.setDefaultFont(resources.getFont("DEFAULT"));
     statelogic.changeTo(startStateName);
     config.configureAfterStartup(cwInput);
+
+    logger.debug("Startup complete starting state=" + (startStateName == null ? "Default" : startStateName));
   }
 
   private void buildStateList() {

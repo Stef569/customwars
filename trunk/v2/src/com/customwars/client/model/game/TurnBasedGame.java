@@ -36,7 +36,7 @@ public class TurnBasedGame implements Observable {
 
   Map<Tile> map;                // The map containing all the tiles
   Turn turn;                    // The current turn+turn limit
-  Player neutralPlayer;         // Idle neutral player for cities that are not owned.
+  final Player neutralPlayer;   // Idle neutral player for cities that are not owned.
   private List<Player> players; // The Human and AI players that are in this game
   private Player activePlayer;  // There can only be one active player in a game at any time
   private GameState state;
@@ -285,10 +285,6 @@ public class TurnBasedGame implements Observable {
     } else {
       return result;
     }
-  }
-
-  public Color getNeutralColor() {
-    return neutralPlayer.getColor();
   }
 
   private void validateStartGame(Player gameStarter) {
