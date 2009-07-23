@@ -27,13 +27,29 @@ import java.util.Set;
 
 /**
  * Converts a CW2 map objects to and from a binary file.
- * Each Terrain, City and Unit object:
- * has an unique ID: eg. Tank=1 Inf=4 Bomber=403
- * has 1 BASE_ID in the map file: eg. Terrain=0 Unit=1 City=2
+ * Each Terrain, City and Unit object has an unique ID: eg. Tank=1 Inf=4 Bomber=403
+ *
+ * When a data block is optional or when the data block varies in size, a start byte is prepended
+ * eg. Terrain=0 City=1 Unit=2 no_unit=3
  *
  * The bin format has 2 chunks the Header and the map data.
  * The header has 3 chunks:
- * Static, Player and Dynamic
+ * Static, Player and Map properties
+ *
+ * Formatting used:
+ * One binary field
+ * <field name> data type (possible values)
+ *
+ * A group of related fields
+ * CHUNK:
+ *
+ * Reads/writes the field list under the for each multiple times
+ * for each entity
+ *
+ * Reads/writes fieldList1 or 2 depending on the start byte
+ * fieldList1
+ * or
+ * fieldList2
  *
  * STATIC HEADER:
  * <CW2_HEADER_START> txt
@@ -50,9 +66,9 @@ import java.util.Set;
  * <PLAYER_HQ_COL> int
  * <PLAYER_HQ_ROW> int
  *
- * DYNAMIC HEADER:
+ * MAP PROPERTIES HEADER:
  * <DYNAMIC_HEADER_SIZE> int
- * for each property:
+ * for each map property:
  * <MAP_PROPERTY_NAME> txt
  * <MAP_PROPERTY_VALUE> txt
  *
@@ -60,14 +76,14 @@ import java.util.Set;
  * <TILE COL> int
  * <TILE ROW> int
  *
- * <BASE_TERRAIN_ID> byte (TERRAIN_START_BYTE)
+ * <START_TERRAIN> byte (TERRAIN_START)
  * <TERRAIN_ID> byte
  * or
- * <BASE_CITY_ID> byte (CITY_START_BYTE)
+ * <START_CITY> byte (CITY_START)
  * <CITY_ID> byte
  * <OWNER_ID> byte
  *
- * <BASE_UNIT_ID> byte (UNIT_START_BYTE or NO_UNIT)
+ * <START_UNIT> byte (UNIT_START or NO_UNIT)
  * <UNIT_ID> byte
  * <OWNER_ID> byte
  * <TRANSPORT_COUNT> byte
@@ -135,7 +151,7 @@ public class BinaryCW2MapParser implements MapParser {
     private Map<Tile> readHeader() throws IOException {
       Map<Tile> map = readStaticHeader();
       readMapPlayers(map);
-      readDynamicHeader(map);
+      readMapProperties(map);
       return map;
     }
 
@@ -153,12 +169,10 @@ public class BinaryCW2MapParser implements MapParser {
     private void readMapPlayers(Map<Tile> map) throws IOException {
       for (int i = 0; i < map.getNumPlayers(); i++) {
         int id = in.readByte();
-        Color color = new Color(in.readInt());
-        int hqCol = in.readInt();
-        int hqRow = in.readInt();
-
-        Location2D hqLocation = new Location2D(hqCol, hqRow);
+        int rgb = in.readInt();
+        Color color = new Color(rgb);
         Player mapPlayer = new Player(id, color, false, null, "Map player " + id, 0, 0, false);
+        Location2D hqLocation = readHQLocation();
 
         addPlayer(mapPlayer);
         hqLocations.put(mapPlayer, hqLocation);
@@ -169,6 +183,13 @@ public class BinaryCW2MapParser implements MapParser {
       addPlayer(neutral);
     }
 
+    private Location2D readHQLocation() throws IOException {
+      int hqCol = in.readInt();
+      int hqRow = in.readInt();
+
+      return new Location2D(hqCol, hqRow);
+    }
+
     private void addPlayer(Player player) {
       if (players.containsKey(player.getId())) {
         throw new MapFormatException("Duplicate player ID(" + player.getId() + ")");
@@ -177,7 +198,7 @@ public class BinaryCW2MapParser implements MapParser {
       }
     }
 
-    private void readDynamicHeader(Map<Tile> map) throws IOException {
+    private void readMapProperties(Map<Tile> map) throws IOException {
       int dynamicHeaderSize = in.readInt();
       int bytesRead = 0;
 
@@ -219,23 +240,12 @@ public class BinaryCW2MapParser implements MapParser {
     private Tile readTile() throws IOException {
       int col = in.readInt();
       int row = in.readInt();
-      Terrain terrain;
-      City city = null;
-
-      // Terrain or City
-      int terrainBaseID = in.readByte();
-      if (terrainBaseID == CITY_START) {
-        city = readCity();
-        terrain = city;
-      } else if (terrainBaseID == TERRAIN_START) {
-        terrain = readTerrain();
-      } else {
-        throw new MapFormatException("tile @ " + col + "," + row + " has an invalid terrain base id " + terrainBaseID);
-      }
-
+      Terrain terrain = readTerrainOrCity(col, row);
       Tile tile = new Tile(col, row, terrain);
 
-      if (city != null) {
+      // Locate the city
+      if (terrain instanceof City) {
+        City city = (City) terrain;
         city.setLocation(tile);
       }
 
@@ -249,14 +259,27 @@ public class BinaryCW2MapParser implements MapParser {
       return tile;
     }
 
+    private Terrain readTerrainOrCity(int col, int row) throws IOException {
+      Terrain terrain;
+      int terrainStartByte = in.readByte();
+      if (terrainStartByte == CITY_START) {
+        terrain = readCity();
+      } else if (terrainStartByte == TERRAIN_START) {
+        terrain = readTerrain();
+      } else {
+        throw new MapFormatException("tile @ " + col + "," + row + " has an invalid terrain start byte " + terrainStartByte);
+      }
+      return terrain;
+    }
+
     private boolean nextBytesIsUnit() throws IOException {
-      int unitBaseID = in.readByte();
-      if (unitBaseID == UNIT_START) {
+      int unitStartByte = in.readByte();
+      if (unitStartByte == UNIT_START) {
         return true;
-      } else if (unitBaseID == NO_UNIT) {
+      } else if (unitStartByte == NO_UNIT) {
         return false;
       } else {
-        throw new MapFormatException("unit has an invalid unit base id " + unitBaseID);
+        throw new MapFormatException("unit has an invalid unit start byte " + unitStartByte);
       }
     }
 
@@ -322,12 +345,9 @@ public class BinaryCW2MapParser implements MapParser {
     private void writeHeader() throws IOException {
       writeStaticHeader();
       writePlayers();
-      writeProperties();
+      writeMapProperties();
     }
 
-    /**
-     * The static header includes data that is always included
-     */
     private void writeStaticHeader() throws IOException {
       writeTxt(out, CW2_HEADER_START);
       out.writeInt(map.getCols());
@@ -347,12 +367,11 @@ public class BinaryCW2MapParser implements MapParser {
       for (Player p : players) {
         out.writeByte(p.getId());
         out.writeInt(p.getColor().getRGB());
-        writeHQ(p);
+        writeHQ(p.getHq());
       }
     }
 
-    private void writeHQ(Player p) throws IOException {
-      City hq = p.getHq();
+    private void writeHQ(City hq) throws IOException {
       if (hq != null) {
         out.writeInt(hq.getLocation().getCol());
         out.writeInt(hq.getLocation().getRow());
@@ -383,7 +402,7 @@ public class BinaryCW2MapParser implements MapParser {
       return players;
     }
 
-    private void writeProperties() throws IOException {
+    private void writeMapProperties() throws IOException {
       out.writeInt(getPropertiesByteSize());
 
       for (String property : map.getPropertyKeys()) {
