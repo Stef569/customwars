@@ -248,6 +248,7 @@ public class SpriteManager implements PropertyChangeListener {
       unitSprite = new UnitSprite(t, map, unit, unitDecorationStrip);
       unitSprite.setAnimDying(animDying);
       unitSprite.setFont(numbers);
+      unitSprite.setVisible(!t.isFogged());
     }
     return unitSprite;
   }
