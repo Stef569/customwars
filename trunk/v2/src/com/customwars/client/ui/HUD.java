@@ -9,6 +9,7 @@ import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.ui.hud.PlayerInfoBox;
 import com.customwars.client.ui.hud.TerrainInfoBox;
+import com.customwars.client.ui.hud.TransportInfoBox;
 import com.customwars.client.ui.hud.UnitInfoBox;
 import com.customwars.client.ui.slick.BasicComponent;
 import com.customwars.client.ui.sprite.SpriteManager;
@@ -24,7 +25,7 @@ import java.util.List;
 
 /**
  * Render following components:
- * Popups, tile info, unitInfo,...
+ * Popups, tile info, unitInfo, units in a transport
  *
  * @author stefan
  */
@@ -40,6 +41,7 @@ public class HUD {
   private List<BasicComponent> bottomComponents;
   private TerrainInfoBox terrainInfoBox;
   private UnitInfoBox unitInfoBox;
+  private TransportInfoBox transportInfoBox;
 
   public HUD(GUIContext guiContext) {
     this.guiContext = guiContext;
@@ -68,6 +70,12 @@ public class HUD {
     unitInfoBox.setHeight(INFO_BOX_HEIGH);
     bottomComponents.add(unitInfoBox);
 
+    transportInfoBox = new TransportInfoBox(guiContext);
+    int tileSize = game.getMap().getTileSize();
+    transportInfoBox.setWidth(tileSize);
+    transportInfoBox.setHeight(INFO_BOX_HEIGH);
+    bottomComponents.add(transportInfoBox);
+
     PlayerInfoBox playerInfoBox = new PlayerInfoBox(guiContext, game);
     playerInfoBox.setWidth(150);
     playerInfoBox.setHeight(80);
@@ -83,10 +91,14 @@ public class HUD {
       Locatable locatable = tile.getLastLocatable();
 
       if (locatable instanceof Unit && !tile.isFogged()) {
+        Unit unit = (Unit) locatable;
         unitInfoBox.setVisible(true);
-        unitInfoBox.setUnit((Unit) locatable);
+        unitInfoBox.setUnit(unit);
+        transportInfoBox.setVisible(true);
+        transportInfoBox.setUnit(unit);
       } else {
         unitInfoBox.setVisible(false);
+        transportInfoBox.setVisible(false);
       }
       Direction quadrant = game.getMap().getQuadrantFor(tile);
       locateInfoBoxes(quadrant);
@@ -100,7 +112,7 @@ public class HUD {
    * the info boxes will be set to display on the right side.
    */
   public final void locateInfoBoxes(Direction quadrant) {
-    if (quadrant == Direction.NORTHWEST || quadrant == Direction.SOUTHWEST) {
+    if (isInWestQuadrant(quadrant)) {
       locateRightToLeft(topComponents, TOP_MARGIN);
       locateRightToLeft(bottomComponents, camera.getHeight() - INFO_BOX_HEIGH);
     } else {
@@ -109,41 +121,45 @@ public class HUD {
     }
   }
 
+  private boolean isInWestQuadrant(Direction quadrant) {
+    return quadrant == Direction.NORTHWEST || quadrant == Direction.SOUTHWEST;
+  }
+
   private void locateRightToLeft(List<BasicComponent> components, int topMargin) {
     Point startPoint = new Point(camera.getWidth(), topMargin);
+    int currentXPos = startPoint.x;
 
     for (int i = 0; i < components.size(); i++) {
       BasicComponent comp = components.get(i);
       BasicComponent nextComp;
-      int componentLeftTop;
 
       if (i == 0) {
-        componentLeftTop = startPoint.x - comp.getWidth();
+        currentXPos = startPoint.x - comp.getWidth();
       } else {
-        nextComp = components.get(i - 1);
-        componentLeftTop = startPoint.x - comp.getWidth() - nextComp.getWidth();
+        nextComp = components.get(i);
+        currentXPos -= nextComp.getWidth();
       }
 
-      comp.setLocation(componentLeftTop, startPoint.y);
+      comp.setLocation(currentXPos, startPoint.y);
     }
   }
 
   private void locateLeftToRight(List<BasicComponent> components, int topMargin) {
     Point startPoint = new Point(0, topMargin);
+    int currentXPos = 0;
 
     for (int i = 0; i < components.size(); i++) {
       BasicComponent comp = components.get(i);
       BasicComponent nextComp;
-      int componentLeftTop;
 
       if (i == 0) {
-        componentLeftTop = startPoint.x;
+        currentXPos = startPoint.x;
       } else {
         nextComp = components.get(i - 1);
-        componentLeftTop = startPoint.x + nextComp.getWidth();
+        currentXPos +=nextComp.getWidth();
       }
 
-      comp.setLocation(componentLeftTop, startPoint.y);
+      comp.setLocation(currentXPos, startPoint.y);
     }
   }
 

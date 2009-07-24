@@ -13,7 +13,6 @@ import org.newdawn.slick.Font;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.gui.GUIContext;
-import tools.ColorUtil;
 import tools.NumberUtil;
 
 public class UnitInfoBox extends BasicComponent {
@@ -72,7 +71,7 @@ public class UnitInfoBox extends BasicComponent {
   }
 
   private void initBoxes() {
-    unitBox.setImage(getUnitImg(unit));
+    unitBox.setImage(getEastFacingUnitImg(unit));
     suppliesRow.setText(unit.getSupplies() + "");
     hpRow.setText(unit.getInternalHp() + "");
 
@@ -80,13 +79,13 @@ public class UnitInfoBox extends BasicComponent {
     if (weapon != null) {
       ammoRow.setText(weapon.getAmmo() + "");
     } else {
-      ammoRow.setText("");
+      ammoRow.setText("0");
     }
   }
 
-  private Image getUnitImg(Unit unit) {
-    String colorName = ColorUtil.toString(unit.getOwner().getColor());
-    return resources.getSlickSpriteSheet("unit_" + colorName).getSubImage(5, unit.getID());
+  private Image getEastFacingUnitImg(Unit unit) {
+    java.awt.Color playerColor = unit.getOwner().getColor();
+    return resources.getUnitSpriteSheet(playerColor).getSubImage(5, unit.getID());
   }
 
   private void locateBoxes(int x, int y) {
