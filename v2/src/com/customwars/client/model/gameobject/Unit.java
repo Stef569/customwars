@@ -858,8 +858,8 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
 
   @Override
   public String toString() {
-    return String.format("[name=%s id=%s owner=%s location=%s transport=%s state=%s]",
-      name, id, getOwnerText(), getLocationText(), transport, unitState);
+    return String.format("[name=%s id=%s owner=%s location=%s transport=%s unit state=%s state=%s]",
+      name, id, getOwnerText(), getLocationText(), transport, unitState, getState());
   }
 
   private String getLocationText() {

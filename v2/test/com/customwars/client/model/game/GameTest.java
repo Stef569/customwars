@@ -3,6 +3,7 @@ package com.customwars.client.model.game;
 import com.customwars.client.model.TestData;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.CityFactory;
+import com.customwars.client.model.gameobject.GameObjectState;
 import com.customwars.client.model.gameobject.Terrain;
 import com.customwars.client.model.gameobject.TerrainFactory;
 import com.customwars.client.model.gameobject.Unit;
@@ -213,5 +214,45 @@ public class GameTest {
     Assert.assertTrue(p1.isDestroyed());
     Assert.assertTrue(p2.isDestroyed());
     Assert.assertTrue(game.isGameOver());
+  }
+
+
+  /**
+   * When the game has started the starting player(p1) contains active units
+   * all the other players contain idle units
+   */
+  @Test
+  public void testActiveUnitsAfterGameStart() {
+    // Add some units to each player
+    Unit inf1 = UnitFactory.getUnit(TestData.INF);
+    map.getTile(0, 0).add(inf1);
+    inf1.setOwner(p1);
+
+    Unit inf2 = UnitFactory.getUnit(TestData.INF);
+    map.getTile(0, 1).add(inf2);
+    inf2.setOwner(p2);
+
+    Unit inf3 = UnitFactory.getUnit(TestData.INF);
+    map.getTile(0, 2).add(inf3);
+    inf3.setOwner(p3);
+
+    Unit inf4 = UnitFactory.getUnit(TestData.INF);
+    map.getTile(0, 3).add(inf4);
+    inf4.setOwner(p3);
+
+    startGame(p1);
+
+    // Only player1 has active units
+    for (Unit unit : p1.getArmy()) {
+      Assert.assertEquals(unit.getState(), GameObjectState.ACTIVE);
+    }
+
+    for (Unit unit : p2.getArmy()) {
+      Assert.assertEquals(unit.getState(), GameObjectState.IDLE);
+    }
+
+    for (Unit unit : p3.getArmy()) {
+      Assert.assertEquals(unit.getState(), GameObjectState.IDLE);
+    }
   }
 }
