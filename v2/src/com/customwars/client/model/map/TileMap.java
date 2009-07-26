@@ -604,6 +604,11 @@ public class TileMap<T extends Location> implements Observable {
    * @return The relative Tile or baseTile if direction is Direction.STILL
    */
   public T getRelativeTile(Location baseTile, Direction direction) {
+    Location location = getRelativeLocation(baseTile, direction);
+    return getTile(location);
+  }
+
+  private Location getRelativeLocation(Location baseTile, Direction direction) {
     int row = baseTile.getRow();
     int col = baseTile.getCol();
 
@@ -639,7 +644,7 @@ public class TileMap<T extends Location> implements Observable {
       case STILL:
         break;
     }
-    return getTile(col, row);
+    return new Location2D(col, row);
   }
 
   /**
@@ -657,21 +662,21 @@ public class TileMap<T extends Location> implements Observable {
       return Direction.STILL;
     }
 
-    if (getRelativeTile(baseTile, Direction.NORTH) == tile) {
+    if (getRelativeLocation(baseTile, Direction.NORTH).equals(tile)) {
       direction = Direction.NORTH;
-    } else if (getRelativeTile(baseTile, Direction.EAST) == tile) {
+    } else if (getRelativeLocation(baseTile, Direction.EAST).equals(tile)) {
       direction = Direction.EAST;
-    } else if (getRelativeTile(baseTile, Direction.SOUTH) == tile) {
+    } else if (getRelativeLocation(baseTile, Direction.SOUTH).equals(tile)) {
       direction = Direction.SOUTH;
-    } else if (getRelativeTile(baseTile, Direction.WEST) == tile) {
+    } else if (getRelativeLocation(baseTile, Direction.WEST).equals(tile)) {
       direction = Direction.WEST;
-    } else if (getRelativeTile(baseTile, Direction.NORTHEAST) == tile) {
+    } else if (getRelativeLocation(baseTile, Direction.NORTHEAST).equals(tile)) {
       direction = Direction.NORTHEAST;
-    } else if (getRelativeTile(baseTile, Direction.NORTHWEST) == tile) {
+    } else if (getRelativeLocation(baseTile, Direction.NORTHWEST).equals(tile)) {
       direction = Direction.NORTHWEST;
-    } else if (getRelativeTile(baseTile, Direction.SOUTHEAST) == tile) {
+    } else if (getRelativeLocation(baseTile, Direction.SOUTHEAST).equals(tile)) {
       direction = Direction.SOUTHEAST;
-    } else if (getRelativeTile(baseTile, Direction.SOUTHWEST) == tile) {
+    } else if (getRelativeLocation(baseTile, Direction.SOUTHWEST).equals(tile)) {
       direction = Direction.SOUTHWEST;
     }
     return direction;
