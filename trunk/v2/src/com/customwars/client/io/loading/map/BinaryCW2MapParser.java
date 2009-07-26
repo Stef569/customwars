@@ -3,12 +3,11 @@ package com.customwars.client.io.loading.map;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.CityFactory;
-import com.customwars.client.model.gameobject.Locatable;
 import com.customwars.client.model.gameobject.Terrain;
 import com.customwars.client.model.gameobject.TerrainFactory;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.gameobject.UnitFactory;
-import com.customwars.client.model.map.Location;
+import com.customwars.client.model.map.Location2D;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
 import org.apache.log4j.Logger;
@@ -496,57 +495,6 @@ public class BinaryCW2MapParser implements MapParser {
         logger.warn("Writing empty txt");
       }
       out.writeUTF(txt);
-    }
-  }
-
-  /**
-   * A Location that has a Col and Row
-   */
-  private class Location2D implements Location {
-    private int col, row;
-
-    public Location2D(int col, int row) {
-      this.col = col;
-      this.row = row;
-    }
-
-    public boolean canAdd(Locatable locatable) {
-      return false;
-    }
-
-    public void add(Locatable locatable) {
-    }
-
-    public boolean remove(Locatable locatable) {
-      return false;
-    }
-
-    public boolean contains(Locatable locatable) {
-      return false;
-    }
-
-    public Locatable getLastLocatable() {
-      return null;
-    }
-
-    public Locatable getLocatable(int index) {
-      return null;
-    }
-
-    public int getLocatableCount() {
-      return 0;
-    }
-
-    public int getCol() {
-      return col;
-    }
-
-    public int getRow() {
-      return row;
-    }
-
-    public String getLocationString() {
-      return col + "," + row;
     }
   }
 }

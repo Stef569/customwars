@@ -16,9 +16,8 @@ import java.util.List;
  *
  * @author stefan
  */
-public class Tile implements Location, Observable {
+public class Tile extends AbstractLocation implements Observable {
   private final PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
-  private final int col, row;
   private boolean fogged;
   private Terrain terrain;
   private List<Locatable> locatables;
@@ -29,8 +28,7 @@ public class Tile implements Location, Observable {
   }
 
   public Tile(int col, int row, Terrain terrain) {
-    this.col = col;
-    this.row = row;
+    super(col, row);
     setTerrain(terrain);
     locatables = new ArrayList<Locatable>();
   }
@@ -74,14 +72,6 @@ public class Tile implements Location, Observable {
     firePropertyChange("fog", oldVal, fogged);
   }
 
-  public int getCol() {
-    return col;
-  }
-
-  public int getRow() {
-    return row;
-  }
-
   public boolean isFogged() {
     return fogged;
   }
@@ -106,10 +96,6 @@ public class Tile implements Location, Observable {
       return locatables.get(index);
     else
       return null;
-  }
-
-  public String getLocationString() {
-    return col + "," + row;
   }
 
   public String toString() {
