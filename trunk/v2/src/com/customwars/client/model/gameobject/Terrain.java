@@ -183,7 +183,8 @@ public class Terrain extends GameObject {
   }
 
   public boolean spansOver(String spansOver) {
-    return StringUtil.hasContent(spansOver) && spansOverType.equalsIgnoreCase(spansOver);
+    return StringUtil.hasContent(spansOver) && StringUtil.hasContent(spansOverType) &&
+      spansOverType.equalsIgnoreCase(spansOver);
   }
 
   public boolean canConnectTo(Terrain otherTerrain) {
