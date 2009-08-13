@@ -39,16 +39,21 @@
     <terrain id="12" type="Road">
         <connect>North, East, South, West</connect>
     </terrain>
-    <terrain name="Bridge" id="13" type="Road">
+
+    <!--
+        Bridges inherit from road types, they connect to roads and
+        span over a River or Ocean depending on the bridge type
+    -->
+    <terrain name="Bridge" id="13" type="Road" spansOver="River">
         <connect>West, East</connect>
     </terrain>
-    <terrain name="Bridge" id="14" type="Road">
+    <terrain name="Bridge" id="14" type="Road" spansOver="River">
         <connect>North, South</connect>
     </terrain>
-    <terrain name="Suspension" id="15" type="Road">
+    <terrain name="Suspension" id="15" type="Road" spansOver="Ocean">
         <connect>West, East</connect>
     </terrain>
-    <terrain name="Suspension" id="16" type="Road">
+    <terrain name="Suspension" id="16" type="Road" spansOver="Ocean">
         <connect>North, South</connect>
     </terrain>
 
@@ -174,7 +179,8 @@
     <terrain name="Coast" id="63" type="Ocean">
         <connect>North, East, SouthEast, South, SouthWest, West</connect>
     </terrain>
-    <!-- Skipping 4 shoals --><!-- Row 4 -->
+    <!-- Skipping 4 shoals -->
+    <!-- Row 5 -->
     <terrain name="Coast" id="68" type="Ocean">
         <connect>North, NorthEast, East, SouthEast, South, West</connect>
     </terrain>

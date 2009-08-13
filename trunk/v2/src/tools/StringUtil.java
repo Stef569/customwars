@@ -20,4 +20,8 @@ public class StringUtil {
     if (in.charAt(in.length() - 1) != c) in += c;
     return in;
   }
+
+  public static boolean hasContent(String in) {
+    return in != null && in.trim().length() > 0;
+  }
 }

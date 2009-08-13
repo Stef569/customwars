@@ -127,12 +127,14 @@ public class SurroundingTileData {
 
   /**
    * Search around the center for the same Terrain types ie (Roads, Rivers, ...)
+   * Include the surrounding terrains that span over this terrain type(bridges)
    */
   public List<Tile> calcTerrainsOfTheSameType(List<Tile> surroundingTiles) {
     List<Tile> terrains = new ArrayList<Tile>();
 
     for (Tile t : surroundingTiles) {
-      if (t.getTerrain().isSameType(terrain)) {
+      Terrain surroundingTerrain = t.getTerrain();
+      if (surroundingTerrain.isSameType(terrain) || surroundingTerrain.spansOver(terrain)) {
         terrains.add(t);
       }
     }
