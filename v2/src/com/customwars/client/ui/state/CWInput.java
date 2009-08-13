@@ -5,6 +5,9 @@ import org.newdawn.slick.command.BasicCommand;
 import org.newdawn.slick.command.Command;
 import org.newdawn.slick.command.Control;
 import org.newdawn.slick.command.InputProvider;
+import org.newdawn.slick.command.KeyControl;
+import org.newdawn.slick.command.MouseButtonControl;
+import tools.StringUtil;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -172,5 +175,54 @@ public class CWInput extends InputProvider {
 
   public int getMouseY() {
     return input.getMouseY();
+  }
+
+  @SuppressWarnings("unchecked")
+  public String getControlsAsText(Command command) {
+    List<Control> controls = getControlsFor(command);
+    return getControlsAsText(controls, 20);
+  }
+
+  @SuppressWarnings("unchecked")
+  public String getControlsAsText(Command command, int maxControls) {
+    List<Control> controls = getControlsFor(command);
+    return getControlsAsText(controls, maxControls);
+  }
+
+  private String getControlsAsText(List controls, int maxControls) {
+    String txt = "";
+    int controlCounter = 0;
+
+    for (Object controlObj : controls) {
+      Control control = (Control) controlObj;
+      txt += convertControlToText(control) + ", ";
+
+      if (++controlCounter >= maxControls) {
+        break;
+      }
+    }
+
+    // remove trailing comma and space
+    return StringUtil.removeCharsFromEnd(txt, 2);
+  }
+
+  private String convertControlToText(Control control) {
+    if (control instanceof KeyControl) {
+      KeyControl keyControl = (KeyControl) control;
+      return Input.getKeyName(keyControl.hashCode());
+    } else if (control instanceof MouseButtonControl) {
+      MouseButtonControl mouseButtonControl = (MouseButtonControl) control;
+      if (mouseButtonControl.hashCode() == Input.MOUSE_LEFT_BUTTON) {
+        return "Left Mouse button";
+      } else if (mouseButtonControl.hashCode() == Input.MOUSE_MIDDLE_BUTTON) {
+        return "Middle Mouse button";
+      } else if (mouseButtonControl.hashCode() == Input.MOUSE_RIGHT_BUTTON) {
+        return "Right Mouse button";
+      } else {
+        return "Unknown mouse button";
+      }
+    } else {
+      return "unknown control";
+    }
   }
 }

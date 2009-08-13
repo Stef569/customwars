@@ -15,7 +15,6 @@ import com.customwars.client.ui.sprite.SpriteManager;
 import com.customwars.client.ui.sprite.TileSprite;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
-import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.command.Command;
 import org.newdawn.slick.gui.GUIContext;
@@ -25,6 +24,13 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * In this state the user can create and save maps
+ * There are 3 panels
+ * one for adding terrains
+ * one for adding cities
+ * one for adding units
+ */
 public class MapEditorState extends CWState {
   private MapEditorController mapEditorController;
   private CursorController cursorController;
@@ -36,9 +42,7 @@ public class MapEditorState extends CWState {
 
   public void init(GameContainer gameContainer, StateBasedGame stateBasedGame) throws SlickException {
     buildPanels(gameContainer);
-    for (SelectPanel panel : panels) {
-      panel.loadResources(resources);
-    }
+    loadPanelResources();
 
     mapEditorController = new MapEditorController(this, resources, panels.size());
     mapRenderer.loadResources(resources);
@@ -51,9 +55,26 @@ public class MapEditorState extends CWState {
     panels.add(new UnitSelectPanel(guiContex));
   }
 
+  private void loadPanelResources() {
+    for (SelectPanel panel : panels) {
+      panel.loadResources(resources);
+    }
+  }
+
   public void render(GameContainer container, Graphics g) throws SlickException {
     mapRenderer.render(g);
     getActivePanel().render(container, g);
+    renderControls(g);
+  }
+
+  private void renderControls(Graphics g) {
+    int LEFT_MARGIN = 350;
+    g.drawString("The Controls:", LEFT_MARGIN, 10);
+    g.drawString("Fill: " + cwInput.getControlsAsText(CWInput.fillMap), LEFT_MARGIN, 20);
+    g.drawString("Add: " + cwInput.getControlsAsText(CWInput.select), LEFT_MARGIN, 30);
+    g.drawString("Delete object: " + cwInput.getControlsAsText(CWInput.delete), LEFT_MARGIN, 40);
+    g.drawString("Change panel: " + cwInput.getControlsAsText(CWInput.nextPage), LEFT_MARGIN, 50);
+    g.drawString("Recolor: " + cwInput.getControlsAsText(CWInput.recolor), LEFT_MARGIN, 60);
   }
 
   public void update(GameContainer container, int delta) throws SlickException {
@@ -62,37 +83,25 @@ public class MapEditorState extends CWState {
   }
 
   public void setMap(Map<Tile> map) {
-    this.map = map;
     SpriteManager spriteManager = new SpriteManager(map);
+    this.map = map;
     this.mapRenderer = new MapRenderer(map, spriteManager);
-    initCursors();
     this.cursorController = new CursorController(map, spriteManager);
+    initCursors();
   }
 
   private void initCursors() {
     ImageStrip selectCursorImgs = resources.getSlickImgStrip("selectCursor");
-    ImageStrip aimCursorImgs = resources.getSlickImgStrip("aimCursor");
-    Image siloCursorImg = resources.getSlickImg("siloCursor");
-
     Tile randomTile = map.getRandomTile();
     TileSprite selectCursor = new TileSprite(selectCursorImgs, 250, randomTile, map);
-    TileSprite aimCursor = new TileSprite(aimCursorImgs, randomTile, map);
-    TileSprite siloCursor = new TileSprite(siloCursorImg, randomTile, map);
-
-    // Use the silo cursor Image height to calculate the effect Range ie
-    // If the image has a height of 160/32 is 5 tiles high/2 rounded to int becomes 2.
-    int effectRange = siloCursorImg.getHeight() / map.getTileSize() / 2;
-    siloCursor.setEffectRange(effectRange);
 
     mapRenderer.addCursor("SELECT", selectCursor);
-    mapRenderer.addCursor("ATTACK", aimCursor);
-    mapRenderer.addCursor("SILO", siloCursor);
     mapRenderer.activateCursor("SELECT");
   }
 
   @Override
   public void controlPressed(Command command, CWInput cwInput) {
-    Tile t = mapRenderer.getCursorLocation();
+    Tile cursorLocation = mapRenderer.getCursorLocation();
     SelectPanel activePanel = getActivePanel();
     int selectedIndex = activePanel.getSelectedIndex();
 
@@ -102,7 +111,7 @@ public class MapEditorState extends CWState {
       boolean clickedOnMap = !activePanel.isWithinComponent(mouseX, mouseY);
 
       if (clickedOnMap) {
-        mapEditorController.add(t, selectedIndex);
+        mapEditorController.add(cursorLocation, selectedIndex);
       }
     } else if (cwInput.isFillMap(command)) {
       mapEditorController.fill(selectedIndex);
@@ -112,7 +121,7 @@ public class MapEditorState extends CWState {
     } else if (cwInput.isRecolor(command)) {
       mapEditorController.nextColor();
     } else if (cwInput.isDelete(command)) {
-      mapEditorController.delete(t);
+      mapEditorController.delete(cursorLocation);
     } else {
       moveCursor(command, cwInput);
     }

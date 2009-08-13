@@ -24,4 +24,12 @@ public class StringUtil {
   public static boolean hasContent(String in) {
     return in != null && in.trim().length() > 0;
   }
+
+  public static String removeCharsFromEnd(String in, int charCount) {
+    String txt = "";
+    if (in.length() > 0) {
+      txt = in.substring(0, in.length() - charCount);
+    }
+    return txt;
+  }
 }
