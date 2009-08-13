@@ -38,6 +38,7 @@ public class TerrainConverter implements Converter {
     int terrainID = Integer.parseInt(reader.getAttribute("id"));
     String terrainName = reader.getAttribute("name");
     String type = reader.getAttribute("type").toUpperCase();
+    String spansOverType = reader.getAttribute("spansOver").toUpperCase();
 
     // Use the type to get the base terrain ie
     // Horizontal road has as type road
@@ -63,7 +64,8 @@ public class TerrainConverter implements Converter {
     // Use reflection to set the new values to the terrain copy
     writeField("id", terrainCopy, terrainID);
     writeField("name", terrainCopy, terrainName == null ? baseTerrain.getName() : terrainName);
-    writeField("type", terrainCopy, baseTerrain.getName());
+    writeField("type", terrainCopy, type);
+    writeField("spansOverType", terrainCopy, spansOverType);
     writeField("connectedDirections", terrainCopy, connections);
     return terrainCopy;
   }

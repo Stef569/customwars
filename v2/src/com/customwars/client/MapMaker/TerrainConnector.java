@@ -29,8 +29,9 @@ public class TerrainConnector {
   };
 
   private TileMap<Tile> map;
-  private Terrain baseTerrain;
-  private List<Terrain> terrains;
+  private Terrain terrainToAdd;     // The terrain that the user wants to add
+  private Terrain baseTerrain;      // The terrain that is going to be overwritten
+  private List<Terrain> terrains;   // All the available terrains, sorted on ID
 
   // Calculated values
   private SurroundingTileData tileData;
@@ -46,19 +47,20 @@ public class TerrainConnector {
   }
 
   /**
-   * Connect each surrounding terrain that is equal to the baseTerrain
-   * around the the baseTile.
+   * Connect each surrounding terrain around the baseTile.
    */
-  public void turnSurroundingTerrains(Tile baseTile, Terrain baseTerrain) {
-    validate(baseTile, baseTerrain);
+  public void turnSurroundingTerrains(Tile baseTile, Terrain terrainToAdd) {
+    validate(baseTile, terrainToAdd, baseTerrain);
 
-    tileData = new SurroundingTileData(baseTile, baseTerrain, map);
+    this.terrainToAdd = terrainToAdd;
+    this.tileData = new SurroundingTileData(baseTile, terrainToAdd, map);
     List<Tile> allTouchingTiles = tileData.getSurroundingTiles();
 
     for (Tile t : allTouchingTiles) {
       if (map.isValid(t)) {
-        tileData = new SurroundingTileData(t, t.getTerrain(), map);
-        Terrain bestMatchingTerrain = connectTerrain(t, t.getTerrain());
+        this.baseTerrain = t.getTerrain();
+        tileData = new SurroundingTileData(t, baseTerrain, map);
+        Terrain bestMatchingTerrain = connectTerrain(t, t.getTerrain(), baseTerrain);
         t.setTerrain(bestMatchingTerrain);
       }
     }
@@ -68,11 +70,13 @@ public class TerrainConnector {
    * Find the matching terrain that can fit on baseTile by examining the tiles that surround the base tile.
    * Terrains of the same type should connect.
    *
-   * @param baseTile    The tile where the resulting terrain should be added to
-   * @param baseTerrain The base terrain type that is used to calculate the best matching terrain.
+   * @param baseTile     The tile where the resulting terrain should be added to
+   * @param terrainToAdd The terrain that is used to calculate the best matching terrain.
+   * @param baseTerrain  The old terrain that will be overwritten
    */
-  public Terrain connectTerrain(Tile baseTile, Terrain baseTerrain) {
-    validate(baseTile, baseTerrain);
+  public Terrain connectTerrain(Tile baseTile, Terrain terrainToAdd, Terrain baseTerrain) {
+    validate(baseTile, terrainToAdd, baseTerrain);
+    this.terrainToAdd = terrainToAdd;
     this.baseTerrain = baseTerrain;
 
     // Cities can't be overwritten by other terrains, but do connect
@@ -81,19 +85,44 @@ public class TerrainConnector {
     }
 
     // Reefs don't connect at all, return it
-    if (baseTerrain.getName().equalsIgnoreCase("Reef"))
-      return baseTerrain;
+    if (terrainToAdd.getName().equalsIgnoreCase("Reef"))
+      return terrainToAdd;
 
     return getBestMatchingTerrain(baseTile);
   }
 
-  private void validate(Tile baseTile, Terrain baseTerrain) {
+  /**
+   * Find the matching terrain that can fit on baseTile by examining the tiles that surround the base tile.
+   * Terrains of the same type should connect.
+   *
+   * @param baseTile     The tile where the resulting terrain should be added to
+   * @param terrainToAdd The terrain type that is used to calculate the best matching terrain.
+   */
+  public Terrain connectTerrain(Tile baseTile, Terrain terrainToAdd) {
+    validate(baseTile, terrainToAdd, baseTerrain);
+    this.terrainToAdd = terrainToAdd;
+    this.baseTerrain = baseTile.getTerrain();
+
+    // Cities can't be overwritten by other terrains, but do connect
+    if (baseTile.getTerrain() instanceof City) {
+      return baseTile.getTerrain();
+    }
+
+    // Reefs don't connect at all, return it
+    if (terrainToAdd.getName().equalsIgnoreCase("Reef"))
+      return terrainToAdd;
+
+    return getBestMatchingTerrain(baseTile);
+  }
+
+  private void validate(Tile baseTile, Terrain terrainToAdd, Terrain baseTerrain) {
     Args.checkForNull(baseTile);
+    Args.checkForNull(terrainToAdd);
     Args.checkForNull(baseTerrain);
   }
 
   private Terrain getBestMatchingTerrain(Tile baseTile) {
-    tileData = new SurroundingTileData(baseTile, baseTerrain, map);
+    tileData = new SurroundingTileData(baseTile, terrainToAdd, map);
     perfectMatchingTerrains = getTerrainsThatConnectsToAllDirections(tileData.getAllDirections());
     perfectAdjacentMatchingTerrains = getTerrainsThatConnectsToAllDirections(tileData.getAdjacentDirections());
     matchingTerrains = getTerrainsThatConnectsToOneofDirections();
@@ -108,17 +137,17 @@ public class TerrainConnector {
 
     if (specialMatchingTerrain != null)
       bestMatch = specialMatchingTerrain;
-    else if (perfectMatchingTerrains.size() != 0) {
+    else if (!perfectMatchingTerrains.isEmpty()) {
       bestMatch = perfectMatchingTerrains.get(0);
-    } else if (perfectAdjacentMatchingTerrains.size() != 0) {
+    } else if (!perfectAdjacentMatchingTerrains.isEmpty()) {
       bestMatch = perfectAdjacentMatchingTerrains.get(0);
-    } else if (matchingTerrains.size() != 0) {
+    } else if (!matchingTerrains.isEmpty()) {
       bestMatch = matchingTerrains.get(0);
     }
 
     // If at this point no match has been found, default back to the user chosen terrain
     if (bestMatch == null) {
-      bestMatch = baseTerrain;
+      bestMatch = terrainToAdd;
     }
     return bestMatch;
   }
@@ -130,7 +159,7 @@ public class TerrainConnector {
   private List<Terrain> getTerrainsThatConnectsToAllDirections(List<Direction> directions) {
     List<Terrain> result = new LinkedList<Terrain>();
     for (Terrain terrain : terrains) {
-      if (terrain.isSameType(baseTerrain) && terrain.canConnectToAll(directions)) {
+      if (terrain.isSameType(terrainToAdd) && terrain.canConnectToAll(directions)) {
         result.add(terrain);
       }
     }
@@ -144,7 +173,7 @@ public class TerrainConnector {
   private List<Terrain> getTerrainsThatConnectsToOneofDirections() {
     List<Terrain> result = new LinkedList<Terrain>();
     for (Terrain terrain : terrains) {
-      if (terrain.isSameType(baseTerrain) && terrain.canConnectToOneOf(tileData.getAllDirections())) {
+      if (terrain.isSameType(terrainToAdd) && terrain.canConnectToOneOf(tileData.getAllDirections())) {
         result.add(terrain);
       }
     }
@@ -153,37 +182,23 @@ public class TerrainConnector {
 
   private Terrain getSpecialTerrain() {
     Terrain specialTerrain = null;
-    if (isOverRiver()) {
-      specialTerrain = getBridge(true, false, perfectMatchingTerrains, matchingTerrains);
-    } else if (isOverOcean()) {
-      specialTerrain = getBridge(false, true, perfectMatchingTerrains, matchingTerrains);
+    if (terrainToAdd.isSameType("Road")) {
+      if (isOverRiver()) {
+        specialTerrain = getBridge(true, false, perfectMatchingTerrains, matchingTerrains, terrains);
+      } else if (isOverOcean()) {
+        specialTerrain = getBridge(false, true, perfectMatchingTerrains, matchingTerrains, terrains);
+      }
     }
     return specialTerrain;
   }
 
   /**
-   * Are the adjacent Terrains(Horizontal or vertical) an ocean
-   */
-  private boolean isOverOcean() {
-    return !baseTerrain.isOcean() && (isOcean(tileData.getHorizontalTerrains()) || isOcean(tileData.getVerticalTerrains()));
-  }
-
-  /**
-   * Are all terrains an ocean terrain
-   */
-  private boolean isOcean(List<Terrain> terrains) {
-    for (Terrain terrain : terrains) {
-      if (!terrain.isOcean()) return false;
-    }
-    return true;
-  }
-
-  /**
-   * Are the adjacent Terrains(Horizontal or vertical) a river
+   * 1. Are the adjacent Terrains(horizontal or vertical) river terrains
+   * 2. is the original terrain a river or bridge terrain
    */
   private boolean isOverRiver() {
-    return !baseTerrain.isRiver() && (isRiver(tileData.getHorizontalTerrains()) || isRiver(tileData.getVerticalTerrains()));
-
+    return (isRiver(tileData.getHorizontalTerrains()) || isRiver(tileData.getVerticalTerrains())) &&
+      (baseTerrain.isRiver() || baseTerrain.spansOver("River"));
   }
 
   /**
@@ -196,12 +211,31 @@ public class TerrainConnector {
     return true;
   }
 
+  /**
+   * 1. Are the adjacent Terrains(horizontal or vertical) ocean terrains
+   * 2. is the original terrain an ocean or bridge terrain
+   */
+  private boolean isOverOcean() {
+    return (isOcean(tileData.getHorizontalTerrains()) || isOcean(tileData.getVerticalTerrains())) &&
+      (baseTerrain.isOcean() || baseTerrain.spansOver("Ocean"));
+  }
+
+  /**
+   * Are all terrains an ocean terrain
+   */
+  private boolean isOcean(List<Terrain> terrains) {
+    for (Terrain terrain : terrains) {
+      if (!terrain.isOcean()) return false;
+    }
+    return true;
+  }
+
   private Terrain getBridge(boolean overRiver, boolean overOcean, List<Terrain>... terrainLists) {
     for (List<Terrain> terrainList : terrainLists) {
       for (Terrain terrain : terrainList) {
-        if (overRiver && terrain.getName().equalsIgnoreCase("Bridge")) {
+        if (overRiver && terrain.spansOver("River")) {
           return terrain;
-        } else if (overOcean && terrain.getName().equalsIgnoreCase("Suspension")) {
+        } else if (overOcean && terrain.spansOver("Ocean")) {
           return terrain;
         }
       }

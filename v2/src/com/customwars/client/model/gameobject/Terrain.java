@@ -2,6 +2,7 @@ package com.customwars.client.model.gameobject;
 
 import com.customwars.client.model.map.Direction;
 import tools.Args;
+import tools.StringUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -13,8 +14,11 @@ import java.util.List;
  * A moveType ID which is just the index in the movecost array has a cost to move over this terrain.
  * See {@link #canBeTraverseBy(int)} and {@link #getMoveCost(int)}
  *
- * Some terrains remain hidden even within the los of other objects(ie forrests).
+ * Some terrains remain hidden even within the los of other objects(ie forests).
  * Some terrain have extra vision(ie mountains, cities)
+ *
+ * type is the terrain type that this terrain is inherited from(ie a horizontal road inherits from road)
+ * spansOverType is used for bridges (ie a bridge is a road that spans over a river)
  *
  * @author stefan
  */
@@ -22,7 +26,7 @@ public class Terrain extends GameObject {
   public static final int IMPASSIBLE = Byte.MAX_VALUE;
   public static final int MIN_MOVE_COST = 1;
   private int id;
-  private String type;
+  private String type, spansOverType;
   private String name;
   private String description;
   private int defenseBonus;
@@ -38,12 +42,12 @@ public class Terrain extends GameObject {
 
   /**
    * @param id                  Unique identifier
-   * @param type                The base Terrain this terrain is based on ie: Road, River, Ocean
-   * @param name                Short name ie 'plain', 'grass', 'woods'
-   * @param description         long description ie 'provides good cover for ground units'
-   * @param defenseBonus        The defense bonus used in attack calculations, forrest offer better protection then plain.
-   * @param height              Height of this terrain ie ocean is lower then a Mountain
-   * @param hidden              is this terrain hidden within a moveZone
+   * @param type                The base Terrain this terrain is inherited from eg (Road, River, Ocean,...)
+   * @param name                Short name eg 'plain', 'grass', 'woods'
+   * @param description         Long description eg 'provides good cover for ground units'
+   * @param defenseBonus        The defense bonus used in attack calculations, forest offer better protection then plain.
+   * @param height              Height of this terrain eg ocean is lower then a Mountain
+   * @param hidden              Is this terrain hidden within a moveZone
    * @param vision              The additional vision this terrain gives in fog of war
    * @param moveCosts           The cost to move over this terrain for each movementType, starts at 1(no cost) to 127(Impassible)
    * @param connectedDirections The Directions another terrain of the same type can be connected to
@@ -95,6 +99,7 @@ public class Terrain extends GameObject {
     super(otherTerrain);
     this.id = otherTerrain.id;
     this.type = otherTerrain.type;
+    this.spansOverType = otherTerrain.spansOverType;
     this.name = otherTerrain.name;
     this.description = otherTerrain.description;
     this.defenseBonus = otherTerrain.defenseBonus;
@@ -166,7 +171,19 @@ public class Terrain extends GameObject {
   }
 
   public boolean isSameType(Terrain otherTerrain) {
-    return type.equalsIgnoreCase(otherTerrain.type);
+    return isSameType(otherTerrain.type);
+  }
+
+  public boolean isSameType(String otherTerrainType) {
+    return type.equalsIgnoreCase(otherTerrainType);
+  }
+
+  public boolean spansOver(Terrain terrain) {
+    return spansOver(terrain.type);
+  }
+
+  public boolean spansOver(String spansOver) {
+    return StringUtil.hasContent(spansOver) && spansOverType.equalsIgnoreCase(spansOver);
   }
 
   public boolean canConnectTo(Terrain otherTerrain) {
