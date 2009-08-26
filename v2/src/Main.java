@@ -10,7 +10,6 @@ import com.customwars.client.model.game.Player;
 import com.customwars.client.ui.debug.DebugEnvironment;
 import com.customwars.client.ui.state.CWStates;
 import com.customwars.client.ui.state.StateSession;
-import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.SlickException;
@@ -19,8 +18,7 @@ import org.newdawn.slick.state.StateBasedGame;
 import slick.HardCodedGame;
 import slick.TestStates;
 import tools.ColorUtil;
-
-import java.util.Enumeration;
+import tools.Log4JUtil;
 
 /**
  * Starts The client
@@ -110,26 +108,6 @@ public class Main {
     bsh.set("resources", resources);
   }
 
-  /**
-   * Returns true if it appears that log4j have been previously configured. This code
-   * checks to see if there are any appenders defined for log4j which is the
-   * definitive way to tell if log4j is already initialized
-   */
-  private static boolean isLog4JConfigured() {
-    Enumeration appenders = Logger.getRoot().getAllAppenders();
-    if (appenders.hasMoreElements()) {
-      return true;
-    } else {
-      Enumeration loggers = LogManager.getCurrentLoggers();
-      while (loggers.hasMoreElements()) {
-        Logger c = (Logger) loggers.nextElement();
-        if (c.getAllAppenders().hasMoreElements())
-          return true;
-      }
-    }
-    return false;
-  }
-
   private void shutDownHook() {
     logger.info("Shutting down");
     config.storeInputConfig();
@@ -147,7 +125,7 @@ public class Main {
       logger.info("Starting up");
       new Main();
     } catch (Exception e) {
-      if (isLog4JConfigured())
+      if (Log4JUtil.isLog4JConfigured())
         logger.fatal("Failure", e);
       else
         e.printStackTrace();
