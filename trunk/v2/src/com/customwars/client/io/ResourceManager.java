@@ -31,6 +31,7 @@ import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -170,6 +171,13 @@ public class ResourceManager {
         maps.put(mapName, map);
       }
     }
+  }
+
+  public void saveMap(Map<Tile> map, OutputStream out) throws IOException {
+    MapParser mapParser = mapParsers.get(0);
+    mapParser.writeMap(map, out);
+    String mapName = map.getProperty("NAME");
+    maps.put(mapName, map);
   }
 
   public void recolor(Color... colors) {
