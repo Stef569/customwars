@@ -41,7 +41,7 @@ public class LaunchRocketAction extends DirectAction {
 
         if (locatable instanceof Unit) {
           Unit unit = (Unit) locatable;
-          unit.addHp(-App.getInt("plugin.rocketdamage"));
+          unit.addHp(-App.getInt("plugin.silo_rocket_damage"));
         }
       }
     }
