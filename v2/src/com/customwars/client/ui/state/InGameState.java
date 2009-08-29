@@ -1,5 +1,6 @@
 package com.customwars.client.ui.state;
 
+import com.customwars.client.App;
 import com.customwars.client.AppGUI;
 import com.customwars.client.SFX;
 import com.customwars.client.controller.ControllerManager;
@@ -256,10 +257,13 @@ public class InGameState extends CWState implements PropertyChangeListener {
           gameControl.endTurn(statelogic);
         }
 
-        if (cwInput.isZoomIn(command)) {
-          camera.zoomIn();
-        } else if (cwInput.isZoomOut(command)) {
-          camera.zoomOut();
+        boolean zoomEnabled = App.getBoolean("display.zoom");
+        if (zoomEnabled) {
+          if (cwInput.isZoomIn(command)) {
+            camera.zoomIn();
+          } else if (cwInput.isZoomOut(command)) {
+            camera.zoomOut();
+          }
         }
       }
     }
@@ -284,11 +288,14 @@ public class InGameState extends CWState implements PropertyChangeListener {
   }
 
   public void mouseWheelMoved(int newValue) {
-    if (entered) {
-      if (newValue > 0) {
-        camera.zoomIn();
-      } else {
-        camera.zoomOut();
+    boolean zoomEnabled = App.getBoolean("display.zoom");
+    if (zoomEnabled) {
+      if (entered) {
+        if (newValue > 0) {
+          camera.zoomIn();
+        } else {
+          camera.zoomOut();
+        }
       }
     }
   }
