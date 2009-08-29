@@ -1,7 +1,6 @@
-package slick;
+package com.customwars.client.ui.state;
 
 import com.customwars.client.ui.slick.InputField;
-import com.customwars.client.ui.state.CWState;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -19,7 +18,7 @@ import java.util.List;
  *
  * @author stefan
  */
-public class RemapKeysTest extends CWState {
+public class ControlBindingState extends CWState {
   private static final boolean DEBUG = false;
   private static final int LBL_FIELD_WIDTH = 120;
   private static final int INPUT_FIELD_WIDTH = 430;
@@ -118,6 +117,6 @@ public class RemapKeysTest extends CWState {
   }
 
   public int getID() {
-    return 2;
+    return 5;
   }
 }

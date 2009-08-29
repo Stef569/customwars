@@ -103,6 +103,7 @@ public class StartupTest extends BasicGame {
   }
 
   public static void main(String[] args) throws SlickException {
+    LoadingList.setDeferredLoading(true);
     appGameContainer = new AppGameContainer(new StartupTest());
     appGameContainer.setDisplayMode(800, 600, false);
     appGameContainer.setTargetFrameRate(60);

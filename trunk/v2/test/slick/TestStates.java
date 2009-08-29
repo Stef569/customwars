@@ -1,11 +1,16 @@
 package slick;
 
 import com.customwars.client.App;
+import com.customwars.client.AppGUI;
 import com.customwars.client.Config;
+import com.customwars.client.SFX;
 import com.customwars.client.io.ResourceManager;
 import com.customwars.client.ui.state.CWInput;
 import com.customwars.client.ui.state.CWState;
+import com.customwars.client.ui.state.ControlBindingState;
+import com.customwars.client.ui.state.EndTurnState;
 import com.customwars.client.ui.state.GameOverState;
+import com.customwars.client.ui.state.InGameState;
 import com.customwars.client.ui.state.MapEditorState;
 import com.customwars.client.ui.state.StateLogic;
 import com.customwars.client.ui.state.StateSession;
@@ -56,7 +61,7 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
     loadResources();
     CWState.setDefaultFont(resources.getFont("DEFAULT"));
     statelogic.changeTo(startStateName);
-    config.configureAfterStartup(cwInput);
+    config.loadInputBindings(cwInput);
 
     logger.debug("Startup complete starting state=" + (startStateName == null ? "Default" : startStateName));
   }
@@ -64,8 +69,8 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
   private void buildStateList() {
     CWState testMenu = new TestMenu();
     CWState testMapRenderer = new TestMapRenderer();
-    CWState remapKeysTest = new RemapKeysTest();
-    CWState inGameTest = new TestInGameState();
+    CWState remapKeysTest = new ControlBindingState();
+    CWState inGameTest = new InGameState();
     CWState endTurnState = new EndTurnState();
     CWState mapParser = new TestMapParser();
     CWState gameOver = new GameOverState();
@@ -86,7 +91,7 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
     statelogic.addState("mainmenu", 0);
     statelogic.addState("MAIN_MENU", 0);
     statelogic.addState("terrainmenu", 1);
-    statelogic.addState("keymenu", 2);
+    statelogic.addState("keymenu", 5);
     statelogic.addState("IN_GAME", 3);
     statelogic.addState("END_TURN", 4);
     statelogic.addState("MAP_PARSER", 6);
@@ -126,7 +131,11 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
       logger.info("Exit pressed");
       gameContainer.exit();
     } else if (cwInput.isToggleMusic(command)) {
-      gameContainer.setMusicOn(!gameContainer.isMusicOn());
+      SFX.toggleMusic();
+    } else if (cwInput.isToggleConsole(command)) {
+      AppGUI.toggleConsoleFrame();
+    } else if (cwInput.isToggleEventViewer(command)) {
+      AppGUI.toggleEventFrame();
     } else if (cwInput.isToggleFPS(command)) {
       gameContainer.setShowFPS(!gameContainer.isShowingFPS());
     }

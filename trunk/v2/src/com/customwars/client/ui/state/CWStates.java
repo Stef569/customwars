@@ -1,15 +1,17 @@
 package com.customwars.client.ui.state;
 
 import com.customwars.client.App;
+import com.customwars.client.AppGUI;
 import com.customwars.client.Config;
+import com.customwars.client.SFX;
 import com.customwars.client.io.ResourceManager;
+import com.customwars.client.ui.state.menu.MainMenuState;
 import org.apache.log4j.Logger;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.command.Command;
 import org.newdawn.slick.command.InputProviderListener;
 import org.newdawn.slick.state.StateBasedGame;
-import slick.EndTurnState;
 
 /**
  * Create each State and link it to a name
@@ -50,17 +52,24 @@ public class CWStates extends StateBasedGame implements InputProviderListener {
     buildStateList();
     mapStateIdsToName();
 
+    config.loadInputBindings(cwInput);
     statelogic.changeTo(startStateName);
-    config.configureAfterStartup(cwInput);
+    logger.debug("Startup complete starting state=" + (startStateName == null ? "Default" : startStateName));
   }
 
   private void buildStateList() {
     CWState startup = new StartupState();
+
+    // Menu
+    CWState mainMenu = new MainMenuState();
+
+    // Game
     CWState inGame = new InGameState();
     CWState endTurnState = new EndTurnState();
     CWState gameOver = new GameOverState();
 
     addState(startup);
+    addState(mainMenu);
     addState(inGame);
     addState(endTurnState);
     addState(gameOver);
@@ -69,10 +78,8 @@ public class CWStates extends StateBasedGame implements InputProviderListener {
   private void mapStateIdsToName() {
     statelogic = new StateLogic(this);
     statelogic.addState("STARTUP", 0);
-    statelogic.addState("KEY_MAP", 2);
-    statelogic.addState("IN_GAME", 10);
-    statelogic.addState("END_TURN", 4);
-    statelogic.addState("GAME_OVER", 10);
+    statelogic.addState("MAIN_MENU", 2);
+    statelogic.addState("KEY_MAP", 5);
     CWState.setStatelogic(statelogic);
   }
 
@@ -98,7 +105,13 @@ public class CWStates extends StateBasedGame implements InputProviderListener {
       logger.info("Exit pressed");
       gameContainer.exit();
     } else if (cwInput.isToggleMusic(command)) {
-      gameContainer.setMusicOn(!gameContainer.isMusicOn());
+      SFX.toggleMusic();
+    } else if (cwInput.isToggleConsole(command)) {
+      AppGUI.toggleConsoleFrame();
+    } else if (cwInput.isToggleEventViewer(command)) {
+      AppGUI.toggleEventFrame();
+    } else if (cwInput.isToggleFPS(command)) {
+      gameContainer.setShowFPS(!gameContainer.isShowingFPS());
     }
   }
 }

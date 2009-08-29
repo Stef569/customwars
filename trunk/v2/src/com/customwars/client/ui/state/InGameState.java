@@ -1,116 +1,324 @@
 package com.customwars.client.ui.state;
 
+import com.customwars.client.AppGUI;
+import com.customwars.client.SFX;
+import com.customwars.client.controller.ControllerManager;
 import com.customwars.client.controller.CursorController;
+import com.customwars.client.controller.GameController;
+import com.customwars.client.io.ResourceManager;
 import com.customwars.client.io.img.slick.ImageStrip;
+import com.customwars.client.model.Statistics;
+import com.customwars.client.model.fight.Fight;
+import com.customwars.client.model.game.Game;
+import com.customwars.client.model.game.Player;
+import com.customwars.client.model.gameobject.City;
+import com.customwars.client.model.gameobject.Unit;
+import com.customwars.client.model.gameobject.UnitFight;
 import com.customwars.client.model.map.Direction;
+import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
+import com.customwars.client.model.map.path.MoveTraverse;
 import com.customwars.client.ui.Camera2D;
-import com.customwars.client.ui.renderer.MapRenderer;
-import com.customwars.client.ui.sprite.SpriteManager;
+import com.customwars.client.ui.HUD;
+import com.customwars.client.ui.renderer.GameRenderer;
 import com.customwars.client.ui.sprite.TileSprite;
+import org.apache.log4j.Logger;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Image;
+import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.command.Command;
+import org.newdawn.slick.gui.GUIContext;
 import org.newdawn.slick.state.StateBasedGame;
+import tools.ColorUtil;
 
 import java.awt.Dimension;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
-public class InGameState extends CWState {
-  private MapRenderer mapRenderer;
-  private CursorController cursorControl;
+public class InGameState extends CWState implements PropertyChangeListener {
+  private static final Logger logger = Logger.getLogger(InGameState.class);
+
+  // Model
+  private Game game;
+  private boolean gameOver;
+  private Fight fight;
+  private InGameContext inGameContext;
+
+  // GUI
+  private GUIContext guiContext;
+  private HUD hud;
   private Camera2D camera;
+  private GameRenderer gameRenderer;
+
+  // Control
+  private GameController gameControl;
+  private CursorController cursorControl;
+  private Input input;
 
   public void init(GameContainer container, StateBasedGame game) throws SlickException {
+    this.guiContext = container;
+    this.input = guiContext.getInput();
+    this.fight = new UnitFight();
   }
 
-  public void enter(GameContainer container, StateBasedGame game) throws SlickException {
-    super.enter(container, game);
-    Map<Tile> map = stateSession.map;
-    SpriteManager spriteManager = new SpriteManager(map);
-    mapRenderer = new MapRenderer(map, spriteManager);
-    mapRenderer.loadResources(resources);
-    cursorControl = new CursorController(map, spriteManager);
+  @Override
+  public void enter(GameContainer container, StateBasedGame stateBasedGame) throws SlickException {
+    super.enter(container, stateBasedGame);
+    Game game = stateSession.game;
 
-    // Create Camera & Scroller
-    Dimension worldSize = new Dimension(map.getWidth(), map.getHeight());
-    Dimension screenSize = new Dimension(container.getWidth(), container.getHeight());
-    camera = new Camera2D(screenSize, worldSize, map.getTileSize());
-
-    // Create & add Cursors
-    ImageStrip cursor1 = resources.getSlickImgStrip("selectCursor");
-    ImageStrip cursor2 = resources.getSlickImgStrip("aimCursor");
-    TileSprite selectCursor = new TileSprite(cursor1, 250, map.getRandomTile(), map);
-    TileSprite aimCursor = new TileSprite(cursor2, map.getRandomTile(), map);
-
-    mapRenderer.addCursor("SELECT", selectCursor);
-    mapRenderer.addCursor("ATTACK", aimCursor);
-    mapRenderer.activateCursor("SELECT");
+    if (!game.isStarted() && !game.isGameOver()) {
+      game.startGame();
+      setGame(game, container);
+      stateSession.stats = new Statistics(game);
+    }
   }
 
-  public void update(GameContainer container, int delta) throws SlickException {
-    mapRenderer.update(delta);
-    camera.update(delta);
+  private void setGame(Game game, GameContainer container) {
+    initGameListener(game);
+    this.game = game;
+    initScriptObjects(game, resources);
+    initCamera(game.getMap());
+    MoveTraverse moveTraverse = new MoveTraverse(game.getMap());
+    hud = new HUD(container);
+
+    gameRenderer = new GameRenderer(game, camera, hud, moveTraverse);
+    gameRenderer.loadResources(resources);
+    initCursors(resources, game.getMap());
+
+    inGameContext = new InGameContext();
+    inGameContext.setMoveTraverse(moveTraverse);
+    inGameContext.setGame(game);
+    inGameContext.setResources(resources);
+    inGameContext.setContainer(container);
+    inGameContext.setHud(hud);
+    inGameContext.setGameRenderer(gameRenderer);
+
+    ControllerManager controllerManager = new ControllerManager(inGameContext);
+    inGameContext.setControllerManager(controllerManager);
+
+    gameControl = gameRenderer.getGameControl();
+    gameControl.setInGameContext(inGameContext);
+    gameControl.setStateLogic(statelogic);
+
+    cursorControl = gameControl.getCursorController();
+    inGameContext.setGameController(gameControl);
+
+    controllerManager.initCityControllers();
+    controllerManager.initUnitControllers();
   }
 
-  public void render(GameContainer container, Graphics g) throws SlickException {
-    g.scale(camera.getZoomLvl(), camera.getZoomLvl());
-    g.translate(-camera.getX(), -camera.getY());
-    mapRenderer.render(g);
-    renderTileInfo(mapRenderer.getCursorLocation().toString(), g, container);
-  }
-
-  private void renderTileInfo(String tileInfo, Graphics g, GameContainer container) {
-    String line1 = tileInfo, line2 = "";
-
-    int endIndex = tileInfo.length();
-    while (g.getFont().getWidth(line1) > container.getWidth() - 20) {
-      line1 = tileInfo.substring(0, endIndex--);
+  /**
+   * We add various objects to beanshell, accessible by their name
+   */
+  private void initScriptObjects(Game game, ResourceManager resources) {
+    AppGUI.init();
+    AppGUI.setGame(game);
+    for (Player p : game.getAllPlayers()) {
+      AppGUI.addConsoleScriptObj("p_" + ColorUtil.toString(p.getColor()), p);
     }
 
-    if (endIndex > 0)
-      line2 = tileInfo.substring(endIndex);
-    g.drawString(line1, 10, container.getHeight() - 40);
-    g.drawString(line2, 10, container.getHeight() - 20);
+    AppGUI.addConsoleScriptObj("game", game);
+    AppGUI.addConsoleScriptObj("map", game.getMap());
+    AppGUI.addConsoleScriptObj("resources", resources);
+  }
 
+  private void initGameListener(Game game) {
+    if (this.game != null) {
+      this.game.removePropertyChangeListener(this);
+    }
+    game.addPropertyChangeListener(this);
+  }
+
+  private void initCamera(Map<Tile> map) {
+    Dimension screenSize = new Dimension(guiContext.getWidth(), guiContext.getHeight());
+    Dimension worldSize = new Dimension(map.getWidth(), map.getHeight());
+    this.camera = new Camera2D(screenSize, worldSize, map.getTileSize());
+  }
+
+  private void initCursors(ResourceManager resources, Map<Tile> map) {
+    ImageStrip selectCursorImgs = resources.getSlickImgStrip("selectCursor");
+    ImageStrip aimCursorImgs = resources.getSlickImgStrip("aimCursor");
+    Image siloCursorImg = resources.getSlickImg("siloCursor");
+
+    Tile randomTile = map.getRandomTile();
+    TileSprite selectCursor = new TileSprite(selectCursorImgs, 250, randomTile, map);
+    TileSprite aimCursor = new TileSprite(aimCursorImgs, randomTile, map);
+    TileSprite siloCursor = new TileSprite(siloCursorImg, randomTile, map);
+
+    selectCursor.addPropertyChangeListener(this);
+    aimCursor.addPropertyChangeListener(this);
+    siloCursor.addPropertyChangeListener(this);
+
+    // Use the silo explosion cursor Image height to calculate the effect Range ie
+    // If the image has a height of 160/32 is 5 tiles 5/2 rounded to int becomes 2.
+    int effectRange = siloCursorImg.getHeight() / map.getTileSize() / 2;
+    siloCursor.setEffectRange(effectRange);
+
+    gameRenderer.addCursor("SELECT", selectCursor);
+    gameRenderer.addCursor("ATTACK", aimCursor);
+    gameRenderer.addCursor("SILO", siloCursor);
+    gameRenderer.activateCursor("SELECT");
+  }
+
+  @Override
+  public void leave(GameContainer container, StateBasedGame stateBasedGame) throws SlickException {
+    super.leave(container, stateBasedGame);
+    resetInputTransition();
+  }
+
+  private void resetInputTransition() {
+    input.setOffset(0, 0);
+    input.setScale(1, 1);
+  }
+
+  @Override
+  public void update(GameContainer container, int delta) throws SlickException {
+    if (gameRenderer != null) {
+      gameRenderer.update(delta);
+
+      inGameContext.update(delta);
+      if (gameOver && inGameContext.isActionCompleted()) {
+        changeGameState("GAME_OVER");
+        gameOver = false;
+      }
+      input.setOffset(camera.getX(), camera.getY());
+    }
+  }
+
+  @Override
+  public void render(GameContainer container, Graphics g) throws SlickException {
+    // gameRenderer is only assigned when init has been completed
+    // render can be invoked before init by a transition see StateBasedGame
+    if (gameRenderer != null) {
+      gameRenderer.render(g);
+      renderAttackDamagePercentage(g);
+    }
+  }
+
+  /**
+   * Draw The damage percentage at the top right of the cursorlocation
+   */
+  private void renderAttackDamagePercentage(Graphics g) {
+    if (inGameContext.isUnitAttackMode()) {
+      Location cursorLocation = gameRenderer.getCursorLocation();
+      Unit attacker = game.getActiveUnit();
+      Unit defender = game.getMap().getUnitOn(cursorLocation);
+
+      if (defender != null) {
+        fight.initFight(attacker, defender);
+        int tileSize = game.getMap().getTileSize();
+        int x = cursorLocation.getCol() * tileSize;
+        int y = cursorLocation.getRow() * tileSize;
+        int dmgPercentage = fight.getAttackDamagePercentage();
+        g.drawString("Damage:" + dmgPercentage, x + 50, y - 50);
+      }
+    }
   }
 
   public void controlPressed(Command command, CWInput cwInput) {
-    moveCursor(command, cwInput);
-    if (cwInput.isSelect(command)) {
-      System.out.println("Clicked on " + mapRenderer.getCursorLocation());
+    if (entered) {
+      if (cwInput.isCancel(command)) {
+        if (inGameContext.canUndo()) {
+          gameControl.undo();
+          return;
+        }
+      }
+
+      moveCursor(command, cwInput);
+
+      if (inGameContext.isGUIMode()) {
+        hud.controlPressed(command, cwInput);
+      } else {
+        Tile cursorLocation = gameRenderer.getCursorLocation();
+        Unit activeUnit = game.getActiveUnit();
+        Unit selectedUnit = game.getMap().getUnitOn(cursorLocation);
+        City city = game.getMap().getCityOn(cursorLocation);
+
+        Unit unit;
+        if (activeUnit != null) {
+          unit = activeUnit;
+        } else {
+          unit = selectedUnit;
+        }
+
+        if (cwInput.isSelect(command)) {
+          gameControl.handleA(unit, city, cursorLocation);
+        }
+
+        if (cwInput.isCancel(command)) {
+          gameControl.handleB(activeUnit, selectedUnit);
+        }
+
+        if (cwInput.isEndTurn(command)) {
+          gameControl.endTurn(statelogic);
+        }
+
+        if (cwInput.isZoomIn(command)) {
+          camera.zoomIn();
+        } else if (cwInput.isZoomOut(command)) {
+          camera.zoomOut();
+        }
+      }
     }
   }
 
-  private void moveCursor(Command command, CWInput cwInput) {
+  public void moveCursor(Command command, CWInput cwInput) {
     if (cwInput.isUp(command)) {
       cursorControl.moveCursor(Direction.NORTH);
     }
+
     if (cwInput.isDown(command)) {
       cursorControl.moveCursor(Direction.SOUTH);
     }
+
     if (cwInput.isLeft(command)) {
       cursorControl.moveCursor(Direction.WEST);
     }
+
     if (cwInput.isRight(command)) {
       cursorControl.moveCursor(Direction.EAST);
     }
   }
 
   public void mouseWheelMoved(int newValue) {
-    if (newValue > 0) {
-      camera.zoomIn();
-    } else {
-      camera.zoomOut();
+    if (entered) {
+      if (newValue > 0) {
+        camera.zoomIn();
+      } else {
+        camera.zoomOut();
+      }
     }
   }
 
+  @Override
   public void mouseMoved(int oldx, int oldy, int newx, int newy) {
-    cursorControl.moveCursor(newx, newy);
+    if (entered) {
+      cursorControl.moveCursor(newx, newy);
+    }
   }
 
+  public void propertyChange(PropertyChangeEvent evt) {
+    String propertyName = evt.getPropertyName();
+
+    if (propertyName.equals("state")) {
+      this.gameOver = game.isGameOver();
+    } else if (evt.getSource() instanceof TileSprite && propertyName.equals("position")) {
+      cursorPositionChanged(evt);
+    }
+  }
+
+  private void cursorPositionChanged(PropertyChangeEvent evt) {
+    TileSprite cursor = (TileSprite) evt.getSource();
+    SFX.playSound("maptick");
+    Tile newCursorLocation = (Tile) cursor.getLocation();
+    hud.moveOverTile(newCursorLocation);
+  }
+
+  @Override
   public int getID() {
-    return 10;
+    return 3;
   }
 }

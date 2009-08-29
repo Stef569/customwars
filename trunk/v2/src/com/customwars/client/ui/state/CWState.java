@@ -53,8 +53,8 @@ public abstract class CWState extends BasicGameState implements InputProviderLis
   }
 
   public final void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
-    g.setFont(defaultFont);
-    g.setColor(defaultColor);
+    if (defaultFont != null) g.setFont(defaultFont);
+    if (defaultColor != null) g.setColor(defaultColor);
     render(container, g);
   }
 
