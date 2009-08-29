@@ -59,7 +59,7 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
     buildStateList();
     mapStateIdsToName();
     loadResources();
-    CWState.setDefaultFont(resources.getFont("DEFAULT"));
+    CWState.setDefaultFont(container);
     statelogic.changeTo(startStateName);
     config.loadInputBindings(cwInput);
 

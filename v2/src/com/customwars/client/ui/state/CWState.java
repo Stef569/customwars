@@ -1,6 +1,7 @@
 package com.customwars.client.ui.state;
 
 import com.customwars.client.io.ResourceManager;
+import com.thoughtworks.xstream.core.util.Fields;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Font;
 import org.newdawn.slick.GameContainer;
@@ -11,6 +12,8 @@ import org.newdawn.slick.command.Command;
 import org.newdawn.slick.command.InputProviderListener;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
+
+import java.lang.reflect.Field;
 
 /**
  * A state that CW can be in, examples MainMenu, EndTurn, InGame
@@ -94,7 +97,17 @@ public abstract class CWState extends BasicGameState implements InputProviderLis
     CWState.stateSession = stateSession;
   }
 
-  public static void setDefaultFont(Font defaultFont) {
-    CWState.defaultFont = defaultFont;
+  public static void setDefaultFont(GameContainer gameContainer) {
+    Font font = resources.getFont("DEFAULT");
+    CWState.defaultFont = font;
+
+    try {
+      Field f = GameContainer.class.getDeclaredField("defaultFont");
+      f.setAccessible(true);
+      Fields.write(f, gameContainer, font);
+      f.setAccessible(false);
+    } catch (NoSuchFieldException e) {
+      e.printStackTrace();
+    }
   }
 }

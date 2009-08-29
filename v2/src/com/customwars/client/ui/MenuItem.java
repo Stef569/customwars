@@ -7,6 +7,7 @@ import com.customwars.client.ui.layout.TextBox;
 import com.customwars.client.ui.slick.MouseOverArea;
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Color;
+import org.newdawn.slick.Font;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.gui.GUIContext;
@@ -19,7 +20,7 @@ import java.util.List;
  * A single Menu item containing:
  * An animated cursor, Icon and text
  * Each of the above is optional and rendered centered in a box, each box is the dimension of the Image/text + the margins
- * The menu item height is set to the highest box height.
+ * The menu item height is set to the highest inner box height.
  *
  * @author stefan
  */
@@ -32,38 +33,46 @@ public class MenuItem extends MouseOverArea {
 
   private Box animBox = new AnimationBox();
   private Box imgBox = new ImageBox();
-  private Box textBox = new TextBox("", container.getDefaultFont());
+  private Box textBox = new TextBox();
   private List<Box> boxes = new ArrayList<Box>();
 
   public MenuItem(GUIContext container) {
     this(null, null, null, container);
   }
 
+  public MenuItem(String txt, Font font, GUIContext container) {
+    this(null, null, txt, font, container);
+  }
+
   public MenuItem(String txt, GUIContext container) {
-    this(null, null, txt, container);
+    this(null, null, txt, container.getDefaultFont(), container);
   }
 
   public MenuItem(Image icon, GUIContext container) {
-    this(null, icon, null, container);
+    this(null, icon, null, null, container);
   }
 
   public MenuItem(Animation cursorAnim, Image icon, GUIContext container) {
-    this(cursorAnim, icon, "", container);
+    this(cursorAnim, icon, "", null, container);
+  }
+
+  public MenuItem(Image icon, String txt, Font font, GUIContext container) {
+    this(null, icon, txt, font, container);
   }
 
   public MenuItem(Image icon, String txt, GUIContext container) {
-    this(null, icon, txt, container);
+    this(null, icon, txt, container.getDefaultFont(), container);
   }
 
-  public MenuItem(Animation cursorAnim, Image icon, String txt, GUIContext container) {
+  public MenuItem(Animation cursorAnim, Image icon, String txt, Font font, GUIContext container) {
     super(container);
-    init(cursorAnim, icon, txt);
+    init(cursorAnim, icon, txt, font);
   }
 
-  protected void init(Animation cursorAnim, Image icon, String txt) {
+  protected void init(Animation cursorAnim, Image icon, String txt, Font font) {
     setCursorAnim(cursorAnim);
     setIcon(icon);
-    setText(txt);
+    setText(txt, font);
     initArea();
   }
 
@@ -94,10 +103,10 @@ public class MenuItem extends MouseOverArea {
     }
   }
 
-  public void setText(String text) {
+  public void setText(String text, Font font) {
     if (text != null) {
       Insets insets = new Insets(0, FONT_HORIZONTAL_MARGIN, 0, FONT_HORIZONTAL_MARGIN);
-      textBox = new TextBox(text, container.getDefaultFont(), insets);
+      textBox = new TextBox(text, font, insets);
       boxes.add(textBox);
     }
   }

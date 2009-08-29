@@ -34,7 +34,6 @@ public class PopupMenu extends BasicComponent {
   private List<MenuItem> menuItems;
   private int currItem;
 
-  private boolean visible;
   private boolean inited;
   private boolean renderBackground;
   private int spacingY = 0;                       // The space between menu Items
@@ -44,8 +43,14 @@ public class PopupMenu extends BasicComponent {
   public PopupMenu(GUIContext container) {
     super(container);
     menuItems = new ArrayList<MenuItem>();
-    visible = true;
     renderBackground = true;
+    setVisible(true);
+  }
+
+  public void addItems(MenuItem... menuItems) {
+    for (MenuItem item : menuItems) {
+      addItem(item);
+    }
   }
 
   public void addItem(MenuItem menuItem) {
@@ -190,10 +195,6 @@ public class PopupMenu extends BasicComponent {
     }
   }
 
-  public void setVisible(boolean visible) {
-    this.visible = visible;
-  }
-
   public void setMenuTickSound(Sound sound) {
     this.menuTickSound = sound;
   }
@@ -225,10 +226,6 @@ public class PopupMenu extends BasicComponent {
       }
     }
     return null;
-  }
-
-  public boolean isVisible() {
-    return visible;
   }
 
   private int getWidestMenuItem() {
