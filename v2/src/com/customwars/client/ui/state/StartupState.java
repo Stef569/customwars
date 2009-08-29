@@ -10,7 +10,13 @@ import org.newdawn.slick.state.StateBasedGame;
 import java.io.IOException;
 
 /**
- * State in which resources are loaded
+ * State in which all resources are loaded
+ *
+ * There are 2 modes DeferredLoading on/off:
+ *
+ * When deferred loading is on then a loading bar is displayed
+ * Each resource is first loaded from disk and then the loading bar is updated
+ * If it is off the text loading... is displayed
  *
  * @author stefan
  */
@@ -34,8 +40,14 @@ public class StartupState extends CWState {
     if (LoadingList.get().getRemainingResources() > 0) {
       nextResource = LoadingList.get().getNext();
     } else {
-      changeGameState("IN_GAME");
+      onLoadingCompleted();
     }
+  }
+
+  private void onLoadingCompleted() {
+    // After the resources have been loaded overwrite the default font with our own
+    CWState.setDefaultFont(resources.getFont("DEFAULT"));
+    changeGameState("MAIN_MENU");
   }
 
   public void render(GameContainer container, Graphics g) throws SlickException {

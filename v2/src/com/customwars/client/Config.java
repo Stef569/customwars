@@ -8,6 +8,7 @@ import org.apache.log4j.PropertyConfigurator;
 import org.newdawn.slick.util.ResourceLoader;
 import tools.IOUtil;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,11 +24,14 @@ import java.util.ResourceBundle;
  * There is global configuration: game, user, log4J, language properties
  * and plugin configuration plugin properties, sound, maps, images
  *
+ * Persistance properties(user config) are located in the user home dir
+ *
  * @author Stefan
  */
 public class Config {
   private static final Logger logger = Logger.getLogger(Config.class);
-  private static final String configPath = "res/data/config/";
+  private static final String HOME_DIR = System.getProperty("user.home") + "/.cw2/";
+  private static final String CONFIG_PATH = "res/data/config/";
   private static final String GAME_PROPERTIES_FILE = "game.properties";
   private static final String LOG_PROPERTIES_FILE = "log4j.properties";
   private static final String USER_PROPERTIES_FILE = "user.properties";
@@ -39,7 +43,7 @@ public class Config {
   private ResourceManager resources;
   private Properties userProperties;
   private Map<String, Properties> persistenceProperties; // Location -> Properties, Properties that can be stored
-  private UserConfigParser userConfigParser;             // Parses and applies user configuration
+  private UserConfigParser userConfigParser;
 
   public Config(ResourceManager resources) {
     this.resources = resources;
@@ -47,6 +51,8 @@ public class Config {
   }
 
   public void configure() {
+    createHomeDir();
+    createEmptyUserPropertyFileIfNonePresent();
     loadProperties();
 
     resources.setImgPath(pluginLocation + "/images/");
@@ -55,6 +61,30 @@ public class Config {
     resources.setMapPath(pluginLocation + "/maps/");
     resources.setFontPath("res/data/fonts/");
     resources.setDarkPercentage(App.getInt("display.darkpercentage"));
+  }
+
+  private void createHomeDir() {
+    File homeDir = new File(HOME_DIR);
+    if (!homeDir.exists()) {
+      boolean success = homeDir.mkdir();
+      if (!success) {
+        throw new RuntimeException("Could not create home dir " + HOME_DIR);
+      }
+    }
+  }
+
+  private void createEmptyUserPropertyFileIfNonePresent() {
+    File userPropertiesFile = new File(HOME_DIR + USER_PROPERTIES_FILE);
+    if (!userPropertiesFile.exists()) {
+      try {
+        boolean success = userPropertiesFile.createNewFile();
+        if (!success) {
+          throw new RuntimeException("Could not create empty user properties file");
+        }
+      } catch (IOException ex) {
+        throw new RuntimeException("Could not create empty user properties file");
+      }
+    }
   }
 
   private void loadProperties() {
@@ -74,25 +104,31 @@ public class Config {
     }
   }
 
-  public void configureAfterStartup(CWInput cwInput) {
+  /**
+   * Load the command -> key-mouse control bindings from the userProperties file
+   * Add the bindings to cwInput
+   *
+   * @param cwInput the inputprovider that stores each control->command mapping
+   */
+  public void loadInputBindings(CWInput cwInput) {
     userConfigParser = new UserConfigParser(cwInput);
     userConfigParser.readInputConfig(userProperties);
   }
 
   private void loadLog4JProperties() throws IOException {
-    Properties log4JProperties = loadProperties(configPath + LOG_PROPERTIES_FILE, null);
+    Properties log4JProperties = loadProperties(CONFIG_PATH + LOG_PROPERTIES_FILE);
     PropertyConfigurator.configure(log4JProperties);
   }
 
   private void loadGameProperties() throws IOException {
-    Properties gameProperties = loadProperties(configPath + GAME_PROPERTIES_FILE, App.getProperties());
+    Properties gameProperties = loadProperties(CONFIG_PATH + GAME_PROPERTIES_FILE, App.getProperties());
     App.setProperties(gameProperties);
   }
 
   private void loadUserProperties() throws IOException {
-    Properties defaults = loadProperties(configPath + USER_DEFAULTS_PROPERTIES_FILE, null);
-    userProperties = loadProperties(configPath + USER_PROPERTIES_FILE, defaults);
-    persistenceProperties.put(configPath + USER_PROPERTIES_FILE, userProperties);
+    Properties defaults = loadProperties(CONFIG_PATH + USER_DEFAULTS_PROPERTIES_FILE);
+    userProperties = loadProperties(HOME_DIR + USER_PROPERTIES_FILE, defaults);
+    persistenceProperties.put(HOME_DIR + USER_PROPERTIES_FILE, userProperties);
   }
 
   public void loadLang(String languageCode) throws IOException {
@@ -114,6 +150,11 @@ public class Config {
     logger.info("Plugin=" + pluginLocation);
   }
 
+  private Properties loadProperties(String location) throws IOException {
+    InputStream in = ResourceLoader.getResourceAsStream(location);
+    return IOUtil.loadProperties(in);
+  }
+
   private Properties loadProperties(String location, Properties defaults) throws IOException {
     InputStream in = ResourceLoader.getResourceAsStream(location);
     return IOUtil.loadProperties(in, defaults);
@@ -132,9 +173,12 @@ public class Config {
     }
   }
 
-  public void storeProperties() {
-    for (String props : persistenceProperties.keySet()) {
-      storePropertyFile(persistenceProperties.get(props), props);
+  /**
+   * Store each Property file in persistenceProperties
+   */
+  public void storePersistenceProperties() {
+    for (String propertyFilePath : persistenceProperties.keySet()) {
+      storePropertyFile(persistenceProperties.get(propertyFilePath), propertyFilePath);
     }
   }
 
@@ -144,7 +188,7 @@ public class Config {
       properties.store(out, null);
       IOUtil.closeStream(out);
     } catch (IOException e) {
-      logger.warn("Could not save property file to " + location + " ", e);
+      logger.warn("Could not save property file to " + location, e);
     }
   }
 }

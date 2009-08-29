@@ -1,8 +1,7 @@
-package slick;
+package com.customwars.client.ui.state;
 
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.game.Player;
-import com.customwars.client.ui.state.CWState;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;

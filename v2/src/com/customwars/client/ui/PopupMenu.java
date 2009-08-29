@@ -18,13 +18,18 @@ import java.util.List;
  * A popup menu contains MenuItems
  * When the mouse moves over a menuItem the menu item is selected
  *
+ * Init should be called after all menu items are added
+ * If init was not called it is invoked once on the first render attempt.
+ *
+ * the location and dimensions of the popUpMenu are not correct until init is invoked.
+ *
  * @author stefan
  */
 public class PopupMenu extends BasicComponent {
   private static final int MENU_BACKGROUND_MARGIN = 8;
-
-  private static final Color BACKGOUND_COLOR = new Color(0, 0, 0, 0.4f);
-  private static final Color HOVER_COLOR = new Color(0, 0, 0, 0.20f);
+  // Default White hover on black background
+  private Color backGroundColor = new Color(0, 0, 0, 0.4f);
+  private Color hoverColor = new Color(255, 255, 255, 0.20f);
 
   private List<MenuItem> menuItems;
   private int currItem;
@@ -101,7 +106,7 @@ public class PopupMenu extends BasicComponent {
       menuItem.setLocation(getX(), getVerticalLocation(menuItem));
       menuItem.setWidth(widestMenuItem);
       menuItem.initBoxes();
-      menuItem.setMouseOverColor(HOVER_COLOR);
+      menuItem.setMouseOverColor(hoverColor);
     }
   }
 
@@ -119,9 +124,9 @@ public class PopupMenu extends BasicComponent {
    * Render the menu background which is MENU_BACKGROUND_MARGIN bigger then the menu bounds
    */
   private void renderBackground(Graphics g) {
-    g.setColor(BACKGOUND_COLOR);
+    g.setColor(backGroundColor);
     g.fillRoundRect(getX() - MENU_BACKGROUND_MARGIN, getY() - MENU_BACKGROUND_MARGIN,
-            getWidth() + MENU_BACKGROUND_MARGIN * 2, getHeight() + MENU_BACKGROUND_MARGIN * 2, 8);
+      getWidth() + MENU_BACKGROUND_MARGIN * 2, getHeight() + MENU_BACKGROUND_MARGIN * 2, 8);
   }
 
   public void controlPressed(Command command, CWInput cwInput) {
@@ -199,6 +204,14 @@ public class PopupMenu extends BasicComponent {
 
   public void setVerticalSpacing(int margin) {
     this.spacingY = margin;
+  }
+
+  public void setHoverColor(Color hoverColor) {
+    this.hoverColor = hoverColor;
+  }
+
+  public void setBackGroundColor(Color backGroundColor) {
+    this.backGroundColor = backGroundColor;
   }
 
   public int getCurrentItem() {

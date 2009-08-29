@@ -1,4 +1,4 @@
-package com.customwars.client.ui.debug;
+package com.customwars.client.ui.hud;
 
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.gameobject.City;
@@ -37,15 +37,15 @@ import java.util.List;
  *
  * @author stefan
  */
-public class ModelDebugEventScreen implements PropertyChangeListener {
-  private static final Logger logger = Logger.getLogger(ModelDebugEventScreen.class);
+public class ModelEventScreen implements PropertyChangeListener {
+  private static final Logger logger = Logger.getLogger(ModelEventScreen.class);
   private JPanel content = new JPanel(new BorderLayout());
   private JList list;
   private DefaultListModel listModel = new DefaultListModel();
   private HashMap<Class, List<String>> filters;
   private Game game;
 
-  public ModelDebugEventScreen(JFrame frame) {
+  public ModelEventScreen(JFrame frame) {
     list = new JList(listModel);
     content.add(new JScrollPane(list));
 
@@ -68,8 +68,22 @@ public class ModelDebugEventScreen implements PropertyChangeListener {
     return menu;
   }
 
-  public void addModelEventListeners(Game game) {
+  /**
+   * Registers for events from game
+   * if there was a previous game then stop receiving events from that game
+   *
+   * @param game
+   */
+  public void setGame(Game game) {
+    if (this.game != null || game == null) {
+      removeModelEventListeners(this.game);
+    } else {
+      addModelEventListeners(game);
+    }
     this.game = game;
+  }
+
+  private void addModelEventListeners(Game game) {
     game.addPropertyChangeListener(this);
     Map<Tile> map = game.getMap();
 
@@ -84,8 +98,7 @@ public class ModelDebugEventScreen implements PropertyChangeListener {
     }
   }
 
-  public void removeModelEventListeners(Game game) {
-    this.game = null;
+  private void removeModelEventListeners(Game game) {
     game.removePropertyChangeListener(this);
     Map<Tile> map = game.getMap();
 

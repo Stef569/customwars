@@ -14,6 +14,9 @@ public class SFX {
   private static ResourceManager resources;
   private static GameContainer container;
 
+  /**
+   * Pause or resume the music depending on it's current state
+   */
   public static void toggleMusic(Music music) {
     if (music.playing()) {
       music.pause();
@@ -22,6 +25,11 @@ public class SFX {
     }
   }
 
+  /**
+   * Play a sound once
+   *
+   * @param soundName The sound to play as defined in the ResourceManager
+   */
   public static void playSound(String soundName) {
     Sound s = resources.getSound(soundName);
     if (s != null) {
@@ -29,11 +37,21 @@ public class SFX {
     }
   }
 
+  /**
+   * Play music, Only one piece of music can play at any given time
+   * if another music piece is already playing it is stopped
+   *
+   * @param musicName The music to play as defined in the ResourceManager
+   */
   public void playMusic(String musicName) {
     Music music = resources.getMusic(musicName);
     if (music != null) {
       music.play();
     }
+  }
+
+  public static void toggleMusic() {
+    container.setMusicOn(!container.isMusicOn());
   }
 
   public void mute() {

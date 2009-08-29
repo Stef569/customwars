@@ -14,6 +14,7 @@ import com.customwars.client.ui.hud.UnitInfoBox;
 import com.customwars.client.ui.slick.BasicComponent;
 import com.customwars.client.ui.sprite.SpriteManager;
 import com.customwars.client.ui.state.CWInput;
+import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.command.Command;
 import org.newdawn.slick.gui.ComponentListener;
@@ -156,7 +157,7 @@ public class HUD {
         currentXPos = startPoint.x;
       } else {
         nextComp = components.get(i - 1);
-        currentXPos +=nextComp.getWidth();
+        currentXPos += nextComp.getWidth();
       }
 
       comp.setLocation(currentXPos, startPoint.y);
@@ -185,6 +186,8 @@ public class HUD {
 
   private PopupMenu buildPopupMenu(List<MenuItem> items) {
     popupMenu = new PopupMenu(guiContext);
+    popupMenu.setBackGroundColor(new Color(0, 0, 0, 0.4f));
+    popupMenu.setHoverColor(new Color(0, 0, 0, 0.20f));
 
     for (MenuItem item : items) {
       popupMenu.addItem(item);
