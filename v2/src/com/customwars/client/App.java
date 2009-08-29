@@ -8,9 +8,18 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 
 /**
- * Handles Application wide settings by Wrapping Properties functions like
- * get(String key, String def) into functions that return primitives. This reduces the line
- * Integer.parse(System.get("user.age", "10")) to App.getInt("user.age",10)
+ * Handles Application wide settings by Wrapping System properties functions like
+ * <code>System.get(key, default_value)</code> into functions that return primitives.
+ *
+ * This reduces the line <code>Integer.parse(System.get("user.age", "10"))</code>
+ * to <code>App.getInt("user.age",10)</code>
+ *
+ * The default value is optional, when it is not provided a sensible default is returned
+ * getString  -> ""
+ * getInt     -> 0
+ * getDouble  -> 0.0
+ * getBoolean -> false
+ * getColor   -> null
  *
  * @author stefan
  */
@@ -72,6 +81,10 @@ public class App {
       // Ignoring exception causes specified default to be returned
     }
     return result;
+  }
+
+  public static Color getColor(String key) {
+    return getColor(key, null);
   }
 
   public static Color getColor(String key, Color def) {
