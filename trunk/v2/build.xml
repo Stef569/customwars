@@ -1,0 +1,155 @@
+<project name="Custom wars2" basedir=".">
+    <property name="app.name" value="CW2"/>
+    <property name="jar.core.main.class" value="AppMain"/>
+    <property name="jar.test.main.class" value="TestMain"/>
+    <property name="core.batlauncher.name" value="Custom Wars.bat"/>
+    <property name="tests.batlauncher.name" value="Custom Wars - tests.bat"/>
+
+    <property name="src.dir" value="src"/>
+    <property name="test.dir" value="test"/>
+    <property name="res.dir" value="resources/"/>
+    <property name="dist.dir" value="dist"/>
+    <property name="dist.lib.dir" value="${dist.dir}/lib"/>
+    <property name="dist.lib.native.dir" value="${dist.dir}/lib/native"/>
+    <property name="dist.res.dir" value="${dist.dir}/resources"/>
+    <property name="lib.dir" value="lib"/>
+    <property name="build.dir" value="build"/>
+    <property name="build.classes.dir" value="${build.dir}/classes"/>
+    <property name="build.test.classes.dir" value="${build.dir}/classes/test"/>
+    <property name="docs.dir" value="docs"/>
+    <property name="docs.javadoc.dir" value="${docs.dir}/javadoc"/>
+
+    <path id="build.path.id">
+        <pathelement path="${build.classes.dir}"/>
+        <pathelement path="${build.test.classes.dir}"/>
+        <fileset dir="${lib.dir}">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+
+    <target name="dir" description="Init project dirs" depends="clean">
+        <echo message="Creating working directories"/>
+        <mkdir dir="${build.dir}"/>
+        <mkdir dir="${build.classes.dir}"/>
+        <mkdir dir="${dist.dir}"/>
+        <mkdir dir="${docs.javadoc.dir}"/>
+        <mkdir dir="${dist.lib.native.dir}"/>
+        <mkdir dir="${dist.res.dir}"/>
+        <mkdir dir="${build.test.classes.dir}"/>
+    </target>
+
+    <target name="compile_core" description="Compile source code" depends="dir">
+        <javac srcdir="${src.dir}" destdir="${build.classes.dir}" classpathref="build.path.id"/>
+    </target>
+
+    <target name="doc" description="Generate JavaDoc" depends="dir">
+        <javadoc sourcepath="${src.dir}"
+                 classpathref="build.path.id"
+                 destdir="${docs.javadoc.dir}"
+                 access="public"
+                 windowtitle="Custom wars 2 - class Documentation"
+                 verbose="true"
+                 author="true"
+                 version="true">
+        </javadoc>
+    </target>
+
+    <target name="pre_jar" description="Prepare the dist folder to generate a jar file" depends="compile_core">
+        <!-- Copy all libs and native folder to dist/lib -->
+        <copy todir="${dist.lib.dir}">
+            <fileset dir="${lib.dir}"/>
+        </copy>
+
+        <!-- Move files in native subdirs into native -->
+        <copy todir="${dist.lib.native.dir}">
+            <fileset dir="${dist.lib.native.dir}/natives-linux"/>
+        </copy>
+        <copy todir="${dist.lib.native.dir}">
+            <fileset dir="${dist.lib.native.dir}/natives-mac"/>
+        </copy>
+        <copy todir="${dist.lib.native.dir}">
+            <fileset dir="${dist.lib.native.dir}/natives-win32"/>
+        </copy>
+
+        <!-- Delete empty native subdirs -->
+        <delete dir="${dist.lib.native.dir}/natives-linux"/>
+        <delete dir="${dist.lib.native.dir}/natives-mac"/>
+        <delete dir="${dist.lib.native.dir}/natives-win32"/>
+
+        <!-- Copy resource to dist/resource -->
+        <copy todir="${dist.res.dir}">
+            <fileset dir="${res.dir}"/>
+        </copy>
+    </target>
+
+    <target name="jar_core" description="Create a jar files for the core classes" depends="pre_jar">
+        <!-- Convert build class path to string property so it can be used as classpath in jar manifest -->
+        <!-- The classpath contains all the jars and the resources dir-->
+        <pathconvert property="jars.path" pathsep=" lib/">
+            <path refid="build.path.id"/>
+            <flattenmapper/>
+        </pathconvert>
+
+        <pathconvert property="res.path" pathsep=" ">
+            <path path="${res.dir}"/>
+            <flattenmapper/>
+        </pathconvert>
+
+        <jar destfile="${dist.dir}/${app.name}.jar" basedir="${build.classes.dir}">
+            <manifest>
+                <attribute name="Main-Class" value="${jar.core.main.class}"/>
+                <attribute name="Class-Path" value="${jars.path} ${res.path}/"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="release core" description="Create a zip containing the core jar + resources" depends="jar_core">
+        <!-- create win Launcher bat file for one click launching on windoos-->
+        <echo file="${dist.dir}/${core.batlauncher.name}" append="false">
+            java -Djava.library.path=lib/native/ -jar CW2.jar
+            pause
+        </echo>
+
+        <property name="zipFile" value="${dist.dir}\${app.name}.zip"/>
+        <zip destfile="${zipFile}" basedir="${dist.dir}" excludes="${zipFile}"/>
+    </target>
+
+
+    <!-- Compile the test dir and add it to the build/test dir -->
+    <target name="compile_tests" description="Compile test source code" depends="dir, jar_core">
+        <javac srcdir="${test.dir}" destdir="${build.test.classes.dir}" classpathref="build.path.id"/>
+    </target>
+
+    <!--
+        Jar the classes inside the build/test dir 
+        The Test jar uses the core jar and it's classpath
+        Tests inside test.jar have references to the core jar
+    -->
+    <target name="jar_tests" description="Create a jar file for the executable tests" depends="compile_tests">
+        <jar destfile="${dist.dir}/${app.name}-tests.jar" basedir="${build.test.classes.dir}">
+            <manifest>
+                <attribute name="Main-Class" value="${jar.test.main.class}"/>
+                <attribute name="Class-Path" value="${app.name}.jar "/>
+            </manifest>
+        </jar>
+    </target>
+
+    <!-- Remove generated dirs -->
+    <target name="clean" description="Clean generated dirs">
+        <delete includeEmptyDirs="true" quiet="true">
+            <fileset dir="${build.dir}"/>
+            <fileset dir="${dist.dir}"/>
+            <fileset dir="${docs.javadoc.dir}"/>
+        </delete>
+    </target>
+
+    <target name="release tests" description="Create a zip containing the core jar + test jar"
+            depends="jar_core, jar_tests">
+        <echo file="${dist.dir}/${tests.batlauncher.name}" append="false">
+            java -Djava.library.path=lib/native/ -jar CW2-tests.jar
+            pause
+        </echo>
+        <property name="zipFile" value="${dist.dir}\${app.name}-tests.zip"/>
+        <zip destfile="${zipFile}" basedir="${dist.dir}" excludes="${zipFile}"/>
+    </target>
+</project>
