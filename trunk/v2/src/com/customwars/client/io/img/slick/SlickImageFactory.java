@@ -1,6 +1,7 @@
 package com.customwars.client.io.img.slick;
 
 import com.customwars.client.io.img.awt.AwtImageLib;
+import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.loading.DeferredResource;
@@ -65,7 +66,7 @@ public class SlickImageFactory {
 
   private static void setTextureNow(Image img, String awtImgName) throws IOException {
     BufferedImage awtImg = imageLib.getAwImg(awtImgName);
-    Texture target = BufferedImageUtil.getTexture("", awtImg);
+    Texture target = BufferedImageUtil.getTexture("", awtImg, GL11.GL_NEAREST);
     img.setTexture(target);
   }
 
