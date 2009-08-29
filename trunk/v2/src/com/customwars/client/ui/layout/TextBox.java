@@ -10,6 +10,10 @@ public class TextBox extends Box {
   private Font font;
   private Insets insets;
 
+  public TextBox() {
+    this.txt = "";
+  }
+
   public TextBox(String txt, Font font) {
     this(txt, font, new Insets(0, 0, 0, 0));
   }

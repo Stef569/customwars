@@ -17,9 +17,6 @@ import org.newdawn.slick.gui.AbstractComponent;
 import org.newdawn.slick.gui.ComponentListener;
 import org.newdawn.slick.state.StateBasedGame;
 
-import java.util.Arrays;
-import java.util.List;
-
 /**
  * @author Crecen
  */
@@ -42,16 +39,12 @@ public class TestMenu extends CWState implements ComponentListener {
     Image endTurn = new Image("testData/EndTurn.png");
 
     testmenu = new PopupMenu(container);
-    List<MenuItem> items = Arrays.asList(
-            new MenuItem(mapOption, "Option 1: Test Map Terrain", container),
-            new MenuItem(keyInputOption, container),
-            new MenuItem(gameOption, "", container),
-            new MenuItem("Map Editor", container)
+    testmenu.addItems(
+      new MenuItem(mapOption, "Option 1: Test Map Terrain", container),
+      new MenuItem(keyInputOption, container),
+      new MenuItem(gameOption, "", container),
+      new MenuItem("Map Editor", container)
     );
-
-    for (MenuItem item : items) {
-      testmenu.addItem(item);
-    }
 
     testmenu.setLocation(250, 150);
     testmenu.setMenuTickSound(new Sound("testData/menutick.wav"));
