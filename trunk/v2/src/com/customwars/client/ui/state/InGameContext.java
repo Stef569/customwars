@@ -110,6 +110,7 @@ public class InGameContext {
 
   public void undo() {
     undoManager.undo();
+    logger.debug("Undo");
   }
 
   public void discartAllEdits() {
@@ -139,7 +140,7 @@ public class InGameContext {
         undoManager.addUndoAction(action, this);
       }
     } else {
-      logger.warn("Skipping action -> " + action.getName() + " other action " + this.action.getName() + " is still executing.");
+      logger.debug("Skipping action -> " + action.getName() + " other action " + this.action.getName() + " is still executing.");
     }
   }
 

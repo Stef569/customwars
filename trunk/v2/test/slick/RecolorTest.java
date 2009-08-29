@@ -25,7 +25,9 @@ import java.io.InputStream;
  * converting to slick images
  */
 public class RecolorTest extends BasicGame {
-  private static final String IMAGE_FILTER_FILE = "res/data/colors.xml";
+  private static final String IMAGE_FILTER_FILE = "res/plugin/default/data/colors.xml";
+  private static final String UNIT_IMG = "res/plugin/default/images/units_RED.png";
+  private static final String CITY_IMG = "res/plugin/default/images/cities_RED.png";
   private static final String UNIT_IMG_FILTER = "unit";
   private static final String UNIT_IMG_PREFIX = "UNIT_";
 
@@ -68,11 +70,11 @@ public class RecolorTest extends BasicGame {
 
   public void load() {
     // Load unit awt image
-    imageLib.loadAwtImg(UNIT_IMG_PREFIX + "RED", "res/image/units_RED.png");
+    imageLib.loadAwtImg(UNIT_IMG_PREFIX + "RED", UNIT_IMG);
     imageLib.loadSlickSpriteSheet("UNIT_RED", 32, 40);
 
     // Load City awt image
-    imageLib.loadAwtImg("CITY_RED", "res/image/cities_RED.png");
+    imageLib.loadAwtImg("CITY_RED", CITY_IMG);
     imageLib.loadSlickSpriteSheet("CITY_RED", 32, 40);
 
     recolorImages();
