@@ -1,0 +1,8 @@
+Known Issues - This list contains issues that will not be fixed
+
+1. When starting the inGameState there is no fade effect.
+2. Zooming does not work for now(disabled)
+3. Reef terrain does not connect in map editor mode
+
+For a list of issues we are currently working on goto:
+http://code.google.com/p/customwars/issues/list
