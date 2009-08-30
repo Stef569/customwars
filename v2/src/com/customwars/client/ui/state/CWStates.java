@@ -1,10 +1,10 @@
 package com.customwars.client.ui.state;
 
 import com.customwars.client.App;
-import com.customwars.client.AppGUI;
 import com.customwars.client.Config;
 import com.customwars.client.SFX;
 import com.customwars.client.io.ResourceManager;
+import com.customwars.client.ui.GUI;
 import com.customwars.client.ui.state.menu.MainMenuState;
 import org.apache.log4j.Logger;
 import org.newdawn.slick.GameContainer;
@@ -107,9 +107,9 @@ public class CWStates extends StateBasedGame implements InputProviderListener {
     } else if (cwInput.isToggleMusic(command)) {
       SFX.toggleMusic();
     } else if (cwInput.isToggleConsole(command)) {
-      AppGUI.toggleConsoleFrame();
+      GUI.toggleConsoleFrame();
     } else if (cwInput.isToggleEventViewer(command)) {
-      AppGUI.toggleEventFrame();
+      GUI.toggleEventFrame();
     } else if (cwInput.isToggleFPS(command)) {
       gameContainer.setShowFPS(!gameContainer.isShowingFPS());
     }

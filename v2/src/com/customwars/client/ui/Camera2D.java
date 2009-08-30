@@ -178,4 +178,13 @@ public class Camera2D {
   public int getHeight() {
     return (int) camera.getHeight();
   }
+
+  /**
+   * @return Can the rectange fit within this camera
+   */
+  public boolean canFitWithin(int x, int y, int width, int height) {
+    int maxX = x + width;
+    int maxY = y + height;
+    return x > getX() && maxX < getMaxX() && y > getY() && maxY < getMaxY();
+  }
 }

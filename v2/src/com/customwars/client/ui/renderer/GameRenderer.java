@@ -17,25 +17,30 @@ import org.newdawn.slick.Graphics;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
+/**
+ * Renders the game, The rendering is delegated to the following subComponents:
+ * the map     ->  MapRenderer
+ * game events ->  EventsRenderer
+ * hud         ->  HUD(optional)
+ *
+ * The map is scrolled when the cursor is near the edge of the map {@link Scroller}
+ */
 public class GameRenderer implements Renderable, PropertyChangeListener {
   // Control
   private boolean renderHUD = true, renderEvents = true;
   private GameController gameControl;
+  private Scroller scroller;
 
+  // GUI
   private MapRenderer mapRenderer;
   private ModelEventsRenderer eventsRenderer;
+  private SpriteManager spriteManager;
   private Camera2D camera;
   private HUD hud;
-  private Scroller scroller;
 
   // Data
   private Game game;
-  private Map<Tile> map;
-  private SpriteManager spriteManager;
 
-  /**
-   * Create a new GameRenderer without a HUD
-   */
   public GameRenderer(Game game, Camera2D camera, MoveTraverse moveTraverse) {
     this(game, camera, null, moveTraverse);
     renderHUD = false;
@@ -44,7 +49,7 @@ public class GameRenderer implements Renderable, PropertyChangeListener {
   public GameRenderer(Game game, Camera2D camera, HUD hud, MoveTraverse moveTraverse) {
     game.addPropertyChangeListener(this);
     this.game = game;
-    this.map = game.getMap();
+    Map<Tile> map = game.getMap();
     this.camera = camera;
     this.hud = hud;
     this.scroller = new Scroller(camera);
@@ -110,6 +115,16 @@ public class GameRenderer implements Renderable, PropertyChangeListener {
     return mapRenderer;
   }
 
+  public boolean isDyingUnitAnimationCompleted() {
+    return spriteManager.isDyingUnitAnimationCompleted();
+  }
+
+  /**
+   * Update the active unit in mapRenderer to the unit in the game
+   * each time the activeunit in the game has changed
+   *
+   * @param evt An event from the game
+   */
   public void propertyChange(PropertyChangeEvent evt) {
     if (evt.getSource() instanceof Game) {
       if (evt.getPropertyName().equals("activeunit")) {

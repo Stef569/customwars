@@ -590,4 +590,17 @@ public class SpriteManager implements PropertyChangeListener {
   public boolean isRenderingSprites() {
     return renderSprites;
   }
+
+  /**
+   * @return true if the dying unit animation has been completed
+   */
+  public boolean isDyingUnitAnimationCompleted() {
+    for (UnitSprite unitSprite : unitSprites.values()) {
+      if (unitSprite.isDying() && !unitSprite.anim.isStopped()) {
+        return false;
+      }
+    }
+
+    return true;
+  }
 }

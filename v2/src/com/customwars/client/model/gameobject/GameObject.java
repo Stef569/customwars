@@ -6,6 +6,11 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
+/**
+ * A Gameobject has a current state and supports sending events and keeping a list of event listeners.
+ * Objects that don't have a state but do support events should not extend this class
+ * but instead should implement the Observable Interface.
+ */
 public class GameObject implements Observable {
   protected PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
 
