@@ -1,10 +1,10 @@
 package slick;
 
 import com.customwars.client.App;
-import com.customwars.client.AppGUI;
 import com.customwars.client.Config;
 import com.customwars.client.SFX;
 import com.customwars.client.io.ResourceManager;
+import com.customwars.client.ui.GUI;
 import com.customwars.client.ui.state.CWInput;
 import com.customwars.client.ui.state.CWState;
 import com.customwars.client.ui.state.ControlBindingState;
@@ -133,9 +133,9 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
     } else if (cwInput.isToggleMusic(command)) {
       SFX.toggleMusic();
     } else if (cwInput.isToggleConsole(command)) {
-      AppGUI.toggleConsoleFrame();
+      GUI.toggleConsoleFrame();
     } else if (cwInput.isToggleEventViewer(command)) {
-      AppGUI.toggleEventFrame();
+      GUI.toggleEventFrame();
     } else if (cwInput.isToggleFPS(command)) {
       gameContainer.setShowFPS(!gameContainer.isShowingFPS());
     }

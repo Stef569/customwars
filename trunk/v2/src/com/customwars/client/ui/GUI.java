@@ -1,4 +1,4 @@
-package com.customwars.client;
+package com.customwars.client.ui;
 
 import bsh.EvalError;
 import bsh.Interpreter;
@@ -6,6 +6,7 @@ import bsh.util.JConsole;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.ui.hud.ModelEventScreen;
 import org.apache.log4j.Logger;
+import org.newdawn.slick.gui.GUIContext;
 
 import javax.swing.JFrame;
 
@@ -13,13 +14,17 @@ import javax.swing.JFrame;
  * Application wide gui's Contains a console and a game event viewer window.
  * Live objects can be added to the console
  */
-public class AppGUI {
-  private static final Logger logger = Logger.getLogger(AppGUI.class);
+public class GUI {
+  private static final Logger logger = Logger.getLogger(GUI.class);
   private static Interpreter bsh;
   private static JFrame eventFrame, consoleFrame;
   private static ModelEventScreen modelEventScreen;
+  private static GUIContext guiContext;
+  private static Camera2D camera;
 
-  public static void init() {
+  public static void init(GUIContext guiContext, Camera2D camera2D) {
+    GUI.guiContext = guiContext;
+    GUI.camera = camera2D;
     initConsole();
     initEventScreen();
   }
@@ -41,10 +46,12 @@ public class AppGUI {
   }
 
   public static void toggleConsoleFrame() {
-    if (consoleFrame.isVisible()) {
-      hideConsoleFrame();
-    } else {
-      showConsoleFrame();
+    if (consoleFrame != null) {
+      if (consoleFrame.isVisible()) {
+        hideConsoleFrame();
+      } else {
+        showConsoleFrame();
+      }
     }
   }
 
@@ -57,10 +64,12 @@ public class AppGUI {
   }
 
   public static void toggleEventFrame() {
-    if (eventFrame.isVisible()) {
-      hideEventFrame();
-    } else {
-      showEventFrame();
+    if (eventFrame != null) {
+      if (eventFrame.isVisible()) {
+        hideEventFrame();
+      } else {
+        showEventFrame();
+      }
     }
   }
 
@@ -85,7 +94,7 @@ public class AppGUI {
    * @param objScriptName The name to reference the object
    * @param obj           The object which methods should become accesible from the console
    */
-  public static void addConsoleScriptObj(String objScriptName, Object obj) {
+  public static void addLiveObjToConsole(String objScriptName, Object obj) {
     try {
       bsh.set(objScriptName, obj);
     } catch (EvalError ex) {
@@ -98,7 +107,7 @@ public class AppGUI {
    *
    * @param objScriptName The name that an object has been previously referenced to
    */
-  public static void removeConsoleScriptObj(String objScriptName) {
+  public static void removeLiveObjFromConsole(String objScriptName) {
     try {
       bsh.unset(objScriptName);
     } catch (EvalError ex) {
@@ -107,9 +116,21 @@ public class AppGUI {
   }
 
   /**
-   * @return a list of all references to live objects
+   * @return a list of names for each live objects
    */
-  public static String[] getAllObjConsoleReferences() {
-    return bsh.getNameSpace().getAllNames();
+  public static String[] getAllLiveObjectNames() {
+    return bsh.getNameSpace().getVariableNames();
+  }
+
+  /**
+   * Can the given rectangle fit to the screen, the 'screen' can be either the guiContext or the camera
+   * Check if the rectangle can fit to the guiContext this is useful if the camera is smaller then the screen
+   * If that is the case the rectangle still fits even outside of the camera bounds.
+   */
+  public static boolean canFitToScreen(int x, int y, int width, int height) {
+    int maxX = x + width;
+    int maxY = y + height;
+    boolean canFitToGuiContext = x > 0 && maxX < guiContext.getWidth() && y > 0 && maxY < guiContext.getHeight();
+    return canFitToGuiContext || camera.canFitWithin(x, y, width, height);
   }
 }

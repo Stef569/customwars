@@ -1,7 +1,6 @@
 package com.customwars.client.ui.state;
 
 import com.customwars.client.App;
-import com.customwars.client.AppGUI;
 import com.customwars.client.SFX;
 import com.customwars.client.controller.ControllerManager;
 import com.customwars.client.controller.CursorController;
@@ -21,10 +20,12 @@ import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.model.map.path.MoveTraverse;
 import com.customwars.client.ui.Camera2D;
+import com.customwars.client.ui.GUI;
 import com.customwars.client.ui.HUD;
 import com.customwars.client.ui.renderer.GameRenderer;
 import com.customwars.client.ui.sprite.TileSprite;
 import org.apache.log4j.Logger;
+import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
@@ -44,6 +45,7 @@ public class InGameState extends CWState implements PropertyChangeListener {
 
   // Model
   private Game game;
+  private Map<Tile> map;
   private boolean gameOver;
   private Fight fight;
   private InGameContext inGameContext;
@@ -80,14 +82,16 @@ public class InGameState extends CWState implements PropertyChangeListener {
   private void setGame(Game game, GameContainer container) {
     initGameListener(game);
     this.game = game;
+    this.map = game.getMap();
+    initCamera(map);
     initScriptObjects(game, resources);
-    initCamera(game.getMap());
-    MoveTraverse moveTraverse = new MoveTraverse(game.getMap());
+
+    MoveTraverse moveTraverse = new MoveTraverse(map);
     hud = new HUD(container);
 
     gameRenderer = new GameRenderer(game, camera, hud, moveTraverse);
     gameRenderer.loadResources(resources);
-    initCursors(resources, game.getMap());
+    initCursors(resources, map);
 
     inGameContext = new InGameContext();
     inGameContext.setMoveTraverse(moveTraverse);
@@ -115,15 +119,15 @@ public class InGameState extends CWState implements PropertyChangeListener {
    * We add various objects to beanshell, accessible by their name
    */
   private void initScriptObjects(Game game, ResourceManager resources) {
-    AppGUI.init();
-    AppGUI.setGame(game);
+    GUI.init(guiContext, camera);
+    GUI.setGame(game);
     for (Player p : game.getAllPlayers()) {
-      AppGUI.addConsoleScriptObj("p_" + ColorUtil.toString(p.getColor()), p);
+      GUI.addLiveObjToConsole("p_" + ColorUtil.toString(p.getColor()), p);
     }
 
-    AppGUI.addConsoleScriptObj("game", game);
-    AppGUI.addConsoleScriptObj("map", game.getMap());
-    AppGUI.addConsoleScriptObj("resources", resources);
+    GUI.addLiveObjToConsole("game", game);
+    GUI.addLiveObjToConsole("map", game.getMap());
+    GUI.addLiveObjToConsole("resources", resources);
   }
 
   private void initGameListener(Game game) {
@@ -181,7 +185,7 @@ public class InGameState extends CWState implements PropertyChangeListener {
       gameRenderer.update(delta);
 
       inGameContext.update(delta);
-      if (gameOver && inGameContext.isActionCompleted()) {
+      if (gameOver && isInputAllowed()) {
         changeGameState("GAME_OVER");
         gameOver = false;
       }
@@ -195,7 +199,9 @@ public class InGameState extends CWState implements PropertyChangeListener {
     // render can be invoked before init by a transition see StateBasedGame
     if (gameRenderer != null) {
       gameRenderer.render(g);
+      g.translate(-camera.getX(), -camera.getY());
       renderAttackDamagePercentage(g);
+      g.resetTransform();
     }
   }
 
@@ -211,16 +217,57 @@ public class InGameState extends CWState implements PropertyChangeListener {
       if (defender != null) {
         fight.initFight(attacker, defender);
         int tileSize = game.getMap().getTileSize();
-        int x = cursorLocation.getCol() * tileSize;
-        int y = cursorLocation.getRow() * tileSize;
+        int cursorX = cursorLocation.getCol() * tileSize + tileSize / 2;
+        int cursorY = cursorLocation.getRow() * tileSize + 5;
         int dmgPercentage = fight.getAttackDamagePercentage();
-        g.drawString("Damage:" + dmgPercentage, x + 50, y - 50);
+
+        String dmgTxt = "Damage:" + dmgPercentage + "%";
+        int fontWidth = g.getFont().getWidth(dmgTxt);
+        int fontHeight = g.getFont().getHeight(dmgTxt);
+
+        final int BOX_MARGIN = 2;
+        final int CURSOR_OFFSET = 64;
+
+        int boxX = cursorX + CURSOR_OFFSET - BOX_MARGIN;
+        int boxY = cursorY - CURSOR_OFFSET - BOX_MARGIN;
+        int totalWidth = fontWidth + BOX_MARGIN * 2;
+        int totalHeight = fontHeight + BOX_MARGIN * 2;
+
+        // If the damage percentage does not fit to the gui make sure that it does
+        // by setting the x,y away from the corner
+        if (!GUI.canFitToScreen(boxX, boxY, totalWidth, totalHeight)) {
+          Direction quadrant = map.getQuadrantFor(cursorLocation);
+          switch (quadrant) {
+            case NORTHEAST:
+              boxX = cursorX - CURSOR_OFFSET - BOX_MARGIN;
+              boxY = cursorY + CURSOR_OFFSET - BOX_MARGIN;
+              break;
+            case NORTHWEST:
+              boxX = cursorX + CURSOR_OFFSET - BOX_MARGIN;
+              boxY = cursorY + CURSOR_OFFSET - BOX_MARGIN;
+              break;
+            case SOUTHEAST:
+              boxX = cursorX - CURSOR_OFFSET - BOX_MARGIN;
+              boxY = cursorY - CURSOR_OFFSET - BOX_MARGIN;
+              break;
+            case SOUTHWEST:
+              boxX = cursorX + CURSOR_OFFSET - BOX_MARGIN;
+              boxY = cursorY - CURSOR_OFFSET - BOX_MARGIN;
+              break;
+          }
+        }
+
+        Color prevColor = g.getColor();
+        g.setColor(new Color(0, 0, 0, 0.4f));
+        g.fillRoundRect(boxX, boxY, totalWidth, totalHeight, 2);
+        g.setColor(prevColor);
+        g.drawString(dmgTxt, boxX + BOX_MARGIN, boxY + BOX_MARGIN);
       }
     }
   }
 
   public void controlPressed(Command command, CWInput cwInput) {
-    if (entered) {
+    if (entered && isInputAllowed()) {
       if (cwInput.isCancel(command)) {
         if (inGameContext.canUndo()) {
           gameControl.undo();
@@ -285,6 +332,15 @@ public class InGameState extends CWState implements PropertyChangeListener {
     if (cwInput.isRight(command)) {
       cursorControl.moveCursor(Direction.EAST);
     }
+  }
+
+  /**
+   * Input is not allowed when an animation or action is still in progress
+   *
+   * @return If the gui is ready to process input
+   */
+  private boolean isInputAllowed() {
+    return gameRenderer.isDyingUnitAnimationCompleted() || inGameContext.isActionCompleted();
   }
 
   public void mouseWheelMoved(int newValue) {

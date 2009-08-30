@@ -171,17 +171,11 @@ public class HUD {
     x = popUpLocation.getCol() * tileSize + tileSize / 2;
     y = popUpLocation.getRow() * tileSize + tileSize / 2;
 
-    if (!canFitToScreen(popup, x, y)) {
+    if (!GUI.canFitToScreen(x, y, popup.getWidth(), popup.getHeight())) {
       x = tileSize / 2;
       y = tileSize / 2;
     }
     showPopUp(x, y, componentListener);
-  }
-
-  private boolean canFitToScreen(PopupMenu popup, int x, int y) {
-    int maxX = x + popup.getWidth();
-    int maxY = y + popup.getHeight();
-    return maxY < camera.getWidth() && maxX < camera.getHeight();
   }
 
   private PopupMenu buildPopupMenu(List<MenuItem> items) {
