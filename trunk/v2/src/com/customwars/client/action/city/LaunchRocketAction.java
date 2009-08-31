@@ -16,6 +16,7 @@ public class LaunchRocketAction extends DirectAction {
   private MapRenderer mapRenderer;
   private City city;
   private Unit unit;
+  private InGameContext context;
 
   public LaunchRocketAction(City city, Unit unit) {
     super("Launch Rocket", false);
@@ -25,11 +26,14 @@ public class LaunchRocketAction extends DirectAction {
 
   @Override
   protected void init(InGameContext context) {
+    this.context = context;
     mapRenderer = context.getMapRenderer();
   }
 
   @Override
   public void invokeAction() {
+    if (context.isTrapped()) return;
+
     city.launchRocket(unit);
     List<Location> effectRange = mapRenderer.getCursorEffectRange();
     mapRenderer.setExplosionArea(effectRange);

@@ -16,6 +16,7 @@ public class FireFlareAction extends DirectAction {
   private Tile flareCenter;
   private int flareRange;
   private Map<Tile> map;
+  private InGameContext context;
 
   public FireFlareAction(Tile flareCenter) {
     super("Fire Flare", false);
@@ -24,12 +25,15 @@ public class FireFlareAction extends DirectAction {
 
   @Override
   protected void init(InGameContext context) {
+    this.context = context;
     this.map = context.getGame().getMap();
     flareRange = App.getInt("plugin.flare_range");
   }
 
   @Override
   protected void invokeAction() {
+    if (context.isTrapped()) return;
+
     for (Tile t : map.getSurroundingTiles(flareCenter, 1, flareRange)) {
       t.setFogged(false);
     }
