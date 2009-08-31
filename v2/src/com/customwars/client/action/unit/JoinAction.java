@@ -13,6 +13,7 @@ import com.customwars.client.ui.state.InGameContext;
 public class JoinAction extends DirectAction {
   private ControllerManager controllerManager;
   private Unit target, unit;
+  private InGameContext context;
 
   public JoinAction(Unit unit, Unit target) {
     super("Join", false);
@@ -21,10 +22,13 @@ public class JoinAction extends DirectAction {
   }
 
   protected void init(InGameContext context) {
+    this.context = context;
     controllerManager = context.getControllerManager();
   }
 
   protected void invokeAction() {
+    if (context.isTrapped()) return;
+
     //Add Money if joining cause the target to go over max HP
     int excessHP = unit.getHp() + target.getHp() - target.getMaxHp();
 

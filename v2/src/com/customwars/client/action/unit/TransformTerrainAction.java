@@ -10,6 +10,7 @@ import com.customwars.client.ui.state.InGameContext;
 public class TransformTerrainAction extends DirectAction {
   private Unit unit;
   private Tile tile;
+  private InGameContext context;
 
   public TransformTerrainAction(Unit unit, Tile tile) {
     super("Transform terrain", false);
@@ -19,10 +20,12 @@ public class TransformTerrainAction extends DirectAction {
 
   @Override
   protected void init(InGameContext context) {
+    this.context = context;
   }
 
   @Override
   protected void invokeAction() {
+    if (context.isTrapped()) return;
     Terrain tranformTo = getTransformToTerrain();
     tile.setTerrain(tranformTo);
   }
