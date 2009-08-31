@@ -403,13 +403,28 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   }
 
   /**
-   * This unit is the supplier
+   * This unit is the supplier, and returns if it can supply the given unit
+   * #1 Can this unit supply at all
+   * #2 Can we add supplies or ammo to one of the weapons of the unit
+   * #3 Is the supplier and the unit owned by the same player
    *
    * @param unit the unit that is going to be supplied by this unit
    * @return Can this unit supply the given unit
    */
   public boolean canSupply(Unit unit) {
-    return canSupply && unit != null && unit.getSuppliesPercentage() != 100 && owner == unit.getOwner();
+    return canSupply && unit != null && !isFullySupplied(unit) && owner == unit.getOwner();
+  }
+
+  /**
+   * return true when
+   * #1 the unit is 100% supplied
+   * #2 The weapons of the unit both have 100% ammo, when one of the weapons is null it has 100% ammo.
+   */
+  private boolean isFullySupplied(Unit unit) {
+    boolean fullSupplies = unit.getSuppliesPercentage() == 100;
+    boolean priWeaponAmmoIsFull = unit.hasPrimaryWeapon() ? unit.getPrimaryWeapon().getAmmoPercentage() == 100 : true;
+    boolean secWeaponAmmiIsFull = unit.hasSecondaryWeapon() ? unit.getSecondaryWeapon().getAmmoPercentage() == 100 : true;
+    return fullSupplies && priWeaponAmmoIsFull && secWeaponAmmiIsFull;
   }
 
   public void heal(int healRate) {
