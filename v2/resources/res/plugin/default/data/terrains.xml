@@ -162,8 +162,18 @@
     <terrain name="Coast" id="54" type="Ocean">
         <connect>North, East, South, SouthWest, West, NorthWest</connect>
     </terrain>
-
-    <!-- Skipping 4 shoals -->
+    <terrain name="Shoal" id="55" type="Ocean">
+        <connect>North, East</connect>
+    </terrain>
+    <terrain name="Shoal" id="56" type="Ocean">
+        <connect>East, South</connect>
+    </terrain>
+    <terrain name="Shoal" id="57" type="Ocean">
+        <connect>South, West</connect>
+    </terrain>
+    <terrain name="Shoal" id="58" type="Ocean">
+        <connect>North, West</connect>
+    </terrain>
     <terrain name="Coast" id="59" type="Ocean">
         <connect>North, East, SouthEast, South, SouthWest, West, NorthWest</connect>
     </terrain>
@@ -179,7 +189,18 @@
     <terrain name="Coast" id="63" type="Ocean">
         <connect>North, East, SouthEast, South, SouthWest, West</connect>
     </terrain>
-    <!-- Skipping 4 shoals -->
+    <terrain name="Shoal" id="64" type="Ocean">
+        <connect>North, East, West</connect>
+    </terrain>
+    <terrain name="Shoal" id="65" type="Ocean">
+        <connect>North, East, South</connect>
+    </terrain>
+    <terrain name="Shoal" id="66" type="Ocean">
+        <connect>East, South, West</connect>
+    </terrain>
+    <terrain name="Shoal" id="67" type="Ocean">
+        <connect>North, South, West</connect>
+    </terrain>
     <!-- Row 5 -->
     <terrain name="Coast" id="68" type="Ocean">
         <connect>North, NorthEast, East, SouthEast, South, West</connect>

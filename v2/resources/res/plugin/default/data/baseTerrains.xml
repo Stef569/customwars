@@ -7,7 +7,6 @@ moveCosts have the following order
   Tires
   Air
   Naval
-  Transport
 -->
 <list>
     <terrain name="Grass" id="0">
@@ -92,6 +91,18 @@ moveCosts have the following order
         <description>Fast flowing river, only inf and mech can pass</description>
     </terrain>
     <terrain name="Ocean" id="30">
+        <defenseBonus>0</defenseBonus>
+        <height>-2</height>
+        <moveCosts>
+            <int>127</int>
+            <int>127</int>
+            <int>127</int>
+            <int>127</int>
+            <int>1</int>
+            <int>1</int>
+        </moveCosts>
+    </terrain>
+    <terrain name="Shoal" id="65">
         <defenseBonus>0</defenseBonus>
         <height>-2</height>
         <moveCosts>
