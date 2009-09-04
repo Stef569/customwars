@@ -10,8 +10,10 @@ import org.apache.log4j.Logger;
 import tools.Args;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -131,13 +133,19 @@ public class TerrainConnector {
     perfectAdjacentMatchingTerrains = getTerrainsThatConnectsToAllDirections(tileData.getAdjacentDirections());
     matchingTerrains = getTerrainsThatConnectsToOneofDirections();
     specialMatchingTerrain = getSpecialTerrain();
-    printMatches();
+    //printMatches();
 
     return getBestMatchingTerrain();
   }
 
   private Terrain getBestMatchingTerrain() {
     Terrain bestMatch = null;
+
+    if (isShoal(terrainToAdd)) {
+      removeAllNonShoalTerrainsFrom(perfectMatchingTerrains);
+      removeAllNonShoalTerrainsFrom(perfectAdjacentMatchingTerrains);
+      removeAllNonShoalTerrainsFrom(matchingTerrains);
+    }
 
     if (specialMatchingTerrain != null)
       bestMatch = specialMatchingTerrain;
@@ -149,11 +157,26 @@ public class TerrainConnector {
       bestMatch = matchingTerrains.get(0);
     }
 
-    // If at this point no match has been found, default back to the user chosen terrain
+    // If at this point no match has been found, default back to the terrain to add
     if (bestMatch == null) {
       bestMatch = terrainToAdd;
     }
     return bestMatch;
+  }
+
+  private void removeAllNonShoalTerrainsFrom(Collection<Terrain> collection) {
+    Iterator<Terrain> it = collection.iterator();
+
+    while (it.hasNext()) {
+      Terrain terrain = it.next();
+      if (!isShoal(terrain)) {
+        it.remove();
+      }
+    }
+  }
+
+  private boolean isShoal(Terrain terrain) {
+    return terrain.getName().equalsIgnoreCase("shoal");
   }
 
   /**
@@ -185,6 +208,7 @@ public class TerrainConnector {
     return result;
   }
 
+  @SuppressWarnings("unchecked")
   private Terrain getSpecialTerrain() {
     Terrain specialTerrain = null;
     if (terrainToAdd.isSameType("Road")) {
