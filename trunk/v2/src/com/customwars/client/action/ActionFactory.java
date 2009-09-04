@@ -87,7 +87,7 @@ public class ActionFactory {
     joinActions.add(new InitAction());
     joinActions.add(new MoveAnimatedAction(unit.getLocation(), target.getLocation()));
     joinActions.add(new JoinAction(unit, target));
-    joinActions.add(new WaitAction(unit));
+    joinActions.add(new WaitAction(target));
     joinActions.add(new ClearInGameStateAction());
     return joinActions;
   }
