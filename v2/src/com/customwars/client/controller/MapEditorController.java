@@ -128,6 +128,8 @@ public class MapEditorController {
     } else {
       if (t.getTerrain() instanceof City) {
         getControl(City.class).removeFromTile(t);
+      } else {
+        getControl(Terrain.class).removeFromTile(t);
       }
     }
   }

@@ -26,7 +26,7 @@ import java.util.List;
 
 /**
  * In this state the user can create and save maps
- * There are 3 panels
+ * There are 3 select panels
  * one for adding terrains
  * one for adding cities
  * one for adding units
@@ -70,11 +70,11 @@ public class MapEditorState extends CWState {
   private void renderControls(Graphics g) {
     int LEFT_MARGIN = 350;
     g.drawString("The Controls:", LEFT_MARGIN, 10);
-    g.drawString("Fill: " + cwInput.getControlsAsText(CWInput.fillMap), LEFT_MARGIN, 20);
-    g.drawString("Add: " + cwInput.getControlsAsText(CWInput.select), LEFT_MARGIN, 30);
-    g.drawString("Delete object: " + cwInput.getControlsAsText(CWInput.delete), LEFT_MARGIN, 40);
-    g.drawString("Change panel: " + cwInput.getControlsAsText(CWInput.nextPage), LEFT_MARGIN, 50);
-    g.drawString("Recolor: " + cwInput.getControlsAsText(CWInput.recolor), LEFT_MARGIN, 60);
+    g.drawString("Fill: " + cwInput.getControlsAsText(CWInput.fillMap), LEFT_MARGIN, 22);
+    g.drawString("Add: " + cwInput.getControlsAsText(CWInput.select), LEFT_MARGIN, 34);
+    g.drawString("Delete object: " + cwInput.getControlsAsText(CWInput.delete), LEFT_MARGIN, 46);
+    g.drawString("Change panel: " + cwInput.getControlsAsText(CWInput.nextPage), LEFT_MARGIN, 58);
+    g.drawString("Recolor: " + cwInput.getControlsAsText(CWInput.recolor), LEFT_MARGIN, 70);
   }
 
   public void update(GameContainer container, int delta) throws SlickException {

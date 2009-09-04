@@ -60,7 +60,8 @@ public abstract class SelectPanel extends BasicComponent implements ComponentLis
 
   public void update(int delta) {
     Input input = container.getInput();
-    if (isWithinComponentY(input.getMouseY())) {
+
+    if (!canFitToContainer() && isWithinComponentY(input.getMouseY())) {
       timeTaken += delta;
       if (timeTaken >= panelScrollDelay) {
         boolean nearLeftEdge = input.getMouseX() < scrollMargin;
@@ -74,6 +75,10 @@ public abstract class SelectPanel extends BasicComponent implements ComponentLis
         }
       }
     }
+  }
+
+  private boolean canFitToContainer() {
+    return getWidth() <= container.getWidth() && getHeight() <= container.getHeight();
   }
 
   private boolean isWithinComponentY(int y) {
