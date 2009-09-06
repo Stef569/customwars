@@ -172,8 +172,8 @@ public class HUD {
     y = popUpLocation.getRow() * tileSize + tileSize / 2;
 
     if (!GUI.canFitToScreen(x, y, popup.getWidth(), popup.getHeight())) {
-      x = tileSize / 2;
-      y = tileSize / 2;
+      x = camera.getX() + tileSize / 2;
+      y = camera.getY() + tileSize / 2;
     }
     showPopUp(x, y, componentListener);
   }
