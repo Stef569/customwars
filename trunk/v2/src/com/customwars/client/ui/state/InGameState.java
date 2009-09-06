@@ -335,12 +335,12 @@ public class InGameState extends CWState implements PropertyChangeListener {
   }
 
   /**
-   * Input is not allowed when an animation or action is still in progress
+   * Input is allowed when all animations and actions are finished
    *
    * @return If the gui is ready to process input
    */
   private boolean isInputAllowed() {
-    return gameRenderer.isDyingUnitAnimationCompleted() || inGameContext.isActionCompleted();
+    return gameRenderer.isDyingUnitAnimationCompleted() && inGameContext.isActionCompleted();
   }
 
   public void mouseWheelMoved(int newValue) {
