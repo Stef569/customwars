@@ -3,13 +3,14 @@ package com.customwars.client.model.gameobject;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
 /**
- * A database(cache) of cities that can be used in the game. each City is mapped to an unique City ID.
- * The Cities in the cache contain values that always remain the same(static values) like: description, maxHP,...
- * getCity(id) will create a copy of the City in the cache and return it.
+ * A database(cache) of cities that can be used in the game. each city is mapped to an unique city ID.
+ * The cities in the cache contain values that always remain the same(static values) like: description, maxHP,...
+ * getCity(id) will create a deep copy of the city in the cache and return it.
  *
  * When cities are added init is invoked on them, this allows the city to validate it's values before it is used.
  * Each time a city is retrieved from this Factory reset is invoked, this allows the city to
@@ -19,6 +20,11 @@ import java.util.List;
  */
 public class CityFactory {
   private static HashMap<Integer, City> cities = new HashMap<Integer, City>();
+  private static final Comparator<City> SORT_CITY_ON_ID = new Comparator<City>() {
+    public int compare(City cityA, City cityB) {
+      return cityA.getID() - cityB.getID();
+    }
+  };
 
   public static void addCities(Collection<City> cities) {
     for (City city : cities) {
@@ -50,6 +56,7 @@ public class CityFactory {
       int cityID = city.getID();
       allCities.add(getCity(cityID));
     }
+    Collections.sort(allCities, SORT_CITY_ON_ID);
     return Collections.unmodifiableList(allCities);
   }
 

@@ -3,18 +3,29 @@ package com.customwars.client.model.gameobject;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
 /**
- * Holds every weapon used in the game, getWeapon returns deep copies
- * Weapons are inited and reset so they are ready to use.
+ * A database(cache) of weapons. each weapon is mapped to an unique weapon ID.
+ * The weapons in the cache contain values that always remain the same(static values) like: maxAmmo,...
+ * getWeapon(id) will create a deep copy of the weapon in the cache and return it.
+ *
+ * When weapons are added init is invoked on them, this allows the weapon to validate it's values before it is used.
+ * Each time a weapon is retrieved from this Factory reset is invoked, this allows the weapon to
+ * put dynamic values to max and put values to default.
  *
  * @author stefan
  */
 public class WeaponFactory {
   private static HashMap<Integer, Weapon> weapons = new HashMap<Integer, Weapon>();
+  private static final Comparator<Weapon> SORT_WEAPON_ON_ID = new Comparator<Weapon>() {
+    public int compare(Weapon weaponA, Weapon weaponB) {
+      return weaponA.getID() - weaponB.getID();
+    }
+  };
 
   public static void addWeapons(Collection<Weapon> weapons) {
     for (Weapon weapon : weapons) {
@@ -76,12 +87,16 @@ public class WeaponFactory {
     return weapon;
   }
 
+  /**
+   * @return A Collection of all the weapons in this Factory sorted on weaponID
+   */
   public static Collection<Weapon> getAllWeapons() {
-    List<Weapon> unitCopies = new ArrayList<Weapon>();
+    List<Weapon> weaponCopies = new ArrayList<Weapon>();
     for (Weapon weapon : weapons.values()) {
-      unitCopies.add(getWeapon(weapon.getID()));
+      weaponCopies.add(getWeapon(weapon.getID()));
     }
-    return Collections.unmodifiableList(unitCopies);
+    Collections.sort(weaponCopies, SORT_WEAPON_ON_ID);
+    return Collections.unmodifiableList(weaponCopies);
   }
 
   public static Weapon getRandomWeapon() {
