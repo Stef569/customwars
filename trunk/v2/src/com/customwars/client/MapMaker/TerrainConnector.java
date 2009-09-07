@@ -11,8 +11,6 @@ import tools.Args;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -24,11 +22,6 @@ import java.util.List;
  */
 public class TerrainConnector {
   private static final Logger logger = Logger.getLogger(TerrainConnector.class);
-  private static final Comparator<Terrain> TERRAIN_SORT_ON_ID = new Comparator<Terrain>() {
-    public int compare(Terrain terrainA, Terrain terrainB) {
-      return terrainA.getID() - terrainB.getID();
-    }
-  };
 
   private TileMap<Tile> map;
   private Terrain terrainToAdd;     // The terrain that the user wants to add
@@ -45,7 +38,6 @@ public class TerrainConnector {
   public TerrainConnector(TileMap<Tile> map) {
     this.map = map;
     this.terrains = new ArrayList<Terrain>(TerrainFactory.getTerrains());
-    Collections.sort(terrains, TERRAIN_SORT_ON_ID);
   }
 
   /**

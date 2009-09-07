@@ -3,18 +3,23 @@ package com.customwars.client.model.gameobject;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
 /**
  * A Cache of Terrain Objects
  * when a terrain is requested using getTerrain(terrain ID)
- * We simply return a terrain reference from the terrains cache.
+ * A terrain reference from the terrains cache is returned.
  */
 public class TerrainFactory {
   private static HashMap<Integer, Terrain> terrains = new HashMap<Integer, Terrain>();
   private static List<Terrain> baseTerrains = new ArrayList<Terrain>();
-
+  private static final Comparator<Terrain> SORT_TERRAIN_ON_ID = new Comparator<Terrain>() {
+    public int compare(Terrain terrainA, Terrain terrainB) {
+      return terrainA.getID() - terrainB.getID();
+    }
+  };
 
   public static void addTerrains(Collection<Terrain> terrains) {
     for (Terrain terrain : terrains) {
@@ -35,13 +40,15 @@ public class TerrainFactory {
   }
 
   /**
-   * Add the terrains from the terrains Map by using the baseTerrain keys
-   * to the baseTerrains Map
+   * Use the id of each dummy base terrain in the baseTerrainCollection
+   * to retrieve the real base terrain from the terrains collection and
+   * to add the real base terrain to the baseTerrain collection
    */
-  public static void addBaseTerrains(Collection<Terrain> baseTerrains) {
-    for (Terrain baseTerrain : baseTerrains) {
-      Terrain terrain = terrains.get(baseTerrain.getID());
-      TerrainFactory.baseTerrains.add(terrain);
+  public static void addBaseTerrains(Collection<Terrain> dummyBaseTerrainCollection) {
+    for (Terrain dummyBaseTerrain : dummyBaseTerrainCollection) {
+      int dummyBaseTerrainID = dummyBaseTerrain.getID();
+      Terrain baseTerrain = terrains.get(dummyBaseTerrainID);
+      baseTerrains.add(baseTerrain);
     }
   }
 
@@ -90,11 +97,20 @@ public class TerrainFactory {
     return terrains.containsKey(id);
   }
 
+  /**
+   * @return A Collection of all the terrains in this Factory sorted on terrainID
+   */
   public static Collection<Terrain> getTerrains() {
-    return Collections.unmodifiableCollection(terrains.values());
+    List<Terrain> allTerrains = new ArrayList<Terrain>(terrains.values());
+    Collections.sort(allTerrains, SORT_TERRAIN_ON_ID);
+    return Collections.unmodifiableCollection(allTerrains);
   }
 
+  /**
+   * @return A Collection of all the base terrains in this Factory sorted on terrainID
+   */
   public static List<Terrain> getBaseTerrains() {
+    Collections.sort(baseTerrains, SORT_TERRAIN_ON_ID);
     return Collections.unmodifiableList(baseTerrains);
   }
 }
