@@ -32,13 +32,17 @@ public class JoinAction extends DirectAction {
     //Add Money if joining cause the target to go over max HP
     int excessHP = unit.getHp() + target.getHp() - target.getMaxHp();
 
-    if (excessHP > 0)
+    if (excessHP > 0) {
       target.getOwner().addToBudget((excessHP * unit.getPrice()) / unit.getMaxHp());
+    }
 
     // add HP, supplies, ammo to target
     target.addHp(unit.getHp());
     target.addSupplies(unit.getSupplies());
-    target.addAmmo(unit.getAvailableWeapon().getAmmo());
+
+    if (unit.getAvailableWeapon() != null) {
+      target.addAmmo(unit.getAvailableWeapon().getAmmo());
+    }
 
     // todo make the dived state of the unit being moved onto the same as the one moving
     //    target.setDived(activeUnit.isDived());
