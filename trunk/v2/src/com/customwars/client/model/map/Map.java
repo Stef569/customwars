@@ -1,5 +1,6 @@
 package com.customwars.client.model.map;
 
+import com.customwars.client.model.ArmyBranch;
 import com.customwars.client.model.TurnHandler;
 import com.customwars.client.model.fight.Attacker;
 import com.customwars.client.model.game.Player;
@@ -23,7 +24,7 @@ import java.util.Properties;
 
 /**
  * A Game map extends tileMap adding game specific fields
- * Handles Fog, paths, units,
+ * Handles Fog, paths and units
  * Zones: move zone, attack zone
  * Surrounding information: suppliables, enemies in a Range
  *
@@ -33,8 +34,7 @@ import java.util.Properties;
  * AUTHOR -> who made this map
  * DESCRIPTION -> Small text describing what this map is all about
  *
- * Each time the turn starts each tile fog value is reset to the Players vision.
- * Each unit that the player controls is made active.
+ * At each start of a turn the map is reset see {@link #resetMap(Player)}
  *
  * @author stefan
  */
@@ -71,6 +71,7 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
     fillMap(cols, rows, startTerrain);
   }
 
+  @SuppressWarnings("unchecked")
   private void fillMap(int cols, int rows, Terrain terrain) {
     for (int row = 0; row < rows; row++) {
       for (int col = 0; col < cols; col++) {
@@ -91,6 +92,7 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
     copyMapData(otherMap);
   }
 
+  @SuppressWarnings("unchecked")
   private void copyMapData(Map<Tile> otherMap) {
     for (Tile t : otherMap.getAllTiles()) {
       int col = t.getCol();
@@ -120,6 +122,12 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
     }
   }
 
+  public void fillWithTerrain(Terrain terrain) {
+    for (Tile t : getAllTiles()) {
+      t.setTerrain(terrain);
+    }
+  }
+
   /**
    * Start the turn by resetting the map to the given player
    */
@@ -144,8 +152,9 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
   }
 
   /**
-   * #1 set Game Object State: not owned units -> IDLE, owned unit -> ACTIVE.
-   * #2 Reset the action the owned unit was performing one turn ago.
+   * For each unit
+   * #1 set Game Object State: not owned by player -> IDLE, owned by player -> ACTIVE.
+   * #2 Reset the action(Capturing, submerged) the owned unit was performing one turn ago.
    *
    * @param player The player who's units should be reset
    */
@@ -213,6 +222,9 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
     return units;
   }
 
+  /**
+   * Init the move and attack zone of each unit owned by the given player
+   */
   public void initUnitZonesForPlayer(Player player) {
     for (Unit unit : player.getArmy()) {
       buildMovementZone(unit);
@@ -222,29 +234,39 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
 
   /**
    * Build a zone in which the mover can make a move and set it to the mover
-   * If the mover cannot move set the mover location as the moveZone
+   * If the mover is within a transport then the movezone is null
+   * If the mover cannot move then the current mover location is set as the moveZone
    */
   public void buildMovementZone(Mover mover) {
     List<Location> moveZone;
-    if (mover.canMove()) {
-      moveZone = pathFinder.getMovementZone(mover);
+
+    if (mover.getLocation() instanceof Unit) {
+      moveZone = null;
     } else {
-      moveZone = Arrays.asList(mover.getLocation());
+      if (mover.canMove()) {
+        moveZone = pathFinder.getMovementZone(mover);
+      } else {
+        moveZone = Arrays.asList(mover.getLocation());
+      }
     }
     mover.setMoveZone(moveZone);
   }
 
   /**
-   * Build a zone in which the Attacker can attack
-   * and set it to the attacker
+   * Build a zone in which the Attacker can attack and set it to the attacker
+   * If the attacker is within a transport then the attackzone is null
    */
   public void buildAttackZone(Attacker attacker) {
     List<Location> attackZone = new ArrayList<Location>();
     Range attackRange = attacker.getAttackRange();
 
-    for (Tile t : getAllTiles()) {
-      if (inFireRange(attacker, t, attackRange)) {
-        attackZone.add(t);
+    if (attacker.getLocation() instanceof Unit) {
+      attackZone = null;
+    } else {
+      for (Tile t : getAllTiles()) {
+        if (inFireRange(attacker, t, attackRange)) {
+          attackZone.add(t);
+        }
       }
     }
     attacker.setAttackZone(attackZone);
@@ -277,8 +299,8 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
   }
 
   /**
-   * Get a path of compass directions for the Mover to get to the destination
-   * Each step in the path has a Direction relative to the previous location.
+   * Get a path of directions(N,E,S,W) from the mover location to the destination
+   * Each Direction in the path is relative to the previous location.
    * In case of illegal data an empty list is returned
    */
   public List<Direction> getDirectionsPath(Mover mover, Location destination) {
@@ -324,18 +346,31 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
     for (Tile t : getAllTiles()) {
       Unit unit = getUnitOn(t);
       City city = getCityOn(t);
-      int visionBonus = t.getTerrain().getVision();
 
       if (unit != null && unit.getOwner().isAlliedWith(player)) {
+        int visionBonus = getUnitVisionBonus(unit);
         int vision = unit.getVision();
         clearSight(t, vision + visionBonus);
       }
 
       if (city != null && city.getOwner().isAlliedWith(player)) {
         int vision = city.getVision();
-        clearSight(t, vision + visionBonus);
+        clearSight(t, vision);
       }
     }
+  }
+
+  private int getUnitVisionBonus(Unit unit) {
+    int visionBonus = 0;
+    Tile t = (Tile) unit.getLocation();
+
+    if (unit.getArmyBranch() == ArmyBranch.LAND) {
+      Terrain terrain = t.getTerrain();
+      if (terrain.getHeight() >= 2) {
+        visionBonus = terrain.getVision();
+      }
+    }
+    return visionBonus;
   }
 
   /**
@@ -386,13 +421,12 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
     Unit unit = getUnitOn(tileToBeFogged);
     Terrain terrain = tileToBeFogged.getTerrain();
 
-    boolean hiddenUnit = unit != null && unit.isHidden();
     boolean hiddenTerrain = terrain.isHidden();
 
     // If directly next to the tile we can see everything
     boolean adjacent = isAdjacent(tileToBeFogged, baseTile);
 
-    return (!hiddenUnit && !hiddenTerrain) || adjacent;
+    return (!hiddenTerrain) || adjacent;
   }
 
   public void setFogOfWarOn(boolean fogOfWarOn) {

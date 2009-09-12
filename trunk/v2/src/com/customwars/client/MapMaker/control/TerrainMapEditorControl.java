@@ -7,7 +7,6 @@ import com.customwars.client.model.gameobject.TerrainFactory;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.model.map.TileMap;
-import tools.MapUtil;
 
 public class TerrainMapEditorControl implements MapEditorControl {
   private TerrainConnector terrainConnector;
@@ -28,7 +27,7 @@ public class TerrainMapEditorControl implements MapEditorControl {
   }
 
   public void fillMap(Map<Tile> map, int terrainID) {
-    MapUtil.fillWithTerrain(map, getTerrain(terrainID));
+    map.fillWithTerrain(getTerrain(terrainID));
   }
 
   private Terrain getTerrain(int terrainID) {

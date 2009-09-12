@@ -30,7 +30,7 @@ public class TestData {
   public static final int MOVE_NAVAL = 5;
 
   public static final int PLAIN = 0;
-  public static final int SEA = 4;
+  public static final int SEA = 30;
   public static final int MOUNTAIN = 17;
   public static final int VERTICAL_RIVER = 20;
 
@@ -57,6 +57,7 @@ public class TestData {
   public static final int MAX_UNIT_SUPPLIES = 20;
   private static final List<Direction> cityRoadConnection = Arrays.asList(Direction.SOUTH);
   private static final List<ArmyBranch> ARMY_BRANCH_LAND_ONLY = Arrays.asList(ArmyBranch.LAND);
+  private static final List<ArmyBranch> ARMY_BRANCH_NAVAL_ONLY = Arrays.asList(ArmyBranch.NAVAL);
 
   // Movecosts: INF, MECH, TREAD, TIRES, AIR, NAVAL
   private static int IMP = Terrain.IMPASSIBLE;
@@ -87,14 +88,17 @@ public class TestData {
   private static Weapon artilleryCannon = new Weapon(4, "Cannon", "nonee", new Range(2, 3), 9, false, ARMY_BRANCH_LAND_ONLY);
 
   // City
-  private static City base = new City(0, "Road", "Base", "", 0, 0, plainMoveCosts, 1,
-    true, cityRoadConnection, ARMY_BRANCH_LAND_ONLY, Arrays.asList(INF, MECH), null, 20, CITY_HEAL_RATE);
+  private static City base = new City(0, "Road", "Base", "", 0, 0, plainMoveCosts, 1, true,
+    cityRoadConnection, ARMY_BRANCH_LAND_ONLY, Arrays.asList(INF, MECH), null, 20, CITY_HEAL_RATE);
 
   private static City factory = new City(1, "Road", "Factory", "", 0, 0, plainMoveCosts, 1, true,
     cityRoadConnection, ARMY_BRANCH_LAND_ONLY, Arrays.asList(INF, MECH), ARMY_BRANCH_LAND_ONLY, 20, CITY_HEAL_RATE);
 
   private static City hq = new City(4, "Road", "HQ", "", 0, 0, plainMoveCosts, 1, true,
     cityRoadConnection, ARMY_BRANCH_LAND_ONLY, Arrays.asList(INF, MECH), null, 20, CITY_HEAL_RATE);
+
+  private static City port = new City(PORT, "Road", "Port", "", 0, 0, plainMoveCosts, 1, true,
+    cityRoadConnection, ARMY_BRANCH_NAVAL_ONLY, Arrays.asList(INF, MECH), ARMY_BRANCH_NAVAL_ONLY, 20, CITY_HEAL_RATE);
 
   private static City silo = new City(5, "Road", "Missle Silo", "", 0, 0, plainMoveCosts, 1, true,
     cityRoadConnection, null, null, null, 20, CITY_HEAL_RATE);
@@ -131,6 +135,7 @@ public class TestData {
     CityFactory.addCity(base);
     CityFactory.addCity(factory);
     CityFactory.addCity(hq);
+    CityFactory.addCity(port);
     CityFactory.addCity(silo);
 
     UnitFight.setBaseDMG(initBaseDmg());
