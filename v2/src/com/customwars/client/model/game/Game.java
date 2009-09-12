@@ -1,5 +1,6 @@
 package com.customwars.client.model.game;
 
+import com.customwars.client.model.ArmyBranch;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Map;
@@ -8,6 +9,7 @@ import tools.Args;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -144,22 +146,40 @@ public class Game extends TurnBasedGame implements PropertyChangeListener {
   }
 
   /**
-   * Search for a friendly city with a unit on the same tile.
-   * try to supply and heal the unit on the city
+   * Search for a friendly city with a unit on the same tile -> Supply and heal the unit on the city
+   * Search for air, naval units that have 0 supplies -> Destroy them
    */
   private void checkSupplyConditions(Player player) {
+    List<Unit> unitsToDestroy = new ArrayList<Unit>();
+
     for (Unit unit : player.getArmy()) {
-      // Skip units located in an apc
+      // Skip units located in a transport
       if (unit.getLocation() instanceof Tile) {
         Tile tile = (Tile) unit.getLocation();
         City city = map.getCityOn(tile);
 
         if (city != null) {
-          city.supply(unit);
-          city.heal(unit);
+          if (city.canSupply(unit) && city.canHeal(unit)) {
+            city.supply(unit);
+            city.heal(unit);
+          }
+        }
+
+        if (unit.getSupplies() == 0 && isDestroyedWhenOutOfSupplies(unit.getArmyBranch())) {
+          // Don't call unit.destroy() here as it will remove the unit from
+          // the owning player army collection throwing a ConcurrentModificationException
+          unitsToDestroy.add(unit);
         }
       }
     }
+
+    for (Unit unit : unitsToDestroy) {
+      unit.destroy();
+    }
+  }
+
+  private boolean isDestroyedWhenOutOfSupplies(ArmyBranch armyBranch) {
+    return armyBranch == ArmyBranch.AIR || armyBranch == ArmyBranch.NAVAL;
   }
 
   public void propertyChange(PropertyChangeEvent evt) {
