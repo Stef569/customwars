@@ -113,7 +113,7 @@ public class MapEditorController {
     controls = new ArrayList<MapEditorControl>();
     controls.add(new TerrainMapEditorControl(map));
     controls.add(new CityMapEditorControl(map));
-    controls.add(new UnitMapEditorControl());
+    controls.add(new UnitMapEditorControl(map));
   }
 
   public void add(Tile t, int selectedIndex) {
