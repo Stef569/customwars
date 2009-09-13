@@ -2,7 +2,6 @@ package com.customwars.client.ui;
 
 import com.customwars.client.io.ResourceManager;
 import com.customwars.client.model.game.Game;
-import com.customwars.client.model.gameobject.Locatable;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Direction;
 import com.customwars.client.model.map.Location;
@@ -89,10 +88,9 @@ public class HUD {
   public void moveOverTile(Tile tile) {
     if (terrainInfoBox != null && camera != null) {
       terrainInfoBox.setTile(tile);
-      Locatable locatable = tile.getLastLocatable();
+      Unit unit = game.getMap().getUnitOn(tile);
 
-      if (locatable instanceof Unit && !tile.isFogged()) {
-        Unit unit = (Unit) locatable;
+      if (unit != null && !tile.isFogged() && !unit.isHidden()) {
         unitInfoBox.setVisible(true);
         unitInfoBox.setUnit(unit);
         transportInfoBox.setVisible(true);
@@ -230,7 +228,8 @@ public class HUD {
   }
 
   public void controlPressed(Command command, CWInput cwInput) {
-    if (isPopupVisible())
+    if (isPopupVisible()) {
       popupMenu.controlPressed(command, cwInput);
+    }
   }
 }

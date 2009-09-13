@@ -55,6 +55,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   private boolean canTransport;
   private boolean canJoin;
   private boolean canFlare;
+  private boolean canHide;
 
   private Map<Integer, Integer> transformTerrains;  // Terrain Ids this unit can transform to for a given TerrainId
   private Map<Integer, Integer> buildCities;        // City Ids this unit can build on given terrains
@@ -119,6 +120,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
     this.buildUnits = Args.createEmptyListIfNull(buildUnits);
     this.transport = new LinkedList<Locatable>();
     this.supplyRange = supplyRange == null ? new Range(0, 0) : supplyRange;
+    if (canDive) dive();
     if (name == null) name = "";
     if (description == null) description = "";
     unitState = UnitState.IDLE;
@@ -156,6 +158,8 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
     canTransport = otherUnit.canTransport;
     canJoin = otherUnit.canJoin;
     canFlare = otherUnit.canFlare;
+    canHide = otherUnit.canHide;
+
     transformTerrains = otherUnit.transformTerrains;
     buildCities = otherUnit.buildCities;
     buildUnits = otherUnit.buildUnits;
@@ -234,6 +238,26 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
 
   public void endTurn(Player invoker) {
     addSupplies(-dailyUse);
+  }
+
+  // ----------------------------------------------------------------------------
+  // Actions :: Submarine
+  // ----------------------------------------------------------------------------
+  public void dive() {
+    unitState = UnitState.SUBMERGED;
+    setHideAbility(true);
+  }
+
+  public void surface() {
+    unitState = UnitState.IDLE;
+    setHideAbility(false);
+  }
+
+  /**
+   * Toggle the ability to hide
+   */
+  private void setHideAbility(boolean canHide) {
+    this.canHide = canHide;
   }
 
   // ----------------------------------------------------------------------------
@@ -861,6 +885,10 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
 
   public boolean canFlare() {
     return canFlare;
+  }
+
+  public boolean canHide() {
+    return canHide;
   }
 
   public int getCaptureRate() {

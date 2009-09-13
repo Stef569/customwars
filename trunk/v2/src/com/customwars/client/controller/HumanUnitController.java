@@ -11,6 +11,7 @@ import com.customwars.client.action.unit.ShowAttackZoneAction;
 import com.customwars.client.action.unit.StartAttackAction;
 import com.customwars.client.action.unit.StartDropAction;
 import com.customwars.client.action.unit.StartFlareAction;
+import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.CityFactory;
 import com.customwars.client.model.gameobject.Terrain;
@@ -43,6 +44,7 @@ public class HumanUnitController extends UnitController {
   private boolean canLaunchRocketFromCity, canTransformTerrain;
   private boolean canFireFlare;
   private boolean canBuildCity;
+  private boolean canDive, canSurface;
 
   public HumanUnitController(Unit unit, InGameContext gameContext) {
     super(unit, gameContext);
@@ -52,7 +54,7 @@ public class HumanUnitController extends UnitController {
   }
 
   public void handleAPress() {
-    Tile selected = (Tile) mapRenderer.getCursorLocation();
+    Tile selected = mapRenderer.getCursorLocation();
     Tile to = context.getClick(2);
 
     if (context.isUnitDropMode() && canDrop(selected)) {
@@ -93,9 +95,11 @@ public class HumanUnitController extends UnitController {
   }
 
   public void handleBPress() {
-    Tile cursorLocation = (Tile) mapRenderer.getCursorLocation();
+    Tile cursorLocation = mapRenderer.getCursorLocation();
     Unit selectedUnit = map.getUnitOn(cursorLocation);
-    if (isUnitVisible() && isUnitOn(cursorLocation) && selectedUnit.canFire()) {
+    Player activePlayer = game.getActivePlayer();
+
+    if (isUnitVisibleTo(activePlayer) && isUnitOn(cursorLocation) && selectedUnit.canFire()) {
       context.doAction(new ShowAttackZoneAction(selectedUnit));
     }
   }
@@ -176,6 +180,8 @@ public class HumanUnitController extends UnitController {
     canTransformTerrain = false;
     canFireFlare = false;
     canBuildCity = false;
+    canDive = false;
+    canSurface = false;
     Tile from = context.getClick(1);
 
     if (canWait(selected)) {
@@ -188,6 +194,8 @@ public class HumanUnitController extends UnitController {
       canTransformTerrain = canTransformTerrain(selected);
       canFireFlare = canFireFlare(from);
       canBuildCity = canBuildCity(selected);
+      canDive = canDive();
+      canSurface = canSurface();
     } else {
       // Actions where the active and selected unit are on the same tile.
       canJoin = canJoin(selected);
@@ -256,6 +264,16 @@ public class HumanUnitController extends UnitController {
       City city = getCityThatCanBeBuildOn(to);
       CWAction buildCityAction = ActionFactory.buildCityAction(unit, city, to, unit.getOwner());
       addToMenu(buildCityAction, App.translate("build") + " " + city.getName());
+    }
+
+    if (canDive) {
+      CWAction diveAction = ActionFactory.buildDiveAction(unit, to);
+      addToMenu(diveAction, App.translate("dive"));
+    }
+
+    if (canSurface) {
+      CWAction surfaceAction = ActionFactory.buildSurfaceAction(unit, to);
+      addToMenu(surfaceAction, App.translate("surface"));
     }
 
     if (canWait) {

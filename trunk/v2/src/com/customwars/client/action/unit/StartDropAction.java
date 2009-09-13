@@ -4,8 +4,8 @@ import com.customwars.client.action.ClearInGameStateAction;
 import com.customwars.client.action.DirectAction;
 import com.customwars.client.controller.CursorController;
 import com.customwars.client.model.map.Location;
+import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
-import com.customwars.client.model.map.TileMap;
 import com.customwars.client.ui.renderer.MapRenderer;
 import com.customwars.client.ui.state.InGameContext;
 
@@ -21,7 +21,7 @@ public class StartDropAction extends DirectAction {
   private InGameContext context;
   private CursorController cursorControl;
   private MapRenderer mapRenderer;
-  private TileMap<Tile> map;
+  private Map<Tile> map;
   private Location center;
 
   public StartDropAction(Location center) {
@@ -49,13 +49,15 @@ public class StartDropAction extends DirectAction {
     context.setInputMode(InGameContext.INPUT_MODE.UNIT_DROP);
   }
 
-  private List<Location> getEmptyAjacentTiles(Location center) {
+  /**
+   * @param transportLocation the location of the transporting unit
+   * @return a list of locations where a unit can be dropped on
+   */
+  private List<Location> getEmptyAjacentTiles(Location transportLocation) {
     List<Location> surroundingTiles = new ArrayList<Location>();
-    for (Tile tile : map.getSurroundingTiles(center, 1, 1)) {
+    for (Tile tile : map.getSurroundingTiles(transportLocation, 1, 1)) {
       if (!context.isDropLocationTaken(tile)) {
-        if (tile.isFogged()) {
-          surroundingTiles.add(tile);
-        } else if (tile.getLocatableCount() == 0) {
+        if (tile.isFogged() || tile.getLocatableCount() == 0 || map.getUnitOn(tile).isHidden()) {
           surroundingTiles.add(tile);
         }
       }

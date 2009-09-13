@@ -6,12 +6,14 @@ import com.customwars.client.action.unit.AddUnitToTileAction;
 import com.customwars.client.action.unit.AttackAction;
 import com.customwars.client.action.unit.CaptureAction;
 import com.customwars.client.action.unit.ConstructCityAction;
+import com.customwars.client.action.unit.DiveAction;
 import com.customwars.client.action.unit.DropAction;
 import com.customwars.client.action.unit.FireFlareAction;
 import com.customwars.client.action.unit.JoinAction;
 import com.customwars.client.action.unit.LoadAction;
 import com.customwars.client.action.unit.MoveAnimatedAction;
 import com.customwars.client.action.unit.SupplyAction;
+import com.customwars.client.action.unit.SurfaceAction;
 import com.customwars.client.action.unit.TransformTerrainAction;
 import com.customwars.client.action.unit.WaitAction;
 import com.customwars.client.model.game.Player;
@@ -30,7 +32,7 @@ import java.util.List;
  */
 public class ActionFactory {
   public static CWAction buildDropAction(Unit transport, Location from, Location moveTo, int dropCount, List<Unit> unitsToBeDropped) {
-    ActionBag dropActions = new ActionBag("Drop Actions");
+    ActionBag dropActions = new ActionBag("Drop");
     dropActions.add(new InitAction());
     dropActions.add(new MoveAnimatedAction(transport, from, moveTo));
     dropActions.add(new WaitAction(transport));
@@ -44,7 +46,7 @@ public class ActionFactory {
   }
 
   public static CWAction buildWaitAction(Unit unit, Location moveTo) {
-    ActionBag waitActions = new ActionBag("Wait actions");
+    ActionBag waitActions = new ActionBag("Wait");
     waitActions.add(new InitAction());
     waitActions.add(new MoveAnimatedAction(unit.getLocation(), moveTo));
     waitActions.add(new WaitAction(unit));
@@ -53,7 +55,7 @@ public class ActionFactory {
   }
 
   public static CWAction buildCaptureAction(Unit unit, City city) {
-    ActionBag captureActions = new ActionBag("Capture actions");
+    ActionBag captureActions = new ActionBag("Capture");
     captureActions.add(new InitAction());
     captureActions.add(new MoveAnimatedAction(unit.getLocation(), city.getLocation()));
     captureActions.add(new CaptureAction(unit, city));
@@ -63,7 +65,7 @@ public class ActionFactory {
   }
 
   public static CWAction buildLoadAction(Unit unit, Unit transport) {
-    ActionBag loadActions = new ActionBag("Load Actions");
+    ActionBag loadActions = new ActionBag("Load");
     loadActions.add(new InitAction());
     loadActions.add(new MoveAnimatedAction(unit.getLocation(), transport.getLocation()));
     loadActions.add(new LoadAction(unit, transport));
@@ -73,7 +75,7 @@ public class ActionFactory {
   }
 
   public static CWAction buildSupplyAction(Unit supplier, Location moveTo) {
-    ActionBag supplyActions = new ActionBag("Supply Actions");
+    ActionBag supplyActions = new ActionBag("Supply");
     supplyActions.add(new InitAction());
     supplyActions.add(new MoveAnimatedAction(supplier.getLocation(), moveTo));
     supplyActions.add(new SupplyAction(supplier));
@@ -83,7 +85,7 @@ public class ActionFactory {
   }
 
   public static CWAction buildJoinAction(Unit unit, Unit target) {
-    ActionBag joinActions = new ActionBag("Join Actions");
+    ActionBag joinActions = new ActionBag("Join");
     joinActions.add(new InitAction());
     joinActions.add(new MoveAnimatedAction(unit.getLocation(), target.getLocation()));
     joinActions.add(new JoinAction(unit, target));
@@ -93,7 +95,7 @@ public class ActionFactory {
   }
 
   public static CWAction buildAttackAction(Unit attacker, Unit defender, Location moveTo) {
-    ActionBag attackActions = new ActionBag("Attack Actions");
+    ActionBag attackActions = new ActionBag("Attack");
     attackActions.add(new InitAction());
     attackActions.add((new MoveAnimatedAction(attacker.getLocation(), moveTo)));
     attackActions.add(new AttackAction(attacker, defender));
@@ -103,7 +105,7 @@ public class ActionFactory {
   }
 
   public static CWAction buildAddUnitToTileAction(Unit unit, Tile selected, boolean canUndo) {
-    ActionBag addToTileAction = new ActionBag("Add unit to tile actions");
+    ActionBag addToTileAction = new ActionBag("Add unit to tile");
     addToTileAction.add(new InitAction());
     addToTileAction.add(new AddUnitToTileAction(unit, selected, canUndo));
     addToTileAction.add(new WaitAction(unit));
@@ -112,14 +114,14 @@ public class ActionFactory {
   }
 
   public static CWAction buildEndTurnAction(StateLogic statelogic) {
-    ActionBag endTurnAction = new ActionBag("End Turn actions");
+    ActionBag endTurnAction = new ActionBag("End Turn");
     endTurnAction.add(new ClearInGameStateAction());
     endTurnAction.add(new EndTurnAction(statelogic));
     return endTurnAction;
   }
 
   public static CWAction buildLaunchRocketAction(Unit unit, City city, Tile to) {
-    ActionBag launchRocketAction = new ActionBag("Launch Rocket actions");
+    ActionBag launchRocketAction = new ActionBag("Launch Rocket");
     launchRocketAction.add(new InitAction());
     launchRocketAction.add(new MoveAnimatedAction(unit.getLocation(), to));
     launchRocketAction.add(new WaitAction(unit));
@@ -129,7 +131,7 @@ public class ActionFactory {
   }
 
   public static CWAction buildTransformTerrainAction(Unit unit, Tile to) {
-    ActionBag transformTerrainAction = new ActionBag("Transform terrain actions");
+    ActionBag transformTerrainAction = new ActionBag("Transform terrain");
     transformTerrainAction.add(new InitAction());
     transformTerrainAction.add(new MoveAnimatedAction(unit.getLocation(), to));
     transformTerrainAction.add(new WaitAction(unit));
@@ -139,7 +141,7 @@ public class ActionFactory {
   }
 
   public static CWAction buildFireFlareAction(Unit unit, Tile to, Tile flareCenter) {
-    ActionBag transformTerrainAction = new ActionBag("Fire Flare actions");
+    ActionBag transformTerrainAction = new ActionBag("Fire Flare");
     transformTerrainAction.add(new InitAction());
     transformTerrainAction.add(new MoveAnimatedAction(unit.getLocation(), to));
     transformTerrainAction.add(new WaitAction(unit));
@@ -156,5 +158,25 @@ public class ActionFactory {
     buildCityAction.add(new ConstructCityAction(unit, city, to, cityOwner));
     buildCityAction.add(new ClearInGameStateAction());
     return buildCityAction;
+  }
+
+  public static CWAction buildDiveAction(Unit unit, Location to) {
+    ActionBag diveAction = new ActionBag("Dive");
+    diveAction.add(new InitAction());
+    diveAction.add(new MoveAnimatedAction(unit.getLocation(), to));
+    diveAction.add(new WaitAction(unit));
+    diveAction.add(new DiveAction(unit));
+    diveAction.add(new ClearInGameStateAction());
+    return diveAction;
+  }
+
+  public static CWAction buildSurfaceAction(Unit unit, Location to) {
+    ActionBag diveAction = new ActionBag("Surface");
+    diveAction.add(new InitAction());
+    diveAction.add(new MoveAnimatedAction(unit.getLocation(), to));
+    diveAction.add(new WaitAction(unit));
+    diveAction.add(new SurfaceAction(unit));
+    diveAction.add(new ClearInGameStateAction());
+    return diveAction;
   }
 }

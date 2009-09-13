@@ -101,7 +101,7 @@ public class MapRenderer implements Renderable {
     }
 
     Unit unit = map.getUnitOn(tile);
-    if (unit != null) {
+    if (unit != null && !unit.isHidden()) {
       spriteManager.renderUnit(g, unit);
     }
   }

@@ -9,7 +9,6 @@ import com.customwars.client.model.gameobject.GameObjectState;
 import com.customwars.client.model.gameobject.Locatable;
 import com.customwars.client.model.gameobject.Terrain;
 import com.customwars.client.model.gameobject.Unit;
-import com.customwars.client.model.gameobject.UnitState;
 import com.customwars.client.model.map.path.Mover;
 import com.customwars.client.model.map.path.PathFinder;
 import org.apache.log4j.Logger;
@@ -152,25 +151,85 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
   }
 
   /**
-   * For each unit
-   * #1 set Game Object State: not owned by player -> IDLE, owned by player -> ACTIVE.
-   * #2 Reset the action(Capturing, submerged) the owned unit was performing one turn ago.
+   * Reset all units so the given player can see
+   * #1 his units, enemy units in los and
+   * #2 hidden units adjacent to one of his units
    *
    * @param player The player who's units should be reset
    */
   private void resetUnits(Player player) {
+    resetAllUnitStates(player);
+    resetAllHiddenUnits(player);
+  }
+
+  private void resetAllUnitStates(Player player) {
     for (Location t : getAllTiles()) {
       Unit unit = getUnitOn(t);
 
       if (unit != null) {
-        if (unit.getOwner() == player) {
-          unit.setState(GameObjectState.ACTIVE);
-          unit.setUnitState(UnitState.IDLE);
-        } else {
-          unit.setState(GameObjectState.IDLE);
-        }
+        resetUnitState(unit, player);
       }
     }
+  }
+
+  /**
+   * Set Game Object State: not owned by player -> IDLE, owned by player -> ACTIVE.
+   *
+   * @param unit   The unit to reset
+   * @param player The active player
+   */
+  private void resetUnitState(Unit unit, Player player) {
+    if (unit.getOwner() == player) {
+      unit.setState(GameObjectState.ACTIVE);
+    } else {
+      unit.setState(GameObjectState.IDLE);
+    }
+  }
+
+  public void resetAllHiddenUnits(Player player) {
+    for (Tile t : getAllTiles()) {
+      Unit unit = getUnitOn(t);
+
+      if (unit != null) {
+        resetHiddenUnit(unit, player);
+      }
+    }
+  }
+
+  /**
+   * Determine if the given unit should be hidden
+   *
+   * #1 Allied hidden units are visible
+   * #2 Hidden enemy units adjacent to an allied unit or city are visible
+   * all others are hidden
+   *
+   * @param unit   The unit to reset the hidden flag for
+   * @param player The active player
+   */
+  private void resetHiddenUnit(Unit unit, Player player) {
+    if (unit.canHide()) {
+      boolean allied = unit.getOwner().isAlliedWith(player);
+      boolean hasAdjacentAlliedUnitOrCity = hasAdjacentAlliedUnitOrCity(unit.getLocation(), player);
+
+      if (allied || hasAdjacentAlliedUnitOrCity) {
+        unit.setHidden(false);
+      } else {
+        unit.setHidden(true);
+      }
+    }
+  }
+
+  private boolean hasAdjacentAlliedUnitOrCity(Location unitLocation, Player player) {
+    for (Tile adjacentTile : getSurroundingTiles(unitLocation, 1, 1)) {
+      Unit unit = getUnitOn(adjacentTile);
+      City city = getCityOn(adjacentTile);
+
+      if ((unit != null && unit.getOwner().isAlliedWith(player)) ||
+        (city != null && city.getOwner().isAlliedWith(player))) {
+        return true;
+      }
+    }
+    return false;
   }
 
   /**
@@ -186,7 +245,7 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
       Unit unitInRange = getUnitOn(t);
 
       if (unitInRange != null) {
-        if (!t.isFogged() && supplier.canSupply(unitInRange)) {
+        if (!t.isFogged() && isUnitVisible(unitInRange) && supplier.canSupply(unitInRange)) {
           units.add(unitInRange);
         }
       }
@@ -215,11 +274,15 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
     for (Tile t : getSurroundingTiles(center, attacker.getAttackRange())) {
       Unit unit = getUnitOn(t);
 
-      if (!t.isFogged() && attacker.canAttack(unit)) {
+      if (!t.isFogged() && isUnitVisible(unit) && attacker.canAttack(unit)) {
         units.add(unit);
       }
     }
     return units;
+  }
+
+  private boolean isUnitVisible(Unit unit) {
+    return unit != null && !unit.isHidden();
   }
 
   /**
