@@ -63,6 +63,7 @@ public class ModelLoader {
     loadDamageTables();
   }
 
+  @SuppressWarnings("unchecked")
   private void loadTerrains() {
     xStream.alias("terrain", Terrain.class);
     xStream.useAttributeFor(Terrain.class, "id");
@@ -78,6 +79,7 @@ public class ModelLoader {
     TerrainFactory.addBaseTerrains(basicTerrains);
   }
 
+  @SuppressWarnings("unchecked")
   private void loadWeapons() {
     xStream.alias("weapon", Weapon.class);
     xStream.useAttributeFor(Weapon.class, "id");
@@ -89,6 +91,7 @@ public class ModelLoader {
     WeaponFactory.addWeapons(weapons);
   }
 
+  @SuppressWarnings("unchecked")
   private void loadUnits() {
     xStream.registerConverter(new UnitWeaponConverter());
     xStream.alias("unit", Unit.class);
@@ -102,6 +105,7 @@ public class ModelLoader {
     UnitFactory.addUnits(units);
   }
 
+  @SuppressWarnings("unchecked")
   private void loadCities() {
     xStream.alias("city", City.class);
     xStream.useAttributeFor(Terrain.class, "id");

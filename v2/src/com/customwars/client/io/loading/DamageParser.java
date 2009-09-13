@@ -11,8 +11,8 @@ import java.util.List;
 import java.util.Scanner;
 
 /**
- * Parse a file filled with ints separated by whitespace
- * Lines starting with COMMENT_PREFIX are ignored
+ * Parse a file filled with ints separated by a single whitespace
+ * Lines starting with COMMENT_PREFIX and empty rows are ignored
  *
  * @author stefan
  */
@@ -26,10 +26,9 @@ public class DamageParser {
 
     try {
       while ((line = reader.readLine()) != null) {
-        if (line.trim().length() == 0)
+        if (line.trim().length() == 0 || line.startsWith(COMMENT_PREFIX)) {
           continue;
-        if (line.startsWith(COMMENT_PREFIX))
-          continue;
+        }
 
         List<Integer> intRow = readIntRow(line);
         damageTable.add(intRow);
@@ -37,7 +36,7 @@ public class DamageParser {
     } finally {
       IOUtil.closeStream(in);
     }
-    return copyTable(damageTable);
+    return convertToPrimitiveArray(damageTable);
   }
 
   private List<Integer> readIntRow(String line) {
@@ -45,21 +44,23 @@ public class DamageParser {
     Scanner scanner = new Scanner(line);
 
     while (scanner.hasNext()) {
-      String number = scanner.next();
-      intRow.add(Integer.parseInt(number));
+      intRow.add(scanner.nextInt());
     }
     return intRow;
   }
 
-  private int[][] copyTable(List<List<Integer>> table) {
+  private int[][] convertToPrimitiveArray(List<List<Integer>> table) {
     final int[][] result = new int[table.size()][];
+
     for (int row = 0; row < table.size(); row++) {
-      result[row] = copyRow(table.get(row).toArray(new Integer[table.size()]));
+      List<Integer> list = table.get(row);
+      Integer[] arrRow = list.toArray(new Integer[table.size()]);
+      result[row] = convertToPrimitiveArray(arrRow);
     }
     return result;
   }
 
-  private int[] copyRow(final Integer[] array) {
+  private int[] convertToPrimitiveArray(final Integer[] array) {
     final int[] result = new int[array.length];
     for (int col = 0; col < array.length; col++) {
       result[col] = array[col];

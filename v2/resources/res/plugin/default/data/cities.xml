@@ -1,9 +1,12 @@
 <!--
-id is a reference to the city image sheet
-  ArmyBranches(used in heals, builds):
-  GROUND = 0;
-  NAVAL = 1;
-  AIR = 2;
+    id is a reference to the city image sheet
+    moveCosts have the following order
+    Infantry
+    Mech
+    Tread
+    Tires
+    Air
+    Naval
 -->
 <list>
     <city name="City" id="0" type='Road'>
@@ -93,12 +96,12 @@ id is a reference to the city image sheet
             <int>1</int>
             <int>2</int>
             <int>1</int>
-            <int>127</int>
+            <int>1</int>
         </moveCosts>
         <vision>1</vision>
 
         <heals>
-            <armyBranch>LAND</armyBranch>
+            <armyBranch>NAVAL</armyBranch>
         </heals>
         <healRate>2</healRate>
         <canBeCaptureBy>
