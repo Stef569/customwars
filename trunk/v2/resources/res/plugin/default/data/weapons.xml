@@ -1,8 +1,3 @@
-<!--
-ArmyBranches:
-  GROUND = 0, NAVAL = 1, AIR = 2
-  used in attacks
- -->
 <list>
     <weapon name="SMG" id="0">
         <fireRange>
@@ -49,6 +44,7 @@ ArmyBranches:
         </fireRange>
         <attacks>
             <armyBranch>LAND</armyBranch>
+            <armyBranch>NAVAL</armyBranch>
         </attacks>
         <description>none</description>
     </weapon>
@@ -73,13 +69,79 @@ ArmyBranches:
         </attacks>
         <description>none</description>
     </weapon>
-    <weapon name="ANTI AIR ROCKETS" id="7">
+    <weapon name="ANTI_AIR_ROCKETS" id="7">
         <fireRange>
             <minRange>3</minRange>
             <maxRange>5</maxRange>
         </fireRange>
         <attacks>
             <armyBranch>AIR</armyBranch>
+        </attacks>
+    </weapon>
+    <weapon name="NAVAL_CANNON" id="8">
+        <fireRange>
+            <minRange>3</minRange>
+            <maxRange>5</maxRange>
+        </fireRange>
+        <attacks>
+            <armyBranch>LAND</armyBranch>
+            <armyBranch>NAVAL</armyBranch>
+        </attacks>
+    </weapon>
+    <weapon name="TORPEDO" id="9">
+        <fireRange>
+            <minRange>1</minRange>
+            <maxRange>1</maxRange>
+        </fireRange>
+        <attacks>
+            <armyBranch>NAVAL</armyBranch>
+        </attacks>
+    </weapon>
+    <weapon name="ANTI_SHIP_MISSLE" id="10">
+        <fireRange>
+            <minRange>1</minRange>
+            <maxRange>1</maxRange>
+        </fireRange>
+        <attacks>
+            <armyBranch>NAVAL</armyBranch>
+        </attacks>
+    </weapon>
+    <weapon name="NAVAL_ANTI_AIR_MISSLE" id="11">
+        <fireRange>
+            <minRange>1</minRange>
+            <maxRange>2</maxRange>
+        </fireRange>
+        <attacks>
+            <armyBranch>AIR</armyBranch>
+        </attacks>
+    </weapon>
+    <weapon name="AIRCRAFT_ANTI_AIR_MISSLE" id="12">
+        <fireRange>
+            <minRange>1</minRange>
+            <maxRange>1</maxRange>
+        </fireRange>
+        <attacks>
+            <armyBranch>AIR</armyBranch>
+        </attacks>
+    </weapon>
+    <weapon name="BOMB" id="13">
+        <fireRange>
+            <minRange>1</minRange>
+            <maxRange>1</maxRange>
+        </fireRange>
+        <attacks>
+            <armyBranch>LAND</armyBranch>
+            <armyBranch>NAVAL</armyBranch>
+        </attacks>
+    </weapon>
+    <weapon name="HELI_GROUND_MISSLE" id="14">
+        <fireRange>
+            <minRange>1</minRange>
+            <maxRange>1</maxRange>
+        </fireRange>
+        <attacks>
+            <armyBranch>LAND</armyBranch>
+            <armyBranch>NAVAL</armyBranch>
         </attacks>
     </weapon>
 </list>
