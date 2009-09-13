@@ -58,6 +58,7 @@ public class TestData {
   private static final List<Direction> cityRoadConnection = Arrays.asList(Direction.SOUTH);
   private static final List<ArmyBranch> ARMY_BRANCH_LAND_ONLY = Arrays.asList(ArmyBranch.LAND);
   private static final List<ArmyBranch> ARMY_BRANCH_NAVAL_ONLY = Arrays.asList(ArmyBranch.NAVAL);
+  private static final List<ArmyBranch> ARMY_BRANCH_AIR_ONLY = Arrays.asList(ArmyBranch.AIR);
 
   // Movecosts: INF, MECH, TREAD, TIRES, AIR, NAVAL
   private static int IMP = Terrain.IMPASSIBLE;
@@ -97,6 +98,9 @@ public class TestData {
   private static City hq = new City(4, "Road", "HQ", "", 0, 0, plainMoveCosts, 1, true,
     cityRoadConnection, ARMY_BRANCH_LAND_ONLY, Arrays.asList(INF, MECH), null, 20, CITY_HEAL_RATE);
 
+  private static City airport = new City(AIRPORT, "Road", "Airport", "", 0, 0, plainMoveCosts, 1, true,
+    cityRoadConnection, ARMY_BRANCH_AIR_ONLY, Arrays.asList(INF, MECH), ARMY_BRANCH_AIR_ONLY, 20, CITY_HEAL_RATE);
+
   private static City port = new City(PORT, "Road", "Port", "", 0, 0, plainMoveCosts, 1, true,
     cityRoadConnection, ARMY_BRANCH_NAVAL_ONLY, Arrays.asList(INF, MECH), ARMY_BRANCH_NAVAL_ONLY, 20, CITY_HEAL_RATE);
 
@@ -134,6 +138,7 @@ public class TestData {
 
     CityFactory.addCity(base);
     CityFactory.addCity(factory);
+    CityFactory.addCity(airport);
     CityFactory.addCity(hq);
     CityFactory.addCity(port);
     CityFactory.addCity(silo);
