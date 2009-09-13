@@ -1,10 +1,12 @@
 package com.customwars.client.controller;
 
 import com.customwars.client.model.game.Game;
+import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Locatable;
 import com.customwars.client.model.gameobject.Terrain;
 import com.customwars.client.model.gameobject.Unit;
+import com.customwars.client.model.gameobject.UnitState;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
@@ -35,8 +37,10 @@ public abstract class UnitController {
   }
 
   boolean canSelect(Location selected) {
-    return isUnitOn(selected) && isUnitVisible() &&
-            unit.isActive() && game.getActiveUnit() == null;
+    Player activePlayer = game.getActivePlayer();
+
+    return isUnitOn(selected) && isUnitVisibleTo(activePlayer) &&
+      unit.isActive() && game.getActiveUnit() == null;
   }
 
   boolean canCapture(Tile selected) {
@@ -59,10 +63,6 @@ public abstract class UnitController {
 
   boolean canMove(Location from, Location to) {
     return from != null || to != null && unit.isWithinMoveZone(to);
-  }
-
-  boolean isValidUnitLocation(Tile selected) {
-    return isUnitVisible() && isUnitOn(selected);
   }
 
   boolean isActiveUnit() {
@@ -92,34 +92,42 @@ public abstract class UnitController {
     }
 
     return transporter.canAdd(unit) &&
-            transporter.getOwner() == unit.getOwner();
+      transporter.getOwner() == unit.getOwner();
   }
 
   boolean canStartDrop(Tile center, Tile selected, int dropCount) {
     List<Location> emptyTiles = getEmptyAjacentTiles(center);
 
     return !emptyTiles.isEmpty() &&
-            unit.canTransport() && dropCount > 0 && dropCount <= unit.getLocatableCount();
+      unit.canTransport() && dropCount > 0 && dropCount <= unit.getLocatableCount();
   }
 
-  private List<Location> getEmptyAjacentTiles(Tile selected) {
-    List<Location> emptyTiles = new ArrayList<Location>();
-    for (Location location : game.getMap().getSurroundingTiles(selected, 1, 1)) {
-      if (location.getLocatableCount() == 0) {
-        emptyTiles.add(location);
+  /**
+   * @return a list of locations where a unit can be dropped on
+   */
+  private List<Location> getEmptyAjacentTiles(Location transportLocation) {
+    List<Location> surroundingTiles = new ArrayList<Location>();
+    for (Tile tile : map.getSurroundingTiles(transportLocation, 1, 1)) {
+      if (tile.isFogged() || tile.getLocatableCount() == 0 || map.getUnitOn(tile).isHidden()) {
+        surroundingTiles.add(tile);
       }
     }
-
-    return emptyTiles;
+    return surroundingTiles;
   }
 
-  boolean canDrop(Tile selected) {
+  /**
+   * @param tile The tile the unit is going to be dropped to
+   * @return true If the active unit can drop a unit on the tile
+   */
+  boolean canDrop(Tile tile) {
     Unit transporter = game.getActiveUnit();
-    if (selected.isFogged()) {
-      return transporter.getLocatableCount() > 0;
-    } else {
-      return transporter.getLocatableCount() > 0 && selected.getLocatableCount() == 0;
+
+    if (transporter.canTransport() && transporter.getLocatableCount() > 0) {
+      if (tile.isFogged() || tile.getLocatableCount() == 0 || map.getUnitOn(tile).isHidden()) {
+        return true;
+      }
     }
+    return false;
   }
 
   /**
@@ -181,11 +189,20 @@ public abstract class UnitController {
 
   boolean canFireFlare(Tile from) {
     return unit.canFlare() && map.isFogOfWarOn() &&
-            !isDirectUnitMoved(from) && unit.getAvailableWeapon().hasAmmoLeft();
+      !isDirectUnitMoved(from) && unit.getAvailableWeapon().hasAmmoLeft();
   }
 
   boolean canBuildCity(Tile selected) {
     return unit.canBuildCityOn(selected.getTerrain());
+  }
+
+  boolean canDive() {
+    return unit.canDive() && unit.getUnitState() != UnitState.SUBMERGED;
+  }
+
+  boolean canSurface() {
+    // if a unit can dive it can also surface...
+    return unit.canDive() && unit.getUnitState() == UnitState.SUBMERGED;
   }
 
   boolean isActiveUnitInGame() {
@@ -208,10 +225,16 @@ public abstract class UnitController {
   }
 
   /**
-   * Is the tile and the unit on it visible
+   * Is the tile and the unit on it visible for the given player
+   *
+   * #1 Fogged tiles are not visible
+   * #2 Hidden enemy units are not visible
    */
-  boolean isUnitVisible() {
+  boolean isUnitVisibleTo(Player player) {
     Tile tile = (Tile) unit.getLocation();
-    return !tile.isFogged() && !unit.isHidden();
+    boolean alliedUnit = unit.getOwner().isAlliedWith(player);
+    boolean hiddenEnemyUnit = !alliedUnit && unit.isHidden();
+
+    return !tile.isFogged() && !hiddenEnemyUnit;
   }
 }

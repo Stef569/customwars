@@ -4,6 +4,8 @@ import com.customwars.client.action.DirectAction;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.gameobject.GameObjectState;
 import com.customwars.client.model.gameobject.Unit;
+import com.customwars.client.model.map.Map;
+import com.customwars.client.model.map.Tile;
 import com.customwars.client.ui.state.InGameContext;
 
 /**
@@ -13,6 +15,7 @@ import com.customwars.client.ui.state.InGameContext;
  */
 public class WaitAction extends DirectAction {
   private Game game;
+  private Map<Tile> map;
   private Unit unit;
 
   public WaitAction(Unit unit) {
@@ -22,6 +25,7 @@ public class WaitAction extends DirectAction {
 
   protected void init(InGameContext context) {
     game = context.getGame();
+    map = game.getMap();
   }
 
   protected void invokeAction() {
@@ -33,6 +37,8 @@ public class WaitAction extends DirectAction {
       // Make sure that the change to idle is picked up by the event listeners
       unit.setState(GameObjectState.ACTIVE);
       unit.setState(GameObjectState.IDLE);
+
+      map.resetAllHiddenUnits(game.getActivePlayer());
     }
   }
 }
