@@ -1,6 +1,7 @@
 package com.customwars.client;
 
 import com.customwars.client.io.ResourceManager;
+import org.apache.log4j.Logger;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Music;
 import org.newdawn.slick.Sound;
@@ -11,6 +12,7 @@ import org.newdawn.slick.Sound;
  * @author stefan
  */
 public class SFX {
+  private static final Logger logger = Logger.getLogger(SFX.class);
   private static ResourceManager resources;
   private static GameContainer container;
 
@@ -34,6 +36,8 @@ public class SFX {
     Sound s = resources.getSound(soundName);
     if (s != null) {
       s.play();
+    } else {
+      logger.warn("No sound for " + soundName);
     }
   }
 
@@ -47,6 +51,8 @@ public class SFX {
     Music music = resources.getMusic(musicName);
     if (music != null) {
       music.play();
+    } else {
+      logger.warn("No music for " + musicName);
     }
   }
 

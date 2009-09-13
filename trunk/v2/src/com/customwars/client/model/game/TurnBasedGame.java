@@ -135,7 +135,7 @@ public class TurnBasedGame implements Observable {
   private void setActivePlayer(Player p) {
     Player oldVal = this.activePlayer;
     this.activePlayer = p;
-    firePropertyChange("activePlayer", oldVal, p);
+    firePropertyChange("activeplayer", oldVal, p);
   }
 
   public int getTurn() {
