@@ -51,6 +51,7 @@ public class TestMain {
   }
 
   private void initTestMode() {
+//What is this for?
     logger.info("Init debug Mode");
     resources.loadModel();
     Game game = HardCodedGame.getGame();
