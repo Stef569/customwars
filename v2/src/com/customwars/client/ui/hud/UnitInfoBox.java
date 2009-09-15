@@ -20,34 +20,37 @@ public class UnitInfoBox extends BasicComponent {
   private static final Color textColor = Color.white;
   private static final int INFO_BOXES_LEFT_MARGIN = 3;
   private static final int UNIT_NAME_LEFT_MARGIN = 3;
+  private static final int VERTICAL_SPACING = 3;
 
   private Unit unit;
+  private String unitName;
   private ResourceManager resources;
-  private ImageBox unitBox;
+  private ImageBox unitImgBox;
   private Row suppliesRow, ammoRow, hpRow;
+  private Font font;
 
   public UnitInfoBox(GUIContext container) {
     super(container);
-    unitBox = new ImageBox();
+    unitImgBox = new ImageBox();
   }
 
   @Override
   public void loadResources(ResourceManager resources) {
+    font = container.getDefaultFont();
     this.resources = resources;
     ImageStrip unitDecorations = resources.getSlickImgStrip("unitDecoration");
     Image ammoImage = unitDecorations.getSubImage(3);
     Image suppliesImage = unitDecorations.getSubImage(4);
-    Font defaultFont = container.getDefaultFont();
 
-    unitBox.setWidth(getWidth());
-    suppliesRow = new Row(new ImageBox(suppliesImage), new TextBox("", defaultFont));
-    suppliesRow.setHorizontalSpacing(5);
+    unitImgBox.setWidth(getWidth());
+    suppliesRow = new Row(new ImageBox(suppliesImage), new TextBox("", font));
+    suppliesRow.setHorizontalSpacing(VERTICAL_SPACING);
 
-    ammoRow = new Row(new ImageBox(ammoImage), new TextBox("", defaultFont));
-    ammoRow.setHorizontalSpacing(5);
+    ammoRow = new Row(new ImageBox(ammoImage), new TextBox("", font));
+    ammoRow.setHorizontalSpacing(VERTICAL_SPACING);
 
-    hpRow = new Row(new TextBox("hp:", defaultFont), new TextBox("", defaultFont));
-    hpRow.setHorizontalSpacing(5);
+    hpRow = new Row(new TextBox("hp:", font), new TextBox("", font));
+    hpRow.setHorizontalSpacing(VERTICAL_SPACING);
   }
 
   @Override
@@ -71,7 +74,7 @@ public class UnitInfoBox extends BasicComponent {
   }
 
   private void initBoxes() {
-    unitBox.setImage(getEastFacingUnitImg(unit));
+    unitImgBox.setImage(getEastFacingUnitImg(unit));
     suppliesRow.setText(unit.getSupplies() + "");
     hpRow.setText(unit.getInternalHp() + "");
 
@@ -89,9 +92,11 @@ public class UnitInfoBox extends BasicComponent {
   }
 
   private void locateBoxes(int x, int y) {
+    int unitNameHeight = font.getHeight(unitName);
     int height = 0;
-    unitBox.setLocation(x, y);
-    height += unitBox.getHeight();
+
+    unitImgBox.setLocation(x, y + unitNameHeight);
+    height += unitImgBox.getHeight() + unitNameHeight;
     ammoRow.setLocation(x + INFO_BOXES_LEFT_MARGIN, y + height);
     height += ammoRow.getHeight();
     suppliesRow.setLocation(x + INFO_BOXES_LEFT_MARGIN, y + height);
@@ -100,7 +105,7 @@ public class UnitInfoBox extends BasicComponent {
   }
 
   private void renderBoxes(Graphics g) {
-    unitBox.render(g);
+    unitImgBox.render(g);
     renderUnitName(g);
     ammoRow.render(g);
     suppliesRow.render(g);
@@ -109,11 +114,17 @@ public class UnitInfoBox extends BasicComponent {
 
   private void renderUnitName(Graphics g) {
     g.setColor(textColor);
-    g.drawString(unit.getName(), getX() + UNIT_NAME_LEFT_MARGIN, getY());
+    g.drawString(unitName, getX() + UNIT_NAME_LEFT_MARGIN, getY());
   }
 
   public void setUnit(Unit unit) {
     this.unit = unit;
+
+    if (unit != null) {
+      this.unitName = unit.getName();
+    } else {
+      this.unitName = null;
+    }
   }
 
   /**
