@@ -30,7 +30,7 @@ import java.util.List;
  * @author stefan
  */
 public class HUD {
-  private static final int INFO_BOX_HEIGH = 100;
+  private static final int INFO_BOX_HEIGH = 110;
   private static final int TOP_MARGIN = 10;
   private Game game;
   private SpriteManager spriteManager;
