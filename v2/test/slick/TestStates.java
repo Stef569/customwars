@@ -60,7 +60,7 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
     mapStateIdsToName();
     loadResources();
     CWState.setDefaultFont(container);
-    statelogic.changeTo(startStateName);
+    statelogic.changeTo("MAIN_MENU");
     config.loadInputBindings(cwInput);
 
     logger.debug("Startup complete starting state=" + (startStateName == null ? "Default" : startStateName));
