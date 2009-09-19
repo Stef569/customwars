@@ -12,6 +12,8 @@ import com.customwars.client.io.loading.ModelLoader;
 import com.customwars.client.io.loading.SoundParser;
 import com.customwars.client.io.loading.map.BinaryCW2MapParser;
 import com.customwars.client.io.loading.map.MapParser;
+import com.customwars.client.model.gameobject.Unit;
+import com.customwars.client.model.map.Direction;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
 import org.apache.log4j.Logger;
@@ -33,6 +35,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -107,9 +110,11 @@ public class ResourceManager {
     loadColorsFromFile();
     loadImagesFromFile();
     loadAnimationsFromFile();
+    recolor();
     loadSoundFromFile();
     loadAllMaps();
     loadFonts();
+    releaseUnneededResources();
   }
 
   private void loadColorsFromFile() throws IOException {
@@ -133,6 +138,12 @@ public class ResourceManager {
     animParser.loadConfigFile(in);
   }
 
+  private void recolor() {
+    Set<Color> supportedColors = getSupportedColors();
+    List<Color> colors = new ArrayList<Color>(supportedColors);
+    recolor(colors.toArray(new Color[colors.size()]));
+  }
+
   private void loadSoundFromFile() throws IOException {
     SoundParser soundParser = new SoundParser(sounds, music);
     InputStream in = ResourceLoader.getResourceAsStream(soundPath + SOUND_LOADER_FILE);
@@ -154,6 +165,10 @@ public class ResourceManager {
     Args.checkForNull(fontID);
     Args.checkForNull(font);
     fonts.put(fontID.toUpperCase(), font);
+  }
+
+  private void releaseUnneededResources() {
+    imageLib.clearImageSources();
   }
 
   /**
@@ -181,11 +196,15 @@ public class ResourceManager {
   }
 
   public void recolor(Color... colors) {
+    recolor(Arrays.asList(colors));
+  }
+
+  public void recolor(Collection<Color> colors) {
     recolorImages(colors);
     createRecoloredAnimations(colors);
   }
 
-  private void recolorImages(Color... colors) {
+  private void recolorImages(Collection<Color> colors) {
     for (Color color : colors) {
       checkIsColorSupported(color);
       imageLib.recolorImg(color, "unit");
@@ -198,7 +217,7 @@ public class ResourceManager {
     }
   }
 
-  private void createRecoloredAnimations(Color... colors) {
+  private void createRecoloredAnimations(Collection<Color> colors) {
     Color unitBaseColor = getBaseColor("unit");
     Color cityBaseColor = getBaseColor("city");
 
@@ -331,7 +350,61 @@ public class ResourceManager {
 
   public SpriteSheet getUnitSpriteSheet(Color color) {
     String colorName = ColorUtil.toString(color);
-    return getSlickSpriteSheet("Unit_" + colorName);
+    return getSlickSpriteSheet("UNIT_" + colorName);
+  }
+
+  public Image getUnitImg(Unit unit, Direction direction) {
+    Color playerColor = unit.getOwner().getColor();
+    return getUnitImg(unit, playerColor, direction);
+  }
+
+  public Image getUnitImg(Unit unit, Color color, Direction direction) {
+    SpriteSheet unitSpriteSheet = getUnitSpriteSheet(color);
+    int row = unit.getImgID();
+    return cropUnitImg(unitSpriteSheet, direction, row);
+  }
+
+  public SpriteSheet getShadedUnitSpriteSheet(Color color) {
+    String colorName = ColorUtil.toString(color);
+    return getSlickSpriteSheet("UNIT_" + colorName + "_darker");
+  }
+
+  public Image getShadedUnitImg(Unit unit, Direction direction) {
+    Color playerColor = unit.getOwner().getColor();
+    return getShadedUnitImg(unit, playerColor, direction);
+  }
+
+  public Image getShadedUnitImg(Unit unit, Color color, Direction direction) {
+    SpriteSheet unitSpriteSheet = getShadedUnitSpriteSheet(color);
+    int row = unit.getImgID();
+    return cropUnitImg(unitSpriteSheet, direction, row);
+  }
+
+  /**
+   * Crop a unit from a spritesheet
+   * that is looking in the given direction
+   * Supported directions(N,E,S,W) all other directions will throw an IllegalArgumentException
+   */
+  private Image cropUnitImg(SpriteSheet unitSpriteSheet, Direction direction, int row) {
+    Image unitImg;
+
+    switch (direction) {
+      case NORTH:
+        unitImg = unitSpriteSheet.getSubImage(10, row);
+        break;
+      case EAST:
+        unitImg = unitSpriteSheet.getSubImage(4, row);
+        break;
+      case SOUTH:
+        unitImg = unitSpriteSheet.getSubImage(7, row);
+        break;
+      case WEST:
+        unitImg = unitSpriteSheet.getSubImage(1, row);
+        break;
+      default:
+        throw new IllegalArgumentException("Direction " + direction + " is not supported for a unit");
+    }
+    return unitImg;
   }
 
   public SpriteSheet getCitySpriteSheet(Color color) {

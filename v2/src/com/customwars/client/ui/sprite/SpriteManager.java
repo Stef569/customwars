@@ -185,8 +185,6 @@ public class SpriteManager implements PropertyChangeListener {
         colorsInMap.add(city.getOwner().getColor());
       }
     }
-
-    resources.recolor(colorsInMap.toArray(new Color[colorsInMap.size()]));
   }
 
   /**
