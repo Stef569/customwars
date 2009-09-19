@@ -42,13 +42,8 @@ public class MapEditorController {
   public MapEditorController(MapEditorState mapEditorState, ResourceManager resources, int panelCount) {
     this.mapEditorView = mapEditorState;
     this.panelCount = panelCount;
-    loadResources(resources);
+    this.colors = new ArrayList<Color>(resources.getSupportedColors());
     init();
-  }
-
-  private void loadResources(ResourceManager resources) {
-    colors = new ArrayList<Color>(resources.getSupportedColors());
-    resources.recolor(colors.toArray(new Color[colors.size()]));
   }
 
   private void init() {

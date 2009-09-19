@@ -94,6 +94,13 @@ public class ImageLib {
     slickImgCache.clear();
   }
 
+  /**
+   * Release the awt image resources
+   */
+  public void clearImageSources() {
+    awtImageLib.clear();
+  }
+
   public void addSlickImg(String slickImgName, Image img) {
     String key = slickImgName.toUpperCase();
     if (!slickImgCache.containsKey(key)) {
