@@ -8,6 +8,7 @@ import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.ui.renderer.MapRenderer;
 import com.customwars.client.ui.state.InGameContext;
+import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +19,7 @@ import java.util.List;
  * @author stefan
  */
 public class StartDropAction extends DirectAction {
+  private static final Logger logger = Logger.getLogger(StartDropAction.class);
   private InGameContext context;
   private CursorController cursorControl;
   private MapRenderer mapRenderer;
@@ -39,6 +41,7 @@ public class StartDropAction extends DirectAction {
   protected void invokeAction() {
     List<Location> adjacentTiles = getEmptyAjacentTiles(center);
 
+    logger.debug("Preparing to drop around " + center + " empty tiles " + adjacentTiles);
     mapRenderer.removeZones();
     mapRenderer.showArrows(false);
 

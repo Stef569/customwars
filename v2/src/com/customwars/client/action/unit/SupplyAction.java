@@ -12,14 +12,14 @@ import org.apache.log4j.Logger;
  * @author stefan
  */
 public class SupplyAction extends DirectAction {
-  private Logger logger = Logger.getLogger(SupplyAction.class);
+  private static final Logger logger = Logger.getLogger(SupplyAction.class);
   private InGameContext context;
   private Game game;
   private Unit supplier;
 
-  public SupplyAction(Unit unit) {
+  public SupplyAction(Unit supplier) {
     super("Supply", false);
-    this.supplier = unit;
+    this.supplier = supplier;
   }
 
   protected void init(InGameContext context) {
@@ -28,11 +28,15 @@ public class SupplyAction extends DirectAction {
   }
 
   protected void invokeAction() {
-    if (context.isTrapped()) return;
+    if (!context.isTrapped()) {
+      supply();
+    }
+  }
 
+  private void supply() {
     for (Unit unit : game.getMap().getSuppliablesInRange(supplier)) {
+      logger.debug(unit.getName() + " is supplied by " + supplier.getName());
       supplier.supply(unit);
-      logger.debug("supplied " + unit);
     }
   }
 }

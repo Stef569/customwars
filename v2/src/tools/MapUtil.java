@@ -14,8 +14,8 @@ import com.customwars.client.model.map.TileMap;
 import java.util.List;
 
 /**
- * Utilities for a map useful in a map editor
- * Each function accepts a Location or x,y coordinates as the position to add a gameobject to the map
+ * Utilities for a map
+ * Each function accepts a Location or (col,row) map coordinates to position the gameobject within the map
  *
  * @author stefan
  */
@@ -46,8 +46,19 @@ public class MapUtil {
   }
 
   public static City addCityToMap(TileMap<Tile> map, int col, int row, int cityID, Player owner) {
-    Tile t = map.getTile(col, row);
     City city = CityFactory.getCity(cityID);
+
+    addCityToMap(map, col, row, city, owner);
+    return city;
+  }
+
+  public static City addCityToMap(TileMap<Tile> map, Location location, City city, Player owner) {
+    return addCityToMap(map, location.getCol(), location.getRow(), city, owner);
+  }
+
+  public static City addCityToMap(TileMap<Tile> map, int col, int row, City city, Player owner) {
+    Tile t = map.getTile(col, row);
+
     owner.addCity(city);
     city.setLocation(t);
     t.setTerrain(city);
@@ -59,8 +70,18 @@ public class MapUtil {
   }
 
   public static Unit addUnitToMap(TileMap<Tile> map, int col, int row, int unitID, Player owner) {
-    Tile t = map.getTile(col, row);
     Unit unit = UnitFactory.getUnit(unitID);
+
+    addUnitToMap(map, col, row, unit, owner);
+    return unit;
+  }
+
+  public static Unit addUnitToMap(TileMap<Tile> map, Location location, Unit unit, Player owner) {
+    return addUnitToMap(map, location.getCol(), location.getRow(), unit, owner);
+  }
+
+  public static Unit addUnitToMap(TileMap<Tile> map, int col, int row, Unit unit, Player owner) {
+    Tile t = map.getTile(col, row);
     owner.addUnit(unit);
     t.add(unit);
     return unit;

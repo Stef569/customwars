@@ -7,6 +7,7 @@ import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.gameobject.UnitState;
 import com.customwars.client.ui.state.InGameContext;
+import org.apache.log4j.Logger;
 
 /**
  * Capture the given City with the given unit
@@ -14,6 +15,7 @@ import com.customwars.client.ui.state.InGameContext;
  * @author stefan
  */
 public class CaptureAction extends DirectAction {
+  private Logger logger = Logger.getLogger(CaptureAction.class);
   private InGameContext context;
   private ControllerManager controllerManager;
   private Unit unit;
@@ -31,13 +33,16 @@ public class CaptureAction extends DirectAction {
   }
 
   protected void invokeAction() {
-    if (context.isTrapped()) return;
-    capture();
+    if (!context.isTrapped()) {
+      capture();
+    }
   }
 
   private void capture() {
     unit.setUnitState(UnitState.CAPTURING);
     city.capture(unit);
+    logger.debug(String.format("%s(%s) is capturing %s captured:%s",
+      unit.getName(), unit.getHp(), city.getName(), city.getCapCount()));
 
     if (city.isCapturedBy(unit)) {
       unit.setUnitState(UnitState.IDLE);

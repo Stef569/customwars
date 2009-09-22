@@ -10,14 +10,16 @@ import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.path.MoveTraverse;
 import com.customwars.client.ui.renderer.MapRenderer;
 import com.customwars.client.ui.state.InGameContext;
+import org.apache.log4j.Logger;
 
 /**
  * Moves the unit animated from the 'from' location to the 'to' location
- * by stepping on each tile between those locations.
+ * by moving the unit on each tile between those locations.
  *
  * @author stefan
  */
 public class MoveAnimatedAction extends DelayedAction {
+  private Logger logger = Logger.getLogger(MoveAnimatedAction.class);
   InGameContext context;
   MoveTraverse moveTraverse;
   Game game;
@@ -42,6 +44,9 @@ public class MoveAnimatedAction extends DelayedAction {
       setActionCompleted(true);
       return;
     }
+
+    logger.debug(String.format("Moving Animated from %s to %s",
+      from.getLocationString(), to.getLocationString()));
 
     this.context = context;
     game = context.getGame();

@@ -5,14 +5,20 @@ import com.customwars.client.controller.ControllerManager;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Unit;
+import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.ui.state.InGameContext;
+import org.apache.log4j.Logger;
+import tools.MapUtil;
 
 public class ConstructCityAction extends DirectAction {
+  private static final Logger logger = Logger.getLogger(ConstructCityAction.class);
   private Unit unit;
+  private Map<Tile> map;
   private Tile tile;
   private City city;
   private Player cityOwner;
+  private InGameContext context;
   private ControllerManager controllerManager;
 
   public ConstructCityAction(Unit unit, City city, Tile tile, Player cityOwner) {
@@ -25,12 +31,23 @@ public class ConstructCityAction extends DirectAction {
 
   @Override
   protected void init(InGameContext context) {
+    this.context = context;
     controllerManager = context.getControllerManager();
+    map = context.getGame().getMap();
   }
 
   @Override
   protected void invokeAction() {
+    if (!context.isTrapped()) {
+      constructCity();
+    }
+  }
+
+  private void constructCity() {
     unit.construct(city);
+
+    logger.debug(String.format("%s is constructing a %s constructed:%s%%",
+      unit.getName(), city.getName(), city.getCapCount()));
 
     if (unit.isConstructionComplete()) {
       unit.stopConstructing();
@@ -39,10 +56,7 @@ public class ConstructCityAction extends DirectAction {
   }
 
   private void addCityToTile() {
-    city.setOwner(cityOwner);
-    city.setLocation(tile);
-    tile.setTerrain(city);
-    cityOwner.addCity(city);
+    MapUtil.addCityToMap(map, tile, city, cityOwner);
 
     if (cityOwner.isAi()) {
       controllerManager.addAICityController(city);
