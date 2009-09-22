@@ -29,24 +29,24 @@ public class TestMenu extends CWState implements ComponentListener {
     backgroundMusic = new Music("testData/shortBackground.ogg");
     backgroundMusic.setVolume(0.5F);
 
-    image = new Image("testData/MainMenu.png");
+    image = new Image("testData/main.png");
     Image whiteSquare = new Image("testData/white.png");
     ImageStrip cursor = new ImageStrip("testData/point.png", 15, 11);
 
-    Image mapOption = new Image("testData/map.png");
-    Image keyInputOption = new Image("testData/KeyInput.png");
-    Image gameOption = new Image("testData/game.png");
-    Image endTurn = new Image("testData/EndTurn.png");
+    Image mapOption = new Image("testData/mapTerrain.png");
+    Image keyInputOption = new Image("testData/keyConfig.png");
+    Image gameOption = new Image("testData/newGame.png");
+    Image endTurn = new Image("testData/mapEditor.png");
 
     testmenu = new PopupMenu(container);
     testmenu.addItems(
-      new MenuItem(mapOption, "Option 1: Test Map Terrain", container),
+      new MenuItem(mapOption, container),
       new MenuItem(keyInputOption, container),
       new MenuItem(gameOption, "", container),
-      new MenuItem("Map Editor", container)
+      new MenuItem(endTurn, container)
     );
 
-    testmenu.setLocation(250, 150);
+    testmenu.setLocation(220, 50);
     testmenu.setMenuTickSound(new Sound("testData/menutick.wav"));
     testmenu.addListener(this);
   }
@@ -62,7 +62,7 @@ public class TestMenu extends CWState implements ComponentListener {
     g.drawString("ENTER: TO GO BACK TO MENU", 400, 10);
     testmenu.render(gameContainer, g);
 
-    g.setColor(Color.darkGray);
+    g.setColor(Color.lightGray);
     switch (testmenu.getCurrentItem()) {
       case 0:
         g.drawString("Scroll a mini-map and see the terrain up close", 210, 440);
