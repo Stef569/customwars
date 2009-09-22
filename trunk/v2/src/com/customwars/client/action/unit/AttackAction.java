@@ -6,6 +6,7 @@ import com.customwars.client.controller.ControllerManager;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.gameobject.UnitFight;
 import com.customwars.client.ui.state.InGameContext;
+import org.apache.log4j.Logger;
 
 /**
  * Attack defender with attacker
@@ -13,6 +14,7 @@ import com.customwars.client.ui.state.InGameContext;
  * @author stefan
  */
 public class AttackAction extends DirectAction {
+  private Logger logger = Logger.getLogger(AttackAction.class);
   private InGameContext context;
   private ControllerManager controllerManager;
   private UnitFight unitFight;
@@ -31,8 +33,9 @@ public class AttackAction extends DirectAction {
   }
 
   protected void invokeAction() {
-    if (context.isTrapped()) return;
-    attackUnit(attacker, defender);
+    if (!context.isTrapped()) {
+      attackUnit(attacker, defender);
+    }
   }
 
   /**
@@ -41,7 +44,14 @@ public class AttackAction extends DirectAction {
    */
   public void attackUnit(Unit attacker, Unit defender) {
     unitFight.initFight(attacker, defender);
+
+    // Gather debugging data before the fight starts
+    int damagePercentage = unitFight.getAttackDamagePercentage();
+    int attackerHPPreFight = attacker.getInternalHp();
+    int defenderHPPreFight = defender.getInternalHp();
+
     unitFight.startFight();
+    logFightStatistics(attackerHPPreFight, defenderHPPreFight, damagePercentage);
 
     if (attacker.isDestroyed()) {
       controllerManager.removeUnitController(attacker);
@@ -51,5 +61,14 @@ public class AttackAction extends DirectAction {
       controllerManager.removeUnitController(defender);
       SFX.playSound("explode");
     }
+  }
+
+  private void logFightStatistics(int attackerHPPreFight, int defenderHPPreFight, int damagePercentage) {
+    String attackerHP = attackerHPPreFight + "/" + attacker.getInternalMaxHp();
+    String defenderHP = defenderHPPreFight + "/" + defender.getInternalMaxHp();
+
+    logger.debug(String.format("%s(%s) is attacking %s(%s) dmg:%s%% Outcome: attacker(%s) defender(%s)",
+      attacker.getName(), attackerHP, defender.getName(), defenderHP,
+      damagePercentage, attacker.getInternalHp(), defender.getInternalHp()));
   }
 }

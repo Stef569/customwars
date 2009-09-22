@@ -25,9 +25,10 @@ public class TransformTerrainAction extends DirectAction {
 
   @Override
   protected void invokeAction() {
-    if (context.isTrapped()) return;
-    Terrain tranformTo = getTransformToTerrain();
-    tile.setTerrain(tranformTo);
+    if (!context.isTrapped()) {
+      Terrain tranformTo = getTransformToTerrain();
+      tile.setTerrain(tranformTo);
+    }
   }
 
   private Terrain getTransformToTerrain() {

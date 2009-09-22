@@ -4,6 +4,7 @@ import com.customwars.client.action.DirectAction;
 import com.customwars.client.controller.ControllerManager;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.ui.state.InGameContext;
+import org.apache.log4j.Logger;
 
 /**
  * The unit joins the target
@@ -11,6 +12,7 @@ import com.customwars.client.ui.state.InGameContext;
  * @author stefan
  */
 public class JoinAction extends DirectAction {
+  private Logger logger = Logger.getLogger(JoinAction.class);
   private ControllerManager controllerManager;
   private Unit target, unit;
   private InGameContext context;
@@ -27,7 +29,13 @@ public class JoinAction extends DirectAction {
   }
 
   protected void invokeAction() {
-    if (context.isTrapped()) return;
+    if (!context.isTrapped()) {
+      join();
+    }
+  }
+
+  private void join() {
+    logger.debug("Join unit " + unit + " with " + target);
 
     //Add Money if joining cause the target to go over max HP
     int excessHP = unit.getHp() + target.getHp() - target.getMaxHp();

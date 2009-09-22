@@ -3,7 +3,8 @@ package com.customwars.client.action;
 import com.customwars.client.ui.state.InGameContext;
 
 /**
- * A direct Action is completed after the first invocation.
+ * A direct Action is executed only once
+ * isCompleted() return true after the first invocation.
  *
  * @author stefan
  */

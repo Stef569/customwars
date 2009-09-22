@@ -279,6 +279,10 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
     return NumberUtil.calcPercentage(capCount, maxCapCount);
   }
 
+  public int getCapCount() {
+    return capCount;
+  }
+
   public Location getLocation() {
     return location;
   }

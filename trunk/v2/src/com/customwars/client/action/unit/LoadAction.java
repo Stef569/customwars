@@ -4,6 +4,7 @@ import com.customwars.client.action.DirectAction;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.ui.renderer.MapRenderer;
 import com.customwars.client.ui.state.InGameContext;
+import org.apache.log4j.Logger;
 
 /**
  * Load the unit in the transport
@@ -12,6 +13,7 @@ import com.customwars.client.ui.state.InGameContext;
  * @author stefan
  */
 public class LoadAction extends DirectAction {
+  private Logger logger = Logger.getLogger(LoadAction.class);
   private InGameContext context;
   private MapRenderer mapRenderer;
   private Unit unit;
@@ -29,8 +31,13 @@ public class LoadAction extends DirectAction {
   }
 
   protected void invokeAction() {
-    if (context.isTrapped()) return;
+    if (!context.isTrapped()) {
+      load();
+    }
+  }
 
+  private void load() {
+    logger.debug("Loading " + unit + " into " + transport);
     unit.getLocation().remove(unit);
     transport.add(unit);
     mapRenderer.removeUnit(unit);
