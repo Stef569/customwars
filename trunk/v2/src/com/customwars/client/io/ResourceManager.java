@@ -360,7 +360,7 @@ public class ResourceManager {
 
   public Image getUnitImg(Unit unit, Color color, Direction direction) {
     SpriteSheet unitSpriteSheet = getUnitSpriteSheet(color);
-    int row = unit.getImgID();
+    int row = unit.getID();
     return cropUnitImg(unitSpriteSheet, direction, row);
   }
 
@@ -376,7 +376,7 @@ public class ResourceManager {
 
   public Image getShadedUnitImg(Unit unit, Color color, Direction direction) {
     SpriteSheet unitSpriteSheet = getShadedUnitSpriteSheet(color);
-    int row = unit.getImgID();
+    int row = unit.getID();
     return cropUnitImg(unitSpriteSheet, direction, row);
   }
 
