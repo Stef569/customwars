@@ -251,8 +251,11 @@ public class BinaryCW2MapParser implements MapParser {
       Unit unit;
       if (nextBytesIsUnit()) {
         unit = readUnit();
-        tile.add(unit);
-        addUnitsToTransport(unit);
+
+        if (unit != null) {
+          tile.add(unit);
+          addUnitsToTransport(unit);
+        }
       }
 
       return tile;
@@ -284,26 +287,45 @@ public class BinaryCW2MapParser implements MapParser {
 
     private Terrain readTerrain() throws IOException {
       int terrainID = in.readByte();
-      return TerrainFactory.getTerrain(terrainID);
+
+      if (TerrainFactory.hasTerrainForID(terrainID)) {
+        return TerrainFactory.getTerrain(terrainID);
+      } else {
+        // If the terrain is not supported, default to the first terrain
+        return TerrainFactory.getTerrain(0);
+      }
     }
 
     private City readCity() throws IOException {
       int cityID = in.readByte();
-      int ownerID = in.readByte();
-      Player owner = players.get(ownerID);
-      City city = CityFactory.getCity(cityID);
-      city.setOwner(owner);
-      return city;
+
+      if (CityFactory.hasCityForID(cityID)) {
+        int ownerID = in.readByte();
+        Player owner = players.get(ownerID);
+        City city = CityFactory.getCity(cityID);
+        city.setOwner(owner);
+
+        return city;
+      } else {
+        // If this city is not supported, default to the first city
+        return CityFactory.getCity(0);
+      }
     }
 
     private Unit readUnit() throws IOException {
       int unitID = in.readByte();
-      int unitOwnerID = in.readByte();
-      Player owner = players.get(unitOwnerID);
 
-      Unit unit = UnitFactory.getUnit(unitID);
-      unit.setOwner(owner);
-      return unit;
+      if (UnitFactory.hasUnitForID(unitID)) {
+        int unitOwnerID = in.readByte();
+        Player owner = players.get(unitOwnerID);
+
+        Unit unit = UnitFactory.getUnit(unitID);
+        unit.setOwner(owner);
+        return unit;
+      } else {
+        // If this unit is not supported, default to no unit
+        return null;
+      }
     }
 
     private void addUnitsToTransport(Unit transport) throws IOException {
@@ -312,8 +334,11 @@ public class BinaryCW2MapParser implements MapParser {
       for (int i = 0; i < unitsInTransportCount; i++) {
         if (nextBytesIsUnit()) {
           Unit unit = readUnit();
-          addUnitsToTransport(unit);  // handle transports in transports in transports...
-          transport.add(unit);
+
+          if (unit != null) {
+            addUnitsToTransport(unit);  // handle transports in transports in transports...
+            transport.add(unit);
+          }
         }
       }
     }
