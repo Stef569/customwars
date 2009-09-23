@@ -93,8 +93,8 @@ public class TerrainFactory {
     terrains.clear();
   }
 
-  public static boolean hasTerrain(int id) {
-    return terrains.containsKey(id);
+  public static boolean hasTerrainForID(int terrainID) {
+    return terrains.containsKey(terrainID);
   }
 
   /**

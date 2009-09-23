@@ -76,6 +76,10 @@ public class UnitFactory {
     return getUnit(rand);
   }
 
+  public static boolean hasUnitForID(int unitID) {
+    return units.containsKey(unitID);
+  }
+
   public static int countUnits() {
     return units.size();
   }

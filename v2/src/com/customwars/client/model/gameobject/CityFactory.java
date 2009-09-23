@@ -65,6 +65,10 @@ public class CityFactory {
     return getCity(rand);
   }
 
+  public static boolean hasCityForID(int cityID) {
+    return cities.containsKey(cityID);
+  }
+
   public static int countCities() {
     return cities.size();
   }
