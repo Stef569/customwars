@@ -1,0 +1,445 @@
+#summary Documentation explaining various elements of the game
+#labels help,faq,setup
+
+= Main program – Custom Wars 2 =
+= #1 Goal =
+
+Create a customizable custom wars Engine, where content is separated from the program, different plugins can be made. The code should be clean and easy to understand. 
+
+The main program(core) consists of 3 logical parts: Controller Model View(CMV)
+
+= #2 The Model =
+
+Located in src/com/customwars/client/model
+
+Sample classes Game,Map,Tile,Unit,City,Terrain
+
+Purpose Models the data + simple logic of cw
+
+Most model entities are split up in a generic class and a cw specific class, model classes do not have a reference to gui classes, instead they send events when a value changed. Gui classes can listen for the changes and change the display this is the CMV pattern.
+
+== #1 Game ==
+
+Generic: TurnBasedGame contains information about turns and players
+
+Specific: Game is a TurnBasedGame contains game logic like supplying units on friendly cities
+
+=== #1 Player ===
+
+We can define 4 types of players:
+
+game player : A real person He has a name, funds, ...
+
+map player : A player within a map file, name unknown funds unknown this type of player is used in maps to link units to a player. It holds the hq location, the default color, the player ID
+
+neutral player: does not contain units, only cities, doesn't do anything, just a dummy player for neutral cities  
+
+The player has a list of units(army) and cities that are owned by him
+
+=== #2 Map ===
+
+Generic: TileMap contains the map data but does not have game specific functions. It doesn't know about Tiles instead it knows about the interfaces Location and Locatable. It doesn't know about anything on a Location.
+
+Specific: Map
+
+Map doesn't know what Location type to use until at runtime so when using the map add the type:
+
+Map<Tile> map = game.getMap(); The benefit for this is that
+
+getTile(0,0) will return a Tile object instead of a Location interface reducing the amount of castings.
+
+=== #3 Tile ===
+
+Is a location that contains 1 required terrain and 0..* locatables
+
+Doesn't know about units instead it talks to the Locatable and Location interfaces
+
+=== #4 Unit ===
+
+There is only 1 unit class that can represent any unit in the game, this is done by giving it game specific vars like canCapture() canDive() canTranspor() etc.
+
+Transport:
+
+Units in a transporting unit are included in the player army. They are not removed from the player list when loaded into the transport.
+
+When a transport unit dies all units within it die too. 
+
+=== #5 Terrain ===
+
+Immutable object, once created it cannot be changed 
+
+*City:* A city is a terrain that can be captured they can heal and supply friendly units, some can fire a rocket.
+
+= #3 Controller = 
+
+Located in src/com/customwars/client/controller
+
+Sample classes ControllerManager , UnitController, UnitHumanController , UnitAiController, CityHumanController
+
+Purpose Handles input from the view, then checks the surrounding conditions then
+
+The humanController generates a gui based on the rules in the subclass,
+
+The humanAiController will think and choose the best action based on the same rules as the human player. 
+
+Each unit, city has a controller,
+
+unit-> unitController and city->cityController mappings are inside the ControllerManager.
+
+When a gameobject dies the corresponding controller is removed.
+
+= #4 Actions =
+
+Actions all share the same Interface 'CWAction'  
+
+public interface CWAction {
+
+  void invoke(InGameContext context);
+
+  void update(int elapsedTime);
+
+  boolean canUndo();
+
+  void undo();
+
+  String getName();
+
+  boolean isCompleted();
+
+}  
+
+When creating an action you have to provide the input for that action... like
+
+context.doAction(new SelectAction(selectLocation)) or
+
+context.doAction(new MoveAction(from, to))
+
+context.doAction(ActionFactory.createJoinAction(from, to, joinLocation))  
+
+Actions can be delayed, this means that each time we update the action it steps further until it is completed.  
+
+Actions can work together, move animated, wait, clean the state..
+
+These actions are used for a lot of different unit actions. We store multiple actions into an ActionBag.  
+
+When is an action completed:
+
+in case of a direct executed action it is completed after the first invocation.
+
+in case of a delayed executed action it is complete after the action sets actionComplete to true
+
+in case of an action bag it is complete after all the actions in the bag are completed, these can be direct and delayed actions.  
+
+actions have a context they are executed in
+
+actions are used in the ingame state and in the end turn state. Actions do things like moving the cursor, moving a unit, showing the popupmenu, joining 2 units, ...  
+
+Each action has it's own class, this is the logical unit of work there are 2 types of actions: 
+
+== #1 Direct Action ==
+
+This action is performed in one step eg: Ending the turn 
+
+== #2 Delayed Action ==
+
+This action takes more then 1 update to finish, when a delayed action is finished it sets itself to complete. 
+
+== #3 Invoking an Action ==
+
+There are 2 ways to invoke an action:
+
+new ClearInGameStateAction().invoke(inGameContext);
+
+and
+
+inGameContext.doAction(new ClearInGameStateAction())
+
+The latter will add the action to an undo list if action.canUndo() returns true 
+
+=== #1 Who executes Actions ===
+
+Actions can be created and executed anywhere, but if the action is executed through inGameContext.doAction(CWAction) then it will receive updates and if it supports undo it will be added to the undo manager. 
+
+=== #2 Who creates Actions ===
+
+To make these complex action groups we provide a Factory that creates combined actions for you eg: ActionFactory.createMoveJoinWaitAction(selectLocation, joinLocation)  
+
+Actions need to be updated in each game loop, to allow multiple actions and delayed actions to complete  
+
+So what's so cool about actions over simple methods?  
+
+    * You can group actions together, including delay actions reusing action code -> ActionBag
+
+    * You can store all actions that happened in the game and just replay the list -> Replay
+
+    * Actions are given an undo method so they can be undone -> Undo
+
+    * If each action has a string command then we can write/load action from a replay file.  
+
+People can do multiple clicks before the action is executed ie
+
+Joining:
+
+# click on unit -> select tile
+
+# click on destination -> destination tile
+
+# choose [Join] click on the unit to join -> join tile  
+
+On click on unit to join execute:
+
+Move animated from select to destination
+
+join unit on destination with unit on join location
+
+wait on join location
+
+clear state  
+
+so we have to remember each click(max 3)
+
+when all actions are completed all clicks are cleared. 
+
+=== #4 How does the undo work ===
+
+There is an undoManager that stores actions. Each action can be done and undone.
+
+As the user performs actions we add them to the undo list.
+
+undoManager.undo() retrieves the last item from the undo list and performs undo to it.
+
+We no longer need the last action, so we remove it from the list
+
+Now undo, redo the last action
+
+It uses the UndoManager in javax.swing.undo.UndoManager  
+
+ie:
+
+-Select Unit
+
+-add to list
+
+UNDO!
+
+-undo select
+
+-remove select from list  
+
+-----------------------------------
+
+-Select Unit
+
+-add to list
+
+-Show Unit Menu
+
+-add to list
+
+UNDO!
+
+-undo Show unit menu
+
+-remove Show unit menu from list
+
+-undo Select
+
+-redo Select  
+
+Why undo and redo Select?
+
+Because redo Select only works when the Select action has been undone. See swing undoManager specs.
+
+= #5 GUI =
+
+== #1 Sprites ==
+
+Sprite: renders an animation on a x,y point 
+TileSprite is a Sprite that has a Location, it has a setLocation method that will convert the location to an x,y location. It doesn't allow the sprite to move off the map.
+
+== #2 Sprite Manager ==
+
+Contains all the sprites in the game, renders and updates them. 
+It listens for changes in the model and changes the gui representation. 
+Note that Animations are shared through the game that means that there is only 1 explosion anim instance, when another explosion is needed the animation is just rewinded.
+
+== #3 States ==
+
+Each screen in cw is a CWState object  
+A state is inited once on startup, this is the place where resources are loaded. 
+Each state has a unique ID, StateLogic contains a mapping from state name to the id 
+so instead of calling stateBasedgame.changetoState(3); use stateLogic.changetoState(“IN_GAME”) 
+MapRenderer: renders the map(Terrain, units, cities)
+
+GameRenderer: renders hud, map, scrolls the map and translates the graphics
+
+=== #1 Menu States ===
+
+Main Menu
+
+- Start Game
+
+  - Single player
+
+   - Senario
+
+   - Campain Missions (not for demo)
+
+  - Multiplayer
+
+   - Join IP
+
+- Options
+
+  - Keys
+
+- HomePage (hyperlink)
+
+- Help (hyperlink)
+
+- About (hyperlink)
+
+- Credits (hyperlink)
+
+= #6 Configuration =
+
+All configuration details can be retrieved from App 
+eg App.getInt(“unit_move_speed”,3); 
+This avoids having hard coded constants in the program.
+
+== #1 Loading ==
+
+The Config class loads configuration files and add the key->values  pairs to the App class
+
+The userProperties file can be changed in the gui and will be saved to the home dir when the application exits.
+
+= #7 Resource Loading =
+
+Resources are loaded by name, the location of the resource is only known at runtime. 
+Resource name → Resource locations mappings are located in text files eg. ImageLoader.txt  
+Each plugin can load different resources for the same resource name. 
+All maps are loaded on startup and can be retrieved by map name 
+Resources can be retrieved from the ResourceManager by name eg
+
+resourceManager.getMap(“myMapName”) 
+resourceManager.getAnimation(“unit_red_left”) 
+resourceManager.getSound(“trapped”) you get the point... 
+SFQ can play sounds and background music eg: 
+SFQ.playSound(“mySound”);
+
+== #1 Loading the model ==
+
+Units, Terrains, Cities and Weapons are read from xml files. Xstream is used to convert xml to a java object. The xml elements are the fields in the class that is converted to.
+
+Example xml for an infantry, the id means that the inf is the first unit in the units_RED image. Each element(price, movement, vision) comes directly from the Unit java class see documentation there for more info about each field.  
+ 
+Elements are case sensitive, most property values are not: 
+true is the same as True. 
+AIR is not the same as air
+
+<unit name="Infantry" id="0"> 
+<price>1000</price> 
+<movement>3</movement> 
+<vision>2</vision> 
+<canCapture>True</canCapture> 
+<canJoin>true</canJoin> 
+<maxExperience>10</maxExperience> 
+<maxHp>100</maxHp> 
+<maxSupplies>99</maxSupplies> 
+<armyBranch>LAND</armyBranch> 
+<movementType>0</movementType> 
+<secondaryWeapon id="SMG"> 
+<ammo>99</ammo> 
+</secondaryWeapon> 
+</unit>
+
+Movement type values are used by the terrains to define what units can move over what terrains. 
+The movement types: 
+INF = 0; 
+MECH = 1; 
+TREAD = 2; 
+TIRES = 3; 
+AIR = 4; 
+NAVAL = 5;
+
+The numbers represent an array index:
+
+<terrain name="Plain" id="18"> 
+<moveCosts> 
+<int>1</int> → INF = 0; 
+<int>1</int> →   MECH = 1; 
+<int>1</int> →   TREAD = 2; 
+<int>2</int> →   TIRES = 3; 
+<int>1</int> →   AIR = 4; 
+<int>127</int> →   NAVAL = 5; 
+</moveCosts> 
+</terrain>
+
+The plain terrain allows move types 1,2,3,4,5 to move over it at the given cost, but 6 is blocked (127 is the maximum value)
+
+= #8 Hidden =
+
+== #1 Units ==
+
+When the turn starts hide all units except the ones visible to the active player. 
+When a unit is moved recheck all units are they still hidden? 
+See map.resetAllHiddenUnits()
+
+== #2 Cities ==
+
+All cities are hidden, this means that enemy cities are neutral until a unit reveales the city by moving adjacent of it.
+
+= #9 Map =
+
+The map contains tile data(units, terrains ,cities) and the players owning a unit or city. 
+Player colors are stored to.
+
+== #1 Units ==
+
+List of unit ids within a map:
+
+   0. Inf
+   1. Mech
+   2. Tank
+   3. Medium tank
+   4. Recon
+   5. Anti air
+   6. Missles
+   7. Artillery
+   8. Rockets
+   9. APC
+  10. Lander
+  11. Cruiser
+  12. Submarine
+  13. Battleship
+  14. Transport helicopter
+  15. Battle helicopter
+  16. Fighter
+  17. Bomber
+  18. Neo tank - Mega tank
+  19. Carrier
+  20. Stealth
+  21. Destroyer - Gunboat
+  22. Anti tank
+  23. Flare
+  24. Interceptor
+  25. Carrier airplane
+  26. Motercycles
+
+When a map is read and the unit is not loaded by the plugin(not in the UnitFactory) then the unit is skipped. For example aw1(default plugin) does not have a flare when a map is read into the default plugin the flare is skipped.
+
+= #10 Use Cases =
+
+== #1 Dropping all units(inf, mech) in a transport(apc) ==
+
+Select the apc move the apc to the destination, the unit actions popup menu shows a drop option for the inf and the mech and a wait option.
+
+   1. drop inf
+   2. drop mech
+   3. wait
+
+Click on drop inf select the drop location, after the location has been selected show the unit menu again, it contains 2. drop mech and 3.wait.
+
+Choose 2. drop mech, select the drop location, after the locations has been selected show the unit menu it only contains the wait option.
+
+Select the wait option, the apc now performs the drop actions.
