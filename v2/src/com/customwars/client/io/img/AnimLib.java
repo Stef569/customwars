@@ -4,9 +4,12 @@ import com.customwars.client.io.ResourceManager;
 import com.customwars.client.io.img.slick.SpriteSheet;
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Image;
+import org.newdawn.slick.loading.DeferredResource;
+import org.newdawn.slick.loading.LoadingList;
 import tools.ColorUtil;
 
 import java.awt.Color;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -14,6 +17,7 @@ import java.util.Map;
 
 /**
  * Contains all the Animations, keyed by upper case name
+ * Unit Animations are stored by row id
  *
  * @author stefan
  */
@@ -42,7 +46,7 @@ public class AnimLib {
     String key = animName.toUpperCase();
     if (!isAnimLoaded(key)) {
       throw new IllegalArgumentException(
-              "Animation cache does not contain " + key + " " + animations.keySet());
+        "Animation cache does not contain " + key + " " + animations.keySet());
     }
     return animations.get(key);
   }
@@ -56,21 +60,32 @@ public class AnimLib {
   }
 
   public void createUnitAnimations(Color baseColor, ResourceManager resources, Color color) {
-    SpriteSheet unitSpriteSheet = resources.getSlickSpriteSheet("unit", color);
-    SpriteSheet darkerSpriteSheet = resources.getSlickSpriteSheet("unit", color, "darker");
-    createUnitAnimationsNow(baseColor, unitSpriteSheet, darkerSpriteSheet, color);
+    if (LoadingList.isDeferredLoading()) {
+      LoadingList.get().add(
+        new DeferredUnitAnimationsCreator(baseColor, color, resources)
+      );
+    } else {
+      createUnitAnimationsNow(baseColor, color, resources);
+    }
   }
 
   public void createCityAnimations(Color baseColor, ResourceManager resources, Color color) {
-    SpriteSheet citySpriteSheet = resources.getSlickSpriteSheet("city", color);
-    SpriteSheet darkerCitySpriteSheet = resources.getSlickSpriteSheet("city", color, "darker");
-    createCityAnimationsNow(baseColor, citySpriteSheet, darkerCitySpriteSheet, color);
+    if (LoadingList.isDeferredLoading()) {
+      LoadingList.get().add(
+        new DeferredCityAnimationsCreator(baseColor, color, resources)
+      );
+    } else {
+      createCityAnimationsNow(baseColor, color, resources);
+    }
   }
 
   //----------------------------------------------------------------------------
   // City Animation
   //----------------------------------------------------------------------------
-  private void createCityAnimationsNow(Color baseColor, SpriteSheet citySpriteSheet, SpriteSheet darkerCitySpriteSheet, Color color) {
+  private void createCityAnimationsNow(Color baseColor, Color color, ResourceManager resources) {
+    SpriteSheet citySpriteSheet = resources.getSlickSpriteSheet("city", color);
+    SpriteSheet darkerCitySpriteSheet = resources.getSlickSpriteSheet("city", color, "darker");
+
     // Read frame count and durations from the base animations
     Animation baseAnim = getCityBaseAnimation(baseColor);
     int[] durations = baseAnim.getDurations();
@@ -121,12 +136,13 @@ public class AnimLib {
   /**
    * Retrieve images from each row of the unitSpriteSheet and create animations out of them.
    *
-   * @param baseColor               base color for a unit
-   * @param unitSpriteSheet         the spritesheet to extract the images from
-   * @param inactiveUnitSpriteSheet the sprite sheet to extract the inactive images from
-   * @param color                   the color of the unitSpriteSheet, used to store the animations ie UNIT_0_BLUE
+   * @param baseColor base color for a unit
+   * @param color     the color of the unitSpriteSheet, used to store the animations ie UNIT_0_BLUE
    */
-  private void createUnitAnimationsNow(Color baseColor, SpriteSheet unitSpriteSheet, SpriteSheet inactiveUnitSpriteSheet, Color color) {
+  private void createUnitAnimationsNow(Color baseColor, Color color, ResourceManager resources) {
+    SpriteSheet unitSpriteSheet = resources.getSlickSpriteSheet("unit", color);
+    SpriteSheet inactiveUnitSpriteSheet = resources.getSlickSpriteSheet("unit", color, "darker");
+
     // Read frame count and durations from the base animations
     Animation baseAnimLeft = getUnitBaseAnimation(baseColor, ANIM_LEFT);
     Animation baseAnimRight = getUnitBaseAnimation(baseColor, ANIM_RIGHT);
@@ -179,19 +195,19 @@ public class AnimLib {
     return getAnim(unitAnimName);
   }
 
-  private void addUnitAnim(int unitID, Color color, String suffix, Animation unitAnim) {
-    String animName = createUnitAnimName(unitID, color, suffix);
+  private void addUnitAnim(int rowID, Color color, String suffix, Animation unitAnim) {
+    String animName = createUnitAnimName(rowID, color, suffix);
     addAnim(animName, unitAnim);
   }
 
-  public Animation getUnitAnim(int unitID, Color color, String suffix) {
-    String unitAnimName = createUnitAnimName(unitID, color, suffix);
+  public Animation getUnitAnim(int rowID, Color color, String suffix) {
+    String unitAnimName = createUnitAnimName(rowID, color, suffix);
     return getAnim(unitAnimName);
   }
 
-  public String createUnitAnimName(int unitID, Color color, String suffix) {
+  public String createUnitAnimName(int rowID, Color color, String suffix) {
     String colorName = ColorUtil.toString(color);
-    return "unit_" + unitID + "_" + colorName + "_" + suffix;
+    return "unit_" + rowID + "_" + colorName + "_" + suffix;
   }
 
   private Animation createAnim(SpriteSheet sheet, int col, int cols, int row, int[] durations) {
@@ -203,5 +219,45 @@ public class AnimLib {
       col++;
     }
     return anim;
+  }
+
+  private class DeferredUnitAnimationsCreator implements DeferredResource {
+    private final Color baseColor;
+    private final ResourceManager resources;
+    private final Color color;
+
+    public DeferredUnitAnimationsCreator(Color baseColor, Color color, ResourceManager resources) {
+      this.baseColor = baseColor;
+      this.resources = resources;
+      this.color = color;
+    }
+
+    public void load() throws IOException {
+      createUnitAnimationsNow(baseColor, color, resources);
+    }
+
+    public String getDescription() {
+      return "Creating unit animations";
+    }
+  }
+
+  private class DeferredCityAnimationsCreator implements DeferredResource {
+    private final Color baseColor;
+    private final Color color;
+    private final ResourceManager resources;
+
+    public DeferredCityAnimationsCreator(Color baseColor, Color color, ResourceManager resources) {
+      this.baseColor = baseColor;
+      this.color = color;
+      this.resources = resources;
+    }
+
+    public void load() throws IOException {
+      createCityAnimationsNow(baseColor, color, resources);
+    }
+
+    public String getDescription() {
+      return "Creating city animations";
+    }
   }
 }
