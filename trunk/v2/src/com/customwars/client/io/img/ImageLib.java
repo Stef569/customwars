@@ -5,9 +5,12 @@ import com.customwars.client.io.img.slick.ImageStrip;
 import com.customwars.client.io.img.slick.SlickImageFactory;
 import com.customwars.client.io.img.slick.SpriteSheet;
 import org.newdawn.slick.Image;
+import org.newdawn.slick.loading.DeferredResource;
+import org.newdawn.slick.loading.LoadingList;
 import tools.ColorUtil;
 
 import java.awt.Color;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -142,7 +145,13 @@ public class ImageLib {
       storeImgName += "_" + suffix;
     }
 
-    recolorImgNow(recolorTo, imgFilterName, baseImgName, storeImgName, darkPercentage);
+    if (LoadingList.isDeferredLoading()) {
+      LoadingList.get().add(
+        new DeferredAwtImgRecolorer(recolorTo, imgFilterName, baseImgName, storeImgName, darkPercentage)
+      );
+    } else {
+      recolorImgNow(recolorTo, imgFilterName, baseImgName, storeImgName, darkPercentage);
+    }
   }
 
   private void recolorImgNow(Color recolorTo, String imgFilterName, String baseImgName, String storeImgName, int darkPercentage) {
@@ -229,5 +238,29 @@ public class ImageLib {
 
   public String getStoredImgNames() {
     return slickImgCache.keySet().toString();
+  }
+
+  private class DeferredAwtImgRecolorer implements DeferredResource {
+    private final Color recolorTo;
+    private final String imgFilterName;
+    private final String baseImgName;
+    private final String storeImgName;
+    private final int darkPercentage;
+
+    public DeferredAwtImgRecolorer(Color recolorTo, String imgFilterName, String baseImgName, String storeImgName, int darkPercentage) {
+      this.recolorTo = recolorTo;
+      this.imgFilterName = imgFilterName;
+      this.baseImgName = baseImgName;
+      this.storeImgName = storeImgName;
+      this.darkPercentage = darkPercentage;
+    }
+
+    public void load() throws IOException {
+      recolorImgNow(recolorTo, imgFilterName, baseImgName, storeImgName, darkPercentage);
+    }
+
+    public String getDescription() {
+      return "recoloring " + baseImgName + " storing as " + storeImgName;
+    }
   }
 }
