@@ -35,8 +35,8 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
   private String startStateName;
 
   public TestStates(String startStateName, StateSession stateSession, ResourceManager resources, Config config) {
-    super(App.get("game.name") + " - " + App.get("plugin.name"));
-    this.startStateName = startStateName;
+    super(App.get("game.name") + " - Slick tests");
+    this.startStateName = startStateName == null ? "MAIN_MENU" : startStateName;
     this.stateSession = stateSession;
     this.resources = resources;
     this.config = config;
@@ -60,7 +60,7 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
     mapStateIdsToName();
     loadResources();
     CWState.setDefaultFont(container);
-    statelogic.changeTo("MAIN_MENU");
+    statelogic.changeTo(startStateName);
     config.loadInputBindings(cwInput);
 
     logger.debug("Startup complete starting state=" + (startStateName == null ? "Default" : startStateName));
