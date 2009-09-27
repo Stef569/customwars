@@ -1,4 +1,4 @@
-<project name="Custom wars2" basedir=".">
+<project name="Custom wars2" basedir="." default="release tests">
     <property name="app.name" value="CW2"/>
     <property name="jar.core.main.class" value="AppMain"/>
     <property name="jar.test.main.class" value="TestMain"/>

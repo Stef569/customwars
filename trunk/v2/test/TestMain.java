@@ -15,7 +15,10 @@ import tools.Log4JUtil;
 
 /**
  * Starts The tests
- * A startstate argument can be provided to jump to a given state.
+ *
+ * Command line arguments:
+ * -startstate startStateName
+ * The state to start  the program in, defaults to the main menu
  * see {@link slick.TestStates#mapStateIdsToName()} for a list of state names that can be used.
  *
  * @author stefan
@@ -51,7 +54,6 @@ public class TestMain {
   }
 
   private void initTestMode() {
-//What is this for?
     logger.info("Init debug Mode");
     resources.loadModel();
     Game game = HardCodedGame.getGame();

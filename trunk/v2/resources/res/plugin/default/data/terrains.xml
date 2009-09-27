@@ -1,7 +1,7 @@
 <!--
  Links a terrain to an image(using the ID) and
  provide extra information for specific terrain types ie there is only 1 road base terrain
- but there are many road types(Vertical, horizontal, bends). Type referes to a baseTerrain inside terrains.xml
+ but there are many road types(Vertical, horizontal, bends). Type referes to a baseTerrain inside baseTerrains.xml
 -->
 <list>
     <terrain id="0" type="Grass"/>
