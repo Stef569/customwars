@@ -20,22 +20,43 @@ public class MainMenuState extends CWState implements ComponentListener {
     mainMenu = new PopupMenu(container);
     mainMenu.setBackGroundColor(new Color(0, 0, 0));
     mainMenu.setHoverColor(new Color(255, 255, 255, 0.20f));
-
     mainMenu.addItems(
-      new MenuItem("Single player", container),
-      new MenuItem("Multi player", container),
-      new MenuItem("Options", container),
-      new MenuItem("Exit", container)
+      new MenuItem(resources.getSlickImg("single"), container),
+      new MenuItem(resources.getSlickImg("multi"), container),
+      new MenuItem(resources.getSlickImg("options"), container),
+      new MenuItem(resources.getSlickImg("exit"), container)
     );
 
     mainMenu.addListener(this);
     mainMenu.init();
-    mainMenu.setLocation(container.getWidth() / 2 - mainMenu.getWidth() / 2, container.getHeight() / 2 - mainMenu.getHeight() / 2);
+    mainMenu.setLocation((container.getWidth() / 2 - mainMenu.getWidth() / 2)+20,
+            (container.getHeight() / 2 - mainMenu.getHeight() / 2)-100);
   }
 
   @Override
   public void render(GameContainer container, Graphics g) throws SlickException {
     mainMenu.render(container, g);
+
+    g.drawImage(resources.getSlickImg("menu"), 0, 0);
+    g.setColor(Color.white);
+    //g.drawString("ENTER: TO GO BACK TO MENU", 400, 10);
+    mainMenu.render(container, g);
+
+    g.setColor(Color.lightGray);
+    switch (mainMenu.getCurrentItem()) {
+      case 0:
+        g.drawString("Single-player games and options", 210, 440);
+        break;
+      case 1:
+        g.drawString("Play with more than one person", 210, 440);
+        break;
+      case 2:
+        g.drawString("Choose between a list of options", 210, 440);
+        break;
+      case 3:
+        g.drawString("Quit the game", 210, 440);
+        break;
+    }
   }
 
   @Override
@@ -59,3 +80,4 @@ public class MainMenuState extends CWState implements ComponentListener {
     return 2;
   }
 }
+

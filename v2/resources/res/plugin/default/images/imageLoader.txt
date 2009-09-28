@@ -26,3 +26,10 @@ s cityDecorations cityDecorations.png 16 16
 
 o trapped trapped.png
 o supplied supplied.png
+
+o exit menu/exit.png
+o options menu/options.png
+o multi menu/multi.png
+o single menu/single.png
+o menu menu/mainmenu.png
+
