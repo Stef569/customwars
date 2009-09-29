@@ -180,6 +180,11 @@ public class CWInput extends InputProvider {
     return open.equals(command);
   }
 
+  public void resetInputTransition() {
+    input.setOffset(0, 0);
+    input.setScale(1, 1);
+  }
+
   public Command getCommandByName(String commandName) {
     for (Command c : commands) {
       BasicCommand command = (BasicCommand) c;
@@ -245,4 +250,5 @@ public class CWInput extends InputProvider {
       return "unknown control";
     }
   }
+
 }
