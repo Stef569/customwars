@@ -224,7 +224,7 @@ public class SpriteManager implements PropertyChangeListener {
     Color unitColor = unit.getOwner().getColor();
     UnitSprite sprite = createUnitSprite(unit);
     sprite.setUpdateAnim(false);
-    recolorUnitSprite(sprite, unitColor, unit.getID());
+    recolorUnitSprite(sprite, unitColor, unit);
     addUnitSprite(unit, sprite);
     sprite.addPropertyChangeListener(this);
     unit.addPropertyChangeListener(this);
@@ -251,12 +251,12 @@ public class SpriteManager implements PropertyChangeListener {
     return unitSprite;
   }
 
-  private void recolorUnitSprite(UnitSprite sprite, Color c, int unitID) {
-    Animation animLeft = resources.getUnitAnim(unitID, c, AnimLib.ANIM_LEFT);
-    Animation animRight = resources.getUnitAnim(unitID, c, AnimLib.ANIM_RIGHT);
-    Animation animUp = resources.getUnitAnim(unitID, c, AnimLib.ANIM_UP);
-    Animation animDown = resources.getUnitAnim(unitID, c, AnimLib.ANIM_DOWN);
-    Animation animInactive = resources.getUnitAnim(unitID, c, AnimLib.ANIM_INACTIVE);
+  private void recolorUnitSprite(UnitSprite sprite, Color c, Unit unit) {
+    Animation animLeft = resources.getUnitAnim(unit, c, AnimLib.ANIM_LEFT);
+    Animation animRight = resources.getUnitAnim(unit, c, AnimLib.ANIM_RIGHT);
+    Animation animUp = resources.getUnitAnim(unit, c, AnimLib.ANIM_UP);
+    Animation animDown = resources.getUnitAnim(unit, c, AnimLib.ANIM_DOWN);
+    Animation animInactive = resources.getUnitAnim(unit, c, AnimLib.ANIM_INACTIVE);
     sprite.setAnimLeft(animLeft);
     sprite.setAnimRight(animRight);
     sprite.setAnimUp(animUp);
@@ -488,7 +488,7 @@ public class SpriteManager implements PropertyChangeListener {
     if (!oldColor.equals(newColor)) {
       Unit unit = (Unit) evt.getSource();
       UnitSprite sprite = unitSprites.get(unit);
-      recolorUnitSprite(sprite, newColor, unit.getID());
+      recolorUnitSprite(sprite, newColor, unit);
     }
   }
 

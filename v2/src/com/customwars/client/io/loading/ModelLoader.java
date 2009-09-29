@@ -97,7 +97,8 @@ public class ModelLoader {
     xStream.alias("unit", Unit.class);
     xStream.alias("primaryWeapon", Weapon.class);
     xStream.alias("secondaryWeapon", Weapon.class);
-    xStream.useAttributeFor(Unit.class, "id");
+    xStream.useAttributeFor(Unit.class, "unitID");
+    xStream.useAttributeFor(Unit.class, "imgRowID");
     xStream.useAttributeFor(Unit.class, "name");
     xStream.alias("supplyRange", Range.class);
     InputStream unitStream = ResourceLoader.getResourceAsStream(modelResPath + XML_DATA_UNITS_FILE);

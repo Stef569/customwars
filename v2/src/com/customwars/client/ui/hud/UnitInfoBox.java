@@ -4,6 +4,7 @@ import com.customwars.client.io.ResourceManager;
 import com.customwars.client.io.img.slick.ImageStrip;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.gameobject.Weapon;
+import com.customwars.client.model.map.Direction;
 import com.customwars.client.ui.layout.Box;
 import com.customwars.client.ui.layout.ImageBox;
 import com.customwars.client.ui.layout.TextBox;
@@ -74,7 +75,8 @@ public class UnitInfoBox extends BasicComponent {
   }
 
   private void initBoxes() {
-    unitImgBox.setImage(getEastFacingUnitImg(unit));
+    Image unitImg = resources.getUnitImg(unit, Direction.EAST);
+    unitImgBox.setImage(unitImg);
     suppliesRow.setText(unit.getSupplies() + "");
     hpRow.setText(unit.getInternalHp() + "");
 
@@ -84,11 +86,6 @@ public class UnitInfoBox extends BasicComponent {
     } else {
       ammoRow.setText("0");
     }
-  }
-
-  private Image getEastFacingUnitImg(Unit unit) {
-    java.awt.Color playerColor = unit.getOwner().getColor();
-    return resources.getUnitSpriteSheet(playerColor).getSubImage(5, unit.getID());
   }
 
   private void locateBoxes(int x, int y) {

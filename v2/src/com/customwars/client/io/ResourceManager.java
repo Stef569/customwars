@@ -59,7 +59,7 @@ public class ResourceManager {
   private static final String SOUND_LOADER_FILE = "soundLoader.txt";
   private static final String COLORS_FILE = "colors.xml";
   private static final ModelLoader modelLoader = new ModelLoader();
-  private List<MapParser> mapParsers = new ArrayList<MapParser>();
+  private MapParser mapParser;
   private int darkPercentage;
 
   private ImageLib imageLib;
@@ -69,10 +69,12 @@ public class ResourceManager {
   private HashMap<String, Music> music = new HashMap<String, Music>();
   private HashMap<String, Map<Tile>> maps = new HashMap<String, Map<Tile>>();
   private HashMap<String, Font> fonts = new HashMap<String, Font>();
-  private String imgPath, soundPath, mapPath, dataPath, fontPath;
+  private String imgPath, soundPath, dataPath, fontPath;
+  private List<String> mapPaths;
 
   public ResourceManager() {
     this(new ImageLib(), new AnimLib());
+    this.mapPaths = new ArrayList<String>();
   }
 
   /**
@@ -83,12 +85,7 @@ public class ResourceManager {
     this.imageLib = imageLib;
     this.animLib = animLib;
     SlickImageFactory.setDeferredLoading(LoadingList.isDeferredLoading());
-    initMapParsers();
-  }
-
-  private void initMapParsers() {
-    MapParser binaryCW2MapParser = new BinaryCW2MapParser();
-    mapParsers.add(binaryCW2MapParser);
+    this.mapParser = new BinaryCW2MapParser();
   }
 
   public void loadAll() {
@@ -172,24 +169,40 @@ public class ResourceManager {
   }
 
   /**
-   * Load all the maps from the map path using the CW2 binary map parser
+   * Load all the maps from the 'map paths locations'
+   * using the CW2 binary map parser
+   *
+   * Maps are searched for in the current map path and all subdirs
    */
   private void loadAllMaps() throws IOException {
-    FileSystemManager fsm = new FileSystemManager(mapPath);
-    MapParser mapParser = mapParsers.get(0);
+    for (String mapPath : mapPaths) {
+      FileSystemManager fsm = new FileSystemManager(mapPath);
 
-    for (File category : fsm.getDirs()) {
-      for (File mapFile : fsm.getFiles(category)) {
+      // Current dir
+      File f = new File(mapPath);
+      readMapsFromDir(fsm, f);
+
+      // Subdirs
+      for (File category : fsm.getDirs()) {
+        readMapsFromDir(fsm, category);
+      }
+    }
+  }
+
+  private void readMapsFromDir(FileSystemManager fsm, File dir) throws IOException {
+    for (File mapFile : fsm.getFiles(dir)) {
+      if (mapFile.getName().endsWith(".map")) {
         InputStream in = ResourceLoader.getResourceAsStream(mapFile.getPath());
         Map<Tile> map = mapParser.readMap(in);
         String mapName = map.getProperty("NAME");
         maps.put(mapName, map);
+      } else {
+        logger.warn("Skipping " + mapFile + " wrong extension expected .map");
       }
     }
   }
 
   public void saveMap(Map<Tile> map, OutputStream out) throws IOException {
-    MapParser mapParser = mapParsers.get(0);
     mapParser.writeMap(map, out);
     String mapName = map.getProperty("NAME");
     maps.put(mapName, map);
@@ -251,8 +264,8 @@ public class ResourceManager {
     this.soundPath = soundPath;
   }
 
-  public void setMapPath(String mapPath) {
-    this.mapPath = mapPath;
+  public void addMapPath(String mapPath) {
+    this.mapPaths.add(mapPath);
   }
 
   public void setFontPath(String fontPath) {
@@ -309,8 +322,8 @@ public class ResourceManager {
     return animLib.getCityAnim(cityID, color, suffix);
   }
 
-  public Animation getUnitAnim(int unitID, Color color, String suffix) {
-    return animLib.getUnitAnim(unitID, color, suffix);
+  public Animation getUnitAnim(Unit unit, Color color, String suffix) {
+    return animLib.getUnitAnim(unit.getImgRowID(), color, suffix);
   }
 
   public Collection<Animation> getAllAnims() {
@@ -360,7 +373,7 @@ public class ResourceManager {
 
   public Image getUnitImg(Unit unit, Color color, Direction direction) {
     SpriteSheet unitSpriteSheet = getUnitSpriteSheet(color);
-    int row = unit.getID();
+    int row = unit.getImgRowID();
     return cropUnitImg(unitSpriteSheet, direction, row);
   }
 
@@ -376,7 +389,7 @@ public class ResourceManager {
 
   public Image getShadedUnitImg(Unit unit, Color color, Direction direction) {
     SpriteSheet unitSpriteSheet = getShadedUnitSpriteSheet(color);
-    int row = unit.getID();
+    int row = unit.getImgRowID();
     return cropUnitImg(unitSpriteSheet, direction, row);
   }
 
