@@ -1,5 +1,6 @@
 package com.customwars.client.io.loading.map;
 
+import com.customwars.client.App;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.CityFactory;
@@ -21,7 +22,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -54,11 +54,10 @@ import java.util.Set;
  * <CW2_HEADER_START> txt
  * <COLS> int
  * <ROWS> int
- * <TILE_SIZE> byte
  * <FOG_ON> boolean
- * <MAX_PLAYERS> byte
  *
  * PLAYER HEADER:
+ * <NUM_PLAYERS> byte
  * for each player (excluding the neutral player)
  * <PlAYER_ID> byte
  * <PLAYER_RGB> int
@@ -157,16 +156,16 @@ public class BinaryCW2MapParser implements MapParser {
     private Map<Tile> readStaticHeader() throws IOException {
       int cols = in.readInt();
       int rows = in.readInt();
-      int tileSize = in.readByte();
       boolean fogOn = in.readBoolean();
-      int maxPlayers = in.readByte();
 
       Terrain plain = TerrainFactory.getTerrain(0);
-      return new Map<Tile>(cols, rows, tileSize, maxPlayers, fogOn, plain);
+      int tileSize = App.getInt("plugin.tilesize");
+      return new Map<Tile>(cols, rows, tileSize, fogOn, plain);
     }
 
     private void readMapPlayers(Map<Tile> map) throws IOException {
-      for (int i = 0; i < map.getNumPlayers(); i++) {
+      int numPlayers = in.readByte();
+      for (int i = 0; i < numPlayers; i++) {
         int id = in.readByte();
         int rgb = in.readInt();
         Color color = new Color(rgb);
@@ -301,7 +300,7 @@ public class BinaryCW2MapParser implements MapParser {
 
       if (CityFactory.hasCityForID(cityID)) {
         int ownerID = in.readByte();
-        Player owner = players.get(ownerID);
+        Player owner = getPlayer(ownerID);
         City city = CityFactory.getCity(cityID);
         city.setOwner(owner);
 
@@ -317,7 +316,7 @@ public class BinaryCW2MapParser implements MapParser {
 
       if (UnitFactory.hasUnitForID(unitID)) {
         int unitOwnerID = in.readByte();
-        Player owner = players.get(unitOwnerID);
+        Player owner = getPlayer(unitOwnerID);
 
         Unit unit = UnitFactory.getUnit(unitID);
         unit.setOwner(owner);
@@ -326,6 +325,13 @@ public class BinaryCW2MapParser implements MapParser {
         // If this unit is not supported, default to no unit
         return null;
       }
+    }
+
+    private Player getPlayer(int id) {
+      if (!players.containsKey(id)) {
+        throw new IllegalArgumentException("No player for " + id + " " + players.keySet());
+      }
+      return players.get(id);
     }
 
     private void addUnitsToTransport(Unit transport) throws IOException {
@@ -376,18 +382,17 @@ public class BinaryCW2MapParser implements MapParser {
       writeTxt(out, CW2_HEADER_START);
       out.writeInt(map.getCols());
       out.writeInt(map.getRows());
-      out.writeByte(map.getTileSize());
       out.writeBoolean(map.isFogOfWarOn());
-      out.writeByte(map.getNumPlayers());
     }
 
     /**
      * Write the players to the outputstream
-     * playerID, color and hq location
+     * player size, playerID, color and hq location
      */
     private void writePlayers() throws IOException {
-      Set<Player> players = getUniquePlayers();
+      Set<Player> players = map.getUniquePlayers();
 
+      out.writeByte(players.size());
       for (Player p : players) {
         out.writeByte(p.getId());
         out.writeInt(p.getColor().getRGB());
@@ -403,27 +408,6 @@ public class BinaryCW2MapParser implements MapParser {
         out.writeInt(-1);
         out.writeInt(-1);
       }
-    }
-
-    /**
-     * Get each unique player in the map
-     * excluding the neutral player
-     */
-    private Set<Player> getUniquePlayers() {
-      Set<Player> players = new HashSet<Player>();
-      for (Tile t : map.getAllTiles()) {
-        Unit unit = map.getUnitOn(t);
-        City city = map.getCityOn(t);
-
-        if (unit != null && !unit.getOwner().isNeutral()) {
-          players.add(unit.getOwner());
-        }
-
-        if (city != null && !city.getOwner().isNeutral()) {
-          players.add(city.getOwner());
-        }
-      }
-      return players;
     }
 
     private void writeMapProperties() throws IOException {
@@ -517,7 +501,6 @@ public class BinaryCW2MapParser implements MapParser {
     private void writeTxt(DataOutputStream out, String txt) throws IOException {
       if (txt == null) {
         txt = "";
-        logger.warn("Writing empty txt");
       }
       out.writeUTF(txt);
     }

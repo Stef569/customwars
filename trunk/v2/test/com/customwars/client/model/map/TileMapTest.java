@@ -21,7 +21,7 @@ public class TileMapTest {
   @Before
   public void beforeEachTest() {
     plain = TerrainFactory.getTerrain(TestData.PLAIN);
-    map = new Map<Tile>(10, 15, 32, 3, false, plain);
+    map = new Map<Tile>(10, 15, 32, false, plain);
   }
 
   // Check If getAllTiles realy Returns AllTiles
@@ -333,7 +333,7 @@ public class TileMapTest {
    */
   public void quadrantWithUnEvenMapSize() {
     Location middle = map.getTile(5, 7);
-    Map<Tile> map = new Map<Tile>(10, 15, 32, 1, false, plain);
+    Map<Tile> map = new Map<Tile>(10, 15, 32, false, plain);
     Direction quadrant = map.getQuadrantFor(middle);
     Assert.assertNotNull(quadrant);
   }

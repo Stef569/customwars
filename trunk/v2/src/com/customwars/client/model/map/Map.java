@@ -12,14 +12,15 @@ import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.path.Mover;
 import com.customwars.client.model.map.path.PathFinder;
 import org.apache.log4j.Logger;
-import tools.Args;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 
 /**
  * A Game map extends tileMap adding game specific fields
@@ -40,12 +41,11 @@ import java.util.Properties;
 public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
   private static final Logger logger = Logger.getLogger(Map.class);
   private Properties properties;    // The properties of the map
-  private int numPlayers;           // Amount of players that can play on this map
   private boolean fogOfWarOn;       // Is fog of war in effect
   private PathFinder pathFinder;    // To builds paths within the map
 
-  public Map(int cols, int rows, int tileSize, int numPlayers, boolean fogOfWar, Terrain startTerrain, Properties properties) {
-    this(cols, rows, tileSize, numPlayers, fogOfWar, startTerrain);
+  public Map(int cols, int rows, int tileSize, boolean fogOfWar, Terrain startTerrain, Properties properties) {
+    this(cols, rows, tileSize, fogOfWar, startTerrain);
     this.properties = properties == null ? new Properties() : properties;
   }
 
@@ -55,15 +55,11 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
    * @param cols         width in tiles
    * @param rows         height in tiles
    * @param tileSize     square size of 1 tile in pixels
-   * @param numPlayers   Amount of players that can play on this map
    * @param fogOfWar     indicates if fow is on
    * @param startTerrain the terrain that is used to fill the map
    */
-  public Map(int cols, int rows, int tileSize, int numPlayers, boolean fogOfWar, Terrain startTerrain) {
+  public Map(int cols, int rows, int tileSize, boolean fogOfWar, Terrain startTerrain) {
     super(cols, rows, tileSize);
-    Args.validateBetweenZeroMax(numPlayers, Integer.MAX_VALUE, "numplayers");
-
-    this.numPlayers = numPlayers;
     this.fogOfWarOn = fogOfWar;
     this.pathFinder = new PathFinder(this);
     this.properties = new Properties();
@@ -86,7 +82,7 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
    * @param otherMap map to copy
    */
   public Map(Map<Tile> otherMap) {
-    this(otherMap.getCols(), otherMap.getRows(), otherMap.getTileSize(), otherMap.numPlayers, otherMap.fogOfWarOn, otherMap.getTile(0, 0).getTerrain());
+    this(otherMap.getCols(), otherMap.getRows(), otherMap.getTileSize(), otherMap.fogOfWarOn, otherMap.getTile(0, 0).getTerrain());
     this.properties = new Properties(otherMap.properties);
     copyMapData(otherMap);
   }
@@ -498,10 +494,6 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
     firePropertyChange("fogOfWar", oldVal, fogOfWarOn);
   }
 
-  public void setNumPlayers(int numPlayers) {
-    this.numPlayers = numPlayers;
-  }
-
   public void putProperty(String key, String value) {
     properties.put(key, value);
   }
@@ -536,7 +528,28 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
   }
 
   public int getNumPlayers() {
-    return numPlayers;
+    return getUniquePlayers().size();
+  }
+
+  /**
+   * Get each unique player in the map
+   * excluding the neutral player
+   */
+  public Set<Player> getUniquePlayers() {
+    Set<Player> players = new HashSet<Player>();
+    for (Tile t : getAllTiles()) {
+      Unit unit = getUnitOn(t);
+      City city = getCityOn(t);
+
+      if (unit != null && !unit.getOwner().isNeutral()) {
+        players.add(unit.getOwner());
+      }
+
+      if (city != null && !city.getOwner().isNeutral()) {
+        players.add(city.getOwner());
+      }
+    }
+    return players;
   }
 
   public String getProperty(String key) {

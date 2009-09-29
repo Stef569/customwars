@@ -27,7 +27,7 @@ public class GameTest {
   public void beforeEachTest() {
     game = null;
     Terrain plain = TerrainFactory.getTerrain(TestData.PLAIN);
-    map = new Map<Tile>(10, 10, 32, 4, false, plain);
+    map = new Map<Tile>(10, 10, 32, false, plain);
     map.setFogOfWarOn(true);
 
     p1 = new Player(0, Color.RED, false, null, "Stef", Integer.MAX_VALUE, 0, false);
