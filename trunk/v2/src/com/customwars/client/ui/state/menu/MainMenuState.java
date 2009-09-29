@@ -71,7 +71,16 @@ public class MainMenuState extends CWState implements ComponentListener {
   public void componentActivated(AbstractComponent source) {
     PopupMenu popupMenu = (PopupMenu) source;
     switch (popupMenu.getCurrentItem()) {
-      // not yet implemented
+      case 0:
+        changeGameState("SINGLE");
+        break;
+      case 2:
+        changeGameState("OPTION");
+        break;
+      case 3:
+        //Have to figure out how to quit from the menu.
+        System.exit(0);
+        break;
     }
   }
 
