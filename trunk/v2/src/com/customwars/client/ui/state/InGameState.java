@@ -8,14 +8,11 @@ import com.customwars.client.controller.GameController;
 import com.customwars.client.io.ResourceManager;
 import com.customwars.client.io.img.slick.ImageStrip;
 import com.customwars.client.model.Statistics;
-import com.customwars.client.model.fight.Fight;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Unit;
-import com.customwars.client.model.gameobject.UnitFight;
 import com.customwars.client.model.map.Direction;
-import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.model.map.path.MoveTraverse;
@@ -24,8 +21,6 @@ import com.customwars.client.ui.GUI;
 import com.customwars.client.ui.HUD;
 import com.customwars.client.ui.renderer.GameRenderer;
 import com.customwars.client.ui.sprite.TileSprite;
-import org.apache.log4j.Logger;
-import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
@@ -41,13 +36,10 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 public class InGameState extends CWState implements PropertyChangeListener {
-  private static final Logger logger = Logger.getLogger(InGameState.class);
-
   // Model
   private Game game;
   private Map<Tile> map;
   private boolean gameOver;
-  private Fight fight;
   private InGameContext inGameContext;
 
   // GUI
@@ -64,7 +56,6 @@ public class InGameState extends CWState implements PropertyChangeListener {
   public void init(GameContainer container, StateBasedGame game) throws SlickException {
     this.guiContext = container;
     this.input = guiContext.getInput();
-    this.fight = new UnitFight();
   }
 
   @Override
@@ -126,7 +117,7 @@ public class InGameState extends CWState implements PropertyChangeListener {
     }
 
     GUI.addLiveObjToConsole("game", game);
-    GUI.addLiveObjToConsole("map", game.getMap());
+    GUI.addLiveObjToConsole("map", map);
     GUI.addLiveObjToConsole("resources", resources);
   }
 
@@ -171,12 +162,7 @@ public class InGameState extends CWState implements PropertyChangeListener {
   @Override
   public void leave(GameContainer container, StateBasedGame stateBasedGame) throws SlickException {
     super.leave(container, stateBasedGame);
-    resetInputTransition();
-  }
-
-  private void resetInputTransition() {
-    input.setOffset(0, 0);
-    input.setScale(1, 1);
+    cwInput.resetInputTransition();
   }
 
   @Override
@@ -200,69 +186,10 @@ public class InGameState extends CWState implements PropertyChangeListener {
     if (gameRenderer != null) {
       gameRenderer.render(g);
       g.translate(-camera.getX(), -camera.getY());
-      renderAttackDamagePercentage(g);
-      g.resetTransform();
-    }
-  }
-
-  /**
-   * Draw The damage percentage at the top right of the cursorlocation
-   */
-  private void renderAttackDamagePercentage(Graphics g) {
-    if (inGameContext.isUnitAttackMode()) {
-      Location cursorLocation = gameRenderer.getCursorLocation();
-      Unit attacker = game.getActiveUnit();
-      Unit defender = game.getMap().getUnitOn(cursorLocation);
-
-      if (defender != null) {
-        fight.initFight(attacker, defender);
-        int tileSize = game.getMap().getTileSize();
-        int cursorX = cursorLocation.getCol() * tileSize + tileSize / 2;
-        int cursorY = cursorLocation.getRow() * tileSize + 5;
-        int dmgPercentage = fight.getAttackDamagePercentage();
-
-        String dmgTxt = "Damage:" + dmgPercentage + "%";
-        int fontWidth = g.getFont().getWidth(dmgTxt);
-        int fontHeight = g.getFont().getHeight(dmgTxt);
-
-        final int BOX_MARGIN = 2;
-        final int CURSOR_OFFSET = 64;
-
-        int boxX = cursorX + CURSOR_OFFSET - BOX_MARGIN;
-        int boxY = cursorY - CURSOR_OFFSET - BOX_MARGIN;
-        int totalWidth = fontWidth + BOX_MARGIN * 2;
-        int totalHeight = fontHeight + BOX_MARGIN * 2;
-
-        // If the damage percentage does not fit to the gui make sure that it does
-        // by setting the x,y away from the corner
-        if (!GUI.canFitToScreen(boxX, boxY, totalWidth, totalHeight)) {
-          Direction quadrant = map.getQuadrantFor(cursorLocation);
-          switch (quadrant) {
-            case NORTHEAST:
-              boxX = cursorX - CURSOR_OFFSET - BOX_MARGIN;
-              boxY = cursorY + CURSOR_OFFSET - BOX_MARGIN;
-              break;
-            case NORTHWEST:
-              boxX = cursorX + CURSOR_OFFSET - BOX_MARGIN;
-              boxY = cursorY + CURSOR_OFFSET - BOX_MARGIN;
-              break;
-            case SOUTHEAST:
-              boxX = cursorX - CURSOR_OFFSET - BOX_MARGIN;
-              boxY = cursorY - CURSOR_OFFSET - BOX_MARGIN;
-              break;
-            case SOUTHWEST:
-              boxX = cursorX + CURSOR_OFFSET - BOX_MARGIN;
-              boxY = cursorY - CURSOR_OFFSET - BOX_MARGIN;
-              break;
-          }
-        }
-
-        Color prevColor = g.getColor();
-        g.setColor(new Color(0, 0, 0, 0.4f));
-        g.fillRoundRect(boxX, boxY, totalWidth, totalHeight, 2);
-        g.setColor(prevColor);
-        g.drawString(dmgTxt, boxX + BOX_MARGIN, boxY + BOX_MARGIN);
+      if (inGameContext.isUnitAttackMode()) {
+        gameRenderer.renderAttackDamagePercentage(g);
       }
+      g.resetTransform();
     }
   }
 
@@ -282,8 +209,8 @@ public class InGameState extends CWState implements PropertyChangeListener {
       } else {
         Tile cursorLocation = gameRenderer.getCursorLocation();
         Unit activeUnit = game.getActiveUnit();
-        Unit selectedUnit = game.getMap().getUnitOn(cursorLocation);
-        City city = game.getMap().getCityOn(cursorLocation);
+        Unit selectedUnit = map.getUnitOn(cursorLocation);
+        City city = map.getCityOn(cursorLocation);
 
         Unit unit;
         if (activeUnit != null) {
@@ -345,13 +272,11 @@ public class InGameState extends CWState implements PropertyChangeListener {
 
   public void mouseWheelMoved(int newValue) {
     boolean zoomEnabled = App.getBoolean("display.zoom");
-    if (zoomEnabled) {
-      if (entered) {
-        if (newValue > 0) {
-          camera.zoomIn();
-        } else {
-          camera.zoomOut();
-        }
+    if (entered && zoomEnabled) {
+      if (newValue > 0) {
+        camera.zoomIn();
+      } else {
+        camera.zoomOut();
       }
     }
   }
@@ -375,9 +300,9 @@ public class InGameState extends CWState implements PropertyChangeListener {
 
   private void cursorPositionChanged(PropertyChangeEvent evt) {
     TileSprite cursor = (TileSprite) evt.getSource();
-    SFX.playSound("maptick");
     Tile newCursorLocation = (Tile) cursor.getLocation();
     hud.moveOverTile(newCursorLocation);
+    SFX.playSound("maptick");
   }
 
   @Override
