@@ -11,6 +11,7 @@ import com.customwars.client.io.loading.ImageParser;
 import com.customwars.client.io.loading.ModelLoader;
 import com.customwars.client.io.loading.SoundParser;
 import com.customwars.client.io.loading.map.BinaryCW2MapParser;
+import com.customwars.client.io.loading.map.MapLoader;
 import com.customwars.client.io.loading.map.MapParser;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Direction;
@@ -30,7 +31,6 @@ import tools.Args;
 import tools.ColorUtil;
 
 import java.awt.Color;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -71,6 +71,7 @@ public class ResourceManager {
   private HashMap<String, Font> fonts = new HashMap<String, Font>();
   private String imgPath, soundPath, dataPath, fontPath;
   private List<String> mapPaths;
+  private MapLoader mapLoader;
 
   public ResourceManager() {
     this(new ImageLib(), new AnimLib());
@@ -109,7 +110,7 @@ public class ResourceManager {
     loadAnimationsFromFile();
     recolor();
     loadSoundFromFile();
-    loadAllMaps();
+    loadMaps();
     loadFonts();
     releaseUnneededResources();
   }
@@ -148,6 +149,11 @@ public class ResourceManager {
     soundParser.loadConfigFile(in);
   }
 
+  private void loadMaps() throws IOException {
+    mapLoader = new MapLoader(mapPaths, mapParser, this);
+    mapLoader.loadAllMaps();
+  }
+
   private void loadFonts() throws IOException {
     Font defaultFont;
     try {
@@ -166,40 +172,6 @@ public class ResourceManager {
 
   private void releaseUnneededResources() {
     imageLib.clearImageSources();
-  }
-
-  /**
-   * Load all the maps from the 'map paths locations'
-   * using the CW2 binary map parser
-   *
-   * Maps are searched for in the current map path and all subdirs
-   */
-  private void loadAllMaps() throws IOException {
-    for (String mapPath : mapPaths) {
-      FileSystemManager fsm = new FileSystemManager(mapPath);
-
-      // Current dir
-      File f = new File(mapPath);
-      readMapsFromDir(fsm, f);
-
-      // Subdirs
-      for (File category : fsm.getDirs()) {
-        readMapsFromDir(fsm, category);
-      }
-    }
-  }
-
-  private void readMapsFromDir(FileSystemManager fsm, File dir) throws IOException {
-    for (File mapFile : fsm.getFiles(dir)) {
-      if (mapFile.getName().endsWith(".map")) {
-        InputStream in = ResourceLoader.getResourceAsStream(mapFile.getPath());
-        Map<Tile> map = mapParser.readMap(in);
-        String mapName = map.getProperty("NAME");
-        maps.put(mapName, map);
-      } else {
-        logger.warn("Skipping " + mapFile + " wrong extension expected .map");
-      }
-    }
   }
 
   public void saveMap(Map<Tile> map, OutputStream out) throws IOException {
@@ -423,5 +395,13 @@ public class ResourceManager {
   public SpriteSheet getCitySpriteSheet(Color color) {
     String colorName = ColorUtil.toString(color);
     return getSlickSpriteSheet("CITY_" + colorName);
+  }
+
+  public void addMap(String mapName, Map<Tile> map) {
+    if (maps.containsKey(mapName)) {
+      throw new IllegalArgumentException(mapName + " is already stored " + maps);
+    } else {
+      maps.put(mapName, map);
+    }
   }
 }
