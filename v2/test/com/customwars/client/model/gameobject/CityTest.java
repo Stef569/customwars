@@ -21,7 +21,7 @@ public class CityTest {
     player1 = new Player(0, Color.RED, false, null, "Stef", Integer.MAX_VALUE, 0, false);
     player2 = new Player(1, Color.BLUE, false, null, "JSR", 8500, 1, false);
     Terrain plain = TerrainFactory.getTerrain(TestData.PLAIN);
-    map = new Map<Tile>(10, 10, 32, 4, false, plain);
+    map = new Map<Tile>(10, 10, 32, false, plain);
     map.setFogOfWarOn(true);
   }
 

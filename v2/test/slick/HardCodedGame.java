@@ -44,7 +44,7 @@ public class HardCodedGame {
   public static Map<Tile> getMap() {
     int tileSize = App.getInt("plugin.tilesize", 32);
     Terrain plain = TerrainFactory.getTerrain(TestData.PLAIN);
-    map = new Map<Tile>(15, 20, tileSize, 3, true, plain);
+    map = new Map<Tile>(15, 20, tileSize, true, plain);
     initMapProperties();
     initTerrains();
 
