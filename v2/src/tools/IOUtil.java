@@ -53,18 +53,60 @@ public final class IOUtil {
   }
 
   /**
-   * Helper method for checking dirs
-   * If the directory doesn't exist it will create it else it will return immediately
-   * When it failed to create the dir, it returns false
+   * Helper method for creating dirs
+   * When the dir could not be created, a RuntimeException is thrown
+   *
+   * @param dir    directory to create
+   * @param errMsg The message to be included in the exception, if null a default error message will be generated
+   * @throws RuntimeException thrown when the dir could not be created
+   */
+  public static void mkDir(File dir, String errMsg) throws RuntimeException {
+    boolean success = mkDir(dir);
+
+    if (!success) {
+      String errorMessage = errMsg == null ? "Could not create dir: " + dir : errMsg;
+      throw new RuntimeException(errorMessage);
+    }
+  }
+
+  /**
+   * Helper method for creating dirs
+   * If the directory doesn't exist, create the dir
    *
    * @param dir directory to create
+   * @return true if the directory could be created, false otherwise
    */
   public static boolean mkDir(File dir) {
-    boolean result = true;
+    boolean success = true;
     if (!dir.exists()) {
-      result = !dir.mkdir();
+      success = !dir.mkdir();
     }
-    return result;
+    return success;
+  }
+
+  public static void createNewFile(File file) throws RuntimeException {
+    createNewFile(file, null);
+  }
+
+  /**
+   * Helper method for creating a file
+   * If the file could not be created a RuntimeException is thrown
+   *
+   * @param file   file to create
+   * @param errMsg The message to be included in the exception, if null a default error message will be generated
+   * @throws RuntimeException thrown when the file could not be created
+   */
+  public static void createNewFile(File file, String errMsg) throws RuntimeException {
+    String errorMessage = errMsg == null ? "Could not create file: '" + file + "'" : errMsg;
+
+    try {
+      boolean successs = file.createNewFile();
+      if (!successs) {
+        throw new RuntimeException(errorMessage);
+      }
+    } catch (IOException e) {
+      throw new RuntimeException(errorMessage);
+    }
   }
 
   /**
