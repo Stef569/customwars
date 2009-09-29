@@ -1,11 +1,13 @@
 package com.customwars.client.ui.state;
 
+import com.customwars.client.Config;
 import com.customwars.client.controller.CursorController;
 import com.customwars.client.controller.MapEditorController;
 import com.customwars.client.io.img.slick.ImageStrip;
 import com.customwars.client.model.map.Direction;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
+import com.customwars.client.ui.hud.Dialog;
 import com.customwars.client.ui.mapMaker.CitySelectPanel;
 import com.customwars.client.ui.mapMaker.SelectPanel;
 import com.customwars.client.ui.mapMaker.TerrainSelectPanel;
@@ -20,16 +22,26 @@ import org.newdawn.slick.command.Command;
 import org.newdawn.slick.gui.GUIContext;
 import org.newdawn.slick.state.StateBasedGame;
 
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import java.awt.Color;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * In this state the user can create and save maps
- * There are 3 select panels
+ * In this state the user can create open and save maps in the cw2 format
+ * There are 3 panels that contain a row of gameobjects
  * one for adding terrains
  * one for adding cities
  * one for adding units
+ *
+ * To add a gameobject:
+ * Select 1 gameobject by clicking on it
+ * click on the map to add it
+ * At all times there is 1 active panel
  */
 public class MapEditorState extends CWState {
   private MapEditorController mapEditorController;
@@ -41,11 +53,15 @@ public class MapEditorState extends CWState {
   private MapRenderer mapRenderer;
 
   public void init(GameContainer gameContainer, StateBasedGame stateBasedGame) throws SlickException {
-    buildPanels(gameContainer);
-    loadPanelResources();
+    createPanels(gameContainer);
 
     mapEditorController = new MapEditorController(this, resources, panels.size());
-    mapRenderer.loadResources(resources);
+    recolorPanels();
+  }
+
+  private void createPanels(GameContainer gameContainer) {
+    buildPanels(gameContainer);
+    loadPanelResources();
   }
 
   private void buildPanels(GUIContext guiContex) {
@@ -59,6 +75,14 @@ public class MapEditorState extends CWState {
     for (SelectPanel panel : panels) {
       panel.loadResources(resources);
     }
+  }
+
+  private void recolorPanels() {
+    for (int panelIndex = 0; panelIndex < panels.size(); panelIndex++) {
+      this.activePanelID = panelIndex;
+      mapEditorController.recolor();
+    }
+    this.activePanelID = 0;
   }
 
   public void render(GameContainer container, Graphics g) throws SlickException {
@@ -75,6 +99,8 @@ public class MapEditorState extends CWState {
     g.drawString("Delete object: " + cwInput.getControlsAsText(CWInput.delete), LEFT_MARGIN, 46);
     g.drawString("Change panel: " + cwInput.getControlsAsText(CWInput.nextPage), LEFT_MARGIN, 58);
     g.drawString("Recolor: " + cwInput.getControlsAsText(CWInput.recolor), LEFT_MARGIN, 70);
+    g.drawString("Save map: " + cwInput.getControlsAsText(CWInput.save), LEFT_MARGIN, 82);
+    g.drawString("Open map: " + cwInput.getControlsAsText(CWInput.open), LEFT_MARGIN, 94);
   }
 
   public void update(GameContainer container, int delta) throws SlickException {
@@ -83,9 +109,10 @@ public class MapEditorState extends CWState {
   }
 
   public void setMap(Map<Tile> map) {
-    SpriteManager spriteManager = new SpriteManager(map);
     this.map = map;
+    SpriteManager spriteManager = new SpriteManager(map);
     this.mapRenderer = new MapRenderer(map, spriteManager);
+    mapRenderer.loadResources(resources);
     this.cursorController = new CursorController(map, spriteManager);
     initCursors();
   }
@@ -117,13 +144,75 @@ public class MapEditorState extends CWState {
       mapEditorController.fill(selectedIndex);
     } else if (cwInput.isNextPage(command)) {
       this.activePanelID = mapEditorController.nextPanel();
-      mapEditorController.nextColor();
     } else if (cwInput.isRecolor(command)) {
       mapEditorController.nextColor();
     } else if (cwInput.isDelete(command)) {
       mapEditorController.delete(cursorLocation);
+    } else if (cwInput.isSave(command)) {
+      saveMap();
+    } else if (cwInput.isOpen(command)) {
+      openMap();
     } else {
       moveCursor(command, cwInput);
+    }
+  }
+
+  private void saveMap() {
+    cwInput.setActive(false);
+    Dialog dialog = new Dialog("Save Map");
+    dialog.addTextField("Map name");
+    dialog.addTextField("Map description");
+    dialog.addTextField("Author");
+
+    int eventType = dialog.show();
+    handleSaveMapDialogInput(eventType, dialog);
+    cwInput.setActive(true);
+  }
+
+  private void openMap() {
+    cwInput.setActive(false);
+    JFileChooser fileChooser = new JFileChooser(Config.MAPS_DIR);
+    fileChooser.showOpenDialog(null);
+
+    File file = fileChooser.getSelectedFile();
+    handleOpenMapDialogInput(file);
+    cwInput.setActive(true);
+  }
+
+  private void handleOpenMapDialogInput(File file) {
+    if (file != null) {
+      try {
+        mapEditorController.loadMap(file.getName());
+      } catch (FileNotFoundException e) {
+        JOptionPane.showMessageDialog(null,
+          "Could not open the map '" + file.getPath() + "'\n " +
+            e.getMessage(),
+          "Error while Opening map",
+          JOptionPane.ERROR_MESSAGE);
+      }
+    }
+  }
+
+  public void handleSaveMapDialogInput(int eventType, Dialog dialog) {
+    if (eventType == JOptionPane.OK_OPTION) {
+      String mapName = dialog.getFieldValue("map name");
+      String mapDescription = dialog.getFieldValue("map description");
+      String author = dialog.getFieldValue("author");
+
+      try {
+        mapEditorController.saveMap(mapName, mapDescription, author);
+        JOptionPane.showMessageDialog(null,
+          author + ", your map '" + mapName + "'\n" +
+            " has been saved to " + Config.MAPS_DIR,
+          "Saved",
+          JOptionPane.PLAIN_MESSAGE);
+      } catch (IOException e) {
+        JOptionPane.showMessageDialog(null,
+          "Could not save the map '" + mapName + "'\n " +
+            e.getMessage(),
+          "Error while saving",
+          JOptionPane.PLAIN_MESSAGE);
+      }
     }
   }
 
