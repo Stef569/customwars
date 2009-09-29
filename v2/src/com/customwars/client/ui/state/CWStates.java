@@ -6,6 +6,8 @@ import com.customwars.client.SFX;
 import com.customwars.client.io.ResourceManager;
 import com.customwars.client.ui.GUI;
 import com.customwars.client.ui.state.menu.MainMenuState;
+import com.customwars.client.ui.state.menu.OptionMenuState;
+import com.customwars.client.ui.state.menu.SingleMenuState;
 import org.apache.log4j.Logger;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.SlickException;
@@ -62,24 +64,43 @@ public class CWStates extends StateBasedGame implements InputProviderListener {
 
     // Menu
     CWState mainMenu = new MainMenuState();
+    CWState optionMenu = new OptionMenuState();
+    CWState singleMenu = new SingleMenuState();
+
+    //Config
+    CWState remapKeysTest = new ControlBindingState();
+
+    //Editor
+    //CWState mapEditorState = new MapEditorState();
 
     // Game
     CWState inGame = new InGameState();
     CWState endTurnState = new EndTurnState();
     CWState gameOver = new GameOverState();
 
+
     addState(startup);
     addState(mainMenu);
+    addState(optionMenu);
+    addState(singleMenu);
     addState(inGame);
     addState(endTurnState);
     addState(gameOver);
+    addState(remapKeysTest);
+    //addState(mapEditorState);
   }
 
   private void mapStateIdsToName() {
     statelogic = new StateLogic(this);
     statelogic.addState("STARTUP", 0);
     statelogic.addState("MAIN_MENU", 2);
-    statelogic.addState("KEY_MAP", 5);
+    statelogic.addState("KEY_MENU", 5);
+    statelogic.addState("SINGLE", 6);
+    statelogic.addState("OPTION", 7);
+    statelogic.addState("IN_GAME", 3);
+    statelogic.addState("GAME_OVER", 10);
+    statelogic.addState("END_TURN", 4);
+    //statelogic.addState("MAP_EDITOR", 50);
     CWState.setStatelogic(statelogic);
   }
 

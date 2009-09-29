@@ -66,7 +66,7 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
     fillMap(cols, rows, startTerrain);
   }
 
-  @SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked")
   private void fillMap(int cols, int rows, Terrain terrain) {
     for (int row = 0; row < rows; row++) {
       for (int col = 0; col < cols; col++) {
