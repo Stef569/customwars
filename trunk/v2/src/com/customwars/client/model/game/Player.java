@@ -263,6 +263,23 @@ public class Player extends GameObject {
   }
 
   @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof Player)) return false;
+
+    Player player = (Player) o;
+
+    if (id != player.id) return false;
+
+    return true;
+  }
+
+  @Override
+  public int hashCode() {
+    return id;
+  }
+
+  @Override
   public String toString() {
     return String.format("[name=%s id=%s state=%s color=%s budget=%s team=%s]",
       name, id, getState(), ColorUtil.toString(color), budget, team);

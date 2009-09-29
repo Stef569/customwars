@@ -13,11 +13,13 @@ public class StringUtil {
   }
 
   /**
-   * Append char c to String in
-   * when it is not already the last char
+   * Append the suffix suf to String in
+   * when in does not end with the suffix already
    */
-  public static String appendTrailingSuffix(String in, char c) {
-    if (in.charAt(in.length() - 1) != c) in += c;
+  public static String appendTrailingSuffix(String in, String suf) {
+    if (!in.endsWith(suf)) {
+      in += suf;
+    }
     return in;
   }
 

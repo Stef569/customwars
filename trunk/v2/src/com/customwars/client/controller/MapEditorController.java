@@ -1,6 +1,7 @@
 package com.customwars.client.controller;
 
 import com.customwars.client.App;
+import com.customwars.client.Config;
 import com.customwars.client.MapMaker.control.CityMapEditorControl;
 import com.customwars.client.MapMaker.control.MapEditorControl;
 import com.customwars.client.MapMaker.control.TerrainMapEditorControl;
@@ -14,8 +15,13 @@ import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.ui.state.MapEditorState;
+import tools.StringUtil;
 
 import java.awt.Color;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -38,8 +44,10 @@ public class MapEditorController {
 
   private MapEditorState mapEditorView;
   private final int panelCount;
+  private ResourceManager resources;
 
   public MapEditorController(MapEditorState mapEditorState, ResourceManager resources, int panelCount) {
+    this.resources = resources;
     this.mapEditorView = mapEditorState;
     this.panelCount = panelCount;
     this.colors = new ArrayList<Color>(resources.getSupportedColors());
@@ -59,12 +67,13 @@ public class MapEditorController {
     int nextPlayerID = 0;
 
     for (Color color : colors) {
-      boolean neutral = false;
+      Player player;
       if (color.equals(neutralColor)) {
-        neutral = true;
+        player = new Player(Player.NEUTRAL_PLAYER_ID, color, true, null);
+      } else {
+        player = new Player(nextPlayerID++, color, false, null);
       }
 
-      Player player = new Player(nextPlayerID++, color, neutral, null);
       players.put(color, player);
     }
   }
@@ -74,16 +83,33 @@ public class MapEditorController {
     String version = App.get("game.version");
 
     Terrain plain = TerrainFactory.getTerrain(0);
-    Map<Tile> map = new Map<Tile>(cols, rows, tileSize, 4, false, plain);
+    Map<Tile> map = new Map<Tile>(cols, rows, tileSize, false, plain);
     map.putProperty("VERSION", version);
     setMap(map);
   }
 
-  public void loadMap(String fileName) {
-
+  public void loadMap(String fileName) throws FileNotFoundException {
+    String mapName = fileName.substring(0, fileName.lastIndexOf('.'));
+    Map<Tile> map = resources.getMap(mapName);
+    setMap(map);
   }
 
-  public void saveMap(String fileName) {
+  public void saveMap(String mapName, String mapDescription, String author) throws IOException {
+    map.putProperty("NAME", mapName);
+    map.putProperty("DESCRIPTION", mapDescription);
+    map.putProperty("AUTHOR", author);
+    saveMap(mapName);
+  }
+
+  public void saveMap(String fileName) throws IOException {
+    String mapName = StringUtil.appendTrailingSuffix(fileName, ".map");
+    File newMapFile = new File(Config.MAPS_DIR, mapName);
+
+    if (newMapFile.exists()) {
+      throw new IOException("The map " + fileName + " already exists");
+    } else {
+      resources.saveMap(map, new FileOutputStream(newMapFile));
+    }
   }
 
   public void setMapName(String mapName) {

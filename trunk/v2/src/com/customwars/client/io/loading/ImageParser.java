@@ -96,7 +96,7 @@ public class ImageParser {
 
     if (tokens.countTokens() < 3)
       throw new IllegalArgumentException(ERR_WRONG_NUM_ARGS + " for line: " + line +
-              " Usage " + SINGLE_IMAGE_SYMBOL + " <imgName> <fileName>");
+        " Usage " + SINGLE_IMAGE_SYMBOL + " <imgName> <fileName>");
     else {
       tokens.nextToken();    // skip command label
       String imgName = tokens.nextToken();
@@ -114,7 +114,7 @@ public class ImageParser {
 
     if (tokens.countTokens() < 5)
       throw new IllegalArgumentException(ERR_WRONG_NUM_ARGS + " for line: " + line +
-              " Usage: " + STRIP_IMAGE_SYMBOL + " <imgName> <fileName> <tileWidth> <tileHeight>");
+        " Usage: " + STRIP_IMAGE_SYMBOL + " <imgName> <fileName> <tileWidth> <tileHeight>");
     else {
       tokens.nextToken();    // skip command label
       String imgName = tokens.nextToken();
@@ -144,7 +144,7 @@ public class ImageParser {
 
     if (tokens.countTokens() < 5)
       throw new IllegalArgumentException(ERR_WRONG_NUM_ARGS + " for line: " + line +
-              " Usage: " + MATRIX_IMAGE_SYMBOL + " <imgName> <fileName> <tileWidth> <tileHeight>");
+        " Usage: " + MATRIX_IMAGE_SYMBOL + " <imgName> <fileName> <tileWidth> <tileHeight>");
     else {
       tokens.nextToken();    // skip command label
       String imgName = tokens.nextToken();
@@ -166,7 +166,7 @@ public class ImageParser {
   }
 
   public void setImgPath(String fullImgPath) {
-    fullImgPath = StringUtil.appendTrailingSuffix(fullImgPath, '/');
+    fullImgPath = StringUtil.appendTrailingSuffix(fullImgPath, "/");
     this.fullImgPath = fullImgPath;
   }
 }

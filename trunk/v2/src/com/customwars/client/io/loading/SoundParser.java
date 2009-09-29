@@ -60,7 +60,7 @@ public class SoundParser {
         loadMusic(line);
       } else
         throw new IllegalArgumentException(ERR_READING_LINE + " " + line + ", unknown Symbol: " + ch +
-                " use " + SOUND_SYMBOL + " for sounds and " + MUSIC_SYMBOL + " for music");
+          " use " + SOUND_SYMBOL + " for sounds and " + MUSIC_SYMBOL + " for music");
     } catch (SlickException e) {
       throw new RuntimeException(e);
     }
@@ -75,7 +75,7 @@ public class SoundParser {
 
     if (tokens.countTokens() != 3)
       throw new IllegalArgumentException(ERR_WRONG_NUM_ARGS + " for line: " + line +
-              " Usage " + SOUND_SYMBOL + " <soundName> <fileName>");
+        " Usage " + SOUND_SYMBOL + " <soundName> <fileName>");
     else {
       tokens.nextToken();    // skip command label
       String soundName = tokens.nextToken().toUpperCase();
@@ -93,7 +93,7 @@ public class SoundParser {
 
     if (tokens.countTokens() != 3)
       throw new IllegalArgumentException(ERR_WRONG_NUM_ARGS + " for line: " + line +
-              " Usage " + MUSIC_SYMBOL + " <musicName> <fileName>");
+        " Usage " + MUSIC_SYMBOL + " <musicName> <fileName>");
     else {
       tokens.nextToken();    // skip command label
       String musicName = tokens.nextToken().toUpperCase();
@@ -103,7 +103,7 @@ public class SoundParser {
   }
 
   public void setSoundPath(String fullSoundPath) {
-    fullSoundPath = StringUtil.appendTrailingSuffix(fullSoundPath, '/');
+    fullSoundPath = StringUtil.appendTrailingSuffix(fullSoundPath, "/");
     this.fullSoundPath = fullSoundPath;
   }
 }

@@ -41,6 +41,8 @@ public class CWInput extends InputProvider {
   public static final Command endTurn = new BasicCommand("End_Turn");
   public static final Command toggleConsole = new BasicCommand("Toggle_Console");
   public static final Command toggleEventViewer = new BasicCommand("Toggle_EventViewer");
+  public static final Command save = new BasicCommand("Save");
+  public static final Command open = new BasicCommand("Open");
 
   private static final int KEY_REPEAT_DELAY = 250;
   private Input input;
@@ -168,6 +170,14 @@ public class CWInput extends InputProvider {
 
   public boolean isToggleEventViewer(Command command) {
     return toggleEventViewer.equals(command);
+  }
+
+  public boolean isSave(Command command) {
+    return save.equals(command);
+  }
+
+  public boolean isOpen(Command command) {
+    return open.equals(command);
   }
 
   public Command getCommandByName(String commandName) {
