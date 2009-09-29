@@ -35,7 +35,8 @@ import java.util.Map;
  */
 public class Unit extends GameObject implements Mover, Location, TurnHandler, Attacker, Defender {
   public static final Direction DEFAULT_ORIENTATION = Direction.EAST;
-  private final int id;         // The unit Type ie(1->INF, 2->APC,...)
+  private final int unitID;     // The unit Type ie(1->INF, 2->APC,...)
+  private final int imgRowID;      // The id, used to retrieve the images for this unit
   private String name;          // Full name ie Infantry, Tank, ...
   private String description;   // Information about this Unit
   private int price;            // The price for buying this Unit
@@ -81,13 +82,14 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   private List<Locatable> transport;  // Locatables that are within this Transport
   private List<Integer> transports;   // Ids that can be transported (empty when this unit can't transport)
 
-  public Unit(int id, String name, String description,
+  public Unit(int unitID, int imgRowID, String name, String description,
               int cost, int movement, int vision,
               int maxHp, int maxSupplies, int maxTransportCount, int suppliesPerTurn,
               boolean canCapture, boolean canDive, boolean canSupply, boolean canTransport, boolean canJoin, List<Integer> transports,
               ArmyBranch armyBranch, int movementType, Range supplyRange) {
     super(GameObjectState.ACTIVE);
-    this.id = id;
+    this.unitID = unitID;
+    this.imgRowID = imgRowID;
     this.name = name;
     this.description = description;
     this.price = cost;
@@ -140,7 +142,8 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
     unitState = otherUnit.unitState;
 
     name = otherUnit.name;
-    id = otherUnit.id;
+    unitID = otherUnit.unitID;
+    imgRowID = otherUnit.imgRowID;
     price = otherUnit.price;
     movement = otherUnit.movement;
     vision = otherUnit.vision;
@@ -255,6 +258,8 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
 
   /**
    * Toggle the ability to hide
+   *
+   * @param canHide can this unit hide itself
    */
   private void setHideAbility(boolean canHide) {
     this.canHide = canHide;
@@ -446,8 +451,8 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
    */
   private boolean isFullySupplied(Unit unit) {
     boolean fullSupplies = unit.getSuppliesPercentage() == 100;
-    boolean priWeaponAmmoIsFull = unit.hasPrimaryWeapon() ? unit.getPrimaryWeapon().getAmmoPercentage() == 100 : true;
-    boolean secWeaponAmmiIsFull = unit.hasSecondaryWeapon() ? unit.getSecondaryWeapon().getAmmoPercentage() == 100 : true;
+    boolean priWeaponAmmoIsFull = !unit.hasPrimaryWeapon() || unit.getPrimaryWeapon().getAmmoPercentage() == 100;
+    boolean secWeaponAmmiIsFull = !unit.hasSecondaryWeapon() || unit.getSecondaryWeapon().getAmmoPercentage() == 100;
     return fullSupplies && priWeaponAmmoIsFull && secWeaponAmmiIsFull;
   }
 
@@ -807,7 +812,11 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   // Getters :: Other
   // ---------------------------------------------------------------------------
   public int getID() {
-    return id;
+    return unitID;
+  }
+
+  public int getImgRowID() {
+    return imgRowID;
   }
 
   public String getName() {
@@ -896,13 +905,13 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   }
 
   public boolean canBuildUnit(Unit unit) {
-    return buildUnits.contains(unit.id);
+    return buildUnits.contains(unit.unitID);
   }
 
   @Override
   public String toString() {
     return String.format("[name=%s id=%s owner=%s location=%s transport=%s unit state=%s state=%s]",
-      name, id, getOwnerText(), getLocationText(), transport, unitState, getState());
+      name, unitID, getOwnerText(), getLocationText(), transport, unitState, getState());
   }
 
   private String getLocationText() {

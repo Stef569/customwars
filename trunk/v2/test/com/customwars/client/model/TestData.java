@@ -74,12 +74,12 @@ public class TestData {
   private static Terrain sea = new Terrain(SEA, "Ocean", "Sea", "", 0, -2, false, 0, seaMoveCosts);
 
   // Units
-  private static Unit infantry = new Unit(INF, "Infantry", "", 3000, 3, 3, UNIT_MAX_HP, MAX_UNIT_SUPPLIES, 0, 0, true, false, false, false, true, null, ArmyBranch.LAND, MOVE_INF, new Range(0, 0));
-  private static Unit mech = new Unit(MECH, "Mech", "", 3000, 3, 3, UNIT_MAX_HP, MAX_UNIT_SUPPLIES, 0, 0, true, false, false, false, true, null, ArmyBranch.LAND, MOVE_MECH, new Range(0, 0));
-  private static Unit apc = new Unit(APC, "Apc", "", 8000, 5, 1, UNIT_MAX_HP, MAX_UNIT_SUPPLIES, 3, 0, false, false, true, true, true, Arrays.asList(MOVE_INF, MOVE_MECH), ArmyBranch.LAND, MOVE_TREAD, new Range(1, 1));
-  private static Unit tank = new Unit(TANK, "Tank", "", 7000, 6, 3, UNIT_MAX_HP, MAX_UNIT_SUPPLIES, 0, 0, false, false, false, false, true, null, ArmyBranch.LAND, MOVE_TREAD, new Range(0, 0));
-  private static Unit rocket = new Unit(ROCKETS, "Rockets", "", 14000, 5, 1, UNIT_MAX_HP, MAX_UNIT_SUPPLIES, 0, 0, false, false, false, false, true, null, ArmyBranch.LAND, MOVE_TIRES, new Range(0, 0));
-  private static Unit artillery = new Unit(ARTILLERY, "Artillery", "", 6000, 5, 1, UNIT_MAX_HP, 50, 0, 0, false, false, false, false, true, null, ArmyBranch.LAND, MOVE_TREAD, new Range(0, 0));
+  private static Unit infantry = new Unit(INF, INF, "Infantry", "", 3000, 3, 3, UNIT_MAX_HP, MAX_UNIT_SUPPLIES, 0, 0, true, false, false, false, true, null, ArmyBranch.LAND, MOVE_INF, new Range(0, 0));
+  private static Unit mech = new Unit(MECH, MECH, "Mech", "", 3000, 3, 3, UNIT_MAX_HP, MAX_UNIT_SUPPLIES, 0, 0, true, false, false, false, true, null, ArmyBranch.LAND, MOVE_MECH, new Range(0, 0));
+  private static Unit apc = new Unit(APC, APC, "Apc", "", 8000, 5, 1, UNIT_MAX_HP, MAX_UNIT_SUPPLIES, 3, 0, false, false, true, true, true, Arrays.asList(MOVE_INF, MOVE_MECH), ArmyBranch.LAND, MOVE_TREAD, new Range(1, 1));
+  private static Unit tank = new Unit(TANK, TANK, "Tank", "", 7000, 6, 3, UNIT_MAX_HP, MAX_UNIT_SUPPLIES, 0, 0, false, false, false, false, true, null, ArmyBranch.LAND, MOVE_TREAD, new Range(0, 0));
+  private static Unit rocket = new Unit(ROCKETS, ROCKETS, "Rockets", "", 14000, 5, 1, UNIT_MAX_HP, MAX_UNIT_SUPPLIES, 0, 0, false, false, false, false, true, null, ArmyBranch.LAND, MOVE_TIRES, new Range(0, 0));
+  private static Unit artillery = new Unit(ARTILLERY, ARTILLERY, "Artillery", "", 6000, 5, 1, UNIT_MAX_HP, 50, 0, 0, false, false, false, false, true, null, ArmyBranch.LAND, MOVE_TREAD, new Range(0, 0));
 
   // Weapons
   private static Weapon smg = new Weapon(0, "smg", "", new Range(1, 1), Weapon.UNLIMITED_AMMO, false, ARMY_BRANCH_LAND_ONLY);

@@ -4,17 +4,17 @@ import com.customwars.client.action.ActionFactory;
 import com.customwars.client.action.CWAction;
 import com.customwars.client.action.ShowPopupMenu;
 import com.customwars.client.io.ResourceManager;
-import com.customwars.client.io.img.slick.SpriteSheet;
-import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.gameobject.UnitFactory;
+import com.customwars.client.model.map.Direction;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.ui.MenuItem;
 import com.customwars.client.ui.renderer.MapRenderer;
 import com.customwars.client.ui.state.InGameContext;
 import org.newdawn.slick.Image;
-import tools.ColorUtil;
+
+import java.awt.Color;
 
 /**
  * Allows a human to control a city
@@ -25,15 +25,18 @@ import tools.ColorUtil;
 public class HumanCityController extends CityController {
   private InGameContext context;
   private MapRenderer mapRenderer;
+  private ResourceManager resources;
 
   public HumanCityController(City city, InGameContext inGameContext) {
     super(city, inGameContext.getGame());
     this.context = inGameContext;
     this.mapRenderer = inGameContext.getMapRenderer();
+    this.resources = context.getResourceManager();
+
   }
 
   public void handleAPress() {
-    Tile selected = (Tile) mapRenderer.getCursorLocation();
+    Tile selected = mapRenderer.getCursorLocation();
 
     if (context.isDefaultMode() && canShowMenu()) {
       CWAction showMenu = buildMenu(selected);
@@ -42,7 +45,7 @@ public class HumanCityController extends CityController {
   }
 
   private boolean canShowMenu() {
-    Tile selected = (Tile) mapRenderer.getCursorLocation();
+    Tile selected = mapRenderer.getCursorLocation();
     return !selected.isFogged() && city.getLocation() == selected && city.canBuild();
   }
 
@@ -72,22 +75,20 @@ public class HumanCityController extends CityController {
 
   private MenuItem buildMenuItem(Unit unit, boolean active) {
     String unitInfo = unit.getName() + " " + unit.getPrice();
-    Image unitImage = getUnitImg(unit.getID(), city.getOwner(), active);
+    Color cityColor = city.getOwner().getColor();
+    Image unitImage = getUnitImg(unit, cityColor, active);
     return new MenuItem(unitImage, unitInfo, context.getContainer());
   }
 
-  private Image getUnitImg(int unitID, Player player, boolean active) {
-    final int RIGHT_ORIENTATION = 4;
-    ResourceManager resources = context.getResourceManager();
-    String colorName = ColorUtil.toString(player.getColor());
-    SpriteSheet unitSpriteSheet;
+  private Image getUnitImg(Unit unit, Color color, boolean active) {
+    Image unitImg;
 
-    if (active)
-      unitSpriteSheet = resources.getSlickSpriteSheet("unit_" + colorName);
-    else
-      unitSpriteSheet = resources.getSlickSpriteSheet("unit_" + colorName + "_DARKER");
-
-    return unitSpriteSheet.getSprite(RIGHT_ORIENTATION, unitID);
+    if (active) {
+      unitImg = resources.getUnitImg(unit, color, Direction.EAST);
+    } else {
+      unitImg = resources.getShadedUnitImg(unit, color, Direction.EAST);
+    }
+    return unitImg;
   }
 }
 

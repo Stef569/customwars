@@ -1,9 +1,9 @@
 package com.customwars.client.ui.mapMaker;
 
 import com.customwars.client.io.ResourceManager;
-import com.customwars.client.io.img.slick.SpriteSheet;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.gameobject.UnitFactory;
+import com.customwars.client.model.map.Direction;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.gui.GUIContext;
 
@@ -14,8 +14,8 @@ import java.awt.Color;
  * Renders a list of available units looking right
  */
 public class UnitSelectPanel extends SelectPanel {
-  private SpriteSheet unitSpriteSheet;
   private ResourceManager resources;
+  private Color color;
 
   public UnitSelectPanel(GUIContext container) {
     super(container);
@@ -26,15 +26,15 @@ public class UnitSelectPanel extends SelectPanel {
     this.resources = resources;
   }
 
-  public void recolor(Color c) {
-    unitSpriteSheet = resources.getUnitSpriteSheet(c);
+  public void recolor(Color color) {
+    this.color = color;
     buildComponent();
   }
 
   private void buildComponent() {
     clear();
     for (Unit unit : UnitFactory.getAllUnits()) {
-      Image unitImg = unitSpriteSheet.getSubImage(4, unit.getID());
+      Image unitImg = resources.getUnitImg(unit, color, Direction.EAST);
       add(unitImg);
     }
 

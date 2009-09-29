@@ -2,6 +2,7 @@ package com.customwars.client.ui.hud;
 
 import com.customwars.client.io.ResourceManager;
 import com.customwars.client.model.gameobject.Unit;
+import com.customwars.client.model.map.Direction;
 import com.customwars.client.ui.layout.ImageBox;
 import com.customwars.client.ui.slick.BasicComponent;
 import org.newdawn.slick.Color;
@@ -10,11 +11,10 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.gui.GUIContext;
 
 public class TransportInfoBox extends BasicComponent {
-
   private static final Color backgroundColor = new Color(0, 0, 0, 0.40f);
   private static final Color textColor = Color.white;
   private Unit unit;
-  private ImageBox unitInTransportBox1,  unitInTransportBox2;
+  private ImageBox unitInTransportBox1, unitInTransportBox2;
   private ResourceManager resources;
 
   public TransportInfoBox(GUIContext container) {
@@ -50,31 +50,41 @@ public class TransportInfoBox extends BasicComponent {
 
   private void initBoxes() {
     if (unit.getLocatableCount() == 1) {
-      Unit unitInTransport1 = (Unit) unit.getLocatable(0);
-      Image unitImg1 = getEastFacingUnitImg(unitInTransport1);
-      unitInTransportBox1.setImage(unitImg1);
-      unitInTransportBox2.setImage(null);
+      prepareComponentFor1Unit();
     } else if (unit.getLocatableCount() == 2) {
-      Unit unitInTransport1 = (Unit) unit.getLocatable(0);
-      Image unitInTransporImg1 = getEastFacingUnitImg(unitInTransport1);
-      unitInTransportBox1.setImage(unitInTransporImg1);
-
-      Unit unitInTransport2 = (Unit) unit.getLocatable(1);
-      Image unitInTransportImg2 = getEastFacingUnitImg(unitInTransport2);
-      unitInTransportBox2.setImage(unitInTransportImg2);
+      prepareComponentFor2Units();
     }
+  }
+
+  private void prepareComponentFor1Unit() {
+    Unit unitInTransport1 = (Unit) unit.getLocatable(0);
+    setUnitImageInBox(unitInTransportBox1, unitInTransport1);
+    unitInTransportBox2.setImage(null);
+  }
+
+  private void prepareComponentFor2Units() {
+    Unit unitInTransport1 = (Unit) unit.getLocatable(0);
+    setUnitImageInBox(unitInTransportBox1, unitInTransport1);
+
+    Unit unitInTransport2 = (Unit) unit.getLocatable(1);
+    setUnitImageInBox(unitInTransportBox2, unitInTransport2);
+  }
+
+  private void setUnitImageInBox(ImageBox imageBox, Unit unit) {
+    Image unitImg = getEastFacingUnitImg(unit);
+    imageBox.setImage(unitImg);
   }
 
   private Image getEastFacingUnitImg(Unit unit) {
     java.awt.Color playerColor = unit.getOwner().getColor();
-    return resources.getUnitSpriteSheet(playerColor).getSubImage(5, unit.getID());
+    return resources.getUnitImg(unit, playerColor, Direction.EAST);
   }
 
   private void locateBoxes(int x, int y) {
     int height = 0;
     unitInTransportBox1.setLocation(x, y);
     height += unitInTransportBox1.getHeight();
-    unitInTransportBox2.setLocation(x , y + height);
+    unitInTransportBox2.setLocation(x, y + height);
   }
 
   private void renderBoxes(Graphics g) {

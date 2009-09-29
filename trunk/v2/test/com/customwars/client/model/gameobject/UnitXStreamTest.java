@@ -29,7 +29,8 @@ public class UnitXStreamTest {
     xStream.registerConverter(new UnitWeaponConverter());
 
     // id and name are read from attributes, not elements
-    xStream.useAttributeFor(Unit.class, "id");
+    xStream.useAttributeFor(Unit.class, "unitID");
+    xStream.useAttributeFor(Unit.class, "imgRowID");
     xStream.useAttributeFor(Unit.class, "name");
   }
 

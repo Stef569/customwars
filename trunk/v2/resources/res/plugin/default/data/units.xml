@@ -12,7 +12,8 @@ The id is a reference to a row in the unit image spritesheet
                 movementType, primaryWeapon?, secondaryWeapon?, description?)>
 
         <!ATTLIST unit name CDATA #REQUIRED>
-        <!ATTLIST unit id CDATA #REQUIRED>
+        <!ATTLIST unit unitID CDATA #REQUIRED>
+        <!ATTLIST unit imgRowID CDATA #REQUIRED>
 
         <!ELEMENT price (#PCDATA)>
         <!ELEMENT movement (#PCDATA)>
@@ -60,7 +61,7 @@ The id is a reference to a row in the unit image spritesheet
         <!ENTITY NAVAL "5">
         ]>
 <list>
-    <unit name="Infantry" id="0">
+    <unit name="Infantry" unitID="0" imgRowID="0">
         <price>1000</price>
         <movement>3</movement>
         <vision>2</vision>
@@ -78,7 +79,7 @@ The id is a reference to a row in the unit image spritesheet
             <ammo>99</ammo>
         </secondaryWeapon>
     </unit>
-    <unit name="Mech" id="1">
+    <unit name="Mech" unitID="1" imgRowID="1">
         <price>3000</price>
         <movement>2</movement>
         <vision>2</vision>
@@ -101,7 +102,7 @@ The id is a reference to a row in the unit image spritesheet
         <description>Infantry units that are equiped to take out Tanks, they have a machin gun as secondary weapon.
         </description>
     </unit>
-    <unit name="Tank" id="2">
+    <unit name="Tank" unitID="2" imgRowID="2">
         <price>7000</price>
         <movement>6</movement>
         <vision>3</vision>
@@ -122,7 +123,7 @@ The id is a reference to a row in the unit image spritesheet
         </secondaryWeapon>
         <description>Fast Armoured unit, great for scouting.</description>
     </unit>
-    <unit name="Medium Tank" id="3">
+    <unit name="Medium Tank" unitID="3" imgRowID="3">
         <price>16000</price>
         <movement>5</movement>
         <vision>1</vision>
@@ -143,7 +144,7 @@ The id is a reference to a row in the unit image spritesheet
         </secondaryWeapon>
         <description>A tank</description>
     </unit>
-    <unit name="Recon" id="4">
+    <unit name="Recon" unitID="4" imgRowID="4">
         <price>4000</price>
         <movement>8</movement>
         <vision>5</vision>
@@ -181,7 +182,7 @@ The id is a reference to a row in the unit image spritesheet
         </secondaryWeapon>
         <description>Useful against Infantry and Mech, and for providing sight in fog of war.</description>
     </unit>
-    <unit name="Anti-Air" id="5">
+    <unit name="Anti-Air" unitID="5" imgRowID="5">
         <price>8000</price>
         <movement>6</movement>
         <vision>2</vision>
@@ -199,7 +200,7 @@ The id is a reference to a row in the unit image spritesheet
         </primaryWeapon>
         <description>For popping airplanes out of the sky</description>
     </unit>
-    <unit name="Missiles" id="6">
+    <unit name="Missiles" unitID="6" imgRowID="6">
         <price>22000</price>
         <movement>4</movement>
         <vision>5</vision>
@@ -217,7 +218,7 @@ The id is a reference to a row in the unit image spritesheet
         </primaryWeapon>
         <description>To pop airplanes out of the sky</description>
     </unit>
-    <unit name="Artillery" id="7">
+    <unit name="Artillery" unitID="7" imgRowID="7">
         <price>6000</price>
         <movement>5</movement>
         <vision>2</vision>
@@ -235,7 +236,7 @@ The id is a reference to a row in the unit image spritesheet
         </primaryWeapon>
         <description>To bombard stuff in short range</description>
     </unit>
-    <unit name="Rockets" id="8">
+    <unit name="Rockets" unitID="8" imgRowID="8">
         <price>15000</price>
         <movement>2</movement>
         <vision>1</vision>
@@ -254,7 +255,7 @@ The id is a reference to a row in the unit image spritesheet
         <description>Rocket units are the best long range units you have. They can fire on both land and sea units.
         </description>
     </unit>
-    <unit name="APC" id="9">
+    <unit name="APC" unitID="9" imgRowID="9">
         <price>5000</price>
         <movement>6</movement>
         <vision>1</vision>
@@ -280,7 +281,7 @@ The id is a reference to a row in the unit image spritesheet
         <movementType>&TREAD;</movementType>
         <description>Can transport other units they also have the ability to supply.</description>
     </unit>
-    <unit name="Lander" id="10">
+    <unit name="Lander" unitID="10" imgRowID="10">
         <price>10000</price>
         <movement>6</movement>
         <vision>1</vision>
@@ -309,7 +310,7 @@ The id is a reference to a row in the unit image spritesheet
         <movementType>&NAVAL;</movementType>
         <description>Can transport 2 ground units</description>
     </unit>
-    <unit name="Cruiser" id="11">
+    <unit name="Cruiser" unitID="11" imgRowID="11">
         <price>16000</price>
         <movement>6</movement>
         <vision>5</vision>
@@ -328,7 +329,7 @@ The id is a reference to a row in the unit image spritesheet
         </secondaryWeapon>
         <description>Strong against air units and submarines</description>
     </unit>
-    <unit name="Sub" id="12">
+    <unit name="Sub" unitID="12" imgRowID="12">
         <price>20000</price>
         <movement>6</movement>
         <vision>5</vision>
@@ -346,7 +347,7 @@ The id is a reference to a row in the unit image spritesheet
         </primaryWeapon>
         <description>After diving this unit remains hidden unless enemy units are adjacent</description>
     </unit>
-    <unit name="Battleship" id="13">
+    <unit name="Battleship" unitID="13" imgRowID="13">
         <price>25000</price>
         <movement>5</movement>
         <vision>3</vision>
@@ -362,7 +363,7 @@ The id is a reference to a row in the unit image spritesheet
         </primaryWeapon>
         <description>Most powerful naval ship</description>
     </unit>
-    <unit name="TCopter" id="14">
+    <unit name="TCopter" unitID="14" imgRowID="14">
         <price>5000</price>
         <movement>6</movement>
         <vision>1</vision>
@@ -382,7 +383,7 @@ The id is a reference to a row in the unit image spritesheet
         <movementType>&AIR;</movementType>
         <description>Carries 1 inf or mech unit</description>
     </unit>
-    <unit name="BCopter" id="15">
+    <unit name="BCopter" unitID="15" imgRowID="15">
         <price>9000</price>
         <movement>6</movement>
         <vision>2</vision>
@@ -398,7 +399,7 @@ The id is a reference to a row in the unit image spritesheet
         </secondaryWeapon>
         <description>Can attack ground,naval and other helicopter units</description>
     </unit>
-    <unit name="Fighter" id="16">
+    <unit name="Fighter" unitID="16" imgRowID="16">
         <price>20000</price>
         <movement>9</movement>
         <vision>5</vision>
@@ -415,7 +416,7 @@ The id is a reference to a row in the unit image spritesheet
         </primaryWeapon>
         <description>Can attack other air units</description>
     </unit>
-    <unit name="Bomber" id="17">
+    <unit name="Bomber" unitID="17" imgRowID="17">
         <price>20000</price>
         <movement>7</movement>
         <vision>3</vision>
@@ -432,7 +433,7 @@ The id is a reference to a row in the unit image spritesheet
         </primaryWeapon>
         <description>Can bombard ground and naval units</description>
     </unit>
-    <unit name="Neo Tank" id="18">
+    <unit name="Neo Tank" unitID="18" imgRowID="18">
         <price>15000</price>
         <movement>6</movement>
         <vision>1</vision>
@@ -453,7 +454,7 @@ The id is a reference to a row in the unit image spritesheet
         </secondaryWeapon>
         <description></description>
     </unit>
-    <unit name="Carrier" id="19">
+    <unit name="Carrier" unitID="19" imgRowID="19">
         <price>28000</price>
         <movement>5</movement>
         <vision>4</vision>
@@ -475,7 +476,7 @@ The id is a reference to a row in the unit image spritesheet
         </secondaryWeapon>
         <description>Can produce and carry 2 air units</description>
     </unit>
-    <unit name="Stealth" id="20">
+    <unit name="Stealth" unitID="20" imgRowID="20">
         <price>22000</price>
         <movement>7</movement>
         <vision>3</vision>
@@ -490,7 +491,7 @@ The id is a reference to a row in the unit image spritesheet
         <movementType>&AIR;</movementType>
         <description></description>
     </unit>
-    <unit name="Destroyer" id="21">
+    <unit name="Gun boat" unitID="21" imgRowID="21">
         <price>28000</price>
         <movement>5</movement>
         <vision>4</vision>
