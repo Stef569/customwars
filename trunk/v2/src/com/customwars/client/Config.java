@@ -31,6 +31,7 @@ import java.util.ResourceBundle;
 public class Config {
   private static final Logger logger = Logger.getLogger(Config.class);
   private static final String HOME_DIR = System.getProperty("user.home") + "/.cw2/";
+  public static final String MAPS_DIR = HOME_DIR + "maps/";
   private static final String CONFIG_PATH = "res/data/config/";
   private static final String GAME_PROPERTIES_FILE = "game.properties";
   private static final String LOG_PROPERTIES_FILE = "log4j.properties";
@@ -58,32 +59,25 @@ public class Config {
     resources.setImgPath(pluginLocation + "/images/");
     resources.setSoundPath(pluginLocation + "/sound/");
     resources.setDataPath(pluginLocation + "/data/");
-    resources.setMapPath(pluginLocation + "/maps/");
+    resources.addMapPath(MAPS_DIR);
+    resources.addMapPath("res/maps/");
     resources.setFontPath("res/data/fonts/");
     resources.setDarkPercentage(App.getInt("display.darkpercentage"));
   }
 
   private void createHomeDir() {
     File homeDir = new File(HOME_DIR);
-    if (!homeDir.exists()) {
-      boolean success = homeDir.mkdir();
-      if (!success) {
-        throw new RuntimeException("Could not create home dir " + HOME_DIR);
-      }
-    }
+    File mapsDir = new File(MAPS_DIR);
+
+    IOUtil.mkDir(homeDir, "Could not create home dir " + HOME_DIR);
+    IOUtil.mkDir(mapsDir);
   }
 
   private void createEmptyUserPropertyFileIfNonePresent() {
     File userPropertiesFile = new File(HOME_DIR + USER_PROPERTIES_FILE);
+
     if (!userPropertiesFile.exists()) {
-      try {
-        boolean success = userPropertiesFile.createNewFile();
-        if (!success) {
-          throw new RuntimeException("Could not create empty user properties file");
-        }
-      } catch (IOException ex) {
-        throw new RuntimeException("Could not create empty user properties file");
-      }
+      IOUtil.createNewFile(userPropertiesFile, "Could not create empty user properties file");
     }
   }
 
