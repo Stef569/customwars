@@ -7,16 +7,13 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.gui.GUIContext;
 
 import java.awt.Color;
-import java.util.List;
 
 public class TerrainSelectPanel extends SelectPanel {
-  private List<Terrain> baseTerrains;
   private ResourceManager resources;
   private boolean buildComponentCompleted;
 
   public TerrainSelectPanel(GUIContext container) {
     super(container);
-    baseTerrains = TerrainFactory.getBaseTerrains();
   }
 
   @Override
@@ -34,7 +31,7 @@ public class TerrainSelectPanel extends SelectPanel {
     if (buildComponentCompleted) return;
 
     clear();
-    for (Terrain terrain : baseTerrains) {
+    for (Terrain terrain : TerrainFactory.getBaseTerrains()) {
       Image terrainImg = resources.getSlickImgStrip("terrains").getSubImage(terrain.getID());
       add(terrainImg);
     }
