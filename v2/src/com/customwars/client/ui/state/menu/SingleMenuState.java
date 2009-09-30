@@ -21,15 +21,14 @@ public class SingleMenuState extends CWState implements ComponentListener {
     mainMenu.setBackGroundColor(new Color(0, 0, 0));
     mainMenu.setHoverColor(new Color(255, 255, 255, 0.20f));
     mainMenu.addItems(
-      new MenuItem(resources.getSlickImg("gametest"), container),
       new MenuItem(resources.getSlickImg("editor"), container),
       new MenuItem(resources.getSlickImg("back"), container)
     );
 
     mainMenu.addListener(this);
     mainMenu.init();
-    mainMenu.setLocation((container.getWidth() / 2 - mainMenu.getWidth() / 2)+20,
-            (container.getHeight() / 2 - mainMenu.getHeight() / 2)-100);
+    mainMenu.setLocation((container.getWidth() / 2 - mainMenu.getWidth() / 2) + 20,
+      (container.getHeight() / 2 - mainMenu.getHeight() / 2) - 100);
   }
 
   @Override
@@ -38,18 +37,14 @@ public class SingleMenuState extends CWState implements ComponentListener {
 
     g.drawImage(resources.getSlickImg("menu"), 0, 0);
     g.setColor(Color.white);
-    //g.drawString("ENTER: TO GO BACK TO MENU", 400, 10);
     mainMenu.render(container, g);
 
     g.setColor(Color.lightGray);
     switch (mainMenu.getCurrentItem()) {
       case 0:
-        g.drawString("Play a test game between 3 players", 210, 440);
-        break;
-      case 1:
         g.drawString("Save/Load maps with this editor", 210, 440);
         break;
-      case 2:
+      case 1:
         g.drawString("Go back to menu", 210, 440);
         break;
     }
@@ -67,14 +62,10 @@ public class SingleMenuState extends CWState implements ComponentListener {
   public void componentActivated(AbstractComponent source) {
     PopupMenu popupMenu = (PopupMenu) source;
     switch (popupMenu.getCurrentItem()) {
-      //Doesn't work anyway...
-      //case 0:
-      //  changeGameState("IN_GAME");
-      //  break;
-      //case 1:
-      //  changeGameState("MAP_EDITOR");
-      //  break;
-      case 2:
+      case 0:
+        changeGameState("MAP_EDITOR");
+        break;
+      case 1:
         changeGameState("MAIN_MENU");
         break;
     }

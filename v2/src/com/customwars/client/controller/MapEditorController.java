@@ -19,7 +19,6 @@ import tools.StringUtil;
 
 import java.awt.Color;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -88,9 +87,16 @@ public class MapEditorController {
     setMap(map);
   }
 
-  public void loadMap(String fileName) throws FileNotFoundException {
+  public void loadMap(File file) throws IOException {
+    String fileName = file.getName();
     String mapName = fileName.substring(0, fileName.lastIndexOf('.'));
-    Map<Tile> map = resources.getMap(mapName);
+
+    Map<Tile> map;
+    if (resources.isMapCached(mapName)) {
+      map = resources.getMap(mapName);
+    } else {
+      map = resources.loadMap(file);
+    }
     setMap(map);
   }
 

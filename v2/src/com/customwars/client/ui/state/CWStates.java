@@ -66,18 +66,13 @@ public class CWStates extends StateBasedGame implements InputProviderListener {
     CWState mainMenu = new MainMenuState();
     CWState optionMenu = new OptionMenuState();
     CWState singleMenu = new SingleMenuState();
-
-    //Config
     CWState remapKeysTest = new ControlBindingState();
 
-    //Editor
-    //CWState mapEditorState = new MapEditorState();
-
     // Game
+    CWState mapEditorState = new MapEditorState();
     CWState inGame = new InGameState();
     CWState endTurnState = new EndTurnState();
     CWState gameOver = new GameOverState();
-
 
     addState(startup);
     addState(mainMenu);
@@ -87,7 +82,7 @@ public class CWStates extends StateBasedGame implements InputProviderListener {
     addState(endTurnState);
     addState(gameOver);
     addState(remapKeysTest);
-    //addState(mapEditorState);
+    addState(mapEditorState);
   }
 
   private void mapStateIdsToName() {
@@ -100,7 +95,7 @@ public class CWStates extends StateBasedGame implements InputProviderListener {
     statelogic.addState("IN_GAME", 3);
     statelogic.addState("GAME_OVER", 10);
     statelogic.addState("END_TURN", 4);
-    //statelogic.addState("MAP_EDITOR", 50);
+    statelogic.addState("MAP_EDITOR", 50);
     CWState.setStatelogic(statelogic);
   }
 

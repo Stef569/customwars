@@ -20,13 +20,14 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.command.Command;
 import org.newdawn.slick.gui.GUIContext;
+import org.newdawn.slick.loading.DeferredResource;
+import org.newdawn.slick.loading.LoadingList;
 import org.newdawn.slick.state.StateBasedGame;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import java.awt.Color;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -55,6 +56,24 @@ public class MapEditorState extends CWState {
   public void init(GameContainer gameContainer, StateBasedGame stateBasedGame) throws SlickException {
     createPanels(gameContainer);
 
+    if (LoadingList.isDeferredLoading()) {
+      LoadingList.get().add(
+        new DeferredResource() {
+          public void load() throws IOException {
+            init();
+          }
+
+          public String getDescription() {
+            return "init map editor";
+          }
+        }
+      );
+    } else {
+      init();
+    }
+  }
+
+  private void init() {
     mapEditorController = new MapEditorController(this, resources, panels.size());
     recolorPanels();
   }
@@ -182,8 +201,8 @@ public class MapEditorState extends CWState {
   private void handleOpenMapDialogInput(File file) {
     if (file != null) {
       try {
-        mapEditorController.loadMap(file.getName());
-      } catch (FileNotFoundException e) {
+        mapEditorController.loadMap(file);
+      } catch (IOException e) {
         JOptionPane.showMessageDialog(null,
           "Could not open the map '" + file.getPath() + "'\n " +
             e.getMessage(),

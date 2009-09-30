@@ -13,20 +13,17 @@ import tools.Log4JUtil;
 
 /**
  * Starts The client
- * If DEBUG is true a hardcoded testGame will be loaded
- * if DEBUG_GUI is true 2 debug windows will be visible
  *
  * @author stefan
  */
 public class AppMain {
   private static final Logger logger = Logger.getLogger(AppMain.class);
   private static ResourceManager resources;
-  private static String startStateName;
   private static Config config;
 
   public AppMain() throws SlickException {
     StateSession stateSession = new StateSession();
-    StateBasedGame stateBasedGame = new CWStates(startStateName, stateSession, resources, config);
+    StateBasedGame stateBasedGame = new CWStates("STARTUP", stateSession, resources, config);
 
     logger.info("Starting Slick");
     boolean fullScreen = App.getBoolean("user.display.fullscreen", false);
@@ -61,10 +58,11 @@ public class AppMain {
       logger.info("Starting up");
       new AppMain();
     } catch (Exception e) {
-      if (Log4JUtil.isLog4JConfigured())
+      if (Log4JUtil.isLog4JConfigured()) {
         logger.fatal("Failure", e);
-      else
+      } else {
         e.printStackTrace();
+      }
       System.exit(-1);
     }
   }

@@ -31,6 +31,8 @@ import tools.Args;
 import tools.ColorUtil;
 
 import java.awt.Color;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -329,6 +331,25 @@ public class ResourceManager {
     return new Map<Tile>(maps.get(mapName));
   }
 
+  public boolean isMapCached(String mapName) {
+    return maps.containsKey(mapName);
+  }
+
+  public Map<Tile> loadMap(File file) throws IOException {
+    Map<Tile> map = mapParser.readMap(new FileInputStream(file));
+    String mapName = map.getProperty("NAME");
+    addMap(mapName, map);
+    return map;
+  }
+
+  public void addMap(String mapName, Map<Tile> map) {
+    if (maps.containsKey(mapName)) {
+      throw new IllegalArgumentException(mapName + " is already stored " + maps);
+    } else {
+      maps.put(mapName, map);
+    }
+  }
+
   public Set<String> getAllMapNames() {
     return Collections.unmodifiableSet(maps.keySet());
   }
@@ -395,13 +416,5 @@ public class ResourceManager {
   public SpriteSheet getCitySpriteSheet(Color color) {
     String colorName = ColorUtil.toString(color);
     return getSlickSpriteSheet("CITY_" + colorName);
-  }
-
-  public void addMap(String mapName, Map<Tile> map) {
-    if (maps.containsKey(mapName)) {
-      throw new IllegalArgumentException(mapName + " is already stored " + maps);
-    } else {
-      maps.put(mapName, map);
-    }
   }
 }
