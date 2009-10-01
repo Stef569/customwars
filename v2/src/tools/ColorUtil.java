@@ -127,4 +127,15 @@ public final class ColorUtil {
     }
     colorMap.put(colorName, color);
   }
+
+  /**
+   * Convert a java.awt.Color to an org.newdawn.slick.Color
+   *
+   * @param color awt Color
+   * @return Slick Color
+   */
+  public static org.newdawn.slick.Color convertToSlickColor(Color color) {
+    int rgb = color.getRGB();
+    return new org.newdawn.slick.Color(rgb);
+  }
 }
