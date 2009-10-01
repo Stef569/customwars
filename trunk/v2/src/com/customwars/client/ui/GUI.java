@@ -9,6 +9,8 @@ import org.apache.log4j.Logger;
 import org.newdawn.slick.gui.GUIContext;
 
 import javax.swing.JFrame;
+import java.awt.Dimension;
+import java.awt.Point;
 
 /**
  * Application wide gui's Contains a console and a game event viewer window.
@@ -132,5 +134,33 @@ public class GUI {
     int maxY = y + height;
     boolean canFitToGuiContext = x > 0 && maxX < guiContext.getWidth() && y > 0 && maxY < guiContext.getHeight();
     return canFitToGuiContext || camera.canFitWithin(x, y, width, height);
+  }
+
+  /**
+   * Get the left top point of the inner component
+   * so that the component is centered within the container
+   */
+  public static Point getCenteredRenderPoint(Dimension innerComponentSize, GUIContext guiContext) {
+    return getCenteredRenderPoint(innerComponentSize.width, innerComponentSize.height, guiContext.getWidth(), guiContext.getHeight());
+  }
+
+  /**
+   * Get the left top point of the inner component
+   * so that the component is centered within the container
+   */
+  public static Point getCenteredRenderPoint(int innerComponentWidth, int innerComponentHeight, GUIContext guiContext) {
+    return getCenteredRenderPoint(innerComponentWidth, innerComponentHeight, guiContext.getWidth(), guiContext.getHeight());
+  }
+
+  /**
+   * Get the left top point of the inner component
+   * so that the component is centered within the container
+   */
+  public static Point getCenteredRenderPoint(int innerComponentWidth, int innerComponentHeight, int containerWidth, int containerHeight) {
+    Point leftTop = new Point();
+    int centerX = (containerWidth / 2) - (innerComponentWidth / 2);
+    int centerY = (containerHeight / 2) - (innerComponentHeight / 2);
+    leftTop.setLocation(centerX, centerY);
+    return leftTop;
   }
 }
