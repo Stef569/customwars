@@ -297,27 +297,29 @@ public class BinaryCW2MapParser implements MapParser {
 
     private City readCity() throws IOException {
       int cityID = in.readByte();
+      int ownerID = in.readByte();
 
       if (CityFactory.hasCityForID(cityID)) {
-        int ownerID = in.readByte();
-        Player owner = getPlayer(ownerID);
-        City city = CityFactory.getCity(cityID);
-        city.setOwner(owner);
-
-        return city;
+        return createCity(cityID, ownerID);
       } else {
         // If this city is not supported, default to the first city
-        return CityFactory.getCity(0);
+        return createCity(0, ownerID);
       }
+    }
+
+    private City createCity(int cityID, int ownerID) {
+      Player owner = getPlayer(ownerID);
+      City city = CityFactory.getCity(cityID);
+      city.setOwner(owner);
+      return city;
     }
 
     private Unit readUnit() throws IOException {
       int unitID = in.readByte();
+      int unitOwnerID = in.readByte();
 
       if (UnitFactory.hasUnitForID(unitID)) {
-        int unitOwnerID = in.readByte();
         Player owner = getPlayer(unitOwnerID);
-
         Unit unit = UnitFactory.getUnit(unitID);
         unit.setOwner(owner);
         return unit;
