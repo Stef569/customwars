@@ -68,6 +68,18 @@ public class TerrainConnector {
    * Terrains of the same type should connect.
    *
    * @param baseTile     The tile where the resulting terrain should be added to
+   * @param terrainToAdd The terrain type that is used to calculate the best matching terrain.
+   * @return The best matching terrain
+   */
+  public Terrain connectTerrain(Tile baseTile, Terrain terrainToAdd) {
+    return connectTerrain(baseTile, terrainToAdd, baseTile.getTerrain());
+  }
+
+  /**
+   * Find the matching terrain that can fit on baseTile by examining the tiles that surround the base tile.
+   * Terrains of the same type should connect.
+   *
+   * @param baseTile     The tile where the resulting terrain should be added to
    * @param terrainToAdd The terrain that is used to calculate the best matching terrain.
    * @param baseTerrain  The old terrain that will be overwritten
    * @return The best matching terrain
@@ -83,33 +95,9 @@ public class TerrainConnector {
     }
 
     // Reefs don't connect at all, return it
-    if (terrainToAdd.getName().equalsIgnoreCase("Reef"))
+    if (terrainToAdd.getName().equalsIgnoreCase("Reef")) {
       return terrainToAdd;
-
-    return getBestMatchingTerrain(baseTile);
-  }
-
-  /**
-   * Find the matching terrain that can fit on baseTile by examining the tiles that surround the base tile.
-   * Terrains of the same type should connect.
-   *
-   * @param baseTile     The tile where the resulting terrain should be added to
-   * @param terrainToAdd The terrain type that is used to calculate the best matching terrain.
-   * @return The best matching terrain
-   */
-  public Terrain connectTerrain(Tile baseTile, Terrain terrainToAdd) {
-    validate(baseTile, terrainToAdd);
-    this.terrainToAdd = terrainToAdd;
-    this.baseTerrain = baseTile.getTerrain();
-
-    // Cities can't be overwritten by other terrains, but do connect
-    if (baseTile.getTerrain() instanceof City) {
-      return baseTile.getTerrain();
     }
-
-    // Reefs don't connect at all, return it
-    if (terrainToAdd.getName().equalsIgnoreCase("Reef"))
-      return terrainToAdd;
 
     return getBestMatchingTerrain(baseTile);
   }

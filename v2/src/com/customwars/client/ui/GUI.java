@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 import org.newdawn.slick.gui.GUIContext;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import java.awt.Dimension;
 import java.awt.Point;
 
@@ -162,5 +163,20 @@ public class GUI {
     int centerY = (containerHeight / 2) - (innerComponentHeight / 2);
     leftTop.setLocation(centerX, centerY);
     return leftTop;
+  }
+
+  public static void showExceptionDialog(String errMsg, Exception e, String title) {
+    String msg = String.format(errMsg + "\n%s", e.getMessage());
+    showErrDialog(msg, title);
+  }
+
+  public static void showErrDialog(String errMsg, String title) {
+    JOptionPane.showMessageDialog(null,
+      errMsg, title, JOptionPane.ERROR_MESSAGE);
+  }
+
+  public static void showdialog(String msg, String title) {
+    JOptionPane.showMessageDialog(null,
+      msg, title, JOptionPane.PLAIN_MESSAGE);
   }
 }

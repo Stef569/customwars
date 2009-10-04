@@ -251,4 +251,12 @@ public class CWInput extends InputProvider {
     }
   }
 
+  public void setActive(boolean active) {
+    super.setActive(active);
+
+    // Clear any control pressed records, that ended up in the input queue
+    input.clearControlPressedRecord();
+    input.clearKeyPressedRecord();
+    input.clearMousePressedRecord();
+  }
 }
