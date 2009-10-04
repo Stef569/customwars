@@ -13,8 +13,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Represent a player that can participates in a game, can be either
- * a human, AI or neutral player.
+ * Represent a player that can participates in a game, can be either a human, AI or neutral player.
  * Can be allied with another Player
  * Each non neutral player has an unique ID, neutral players always have the same NEUTRAL_PLAYER_ID
  *
@@ -35,20 +34,19 @@ public class Player extends GameObject {
   private List<City> cities;  // All the cities of this player
   private boolean createdFirstUnit; // Has this player created his first unit
 
-  private Player() {
+  public Player(int id) {
+    this.id = id;
     army = new LinkedList<Unit>();
     cities = new LinkedList<City>();
   }
 
   public Player(int id, City hq) {
-    this();
-    this.id = id;
+    this(id);
     this.hq = hq;
   }
 
   public Player(int id, Color color, boolean neutral, City hq) {
-    this();
-    this.id = id;
+    this(id);
     this.color = color;
     this.neutral = neutral;
     this.hq = hq;
@@ -83,8 +81,8 @@ public class Player extends GameObject {
   }
 
   /**
-   * Destroy all units
-   * Cities are owned by the conquerer
+   * Destroy all units of this owner
+   * Change the owner of the cities owned by this player to the conquerer player.
    *
    * @param conquerer the player that has conquered this player
    */
@@ -95,7 +93,7 @@ public class Player extends GameObject {
   }
 
   /**
-   * Keep removing units from army, until there are none left
+   * Remove all units from army, until there are none left
    * unit.destroy() removes the unit from this player's army.
    */
   public void destroyAllUnits() {
@@ -126,7 +124,7 @@ public class Player extends GameObject {
   }
 
   /**
-   * Add city to this player, and set this player as owner of the city
+   * Add the given city to this player, and set this player as owner of the city
    */
   public void addCity(City city) {
     Args.checkForNull(city, "null city cannot be added");

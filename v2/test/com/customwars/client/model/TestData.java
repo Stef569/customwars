@@ -1,5 +1,6 @@
 package com.customwars.client.model;
 
+import com.customwars.client.App;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.CityFactory;
 import com.customwars.client.model.gameobject.Terrain;
@@ -14,6 +15,7 @@ import com.customwars.client.model.map.Range;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 
 /**
  * Contains test data
@@ -145,6 +147,10 @@ public class TestData {
 
     UnitFight.setBaseDMG(initBaseDmg());
     UnitFight.setAltDMG(initAltDmg());
+
+    Properties prop = new Properties();
+    prop.setProperty("plugin.tilesize", "32");
+    App.setProperties(prop);
   }
 
   public static void clearTestData() {

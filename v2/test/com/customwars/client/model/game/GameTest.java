@@ -1,8 +1,6 @@
 package com.customwars.client.model.game;
 
 import com.customwars.client.model.TestData;
-import com.customwars.client.model.gameobject.City;
-import com.customwars.client.model.gameobject.CityFactory;
 import com.customwars.client.model.gameobject.GameObjectState;
 import com.customwars.client.model.gameobject.Terrain;
 import com.customwars.client.model.gameobject.TerrainFactory;
@@ -10,98 +8,69 @@ import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.gameobject.UnitFactory;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import tools.MapUtil;
 
 import java.awt.Color;
 import java.util.Arrays;
-import java.util.List;
 
 public class GameTest {
   private Game game;
-  private Map<Tile> map;
-  private Player p1, p2, p3, p4;
+  private Map<Tile> map;    // Hardcoded map, see beforeEachTest and buildHardCodedMap
 
   @Before
   public void beforeEachTest() {
-    game = null;
     Terrain plain = TerrainFactory.getTerrain(TestData.PLAIN);
-    map = new Map<Tile>(10, 10, 32, false, plain);
-    map.setFogOfWarOn(true);
-
-    p1 = new Player(0, Color.RED, false, null, "Stef", Integer.MAX_VALUE, 0, false);
-    p2 = new Player(1, Color.BLUE, false, null, "JSR", 8500, 0, false);
-    p3 = new Player(2, Color.GREEN, false, null, "Ben", 500, 1, false);
-    p4 = new Player(3, Color.BLACK, false, null, "Joop", 1000, 5, false);
+    map = new Map<Tile>(10, 10, 32, true, plain);
   }
 
-  private void startGame(Player gameStarter) {
-    startGame(new GameConfig(), gameStarter);
+  @After
+  public void afterEachTest() {
+    game = null;
+    map = null;
   }
 
-  private void startGame(GameConfig gc, Player gameStarter) {
-    List<Player> players = Arrays.asList(p1, p2, p3, p4);
-    startGame(gc, gameStarter, players);
-  }
-
-  private void startGame(GameConfig gc, Player gameStarter, List<Player> players) {
-    if (gc.getTurnLimit() == 0)
-      gc.setTurnLimit(Turn.UNLIMITED);
-    if (gc.getDayLimit() == 0)
-      gc.setDayLimit(Turn.UNLIMITED);
-
-    game = new Game(map, players, gc);
-    game.startGame(gameStarter);
-  }
-
+  /**
+   * p1 Start budget=800 cities=1
+   * p2 Start budget=5000 cities=1
+   */
   @Test
   public void testCityBudget() {
-    int P4_START_BUDGET = 5000;
     int P1_START_BUDGET = 800;
+    int P2_START_BUDGET = 5000;
     int CITY_FUNDS = 1200;
 
-    p1 = new Player(0, Color.RED, false, null, "Stef", P1_START_BUDGET, 0, false);
-    p4 = new Player(3, Color.BLACK, false, null, "Joop", P4_START_BUDGET, 5, false);
-
-    // Give player 4 a City
-    City p4City = CityFactory.getCity(TestData.BASE);
-    Tile tile = map.getTile(0, 0);
-    tile.setTerrain(p4City);
-    p4City.setLocation(tile);
-    p4City.setOwner(p4);
-
-    // Give player 1 a City
-    City p1City = CityFactory.getCity(TestData.BASE);
-    tile = map.getTile(1, 0);
-    tile.setTerrain(p1City);
-    p1City.setLocation(tile);
-    p1City.setOwner(p1);
-
+    buildHardCodedMap(2);
+    Player p1 = new Player(0, Color.RED, false, null, "Stef", P1_START_BUDGET, 0, false);
+    Player p2 = new Player(1, Color.BLACK, false, null, "JSR", P2_START_BUDGET, 5, false);
     GameConfig gc = new GameConfig();
-    gc.setTurnLimit(500);
     gc.setCityfunds(CITY_FUNDS);
-    startGame(gc, p4);
+
+    // p1 is starting the game
+    startGame(p1, gc, p1, p2);
 
     // Game is now started
     Assert.assertTrue(game.isStarted());
     Assert.assertEquals(0, game.getTurn());
-    Assert.assertEquals(p4, game.getActivePlayer());
+    Assert.assertEquals(p1, game.getActivePlayer());
 
-    // p4 now has more cash because the one building it had
-    // added 1200 funds to it's budget.
-    Assert.assertEquals(p4.getBudget(), P4_START_BUDGET + CITY_FUNDS);
+    // p1 has more cash because the one city it had
+    // added 1200 funds to p1's budget.
+    Assert.assertEquals(p1.getBudget(), P1_START_BUDGET + CITY_FUNDS);
 
     game.endTurn();
 
     // 1 turn further
-    // p1 is now the activeplayer
+    // p2 is now the activeplayer
     Assert.assertEquals(1, game.getTurn());
-    Assert.assertEquals(p1, game.getActivePlayer());
+    Assert.assertEquals(p2, game.getActivePlayer());
 
-    // p1 now has more cash because the one building it had
-    // added 1200 funds to p1 budget.
-    Assert.assertEquals(p1.getBudget(), P1_START_BUDGET + CITY_FUNDS);
+    // p2 has more cash because the one city it had
+    // added 1200 funds to p2's budget.
+    Assert.assertEquals(p2.getBudget(), P2_START_BUDGET + CITY_FUNDS);
   }
 
   /**
@@ -109,7 +78,11 @@ public class GameTest {
    */
   @Test(expected = NotYourTurnException.class)
   public void testEndTurnWithNonActivePlayer() {
-    startGame(new GameConfig(), p1);
+    buildHardCodedMap(2);
+    Player p1 = new Player(0, Color.RED, false, null, "Stef", 0, 0, false);
+    Player p2 = new Player(1, Color.BLACK, false, null, "JSR", 0, 1, false);
+    startGame(new GameConfig(), p1, p2);
+
     game.endTurn(p2);
   }
 
@@ -118,9 +91,14 @@ public class GameTest {
    */
   @Test(expected = IllegalStateException.class)
   public void testEndTurnOnLastTurn() {
+    buildHardCodedMap(4);
+    Player p1 = new Player(0, Color.RED, false, null, "Stef", 0, 0, false);
+    Player p2 = new Player(1, Color.RED, false, null, "JSR", 0, 0, false);
+    Player p3 = new Player(2, Color.RED, false, null, "Ben", 0, 0, false);
+    Player p4 = new Player(3, Color.BLACK, false, null, "Joop", 0, 5, false);
     GameConfig gc = new GameConfig();
     gc.setDayLimit(2);
-    startGame(gc, p1);
+    startGame(gc, p1, p1, p2, p3, p4);
 
     game.endTurn();  // p1
     game.endTurn();  // p2
@@ -140,33 +118,54 @@ public class GameTest {
    */
   @Test
   public void testEndTurn() {
-    startGame(new GameConfig(), p1);
+    int END_TURN_ITERATIONS = 1500;
 
-    int counter = 0;
-    while (counter < 1500) {
+    buildHardCodedMap(4);
+    Player p1 = new Player(0, Color.RED, false, null, "Stef", 0, 0, false);
+    Player p2 = new Player(1, Color.GREEN, false, null, "Jan", 0, 0, false);
+    Player p3 = new Player(2, Color.BLUE, false, null, "JSR", 0, 0, false);
+    Player p4 = new Player(3, Color.BLACK, false, null, "Joop", 0, 1, false);
+    startGame(new GameConfig(), p1, p2, p3, p4);
+
+    for (int counter = 0; counter < END_TURN_ITERATIONS; counter++) {
       game.endTurn();
-      counter++;
     }
+  }
+
+  /**
+   * Try to Start a game with duplicate players
+   */
+  @Test(expected = IllegalStateException.class)
+  public void testDuplicatePlayers() {
+    buildHardCodedMap(5);
+    Player p1 = new Player(0, Color.RED, false, null, "Stef", 0, 0, false);
+    Player p2 = new Player(1, Color.RED, false, null, "Jan", 0, 0, false);
+    Player p3 = new Player(2, Color.RED, false, null, "Jsr", 0, 0, false);
+    Player p4 = new Player(3, Color.BLACK, false, null, "Joop", 0, 5, false);
+    Player p5 = new Player(4, Color.YELLOW, false, null, "Kembo", 0, 4, false);
+    startGame(new GameConfig(), p3, p3, p1, p2, p4, p5);
   }
 
   @Test
   public void testGameOverByLastPlayerRemaining() {
-    startGame(p1);
+    buildHardCodedMap(4);
+    Player p1 = new Player(0, Color.RED, false, null, "Stef", 0, 0, false);
+    Player p2 = new Player(1, Color.BLUE, false, null, "Jan", 0, 0, false);
+    Player p3 = new Player(2, Color.YELLOW, false, null, "JSR", 0, 0, false);
+    Player p4 = new Player(3, Color.BLACK, false, null, "Kembo", 0, 0, false);
+    startGame(new GameConfig(), p1, p2, p3, p4);
 
     // Give p2 a unit
     Unit inf2 = UnitFactory.getUnit(TestData.INF);
-    map.getRandomTile().add(inf2);
-    p3.addUnit(inf2);
+    MapUtil.addUnitToMap(map, 0, 0, inf2, p2);
 
     // Give p3 a unit
     Unit inf3 = UnitFactory.getUnit(TestData.INF);
-    map.getRandomTile().add(inf3);
-    p3.addUnit(inf3);
+    MapUtil.addUnitToMap(map, 1, 0, inf3, p3);
 
     // Give p4 a unit
     Unit inf4 = UnitFactory.getUnit(TestData.INF);
-    map.getRandomTile().add(inf4);
-    p4.addUnit(inf4);
+    MapUtil.addUnitToMap(map, 2, 0, inf4, p4);
 
     // p1 slays them all:
     inf2.destroy();
@@ -178,34 +177,25 @@ public class GameTest {
   }
 
   /**
-   * Try to Start a game with duplicate players
-   */
-  @Test(expected = IllegalStateException.class)
-  public void testDuplicatePlayers() {
-    startGame(new GameConfig(), p1, Arrays.asList(p1, p2, p3, p3));
-  }
-
-  /**
    * The game ends when only 1 team remains(all other team players are destroyed)
    * There are 2 teams: 1(Stef, JSR) and 2(Ben, Joop)
    */
   @Test
   public void testGameOverByAlliedVictory() {
+    buildHardCodedMap(4);
     Player p1 = new Player(0, Color.RED, false, null, "Stef", Integer.MAX_VALUE, 1, false);
     Player p2 = new Player(1, Color.BLUE, false, null, "JSR", 8500, 1, false);
     Player p3 = new Player(2, Color.GREEN, false, null, "Ben", 500, 2, false);
     Player p4 = new Player(3, Color.BLACK, false, null, "Joop", 1000, 2, false);
-    startGame(new GameConfig(), p1, Arrays.asList(p1, p2, p3, p4));
+    startGame(new GameConfig(), p1, p2, p3, p4);
 
     // p1 builds up his army
     Unit inf1 = UnitFactory.getUnit(TestData.INF);
-    map.getRandomTile().add(inf1);
-    p1.addUnit(inf1);
+    MapUtil.addUnitToMap(map, 0, 0, inf1, p1);
 
     // p2 builds up his army
     Unit inf2 = UnitFactory.getUnit(TestData.INF);
-    map.getRandomTile().add(inf2);
-    p2.addUnit(inf2);
+    MapUtil.addUnitToMap(map, 1, 0, inf2, p2);
 
     // team 2 comes along and kills all units of team 1
     inf1.destroy();
@@ -216,43 +206,77 @@ public class GameTest {
     Assert.assertTrue(game.isGameOver());
   }
 
-
   /**
    * When the game has started the starting player(p1) contains active units
    * all the other players contain idle units
    */
   @Test
   public void testActiveUnitsAfterGameStart() {
+    buildHardCodedMap(5);
+    Player mapPlayer1 = new Player(0);
+    Player mapPlayer2 = new Player(1);
+    Player mapPlayer3 = new Player(2);
+    Player mapPlayer4 = new Player(3);
+    Player mapPlayer5 = new Player(4);
+
     // Add some units to each player
-    Unit inf1 = UnitFactory.getUnit(TestData.INF);
-    map.getTile(0, 0).add(inf1);
-    inf1.setOwner(p1);
+    MapUtil.addUnitToMap(map, 0, 0, TestData.INF, mapPlayer1);
+    MapUtil.addUnitToMap(map, 1, 0, TestData.INF, mapPlayer2);
+    MapUtil.addUnitToMap(map, 2, 0, TestData.INF, mapPlayer2);
+    MapUtil.addUnitToMap(map, 3, 0, TestData.INF, mapPlayer2);
+    MapUtil.addUnitToMap(map, 4, 0, TestData.INF, mapPlayer2);
+    MapUtil.addUnitToMap(map, 5, 0, TestData.INF, mapPlayer2);
+    MapUtil.addUnitToMap(map, 6, 0, TestData.INF, mapPlayer3);
+    MapUtil.addUnitToMap(map, 7, 0, TestData.INF, mapPlayer3);
+    MapUtil.addUnitToMap(map, 8, 0, TestData.INF, mapPlayer4);
+    MapUtil.addUnitToMap(map, 9, 0, TestData.INF, mapPlayer4);
+    MapUtil.addUnitToMap(map, 0, 1, TestData.INF, mapPlayer5);
 
-    Unit inf2 = UnitFactory.getUnit(TestData.INF);
-    map.getTile(0, 1).add(inf2);
-    inf2.setOwner(p2);
-
-    Unit inf3 = UnitFactory.getUnit(TestData.INF);
-    map.getTile(0, 2).add(inf3);
-    inf3.setOwner(p3);
-
-    Unit inf4 = UnitFactory.getUnit(TestData.INF);
-    map.getTile(0, 3).add(inf4);
-    inf4.setOwner(p3);
-
-    startGame(p1);
+    Player p1 = new Player(0, Color.RED, false, null, "Stef", 0, 0, false);
+    Player p2 = new Player(1, Color.BLUE, false, null, "Jan", 0, 0, false);
+    Player p3 = new Player(2, Color.WHITE, false, null, "Jsr", 0, 0, false);
+    Player p4 = new Player(3, Color.BLACK, false, null, "Joop", 0, 5, false);
+    Player p5 = new Player(4, Color.YELLOW, false, null, "Kembo", 0, 3, false);
+    startGame(new GameConfig(), p1, p2, p3, p4, p5);
 
     // Only player1 has active units
-    for (Unit unit : p1.getArmy()) {
-      Assert.assertEquals(unit.getState(), GameObjectState.ACTIVE);
-    }
+    checkState(p1.getArmy(), GameObjectState.ACTIVE);
+    checkState(p2.getArmy(), GameObjectState.IDLE);
+    checkState(p3.getArmy(), GameObjectState.IDLE);
+    checkState(p4.getArmy(), GameObjectState.IDLE);
+    checkState(p5.getArmy(), GameObjectState.IDLE);
+  }
 
-    for (Unit unit : p2.getArmy()) {
-      Assert.assertEquals(unit.getState(), GameObjectState.IDLE);
+  // Util Functions
+  private void checkState(Iterable<Unit> units, GameObjectState state) {
+    for (Unit unit : units) {
+      Assert.assertEquals(unit.getState(), state);
     }
+  }
 
-    for (Unit unit : p3.getArmy()) {
-      Assert.assertEquals(unit.getState(), GameObjectState.IDLE);
+  /**
+   * Build a map that supports the playerCount
+   * Supports means that for each player in the map there should be a game player.
+   * When starting a game the game players count is compared to the player count in the map
+   * so add a base for each player to the map.
+   */
+  private void buildHardCodedMap(int playerCount) {
+    int col = 0;
+    for (int playerIndex = 0; playerIndex < playerCount; playerIndex++) {
+      Player mapPlayer = new Player(playerIndex);
+      MapUtil.addCityToMap(map, col++, 0, TestData.BASE, mapPlayer);
     }
+  }
+
+  /**
+   * Start a game with the first player as game starter
+   */
+  private void startGame(GameConfig gc, Player... players) {
+    startGame(players[0], gc, players);
+  }
+
+  private void startGame(Player gameStarter, GameConfig gc, Player... players) {
+    game = new Game(map, Arrays.asList(players), gc);
+    game.startGame(gameStarter);
   }
 }
