@@ -5,7 +5,6 @@ import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
-import tools.Args;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -14,17 +13,13 @@ import java.util.List;
 
 /**
  * CW Impl of a Turnbase game
- * The Players in the map will be replaced by players from the players list.
+ * The Players in the map(map players) will be replaced by players from the players list(game players).
  * Usage:
  * Game game = new Game(map,players,gameConfig)
  * game.startGame();
  * game.endTurn();
  * game.endTurn();
  * ...
- * The game is over when
- * The turn or day limit is reached or
- * When the active players(not destroyed, not neutral) are allied or
- * When there is only 1 player left see {@link #isTheGameOver()}
  */
 public class Game extends TurnBasedGame implements PropertyChangeListener {
   private int weather;            // The current weather in effect
@@ -66,34 +61,24 @@ public class Game extends TurnBasedGame implements PropertyChangeListener {
   }
 
   private void initCity(City city) {
-    Tile t = (Tile) city.getLocation();
-    Args.checkForNull(city.getLocation(), "City has no location");
-    Args.checkForNull(city.getOwner(), "City @ " + t.getLocationString() + " has no owner");
-
     Player mapPlayer = city.getOwner();
-    Player newOwner = getGamePlayer(mapPlayer);
+    Player gamePlayer = getGamePlayer(mapPlayer);
 
-    // Is this city the HQ
     if (mapPlayer.getHq() == city) {
-      newOwner.setHq(city);
+      gamePlayer.setHq(city);
     }
 
-    newOwner.addCity(city);
+    gamePlayer.addCity(city);
     city.setFunds(cityFunds);
   }
 
   private void initUnit(Unit unit) {
-    Tile t = (Tile) unit.getLocation();
-    Args.validate(t.getLocatableCount() != 1, "Tile @ " + t.getLocationString() + " contains " + t.getLocatableCount() + " units, limit=1");
-    Args.checkForNull(unit.getLocation(), "Unit has no location");
-    Args.checkForNull(unit.getOwner(), "Unit @ " + t.getLocationString() + " has no owner");
-
-    Player newOwner = getGamePlayer(unit.getOwner());
-    newOwner.addUnit(unit);
+    Player gamePlayer = getGamePlayer(unit.getOwner());
+    gamePlayer.addUnit(unit);
 
     for (int i = 0; i < unit.getLocatableCount(); i++) {
       Unit unitInTransport = (Unit) unit.getLocatable(i);
-      newOwner.addUnit(unitInTransport);
+      gamePlayer.addUnit(unitInTransport);
     }
   }
 
@@ -231,6 +216,10 @@ public class Game extends TurnBasedGame implements PropertyChangeListener {
     }
   }
 
+  /**
+   * The game is over when
+   * the active players(not destroyed, not neutral) are allied or When there is only 1 player left
+   */
   private boolean isTheGameOver() {
     return getActivePlayerCount() <= 1 || isAlliedVictory();
   }
