@@ -12,6 +12,7 @@ import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.path.Mover;
 import com.customwars.client.model.map.path.PathFinder;
 import org.apache.log4j.Logger;
+import tools.Args;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,7 +24,7 @@ import java.util.Properties;
 import java.util.Set;
 
 /**
- * A Game map extends tileMap adding game specific fields
+ * A game Map extends TileMap adding game specific fields
  * Handles Fog, paths and units
  * Zones: move zone, attack zone
  * Surrounding information: suppliables, enemies in a Range
@@ -64,6 +65,7 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
     this.pathFinder = new PathFinder(this);
     this.properties = new Properties();
     fillMap(cols, rows, startTerrain);
+    validateMap();
   }
 
   @SuppressWarnings("unchecked")
@@ -72,6 +74,26 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
       for (int col = 0; col < cols; col++) {
         Tile t = new Tile(col, row, terrain);
         setTile(col, row, (T) t);
+      }
+    }
+  }
+
+  private void validateMap() {
+    for (Tile t : getAllTiles()) {
+      City city = getCityOn(t);
+      Unit unit = getUnitOn(t);
+
+      if (city != null) {
+        Args.checkForNull(city.getLocation(), "City has no location");
+        Args.validate(city.getLocation() != t, "Wrong location for " + city + " Expected " + t.getLocationString());
+        Args.checkForNull(city.getOwner(), "City @ " + t.getLocationString() + " has no owner");
+      }
+
+      if (unit != null) {
+        Args.validate(t.getLocatableCount() != 1, "Tile @ " + t.getLocationString() + " contains " + t.getLocatableCount() + " units, limit=1");
+        Args.checkForNull(unit.getLocation(), "Unit has no location");
+        Args.validate(unit.getLocation() != t, "Wrong location for " + unit + " Expected " + t.getLocationString());
+        Args.checkForNull(unit.getOwner(), "Unit @ " + t.getLocationString() + " has no owner");
       }
     }
   }

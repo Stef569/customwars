@@ -4,15 +4,18 @@ package com.customwars.client.model.game;
 /**
  * Game specific configuration:
  * turns, weather etc
- * -1 means infinitive
  */
 public class GameConfig {
-  private int startWeather = 0;
+  private int startWeather;
   private int turnLimit;
   private int cityfunds;
   private int dayLimit;
 
+  /**
+   * Create GameConfig with default values
+   */
   public GameConfig() {
+    this(0, Turn.UNLIMITED, Turn.UNLIMITED, 2000);
   }
 
   public GameConfig(int weather, int turnLimit, int dayLimit, int cityfunds) {
