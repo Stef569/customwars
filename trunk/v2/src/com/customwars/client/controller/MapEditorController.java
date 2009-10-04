@@ -7,6 +7,7 @@ import com.customwars.client.MapMaker.control.MapEditorControl;
 import com.customwars.client.MapMaker.control.TerrainMapEditorControl;
 import com.customwars.client.MapMaker.control.UnitMapEditorControl;
 import com.customwars.client.io.ResourceManager;
+import com.customwars.client.io.loading.map.MapParser;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Terrain;
@@ -15,6 +16,7 @@ import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.ui.state.MapEditorState;
+import tools.FileUtil;
 import tools.StringUtil;
 
 import java.awt.Color;
@@ -88,16 +90,23 @@ public class MapEditorController {
   }
 
   public void loadMap(File file) throws IOException {
-    String fileName = file.getName();
-    String mapName = fileName.substring(0, fileName.lastIndexOf('.'));
+    if (!isValidMapFile(file)) {
+      throw new IllegalArgumentException(file.getName() + " is not a valid CW2 map file");
+    }
 
     Map<Tile> map;
+    String mapName = FileUtil.StripFileExtension(file.getName());
     if (resources.isMapCached(mapName)) {
       map = resources.getMap(mapName);
     } else {
       map = resources.loadMap(file);
     }
     setMap(map);
+  }
+
+  private boolean isValidMapFile(File file) {
+    String fileName = file.getName();
+    return fileName != null && fileName.endsWith(MapParser.MAP_FILE_EXTENSION);
   }
 
   public void saveMap(String mapName, String mapDescription, String author) throws IOException {
@@ -108,7 +117,7 @@ public class MapEditorController {
   }
 
   public void saveMap(String fileName) throws IOException {
-    String mapName = StringUtil.appendTrailingSuffix(fileName, ".map");
+    String mapName = StringUtil.appendTrailingSuffix(fileName, MapParser.MAP_FILE_EXTENSION);
     File newMapFile = new File(Config.MAPS_DIR, mapName);
 
     if (newMapFile.exists()) {

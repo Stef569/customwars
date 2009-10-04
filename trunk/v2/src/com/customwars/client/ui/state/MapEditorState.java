@@ -7,6 +7,9 @@ import com.customwars.client.io.img.slick.ImageStrip;
 import com.customwars.client.model.map.Direction;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
+import com.customwars.client.ui.Camera2D;
+import com.customwars.client.ui.GUI;
+import com.customwars.client.ui.Scroller;
 import com.customwars.client.ui.hud.Dialog;
 import com.customwars.client.ui.mapMaker.CitySelectPanel;
 import com.customwars.client.ui.mapMaker.SelectPanel;
@@ -15,6 +18,7 @@ import com.customwars.client.ui.mapMaker.UnitSelectPanel;
 import com.customwars.client.ui.renderer.MapRenderer;
 import com.customwars.client.ui.sprite.SpriteManager;
 import com.customwars.client.ui.sprite.TileSprite;
+import org.apache.log4j.Logger;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
@@ -27,6 +31,7 @@ import org.newdawn.slick.state.StateBasedGame;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -45,6 +50,7 @@ import java.util.List;
  * At all times there is 1 active panel
  */
 public class MapEditorState extends CWState {
+  private static final Logger logger = Logger.getLogger(MapEditorState.class);
   private MapEditorController mapEditorController;
   private CursorController cursorController;
   private List<SelectPanel> panels;
@@ -52,8 +58,12 @@ public class MapEditorState extends CWState {
 
   private Map<Tile> map;
   private MapRenderer mapRenderer;
+  private Camera2D camera;
+  private Scroller scroller;
+  private GUIContext guiContext;
 
   public void init(GameContainer gameContainer, StateBasedGame stateBasedGame) throws SlickException {
+    this.guiContext = gameContainer;
     createPanels(gameContainer);
 
     if (LoadingList.isDeferredLoading()) {
@@ -104,10 +114,24 @@ public class MapEditorState extends CWState {
     this.activePanelID = 0;
   }
 
+  public void update(GameContainer container, int delta) throws SlickException {
+    mapRenderer.update(delta);
+    camera.update(delta);
+    scroller.setCursorLocation(mapRenderer.getCursorLocation());
+    scroller.update(delta);
+    getActivePanel().update(delta);
+    container.getInput().setOffset(camera.getX(), camera.getY());
+  }
+
   public void render(GameContainer container, Graphics g) throws SlickException {
+    g.scale(camera.getZoomLvl(), camera.getZoomLvl());
+    g.translate(-camera.getX(), -camera.getY());
     mapRenderer.render(g);
+    g.translate(camera.getX(), camera.getY());
+
     getActivePanel().render(container, g);
     renderControls(g);
+    g.resetTransform();
   }
 
   private void renderControls(Graphics g) {
@@ -122,18 +146,27 @@ public class MapEditorState extends CWState {
     g.drawString("Open map: " + cwInput.getControlsAsText(CWInput.open), LEFT_MARGIN, 94);
   }
 
-  public void update(GameContainer container, int delta) throws SlickException {
-    mapRenderer.update(delta);
-    getActivePanel().update(delta);
+  @Override
+  public void leave(GameContainer container, StateBasedGame game) throws SlickException {
+    super.leave(container, game);
+    cwInput.resetInputTransition();
   }
 
   public void setMap(Map<Tile> map) {
     this.map = map;
+    initCamera(map);
+    this.scroller = new Scroller(camera);
     SpriteManager spriteManager = new SpriteManager(map);
     this.mapRenderer = new MapRenderer(map, spriteManager);
     mapRenderer.loadResources(resources);
     this.cursorController = new CursorController(map, spriteManager);
     initCursors();
+  }
+
+  private void initCamera(Map<Tile> map) {
+    Dimension screenSize = new Dimension(guiContext.getWidth(), guiContext.getHeight());
+    Dimension worldSize = new Dimension(map.getWidth(), map.getHeight());
+    this.camera = new Camera2D(screenSize, worldSize, map.getTileSize());
   }
 
   private void initCursors() {
@@ -203,11 +236,13 @@ public class MapEditorState extends CWState {
       try {
         mapEditorController.loadMap(file);
       } catch (IOException e) {
-        JOptionPane.showMessageDialog(null,
-          "Could not open the map '" + file.getPath() + "'\n " +
-            e.getMessage(),
-          "Error while Opening map",
-          JOptionPane.ERROR_MESSAGE);
+        logger.error(e);
+        GUI.showExceptionDialog(
+          String.format("Could not open the map '%s'", file.getPath()), e,
+          "Error while Opening map"
+        );
+      } catch (Exception e) {
+        logger.error(e);
       }
     }
   }
@@ -220,17 +255,18 @@ public class MapEditorState extends CWState {
 
       try {
         mapEditorController.saveMap(mapName, mapDescription, author);
-        JOptionPane.showMessageDialog(null,
-          author + ", your map '" + mapName + "'\n" +
-            " has been saved to " + Config.MAPS_DIR,
-          "Saved",
-          JOptionPane.PLAIN_MESSAGE);
+        GUI.showdialog(
+          String.format("%s your map '%s'\nhas been saved to %s", author, mapName, Config.MAPS_DIR),
+          "Saved"
+        );
       } catch (IOException e) {
-        JOptionPane.showMessageDialog(null,
-          "Could not save the map '" + mapName + "'\n " +
-            e.getMessage(),
-          "Error while saving",
-          JOptionPane.PLAIN_MESSAGE);
+        logger.error(e);
+        GUI.showExceptionDialog(
+          String.format("Could not save the map '%s'", mapName), e,
+          "Error while saving"
+        );
+      } catch (Exception e) {
+        logger.error(e);
       }
     }
   }
