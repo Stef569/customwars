@@ -130,7 +130,8 @@ public class HumanUnitController extends UnitController {
         showMenu = buildDropModeMenu(from, to, selected);
         map.teleport(to, from, unit);
       } else {
-        // Teleport the unit to the selected tile
+        // Temporarily teleport the active unit to the selected tile
+        // to determine what actions are available
         map.teleport(from, selected, unit);
         initUnitActions(selected);
         map.teleport(selected, from, unit);
@@ -150,7 +151,7 @@ public class HumanUnitController extends UnitController {
           Unit unitInTransport = (Unit) unit.getLocatable(dropCount);
           unitsInTransport.add(unitInTransport);
           if (canStartDrop(to, selected, dropCount + 1)) {
-            CWAction dropAction = new StartDropAction(to);
+            CWAction dropAction = new StartDropAction(to, unit);
             addToMenu(dropAction, App.translate("drop") + " " + unitInTransport.getName());
           }
         }

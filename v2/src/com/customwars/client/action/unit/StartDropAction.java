@@ -3,6 +3,7 @@ package com.customwars.client.action.unit;
 import com.customwars.client.action.ClearInGameStateAction;
 import com.customwars.client.action.DirectAction;
 import com.customwars.client.controller.CursorController;
+import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
@@ -25,10 +26,12 @@ public class StartDropAction extends DirectAction {
   private MapRenderer mapRenderer;
   private Map<Tile> map;
   private Location center;
+  private Unit transport;
 
-  public StartDropAction(Location center) {
+  public StartDropAction(Location center, Unit transport) {
     super("Start drop", true);
     this.center = center;
+    this.transport = transport;
   }
 
   protected void init(InGameContext context) {
@@ -59,10 +62,8 @@ public class StartDropAction extends DirectAction {
   private List<Location> getEmptyAjacentTiles(Location transportLocation) {
     List<Location> surroundingTiles = new ArrayList<Location>();
     for (Tile tile : map.getSurroundingTiles(transportLocation, 1, 1)) {
-      if (!context.isDropLocationTaken(tile)) {
-        if (tile.isFogged() || tile.getLocatableCount() == 0 || map.getUnitOn(tile).isHidden()) {
-          surroundingTiles.add(tile);
-        }
+      if (!context.isDropLocationTaken(tile) && map.isFreeDropLocation(tile, transport)) {
+        surroundingTiles.add(tile);
       }
     }
     return surroundingTiles;
