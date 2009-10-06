@@ -157,10 +157,8 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
   }
 
   /**
-   * Set all units to Idle and the units of this player to active.
-   * if fog is enabled we apply the los for each owned unit.
-   *
-   * @param player The player who's units should be made active and fog applied to.
+   * Activate the units of the given player
+   * if fog is enabled the vision range for each owned and allied unit/city is set.
    */
   public void resetMap(Player player) {
     resetUnits(player);
@@ -337,6 +335,8 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
   /**
    * Build a zone in which the Attacker can attack and set it to the attacker
    * If the attacker is within a transport then the attackzone is null
+   *
+   * @param attacker The attacker to build the attack zone for
    */
   public void buildAttackZone(Attacker attacker) {
     List<Location> attackZone = new ArrayList<Location>();
@@ -420,7 +420,7 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
 
   /**
    * Resets the map fog of war.
-   * This is done by setting all the tiles within a Unit and City Line of sight to fogged=false.
+   * This is done by setting all the tiles within a Unit and City Line of sight(the vision range) to fogged=false.
    *
    * @param player The player and his allies to apply the los for
    */
@@ -481,40 +481,33 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
     }
   }
 
-  private void clearFog(Tile baseTile, Tile tileToBeFogged) {
-    if (isValid(tileToBeFogged) && canClearFog(baseTile, tileToBeFogged)) {
-      tileToBeFogged.setFogged(false);
+  private void clearFog(Tile baseTile, Tile tile) {
+    if (isValid(tile) && canClearFog(baseTile, tile)) {
+      tile.setFogged(false);
     }
   }
 
   /**
-   * If a tile is within the unit los
-   * then there are some gameObjects that remain fogged until directly next to it.
-   * See the isHidden() function.
+   * Can the fog be cleared for the given tile
+   * There are some terrains that remain fogged until directly next to the baseTile.
+   * Hidden terrains can only be cleared of fog if the terrain is directly next to the baseTile
    *
-   * They can only be made clear if the unit is directly next to it
-   * The base and adjacent tiles are always visible.
-   *
-   * @param tileToBeFogged The tile to check relative to the baseTile
-   * @param baseTile       The tile the unit is on
-   * @return If the tile can be cleared of fog.
+   * @param tile     A tile within vision range
+   * @param baseTile The center of the vision range that is being cleared
+   * @return If the tile should be cleared of fog.
    */
-  public boolean canClearFog(Tile baseTile, Tile tileToBeFogged) {
-    Unit unit = getUnitOn(tileToBeFogged);
-    Terrain terrain = tileToBeFogged.getTerrain();
+  public boolean canClearFog(Tile baseTile, Tile tile) {
+    Terrain terrain = tile.getTerrain();
+    boolean adjacent = isAdjacent(tile, baseTile);
 
-    boolean hiddenTerrain = terrain.isHidden();
-
-    // If directly next to the tile we can see everything
-    boolean adjacent = isAdjacent(tileToBeFogged, baseTile);
-
-    return (!hiddenTerrain) || adjacent;
+    // If not hidden or directly next to the tile we can see everything
+    return !terrain.isHidden() || adjacent;
   }
 
   public void setFogOfWarOn(boolean fogOfWarOn) {
     boolean oldVal = this.fogOfWarOn;
     this.fogOfWarOn = fogOfWarOn;
-    firePropertyChange("fogOfWar", oldVal, fogOfWarOn);
+    firePropertyChange("fogofwar", oldVal, fogOfWarOn);
   }
 
   public void putProperty(String key, String value) {
@@ -522,8 +515,9 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
   }
 
   /**
-   * Retrieves the last added unit from location
-   * if location doesn't contain a unit <b>NULL</b> is returned
+   * @param location the location to retrieve a unit from
+   * @return The last added unit from location
+   *         if location doesn't contain a unit <b>NULL</b> is returned
    */
   public Unit getUnitOn(Location location) {
     Locatable locatable = location.getLastLocatable();
@@ -534,8 +528,9 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
   }
 
   /**
-   * Retrieves a city that is on the location
-   * if location doesn't contain a city <b>NULL</b> is returned
+   * @param location the location to retrieve a city from
+   * @return The city that is on the location
+   *         if location doesn't contain a city <b>NULL</b> is returned
    */
   public City getCityOn(Location location) {
     Tile t = (Tile) location;
@@ -544,6 +539,17 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
       return (City) terrain;
     }
     return null;
+  }
+
+  /**
+   * @param tile        The tile to be checked if it is a valid drop location
+   * @param transporter The unit that attempts to drop a unit to tile
+   * @return Can the transporter drop a unit to the given tile
+   */
+  public boolean isFreeDropLocation(Tile tile, Unit transporter) {
+    Unit unitOnDropLocation = getUnitOn(tile);
+    return tile.isFogged() || tile.getLocatableCount() == 0 ||
+      unitOnDropLocation.isHidden() || unitOnDropLocation == transporter;
   }
 
   public boolean isFogOfWarOn() {
@@ -555,8 +561,7 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
   }
 
   /**
-   * Get each unique player in the map
-   * excluding the neutral player
+   * @return Each unique player in the map excluding the neutral player
    */
   public Set<Player> getUniquePlayers() {
     Set<Player> players = new HashSet<Player>();

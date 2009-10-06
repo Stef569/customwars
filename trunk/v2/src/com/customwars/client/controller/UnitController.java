@@ -117,17 +117,10 @@ public abstract class UnitController {
 
   /**
    * @param tile The tile the unit is going to be dropped to
-   * @return true If the active unit can drop a unit on the tile
+   * @return true If this unit can drop a unit on the given tile
    */
   boolean canDrop(Tile tile) {
-    Unit transporter = game.getActiveUnit();
-
-    if (transporter.canTransport() && transporter.getLocatableCount() > 0) {
-      if (tile.isFogged() || tile.getLocatableCount() == 0 || map.getUnitOn(tile).isHidden()) {
-        return true;
-      }
-    }
-    return false;
+    return unit.canTransport() && unit.getLocatableCount() > 0 && map.isFreeDropLocation(tile, unit);
   }
 
   /**
