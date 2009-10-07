@@ -6,6 +6,7 @@ import com.customwars.client.action.DelayedAction;
 import com.customwars.client.controller.CursorController;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.gameobject.Unit;
+import com.customwars.client.model.gameobject.UnitState;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.path.MoveTraverse;
 import com.customwars.client.ui.renderer.MapRenderer;
@@ -47,6 +48,11 @@ public class MoveAnimatedAction extends DelayedAction {
 
     logger.debug(String.format("Moving Animated from %s to %s",
       from.getLocationString(), to.getLocationString()));
+
+    // Reset capturing state, if this unit was capturing a city
+    if (unit.getUnitState() == UnitState.CAPTURING) {
+      unit.setUnitState(UnitState.IDLE);
+    }
 
     this.context = context;
     game = context.getGame();

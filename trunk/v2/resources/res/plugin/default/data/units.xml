@@ -7,7 +7,7 @@ The id is a reference to a row in the unit image spritesheet
         <!ELEMENT unit (price, movement, vision,
                 canHide?, canDive?,
                 canCapture?, canJoin?, canFlare?, canSupply?, canTransport?,
-                transports?, transformTerrains?, buildCities?,
+                transports?, transformTerrains?, buildCities?, buildUnits?,
                 maxExperience, maxHp, supplyRange?, maxSupplies, dailyUse?, maxTransportCount?, armyBranch,
                 movementType, primaryWeapon?, secondaryWeapon?, description?)>
 
@@ -29,6 +29,7 @@ The id is a reference to a row in the unit image spritesheet
         <!ELEMENT transports (int*)>
         <!ELEMENT transformTerrains (map)>
         <!ELEMENT buildCities (map)>
+        <!ELEMENT buildUnits (int*)>
 
         <!ELEMENT map (int*)>
         <!ELEMENT int (#PCDATA)>
@@ -461,8 +462,12 @@ The id is a reference to a row in the unit image spritesheet
 
         <canTransport>true</canTransport>
         <transports>
-            <int>16</int>
+            <int>&AIR;</int>
         </transports>
+
+        <buildUnits>
+            <int>16</int>
+        </buildUnits>
 
         <maxExperience>10</maxExperience>
         <maxHp>100</maxHp>

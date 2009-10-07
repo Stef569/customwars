@@ -450,6 +450,8 @@ public class SpriteManager implements PropertyChangeListener {
         unitOwnerChange(evt);
       } else if (propertyName.equals("location")) {
         unitLocationchange(evt);
+      } else if (propertyName.equals("transport")) {
+        transportChange(evt);
       }
     } else if (evt.getSource() instanceof Sprite) {
       if (propertyName.equals("anim")) {
@@ -504,6 +506,11 @@ public class SpriteManager implements PropertyChangeListener {
     }
   }
 
+  private void transportChange(PropertyChangeEvent evt) {
+    Unit transport = (Unit) evt.getSource();
+    addUnit(transport);
+  }
+
   private void spriteAnimChange(PropertyChangeEvent evt) {
     animChange((Animation) evt.getOldValue(), (Animation) evt.getNewValue());
   }
@@ -541,7 +548,10 @@ public class SpriteManager implements PropertyChangeListener {
    */
   private void unitOnTileChange(PropertyChangeEvent evt) {
     Unit newUnit = (Unit) evt.getNewValue();
+    addUnit(newUnit);
+  }
 
+  private void addUnit(Unit newUnit) {
     if (newUnit != null && !unitSprites.containsKey(newUnit)) {
       Tile t = (Tile) newUnit.getLocation();
       logger.debug("Found 1 new Unit, Creating sprite @ " + t.getLocationString());

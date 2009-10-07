@@ -39,7 +39,7 @@ public class LoadAction extends DirectAction {
   private void load() {
     logger.debug("Loading " + unit + " into " + transport);
     unit.getLocation().remove(unit);
-    transport.add(unit);
     mapRenderer.removeUnit(unit);
+    transport.add(unit);
   }
 }

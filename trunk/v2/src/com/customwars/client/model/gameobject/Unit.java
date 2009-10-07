@@ -354,7 +354,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   }
 
   public Locatable getLocatable(int id) {
-    if (id > 0 || id < transport.size()) {
+    if (!transport.isEmpty()) {
       return transport.get(id);
     } else {
       return null;
@@ -888,6 +888,14 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
     return canTransport;
   }
 
+  public boolean canBuildUnit(Unit unit) {
+    return unit.canTransport() && getLocatableCount() <= maxTransportCount && buildUnits.contains(unit.unitID);
+  }
+
+  public boolean canBuildUnit() {
+    return getLocatableCount() < maxTransportCount;
+  }
+
   public boolean canJoin() {
     return canJoin;
   }
@@ -904,8 +912,8 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
     return getHp();
   }
 
-  public boolean canBuildUnit(Unit unit) {
-    return buildUnits.contains(unit.unitID);
+  public List<Integer> getUnitsThatCanBeBuild() {
+    return buildUnits;
   }
 
   @Override
