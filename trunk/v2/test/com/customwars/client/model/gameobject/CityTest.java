@@ -4,8 +4,10 @@ import com.customwars.client.model.TestData;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.awt.Color;
@@ -15,14 +17,23 @@ public class CityTest {
   private Player player1, player2;
   private City city;
 
+  @BeforeClass
+  public static void beforeAllTests() {
+    TestData.storeTestData();
+  }
+
   @Before
   public void beforeEachTest() {
     city = CityFactory.getCity(TestData.BASE);
     player1 = new Player(0, Color.RED, false, null, "Stef", Integer.MAX_VALUE, 0, false);
     player2 = new Player(1, Color.BLUE, false, null, "JSR", 8500, 1, false);
     Terrain plain = TerrainFactory.getTerrain(TestData.PLAIN);
-    map = new Map<Tile>(10, 10, 32, false, plain);
-    map.setFogOfWarOn(true);
+    map = new Map<Tile>(10, 10, 32, true, plain);
+  }
+
+  @AfterClass
+  public static void afterAllTests() {
+    TestData.clearTestData();
   }
 
   @Test
@@ -30,10 +41,9 @@ public class CityTest {
    * A Unit captures a City, in 2 steps
    * The first time the unit tries to capture the city the capCount will be 50% (10/20)
    * The next attempt will fully capture the city 100% (20/20)
-   * player2 is now owning the city,
+   * player2 is now owning the city.
    *
    * resetCapturing will put the capCount back to 0.
-   *
    * The Unit Hp is used to increase the cap count
    */
   public void testValidCaptureCity() {
@@ -70,12 +80,12 @@ public class CityTest {
     capturingUnit.setOwner(player2);
     city.capture(capturingUnit);
     city.capture(capturingUnit);
+    Assert.assertEquals(city.getOwner(), player2);
 
     Unit capturingUnit2 = UnitFactory.getUnit(TestData.INF);
     capturingUnit2.setOwner(player1);
     city.capture(capturingUnit2);
     city.capture(capturingUnit2);
-
     Assert.assertEquals(city.getOwner(), player1);
   }
 
@@ -100,7 +110,7 @@ public class CityTest {
     city.heal(unit);
     int expectedHp = UNIT_HP + TestData.CITY_HEAL_RATE;
     Assert.assertEquals(expectedHp, unit.getHp());
-    Assert.assertEquals(expectedHp * 10, unit.getHpPercentage());
+    Assert.assertEquals(expectedHp * 10, unit.getInternalHp());
   }
 
   @Test

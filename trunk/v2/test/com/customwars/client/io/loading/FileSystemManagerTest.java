@@ -31,16 +31,16 @@ public class FileSystemManagerTest {
   @Before
   public void beforeEachTest() throws IOException {
     fsm = new FileSystemManager(parentDir);
-    new File(parentDir + testDir).mkdirs();
-    new File(parentDir + versusDir).mkdirs();
+    new File(parentDir, testDir).mkdirs();
+    new File(parentDir, versusDir).mkdirs();
   }
 
   @AfterClass
   public static void afterAllTests() {
-    File test = new File(parentDir + testDir);
+    File test = new File(parentDir, testDir);
     fsm.clearFiles(test);
     test.delete();
-    File versus = new File(parentDir + versusDir);
+    File versus = new File(parentDir, versusDir);
     fsm.clearFiles(versus);
     versus.delete();
     new File(parentDir).delete();

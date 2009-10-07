@@ -6,7 +6,9 @@ import com.customwars.client.model.gameobject.TerrainFactory;
 import com.customwars.client.model.gameobject.UnitFactory;
 import com.customwars.client.model.map.path.Mover;
 import junit.framework.Assert;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
@@ -18,10 +20,20 @@ public class TileMapTest {
   private TileMap<Tile> map;
   private Terrain plain;
 
+  @BeforeClass
+  public static void beforeAllTests() {
+    TestData.storeTestData();
+  }
+
   @Before
   public void beforeEachTest() {
     plain = TerrainFactory.getTerrain(TestData.PLAIN);
     map = new Map<Tile>(10, 15, 32, false, plain);
+  }
+
+  @AfterClass
+  public static void afterAllTests() {
+    TestData.clearTestData();
   }
 
   // Check If getAllTiles realy Returns AllTiles
@@ -47,7 +59,7 @@ public class TileMapTest {
     Location tile = map.getTile(0, 1);
     Assert.assertFalse(map.isValid(map.getTile(-1, -1)));
     Assert.assertTrue(map.isValid(leftCorner));
-    Assert.assertTrue(map.isAdjacent(leftCorner, tile));
+    Assert.assertTrue(TileMap.isAdjacent(leftCorner, tile));
   }
 
   @Test
@@ -59,17 +71,17 @@ public class TileMapTest {
     Location center = map.getTile(1, 1);
 
     // All tiles touch the center tile
-    Assert.assertTrue(map.isAdjacent(left, center));
-    Assert.assertTrue(map.isAdjacent(up, center));
-    Assert.assertTrue(map.isAdjacent(right, center));
-    Assert.assertTrue(map.isAdjacent(down, center));
+    Assert.assertTrue(TileMap.isAdjacent(left, center));
+    Assert.assertTrue(TileMap.isAdjacent(up, center));
+    Assert.assertTrue(TileMap.isAdjacent(right, center));
+    Assert.assertTrue(TileMap.isAdjacent(down, center));
 
     // These Tiles don't touch
-    Assert.assertFalse(map.isAdjacent(down, up));
-    Assert.assertFalse(map.isAdjacent(left, right));
-    Assert.assertFalse(map.isAdjacent(up, left));
-    Assert.assertFalse(map.isAdjacent(up, right));
-    Assert.assertFalse(map.isAdjacent(up, down));
+    Assert.assertFalse(TileMap.isAdjacent(down, up));
+    Assert.assertFalse(TileMap.isAdjacent(left, right));
+    Assert.assertFalse(TileMap.isAdjacent(up, left));
+    Assert.assertFalse(TileMap.isAdjacent(up, right));
+    Assert.assertFalse(TileMap.isAdjacent(up, down));
   }
 
   /**
@@ -198,10 +210,10 @@ public class TileMapTest {
     Assert.assertEquals(8, surroundingTilesCount);
   }
 
-  @Test
   /**
    * 3 tiles are skipped because they are outside the map bounds
    */
+  @Test
   public void testSquareIteratorAtMapEdge() {
     Tile center = map.getTile(0, 1);
 
@@ -213,10 +225,10 @@ public class TileMapTest {
     Assert.assertEquals(5, surroundingTilesCount);
   }
 
-  @Test
   /**
    * 3 tiles are skipped because they are outside the map bounds
    */
+  @Test
   public void testSquareIteratorAtMapEdge2() {
     Tile center = map.getTile(map.getCols() - 1, 1);
 
@@ -228,10 +240,10 @@ public class TileMapTest {
     Assert.assertEquals(5, surroundingTilesCount);
   }
 
-  @Test
   /**
    * 5 tiles are skipped because they are outside the map bounds
    */
+  @Test
   public void testSquareIteratorAtMapEdge3() {
     Tile center = map.getTile(0, map.getRows() - 1);
 
@@ -243,10 +255,10 @@ public class TileMapTest {
     Assert.assertEquals(3, surroundingTilesCount);
   }
 
-  @Test
   /**
    * 3 tiles are skipped because they are outside the map bounds
    */
+  @Test
   public void testSquareIteratorAtMapEdge4() {
     Tile center = map.getTile(1, map.getRows() - 1);
 
@@ -258,10 +270,10 @@ public class TileMapTest {
     Assert.assertEquals(5, surroundingTilesCount);
   }
 
-  @Test
   /**
    * 0 tiles are skipped, there are 24 tiles(excluding the center) around 2,2
    */
+  @Test
   public void testSquareIteratorWithBiggerRange() {
     Tile center = map.getTile(2, 2);
 
@@ -273,10 +285,10 @@ public class TileMapTest {
     Assert.assertEquals(24, surroundingTilesCount);
   }
 
-  @Test
   /**
    * 1 row of tiles(5) are skipped, there are 19 tiles(excluding the center) around 2,2
    */
+  @Test
   public void testSquareIteratorWithBiggerRange2() {
     Tile center = map.getTile(2, 1);
 
@@ -294,7 +306,7 @@ public class TileMapTest {
     Location b = map.getTile(1, 1);
 
     // One down one to the right makes 2
-    Assert.assertEquals(2, map.getDistanceBetween(a, b));
+    Assert.assertEquals(2, TileMap.getDistanceBetween(a, b));
   }
 
   @Test
@@ -303,7 +315,7 @@ public class TileMapTest {
     Location b = map.getTile(4, 5);
 
     // 2 down 3 to the right makes 5
-    Assert.assertEquals(5, map.getDistanceBetween(a, b));
+    Assert.assertEquals(5, TileMap.getDistanceBetween(a, b));
   }
 
   @Test
@@ -327,12 +339,13 @@ public class TileMapTest {
       Direction.NORTHEAST, map.getQuadrantFor(topLeft));
   }
 
-  @Test
+
   /**
    * Should not throw an exception or return null.
    */
+  @Test
   public void quadrantWithUnEvenMapSize() {
-    Location middle = map.getTile(5, 7);
+    Location middle = new Location2D(5, 7);
     Map<Tile> map = new Map<Tile>(10, 15, 32, false, plain);
     Direction quadrant = map.getQuadrantFor(middle);
     Assert.assertNotNull(quadrant);

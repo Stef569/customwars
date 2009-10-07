@@ -5,8 +5,10 @@ import com.customwars.client.model.fight.Fight;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import slick.HardCodedGame;
@@ -18,12 +20,22 @@ public class UnitFightTest {
   private Player p2;
   private Map<Tile> map;
 
+  @BeforeClass
+  public static void beforeAllTests() {
+    TestData.storeTestData();
+  }
+
   @Before
   public void beforeEachTest() {
     map = HardCodedGame.getMap();
     // 2 Non allied Players
     p1 = new Player(8, Color.GREEN, false, null, "Jos", 0, 0, false);
     p2 = new Player(250, Color.BLUE, false, null, "Bob", 0, 1, false);
+  }
+
+  @AfterClass
+  public static void afterAllTests() {
+    TestData.clearTestData();
   }
 
   @Test

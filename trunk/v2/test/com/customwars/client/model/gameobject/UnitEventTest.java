@@ -3,7 +3,9 @@ package com.customwars.client.model.gameobject;
 import com.customwars.client.model.TestData;
 import junit.framework.Assert;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.beans.PropertyChangeEvent;
@@ -16,6 +18,11 @@ public class UnitEventTest implements PropertyChangeListener {
   private Unit unit;
   private GameObjectState oldState;
 
+  @BeforeClass
+  public static void beforeAllTests() {
+    TestData.storeTestData();
+  }
+
   @Before
   public void beforeEachTest() {
     unit = UnitFactory.getUnit(TestData.INF);
@@ -26,6 +33,11 @@ public class UnitEventTest implements PropertyChangeListener {
   public void afterEachTest() {
     unit.removePropertyChangeListener(this);
     unit = null;
+  }
+
+  @AfterClass
+  public static void afterAllTests() {
+    TestData.clearTestData();
   }
 
   @Test

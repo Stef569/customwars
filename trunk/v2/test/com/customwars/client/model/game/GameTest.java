@@ -8,9 +8,12 @@ import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.gameobject.UnitFactory;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
+import junit.framework.JUnit4TestAdapter;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import tools.MapUtil;
 
@@ -20,6 +23,11 @@ import java.util.Arrays;
 public class GameTest {
   private Game game;
   private Map<Tile> map;    // Hardcoded map, see beforeEachTest and buildHardCodedMap
+
+  @BeforeClass
+  public static void beforeAllTests() {
+    TestData.storeTestData();
+  }
 
   @Before
   public void beforeEachTest() {
@@ -31,6 +39,11 @@ public class GameTest {
   public void afterEachTest() {
     game = null;
     map = null;
+  }
+
+  @AfterClass
+  public static void afterAllTests() {
+    TestData.clearTestData();
   }
 
   /**
@@ -278,5 +291,9 @@ public class GameTest {
   private void startGame(Player gameStarter, GameConfig gc, Player... players) {
     game = new Game(map, Arrays.asList(players), gc);
     game.startGame(gameStarter);
+  }
+
+  public static junit.framework.Test suite() {
+    return new JUnit4TestAdapter(GameTest.class);
   }
 }

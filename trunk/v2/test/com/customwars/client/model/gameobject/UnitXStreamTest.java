@@ -20,6 +20,11 @@ public class UnitXStreamTest {
   private static XStream xStream = new XStream(new DomDriver());
 
   @BeforeClass
+  public static void beforeAllTests() {
+    TestData.storeTestData();
+  }
+
+  @BeforeClass
   public static void beforeAllTest() {
     // When we find a unit tag, create a Unit object
     xStream.alias("unit", Unit.class);
@@ -28,7 +33,7 @@ public class UnitXStreamTest {
     xStream.alias("secondaryWeapon", Weapon.class);
     xStream.registerConverter(new UnitWeaponConverter());
 
-    // id and name are read from attributes, not elements
+    // id, imgRowID and name are read from attributes, not elements
     xStream.useAttributeFor(Unit.class, "unitID");
     xStream.useAttributeFor(Unit.class, "imgRowID");
     xStream.useAttributeFor(Unit.class, "name");
@@ -40,8 +45,8 @@ public class UnitXStreamTest {
   }
 
   @AfterClass
-  public static void afterAllTest() {
-    TestData.storeTestData();
+  public static void afterAllTests() {
+    TestData.clearTestData();
   }
 
   @Test

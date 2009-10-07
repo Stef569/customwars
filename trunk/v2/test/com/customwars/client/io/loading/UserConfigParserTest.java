@@ -13,7 +13,7 @@ import java.util.Properties;
 /**
  * Test reading user properties
  * starting with keys,
- * mouse btn and mouse clicks can't be tested since they require a display...
+ * mouse controls can't be tested since they require a display.
  *
  * @author stefan
  */
@@ -31,7 +31,7 @@ public class UserConfigParserTest {
   public void testReadingKeyInput() {
     Properties properties = new Properties();
     properties.put(UserConfigParser.INPUT_PREFIX + ".CanCeL", "x,W,a,9,f5");
-    properties.put(UserConfigParser.INPUT_PREFIX + ".SELECT", "A,B,C,D,E,F,ESCAPE");
+    properties.put(UserConfigParser.INPUT_PREFIX + ".SELECT", "B,C,D,E,F,ESCAPE");
     properties.put(UserConfigParser.INPUT_PREFIX + ".Toggle_Music", "1");
 
     userConfigParser.readInputConfig(properties);
@@ -44,15 +44,26 @@ public class UserConfigParserTest {
     Assert.assertEquals(0, inputProvider.getControlsFor(CWInput.zoomIn).size());
   }
 
-  @Test
+  @Test(expected = IllegalArgumentException.class)
   public void testReadingDuplicateKeyInput() {
     Properties properties = new Properties();
     // Dilema 2 keys binded to 2 different commands
+    // Throws an exception
     properties.put(UserConfigParser.INPUT_PREFIX + ".CANCEL", "A");
-    properties.put(UserConfigParser.INPUT_PREFIX + ".SELECT", "A");            // Ignore duplicate keys
+    properties.put(UserConfigParser.INPUT_PREFIX + ".SELECT", "A");
     userConfigParser.readInputConfig(properties);
 
     Assert.assertEquals(1, inputProvider.getControlsFor(CWInput.cancel).size());
     Assert.assertEquals(0, inputProvider.getControlsFor(CWInput.select).size());
+  }
+
+  @Test()
+  public void testReadingDuplicateCommands() {
+    Properties properties = new Properties();
+    // 2 commands, the 2nd command overwrites the first command
+    // Only B is used as control for CANCEL
+    properties.put(UserConfigParser.INPUT_PREFIX + ".CANCEL", "A");
+    properties.put(UserConfigParser.INPUT_PREFIX + ".CANCEL", "B");
+    userConfigParser.readInputConfig(properties);
   }
 }

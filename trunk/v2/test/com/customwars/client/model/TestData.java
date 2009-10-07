@@ -158,6 +158,8 @@ public class TestData {
     WeaponFactory.clear();
     UnitFactory.clear();
     CityFactory.clear();
+    UnitFight.setBaseDMG(null);
+    UnitFight.setAltDMG(null);
   }
 
   private static int[][] initBaseDmg() {
