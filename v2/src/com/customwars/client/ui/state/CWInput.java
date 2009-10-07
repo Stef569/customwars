@@ -22,27 +22,27 @@ import java.util.List;
  * @author stefan
  */
 public class CWInput extends InputProvider {
-  public static final Command select = new BasicCommand("Select");
-  public static final Command cancel = new BasicCommand("Cancel");
-  public static final Command exit = new BasicCommand("Exit");
-  public static final Command down = new BasicCommand("Down");
-  public static final Command up = new BasicCommand("Up");
-  public static final Command left = new BasicCommand("Left");
-  public static final Command right = new BasicCommand("Right");
-  public static final Command toggleMusic = new BasicCommand("Toggle_Music");
-  public static final Command zoomIn = new BasicCommand("Zoom_In");
-  public static final Command zoomOut = new BasicCommand("Zoom_Out");
-  public static final Command fillMap = new BasicCommand("Fill_Map");
-  public static final Command nextPage = new BasicCommand("Next_Page");
-  public static final Command prevPage = new BasicCommand("Prev_Page");
-  public static final Command recolor = new BasicCommand("Recolor");
-  public static final Command delete = new BasicCommand("Delete");
-  public static final Command toggleFPS = new BasicCommand("Toggle_FPS");
-  public static final Command endTurn = new BasicCommand("End_Turn");
-  public static final Command toggleConsole = new BasicCommand("Toggle_Console");
-  public static final Command toggleEventViewer = new BasicCommand("Toggle_EventViewer");
-  public static final Command save = new BasicCommand("Save");
-  public static final Command open = new BasicCommand("Open");
+  public static final Command select = new BasicCommand("select");
+  public static final Command cancel = new BasicCommand("cancel");
+  public static final Command exit = new BasicCommand("exit");
+  public static final Command down = new BasicCommand("down");
+  public static final Command up = new BasicCommand("up");
+  public static final Command left = new BasicCommand("left");
+  public static final Command right = new BasicCommand("right");
+  public static final Command toggleMusic = new BasicCommand("toggle_music");
+  public static final Command zoomIn = new BasicCommand("zoom_in");
+  public static final Command zoomOut = new BasicCommand("zoom_out");
+  public static final Command fillMap = new BasicCommand("fill_map");
+  public static final Command nextPage = new BasicCommand("next_page");
+  public static final Command prevPage = new BasicCommand("prev_page");
+  public static final Command recolor = new BasicCommand("recolor");
+  public static final Command delete = new BasicCommand("delete");
+  public static final Command toggleFPS = new BasicCommand("toggle_fps");
+  public static final Command endTurn = new BasicCommand("end_turn");
+  public static final Command toggleConsole = new BasicCommand("toggle_console");
+  public static final Command toggleEventViewer = new BasicCommand("toggle_eventviewer");
+  public static final Command save = new BasicCommand("save");
+  public static final Command open = new BasicCommand("open");
 
   private static final int KEY_REPEAT_DELAY = 250;
   private Input input;
@@ -194,6 +194,15 @@ public class CWInput extends InputProvider {
     throw new IllegalArgumentException("No command found for " + commandName + " " + commands);
   }
 
+  public Command getCommandForControl(Control control) {
+    for (Command command : CWInput.commands) {
+      if (getControlsFor(command).contains(control)) {
+        return command;
+      }
+    }
+    return null;
+  }
+
   public int getMouseX() {
     return input.getMouseX();
   }
@@ -214,12 +223,12 @@ public class CWInput extends InputProvider {
     return getControlsAsText(controls, maxControls);
   }
 
-  private String getControlsAsText(List controls, int maxControls) {
+  public String getControlsAsText(List<Control> controls, int maxControls) {
     String txt = "";
     int controlCounter = 0;
 
-    for (Object controlObj : controls) {
-      Control control = (Control) controlObj;
+    for (Control controlObj : controls) {
+      Control control = controlObj;
       txt += convertControlToText(control) + ", ";
 
       if (++controlCounter >= maxControls) {
@@ -231,7 +240,7 @@ public class CWInput extends InputProvider {
     return StringUtil.removeCharsFromEnd(txt, 2);
   }
 
-  private String convertControlToText(Control control) {
+  public String convertControlToText(Control control) {
     if (control instanceof KeyControl) {
       KeyControl keyControl = (KeyControl) control;
       return Input.getKeyName(keyControl.hashCode());

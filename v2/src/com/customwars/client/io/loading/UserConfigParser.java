@@ -51,23 +51,39 @@ public class UserConfigParser {
 
   private void parseInput(String commandName, String controls) {
     Command command = inputProvider.getCommandByName(commandName);
-    List<Control> controlList = getControls(controls);
+    List<Control> controlList = parseControls(controls);
 
     for (Control control : controlList) {
+      checkControlAlreadyUsed(control, commandName);
       inputProvider.bindCommand(control, command);
     }
   }
 
-  private List<Control> getControls(String controls) {
+  private void checkControlAlreadyUsed(Control control, String commandName) {
+    boolean alreadyUsed = inputProvider.isControlAlreadyUsed(control);
+    String controlText = inputProvider.convertControlToText(control);
+    BasicCommand duplicateCommand = (BasicCommand) inputProvider.getCommandForControl(control);
+    String duplicateCommandText = duplicateCommand == null ? "" : duplicateCommand.getName();
+
+    Args.validate(alreadyUsed,
+      String.format("control %s for %s is already used by %s",
+        controlText, commandName, duplicateCommandText)
+    );
+  }
+
+  private List<Control> parseControls(String controls) {
     List<Control> controlList = new ArrayList<Control>();
 
     for (StringTokenizer tok = new StringTokenizer(controls, ","); tok.hasMoreTokens();) {
-      String controlName = tok.nextToken().toUpperCase();
-      Control control = getControlByName(controlName.trim());
+      String controlName = tok.nextToken();
+      Control control = getControlByName(controlName.toUpperCase().trim());
       Args.checkForNull(control, "control is null");
 
-      if (!controlList.contains(control))
+      if (controlList.contains(control)) {
+        throw new IllegalArgumentException("Duplicate control " + controlName + " found");
+      } else {
         controlList.add(control);
+      }
     }
     return controlList;
   }
@@ -113,7 +129,7 @@ public class UserConfigParser {
   }
 
   private void writeLine(BasicCommand command, List controls, Properties properties) {
-    String commandName = command.getName();
+    String commandName = command.getName().toLowerCase();
     String controlList = "";
 
     for (Object control : controls) {
