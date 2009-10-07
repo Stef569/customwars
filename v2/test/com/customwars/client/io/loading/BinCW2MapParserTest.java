@@ -1,6 +1,7 @@
 package com.customwars.client.io.loading;
 
 import com.customwars.client.io.loading.map.BinaryCW2MapParser;
+import com.customwars.client.model.TestData;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Unit;
@@ -8,7 +9,9 @@ import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
 import junit.framework.Assert;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import slick.HardCodedGame;
 
@@ -16,41 +19,50 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 public class BinCW2MapParserTest {
-
-  private static final String TEST_DIR = "test";
+  private static final String TEST_DIR_NAME = "test";
   private static final String MAP_NAME = "test.map";
+  private static File testDir;
+  private static File mapFile;
+
   private BinaryCW2MapParser mapParser;
   private Map<Tile> hardCodedMap;
+
+  @BeforeClass
+  public static void beforeEachClass() {
+    TestData.storeTestData();
+    testDir = new File(TEST_DIR_NAME);
+    testDir.mkdir();
+    mapFile = new File(TEST_DIR_NAME, MAP_NAME);
+  }
 
   @Before
   public void beforeEachTest() {
     hardCodedMap = HardCodedGame.getMap();
     mapParser = new BinaryCW2MapParser();
-    createTestDir();
-  }
-
-  private void createTestDir() {
-    new File(TEST_DIR).mkdir();
   }
 
   @After
-  public void afterAllTest() {
+  public void afterEachTest() {
+    hardCodedMap = null;
+    mapParser = null;
+  }
+
+  @AfterClass
+  public static void afterAllTests() {
+    TestData.clearTestData();
     deleteTestDir();
   }
 
-  private void deleteTestDir() {
-    File mapFile = new File(TEST_DIR, MAP_NAME);
-
+  private static void deleteTestDir() {
     // can't delete non empty dirs, first remove the content then the test dir.
     if (mapFile.exists()) {
       mapFile.delete();
     }
-    new File(TEST_DIR).delete();
+    testDir.delete();
   }
 
   /**
@@ -60,7 +72,6 @@ public class BinCW2MapParserTest {
   @Test
   public void testWriteReadMap() throws IOException {
     // Write map to the test dir
-    File mapFile = new File(TEST_DIR, MAP_NAME);
     mapParser.writeMap(hardCodedMap, new FileOutputStream(mapFile));
 
     // Read the map back in
@@ -90,12 +101,11 @@ public class BinCW2MapParserTest {
       City loadedCity = loadedMap.getCityOn(loadedMapTile);
       validateCities(hardCodedCity, loadedCity);
     }
-    java.util.Map<Integer, Player> hardCodedPlayers = getPlayers(hardCodedMap);
-    java.util.Map<Integer, Player> loadedPlayers = getPlayers(loadedMap);
 
+    List<Player> hardCodedPlayers = new ArrayList<Player>(hardCodedMap.getUniquePlayers());
+    List<Player> loadedPlayers = new ArrayList<Player>(loadedMap.getUniquePlayers());
     comparePlayers(hardCodedPlayers, loadedPlayers);
   }
-
 
   private void validateCities(City hardCodedCity, City loadedCity) {
     if (hardCodedCity != null) {
@@ -115,35 +125,14 @@ public class BinCW2MapParserTest {
     Assert.assertTrue(loadedUnit.getOwner() != null);
   }
 
-  private void comparePlayers(java.util.Map<Integer, Player> hardCodedPlayers, java.util.Map<Integer, Player> loadedPlayers) {
+  private void comparePlayers(List<Player> hardCodedPlayers, List<Player> loadedPlayers) {
     Assert.assertTrue(hardCodedPlayers.size() == loadedPlayers.size());
 
-    for (int key : hardCodedPlayers.keySet()) {
+    for (int key = 0; key < hardCodedMap.getNumPlayers(); key++) {
       Player hardCodedPlayer = hardCodedPlayers.get(key);
       Player loadedPlayer = loadedPlayers.get(key);
       Assert.assertTrue(hardCodedPlayer.getId() == (loadedPlayer.getId()));
       Assert.assertTrue(hardCodedPlayer.getColor().equals(loadedPlayer.getColor()));
     }
-  }
-
-  private java.util.Map<Integer, Player> getPlayers(Map<Tile> map) {
-    Set<Player> players = new HashSet();
-    for (Tile t : map.getAllTiles()) {
-      Unit unit = map.getUnitOn(t);
-      City city = map.getCityOn(t);
-
-      if (unit != null) {
-        players.add(unit.getOwner());
-      }
-      if (city != null) {
-        players.add(city.getOwner());
-      }
-    }
-
-    java.util.Map playerMap = new HashMap();
-    for (Player player : players) {
-      playerMap.put(player.getId(), player);
-    }
-    return playerMap;
   }
 }

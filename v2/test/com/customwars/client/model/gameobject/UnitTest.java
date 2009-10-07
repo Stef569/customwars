@@ -10,7 +10,9 @@ import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.ui.state.InGameContext;
 import junit.framework.Assert;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import slick.HardCodedGame;
 
@@ -22,25 +24,27 @@ public class UnitTest {
   private Map<Tile> map;
   private InGameContext inGameContext;
 
+  @BeforeClass
+  public static void beforeAllTests() {
+    TestData.storeTestData();
+  }
+
   @Before
   public void beforeEachTest() {
     player1 = new Player(0, Color.RED, false, null, "John", 1500, 0, false);
-    inGameContext = new InGameContext();
     Game game = HardCodedGame.getGame();
+    map = game.getMap();
+    inGameContext = new InGameContext();
     inGameContext.setGame(game);
     inGameContext.setControllerManager(new ControllerManager(inGameContext));
-    map = game.getMap();
+  }
+
+  @AfterClass
+  public static void afterAllTests() {
+    TestData.clearTestData();
   }
 
   @Test
-  /**
-   * Unit joins the target
-   *
-   * The join conditions are:
-   * Our unit is on the same tile as the target, both units are of the same type
-   * The two units must have the same owner
-   * The target unit must have 50% or less HP
-   */
   public void joinTest() {
     Unit unit = UnitFactory.getUnit(TestData.INF);
     Unit target = UnitFactory.getUnit(TestData.INF);

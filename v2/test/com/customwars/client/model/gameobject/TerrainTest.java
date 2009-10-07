@@ -3,7 +3,9 @@ package com.customwars.client.model.gameobject;
 import com.customwars.client.model.TestData;
 import com.customwars.client.model.map.path.Mover;
 import junit.framework.Assert;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -15,15 +17,24 @@ import java.util.List;
  * @author Stefan
  */
 public class TerrainTest {
-
   private static final byte LEVEL_HEIGHT = 0;
   private static final byte NO_DEFENSE_BONUS = 0;
   private Terrain plain, river;
+
+  @BeforeClass
+  public static void beforeAllTests() {
+    TestData.storeTestData();
+  }
 
   @Before
   public void beforeEachTest() {
     plain = TerrainFactory.getTerrain(TestData.PLAIN);
     river = TerrainFactory.getTerrain(TestData.VERTICAL_RIVER);
+  }
+
+  @AfterClass
+  public static void afterAllTests() {
+    TestData.clearTestData();
   }
 
   @Test
