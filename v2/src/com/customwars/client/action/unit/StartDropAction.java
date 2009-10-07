@@ -44,7 +44,7 @@ public class StartDropAction extends DirectAction {
   protected void invokeAction() {
     List<Location> adjacentTiles = getEmptyAjacentTiles(center);
 
-    logger.debug("Preparing to drop around " + center + " empty tiles " + adjacentTiles);
+    logger.debug("Preparing to drop around tile " + center.getLocationString() + " empty tiles count " + adjacentTiles.size());
     mapRenderer.removeZones();
     mapRenderer.showArrows(false);
 

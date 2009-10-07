@@ -1,5 +1,6 @@
 package com.customwars.client.controller;
 
+import com.customwars.client.model.ArmyBranch;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.City;
@@ -95,11 +96,24 @@ public abstract class UnitController {
       transporter.getOwner() == unit.getOwner();
   }
 
-  boolean canStartDrop(Tile center, Tile selected, int dropCount) {
+  boolean canStartDrop(Tile center, int dropCount) {
     List<Location> emptyTiles = getEmptyAjacentTiles(center);
+    Unit unitToDrop = (Unit) unit.getLastLocatable();
+    boolean droppingGroundUnit = unitToDrop != null && unitToDrop.getArmyBranch() == ArmyBranch.LAND;
+    boolean dropCountInRange = dropCount > 0 && dropCount <= unit.getLocatableCount();
 
-    return !emptyTiles.isEmpty() &&
-      unit.canTransport() && dropCount > 0 && dropCount <= unit.getLocatableCount();
+    return unit.canTransport() && unitToDrop != null && !emptyTiles.isEmpty() &&
+      droppingGroundUnit && dropCountInRange;
+  }
+
+  boolean canAirplaneTakeOffFromUnit() {
+    Unit unitToTakeOff = null;
+
+    if (unit.getLocatableCount() > 0) {
+      unitToTakeOff = (Unit) unit.getLastLocatable();
+    }
+
+    return unit.canTransport() && unitToTakeOff != null && unitToTakeOff.getArmyBranch() == ArmyBranch.AIR;
   }
 
   /**
@@ -187,6 +201,10 @@ public abstract class UnitController {
 
   boolean canBuildCity(Tile selected) {
     return unit.canBuildCityOn(selected.getTerrain());
+  }
+
+  boolean canBuildUnit() {
+    return unit.canBuildUnit();
   }
 
   boolean canDive() {

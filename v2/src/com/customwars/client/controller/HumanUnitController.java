@@ -17,6 +17,7 @@ import com.customwars.client.model.gameobject.CityFactory;
 import com.customwars.client.model.gameobject.Terrain;
 import com.customwars.client.model.gameobject.TerrainFactory;
 import com.customwars.client.model.gameobject.Unit;
+import com.customwars.client.model.gameobject.UnitFactory;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.ui.MenuItem;
@@ -40,10 +41,10 @@ public class HumanUnitController extends UnitController {
   private MapRenderer mapRenderer;
   private List<Unit> unitsInTransport;
   private ShowPopupMenu showMenu;
-  private boolean canStartDrop, canCapture, canSupply, canStartAttack, canWait, canJoin, canLoad;
+  private boolean canStartDropGroundUnit, canTakeOff, canCapture, canSupply, canStartAttack, canWait, canJoin, canLoad;
   private boolean canLaunchRocketFromCity, canTransformTerrain;
   private boolean canFireFlare;
-  private boolean canBuildCity;
+  private boolean canBuildCity, canBuildUnit;
   private boolean canDive, canSurface;
 
   public HumanUnitController(Unit unit, InGameContext gameContext) {
@@ -150,7 +151,7 @@ public class HumanUnitController extends UnitController {
         if (dropCount < unit.getLocatableCount() && !context.isUnitDropped(unit.getLocatable(dropCount))) {
           Unit unitInTransport = (Unit) unit.getLocatable(dropCount);
           unitsInTransport.add(unitInTransport);
-          if (canStartDrop(to, selected, dropCount + 1)) {
+          if (canStartDrop(to, dropCount + 1)) {
             CWAction dropAction = new StartDropAction(to, unit);
             addToMenu(dropAction, App.translate("drop") + " " + unitInTransport.getName());
           }
@@ -171,7 +172,8 @@ public class HumanUnitController extends UnitController {
    * The unit is on the selected tile
    */
   private void initUnitActions(Tile selected) {
-    canStartDrop = false;
+    canStartDropGroundUnit = false;
+    canTakeOff = false;
     canCapture = false;
     canSupply = false;
     canStartAttack = false;
@@ -181,12 +183,14 @@ public class HumanUnitController extends UnitController {
     canTransformTerrain = false;
     canFireFlare = false;
     canBuildCity = false;
+    canBuildUnit = false;
     canDive = false;
     canSurface = false;
     Tile from = context.getClick(1);
 
     if (canWait(selected)) {
-      canStartDrop = canStartDrop(selected, selected, 1);
+      canTakeOff = canAirplaneTakeOffFromUnit();
+      canStartDropGroundUnit = canStartDrop(selected, 1);
       canCapture = canCapture(selected);
       canSupply = canSupply(selected);
       canStartAttack = canStartAttack(from, selected);
@@ -195,6 +199,7 @@ public class HumanUnitController extends UnitController {
       canTransformTerrain = canTransformTerrain(selected);
       canFireFlare = canFireFlare(from);
       canBuildCity = canBuildCity(selected);
+      canBuildUnit = canBuildUnit();
       canDive = canDive();
       canSurface = canSurface();
     } else {
@@ -213,10 +218,22 @@ public class HumanUnitController extends UnitController {
     Tile from = context.getClick(1);
     Tile to = context.getClick(2);
 
-    if (canStartDrop) {
+    if (canStartDropGroundUnit) {
       map.teleport(from, to, unit);
       buildDropModeMenu(from, to, selected);
       map.teleport(to, from, unit);
+    } else if (canTakeOff) {
+      Unit unitToTakeOff = (Unit) unit.getLastLocatable();
+      CWAction buildUnitAction = ActionFactory.buildTakeOffUnitAction(unit, unitToTakeOff);
+      addToMenu(buildUnitAction, App.translate("launch") + " - " + unitToTakeOff.getName());
+    }
+
+    if (canBuildUnit) {
+      for (int unitID : unit.getUnitsThatCanBeBuild()) {
+        Unit unitThatCanBeBuild = UnitFactory.getUnit(unitID);
+        CWAction buildUnitAction = ActionFactory.buildProduceUnitAction(unit, unitThatCanBeBuild, to);
+        addToMenu(buildUnitAction, App.translate("build") + " - " + unitThatCanBeBuild.getName());
+      }
     }
 
     if (canCapture) {
@@ -241,7 +258,7 @@ public class HumanUnitController extends UnitController {
     }
 
     if (canLoad) {
-      Unit transport = (Unit) to.getLastLocatable();
+      Unit transport = (Unit) to.getLocatable(0);
       CWAction loadAction = ActionFactory.buildLoadAction(unit, transport);
       addToMenu(loadAction, App.translate("load"));
     }

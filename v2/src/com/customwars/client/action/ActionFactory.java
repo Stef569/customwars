@@ -12,8 +12,11 @@ import com.customwars.client.action.unit.FireFlareAction;
 import com.customwars.client.action.unit.JoinAction;
 import com.customwars.client.action.unit.LoadAction;
 import com.customwars.client.action.unit.MoveAnimatedAction;
+import com.customwars.client.action.unit.ProduceUnitAction;
+import com.customwars.client.action.unit.SelectAction;
 import com.customwars.client.action.unit.SupplyAction;
 import com.customwars.client.action.unit.SurfaceAction;
+import com.customwars.client.action.unit.TakeOffAction;
 import com.customwars.client.action.unit.TransformTerrainAction;
 import com.customwars.client.action.unit.WaitAction;
 import com.customwars.client.model.game.Player;
@@ -151,7 +154,7 @@ public class ActionFactory {
   }
 
   public static CWAction buildCityAction(Unit unit, City city, Tile to, Player cityOwner) {
-    ActionBag buildCityAction = new ActionBag("Build City actions");
+    ActionBag buildCityAction = new ActionBag("Build City");
     buildCityAction.add(new InitAction());
     buildCityAction.add(new MoveAnimatedAction(unit.getLocation(), to));
     buildCityAction.add(new WaitAction(unit));
@@ -178,5 +181,25 @@ public class ActionFactory {
     diveAction.add(new SurfaceAction(unit));
     diveAction.add(new ClearInGameStateAction());
     return diveAction;
+  }
+
+  public static CWAction buildProduceUnitAction(Unit producer, Unit unitToBuild, Tile to) {
+    ActionBag buildUnitAction = new ActionBag("Produce");
+    buildUnitAction.add(new InitAction());
+    buildUnitAction.add(new MoveAnimatedAction(producer.getLocation(), to));
+    buildUnitAction.add(new ProduceUnitAction(producer, unitToBuild));
+    buildUnitAction.add(new WaitAction(producer));
+    buildUnitAction.add(new ClearInGameStateAction());
+    return buildUnitAction;
+  }
+
+  public static CWAction buildTakeOffUnitAction(Unit launcher, Unit unitToLaunch) {
+    ActionBag buildUnitAction = new ActionBag("Take off");
+    buildUnitAction.add(new InitAction());
+    buildUnitAction.add(new TakeOffAction(launcher, unitToLaunch));
+    buildUnitAction.add(new WaitAction(launcher));
+    buildUnitAction.add(new ClearInGameStateAction());
+    buildUnitAction.add(new SelectAction(launcher.getLocation()));
+    return buildUnitAction;
   }
 }
