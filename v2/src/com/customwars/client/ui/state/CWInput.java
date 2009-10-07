@@ -44,7 +44,6 @@ public class CWInput extends InputProvider {
   public static final Command save = new BasicCommand("save");
   public static final Command open = new BasicCommand("open");
 
-  private static final int KEY_REPEAT_DELAY = 250;
   private Input input;
   private static List<Command> commands = buildCommandList();
 
@@ -81,7 +80,7 @@ public class CWInput extends InputProvider {
   public CWInput(Input input) {
     super(input);
     this.input = input;
-    input.enableKeyRepeat(0, KEY_REPEAT_DELAY);
+    input.enableKeyRepeat();
   }
 
   @Override
@@ -178,6 +177,10 @@ public class CWInput extends InputProvider {
 
   public boolean isOpen(Command command) {
     return open.equals(command);
+  }
+
+  public boolean isMoveCommand(Command command) {
+    return isUp(command) || isDown(command) || isLeft(command) || isRight(command);
   }
 
   public void resetInputTransition() {

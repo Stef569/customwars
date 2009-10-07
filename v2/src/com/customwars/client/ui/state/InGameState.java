@@ -13,6 +13,7 @@ import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Direction;
+import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.model.map.path.MoveTraverse;
@@ -34,6 +35,7 @@ import tools.ColorUtil;
 import java.awt.Dimension;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.List;
 
 public class InGameState extends CWState implements PropertyChangeListener {
   // Model
@@ -52,6 +54,7 @@ public class InGameState extends CWState implements PropertyChangeListener {
   private GameController gameControl;
   private CursorController cursorControl;
   private Input input;
+  private boolean cursorAtZoneEdge, enableCursorZoneCheck;
 
   public void init(GameContainer container, StateBasedGame game) throws SlickException {
     this.guiContext = container;
@@ -243,21 +246,60 @@ public class InGameState extends CWState implements PropertyChangeListener {
     }
   }
 
+  @Override
+  public void controlReleased(Command command, CWInput cwInput) {
+    if (cwInput.isMoveCommand(command)) {
+      cursorControl.setCursorLocked(false);
+
+      if (cursorAtZoneEdge) {
+        enableCursorZoneCheck = false;
+        cursorAtZoneEdge = false;
+      }
+    }
+  }
+
   public void moveCursor(Command command, CWInput cwInput) {
-    if (cwInput.isUp(command)) {
-      cursorControl.moveCursor(Direction.NORTH);
-    }
+    Tile originalLocation = gameRenderer.getCursorLocation();
+    if (cwInput.isMoveCommand(command)) {
+      if (cwInput.isUp(command)) {
+        cursorControl.moveCursor(Direction.NORTH);
+      }
 
-    if (cwInput.isDown(command)) {
-      cursorControl.moveCursor(Direction.SOUTH);
-    }
+      if (cwInput.isDown(command)) {
+        cursorControl.moveCursor(Direction.SOUTH);
+      }
 
-    if (cwInput.isLeft(command)) {
-      cursorControl.moveCursor(Direction.WEST);
-    }
+      if (cwInput.isLeft(command)) {
+        cursorControl.moveCursor(Direction.WEST);
+      }
 
-    if (cwInput.isRight(command)) {
-      cursorControl.moveCursor(Direction.EAST);
+      if (cwInput.isRight(command)) {
+        cursorControl.moveCursor(Direction.EAST);
+      }
+
+      lockCursorAtMoveZoneEdge(originalLocation);
+    }
+  }
+
+  private void lockCursorAtMoveZoneEdge(Location originalCursorLocation) {
+    Unit activeUnit = game.getActiveUnit();
+
+    if (activeUnit != null) {
+      List<Location> moveZone = activeUnit.getMoveZone();
+      Location cursorLocation = gameRenderer.getCursorLocation();
+
+      if (moveZone.contains(cursorLocation)) {
+        cursorAtZoneEdge = false;
+        enableCursorZoneCheck = true;
+      } else {
+        // The cursor moved outside the moveZone!
+        if (enableCursorZoneCheck) {
+          // Snap the cursor back, until enableCursorZoneCheck is put to false(see controlReleased)
+          cursorControl.moveCursor(originalCursorLocation);
+          cursorControl.setCursorLocked(true);
+          cursorAtZoneEdge = true;
+        }
+      }
     }
   }
 
