@@ -25,6 +25,17 @@ public class ImageStrip extends Image {
     this.tileHeight = tileHeight;
   }
 
+  public ImageStrip(Image image, int tw, int th) {
+    super(image);
+
+    this.tileWidth = tw;
+    this.tileHeight = th;
+
+    // call init manually since constructing from an image will have previously initialised
+    // from incorrect values
+    initImpl();
+  }
+
   public ImageStrip(String imgLocation, int tileWidth, int tileHeight) throws SlickException {
     this(imgLocation, tileWidth, tileHeight, null);
   }

@@ -10,7 +10,7 @@ public final class FileUtil {
   private FileUtil() {
   }
 
-  public static String getFileNamewithoutExtension(File file) {
+  public static String getFileNameWithoutExtension(File file) {
     return StripFileExtension(file.getName());
   }
 

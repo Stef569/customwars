@@ -1,5 +1,6 @@
 package com.customwars.client.io;
 
+import com.customwars.client.App;
 import com.customwars.client.io.img.AnimLib;
 import com.customwars.client.io.img.ImageLib;
 import com.customwars.client.io.img.slick.ImageStrip;
@@ -17,6 +18,7 @@ import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Direction;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
+import com.customwars.client.ui.sprite.TileSprite;
 import org.apache.log4j.Logger;
 import org.newdawn.slick.AngelCodeFont;
 import org.newdawn.slick.Animation;
@@ -25,10 +27,12 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.Music;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.Sound;
+import org.newdawn.slick.loading.DeferredResource;
 import org.newdawn.slick.loading.LoadingList;
 import org.newdawn.slick.util.ResourceLoader;
 import tools.Args;
 import tools.ColorUtil;
+import tools.FileUtil;
 
 import java.awt.Color;
 import java.io.File;
@@ -60,6 +64,8 @@ public class ResourceManager {
   private static final String ANIM_LOADER_FILE = "animLoader.txt";
   private static final String SOUND_LOADER_FILE = "soundLoader.txt";
   private static final String COLORS_FILE = "colors.xml";
+  private static final int CURSOR_ANIM_COUNT = 2;
+  private static final int CURSOR_ANIM_SPEED = 250;
   private static final ModelLoader modelLoader = new ModelLoader();
   private MapParser mapParser;
   private int darkPercentage;
@@ -71,7 +77,9 @@ public class ResourceManager {
   private HashMap<String, Music> music = new HashMap<String, Music>();
   private HashMap<String, Map<Tile>> maps = new HashMap<String, Map<Tile>>();
   private HashMap<String, Font> fonts = new HashMap<String, Font>();
-  private String imgPath, soundPath, dataPath, fontPath;
+  private HashMap<String, TileSprite> cursors = new HashMap<String, TileSprite>();
+
+  private String imgPath, cursorImgPath, soundPath, dataPath, fontPath;
   private List<String> mapPaths;
   private MapLoader mapLoader;
 
@@ -107,6 +115,7 @@ public class ResourceManager {
   }
 
   public void loadResources() throws IOException {
+    loadCursors();
     loadColorsFromFile();
     loadImagesFromFile();
     loadAnimationsFromFile();
@@ -115,6 +124,67 @@ public class ResourceManager {
     loadMaps();
     loadFonts();
     releaseUnneededResources();
+  }
+
+  /**
+   * Load all the images from the cursorImgPath
+   * A cursor images contains CURSOR_ANIM_COUNT horizontal images of the same width
+   * Create animation and TileSprite
+   * Add the cursor to the cursor collection
+   */
+  private void loadCursors() {
+    // When deferred loading is on make sure the cursor images are loaded before
+    // the loadCursorsNow method
+    File cursorDir = new File(cursorImgPath);
+    for (File file : cursorDir.listFiles()) {
+      String cursorName = FileUtil.getFileNameWithoutExtension(file);
+      imageLib.loadAwtImg(cursorName, file.getPath());
+      imageLib.loadSlickImage(cursorName);
+    }
+
+    if (LoadingList.isDeferredLoading()) {
+      LoadingList.get().add(new DeferredResource() {
+        public void load() throws IOException {
+          loadCursorsNow();
+        }
+
+        public String getDescription() {
+          return "cursors";
+        }
+      });
+    } else {
+      loadCursorsNow();
+    }
+  }
+
+  private void loadCursorsNow() {
+    File cursorDir = new File(cursorImgPath);
+    for (File file : cursorDir.listFiles()) {
+      String cursorName = FileUtil.getFileNameWithoutExtension(file);
+      Image cursorImg = imageLib.getSlickImg(cursorName);
+      int cursorWidth = cursorImg.getWidth() / CURSOR_ANIM_COUNT;
+      int cursorHeight = cursorImg.getHeight();
+      ImageStrip cursorImgs = new ImageStrip(cursorImg, cursorWidth, cursorHeight);
+      TileSprite cursor = new TileSprite(cursorImgs, CURSOR_ANIM_SPEED, null, null);
+
+      // Use the cursor image height to calculate the tile effect range ie
+      // If the image has a height of 160/32=5 tiles 5/2 rounded to int becomes 2.
+      // most cursors have a effect range of 1 ie
+      // 40/32=1 and 1/2=0 max(0,1) becomes 1
+      int tileSize = App.getInt("plugin.tilesize");
+      int cursorEffectRange = Math.max(cursorImg.getHeight() / tileSize / 2, 1);
+      cursor.setEffectRange(cursorEffectRange);
+      addCursor(cursorName, cursor);
+    }
+  }
+
+  private void addCursor(String cursorName, TileSprite cursor) {
+    String upperCaseCursorName = cursorName.toUpperCase();
+    if (cursors.containsKey(upperCaseCursorName)) {
+      throw new IllegalArgumentException(upperCaseCursorName + " already stored " + cursors);
+    } else {
+      cursors.put(upperCaseCursorName, cursor);
+    }
   }
 
   private void loadColorsFromFile() throws IOException {
@@ -228,6 +298,10 @@ public class ResourceManager {
 
   public void setImgPath(String path) {
     this.imgPath = path;
+  }
+
+  public void setCursorImgsPath(String cursorImgPath) {
+    this.cursorImgPath = cursorImgPath;
   }
 
   public void setDataPath(String path) {
@@ -416,5 +490,18 @@ public class ResourceManager {
   public SpriteSheet getCitySpriteSheet(Color color) {
     String colorName = ColorUtil.toString(color);
     return getSlickSpriteSheet("CITY_" + colorName);
+  }
+
+  public TileSprite getCursor(String cursorName) {
+    String upperCaseCursorName = cursorName.toUpperCase();
+    if (cursors.containsKey(upperCaseCursorName)) {
+      return cursors.get(upperCaseCursorName);
+    } else {
+      throw new IllegalArgumentException("No cursor stored for " + upperCaseCursorName + cursors.keySet());
+    }
+  }
+
+  public Collection<TileSprite> getAllCursors() {
+    return cursors.values();
   }
 }

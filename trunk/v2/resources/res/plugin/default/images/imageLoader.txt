@@ -7,9 +7,6 @@
 // Note: folder and image names are case sensitive!!
 
 s terrains awTerrains.png 32 42
-s selectCursor cursors/selectCursor.png 48 48
-s aimCursor cursors/aimcursor0.png 54 54
-o siloCursor cursors/silocursor.png
 s miniMap miniMap.png 4 4
 
 s arrows arrows.png 32 32

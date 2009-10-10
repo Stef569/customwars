@@ -1,9 +1,9 @@
 package com.customwars.client.ui.state;
 
+import com.customwars.client.App;
 import com.customwars.client.Config;
 import com.customwars.client.controller.CursorController;
 import com.customwars.client.controller.MapEditorController;
-import com.customwars.client.io.img.slick.ImageStrip;
 import com.customwars.client.model.map.Direction;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
@@ -170,9 +170,10 @@ public class MapEditorState extends CWState {
   }
 
   private void initCursors() {
-    ImageStrip selectCursorImgs = resources.getSlickImgStrip("selectCursor");
     Tile randomTile = map.getRandomTile();
-    TileSprite selectCursor = new TileSprite(selectCursorImgs, 250, randomTile, map);
+    TileSprite selectCursor = resources.getCursor(App.get("user.selectcursor"));
+    selectCursor.setMap(map);
+    selectCursor.setLocation(randomTile);
 
     mapRenderer.addCursor("SELECT", selectCursor);
     mapRenderer.activateCursor("SELECT");
