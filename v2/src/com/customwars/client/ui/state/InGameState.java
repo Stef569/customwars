@@ -6,7 +6,6 @@ import com.customwars.client.controller.ControllerManager;
 import com.customwars.client.controller.CursorController;
 import com.customwars.client.controller.GameController;
 import com.customwars.client.io.ResourceManager;
-import com.customwars.client.io.img.slick.ImageStrip;
 import com.customwars.client.model.Statistics;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.game.Player;
@@ -24,7 +23,6 @@ import com.customwars.client.ui.renderer.GameRenderer;
 import com.customwars.client.ui.sprite.TileSprite;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
-import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.command.Command;
@@ -85,7 +83,7 @@ public class InGameState extends CWState implements PropertyChangeListener {
 
     gameRenderer = new GameRenderer(game, camera, hud, moveTraverse);
     gameRenderer.loadResources(resources);
-    initCursors(resources, map);
+    initCursors(map);
 
     inGameContext = new InGameContext();
     inGameContext.setMoveTraverse(moveTraverse);
@@ -137,27 +135,25 @@ public class InGameState extends CWState implements PropertyChangeListener {
     this.camera = new Camera2D(screenSize, worldSize, map.getTileSize());
   }
 
-  private void initCursors(ResourceManager resources, Map<Tile> map) {
-    ImageStrip selectCursorImgs = resources.getSlickImgStrip("selectCursor");
-    ImageStrip aimCursorImgs = resources.getSlickImgStrip("aimCursor");
-    Image siloCursorImg = resources.getSlickImg("siloCursor");
-
+  private void initCursors(Map<Tile> map) {
     Tile randomTile = map.getRandomTile();
-    TileSprite selectCursor = new TileSprite(selectCursorImgs, 250, randomTile, map);
-    TileSprite aimCursor = new TileSprite(aimCursorImgs, randomTile, map);
-    TileSprite siloCursor = new TileSprite(siloCursorImg, randomTile, map);
-
+    TileSprite selectCursor = resources.getCursor(App.get("user.selectcursor"));
+    selectCursor.setMap(map);
+    selectCursor.setLocation(randomTile);
     selectCursor.addPropertyChangeListener(this);
-    aimCursor.addPropertyChangeListener(this);
+
+    TileSprite attackCursor = resources.getCursor(App.get("user.attackcursor"));
+    attackCursor.setMap(map);
+    attackCursor.setLocation(randomTile);
+    attackCursor.addPropertyChangeListener(this);
+
+    TileSprite siloCursor = resources.getCursor(App.get("user.silocursor"));
+    siloCursor.setMap(map);
+    siloCursor.setLocation(randomTile);
     siloCursor.addPropertyChangeListener(this);
 
-    // Use the silo explosion cursor Image height to calculate the effect Range ie
-    // If the image has a height of 160/32 is 5 tiles 5/2 rounded to int becomes 2.
-    int effectRange = siloCursorImg.getHeight() / map.getTileSize() / 2;
-    siloCursor.setEffectRange(effectRange);
-
     gameRenderer.addCursor("SELECT", selectCursor);
-    gameRenderer.addCursor("ATTACK", aimCursor);
+    gameRenderer.addCursor("ATTACK", attackCursor);
     gameRenderer.addCursor("SILO", siloCursor);
     gameRenderer.activateCursor("SELECT");
   }

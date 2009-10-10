@@ -56,8 +56,8 @@ public class TileSprite extends Sprite implements Locatable, Observable {
   }
 
   private void init(TileMap<Tile> map, Location location, Animation anim) {
-    setMap(map);
-    setLocation(location);
+    if (map != null) setMap(map);
+    if (location != null) setLocation(location);
     if (anim != null) setAnim(anim);
     effectRange = 0;
   }
@@ -106,7 +106,7 @@ public class TileSprite extends Sprite implements Locatable, Observable {
     frameHeightOffset = 0;
   }
 
-  private void setMap(TileMap<Tile> map) {
+  public void setMap(TileMap<Tile> map) {
     this.map = map;
     this.tileSize = map.getTileSize();
   }
@@ -129,6 +129,9 @@ public class TileSprite extends Sprite implements Locatable, Observable {
   }
 
   public void setEffectRange(int effectRange) {
+    if (effectRange <= 0) {
+      throw new IllegalArgumentException("Effect range cannot be negative or 0");
+    }
     this.effectRange = effectRange;
   }
 

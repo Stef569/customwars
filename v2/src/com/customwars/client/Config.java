@@ -31,6 +31,7 @@ import java.util.ResourceBundle;
 public class Config {
   private static final Logger logger = Logger.getLogger(Config.class);
   private static final String HOME_DIR = System.getProperty("user.home") + "/.cw2/";
+  private static final File PROJECT_HOME_DIR = new File(".");
   public static final String MAPS_DIR = HOME_DIR + "maps/";
   private static final String CONFIG_PATH = "res/data/config/";
   private static final String GAME_PROPERTIES_FILE = "game.properties";
@@ -57,6 +58,7 @@ public class Config {
     loadProperties();
 
     resources.setImgPath(pluginLocation + "/images/");
+    resources.setCursorImgsPath(PROJECT_HOME_DIR.getPath() + "/resources/" + pluginLocation + "/images/cursors/");
     resources.setSoundPath(pluginLocation + "/sound/");
     resources.setDataPath(pluginLocation + "/data/");
     resources.addMapPath(MAPS_DIR);
@@ -115,14 +117,24 @@ public class Config {
   }
 
   private void loadGameProperties() throws IOException {
-    Properties gameProperties = loadProperties(CONFIG_PATH + GAME_PROPERTIES_FILE, App.getProperties());
-    App.setProperties(gameProperties);
+    Properties gameProperties = loadProperties(CONFIG_PATH + GAME_PROPERTIES_FILE);
+    App.getProperties().putAll(gameProperties);
   }
 
   private void loadUserProperties() throws IOException {
     Properties defaults = loadProperties(CONFIG_PATH + USER_DEFAULTS_PROPERTIES_FILE);
     userProperties = loadProperties(HOME_DIR + USER_PROPERTIES_FILE, defaults);
+    addNonInputUserPropertiesToApp();
     persistenceProperties.put(HOME_DIR + USER_PROPERTIES_FILE, userProperties);
+  }
+
+  private void addNonInputUserPropertiesToApp() {
+    for (String key : userProperties.stringPropertyNames()) {
+      if (!key.startsWith(UserConfigParser.INPUT_PREFIX)) {
+        String val = userProperties.getProperty(key);
+        App.put(key, val);
+      }
+    }
   }
 
   public void loadLang(String languageCode) throws IOException {
@@ -139,8 +151,8 @@ public class Config {
   }
 
   private void loadPluginProperties() throws IOException {
-    Properties pluginProperties = loadProperties(pluginLocation + "/data/" + PLUGIN_PROPERTIES_FILE, App.getProperties());
-    App.setProperties(pluginProperties);
+    Properties pluginProperties = loadProperties(pluginLocation + "/data/" + PLUGIN_PROPERTIES_FILE);
+    App.getProperties().putAll(pluginProperties);
     logger.info("Plugin=" + pluginLocation);
   }
 
