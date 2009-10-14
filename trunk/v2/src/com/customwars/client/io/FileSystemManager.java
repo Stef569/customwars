@@ -1,16 +1,18 @@
 package com.customwars.client.io;
 
+import org.newdawn.slick.util.ResourceLoader;
+
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 /**
  * Handles Files under a parent dir
- *
- * @author Kevin, Stefan
  */
 public class FileSystemManager {
   private static final String DIR_IGNORE_FILTER = ".";
@@ -19,16 +21,24 @@ public class FileSystemManager {
   private File PARENT_DIR;
 
   public FileSystemManager(String parentDir) {
-    PARENT_DIR = new File(parentDir);
+    PARENT_DIR = new File(convertToURI(parentDir));
     fileNameFilter = getFileFilter();
     dirFilter = getDirFilter();
+  }
+
+  public URI convertToURI(String path) {
+    try {
+      return ResourceLoader.getResource(path).toURI();
+    } catch (URISyntaxException e) {
+      throw new IllegalArgumentException("illegal path " + path, e);
+    }
   }
 
   private FilenameFilter getFileFilter() {
     return new FilenameFilter() {
       public boolean accept(File file, String name) {
         return !name.startsWith(DIR_IGNORE_FILTER) &&
-            !new File(file, name).isDirectory();
+          !new File(file, name).isDirectory();
       }
     };
   }
@@ -36,7 +46,8 @@ public class FileSystemManager {
   private FilenameFilter getDirFilter() {
     return new FilenameFilter() {
       public boolean accept(File file, String name) {
-        return !name.startsWith(DIR_IGNORE_FILTER) &&
+        return
+          !name.startsWith(DIR_IGNORE_FILTER) &&
             !new File(file, name).isFile();
       }
     };

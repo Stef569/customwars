@@ -26,17 +26,17 @@ public class TestMenu extends CWState implements ComponentListener {
   private PopupMenu testmenu;
 
   public void init(GameContainer container, StateBasedGame stateBasedGame) throws SlickException {
-    backgroundMusic = new Music("testData/shortBackground.ogg");
+    backgroundMusic = new Music("resources/testData/shortBackground.ogg");
     backgroundMusic.setVolume(0.5F);
 
-    image = new Image("testData/main.png");
-    Image whiteSquare = new Image("testData/white.png");
-    ImageStrip cursor = new ImageStrip("testData/point.png", 15, 11);
+    image = new Image("resources/testData/main.png");
+    Image whiteSquare = new Image("resources/testData/white.png");
+    ImageStrip cursor = new ImageStrip("resources/testData/point.png", 15, 11);
 
-    Image mapOption = new Image("testData/mapTerrain.png");
-    Image keyInputOption = new Image("testData/keyConfig.png");
-    Image gameOption = new Image("testData/newGame.png");
-    Image endTurn = new Image("testData/mapEditor.png");
+    Image mapOption = new Image("resources/testData/mapTerrain.png");
+    Image keyInputOption = new Image("resources/testData/keyConfig.png");
+    Image gameOption = new Image("resources/testData/newGame.png");
+    Image endTurn = new Image("resources/testData/mapEditor.png");
 
     testmenu = new PopupMenu(container);
     testmenu.addItems(
@@ -47,7 +47,7 @@ public class TestMenu extends CWState implements ComponentListener {
     );
 
     testmenu.setLocation(220, 50);
-    testmenu.setMenuTickSound(new Sound("testData/menutick.wav"));
+    testmenu.setMenuTickSound(new Sound("resources/testData/menutick.wav"));
     testmenu.addListener(this);
   }
 

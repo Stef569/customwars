@@ -135,8 +135,8 @@ public class ResourceManager {
   private void loadCursors() {
     // When deferred loading is on make sure the cursor images are loaded before
     // the loadCursorsNow method
-    File cursorDir = new File(cursorImgPath);
-    for (File file : cursorDir.listFiles()) {
+    FileSystemManager fsm = new FileSystemManager(cursorImgPath);
+    for (File file : fsm.getFiles()) {
       String cursorName = FileUtil.getFileNameWithoutExtension(file);
       imageLib.loadAwtImg(cursorName, file.getPath());
       imageLib.loadSlickImage(cursorName);
@@ -158,24 +158,30 @@ public class ResourceManager {
   }
 
   private void loadCursorsNow() {
-    File cursorDir = new File(cursorImgPath);
-    for (File file : cursorDir.listFiles()) {
-      String cursorName = FileUtil.getFileNameWithoutExtension(file);
-      Image cursorImg = imageLib.getSlickImg(cursorName);
-      int cursorWidth = cursorImg.getWidth() / CURSOR_ANIM_COUNT;
-      int cursorHeight = cursorImg.getHeight();
-      ImageStrip cursorImgs = new ImageStrip(cursorImg, cursorWidth, cursorHeight);
-      TileSprite cursor = new TileSprite(cursorImgs, CURSOR_ANIM_SPEED, null, null);
-
-      // Use the cursor image height to calculate the tile effect range ie
-      // If the image has a height of 160/32=5 tiles 5/2 rounded to int becomes 2.
-      // most cursors have a effect range of 1 ie
-      // 40/32=1 and 1/2=0 max(0,1) becomes 1
-      int tileSize = App.getInt("plugin.tilesize");
-      int cursorEffectRange = Math.max(cursorImg.getHeight() / tileSize / 2, 1);
-      cursor.setEffectRange(cursorEffectRange);
+    FileSystemManager fsm = new FileSystemManager(cursorImgPath);
+    for (File cursorImgFile : fsm.getFiles()) {
+      String cursorName = FileUtil.getFileNameWithoutExtension(cursorImgFile);
+      TileSprite cursor = createCursor(cursorName);
       addCursor(cursorName, cursor);
     }
+  }
+
+
+  private TileSprite createCursor(String cursorName) {
+    Image cursorImg = imageLib.getSlickImg(cursorName);
+    int cursorWidth = cursorImg.getWidth() / CURSOR_ANIM_COUNT;
+    int cursorHeight = cursorImg.getHeight();
+    ImageStrip cursorImgs = new ImageStrip(cursorImg, cursorWidth, cursorHeight);
+    TileSprite cursor = new TileSprite(cursorImgs, CURSOR_ANIM_SPEED, null, null);
+
+    // Use the cursor image height to calculate the tile effect range ie
+    // If the image has a height of 160/32=5 tiles 5/2 rounded to int becomes 2.
+    // most cursors have a effect range of 1 ie
+    // 40/32=1 and 1/2=0 max(0,1) becomes 1
+    int tileSize = App.getInt("plugin.tilesize");
+    int cursorEffectRange = Math.max(cursorImg.getHeight() / tileSize / 2, 1);
+    cursor.setEffectRange(cursorEffectRange);
+    return cursor;
   }
 
   private void addCursor(String cursorName, TileSprite cursor) {

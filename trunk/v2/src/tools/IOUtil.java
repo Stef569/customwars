@@ -7,6 +7,8 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Properties;
 
 /**
@@ -124,5 +126,22 @@ public final class IOUtil {
     properties.load(in);
     closeStream(in);
     return properties;
+  }
+
+  /**
+   * Class loader that loads resources from classpath and folders
+   */
+  public static class URLClassLoader extends ClassLoader {
+    protected URL findResource(String name) {
+      File f = new File(name);
+
+      try {
+        return f.toURI().toURL();
+      }
+      catch (MalformedURLException e) {
+        logger.warn("", e);
+      }
+      return super.findResource(name);
+    }
   }
 }
