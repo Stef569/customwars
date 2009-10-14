@@ -21,8 +21,8 @@ import java.util.ResourceBundle;
 
 /**
  * Load and apply configuration
- * There is global configuration: game, user, log4J, language properties
- * and plugin configuration plugin properties, sound, maps, images
+ * There is global configuration: game, user, log4J, language properties and maps
+ * and plugin configuration: plugin properties, sound, images
  *
  * Persistance properties(user config) are located in the user home dir
  *
@@ -31,15 +31,16 @@ import java.util.ResourceBundle;
 public class Config {
   private static final Logger logger = Logger.getLogger(Config.class);
   private static final String HOME_DIR = System.getProperty("user.home") + "/.cw2/";
-  private static final File PROJECT_HOME_DIR = new File(".");
   public static final String MAPS_DIR = HOME_DIR + "maps/";
-  private static final String CONFIG_PATH = "res/data/config/";
+  private static final String RES_DIR = "resources/res/";
+  private static final String CONFIG_PATH = RES_DIR + "data/config/";
+
   private static final String GAME_PROPERTIES_FILE = "game.properties";
   private static final String LOG_PROPERTIES_FILE = "log4j.properties";
   private static final String USER_PROPERTIES_FILE = "user.properties";
   private static final String USER_DEFAULTS_PROPERTIES_FILE = "userDefaults.properties";
   private static final String PLUGIN_PROPERTIES_FILE = "plugin.properties";
-  private static final String LANG_BUNDLE_PATH = "res.data.lang.Languages";
+  private static final String LANG_BUNDLE_PATH = "resources.res.data.lang.Languages";
   private String pluginLocation;
 
   private ResourceManager resources;
@@ -57,13 +58,17 @@ public class Config {
     createEmptyUserPropertyFileIfNonePresent();
     loadProperties();
 
-    resources.setImgPath(pluginLocation + "/images/");
-    resources.setCursorImgsPath(PROJECT_HOME_DIR.getPath() + "/resources/" + pluginLocation + "/images/cursors/");
-    resources.setSoundPath(pluginLocation + "/sound/");
-    resources.setDataPath(pluginLocation + "/data/");
+    resources.setImgPath(pluginLocation + "images/");
+    resources.setCursorImgsPath(pluginLocation + "images/cursors/");
+    resources.setSoundPath(pluginLocation + "sound/");
+    resources.setDataPath(pluginLocation + "data/");
+
+    // Maps can be stored on 2 places
+    // 1. The user can create maps and put them in his HOME_DIR
+    // 2. Maps included within the release are in the RES_DIR
     resources.addMapPath(MAPS_DIR);
-    resources.addMapPath("res/maps/");
-    resources.setFontPath("res/data/fonts/");
+    resources.addMapPath(RES_DIR + "maps/");
+    resources.setFontPath(RES_DIR + "data/fonts/");
     resources.setDarkPercentage(App.getInt("display.darkpercentage"));
   }
 
@@ -91,7 +96,7 @@ public class Config {
 
       String language = userProperties.getProperty("user.lang");
       String pluginName = userProperties.getProperty("user.activeplugin", "default");
-      pluginLocation = "res/plugin/" + pluginName;
+      pluginLocation = RES_DIR + "plugin/" + pluginName + "/";
 
       loadLang(language);
       loadPluginProperties();
@@ -144,8 +149,9 @@ public class Config {
   }
 
   private void loadLangProperties(Locale locale) throws IOException {
-    ClassLoader loader = Thread.currentThread().getContextClassLoader();
-    ResourceBundle bundle = PropertyResourceBundle.getBundle(LANG_BUNDLE_PATH, locale, loader);
+    // Using our own ClassLoader that reads from a folder
+    // default classloader just looks into the classpath
+    ResourceBundle bundle = PropertyResourceBundle.getBundle(LANG_BUNDLE_PATH, locale, new IOUtil.URLClassLoader());
     App.setLocaleResourceBundle(bundle);
     logger.info("Lang=" + locale);
   }
