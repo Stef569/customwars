@@ -201,6 +201,7 @@
     <terrain name="Shoal" id="67" type="Ocean">
         <connect>North, South, West</connect>
     </terrain>
+
     <!-- Row 5 -->
     <terrain name="Coast" id="68" type="Ocean">
         <connect>North, NorthEast, East, SouthEast, South, West</connect>
@@ -225,6 +226,81 @@
     </terrain>
     <terrain name="Reef" id="75" type="Ocean"/>
     <terrain name="Coast" id="76" type="Ocean">
-        <connect>North, NorthEast, East, South, SouthWest, West, NorthWest</connect>
+        <connect>North, NorthEast, East, SouthEast, South, SouthWest, West, NorthWest</connect>
+    </terrain>
+    <terrain name="Shoal" id="77" type="Ocean">
+        <connect>East</connect>
+    </terrain>
+    <terrain name="Shoal" id="78" type="Ocean">
+        <connect>North</connect>
+    </terrain>
+    <terrain name="Shoal" id="79" type="Ocean">
+        <connect>South</connect>
+    </terrain>
+    <terrain name="Shoal" id="80" type="Ocean">
+        <connect>West</connect>
+    </terrain>
+    <terrain name="Shoal" id="81" type="Ocean">
+        <connect>North, NorthEast, East, SouthEast, South, SouthWest, West, NorthWest</connect>
+    </terrain>
+
+    <terrain name="Pipe" id="82" type="Pipe">
+        <connect>East, West</connect>
+    </terrain>
+    <terrain name="Pipe" id="83" type="Pipe">
+        <connect>North, South</connect>
+    </terrain>
+    <terrain name="Pipe" id="84" type="Pipe">
+        <connect>North, East</connect>
+    </terrain>
+
+    <!-- Row 5 -->
+    <terrain name="PipeSeam" id="85" type="Pipe">
+        <connect>East, South</connect>
+    </terrain>
+    <terrain name="PipeSeam" id="86" type="Pipe">
+        <connect>South, West</connect>
+    </terrain>
+    <terrain name="PipeSeam" id="87" type="Pipe">
+        <connect>North, West</connect>
+    </terrain>
+    <terrain name="PipeSeam" id="88" type="Pipe">
+        <connect>North, East, West</connect>
+    </terrain>
+    <terrain name="PipeSeam" id="89" type="Pipe">
+        <connect>North, East, South</connect>
+    </terrain>
+    <terrain name="PipeSeam" id="90" type="Pipe">
+        <connect>East, South, West</connect>
+    </terrain>
+    <terrain name="PipeSeam" id="91" type="Pipe">
+        <connect>North, South, West</connect>
+    </terrain>
+    <terrain name="PipeSeam" id="92" type="Pipe">
+        <connect>North, East, South, West</connect>
+    </terrain>
+    <terrain name="PipeSeam" id="93" type="Pipe">
+        <connect>South</connect>
+    </terrain>
+    <terrain name="PipeSeam" id="94" type="Pipe">
+        <connect>West</connect>
+    </terrain>
+    <terrain name="PipeSeam" id="95" type="Pipe">
+        <connect>North</connect>
+    </terrain>
+    <terrain name="PipeSeam" id="96" type="Pipe">
+        <connect>East</connect>
+    </terrain>
+    <terrain name="Destroyed Pipe" id="97" type="Pipe">
+        <connect>East, West</connect>
+    </terrain>
+    <terrain name="Destroyed Pipe" id="98" type="Pipe">
+        <connect>North, South</connect>
+    </terrain>
+    <terrain name="Destroyed Pipe" id="99" type="Pipe">
+        <connect>East, West</connect>
+    </terrain>
+    <terrain name="Destroyed Pipe" id="100" type="Pipe">
+        <connect>North, South</connect>
     </terrain>
 </list>
