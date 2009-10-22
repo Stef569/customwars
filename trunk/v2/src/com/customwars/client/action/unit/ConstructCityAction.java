@@ -45,13 +45,25 @@ public class ConstructCityAction extends DirectAction {
 
   private void constructCity() {
     unit.construct(city);
-
-    logger.debug(String.format("%s is constructing a %s constructed:%s%%",
-      unit.getName(), city.getName(), city.getCapCount()));
+    logConstructingProgress();
 
     if (unit.isConstructionComplete()) {
       unit.stopConstructing();
       addCityToTile();
+    }
+  }
+
+  private void logConstructingProgress() {
+    if (unit.isConstructionComplete()) {
+      logger.debug(
+        String.format("%s constructed a %s",
+          unit.getName(), city.getName())
+      );
+    } else {
+      logger.debug(
+        String.format("%s is constructing a %s constructed:%s%%",
+          unit.getName(), city.getName(), city.getCapCountPercentage())
+      );
     }
   }
 
