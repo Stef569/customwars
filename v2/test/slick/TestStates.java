@@ -12,7 +12,7 @@ import com.customwars.client.ui.state.EndTurnState;
 import com.customwars.client.ui.state.GameOverState;
 import com.customwars.client.ui.state.InGameState;
 import com.customwars.client.ui.state.MapEditorState;
-import com.customwars.client.ui.state.StateLogic;
+import com.customwars.client.ui.state.StateChanger;
 import com.customwars.client.ui.state.StateSession;
 import org.apache.log4j.Logger;
 import org.newdawn.slick.GameContainer;
@@ -31,7 +31,7 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
   private StateSession stateSession;
   private GameContainer gameContainer;
   private CWInput cwInput;
-  private StateLogic statelogic;
+  private StateChanger stateChanger;
   private String startStateName;
 
   public TestStates(String startStateName, StateSession stateSession, ResourceManager resources, Config config) {
@@ -60,7 +60,7 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
     mapStateIdsToName();
     loadResources();
     CWState.setDefaultFont(container);
-    statelogic.changeTo(startStateName);
+    stateChanger.changeTo(startStateName);
     config.loadInputBindings(cwInput);
 
     logger.debug("Startup complete starting state=" + (startStateName == null ? "Default" : startStateName));
@@ -87,17 +87,17 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
   }
 
   private void mapStateIdsToName() {
-    statelogic = new StateLogic(this);
-    statelogic.addState("mainmenu", 0);
-    statelogic.addState("MAIN_MENU", 0);
-    statelogic.addState("terrainmenu", 1);
-    statelogic.addState("keymenu", 5);
-    statelogic.addState("IN_GAME", 3);
-    statelogic.addState("END_TURN", 4);
-    statelogic.addState("MAP_PARSER", 6);
-    statelogic.addState("GAME_OVER", 10);
-    statelogic.addState("MAP_EDITOR", 50);
-    CWState.setStatelogic(statelogic);
+    stateChanger = new StateChanger(this);
+    stateChanger.addState("mainmenu", 0);
+    stateChanger.addState("MAIN_MENU", 0);
+    stateChanger.addState("terrainmenu", 1);
+    stateChanger.addState("keymenu", 5);
+    stateChanger.addState("IN_GAME", 3);
+    stateChanger.addState("END_TURN", 4);
+    stateChanger.addState("MAP_PARSER", 6);
+    stateChanger.addState("GAME_OVER", 10);
+    stateChanger.addState("MAP_EDITOR", 50);
+    CWState.setStateChanger(stateChanger);
   }
 
   private void loadResources() {
@@ -145,12 +145,12 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
     super.keyPressed(key, c);
     if (cwInput.isActive()) {
       if (key == Input.KEY_SPACE) {
-        statelogic.changeToNext();
+        stateChanger.changeToNext();
       }
     }
 
     if (key == Input.KEY_ENTER) {
-      statelogic.changeTo("MAIN_MenU");
+      stateChanger.changeTo("MAIN_MenU");
     }
   }
 }
