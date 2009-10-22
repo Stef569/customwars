@@ -27,7 +27,7 @@ public class CWStates extends StateBasedGame implements InputProviderListener {
   private StateSession stateSession;
   private GameContainer gameContainer;
   private CWInput cwInput;
-  private StateLogic statelogic;
+  private StateChanger stateChanger;
   private String startStateName;
 
   public CWStates(String startStateName, StateSession stateSession, ResourceManager resources, Config config) {
@@ -55,7 +55,7 @@ public class CWStates extends StateBasedGame implements InputProviderListener {
     mapStateIdsToName();
 
     config.loadInputBindings(cwInput);
-    statelogic.changeTo(startStateName);
+    stateChanger.changeTo(startStateName);
     logger.debug("Startup complete starting state=" + (startStateName == null ? "Default" : startStateName));
   }
 
@@ -86,17 +86,17 @@ public class CWStates extends StateBasedGame implements InputProviderListener {
   }
 
   private void mapStateIdsToName() {
-    statelogic = new StateLogic(this);
-    statelogic.addState("STARTUP", 0);
-    statelogic.addState("MAIN_MENU", 2);
-    statelogic.addState("KEY_MENU", 5);
-    statelogic.addState("SINGLE", 6);
-    statelogic.addState("OPTION", 7);
-    statelogic.addState("IN_GAME", 3);
-    statelogic.addState("GAME_OVER", 10);
-    statelogic.addState("END_TURN", 4);
-    statelogic.addState("MAP_EDITOR", 50);
-    CWState.setStatelogic(statelogic);
+    stateChanger = new StateChanger(this);
+    stateChanger.addState("STARTUP", 0);
+    stateChanger.addState("MAIN_MENU", 2);
+    stateChanger.addState("KEY_MENU", 5);
+    stateChanger.addState("SINGLE", 6);
+    stateChanger.addState("OPTION", 7);
+    stateChanger.addState("IN_GAME", 3);
+    stateChanger.addState("GAME_OVER", 10);
+    stateChanger.addState("END_TURN", 4);
+    stateChanger.addState("MAP_EDITOR", 50);
+    CWState.setStateChanger(stateChanger);
   }
 
   /**

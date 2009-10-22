@@ -17,13 +17,13 @@ import java.util.Map;
  * Each time we change to a state, we store that stateID into previousStates which uses a LIFO Queue
  * This allows to go back 1 state, clearPreviousStates removes all stored stateID's from the previousStates queue.
  */
-public class StateLogic {
+public class StateChanger {
   private static final int PREVIOUS_STATE_LIMIT = 20;
   private StateBasedGame stategame;
   private Deque<Integer> previousStates;
   private Map<String, Integer> states;
 
-  public StateLogic(StateBasedGame game) {
+  public StateChanger(StateBasedGame game) {
     this.stategame = game;
     this.states = new HashMap<String, Integer>();
     this.previousStates = new LinkedList<Integer>();

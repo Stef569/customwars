@@ -25,7 +25,7 @@ import java.lang.reflect.Field;
  * @author stefan
  */
 public abstract class CWState extends BasicGameState implements InputProviderListener {
-  protected static StateLogic statelogic;       // Allows to change to another state
+  protected static StateChanger stateChanger;       // Allows to change to another state
   protected static ResourceManager resources;   // All the resources
   protected static CWInput cwInput;             // Handles input
   protected static StateSession stateSession;   // Handles Data between states
@@ -70,7 +70,7 @@ public abstract class CWState extends BasicGameState implements InputProviderLis
   public abstract void update(GameContainer container, int delta) throws SlickException;
 
   public void changeGameState(String newStateName) {
-    statelogic.changeTo(newStateName);
+    stateChanger.changeTo(newStateName);
   }
 
   public void toggleMusic(Music music) {
@@ -81,8 +81,8 @@ public abstract class CWState extends BasicGameState implements InputProviderLis
     }
   }
 
-  public static void setStatelogic(StateLogic statelogic) {
-    CWState.statelogic = statelogic;
+  public static void setStateChanger(StateChanger stateChanger) {
+    CWState.stateChanger = stateChanger;
   }
 
   public static void setResources(ResourceManager resources) {
