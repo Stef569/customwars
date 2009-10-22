@@ -12,7 +12,7 @@ import java.util.List;
 
 /**
  * Test the FileSystemManager by creating some maps in maps/test and maps/versus
- * when the test is done delete the maps files, so they don't end up on svn.
+ * when the test is done delete the maps folder and the map files, so they don't end up on svn.
  *
  * @author stefan
  */
@@ -30,6 +30,8 @@ public class FileSystemManagerTest {
 
   @Before
   public void beforeEachTest() throws IOException {
+    String path = new File(".").getCanonicalPath();
+    new File(path + parentDir).mkdir();
     fsm = new FileSystemManager(parentDir);
     new File(parentDir, testDir).mkdirs();
     new File(parentDir, versusDir).mkdirs();
@@ -38,12 +40,13 @@ public class FileSystemManagerTest {
   @AfterClass
   public static void afterAllTests() {
     File test = new File(parentDir, testDir);
-    fsm.clearFiles(test);
-    test.delete();
+    Assert.assertTrue(fsm.clearFiles("test"));
+    Assert.assertTrue(test.delete());
+
     File versus = new File(parentDir, versusDir);
-    fsm.clearFiles(versus);
-    versus.delete();
-    new File(parentDir).delete();
+    Assert.assertTrue(fsm.clearFiles("versus"));
+    Assert.assertTrue(versus.delete());
+    Assert.assertTrue(new File(parentDir).delete());
   }
 
   @Test
@@ -54,10 +57,13 @@ public class FileSystemManagerTest {
     Assert.assertTrue(fsm.createFile(testDir + testMap3));
 
     // Check if they are really created
-    List<File> maps = fsm.getFiles(testDir);
-    Assert.assertTrue(maps.contains(new File(parentDir, testDir + testMap1)));
-    Assert.assertTrue(maps.contains(new File(parentDir, testDir + testMap2)));
-    Assert.assertTrue(maps.contains(new File(parentDir, testDir + testMap3)));
+    List<File> testMaps = fsm.getFiles(testDir);
+    File testFile1 = new File(parentDir + testDir, testMap1).getAbsoluteFile();
+    File testFile2 = new File(parentDir + testDir, testMap2).getAbsoluteFile();
+    File testFile3 = new File(parentDir + testDir, testMap3).getAbsoluteFile();
+    Assert.assertTrue(testMaps.contains(testFile1));
+    Assert.assertTrue(testMaps.contains(testFile2));
+    Assert.assertTrue(testMaps.contains(testFile3));
   }
 
   @Test
@@ -66,7 +72,23 @@ public class FileSystemManagerTest {
     Assert.assertTrue(fsm.createFile(versusDir + versusMap1));
 
     // Check if they are really created
-    List<File> maps = fsm.getFiles(versusDir);
-    Assert.assertTrue(maps.contains(new File(parentDir + versusDir, versusMap1)));
+    List<File> versusMaps = fsm.getFiles(versusDir);
+    File versusFile1 = new File(parentDir + versusDir, versusMap1).getAbsoluteFile();
+    Assert.assertTrue(versusMaps.contains(versusFile1));
+  }
+
+  @Test
+  public void getTestAndVersusDir() {
+    // There are 2 dirs under the parent dir
+    List<File> dirs = fsm.getDirs();
+    Assert.assertTrue(dirs.size() == 2);
+  }
+
+  @Test
+  public void getFilesInParentDir() {
+    // There are 2 dirs under the parent dir
+    // But no files
+    List<File> files = fsm.getFiles();
+    Assert.assertTrue(files.size() == 0);
   }
 }
