@@ -24,7 +24,7 @@ import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Tile;
-import com.customwars.client.ui.state.StateLogic;
+import com.customwars.client.ui.state.StateChanger;
 
 import java.util.List;
 
@@ -116,10 +116,10 @@ public class ActionFactory {
     return addToTileAction;
   }
 
-  public static CWAction buildEndTurnAction(StateLogic statelogic) {
+  public static CWAction buildEndTurnAction(StateChanger stateChanger) {
     ActionBag endTurnAction = new ActionBag("End Turn");
     endTurnAction.add(new ClearInGameStateAction());
-    endTurnAction.add(new EndTurnAction(statelogic));
+    endTurnAction.add(new EndTurnAction(stateChanger));
     return endTurnAction;
   }
 

@@ -98,7 +98,7 @@ public class InGameState extends CWState implements PropertyChangeListener {
 
     gameControl = gameRenderer.getGameControl();
     gameControl.setInGameContext(inGameContext);
-    gameControl.setStateLogic(statelogic);
+    gameControl.setStateChanger(stateChanger);
 
     cursorControl = gameControl.getCursorController();
     inGameContext.setGameController(gameControl);
@@ -227,7 +227,7 @@ public class InGameState extends CWState implements PropertyChangeListener {
         }
 
         if (cwInput.isEndTurn(command)) {
-          gameControl.endTurn(statelogic);
+          gameControl.endTurn(stateChanger);
         }
 
         boolean zoomEnabled = App.getBoolean("display.zoom");
