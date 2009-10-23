@@ -1,6 +1,6 @@
 package com.customwars.client.ui.slick;
 
-import com.customwars.client.ui.state.CWInput;
+import com.customwars.client.ui.state.input.CWInput;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.command.Command;
 import org.newdawn.slick.command.Control;

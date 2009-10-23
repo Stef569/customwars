@@ -2,7 +2,7 @@ package com.customwars.client;
 
 import com.customwars.client.io.ResourceManager;
 import com.customwars.client.io.loading.UserConfigParser;
-import com.customwars.client.ui.state.CWInput;
+import com.customwars.client.ui.state.input.CWInput;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.newdawn.slick.util.ResourceLoader;

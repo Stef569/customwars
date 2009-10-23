@@ -1,6 +1,6 @@
 package com.customwars.client.io.loading;
 
-import com.customwars.client.ui.state.CWInput;
+import com.customwars.client.ui.state.input.CWInput;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

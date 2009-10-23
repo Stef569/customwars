@@ -6,6 +6,7 @@ import com.customwars.client.SFX;
 import com.customwars.client.io.ResourceManager;
 import com.customwars.client.ui.GUI;
 import com.customwars.client.ui.state.input.CWCommand;
+import com.customwars.client.ui.state.input.CWInput;
 import com.customwars.client.ui.state.menu.MainMenuState;
 import com.customwars.client.ui.state.menu.OptionMenuState;
 import com.customwars.client.ui.state.menu.SingleMenuState;

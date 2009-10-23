@@ -2,6 +2,7 @@ package com.customwars.client.ui.state;
 
 import com.customwars.client.io.ResourceManager;
 import com.customwars.client.ui.state.input.CWCommand;
+import com.customwars.client.ui.state.input.CWInput;
 import com.thoughtworks.xstream.core.util.Fields;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Font;

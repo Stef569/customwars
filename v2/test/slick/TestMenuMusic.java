@@ -2,9 +2,9 @@ package slick;
 
 import com.customwars.client.ui.MenuItem;
 import com.customwars.client.ui.PopupMenu;
-import com.customwars.client.ui.state.CWInput;
 import com.customwars.client.ui.state.CWState;
 import com.customwars.client.ui.state.input.CWCommand;
+import com.customwars.client.ui.state.input.CWInput;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
