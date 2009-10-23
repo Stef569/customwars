@@ -22,6 +22,7 @@ import com.customwars.client.ui.HUD;
 import com.customwars.client.ui.renderer.GameRenderer;
 import com.customwars.client.ui.sprite.TileSprite;
 import com.customwars.client.ui.state.input.CWCommand;
+import com.customwars.client.ui.state.input.CWInput;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;

@@ -19,6 +19,7 @@ import com.customwars.client.ui.renderer.MapRenderer;
 import com.customwars.client.ui.sprite.SpriteManager;
 import com.customwars.client.ui.sprite.TileSprite;
 import com.customwars.client.ui.state.input.CWCommand;
+import com.customwars.client.ui.state.input.CWInput;
 import org.apache.log4j.Logger;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;

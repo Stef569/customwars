@@ -1,6 +1,6 @@
 package com.customwars.client.io.loading;
 
-import com.customwars.client.ui.state.CWInput;
+import com.customwars.client.ui.state.input.CWInput;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.newdawn.slick.command.BasicCommand;

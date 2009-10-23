@@ -1,7 +1,5 @@
-package com.customwars.client.ui.state;
+package com.customwars.client.ui.state.input;
 
-import com.customwars.client.ui.state.input.CWCommand;
-import com.customwars.client.ui.state.input.CommandEnum;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.command.BasicCommand;
 import org.newdawn.slick.command.Command;
