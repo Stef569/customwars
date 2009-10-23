@@ -21,11 +21,11 @@ import com.customwars.client.ui.GUI;
 import com.customwars.client.ui.HUD;
 import com.customwars.client.ui.renderer.GameRenderer;
 import com.customwars.client.ui.sprite.TileSprite;
+import com.customwars.client.ui.state.input.CWCommand;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
-import org.newdawn.slick.command.Command;
 import org.newdawn.slick.gui.GUIContext;
 import org.newdawn.slick.state.StateBasedGame;
 import tools.ColorUtil;
@@ -114,7 +114,8 @@ public class InGameState extends CWState implements PropertyChangeListener {
     GUI.init(guiContext, camera);
     GUI.setGame(game);
     for (Player p : game.getAllPlayers()) {
-      GUI.addLiveObjToConsole("p_" + ColorUtil.toString(p.getColor()), p);
+      String colorName = ColorUtil.toString(p.getColor());
+      GUI.addLiveObjToConsole("p_" + colorName, p);
     }
 
     GUI.addLiveObjToConsole("game", game);
@@ -136,20 +137,11 @@ public class InGameState extends CWState implements PropertyChangeListener {
   }
 
   private void initCursors(Map<Tile> map) {
-    Tile randomTile = map.getRandomTile();
-    TileSprite selectCursor = resources.getCursor(App.get("user.selectcursor"));
-    selectCursor.setMap(map);
-    selectCursor.setLocation(randomTile);
+    TileSprite selectCursor = resources.createCursor(map, App.get("user.selectcursor"));
     selectCursor.addPropertyChangeListener(this);
-
-    TileSprite attackCursor = resources.getCursor(App.get("user.attackcursor"));
-    attackCursor.setMap(map);
-    attackCursor.setLocation(randomTile);
+    TileSprite attackCursor = resources.createCursor(map, App.get("user.attackcursor"));
     attackCursor.addPropertyChangeListener(this);
-
-    TileSprite siloCursor = resources.getCursor(App.get("user.silocursor"));
-    siloCursor.setMap(map);
-    siloCursor.setLocation(randomTile);
+    TileSprite siloCursor = resources.createCursor(map, App.get("user.silocursor"));
     siloCursor.addPropertyChangeListener(this);
 
     gameRenderer.addCursor("SELECT", selectCursor);
@@ -192,19 +184,20 @@ public class InGameState extends CWState implements PropertyChangeListener {
     }
   }
 
-  public void controlPressed(Command command, CWInput cwInput) {
+  @Override
+  public void controlPressed(CWCommand command, CWInput cwInput) {
     if (entered && isInputAllowed()) {
-      if (cwInput.isCancel(command)) {
-        if (inGameContext.canUndo()) {
-          gameControl.undo();
-          return;
-        }
+      if (inGameContext.canUndo() && command == cwInput.CANCEL) {
+        gameControl.undo();
+        return;
       }
 
-      moveCursor(command, cwInput);
+      if (command.isMoveCommand()) {
+        moveCursor(command);
+      }
 
       if (inGameContext.isGUIMode()) {
-        hud.controlPressed(command, cwInput);
+        hud.controlPressed(command);
       } else {
         Tile cursorLocation = gameRenderer.getCursorLocation();
         Unit activeUnit = game.getActiveUnit();
@@ -218,33 +211,34 @@ public class InGameState extends CWState implements PropertyChangeListener {
           unit = selectedUnit;
         }
 
-        if (cwInput.isSelect(command)) {
-          gameControl.handleA(unit, city, cursorLocation);
-        }
-
-        if (cwInput.isCancel(command)) {
-          gameControl.handleB(activeUnit, selectedUnit);
-        }
-
-        if (cwInput.isEndTurn(command)) {
-          gameControl.endTurn(stateChanger);
-        }
-
         boolean zoomEnabled = App.getBoolean("display.zoom");
-        if (zoomEnabled) {
-          if (cwInput.isZoomIn(command)) {
-            camera.zoomIn();
-          } else if (cwInput.isZoomOut(command)) {
-            camera.zoomOut();
-          }
+        switch (command.getEnum()) {
+          case SELECT:
+            gameControl.handleA(unit, city, cursorLocation);
+            break;
+          case CANCEL:
+            gameControl.handleB(activeUnit, selectedUnit);
+            break;
+          case END_TURN:
+            gameControl.endTurn(stateChanger);
+            break;
+          case ZOOM_IN:
+            if (zoomEnabled) {
+              camera.zoomIn();
+            }
+            break;
+          case ZOOM_OUT:
+            if (zoomEnabled) {
+              camera.zoomOut();
+            }
         }
       }
     }
   }
 
   @Override
-  public void controlReleased(Command command, CWInput cwInput) {
-    if (cwInput.isMoveCommand(command)) {
+  public void controlReleased(CWCommand command, CWInput cwInput) {
+    if (command.isMoveCommand()) {
       cursorControl.setCursorLocked(false);
 
       if (cursorAtZoneEdge) {
@@ -254,27 +248,25 @@ public class InGameState extends CWState implements PropertyChangeListener {
     }
   }
 
-  public void moveCursor(Command command, CWInput cwInput) {
+  public void moveCursor(CWCommand command) {
     Tile originalLocation = gameRenderer.getCursorLocation();
-    if (cwInput.isMoveCommand(command)) {
-      if (cwInput.isUp(command)) {
+
+    switch (command.getEnum()) {
+      case UP:
         cursorControl.moveCursor(Direction.NORTH);
-      }
-
-      if (cwInput.isDown(command)) {
+        break;
+      case DOWN:
         cursorControl.moveCursor(Direction.SOUTH);
-      }
-
-      if (cwInput.isLeft(command)) {
+        break;
+      case LEFT:
         cursorControl.moveCursor(Direction.WEST);
-      }
-
-      if (cwInput.isRight(command)) {
+        break;
+      case RIGHT:
         cursorControl.moveCursor(Direction.EAST);
-      }
-
-      lockCursorAtMoveZoneEdge(originalLocation);
+        break;
     }
+
+    lockCursorAtMoveZoneEdge(originalLocation);
   }
 
   private void lockCursorAtMoveZoneEdge(Location originalCursorLocation) {

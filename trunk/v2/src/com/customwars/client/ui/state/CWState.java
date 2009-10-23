@@ -1,6 +1,7 @@
 package com.customwars.client.ui.state;
 
 import com.customwars.client.io.ResourceManager;
+import com.customwars.client.ui.state.input.CWCommand;
 import com.thoughtworks.xstream.core.util.Fields;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Font;
@@ -8,8 +9,6 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Music;
 import org.newdawn.slick.SlickException;
-import org.newdawn.slick.command.Command;
-import org.newdawn.slick.command.InputProviderListener;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 
@@ -24,8 +23,8 @@ import java.lang.reflect.Field;
  *
  * @author stefan
  */
-public abstract class CWState extends BasicGameState implements InputProviderListener {
-  protected static StateChanger stateChanger;       // Allows to change to another state
+public abstract class CWState extends BasicGameState {
+  protected static StateChanger stateChanger;   // Allows to change to another state
   protected static ResourceManager resources;   // All the resources
   protected static CWInput cwInput;             // Handles input
   protected static StateSession stateSession;   // Handles Data between states
@@ -33,18 +32,18 @@ public abstract class CWState extends BasicGameState implements InputProviderLis
   protected static Color defaultColor = Color.white;
   protected boolean entered;
 
-  public final void controlPressed(Command command) {
+  public final void controlPressed(CWCommand command) {
     if (entered) controlPressed(command, cwInput);
   }
 
-  public void controlPressed(Command command, CWInput cwInput) {
+  public void controlPressed(CWCommand command, CWInput cwInput) {
   }
 
-  public final void controlReleased(Command command) {
+  public final void controlReleased(CWCommand command) {
     if (entered) controlReleased(command, cwInput);
   }
 
-  public void controlReleased(Command command, CWInput cwInput) {
+  public void controlReleased(CWCommand command, CWInput cwInput) {
   }
 
   public void enter(GameContainer container, StateBasedGame game) throws SlickException {

@@ -4,11 +4,11 @@ import com.customwars.client.ui.MenuItem;
 import com.customwars.client.ui.PopupMenu;
 import com.customwars.client.ui.state.CWInput;
 import com.customwars.client.ui.state.CWState;
+import com.customwars.client.ui.state.input.CWCommand;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
-import org.newdawn.slick.command.Command;
 import org.newdawn.slick.gui.AbstractComponent;
 import org.newdawn.slick.gui.ComponentListener;
 import org.newdawn.slick.state.StateBasedGame;
@@ -29,8 +29,8 @@ public class MainMenuState extends CWState implements ComponentListener {
 
     mainMenu.addListener(this);
     mainMenu.init();
-    mainMenu.setLocation((container.getWidth() / 2 - mainMenu.getWidth() / 2)+20,
-            (container.getHeight() / 2 - mainMenu.getHeight() / 2)-100);
+    mainMenu.setLocation((container.getWidth() / 2 - mainMenu.getWidth() / 2) + 20,
+      (container.getHeight() / 2 - mainMenu.getHeight() / 2) - 100);
   }
 
   @Override
@@ -39,7 +39,6 @@ public class MainMenuState extends CWState implements ComponentListener {
 
     g.drawImage(resources.getSlickImg("menu"), 0, 0);
     g.setColor(Color.white);
-    //g.drawString("ENTER: TO GO BACK TO MENU", 400, 10);
     mainMenu.render(container, g);
 
     g.setColor(Color.lightGray);
@@ -64,8 +63,9 @@ public class MainMenuState extends CWState implements ComponentListener {
 
   }
 
-  public void controlPressed(Command command, CWInput cwInput) {
-    mainMenu.controlPressed(command, cwInput);
+  @Override
+  public void controlPressed(CWCommand command, CWInput cwInput) {
+    mainMenu.controlPressed(command);
   }
 
   public void componentActivated(AbstractComponent source) {

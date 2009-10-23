@@ -5,6 +5,7 @@ import com.customwars.client.Config;
 import com.customwars.client.SFX;
 import com.customwars.client.io.ResourceManager;
 import com.customwars.client.ui.GUI;
+import com.customwars.client.ui.state.input.CWCommand;
 import com.customwars.client.ui.state.menu.MainMenuState;
 import com.customwars.client.ui.state.menu.OptionMenuState;
 import com.customwars.client.ui.state.menu.SingleMenuState;
@@ -26,7 +27,6 @@ public class CWStates extends StateBasedGame implements InputProviderListener {
   private Config config;
   private StateSession stateSession;
   private GameContainer gameContainer;
-  private CWInput cwInput;
   private StateChanger stateChanger;
   private String startStateName;
 
@@ -42,7 +42,7 @@ public class CWStates extends StateBasedGame implements InputProviderListener {
     this.gameContainer = container;
 
     // listen for command input(pressed, release)
-    cwInput = new CWInput(container.getInput());
+    CWInput cwInput = new CWInput(container.getInput());
     cwInput.addListener(this);
 
     // Global data for each state
@@ -104,30 +104,36 @@ public class CWStates extends StateBasedGame implements InputProviderListener {
    */
   public void controlPressed(Command command) {
     CWState state = (CWState) getCurrentState();
-    state.controlPressed(command);
+    state.controlPressed((CWCommand) command);
   }
 
   /**
    * Delegate the released control to the current state
    */
   public void controlReleased(Command command) {
-    handleGlobalInput(command);
+    handleGlobalInput((CWCommand) command);
     CWState state = (CWState) getCurrentState();
-    state.controlReleased(command);
+    state.controlReleased((CWCommand) command);
   }
 
-  private void handleGlobalInput(Command command) {
-    if (cwInput.isExit(command)) {
-      logger.info("Exit pressed");
-      gameContainer.exit();
-    } else if (cwInput.isToggleMusic(command)) {
-      SFX.toggleMusic();
-    } else if (cwInput.isToggleConsole(command)) {
-      GUI.toggleConsoleFrame();
-    } else if (cwInput.isToggleEventViewer(command)) {
-      GUI.toggleEventFrame();
-    } else if (cwInput.isToggleFPS(command)) {
-      gameContainer.setShowFPS(!gameContainer.isShowingFPS());
+  protected void handleGlobalInput(CWCommand command) {
+    switch (command.getEnum()) {
+      case EXIT:
+        logger.info("Exit pressed");
+        gameContainer.exit();
+        break;
+      case TOGGLE_MUSIC:
+        SFX.toggleMusic();
+        break;
+      case TOGGLE_CONSOLE:
+        GUI.toggleConsoleFrame();
+        break;
+      case TOGGLE_EVENTVIEWER:
+        GUI.toggleEventFrame();
+        break;
+      case TOGGLE_FPS:
+        gameContainer.setShowFPS(!gameContainer.isShowingFPS());
+        break;
     }
   }
 }

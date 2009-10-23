@@ -4,6 +4,7 @@ import com.customwars.client.ui.MenuItem;
 import com.customwars.client.ui.PopupMenu;
 import com.customwars.client.ui.state.CWInput;
 import com.customwars.client.ui.state.CWState;
+import com.customwars.client.ui.state.input.CWCommand;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
@@ -11,7 +12,6 @@ import org.newdawn.slick.Input;
 import org.newdawn.slick.Music;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.Sound;
-import org.newdawn.slick.command.Command;
 import org.newdawn.slick.gui.AbstractComponent;
 import org.newdawn.slick.gui.ComponentListener;
 import org.newdawn.slick.state.StateBasedGame;
@@ -59,11 +59,11 @@ public class TestMenuMusic extends CWState implements ComponentListener {
     switch (testmenu.getCurrentItem()) {
       case 0:
         g.drawString("Scroll a mini-map and see the terrain up close. \n" +
-                "Use [1] and [2] to switch firing cursor.", 80, 200);
+          "Use [1] and [2] to switch firing cursor.", 80, 200);
         break;
       case 1:
         g.drawString("The way buttons will be set on the keyboard. \n" +
-                "Still under construction :(...", 80, 200);
+          "Still under construction :(...", 80, 200);
         break;
     }
   }
@@ -71,12 +71,12 @@ public class TestMenuMusic extends CWState implements ComponentListener {
   public void update(GameContainer gameContainer, int elapsedTime) throws SlickException {
   }
 
-  public void controlPressed(Command command, CWInput cwInput) {
-    if (cwInput.isSelect(command)) {
+  public void controlPressed(CWCommand command, CWInput cwInput) {
+    if (command == cwInput.SELECT) {
       menuTickSound.play();
     }
 
-    testmenu.controlPressed(command, cwInput);
+    testmenu.controlPressed(command);
   }
 
   public void keyReleased(int key, char c) {

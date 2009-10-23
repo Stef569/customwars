@@ -1,13 +1,12 @@
 package com.customwars.client.ui;
 
 import com.customwars.client.ui.slick.BasicComponent;
-import com.customwars.client.ui.state.CWInput;
+import com.customwars.client.ui.state.input.CWCommand;
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.Sound;
-import org.newdawn.slick.command.Command;
 import org.newdawn.slick.gui.AbstractComponent;
 import org.newdawn.slick.gui.GUIContext;
 
@@ -134,14 +133,18 @@ public class PopupMenu extends BasicComponent {
       getWidth() + MENU_BACKGROUND_MARGIN * 2, getHeight() + MENU_BACKGROUND_MARGIN * 2, 8);
   }
 
-  public void controlPressed(Command command, CWInput cwInput) {
-    if (cwInput.isDown(command)) {
-      moveDown();
-    } else if (cwInput.isUp(command)) {
-      moveUp();
-    } else if (cwInput.isSelect(command)) {
-      selectMenuItem(currItem);
-      componentActivated(getSelectedMenuItem());
+  public void controlPressed(CWCommand command) {
+    switch (command.getEnum()) {
+      case DOWN:
+        moveDown();
+        break;
+      case UP:
+        moveUp();
+        break;
+      case SELECT:
+        selectMenuItem(currItem);
+        componentActivated(getSelectedMenuItem());
+        break;
     }
     consumeEvent();
   }
