@@ -1,5 +1,7 @@
 package com.customwars.client.ui.state;
 
+import com.customwars.client.ui.state.input.CWCommand;
+import com.customwars.client.ui.state.input.CommandEnum;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.command.BasicCommand;
 import org.newdawn.slick.command.Command;
@@ -22,51 +24,51 @@ import java.util.List;
  * @author stefan
  */
 public class CWInput extends InputProvider {
-  public static final Command select = new BasicCommand("select");
-  public static final Command cancel = new BasicCommand("cancel");
-  public static final Command exit = new BasicCommand("exit");
-  public static final Command down = new BasicCommand("down");
-  public static final Command up = new BasicCommand("up");
-  public static final Command left = new BasicCommand("left");
-  public static final Command right = new BasicCommand("right");
-  public static final Command toggleMusic = new BasicCommand("toggle_music");
-  public static final Command zoomIn = new BasicCommand("zoom_in");
-  public static final Command zoomOut = new BasicCommand("zoom_out");
-  public static final Command fillMap = new BasicCommand("fill_map");
-  public static final Command nextPage = new BasicCommand("next_page");
-  public static final Command prevPage = new BasicCommand("prev_page");
-  public static final Command recolor = new BasicCommand("recolor");
-  public static final Command delete = new BasicCommand("delete");
-  public static final Command toggleFPS = new BasicCommand("toggle_fps");
-  public static final Command endTurn = new BasicCommand("end_turn");
-  public static final Command toggleConsole = new BasicCommand("toggle_console");
-  public static final Command toggleEventViewer = new BasicCommand("toggle_eventviewer");
-  public static final Command save = new BasicCommand("save");
-  public static final Command open = new BasicCommand("open");
+  public final String INPUT_PREFIX = "user.input";
+  public final Command SELECT = new CWCommand(CommandEnum.SELECT);
+  public final Command CANCEL = new CWCommand(CommandEnum.CANCEL);
+  public final Command EXIT = new CWCommand(CommandEnum.EXIT);
+  public final Command DOWN = new CWCommand(CommandEnum.DOWN);
+  public final Command UP = new CWCommand(CommandEnum.UP);
+  public final Command LEFT = new CWCommand(CommandEnum.LEFT);
+  public final Command RIGHT = new CWCommand(CommandEnum.RIGHT);
+  public final Command TOGGLE_MUSIC = new CWCommand(CommandEnum.TOGGLE_MUSIC);
+  public final Command ZOOM_IN = new CWCommand(CommandEnum.ZOOM_IN);
+  public final Command ZOOM_OUT = new CWCommand(CommandEnum.ZOOM_OUT);
+  public final Command FILL_MAP = new CWCommand(CommandEnum.FILL_MAP);
+  public final Command NEXT_PAGE = new CWCommand(CommandEnum.NEXT_PAGE);
+  public final Command PREV_PAGE = new CWCommand(CommandEnum.PREV_PAGE);
+  public final Command RECOLOR = new CWCommand(CommandEnum.RECOLOR);
+  public final Command DELETE = new CWCommand(CommandEnum.DELETE);
+  public final Command TOGGLE_FPS = new CWCommand(CommandEnum.TOGGLE_FPS);
+  public final Command END_TURN = new CWCommand(CommandEnum.END_TURN);
+  public final Command TOGGLE_CONSOLE = new CWCommand(CommandEnum.TOGGLE_CONSOLE);
+  public final Command TOGGLE_EVENT_VIEWER = new CWCommand(CommandEnum.TOGGLE_EVENTVIEWER);
+  public final Command SAVE = new CWCommand(CommandEnum.SAVE);
+  public final Command OPEN = new CWCommand(CommandEnum.OPEN);
 
   private Input input;
-  private static List<Command> commands = buildCommandList();
+  private List<Command> commands = buildCommandList();
 
-  private static List<Command> buildCommandList() {
+  private List<Command> buildCommandList() {
     List<Command> commands = new ArrayList<Command>();
     Field[] fields = CWInput.class.getDeclaredFields();
     for (Field field : fields) {
       if (isCommandField(field)) {
         try {
-          Command command = (Command) field.get(null);
+          Command command = (Command) field.get(this);
           commands.add(command);
         }
         catch (IllegalAccessException ex) {
-          throw new AssertionError(ex.getMessage() + " Should not occur because the field is public and static");
+          throw new AssertionError(ex.getMessage() + " Should not occur because the field is public");
         }
       }
     }
     return commands;
   }
 
-  private static boolean isCommandField(Field field) {
+  private boolean isCommandField(Field field) {
     return Modifier.isPublic(field.getModifiers())
-      && Modifier.isStatic(field.getModifiers())
       && Modifier.isFinal(field.getModifiers())
       && Command.class == field.getType();
   }
@@ -99,90 +101,6 @@ public class CWInput extends InputProvider {
     return false;
   }
 
-  public boolean isSelect(Command command) {
-    return select.equals(command);
-  }
-
-  public boolean isCancel(Command command) {
-    return cancel.equals(command);
-  }
-
-  public boolean isExit(Command command) {
-    return exit.equals(command);
-  }
-
-  public boolean isUp(Command command) {
-    return up.equals(command);
-  }
-
-  public boolean isDown(Command command) {
-    return down.equals(command);
-  }
-
-  public boolean isLeft(Command command) {
-    return left.equals(command);
-  }
-
-  public boolean isRight(Command command) {
-    return right.equals(command);
-  }
-
-  public boolean isToggleMusic(Command command) {
-    return toggleMusic.equals(command);
-  }
-
-  public boolean isZoomIn(Command command) {
-    return zoomIn.equals(command);
-  }
-
-  public boolean isZoomOut(Command command) {
-    return zoomOut.equals(command);
-  }
-
-  public boolean isFillMap(Command command) {
-    return fillMap.equals(command);
-  }
-
-  public boolean isNextPage(Command command) {
-    return nextPage.equals(command);
-  }
-
-  public boolean isRecolor(Command command) {
-    return recolor.equals(command);
-  }
-
-  public boolean isDelete(Command command) {
-    return delete.equals(command);
-  }
-
-  public boolean isToggleFPS(Command command) {
-    return toggleFPS.equals(command);
-  }
-
-  public boolean isEndTurn(Command command) {
-    return endTurn.equals(command);
-  }
-
-  public boolean isToggleConsole(Command command) {
-    return toggleConsole.equals(command);
-  }
-
-  public boolean isToggleEventViewer(Command command) {
-    return toggleEventViewer.equals(command);
-  }
-
-  public boolean isSave(Command command) {
-    return save.equals(command);
-  }
-
-  public boolean isOpen(Command command) {
-    return open.equals(command);
-  }
-
-  public boolean isMoveCommand(Command command) {
-    return isUp(command) || isDown(command) || isLeft(command) || isRight(command);
-  }
-
   public void resetInputTransition() {
     input.setOffset(0, 0);
     input.setScale(1, 1);
@@ -198,7 +116,7 @@ public class CWInput extends InputProvider {
   }
 
   public Command getCommandForControl(Control control) {
-    for (Command command : CWInput.commands) {
+    for (Command command : commands) {
       if (getControlsFor(command).contains(control)) {
         return command;
       }
@@ -230,8 +148,7 @@ public class CWInput extends InputProvider {
     String txt = "";
     int controlCounter = 0;
 
-    for (Control controlObj : controls) {
-      Control control = controlObj;
+    for (Control control : controls) {
       txt += convertControlToText(control) + ", ";
 
       if (++controlCounter >= maxControls) {

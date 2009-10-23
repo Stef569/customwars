@@ -201,7 +201,6 @@ public class ResourceManager {
   }
 
   private void loadImagesFromFile() throws IOException {
-    logger.info("Reading file " + imgPath + IMAGE_LOADER_FILE);
     ImageParser imgParser = new ImageParser(imageLib);
     InputStream in = ResourceLoader.getResourceAsStream(imgPath + IMAGE_LOADER_FILE);
     imgParser.setImgPath(imgPath);
@@ -509,5 +508,15 @@ public class ResourceManager {
 
   public Collection<TileSprite> getAllCursors() {
     return cursors.values();
+  }
+
+  /**
+   * Create a new Cursor and place it in the map on a random tile
+   */
+  public TileSprite createCursor(Map<Tile> map, String cursorName) {
+    TileSprite cursor = getCursor(cursorName);
+    cursor.setMap(map);
+    cursor.setLocation(map.getRandomTile());
+    return cursor;
   }
 }

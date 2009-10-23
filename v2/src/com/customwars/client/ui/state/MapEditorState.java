@@ -18,11 +18,11 @@ import com.customwars.client.ui.mapMaker.UnitSelectPanel;
 import com.customwars.client.ui.renderer.MapRenderer;
 import com.customwars.client.ui.sprite.SpriteManager;
 import com.customwars.client.ui.sprite.TileSprite;
+import com.customwars.client.ui.state.input.CWCommand;
 import org.apache.log4j.Logger;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
-import org.newdawn.slick.command.Command;
 import org.newdawn.slick.gui.GUIContext;
 import org.newdawn.slick.loading.DeferredResource;
 import org.newdawn.slick.loading.LoadingList;
@@ -137,13 +137,13 @@ public class MapEditorState extends CWState {
   private void renderControls(Graphics g) {
     int LEFT_MARGIN = 350;
     g.drawString("The Controls:", LEFT_MARGIN, 10);
-    g.drawString("Fill: " + cwInput.getControlsAsText(CWInput.fillMap), LEFT_MARGIN, 22);
-    g.drawString("Add: " + cwInput.getControlsAsText(CWInput.select), LEFT_MARGIN, 34);
-    g.drawString("Delete object: " + cwInput.getControlsAsText(CWInput.delete), LEFT_MARGIN, 46);
-    g.drawString("Change panel: " + cwInput.getControlsAsText(CWInput.nextPage), LEFT_MARGIN, 58);
-    g.drawString("Recolor: " + cwInput.getControlsAsText(CWInput.recolor), LEFT_MARGIN, 70);
-    g.drawString("Save map: " + cwInput.getControlsAsText(CWInput.save), LEFT_MARGIN, 82);
-    g.drawString("Open map: " + cwInput.getControlsAsText(CWInput.open), LEFT_MARGIN, 94);
+    g.drawString("Fill: " + cwInput.getControlsAsText(cwInput.FILL_MAP), LEFT_MARGIN, 22);
+    g.drawString("Add: " + cwInput.getControlsAsText(cwInput.SELECT), LEFT_MARGIN, 34);
+    g.drawString("Delete object: " + cwInput.getControlsAsText(cwInput.DELETE), LEFT_MARGIN, 46);
+    g.drawString("Change panel: " + cwInput.getControlsAsText(cwInput.NEXT_PAGE), LEFT_MARGIN, 58);
+    g.drawString("Recolor: " + cwInput.getControlsAsText(cwInput.RECOLOR), LEFT_MARGIN, 70);
+    g.drawString("Save map: " + cwInput.getControlsAsText(cwInput.SAVE), LEFT_MARGIN, 82);
+    g.drawString("Open map: " + cwInput.getControlsAsText(cwInput.OPEN), LEFT_MARGIN, 94);
   }
 
   @Override
@@ -170,43 +170,56 @@ public class MapEditorState extends CWState {
   }
 
   private void initCursors() {
-    Tile randomTile = map.getRandomTile();
-    TileSprite selectCursor = resources.getCursor(App.get("user.selectcursor"));
-    selectCursor.setMap(map);
-    selectCursor.setLocation(randomTile);
-
+    TileSprite selectCursor = resources.createCursor(map, App.get("user.selectcursor"));
     mapRenderer.addCursor("SELECT", selectCursor);
     mapRenderer.activateCursor("SELECT");
   }
 
   @Override
-  public void controlPressed(Command command, CWInput cwInput) {
+  public void controlPressed(CWCommand command, CWInput cwInput) {
     Tile cursorLocation = mapRenderer.getCursorLocation();
     SelectPanel activePanel = getActivePanel();
     int selectedIndex = activePanel.getSelectedIndex();
 
-    if (cwInput.isSelect(command)) {
-      int mouseX = cwInput.getMouseX();
-      int mouseY = cwInput.getMouseY();
-      boolean clickedOnMap = !activePanel.isWithinComponent(mouseX, mouseY);
+    switch (command.getEnum()) {
+      case SELECT:
+        select();
+        break;
+      case FILL_MAP:
+        mapEditorController.fill(selectedIndex);
+        break;
+      case NEXT_PAGE:
+        this.activePanelID = mapEditorController.nextPanel();
+        break;
+      case RECOLOR:
+        mapEditorController.nextColor();
+        break;
+      case DELETE:
+        mapEditorController.delete(cursorLocation);
+        break;
+      case SAVE:
+        saveMap();
+        break;
+      case OPEN:
+        openMap();
+        break;
+      default:
+        if (command.isMoveCommand()) {
+          moveCursor(command);
+        }
+    }
+  }
 
-      if (clickedOnMap) {
-        mapEditorController.add(cursorLocation, selectedIndex);
-      }
-    } else if (cwInput.isFillMap(command)) {
-      mapEditorController.fill(selectedIndex);
-    } else if (cwInput.isNextPage(command)) {
-      this.activePanelID = mapEditorController.nextPanel();
-    } else if (cwInput.isRecolor(command)) {
-      mapEditorController.nextColor();
-    } else if (cwInput.isDelete(command)) {
-      mapEditorController.delete(cursorLocation);
-    } else if (cwInput.isSave(command)) {
-      saveMap();
-    } else if (cwInput.isOpen(command)) {
-      openMap();
-    } else {
-      moveCursor(command, cwInput);
+  private void select() {
+    SelectPanel activePanel = getActivePanel();
+    int mouseX = cwInput.getMouseX();
+    int mouseY = cwInput.getMouseY();
+    boolean clickedOnMap = !activePanel.isWithinComponent(mouseX, mouseY);
+
+    if (clickedOnMap) {
+      Tile cursorLocation = mapRenderer.getCursorLocation();
+      int selectedIndex = activePanel.getSelectedIndex();
+      mapEditorController.add(cursorLocation, selectedIndex);
     }
   }
 
@@ -272,21 +285,20 @@ public class MapEditorState extends CWState {
     }
   }
 
-  public void moveCursor(Command command, CWInput cwInput) {
-    if (cwInput.isUp(command)) {
-      cursorController.moveCursor(Direction.NORTH);
-    }
-
-    if (cwInput.isDown(command)) {
-      cursorController.moveCursor(Direction.SOUTH);
-    }
-
-    if (cwInput.isLeft(command)) {
-      cursorController.moveCursor(Direction.WEST);
-    }
-
-    if (cwInput.isRight(command)) {
-      cursorController.moveCursor(Direction.EAST);
+  public void moveCursor(CWCommand command) {
+    switch (command.getEnum()) {
+      case UP:
+        cursorController.moveCursor(Direction.NORTH);
+        break;
+      case DOWN:
+        cursorController.moveCursor(Direction.SOUTH);
+        break;
+      case LEFT:
+        cursorController.moveCursor(Direction.WEST);
+        break;
+      case RIGHT:
+        cursorController.moveCursor(Direction.EAST);
+        break;
     }
   }
 

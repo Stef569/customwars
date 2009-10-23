@@ -38,10 +38,10 @@ public class UserConfigParserTest {
     List commands = inputProvider.getUniqueCommands();
     Assert.assertFalse(commands.contains(null));
     Assert.assertEquals(3, commands.size());
-    Assert.assertEquals(5, inputProvider.getControlsFor(CWInput.cancel).size());
-    Assert.assertEquals(6, inputProvider.getControlsFor(CWInput.select).size());
-    Assert.assertEquals(1, inputProvider.getControlsFor(CWInput.toggleMusic).size());
-    Assert.assertEquals(0, inputProvider.getControlsFor(CWInput.zoomIn).size());
+    Assert.assertEquals(5, inputProvider.getControlsFor(inputProvider.CANCEL).size());
+    Assert.assertEquals(6, inputProvider.getControlsFor(inputProvider.SELECT).size());
+    Assert.assertEquals(1, inputProvider.getControlsFor(inputProvider.TOGGLE_MUSIC).size());
+    Assert.assertEquals(0, inputProvider.getControlsFor(inputProvider.ZOOM_IN).size());
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -53,8 +53,8 @@ public class UserConfigParserTest {
     properties.put(UserConfigParser.INPUT_PREFIX + ".SELECT", "A");
     userConfigParser.readInputConfig(properties);
 
-    Assert.assertEquals(1, inputProvider.getControlsFor(CWInput.cancel).size());
-    Assert.assertEquals(0, inputProvider.getControlsFor(CWInput.select).size());
+    Assert.assertEquals(1, inputProvider.getControlsFor(inputProvider.CANCEL).size());
+    Assert.assertEquals(0, inputProvider.getControlsFor(inputProvider.SELECT).size());
   }
 
   @Test()

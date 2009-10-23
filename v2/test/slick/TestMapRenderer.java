@@ -1,7 +1,7 @@
 package slick;
 
+import com.customwars.client.App;
 import com.customwars.client.controller.CursorController;
-import com.customwars.client.io.img.slick.ImageStrip;
 import com.customwars.client.model.map.Direction;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Map;
@@ -13,11 +13,11 @@ import com.customwars.client.ui.sprite.SpriteManager;
 import com.customwars.client.ui.sprite.TileSprite;
 import com.customwars.client.ui.state.CWInput;
 import com.customwars.client.ui.state.CWState;
+import com.customwars.client.ui.state.input.CWCommand;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
-import org.newdawn.slick.command.Command;
 import org.newdawn.slick.gui.GUIContext;
 import org.newdawn.slick.state.StateBasedGame;
 
@@ -54,13 +54,11 @@ public class TestMapRenderer extends CWState {
     scroller = new Scroller(camera);
 
     // Create & add Cursors
-    ImageStrip cursor1 = resources.getSlickImgStrip("selectCursor");
-    ImageStrip cursor2 = resources.getSlickImgStrip("aimCursor");
-    TileSprite selectCursor = new TileSprite(cursor1, 250, map.getRandomTile(), map);
-    TileSprite aimCursor = new TileSprite(cursor2, map.getRandomTile(), map);
+    TileSprite selectCursor = resources.createCursor(map, App.get("user.selectcursor"));
+    TileSprite attackCursor = resources.createCursor(map, App.get("user.attackcursor"));
 
     mapRenderer.addCursor("SELECT", selectCursor);
-    mapRenderer.addCursor("ATTACK", aimCursor);
+    mapRenderer.addCursor("ATTACK", attackCursor);
     mapRenderer.activateCursor("SELECT");
   }
 
@@ -103,29 +101,34 @@ public class TestMapRenderer extends CWState {
 
   }
 
-  public void controlPressed(Command command, CWInput cwInput) {
-    moveCursor(command, cwInput);
-    if (cwInput.isSelect(command)) {
+  @Override
+  public void controlPressed(CWCommand command, CWInput cwInput) {
+    if (command.isMoveCommand()) {
+      moveCursor(command);
+    } else if (command == cwInput.SELECT) {
       System.out.println("Clicked on " + mapRenderer.getCursorLocation());
     }
   }
 
-  private void moveCursor(Command command, CWInput cwInput) {
-    if (cwInput.isUp(command)) {
-      cursorControl.moveCursor(Direction.NORTH);
-    }
-    if (cwInput.isDown(command)) {
-      cursorControl.moveCursor(Direction.SOUTH);
-    }
-    if (cwInput.isLeft(command)) {
-      cursorControl.moveCursor(Direction.WEST);
-    }
-    if (cwInput.isRight(command)) {
-      cursorControl.moveCursor(Direction.EAST);
+  private void moveCursor(CWCommand command) {
+    switch (command.getEnum()) {
+      case UP:
+        cursorControl.moveCursor(Direction.NORTH);
+        break;
+      case DOWN:
+        cursorControl.moveCursor(Direction.SOUTH);
+        break;
+      case LEFT:
+        cursorControl.moveCursor(Direction.WEST);
+        break;
+      case RIGHT:
+        cursorControl.moveCursor(Direction.EAST);
+        break;
     }
     scroller.setCursorLocation(mapRenderer.getCursorLocation());
   }
 
+  @Override
   public void keyReleased(int key, char c) {
     if (key == Input.KEY_0) {
       mapRenderer.activateCursor("DOES_NOT_EXISTS");

@@ -5,6 +5,7 @@ import com.customwars.client.ui.MenuItem;
 import com.customwars.client.ui.PopupMenu;
 import com.customwars.client.ui.state.CWInput;
 import com.customwars.client.ui.state.CWState;
+import com.customwars.client.ui.state.input.CWCommand;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -12,7 +13,6 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.Music;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.Sound;
-import org.newdawn.slick.command.Command;
 import org.newdawn.slick.gui.AbstractComponent;
 import org.newdawn.slick.gui.ComponentListener;
 import org.newdawn.slick.state.StateBasedGame;
@@ -83,8 +83,8 @@ public class TestMenu extends CWState implements ComponentListener {
   public void update(GameContainer gameContainer, int elapsedTime) throws SlickException {
   }
 
-  public void controlPressed(Command command, CWInput cwInput) {
-    testmenu.controlPressed(command, cwInput);
+  public void controlPressed(CWCommand command, CWInput cwInput) {
+    testmenu.controlPressed(command);
   }
 
   public void leave(GameContainer container, StateBasedGame game) throws SlickException {

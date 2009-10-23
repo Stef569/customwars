@@ -4,11 +4,11 @@ import com.customwars.client.ui.MenuItem;
 import com.customwars.client.ui.PopupMenu;
 import com.customwars.client.ui.state.CWInput;
 import com.customwars.client.ui.state.CWState;
+import com.customwars.client.ui.state.input.CWCommand;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
-import org.newdawn.slick.command.Command;
 import org.newdawn.slick.gui.AbstractComponent;
 import org.newdawn.slick.gui.ComponentListener;
 import org.newdawn.slick.state.StateBasedGame;
@@ -55,8 +55,9 @@ public class SingleMenuState extends CWState implements ComponentListener {
 
   }
 
-  public void controlPressed(Command command, CWInput cwInput) {
-    mainMenu.controlPressed(command, cwInput);
+  @Override
+  public void controlPressed(CWCommand command, CWInput cwInput) {
+    mainMenu.controlPressed(command);
   }
 
   public void componentActivated(AbstractComponent source) {

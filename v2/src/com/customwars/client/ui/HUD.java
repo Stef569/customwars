@@ -12,10 +12,9 @@ import com.customwars.client.ui.hud.TransportInfoBox;
 import com.customwars.client.ui.hud.UnitInfoBox;
 import com.customwars.client.ui.slick.BasicComponent;
 import com.customwars.client.ui.sprite.SpriteManager;
-import com.customwars.client.ui.state.CWInput;
+import com.customwars.client.ui.state.input.CWCommand;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
-import org.newdawn.slick.command.Command;
 import org.newdawn.slick.gui.ComponentListener;
 import org.newdawn.slick.gui.GUIContext;
 
@@ -227,9 +226,9 @@ public class HUD {
     return popupMenu != null && popupMenu.isVisible();
   }
 
-  public void controlPressed(Command command, CWInput cwInput) {
+  public void controlPressed(CWCommand command) {
     if (isPopupVisible()) {
-      popupMenu.controlPressed(command, cwInput);
+      popupMenu.controlPressed(command);
     }
   }
 }
