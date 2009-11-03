@@ -1,8 +1,8 @@
-package com.client.model.api.fight;
+package com.customwars.client.model.fight;
 
-import com.client.model.api.ArmyBranch;
-import com.client.model.api.gameobject.Player;
-import com.client.model.api.map.Location;
+import com.customwars.client.model.ArmyBranch;
+import com.customwars.client.model.game.Player;
+import com.customwars.client.model.map.Location;
 
 /**
  * Defines objects that can take damage and can counter attack

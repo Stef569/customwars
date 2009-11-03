@@ -1,7 +1,7 @@
-package com.client.model.api.fight;
+package com.customwars.client.model.fight;
 
-import com.client.model.impl.map.TileMap;
-import com.tools.Args;
+import com.customwars.client.model.map.TileMap;
+import tools.Args;
 
 /**
  * Allows an Attacker to attack a Defender
@@ -62,7 +62,6 @@ public abstract class BasicFight implements Fight {
   }
 
   protected boolean isSuicidalCounterAttack() {
-    // todo this sometimes returns true when it shouldn't
     return getAttackDamagePercentage() >= 100;
   }
 

@@ -1,8 +1,8 @@
-package com.client.model.api.fight;
+package com.customwars.client.model.fight;
 
-import com.client.model.api.ArmyBranch;
-import com.client.model.api.map.Location;
-import com.client.model.api.map.Range;
+import com.customwars.client.model.ArmyBranch;
+import com.customwars.client.model.map.Location;
+import com.customwars.client.model.map.Range;
 
 import java.util.List;
 

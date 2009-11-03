@@ -1,4 +1,4 @@
-package com.client.model.api.fight;
+package com.customwars.client.model.fight;
 
 /**
  * This class allows An Attacker and Defender to fight each other.
@@ -13,8 +13,6 @@ package com.client.model.api.fight;
  *
  * Note that getAttackDamagePercentage() will return
  * a different value or null after startFight() is invoked.
- *
- * @author stefan
  */
 public interface Fight {
 
