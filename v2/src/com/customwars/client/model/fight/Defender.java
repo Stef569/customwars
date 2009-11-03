@@ -1,13 +1,11 @@
-package com.customwars.client.model.fight;
+package com.client.model.api.fight;
 
-import com.customwars.client.model.ArmyBranch;
-import com.customwars.client.model.game.Player;
-import com.customwars.client.model.map.Location;
+import com.client.model.api.ArmyBranch;
+import com.client.model.api.gameobject.Player;
+import com.client.model.api.map.Location;
 
 /**
  * Defines objects that can take damage and can counter attack
- *
- * @author stefan
  */
 public interface Defender {
   void defend(Attacker attacker, Fight fight);
