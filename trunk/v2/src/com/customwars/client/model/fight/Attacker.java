@@ -1,15 +1,13 @@
-package com.customwars.client.model.fight;
+package com.client.model.api.fight;
 
-import com.customwars.client.model.ArmyBranch;
-import com.customwars.client.model.map.Location;
-import com.customwars.client.model.map.Range;
+import com.client.model.api.ArmyBranch;
+import com.client.model.api.map.Location;
+import com.client.model.api.map.Range;
 
 import java.util.List;
 
 /**
  * Defines objects that can attack defenders
- *
- * @author stefan
  */
 public interface Attacker {
   void attack(Defender defender, Fight fight);

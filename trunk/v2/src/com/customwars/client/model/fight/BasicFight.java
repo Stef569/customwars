@@ -1,14 +1,12 @@
-package com.customwars.client.model.fight;
+package com.client.model.api.fight;
 
-import com.customwars.client.model.map.TileMap;
-import tools.Args;
+import com.client.model.impl.map.TileMap;
+import com.tools.Args;
 
 /**
  * Allows an Attacker to attack a Defender
  * When canCounterAttack returns true the defender will counterAttack the attacker
  * An attack - counter attack sequense can only be performed once.
- *
- * @author stefan
  */
 public abstract class BasicFight implements Fight {
   protected Attacker attacker;
@@ -56,7 +54,7 @@ public abstract class BasicFight implements Fight {
 
   protected boolean canCounterAttack() {
     return !fightComplete && !isSuicidalCounterAttack() &&
-            TileMap.isAdjacent(attacker.getLocation(), defender.getLocation());
+      TileMap.isAdjacent(attacker.getLocation(), defender.getLocation());
   }
 
   private boolean canSwapAttackerAndDefender() {
@@ -64,6 +62,7 @@ public abstract class BasicFight implements Fight {
   }
 
   protected boolean isSuicidalCounterAttack() {
+    // todo this sometimes returns true when it shouldn't
     return getAttackDamagePercentage() >= 100;
   }
 

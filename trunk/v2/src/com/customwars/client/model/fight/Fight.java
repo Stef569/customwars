@@ -1,4 +1,4 @@
-package com.customwars.client.model.fight;
+package com.client.model.api.fight;
 
 /**
  * This class allows An Attacker and Defender to fight each other.
