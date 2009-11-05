@@ -37,7 +37,7 @@ public class StartupTest extends BasicGame {
   public void init(GameContainer container) throws SlickException {
     resources = new ResourceManager();
     Config config = new Config(resources);
-    config.configure();
+    config.load();
     screenWidth = container.getWidth();
     resources.loadAll();
     appGameContainer.setTitle(System.getProperty("game.name"));

@@ -5,6 +5,7 @@ import org.apache.log4j.Logger;
 import javax.imageio.stream.ImageInputStream;
 import java.io.Closeable;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -126,6 +127,22 @@ public final class IOUtil {
     properties.load(in);
     closeStream(in);
     return properties;
+  }
+
+  /**
+   * Store the properties to the location with no extra comments
+   */
+  public static void storePropertyFile(Properties properties, String location) throws IOException {
+    storePropertyFile(properties, location, "");
+  }
+
+  /**
+   * Store the properties to the location with comments at the top of the file
+   */
+  public static void storePropertyFile(Properties properties, String location, String comments) throws IOException {
+    FileOutputStream out = new FileOutputStream(location);
+    properties.store(out, comments);
+    closeStream(out);
   }
 
   /**

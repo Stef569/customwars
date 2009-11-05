@@ -24,13 +24,13 @@ import java.util.ResourceBundle;
  * @author stefan
  */
 public class App {
-  private static Properties properties = new Properties();
+  private static final Properties properties = new Properties();
   private static ResourceBundle localeResourceBundle;
 
-  public static void setProperties(Properties properties) {
-    App.properties = properties;
-  }
-
+  /**
+   * Set the locale bundle, this is used to translate text
+   * See the translate method
+   */
   public static void setLocaleResourceBundle(ResourceBundle bundle) {
     App.localeResourceBundle = bundle;
   }
@@ -120,7 +120,31 @@ public class App {
     return localeResourceBundle.getString(msg);
   }
 
-  public static Properties getProperties() {
-    return properties;
+  /**
+   * Put all the key-value pairs from the given properties into this properties
+   * including default values. Duplicate keys are overwritten.
+   *
+   * @param properties The properties to add to this properties
+   */
+  public static void putAll(Properties properties) {
+    for (String key : properties.stringPropertyNames()) {
+      String val = properties.getProperty(key);
+      App.properties.setProperty(key, val);
+    }
+  }
+
+  /**
+   * @return All the properties that can be changed by the user
+   */
+  public static Properties getUserProperties() {
+    Properties userProperties = new Properties();
+
+    for (String key : properties.stringPropertyNames()) {
+      if (key.startsWith("user")) {
+        String val = properties.getProperty(key);
+        userProperties.setProperty(key, val);
+      }
+    }
+    return userProperties;
   }
 }

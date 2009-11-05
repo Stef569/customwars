@@ -1,8 +1,8 @@
 package com.customwars.client;
 
 import com.customwars.client.io.loading.BinCW2MapParserTest;
+import com.customwars.client.io.loading.ControlsConfiguratorTest;
 import com.customwars.client.io.loading.FileSystemManagerTest;
-import com.customwars.client.io.loading.UserConfigParserTest;
 import com.customwars.client.model.game.GameTest;
 import com.customwars.client.model.gameobject.CityTest;
 import com.customwars.client.model.gameobject.CityXStreamTest;
@@ -21,7 +21,7 @@ import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-  BinCW2MapParserTest.class, FileSystemManagerTest.class, UserConfigParserTest.class,
+  BinCW2MapParserTest.class, FileSystemManagerTest.class, ControlsConfiguratorTest.class,
   GameTest.class, TileMapTest.class,
   UnitTest.class, UnitEventTest.class, UnitFightTest.class, CityTest.class, TerrainTest.class,
   CityXStreamTest.class, TerrainXStreamTest.class, UnitXStreamTest.class

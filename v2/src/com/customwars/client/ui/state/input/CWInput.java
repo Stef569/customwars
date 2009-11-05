@@ -5,9 +5,6 @@ import org.newdawn.slick.command.BasicCommand;
 import org.newdawn.slick.command.Command;
 import org.newdawn.slick.command.Control;
 import org.newdawn.slick.command.InputProvider;
-import org.newdawn.slick.command.KeyControl;
-import org.newdawn.slick.command.MouseButtonControl;
-import tools.StringUtil;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -16,37 +13,36 @@ import java.util.List;
 
 /**
  * Contains all the input Commands used in cw(Select, Menu up,...)
- * Storing multiple controls into 1 Command object allows
- * to remap keys that activate a command
+ * Multiple controls can be mapped to 1 Command object
  *
  * @author stefan
  */
 public class CWInput extends InputProvider {
-  public final String INPUT_PREFIX = "user.input";
-  public final Command SELECT = new CWCommand(CommandEnum.SELECT);
-  public final Command CANCEL = new CWCommand(CommandEnum.CANCEL);
-  public final Command EXIT = new CWCommand(CommandEnum.EXIT);
-  public final Command DOWN = new CWCommand(CommandEnum.DOWN);
-  public final Command UP = new CWCommand(CommandEnum.UP);
-  public final Command LEFT = new CWCommand(CommandEnum.LEFT);
-  public final Command RIGHT = new CWCommand(CommandEnum.RIGHT);
-  public final Command TOGGLE_MUSIC = new CWCommand(CommandEnum.TOGGLE_MUSIC);
-  public final Command ZOOM_IN = new CWCommand(CommandEnum.ZOOM_IN);
-  public final Command ZOOM_OUT = new CWCommand(CommandEnum.ZOOM_OUT);
-  public final Command FILL_MAP = new CWCommand(CommandEnum.FILL_MAP);
-  public final Command NEXT_PAGE = new CWCommand(CommandEnum.NEXT_PAGE);
-  public final Command PREV_PAGE = new CWCommand(CommandEnum.PREV_PAGE);
-  public final Command RECOLOR = new CWCommand(CommandEnum.RECOLOR);
-  public final Command DELETE = new CWCommand(CommandEnum.DELETE);
-  public final Command TOGGLE_FPS = new CWCommand(CommandEnum.TOGGLE_FPS);
-  public final Command END_TURN = new CWCommand(CommandEnum.END_TURN);
-  public final Command TOGGLE_CONSOLE = new CWCommand(CommandEnum.TOGGLE_CONSOLE);
-  public final Command TOGGLE_EVENT_VIEWER = new CWCommand(CommandEnum.TOGGLE_EVENTVIEWER);
-  public final Command SAVE = new CWCommand(CommandEnum.SAVE);
-  public final Command OPEN = new CWCommand(CommandEnum.OPEN);
+  public static final String INPUT_PREFIX = "user.input";
+  public static final Command SELECT = new CWCommand(CommandEnum.SELECT);
+  public static final Command CANCEL = new CWCommand(CommandEnum.CANCEL);
+  public static final Command EXIT = new CWCommand(CommandEnum.EXIT);
+  public static final Command DOWN = new CWCommand(CommandEnum.DOWN);
+  public static final Command UP = new CWCommand(CommandEnum.UP);
+  public static final Command LEFT = new CWCommand(CommandEnum.LEFT);
+  public static final Command RIGHT = new CWCommand(CommandEnum.RIGHT);
+  public static final Command TOGGLE_MUSIC = new CWCommand(CommandEnum.TOGGLE_MUSIC);
+  public static final Command ZOOM_IN = new CWCommand(CommandEnum.ZOOM_IN);
+  public static final Command ZOOM_OUT = new CWCommand(CommandEnum.ZOOM_OUT);
+  public static final Command FILL_MAP = new CWCommand(CommandEnum.FILL_MAP);
+  public static final Command NEXT_PAGE = new CWCommand(CommandEnum.NEXT_PAGE);
+  public static final Command PREV_PAGE = new CWCommand(CommandEnum.PREV_PAGE);
+  public static final Command RECOLOR = new CWCommand(CommandEnum.RECOLOR);
+  public static final Command DELETE = new CWCommand(CommandEnum.DELETE);
+  public static final Command TOGGLE_FPS = new CWCommand(CommandEnum.TOGGLE_FPS);
+  public static final Command END_TURN = new CWCommand(CommandEnum.END_TURN);
+  public static final Command TOGGLE_CONSOLE = new CWCommand(CommandEnum.TOGGLE_CONSOLE);
+  public static final Command TOGGLE_EVENT_VIEWER = new CWCommand(CommandEnum.TOGGLE_EVENT_VIEWER);
+  public static final Command SAVE = new CWCommand(CommandEnum.SAVE);
+  public static final Command OPEN = new CWCommand(CommandEnum.OPEN);
 
-  private Input input;
-  private List<Command> commands = buildCommandList();
+  private final Input input;
+  private final List<Command> commands = buildCommandList();
 
   private List<Command> buildCommandList() {
     List<Command> commands = new ArrayList<Command>();
@@ -92,8 +88,8 @@ public class CWInput extends InputProvider {
   public boolean isControlAlreadyUsed(Control control) {
     List commands = getUniqueCommands();
     for (Object obj : commands) {
-      Command c = (Command) obj;
-      if (getControlsFor(c).contains(control))
+      Command command = (Command) obj;
+      if (getControlsFor(command).contains(control))
         return true;
     }
     return false;
@@ -105,10 +101,10 @@ public class CWInput extends InputProvider {
   }
 
   public Command getCommandByName(String commandName) {
-    for (Command c : commands) {
-      BasicCommand command = (BasicCommand) c;
-      if (command.getName().equalsIgnoreCase(commandName))
-        return command;
+    for (Command command : commands) {
+      BasicCommand basicCommand = (BasicCommand) command;
+      if (basicCommand.getName().equalsIgnoreCase(commandName))
+        return basicCommand;
     }
     throw new IllegalArgumentException("No command found for " + commandName + " " + commands);
   }
@@ -131,57 +127,22 @@ public class CWInput extends InputProvider {
   }
 
   @SuppressWarnings("unchecked")
-  public String getControlsAsText(Command command) {
+  public List<String> getControlsAsText(Command command) {
     List<Control> controls = getControlsFor(command);
-    return getControlsAsText(controls, 20);
-  }
-
-  @SuppressWarnings("unchecked")
-  public String getControlsAsText(Command command, int maxControls) {
-    List<Control> controls = getControlsFor(command);
-    return getControlsAsText(controls, maxControls);
-  }
-
-  public String getControlsAsText(List<Control> controls, int maxControls) {
-    String txt = "";
-    int controlCounter = 0;
+    List<String> controlsAsText = new ArrayList();
 
     for (Control control : controls) {
-      txt += convertControlToText(control) + ", ";
-
-      if (++controlCounter >= maxControls) {
-        break;
-      }
+      String humanReadableControlName = LwjglControlUtil.getControlAsHumanReadableText(control);
+      controlsAsText.add(humanReadableControlName);
     }
 
-    // remove trailing comma and space
-    return StringUtil.removeCharsFromEnd(txt, 2);
-  }
-
-  public String convertControlToText(Control control) {
-    if (control instanceof KeyControl) {
-      KeyControl keyControl = (KeyControl) control;
-      return Input.getKeyName(keyControl.hashCode());
-    } else if (control instanceof MouseButtonControl) {
-      MouseButtonControl mouseButtonControl = (MouseButtonControl) control;
-      if (mouseButtonControl.hashCode() == Input.MOUSE_LEFT_BUTTON) {
-        return "Left Mouse button";
-      } else if (mouseButtonControl.hashCode() == Input.MOUSE_MIDDLE_BUTTON) {
-        return "Middle Mouse button";
-      } else if (mouseButtonControl.hashCode() == Input.MOUSE_RIGHT_BUTTON) {
-        return "Right Mouse button";
-      } else {
-        return "Unknown mouse button";
-      }
-    } else {
-      return "unknown control";
-    }
+    return controlsAsText;
   }
 
   public void setActive(boolean active) {
     super.setActive(active);
 
-    // Clear any control pressed records, that ended up in the input queue
+    // Clear any control pressed records, that are still in the input queue
     input.clearControlPressedRecord();
     input.clearKeyPressedRecord();
     input.clearMousePressedRecord();

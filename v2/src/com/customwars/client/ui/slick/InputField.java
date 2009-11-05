@@ -8,6 +8,9 @@ import org.newdawn.slick.command.KeyControl;
 import org.newdawn.slick.gui.ComponentListener;
 import org.newdawn.slick.gui.GUIContext;
 import org.newdawn.slick.gui.TextField;
+import tools.StringUtil;
+
+import java.util.List;
 
 /**
  * The InputField class displays the keys mapped to a particular command and allows the user to
@@ -36,15 +39,34 @@ public class InputField extends TextField {
    * as a ',' separated list
    */
   public void initDisplayText() {
-    String controlsAsText = cwInput.getControlsAsText(command, bindingLimit);
+    String controlsAsText = getControlsAsText(command, bindingLimit);
     setText(controlsAsText);
+  }
+
+  private String getControlsAsText(Command command, int bindingLimit) {
+    StringBuilder controlsBuilder = new StringBuilder(bindingLimit * 2);
+    List<String> controlsAsText = cwInput.getControlsAsText(command);
+
+    if (controlsAsText.size() > bindingLimit) {
+      for (int i = 0; i < controlsAsText.size(); i++) {
+        if (i < bindingLimit) {
+          controlsBuilder.append(controlsAsText.get(i));
+          controlsBuilder.append(", ");
+        } else {
+          controlsAsText.remove(i);
+        }
+      }
+    }
+
+    // Remove , and space
+    return StringUtil.removeCharsFromEnd(controlsBuilder.toString(), 2);
   }
 
   @Override
   public void keyPressed(int key, char c) {
     if (!hasFocus()) return;
 
-    if (key == CLEAR_FIELD && cwInput.getControlsFor(command).size() > 0) {
+    if (key == CLEAR_FIELD && !cwInput.getControlsFor(command).isEmpty()) {
       for (Object control : cwInput.getControlsFor(command)) {
         cwInput.unbindCommand((Control) control);
       }
