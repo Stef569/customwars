@@ -164,7 +164,7 @@ public class InGameState extends CWState implements PropertyChangeListener {
 
       inGameContext.update(delta);
       if (gameOver && isInputAllowed()) {
-        changeGameState("GAME_OVER");
+        changeToState("GAME_OVER");
         gameOver = false;
       }
       input.setOffset(camera.getX(), camera.getY());
@@ -188,7 +188,7 @@ public class InGameState extends CWState implements PropertyChangeListener {
   @Override
   public void controlPressed(CWCommand command, CWInput cwInput) {
     if (entered && isInputAllowed()) {
-      if (inGameContext.canUndo() && command == cwInput.CANCEL) {
+      if (inGameContext.canUndo() && command == CWInput.CANCEL) {
         gameControl.undo();
         return;
       }

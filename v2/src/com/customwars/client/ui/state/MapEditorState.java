@@ -137,13 +137,13 @@ public class MapEditorState extends CWState {
   private void renderControls(Graphics g) {
     int LEFT_MARGIN = 350;
     g.drawString("The Controls:", LEFT_MARGIN, 10);
-    g.drawString("Fill: " + cwInput.getControlsAsText(cwInput.FILL_MAP), LEFT_MARGIN, 22);
-    g.drawString("Add: " + cwInput.getControlsAsText(cwInput.SELECT), LEFT_MARGIN, 34);
-    g.drawString("Delete object: " + cwInput.getControlsAsText(cwInput.DELETE), LEFT_MARGIN, 46);
-    g.drawString("Change panel: " + cwInput.getControlsAsText(cwInput.NEXT_PAGE), LEFT_MARGIN, 58);
-    g.drawString("Recolor: " + cwInput.getControlsAsText(cwInput.RECOLOR), LEFT_MARGIN, 70);
-    g.drawString("Save map: " + cwInput.getControlsAsText(cwInput.SAVE), LEFT_MARGIN, 82);
-    g.drawString("Open map: " + cwInput.getControlsAsText(cwInput.OPEN), LEFT_MARGIN, 94);
+    g.drawString("Fill: " + cwInput.getControlsAsText(CWInput.FILL_MAP), LEFT_MARGIN, 22);
+    g.drawString("Add: " + cwInput.getControlsAsText(CWInput.SELECT), LEFT_MARGIN, 34);
+    g.drawString("Delete object: " + cwInput.getControlsAsText(CWInput.DELETE), LEFT_MARGIN, 46);
+    g.drawString("Change panel: " + cwInput.getControlsAsText(CWInput.NEXT_PAGE), LEFT_MARGIN, 58);
+    g.drawString("Recolor: " + cwInput.getControlsAsText(CWInput.RECOLOR), LEFT_MARGIN, 70);
+    g.drawString("Save map: " + cwInput.getControlsAsText(CWInput.SAVE), LEFT_MARGIN, 82);
+    g.drawString("Open map: " + cwInput.getControlsAsText(CWInput.OPEN), LEFT_MARGIN, 94);
   }
 
   @Override

@@ -4,129 +4,67 @@ import com.customwars.client.App;
 import com.customwars.client.Config;
 import com.customwars.client.SFX;
 import com.customwars.client.io.ResourceManager;
+import com.customwars.client.model.game.Game;
 import com.customwars.client.ui.GUI;
-import com.customwars.client.ui.state.CWState;
+import com.customwars.client.ui.slick.CWStateBasedGame;
 import com.customwars.client.ui.state.ControlBindingState;
 import com.customwars.client.ui.state.EndTurnState;
 import com.customwars.client.ui.state.GameOverState;
 import com.customwars.client.ui.state.InGameState;
 import com.customwars.client.ui.state.MapEditorState;
-import com.customwars.client.ui.state.StateChanger;
-import com.customwars.client.ui.state.StateSession;
 import com.customwars.client.ui.state.input.CWCommand;
-import com.customwars.client.ui.state.input.CWInput;
 import org.apache.log4j.Logger;
-import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Input;
-import org.newdawn.slick.SlickException;
-import org.newdawn.slick.command.Command;
 import org.newdawn.slick.command.InputProviderListener;
-import org.newdawn.slick.state.StateBasedGame;
+import tools.StringUtil;
 
 import java.io.IOException;
 
-public class TestStates extends StateBasedGame implements InputProviderListener {
+public class TestStates extends CWStateBasedGame implements InputProviderListener {
   private static final Logger logger = Logger.getLogger(TestStates.class);
-  private ResourceManager resources;
-  private Config config;
-  private StateSession stateSession;
-  private GameContainer gameContainer;
-  private CWInput cwInput;
-  private StateChanger stateChanger;
-  private String startStateName;
 
-  public TestStates(String startStateName, StateSession stateSession, ResourceManager resources, Config config) {
-    super(App.get("game.name") + " - Slick tests");
-    this.startStateName = startStateName == null ? "MAIN_MENU" : startStateName;
-    this.stateSession = stateSession;
-    this.resources = resources;
-    this.config = config;
+  public TestStates(String startStateName, ResourceManager resources, Config config) {
+    super(
+      App.get("game.name") + " - Slick tests",
+      StringUtil.hasContent(startStateName) ? startStateName : "MAIN_MENU",
+      resources, config);
   }
 
-  public void initStatesList(GameContainer container) throws SlickException {
-    this.gameContainer = container;
-
-    // Create input commands
-    // listen when they are pressed
-    cwInput = new CWInput(container.getInput());
-    cwInput.addListener(this);
-
-    // Global data for each state
-    CWState.setCwInput(cwInput);
-    CWState.setResources(resources);
-    CWState.setStateSession(stateSession);
-
-    // Create and map states
+  public void initStatesList() {
     buildStateList();
-    mapStateIdsToName();
     loadResources();
-    CWState.setDefaultFont(container);
-    stateChanger.changeTo(startStateName);
-    config.loadInputBindings(cwInput);
-
-    logger.debug("Startup complete starting state=" + (startStateName == null ? "Default" : startStateName));
+    initTestMode();
   }
 
   private void buildStateList() {
-    CWState testMenu = new TestMenu();
-    CWState testMapRenderer = new TestMapRenderer();
-    CWState remapKeysTest = new ControlBindingState();
-    CWState inGameTest = new InGameState();
-    CWState endTurnState = new EndTurnState();
-    CWState mapParser = new TestMapParser();
-    CWState gameOver = new GameOverState();
-    CWState mapEditorState = new MapEditorState();
-
-    addState(testMenu);
-    addState(testMapRenderer);
-    addState(remapKeysTest);
-    addState(inGameTest);
-    addState(endTurnState);
-    addState(mapParser);
-    addState(gameOver);
-    addState(mapEditorState);
-  }
-
-  private void mapStateIdsToName() {
-    stateChanger = new StateChanger(this);
-    stateChanger.addState("mainmenu", 0);
-    stateChanger.addState("MAIN_MENU", 0);
-    stateChanger.addState("terrainmenu", 1);
-    stateChanger.addState("keymenu", 5);
-    stateChanger.addState("IN_GAME", 3);
-    stateChanger.addState("END_TURN", 4);
-    stateChanger.addState("MAP_PARSER", 6);
-    stateChanger.addState("GAME_OVER", 10);
-    stateChanger.addState("MAP_EDITOR", 50);
-    CWState.setStateChanger(stateChanger);
+    addState("MAIN_MENU", new TestMenu());
+    addState("terrainmenu", new TestMapRenderer());
+    addState("keymenu", new ControlBindingState());
+    addState("IN_GAME", new InGameState());
+    addState("END_TURN", new EndTurnState());
+    addState("MAP_PARSER", new TestMapParser());
+    addState("GAME_OVER", new GameOverState());
+    addState("MAP_EDITOR", new MapEditorState());
   }
 
   private void loadResources() {
     logger.info("Loading resources");
     try {
+      resources.loadModel();
       resources.loadResources();
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
   }
 
-  /**
-   * Delegate the pressed control to the current state
-   */
-  public void controlPressed(Command command) {
-    CWState state = (CWState) getCurrentState();
-    state.controlPressed((CWCommand) command);
+  private void initTestMode() {
+    logger.info("Init debug Mode");
+    Game game = HardCodedGame.getGame();
+    stateSession.game = game;
+    stateSession.map = game.getMap();
   }
 
-  /**
-   * Delegate the released control to the current state
-   */
-  public void controlReleased(Command command) {
-    handleGlobalInput((CWCommand) command);
-    CWState state = (CWState) getCurrentState();
-    state.controlReleased((CWCommand) command);
-  }
-
+  @Override
   protected void handleGlobalInput(CWCommand command) {
     switch (command.getEnum()) {
       case EXIT:
@@ -139,7 +77,7 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
       case TOGGLE_CONSOLE:
         GUI.toggleConsoleFrame();
         break;
-      case TOGGLE_EVENTVIEWER:
+      case TOGGLE_EVENT_VIEWER:
         GUI.toggleEventFrame();
       case TOGGLE_FPS:
         gameContainer.setShowFPS(!gameContainer.isShowingFPS());
@@ -147,16 +85,14 @@ public class TestStates extends StateBasedGame implements InputProviderListener 
     }
   }
 
+  @Override
   public void keyPressed(int key, char c) {
-    super.keyPressed(key, c);
-    if (cwInput.isActive()) {
-      if (key == Input.KEY_SPACE) {
-        stateChanger.changeToNext();
-      }
-    }
-
     if (key == Input.KEY_ENTER) {
-      stateChanger.changeTo("MAIN_MenU");
+      changeToState("MAIN_MenU");
     }
+  }
+
+  @Override
+  public void shutDownHook() {
   }
 }

@@ -4,6 +4,7 @@ import com.customwars.client.model.Statistics;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.ui.layout.TextBox;
 import org.apache.log4j.Logger;
+import org.newdawn.slick.Font;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
@@ -23,6 +24,7 @@ public class GameOverState extends CWState {
   public void enter(GameContainer container, StateBasedGame game) throws SlickException {
     super.enter(container, game);
     Statistics stats = stateSession.stats;
+    Font defaultFont = container.getDefaultFont();
 
     // todo create a Table gui object where rows and columns can be added, instead of this mess.
     // todo create column for each player, create row for each statistic

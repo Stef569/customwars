@@ -32,12 +32,13 @@ public class HUD {
   private static final int INFO_BOX_HEIGH = 110;
   private static final int TOP_MARGIN = 10;
   private Game game;
+
+  private final GUIContext guiContext;
+  private final List<BasicComponent> topComponents;
+  private final List<BasicComponent> bottomComponents;
   private SpriteManager spriteManager;
   private Camera2D camera;
-  private GUIContext guiContext;
   private PopupMenu popupMenu;
-  private List<BasicComponent> topComponents;
-  private List<BasicComponent> bottomComponents;
   private TerrainInfoBox terrainInfoBox;
   private UnitInfoBox unitInfoBox;
   private TransportInfoBox transportInfoBox;
@@ -83,6 +84,8 @@ public class HUD {
 
   /**
    * Updates the info boxes with information from the tile
+   *
+   * @param tile the tile to show information for
    */
   public void moveOverTile(Tile tile) {
     if (terrainInfoBox != null && camera != null) {
@@ -108,6 +111,8 @@ public class HUD {
    * currently on the screen. If the cursor is half-way or more toward the right side
    * of the screen, the info boxes will be set to display on the left side. Otherwise,
    * the info boxes will be set to display on the right side.
+   *
+   * @param quadrant 1 of the 4 quadrants in the map
    */
   public final void locateInfoBoxes(Direction quadrant) {
     if (isInWestQuadrant(quadrant)) {

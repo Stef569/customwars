@@ -1,5 +1,6 @@
 package com.customwars.client.ui.state.menu;
 
+import com.customwars.client.ui.GUI;
 import com.customwars.client.ui.MenuItem;
 import com.customwars.client.ui.PopupMenu;
 import com.customwars.client.ui.state.CWState;
@@ -13,7 +14,9 @@ import org.newdawn.slick.gui.AbstractComponent;
 import org.newdawn.slick.gui.ComponentListener;
 import org.newdawn.slick.state.StateBasedGame;
 
-public class SingleMenuState extends CWState implements ComponentListener {
+import java.awt.Point;
+
+public class SinglePlayerMenuState extends CWState implements ComponentListener {
   private PopupMenu mainMenu;
 
   public void init(GameContainer container, StateBasedGame game) throws SlickException {
@@ -27,8 +30,8 @@ public class SingleMenuState extends CWState implements ComponentListener {
 
     mainMenu.addListener(this);
     mainMenu.init();
-    mainMenu.setLocation((container.getWidth() / 2 - mainMenu.getWidth() / 2) + 20,
-      (container.getHeight() / 2 - mainMenu.getHeight() / 2) - 100);
+    Point center = GUI.getCenteredRenderPoint(mainMenu.getSize(), container);
+    mainMenu.setLocation(center.x + 20, center.y - 100);
   }
 
   @Override
@@ -55,7 +58,6 @@ public class SingleMenuState extends CWState implements ComponentListener {
 
   }
 
-  @Override
   public void controlPressed(CWCommand command, CWInput cwInput) {
     mainMenu.controlPressed(command);
   }
@@ -64,10 +66,10 @@ public class SingleMenuState extends CWState implements ComponentListener {
     PopupMenu popupMenu = (PopupMenu) source;
     switch (popupMenu.getCurrentItem()) {
       case 0:
-        changeGameState("MAP_EDITOR");
+        changeToState("MAP_EDITOR");
         break;
       case 1:
-        changeGameState("MAIN_MENU");
+        changeToState("MAIN_MENU");
         break;
     }
   }
