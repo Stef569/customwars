@@ -1,76 +1,68 @@
 package com.customwars.client;
 
 import com.customwars.client.io.ResourceManager;
-import com.customwars.client.io.loading.UserConfigParser;
-import com.customwars.client.ui.state.input.CWInput;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.newdawn.slick.util.ResourceLoader;
 import tools.IOUtil;
+import tools.StringUtil;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Properties;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 
 /**
  * Load and apply configuration
- * There is global configuration: game, user, log4J, language properties and maps
- * and plugin configuration: plugin properties, sound, images
- *
- * Persistance properties(user config) are located in the user home dir
- *
- * @author Stefan
+ * global configuration: game, user, log4J, language properties and maps
+ * plugin configuration: plugin properties, sound, images
  */
 public class Config {
   private static final Logger logger = Logger.getLogger(Config.class);
-  private static final String HOME_DIR = System.getProperty("user.home") + "/.cw2/";
-  private static final String MAPS_DIR = HOME_DIR + "maps/";
-  private static final String RES_DIR = "resources/res/";
-  private static final String CONFIG_PATH = RES_DIR + "data/config/";
+  private static final String HOME_DIR = System.getProperty("user.home") + "/.cw2";
+  private static final String MAPS_DIR = HOME_DIR + "/maps";
 
   private static final String GAME_PROPERTIES_FILE = "game.properties";
   private static final String LOG_PROPERTIES_FILE = "log4j.properties";
   private static final String USER_PROPERTIES_FILE = "user.properties";
   private static final String USER_DEFAULTS_PROPERTIES_FILE = "userDefaults.properties";
   private static final String PLUGIN_PROPERTIES_FILE = "plugin.properties";
-  private static final String LANG_BUNDLE_PATH = "resources.res.data.lang.Languages";
-  private String pluginLocation;
 
-  private ResourceManager resources;
-  private Properties userProperties;
-  private Map<String, Properties> persistenceProperties; // Location -> Properties, Properties that can be stored
-  private UserConfigParser userConfigParser;
+  private final ResourceManager resources;
+  private String resourcesPath;
 
   public Config(ResourceManager resources) {
     this.resources = resources;
-    persistenceProperties = new HashMap<String, Properties>();
   }
 
-  public void configure() {
-    createHomeDir();
-    createEmptyUserPropertyFileIfNonePresent();
-    loadProperties();
+  /**
+   * Load Configuration files relative to the current dir
+   */
+  public void load() {
+    load("");
+  }
+
+  /**
+   * Load configuration files relative to the given resourcesPath
+   *
+   * @param resPath The path to the resources
+   */
+  public void load(String resPath) {
+    if (StringUtil.hasContent(resPath)) {
+      String resourcesPath = StringUtil.appendTrailingSuffix(resPath, "/");
+      resourcesPath += "resources";
+      App.put("resources.path", resourcesPath);
+      this.resourcesPath = resourcesPath + "/res";
+    } else {
+      this.resourcesPath = "resources/res";
+    }
+
     storePaths();
-
-    resources.setImgPath(pluginLocation + "images/");
-    resources.setCursorImgsPath(pluginLocation + "images/cursors/");
-    resources.setSoundPath(pluginLocation + "sound/");
-    resources.setDataPath(pluginLocation + "data/");
-
-    // Maps can be stored on 2 places
-    // 1. The user can create maps and put them in his HOME_DIR
-    // 2. Maps included within the release are in the RES_DIR
-    resources.addMapPath(MAPS_DIR);
-    resources.addMapPath(RES_DIR + "maps/");
-    resources.setFontPath(RES_DIR + "data/fonts/");
-    resources.setDarkPercentage(App.getInt("display.darkpercentage"));
+    initHomeDir();
+    loadConfigFiles();
   }
 
   private void storePaths() {
@@ -78,94 +70,97 @@ public class Config {
     App.put("userproperties.path", HOME_DIR + "/" + USER_PROPERTIES_FILE);
   }
 
-  private void createHomeDir() {
-    File homeDir = new File(HOME_DIR);
-    File mapsDir = new File(MAPS_DIR);
+  private void initHomeDir() {
+    createHomeDirs();
+    createEmptyUserPropertyFileIfNonePresent();
+  }
 
-    IOUtil.mkDir(homeDir, "Could not create home dir " + HOME_DIR);
-    IOUtil.mkDir(mapsDir);
+  private void createHomeDirs() {
+    IOUtil.mkDir(new File(HOME_DIR));
+    IOUtil.mkDir(new File(MAPS_DIR));
   }
 
   private void createEmptyUserPropertyFileIfNonePresent() {
-    File userPropertiesFile = new File(HOME_DIR + USER_PROPERTIES_FILE);
+    File userPropertiesFile = new File(HOME_DIR + "/" + USER_PROPERTIES_FILE);
 
     if (!userPropertiesFile.exists()) {
       IOUtil.createNewFile(userPropertiesFile, "Could not create empty user properties file");
     }
   }
 
-  private void loadProperties() {
+  private void loadConfigFiles() {
     try {
-      loadLog4JProperties();
-      loadGameProperties();
-      loadUserProperties();
+      String configPath = resourcesPath + "/data/config";
+      loadLog4JProperties(configPath);
+      loadGameProperties(configPath);
+      Properties userProperties = loadUserProperties(configPath);
 
       String language = userProperties.getProperty("user.lang");
-      String pluginName = userProperties.getProperty("user.activeplugin", "default");
-      pluginLocation = RES_DIR + "plugin/" + pluginName + "/";
+      String pluginName = userProperties.getProperty("user.activeplugin");
+      String pluginPath = resourcesPath + "/plugin/" + pluginName;
 
       loadLang(language);
-      loadPluginProperties();
-    } catch (IOException e) {
-      throw new RuntimeException("Error reading file", e);
+      loadPluginProperties(pluginPath);
+      initResourceManager(pluginPath);
+    } catch (IOException ex) {
+      throw new RuntimeException("Error reading config file", ex);
     }
   }
 
-  /**
-   * Load the command -> key-mouse control bindings from the userProperties file
-   * Add the bindings to cwInput
-   *
-   * @param cwInput the inputprovider that stores each control->command mapping
-   */
-  public void loadInputBindings(CWInput cwInput) {
-    userConfigParser = new UserConfigParser(cwInput);
-    userConfigParser.readInputConfig(userProperties);
-  }
-
-  private void loadLog4JProperties() throws IOException {
-    Properties log4JProperties = loadProperties(CONFIG_PATH + LOG_PROPERTIES_FILE);
+  private void loadLog4JProperties(String configPath) throws IOException {
+    Properties log4JProperties = loadProperties(configPath + "/" + LOG_PROPERTIES_FILE);
     PropertyConfigurator.configure(log4JProperties);
   }
 
-  private void loadGameProperties() throws IOException {
-    Properties gameProperties = loadProperties(CONFIG_PATH + GAME_PROPERTIES_FILE);
-    App.getProperties().putAll(gameProperties);
+  private void loadGameProperties(String configPath) throws IOException {
+    Properties gameProperties = loadProperties(configPath + "/" + GAME_PROPERTIES_FILE);
+    App.putAll(gameProperties);
   }
 
-  private void loadUserProperties() throws IOException {
-    Properties defaults = loadProperties(CONFIG_PATH + USER_DEFAULTS_PROPERTIES_FILE);
-    userProperties = loadProperties(HOME_DIR + USER_PROPERTIES_FILE, defaults);
-    addNonInputUserPropertiesToApp();
-    persistenceProperties.put(HOME_DIR + USER_PROPERTIES_FILE, userProperties);
-  }
-
-  private void addNonInputUserPropertiesToApp() {
-    for (String key : userProperties.stringPropertyNames()) {
-      if (!key.startsWith(UserConfigParser.INPUT_PREFIX)) {
-        String val = userProperties.getProperty(key);
-        App.put(key, val);
-      }
-    }
+  private Properties loadUserProperties(String configPath) throws IOException {
+    Properties defaults = loadProperties(configPath + "/" + USER_DEFAULTS_PROPERTIES_FILE);
+    Properties userProperties = loadProperties(HOME_DIR + "/" + USER_PROPERTIES_FILE, defaults);
+    App.putAll(userProperties);
+    return userProperties;
   }
 
   public void loadLang(String languageCode) throws IOException {
-    if (languageCode == null) languageCode = "EN";
+    if (!StringUtil.hasContent(languageCode)) {
+      logger.warn("Language code not specified, default = english");
+      languageCode = "EN";
+    }
+
     Locale locale = new Locale(languageCode);
-    loadLangProperties(locale);
+    loadLangProperties(locale, resourcesPath + "/data/lang/Languages");
   }
 
-  private void loadLangProperties(Locale locale) throws IOException {
+  private void loadLangProperties(Locale locale, String languageBundlePath) throws IOException {
     // Using our own ClassLoader that reads from a folder
     // default classloader just looks into the classpath
-    ResourceBundle bundle = PropertyResourceBundle.getBundle(LANG_BUNDLE_PATH, locale, new IOUtil.URLClassLoader());
+    ResourceBundle bundle = PropertyResourceBundle.getBundle(languageBundlePath, locale, new IOUtil.URLClassLoader());
     App.setLocaleResourceBundle(bundle);
     logger.info("Lang=" + locale);
   }
 
-  private void loadPluginProperties() throws IOException {
+  private void loadPluginProperties(String pluginLocation) throws IOException {
     Properties pluginProperties = loadProperties(pluginLocation + "/data/" + PLUGIN_PROPERTIES_FILE);
-    App.getProperties().putAll(pluginProperties);
+    App.putAll(pluginProperties);
     logger.info("Plugin=" + pluginLocation);
+  }
+
+  private void initResourceManager(String pluginPath) {
+    resources.setImgPath(pluginPath + "/images/");
+    resources.setCursorImgsPath(pluginPath + "/images/cursors/");
+    resources.setSoundPath(pluginPath + "/sound/");
+    resources.setDataPath(pluginPath + "/data/");
+
+    // Maps can be stored on 2 places
+    // 1. The user can create maps and put them in his HOME_DIR
+    // 2. Maps included within the release are in the RES_DIR
+    resources.addMapPath(MAPS_DIR);
+    resources.addMapPath(resourcesPath + "/maps/");
+    resources.setFontPath(resourcesPath + "/data/fonts/");
+    resources.setDarkPercentage(App.getInt("display.darkpercentage"));
   }
 
   private Properties loadProperties(String location) throws IOException {
@@ -176,37 +171,5 @@ public class Config {
   private Properties loadProperties(String location, Properties defaults) throws IOException {
     InputStream in = ResourceLoader.getResourceAsStream(location);
     return IOUtil.loadProperties(in, defaults);
-  }
-
-  /**
-   * Store the keys defined in CWInput into newUserProperties
-   * Overwrite the old user properties(the one loaded on startup)
-   */
-  public void storeInputConfig() {
-    Properties newUserProperties = userConfigParser.writeInputConfig();
-
-    for (Object obj : newUserProperties.keySet()) {
-      String key = (String) obj;
-      userProperties.put(key, newUserProperties.getProperty(key));
-    }
-  }
-
-  /**
-   * Store each Property file in persistenceProperties
-   */
-  public void storePersistenceProperties() {
-    for (String propertyFilePath : persistenceProperties.keySet()) {
-      storePropertyFile(persistenceProperties.get(propertyFilePath), propertyFilePath);
-    }
-  }
-
-  private void storePropertyFile(Properties properties, String location) {
-    try {
-      FileOutputStream out = new FileOutputStream(location);
-      properties.store(out, null);
-      IOUtil.closeStream(out);
-    } catch (IOException e) {
-      logger.warn("Could not save property file to " + location, e);
-    }
   }
 }

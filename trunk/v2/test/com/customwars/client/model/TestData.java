@@ -15,7 +15,6 @@ import com.customwars.client.model.map.Range;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Properties;
 
 /**
  * Contains test data
@@ -148,9 +147,7 @@ public class TestData {
     UnitFight.setBaseDMG(initBaseDmg());
     UnitFight.setAltDMG(initAltDmg());
 
-    Properties prop = new Properties();
-    prop.setProperty("plugin.tilesize", "32");
-    App.setProperties(prop);
+    App.put("plugin.tilesize", "32");
   }
 
   public static void clearTestData() {
