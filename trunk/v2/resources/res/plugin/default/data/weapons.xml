@@ -1,0 +1,147 @@
+<list>
+    <weapon name="SMG" id="0">
+        <fireRange>
+            <minRange>1</minRange>
+            <maxRange>1</maxRange>
+        </fireRange>
+        <attacks>
+            <armyBranch>LAND</armyBranch>
+        </attacks>
+    </weapon>
+    <weapon name="BAZOOKA" id="1">
+        <fireRange>
+            <minRange>1</minRange>
+            <maxRange>1</maxRange>
+        </fireRange>
+        <attacks>
+            <armyBranch>LAND</armyBranch>
+        </attacks>
+        <description>For taking out tanks in close Combat</description>
+    </weapon>
+    <weapon name="TANK_MACHIN_GUN" id="2">
+        <fireRange>
+            <minRange>1</minRange>
+            <maxRange>1</maxRange>
+        </fireRange>
+        <attacks>
+            <armyBranch>LAND</armyBranch>
+        </attacks>
+        <description>For taking out units in close Combat</description>
+    </weapon>
+    <weapon name="TANK_MAIN_GUN" id="3">
+        <fireRange>
+            <minRange>1</minRange>
+            <maxRange>1</maxRange>
+        </fireRange>
+        <attacks>
+            <armyBranch>LAND</armyBranch>
+        </attacks>
+    </weapon>
+    <weapon name="LONG_RANGE_CANNON" id="4">
+        <fireRange>
+            <minRange>2</minRange>
+            <maxRange>5</maxRange>
+        </fireRange>
+        <attacks>
+            <armyBranch>LAND</armyBranch>
+            <armyBranch>NAVAL</armyBranch>
+        </attacks>
+        <description>none</description>
+    </weapon>
+    <weapon name="ANTI_AIR" id="5">
+        <fireRange>
+            <minRange>1</minRange>
+            <maxRange>1</maxRange>
+        </fireRange>
+        <attacks>
+            <armyBranch>LAND</armyBranch>
+            <armyBranch>AIR</armyBranch>
+        </attacks>
+    </weapon>
+    <weapon name="ROCKETS" id="6">
+        <fireRange>
+            <minRange>3</minRange>
+            <maxRange>5</maxRange>
+        </fireRange>
+        <attacks>
+            <armyBranch>LAND</armyBranch>
+            <armyBranch>NAVAL</armyBranch>
+        </attacks>
+        <description>none</description>
+    </weapon>
+    <weapon name="ANTI_AIR_ROCKETS" id="7">
+        <fireRange>
+            <minRange>3</minRange>
+            <maxRange>5</maxRange>
+        </fireRange>
+        <attacks>
+            <armyBranch>AIR</armyBranch>
+        </attacks>
+    </weapon>
+    <weapon name="NAVAL_CANNON" id="8">
+        <fireRange>
+            <minRange>3</minRange>
+            <maxRange>5</maxRange>
+        </fireRange>
+        <attacks>
+            <armyBranch>LAND</armyBranch>
+            <armyBranch>NAVAL</armyBranch>
+        </attacks>
+    </weapon>
+    <weapon name="TORPEDO" id="9">
+        <fireRange>
+            <minRange>1</minRange>
+            <maxRange>1</maxRange>
+        </fireRange>
+        <attacks>
+            <armyBranch>NAVAL</armyBranch>
+        </attacks>
+    </weapon>
+    <weapon name="ANTI_SHIP_MISSLE" id="10">
+        <fireRange>
+            <minRange>1</minRange>
+            <maxRange>1</maxRange>
+        </fireRange>
+        <attacks>
+            <armyBranch>NAVAL</armyBranch>
+        </attacks>
+    </weapon>
+    <weapon name="NAVAL_ANTI_AIR_MISSLE" id="11">
+        <fireRange>
+            <minRange>1</minRange>
+            <maxRange>2</maxRange>
+        </fireRange>
+        <attacks>
+            <armyBranch>AIR</armyBranch>
+        </attacks>
+    </weapon>
+    <weapon name="AIRCRAFT_ANTI_AIR_MISSLE" id="12">
+        <fireRange>
+            <minRange>1</minRange>
+            <maxRange>1</maxRange>
+        </fireRange>
+        <attacks>
+            <armyBranch>AIR</armyBranch>
+        </attacks>
+    </weapon>
+    <weapon name="BOMB" id="13">
+        <fireRange>
+            <minRange>1</minRange>
+            <maxRange>1</maxRange>
+        </fireRange>
+        <attacks>
+            <armyBranch>LAND</armyBranch>
+            <armyBranch>NAVAL</armyBranch>
+        </attacks>
+    </weapon>
+    <weapon name="HELI_GROUND_MISSLE" id="14">
+        <fireRange>
+            <minRange>1</minRange>
+            <maxRange>1</maxRange>
+        </fireRange>
+        <attacks>
+            <armyBranch>LAND</armyBranch>
+            <armyBranch>NAVAL</armyBranch>
+        </attacks>
+    </weapon>
+</list>
