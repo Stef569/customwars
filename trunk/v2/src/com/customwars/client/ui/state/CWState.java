@@ -3,24 +3,17 @@ package com.customwars.client.ui.state;
 import com.customwars.client.io.ResourceManager;
 import com.customwars.client.ui.state.input.CWCommand;
 import com.customwars.client.ui.state.input.CWInput;
-import com.thoughtworks.xstream.core.util.Fields;
 import org.newdawn.slick.Color;
-import org.newdawn.slick.Font;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
-import org.newdawn.slick.Music;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
-
-import java.lang.reflect.Field;
 
 /**
  * A state that CW can be in, examples MainMenu, EndTurn, InGame
  * each state can listen for input commands(Select, Cancel, menuUp,menuDown etc)
  * by overwriting controlPressed(Command command)
- *
- * We extend BasicGameState to add cw specific functionality.
  *
  * @author stefan
  */
@@ -28,20 +21,22 @@ public abstract class CWState extends BasicGameState {
   protected static StateChanger stateChanger;   // Allows to change to another state
   protected static ResourceManager resources;   // All the resources
   protected static CWInput cwInput;             // Handles input
-  protected static StateSession stateSession;   // Handles Data between states
-  protected static Font defaultFont;
-  protected static Color defaultColor = Color.white;
+  protected static StateSession stateSession;   // Stores Data between states
   protected boolean entered;
 
   public final void controlPressed(CWCommand command) {
-    if (entered) controlPressed(command, cwInput);
+    if (entered) {
+      controlPressed(command, cwInput);
+    }
   }
 
   public void controlPressed(CWCommand command, CWInput cwInput) {
   }
 
   public final void controlReleased(CWCommand command) {
-    if (entered) controlReleased(command, cwInput);
+    if (entered) {
+      controlReleased(command, cwInput);
+    }
   }
 
   public void controlReleased(CWCommand command, CWInput cwInput) {
@@ -56,8 +51,7 @@ public abstract class CWState extends BasicGameState {
   }
 
   public final void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
-    if (defaultFont != null) g.setFont(defaultFont);
-    if (defaultColor != null) g.setColor(defaultColor);
+    g.setColor(Color.white);
     render(container, g);
   }
 
@@ -69,45 +63,28 @@ public abstract class CWState extends BasicGameState {
 
   public abstract void update(GameContainer container, int delta) throws SlickException;
 
-  public void changeGameState(String newStateName) {
-    stateChanger.changeTo(newStateName);
+  /**
+   * Change to another state
+   *
+   * @param stateName the name of the state to change to case insensitive
+   */
+  public void changeToState(String stateName) {
+    stateChanger.changeTo(stateName);
   }
 
-  public void toggleMusic(Music music) {
-    if (music.playing()) {
-      music.pause();
-    } else {
-      music.resume();
-    }
-  }
-
-  public static void setStateChanger(StateChanger stateChanger) {
+  public void setStateChanger(StateChanger stateChanger) {
     CWState.stateChanger = stateChanger;
   }
 
-  public static void setResources(ResourceManager resources) {
+  public void setResources(ResourceManager resources) {
     CWState.resources = resources;
   }
 
-  public static void setCwInput(CWInput cwInput) {
+  public void setCwInput(CWInput cwInput) {
     CWState.cwInput = cwInput;
   }
 
-  public static void setStateSession(StateSession stateSession) {
+  public void setStateSession(StateSession stateSession) {
     CWState.stateSession = stateSession;
-  }
-
-  public static void setDefaultFont(GameContainer gameContainer) {
-    Font font = resources.getFont("DEFAULT");
-    CWState.defaultFont = font;
-
-    try {
-      Field f = GameContainer.class.getDeclaredField("defaultFont");
-      f.setAccessible(true);
-      Fields.write(f, gameContainer, font);
-      f.setAccessible(false);
-    } catch (NoSuchFieldException e) {
-      e.printStackTrace();
-    }
   }
 }

@@ -1,5 +1,6 @@
 package com.customwars.client.ui.state.menu;
 
+import com.customwars.client.ui.GUI;
 import com.customwars.client.ui.MenuItem;
 import com.customwars.client.ui.PopupMenu;
 import com.customwars.client.ui.state.CWState;
@@ -13,10 +14,14 @@ import org.newdawn.slick.gui.AbstractComponent;
 import org.newdawn.slick.gui.ComponentListener;
 import org.newdawn.slick.state.StateBasedGame;
 
+import java.awt.Point;
+
 public class MainMenuState extends CWState implements ComponentListener {
+  private GameContainer gameContainer;
   private PopupMenu mainMenu;
 
   public void init(GameContainer container, StateBasedGame game) throws SlickException {
+    this.gameContainer = container;
     mainMenu = new PopupMenu(container);
     mainMenu.setBackGroundColor(new Color(0, 0, 0));
     mainMenu.setHoverColor(new Color(255, 255, 255, 0.20f));
@@ -28,15 +33,12 @@ public class MainMenuState extends CWState implements ComponentListener {
     );
 
     mainMenu.addListener(this);
-    mainMenu.init();
-    mainMenu.setLocation((container.getWidth() / 2 - mainMenu.getWidth() / 2) + 20,
-      (container.getHeight() / 2 - mainMenu.getHeight() / 2) - 100);
+    Point center = GUI.getCenteredRenderPoint(mainMenu.getSize(), container);
+    mainMenu.setLocation(center.x + 20, center.y - 100);
   }
 
   @Override
   public void render(GameContainer container, Graphics g) throws SlickException {
-    mainMenu.render(container, g);
-
     g.drawImage(resources.getSlickImg("menu"), 0, 0);
     g.setColor(Color.white);
     mainMenu.render(container, g);
@@ -60,10 +62,8 @@ public class MainMenuState extends CWState implements ComponentListener {
 
   @Override
   public void update(GameContainer container, int delta) throws SlickException {
-
   }
 
-  @Override
   public void controlPressed(CWCommand command, CWInput cwInput) {
     mainMenu.controlPressed(command);
   }
@@ -72,14 +72,13 @@ public class MainMenuState extends CWState implements ComponentListener {
     PopupMenu popupMenu = (PopupMenu) source;
     switch (popupMenu.getCurrentItem()) {
       case 0:
-        changeGameState("SINGLE");
+        changeToState("SINGLE_PLAYER");
         break;
       case 2:
-        changeGameState("OPTION");
+        changeToState("REMAP_CONTROLS");
         break;
       case 3:
-        //Have to figure out how to quit from the menu.
-        System.exit(0);
+        gameContainer.exit();
         break;
     }
   }

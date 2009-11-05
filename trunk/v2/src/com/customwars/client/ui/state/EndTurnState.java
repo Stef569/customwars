@@ -52,7 +52,7 @@ public class EndTurnState extends CWState {
   private void endTurn() {
     if (!endTurnPressed) {
       endTurnPressed = true;
-      changeGameState("IN_GAME");
+      changeToState("IN_GAME");
       game.endTurn();
     }
   }

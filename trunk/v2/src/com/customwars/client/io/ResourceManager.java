@@ -232,13 +232,16 @@ public class ResourceManager {
   }
 
   private void loadFonts() throws IOException {
+  }
+
+  public Font loadDefaultFont() throws IOException {
     Font defaultFont;
     try {
       defaultFont = new AngelCodeFont(fontPath + "default.fnt", fontPath + "default_00.tga");
     } catch (SlickException ex) {
       throw new IOException(ex);
     }
-    addFont("DEFAULT", defaultFont);
+    return defaultFont;
   }
 
   public void addFont(String fontID, Font font) {

@@ -22,10 +22,8 @@ import java.io.IOException;
  */
 public class StartupState extends CWState {
   private DeferredResource nextResource;
-  private GameContainer gameContainer;
 
   public void init(GameContainer container, StateBasedGame game) throws SlickException {
-    this.gameContainer = container;
     resources.loadAll();
   }
 
@@ -47,9 +45,7 @@ public class StartupState extends CWState {
   }
 
   private void onLoadingCompleted() {
-    // After the resources have been loaded overwrite the default font with our own
-    CWState.setDefaultFont(gameContainer);
-    changeGameState("MAIN_MENU");
+    changeToState("MAIN_MENU");
   }
 
   public void render(GameContainer container, Graphics g) throws SlickException {

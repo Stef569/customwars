@@ -5,6 +5,8 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.gui.AbstractComponent;
 import org.newdawn.slick.gui.GUIContext;
 
+import java.awt.Dimension;
+
 public abstract class BasicComponent extends AbstractComponent {
   private int x;
   private int y;
@@ -56,6 +58,10 @@ public abstract class BasicComponent extends AbstractComponent {
 
   public int getWidth() {
     return width;
+  }
+
+  public Dimension getSize() {
+    return new Dimension(width, height);
   }
 
   public int getX() {

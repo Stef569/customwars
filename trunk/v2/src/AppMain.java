@@ -2,10 +2,11 @@ import com.customwars.client.App;
 import com.customwars.client.Config;
 import com.customwars.client.SFX;
 import com.customwars.client.io.ResourceManager;
+import com.customwars.client.ui.slick.CWStateBasedGame;
 import com.customwars.client.ui.state.CWStates;
-import com.customwars.client.ui.state.StateSession;
 import org.apache.log4j.Logger;
 import org.newdawn.slick.AppGameContainer;
+import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.loading.LoadingList;
 import org.newdawn.slick.state.StateBasedGame;
@@ -13,57 +14,93 @@ import tools.Log4JUtil;
 
 /**
  * Starts The client
+ * Command line arguments:
+ * -datafiles path     The path to load the resources from, defaults to the working directory
  *
  * @author stefan
  */
 public class AppMain {
   private static final Logger logger = Logger.getLogger(AppMain.class);
-  private static ResourceManager resources;
+  private static CWStateBasedGame cwStates;
   private static Config config;
+  private static String resourcesLocation = "";
 
   public AppMain() throws SlickException {
-    StateSession stateSession = new StateSession();
-    StateBasedGame stateBasedGame = new CWStates("STARTUP", stateSession, resources, config);
+    ResourceManager resources = new ResourceManager();
+    loadConfiguration(resources);
 
+    cwStates = new CWStates("STARTUP", resources, config);
+    AppGameContainer container = createContainer(cwStates);
+    init(container, resources);
+    run(container);
+  }
+
+  private void loadConfiguration(ResourceManager resources) {
+    config = new Config(resources);
+    config.load(resourcesLocation);
+  }
+
+  private AppGameContainer createContainer(StateBasedGame stateBasedGame) throws SlickException {
     logger.info("Starting Slick");
     boolean fullScreen = App.getBoolean("user.display.fullscreen", false);
     int displayWidth = App.getInt("user.display.width", 640);
     int displayHeight = App.getInt("user.display.height", 480);
 
     AppGameContainer appGameContainer = new AppGameContainer(stateBasedGame);
-    SFX.setResources(resources);
-    SFX.setGameContainer(appGameContainer);
-
     appGameContainer.setDisplayMode(displayWidth, displayHeight, fullScreen);
     appGameContainer.setTargetFrameRate(60);
     appGameContainer.setForceExit(false);
     appGameContainer.setShowFPS(false);
-    appGameContainer.start();
-    shutDownHook();
+    return appGameContainer;
+  }
+
+  private void init(GameContainer gameContainer, ResourceManager resources) {
+    SFX.setResources(resources);
+    SFX.setGameContainer(gameContainer);
+  }
+
+  private void run(AppGameContainer container) throws SlickException {
+    // Blocking method, keeps on looping until container.exit() is invoked
+    container.start();
+    cwStates.shutDownHook();
     System.exit(0);
   }
 
-  private void shutDownHook() {
-    logger.info("Shutting down");
-    config.storeInputConfig();
-    config.storePersistenceProperties();
-  }
-
   public static void main(String[] argv) {
+    handleArgs(argv);
+
     try {
       LoadingList.setDeferredLoading(true);
-      resources = new ResourceManager();
-      config = new Config(resources);
-      config.configure();
-      logger.info("Starting up");
       new AppMain();
     } catch (Exception e) {
-      if (Log4JUtil.isLog4JConfigured()) {
-        logger.fatal("Failure", e);
-      } else {
-        e.printStackTrace();
+      logAndExit(e);
+    }
+  }
+
+  private static void logAndExit(Exception e) {
+    if (Log4JUtil.isLog4JConfigured()) {
+      logger.fatal("Failure", e);
+    } else {
+      e.printStackTrace();
+    }
+    System.exit(-1);
+  }
+
+  private static void handleArgs(String[] args) {
+    int i = 0;
+    String arg;
+
+    while (i < args.length && args[i].startsWith("-")) {
+      arg = args[i++];
+
+      // use this type of check for arguments that require arguments
+      if (arg.equals("-datafiles")) {
+        if (i < args.length) {
+          resourcesLocation = args[i++];
+        } else {
+          resourcesLocation = "";
+        }
       }
-      System.exit(-1);
     }
   }
 }

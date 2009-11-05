@@ -5,116 +5,44 @@ import com.customwars.client.Config;
 import com.customwars.client.SFX;
 import com.customwars.client.io.ResourceManager;
 import com.customwars.client.ui.GUI;
+import com.customwars.client.ui.slick.CWStateBasedGame;
 import com.customwars.client.ui.state.input.CWCommand;
-import com.customwars.client.ui.state.input.CWInput;
 import com.customwars.client.ui.state.menu.MainMenuState;
 import com.customwars.client.ui.state.menu.OptionMenuState;
-import com.customwars.client.ui.state.menu.SingleMenuState;
+import com.customwars.client.ui.state.menu.SinglePlayerMenuState;
 import org.apache.log4j.Logger;
-import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.SlickException;
-import org.newdawn.slick.command.Command;
-import org.newdawn.slick.command.InputProviderListener;
-import org.newdawn.slick.state.StateBasedGame;
+import tools.IOUtil;
+
+import java.io.IOException;
+import java.util.Properties;
 
 /**
  * Create each State and link it to a name
  *
  * @author stefan
  */
-public class CWStates extends StateBasedGame implements InputProviderListener {
+public class CWStates extends CWStateBasedGame {
   private static final Logger logger = Logger.getLogger(CWStates.class);
-  private ResourceManager resources;
-  private Config config;
-  private StateSession stateSession;
-  private GameContainer gameContainer;
-  private StateChanger stateChanger;
-  private String startStateName;
 
-  public CWStates(String startStateName, StateSession stateSession, ResourceManager resources, Config config) {
-    super(App.get("game.name") + " - " + App.get("plugin.name"));
-    this.startStateName = startStateName;
-    this.stateSession = stateSession;
-    this.resources = resources;
-    this.config = config;
+  public CWStates(String startStateName, ResourceManager resources, Config config) {
+    super(App.get("game.name") + " - " + App.get("plugin.name"),
+      startStateName, resources, config);
   }
 
-  public void initStatesList(GameContainer container) throws SlickException {
-    this.gameContainer = container;
-
-    // listen for command input(pressed, release)
-    CWInput cwInput = new CWInput(container.getInput());
-    cwInput.addListener(this);
-
-    // Global data for each state
-    CWState.setCwInput(cwInput);
-    CWState.setResources(resources);
-    CWState.setStateSession(stateSession);
-
-    // Create and map states to a string
+  public void initStatesList() {
     buildStateList();
-    mapStateIdsToName();
-
-    config.loadInputBindings(cwInput);
-    stateChanger.changeTo(startStateName);
-    logger.debug("Startup complete starting state=" + (startStateName == null ? "Default" : startStateName));
   }
 
   private void buildStateList() {
-    CWState startup = new StartupState();
-
-    // Menu
-    CWState mainMenu = new MainMenuState();
-    CWState optionMenu = new OptionMenuState();
-    CWState singleMenu = new SingleMenuState();
-    CWState remapKeysTest = new ControlBindingState();
-
-    // Game
-    CWState mapEditorState = new MapEditorState();
-    CWState inGame = new InGameState();
-    CWState endTurnState = new EndTurnState();
-    CWState gameOver = new GameOverState();
-
-    addState(startup);
-    addState(mainMenu);
-    addState(optionMenu);
-    addState(singleMenu);
-    addState(inGame);
-    addState(endTurnState);
-    addState(gameOver);
-    addState(remapKeysTest);
-    addState(mapEditorState);
-  }
-
-  private void mapStateIdsToName() {
-    stateChanger = new StateChanger(this);
-    stateChanger.addState("STARTUP", 0);
-    stateChanger.addState("MAIN_MENU", 2);
-    stateChanger.addState("KEY_MENU", 5);
-    stateChanger.addState("SINGLE", 6);
-    stateChanger.addState("OPTION", 7);
-    stateChanger.addState("IN_GAME", 3);
-    stateChanger.addState("GAME_OVER", 10);
-    stateChanger.addState("END_TURN", 4);
-    stateChanger.addState("MAP_EDITOR", 50);
-    CWState.setStateChanger(stateChanger);
-  }
-
-  /**
-   * Delegate the pressed control to the current state
-   */
-  public void controlPressed(Command command) {
-    CWState state = (CWState) getCurrentState();
-    state.controlPressed((CWCommand) command);
-  }
-
-  /**
-   * Delegate the released control to the current state
-   */
-  public void controlReleased(Command command) {
-    handleGlobalInput((CWCommand) command);
-    CWState state = (CWState) getCurrentState();
-    state.controlReleased((CWCommand) command);
+    addState("STARTUP", new StartupState());
+    addState("MAIN_MENU", new MainMenuState());
+    addState("KEY_MENU", new OptionMenuState());
+    addState("SINGLE_PLAYER", new SinglePlayerMenuState());
+    addState("IN_GAME", new InGameState());
+    addState("END_TURN", new EndTurnState());
+    addState("GAME_OVER", new GameOverState());
+    addState("REMAP_CONTROLS", new ControlBindingState());
+    addState("MAP_EDITOR", new MapEditorState());
   }
 
   protected void handleGlobalInput(CWCommand command) {
@@ -129,12 +57,23 @@ public class CWStates extends StateBasedGame implements InputProviderListener {
       case TOGGLE_CONSOLE:
         GUI.toggleConsoleFrame();
         break;
-      case TOGGLE_EVENTVIEWER:
+      case TOGGLE_EVENT_VIEWER:
         GUI.toggleEventFrame();
         break;
       case TOGGLE_FPS:
         gameContainer.setShowFPS(!gameContainer.isShowingFPS());
         break;
+    }
+  }
+
+  public void shutDownHook() {
+    Properties userProperties = App.getUserProperties();
+
+    try {
+      String userPropertiesPath = App.get("userproperties.path");
+      IOUtil.storePropertyFile(userProperties, userPropertiesPath);
+    } catch (IOException e) {
+      logger.warn("Could not save user properties");
     }
   }
 }
