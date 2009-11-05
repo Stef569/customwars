@@ -1,7 +1,6 @@
 package com.customwars.client.ui.state;
 
 import com.customwars.client.App;
-import com.customwars.client.Config;
 import com.customwars.client.controller.CursorController;
 import com.customwars.client.controller.MapEditorController;
 import com.customwars.client.model.map.Direction;
@@ -238,7 +237,7 @@ public class MapEditorState extends CWState {
 
   private void openMap() {
     cwInput.setActive(false);
-    JFileChooser fileChooser = new JFileChooser(Config.MAPS_DIR);
+    JFileChooser fileChooser = new JFileChooser(App.get("home.maps.dir"));
     fileChooser.showOpenDialog(null);
 
     File file = fileChooser.getSelectedFile();
@@ -271,7 +270,7 @@ public class MapEditorState extends CWState {
       try {
         mapEditorController.saveMap(mapName, mapDescription, author);
         GUI.showdialog(
-          String.format("%s your map '%s'\nhas been saved to %s", author, mapName, Config.MAPS_DIR),
+          String.format("%s your map '%s'\nhas been saved to %s", author, mapName, App.get("home.maps.dir")),
           "Saved"
         );
       } catch (IOException e) {

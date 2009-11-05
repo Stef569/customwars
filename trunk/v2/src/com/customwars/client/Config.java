@@ -31,7 +31,7 @@ import java.util.ResourceBundle;
 public class Config {
   private static final Logger logger = Logger.getLogger(Config.class);
   private static final String HOME_DIR = System.getProperty("user.home") + "/.cw2/";
-  public static final String MAPS_DIR = HOME_DIR + "maps/";
+  private static final String MAPS_DIR = HOME_DIR + "maps/";
   private static final String RES_DIR = "resources/res/";
   private static final String CONFIG_PATH = RES_DIR + "data/config/";
 
@@ -57,6 +57,7 @@ public class Config {
     createHomeDir();
     createEmptyUserPropertyFileIfNonePresent();
     loadProperties();
+    storePaths();
 
     resources.setImgPath(pluginLocation + "images/");
     resources.setCursorImgsPath(pluginLocation + "images/cursors/");
@@ -70,6 +71,11 @@ public class Config {
     resources.addMapPath(RES_DIR + "maps/");
     resources.setFontPath(RES_DIR + "data/fonts/");
     resources.setDarkPercentage(App.getInt("display.darkpercentage"));
+  }
+
+  private void storePaths() {
+    App.put("home.maps.dir", MAPS_DIR);
+    App.put("userproperties.path", HOME_DIR + "/" + USER_PROPERTIES_FILE);
   }
 
   private void createHomeDir() {
