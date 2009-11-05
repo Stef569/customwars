@@ -1,7 +1,6 @@
 package com.customwars.client.controller;
 
 import com.customwars.client.App;
-import com.customwars.client.Config;
 import com.customwars.client.MapMaker.control.CityMapEditorControl;
 import com.customwars.client.MapMaker.control.MapEditorControl;
 import com.customwars.client.MapMaker.control.TerrainMapEditorControl;
@@ -118,7 +117,8 @@ public class MapEditorController {
 
   public void saveMap(String fileName) throws IOException {
     String mapName = StringUtil.appendTrailingSuffix(fileName, MapParser.MAP_FILE_EXTENSION);
-    File newMapFile = new File(Config.MAPS_DIR, mapName);
+    String mapDir = App.get("home.maps.dir");
+    File newMapFile = new File(mapDir, mapName);
 
     if (newMapFile.exists()) {
       throw new IOException("The map " + fileName + " already exists");
