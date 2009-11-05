@@ -1,0 +1,143 @@
+<!--
+Base Terrains, every Terrain inherits at least from one of these terrains
+moveCosts have the following order
+  Infantry
+  Mech
+  Tread
+  Tires
+  Air
+  Naval
+-->
+<list>
+    <terrain name="Grass" id="0">
+        <defenseBonus>0</defenseBonus>
+        <height>0</height>
+        <moveCosts>
+            <int>1</int>
+            <int>1</int>
+            <int>1</int>
+            <int>2</int>
+            <int>1</int>
+            <int>127</int>
+        </moveCosts>
+        <description>Grass is easily traversed but offers little defense.</description>
+    </terrain>
+    <terrain name="Plain" id="18">
+        <defenseBonus>1</defenseBonus>
+        <height>0</height>
+        <moveCosts>
+            <int>1</int>
+            <int>1</int>
+            <int>1</int>
+            <int>2</int>
+            <int>1</int>
+            <int>127</int>
+        </moveCosts>
+    </terrain>
+    <terrain name="Forest" id="1">
+        <hidden>True</hidden>
+        <defenseBonus>2</defenseBonus>
+        <height>0</height>
+        <moveCosts>
+            <int>1</int>
+            <int>1</int>
+            <int>2</int>
+            <int>3</int>
+            <int>1</int>
+            <int>127</int>
+        </moveCosts>
+        <description>The perfect place for an ambush, units that are placed within a forrest are not visible for any
+            unit unless directly adjacent to it.
+        </description>
+    </terrain>
+    <terrain name="Road" id="2">
+        <defenseBonus>0</defenseBonus>
+        <height>0</height>
+        <moveCosts>
+            <int>1</int>
+            <int>1</int>
+            <int>1</int>
+            <int>1</int>
+            <int>1</int>
+            <int>127</int>
+        </moveCosts>
+        <description>Well-surface roads provide optimum mobility, but little cover.</description>
+    </terrain>
+    <terrain name="Mountain" id="17">
+        <defenseBonus>4</defenseBonus>
+        <vision>3</vision>
+        <height>2</height>
+        <moveCosts>
+            <int>3</int>
+            <int>2</int>
+            <int>127</int>
+            <int>127</int>
+            <int>1</int>
+            <int>127</int>
+        </moveCosts>
+        <description>In Fog of War, these add 3 to the vision of inf and mech units.</description>
+    </terrain>
+    <terrain name="River" id="19">
+        <defenseBonus>0</defenseBonus>
+        <height>-1</height>
+        <moveCosts>
+            <int>1</int>
+            <int>1</int>
+            <int>127</int>
+            <int>127</int>
+            <int>1</int>
+            <int>127</int>
+        </moveCosts>
+        <description>Fast flowing river, only inf and mech can pass</description>
+    </terrain>
+    <terrain name="Ocean" id="30">
+        <defenseBonus>0</defenseBonus>
+        <height>-2</height>
+        <moveCosts>
+            <int>127</int>
+            <int>127</int>
+            <int>127</int>
+            <int>127</int>
+            <int>1</int>
+            <int>1</int>
+        </moveCosts>
+    </terrain>
+    <terrain name="Shoal" id="65">
+        <defenseBonus>0</defenseBonus>
+        <height>-2</height>
+        <moveCosts>
+            <int>127</int>
+            <int>127</int>
+            <int>127</int>
+            <int>127</int>
+            <int>1</int>
+            <int>1</int>
+        </moveCosts>
+    </terrain>
+    <terrain name="Reef" id="75">
+        <hidden>True</hidden>
+        <defenseBonus>2</defenseBonus>
+        <height>-2</height>
+        <moveCosts>
+            <int>127</int>
+            <int>127</int>
+            <int>127</int>
+            <int>127</int>
+            <int>1</int>
+            <int>1</int>
+        </moveCosts>
+    </terrain>
+    <terrain name="Pipe" id="82">
+        <defenseBonus>4</defenseBonus>
+        <vision>0</vision>
+        <height>1</height>
+        <moveCosts>
+            <int>3</int>
+            <int>2</int>
+            <int>127</int>
+            <int>127</int>
+            <int>1</int>
+            <int>127</int>
+        </moveCosts>
+    </terrain>
+</list>

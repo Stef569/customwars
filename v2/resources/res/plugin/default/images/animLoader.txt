@@ -1,0 +1,133 @@
+// Usage
+// M AnimName imgName firstFrameCol firstFrameRow lastFrameCol lastFrameRow loopForever
+// S AnimName imgName frameDuration startFrame totalframecount loopForever
+// To is INCLUSIVE!
+// If no col or row is provided for a strip, then startFrame=0 and lastFrameCol=total cols in the image
+
+// Explosions for each armybranch.
+S EXPLOSION_LAND landExplosion 70 False
+S EXPLOSION_NAVAL landExplosion 70 False
+S EXPLOSION_AIR landExplosion 70 False
+
+S movezone movezone 150 True
+S attackzone attackzone 150 True
+
+// Create Property Animations
+M city_0_RED city_RED 650 0 0 1 0 True
+M city_1_RED city_RED 650 0 1 1 1 True 
+M city_2_RED city_RED 650 0 2 1 2 True 
+M city_3_RED city_RED 650 0 3 1 3 True 
+M city_4_RED city_RED 650 0 4 1 4 True 
+
+// Create Unit Animations out of the unit_RED spriteSheet
+// Animations: 3 Left, 3 right, 3 down, 3 up.
+// The color RED is the baseColor for that unit(see colors.xml)
+M unit_0_RED_LEFT 	unit_RED 500 0 0 2 0 True
+M unit_0_RED_RIGHT  unit_RED 500 3 0 5 0 True
+M unit_0_RED_DOWN 	unit_RED 500 6 0 8 0 True
+M unit_0_RED_UP 	unit_RED 500 9 0 11 0 True
+
+M unit_1_RED_LEFT 	unit_RED 500 0 1 2 1 True
+M unit_1_RED_RIGHT  unit_RED 500 3 1 5 1 True
+M unit_1_RED_DOWN 	unit_RED 500 6 1 8 1 True
+M unit_1_RED_UP 	unit_RED 500 9 1 11 1 True
+
+M unit_2_RED_LEFT 	unit_RED 500 0 2 2 2 True
+M unit_2_RED_RIGHT  unit_RED 500 3 2 5 2 True
+M unit_2_RED_DOWN 	unit_RED 500 6 2 8 2 True
+M unit_2_RED_UP 	unit_RED 500 9 2 11 2 True
+
+M unit_3_RED_LEFT 	unit_RED 500 0 3 2 3 True
+M unit_3_RED_RIGHT  unit_RED 500 3 3 5 3 True
+M unit_3_RED_DOWN 	unit_RED 500 6 3 8 3 True
+M unit_3_RED_UP 	unit_RED 500 9 3 11 3 True
+
+M unit_4_RED_LEFT 	unit_RED 500 0 4 2 4 True
+M unit_4_RED_RIGHT  unit_RED 500 3 4 5 4 True
+M unit_4_RED_DOWN 	unit_RED 500 6 4 8 4 True
+M unit_4_RED_UP 	unit_RED 500 9 4 11 4 True
+
+M unit_5_RED_LEFT 	unit_RED 500 0 5 2 5 True
+M unit_5_RED_RIGHT  unit_RED 500 3 5 5 5 True
+M unit_5_RED_DOWN 	unit_RED 500 6 5 8 5 True
+M unit_5_RED_UP 	unit_RED 500 9 5 11 5 True
+
+M unit_6_RED_LEFT 	unit_RED 500 0 6 2 6 True
+M unit_6_RED_RIGHT  unit_RED 500 3 6 5 6 True
+M unit_6_RED_DOWN 	unit_RED 500 6 6 8 6 True
+M unit_6_RED_UP 	unit_RED 500 9 6 11 6 True
+
+M unit_7_RED_LEFT 	unit_RED 500 0 7 2 7 True
+M unit_7_RED_RIGHT  unit_RED 500 3 7 5 7 True
+M unit_7_RED_DOWN 	unit_RED 500 6 7 8 7 True
+M unit_7_RED_UP 	unit_RED 500 9 7 11 7 True
+
+M unit_8_RED_LEFT 	unit_RED 500 0 8 2 8 True
+M unit_8_RED_RIGHT  unit_RED 500 3 8 5 8 True
+M unit_8_RED_DOWN 	unit_RED 500 6 8 8 8 True
+M unit_8_RED_UP 	unit_RED 500 9 8 11 8 True
+
+M unit_9_RED_LEFT 	unit_RED 500 0 9 2 9 True
+M unit_9_RED_RIGHT  unit_RED 500 3 9 5 9 True
+M unit_9_RED_DOWN 	unit_RED 500 6 9 8 9 True
+M unit_9_RED_UP 	unit_RED 500 9 9 11 9 True
+
+M unit_10_RED_LEFT 	unit_RED 500 0 10 2 10 True
+M unit_10_RED_RIGHT unit_RED 500 3 10 5 10 True
+M unit_10_RED_DOWN 	unit_RED 500 6 10 8 10 True
+M unit_10_RED_UP 	unit_RED 500 9 10 11 10 True
+
+M unit_11_RED_LEFT 	unit_RED 500 0 11 2 11 True
+M unit_11_RED_RIGHT unit_RED 500 3 11 5 11 True
+M unit_11_RED_DOWN 	unit_RED 500 6 11 8 11 True
+M unit_11_RED_UP 	unit_RED 500 9 11 11 11 True
+
+M unit_12_RED_LEFT 	unit_RED 500 0 12 2 12 True
+M unit_12_RED_RIGHT unit_RED 500 3 12 5 12 True
+M unit_12_RED_DOWN 	unit_RED 500 6 12 8 12 True
+M unit_12_RED_UP 	unit_RED 500 9 12 11 12 True
+
+M unit_13_RED_LEFT 	unit_RED 500 0 13 2 13 True
+M unit_13_RED_RIGHT unit_RED 500 3 13 5 13 True
+M unit_13_RED_DOWN 	unit_RED 500 6 13 8 13 True
+M unit_13_RED_UP 	unit_RED 500 9 13 11 13 True
+
+M unit_14_RED_LEFT 	unit_RED 500 0 14 2 14 True
+M unit_14_RED_RIGHT unit_RED 500 3 14 5 14 True
+M unit_14_RED_DOWN 	unit_RED 500 6 14 8 14 True
+M unit_14_RED_UP 	unit_RED 500 9 14 11 14 True
+
+M unit_15_RED_LEFT 	unit_RED 500 0 15 2 15 True
+M unit_15_RED_RIGHT unit_RED 500 3 15 5 15 True
+M unit_15_RED_DOWN 	unit_RED 500 6 15 8 15 True
+M unit_15_RED_UP 	unit_RED 500 9 15 11 15 True
+
+M unit_16_RED_LEFT 	unit_RED 500 0 16 2 16 True
+M unit_16_RED_RIGHT unit_RED 500 3 16 5 16 True
+M unit_16_RED_DOWN 	unit_RED 500 6 16 8 16 True
+M unit_16_RED_UP 	unit_RED 500 9 16 11 16 True
+
+M unit_17_RED_LEFT 	unit_RED 500 0 17 2 17 True
+M unit_17_RED_RIGHT unit_RED 500 3 17 5 17 True
+M unit_17_RED_DOWN 	unit_RED 500 6 17 8 17 True
+M unit_17_RED_UP 	unit_RED 500 9 17 11 17 True
+
+M unit_18_RED_LEFT 	unit_RED 500 0 18 2 18 True
+M unit_18_RED_RIGHT unit_RED 500 3 18 5 18 True
+M unit_18_RED_DOWN 	unit_RED 500 6 18 8 18 True
+M unit_18_RED_UP 	unit_RED 500 9 18 11 18 True
+
+M unit_19_RED_LEFT 	unit_RED 500 0 19 2 19 True
+M unit_19_RED_RIGHT unit_RED 500 3 19 5 19 True
+M unit_19_RED_DOWN 	unit_RED 500 6 19 8 19 True
+M unit_19_RED_UP 	unit_RED 500 9 19 11 19 True
+
+M unit_20_RED_LEFT 	unit_RED 500 0 20 2 20 True
+M unit_20_RED_RIGHT unit_RED 500 3 20 5 20 True
+M unit_20_RED_DOWN 	unit_RED 500 6 20 8 20 True
+M unit_20_RED_UP 	unit_RED 500 9 20 11 20 True
+
+M unit_21_RED_LEFT 	unit_RED 500 0 21 2 21 True
+M unit_21_RED_RIGHT unit_RED 500 3 21 5 21 True
+M unit_21_RED_DOWN 	unit_RED 500 6 21 8 21 True
+M unit_21_RED_UP 	unit_RED 500 9 21 11 21 True
