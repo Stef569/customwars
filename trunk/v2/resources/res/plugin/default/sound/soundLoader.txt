@@ -1,7 +1,0 @@
-// Removing one of these lines results in not playing that sound
-S select ok.wav
-S cancel cancel.wav
-S explode explode.wav
-S trapped trap.wav
-S captured capture.wav
-S maptick maptick.wav
