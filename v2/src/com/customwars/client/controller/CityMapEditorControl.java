@@ -1,17 +1,17 @@
-package com.customwars.client.MapMaker.control;
+package com.customwars.client.controller;
 
-import com.customwars.client.MapMaker.TerrainConnector;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.TerrainFactory;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.model.map.TileMap;
+import com.customwars.client.model.map.connector.TerrainConnector;
 import com.customwars.client.tools.MapUtil;
 
 public class CityMapEditorControl implements MapEditorControl {
-  private TileMap<Tile> map;
-  private TerrainConnector terrainConnector;
+  private final TileMap<Tile> map;
+  private final TerrainConnector terrainConnector;
 
   public CityMapEditorControl(TileMap<Tile> map) {
     this.map = map;

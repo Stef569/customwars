@@ -1,4 +1,4 @@
-package com.customwars.client.MapMaker;
+package com.customwars.client.model.map.connector;
 
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Terrain;
@@ -23,10 +23,11 @@ import java.util.List;
 public class TerrainConnector {
   private static final Logger logger = Logger.getLogger(TerrainConnector.class);
 
-  private TileMap<Tile> map;
+  private final TileMap<Tile> map;
+  private final List<Terrain> terrains;   // All the available terrains, sorted on ID
+
   private Terrain terrainToAdd;     // The terrain that the user wants to add
   private Terrain baseTerrain;      // The terrain that is going to be overwritten
-  private List<Terrain> terrains;   // All the available terrains, sorted on ID
 
   // Calculated values
   private SurroundingTileData tileData;

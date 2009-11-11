@@ -1,10 +1,6 @@
 package com.customwars.client.controller;
 
 import com.customwars.client.App;
-import com.customwars.client.MapMaker.control.CityMapEditorControl;
-import com.customwars.client.MapMaker.control.MapEditorControl;
-import com.customwars.client.MapMaker.control.TerrainMapEditorControl;
-import com.customwars.client.MapMaker.control.UnitMapEditorControl;
 import com.customwars.client.io.ResourceManager;
 import com.customwars.client.io.loading.map.MapParser;
 import com.customwars.client.model.game.Player;
@@ -35,16 +31,15 @@ import java.util.List;
 public class MapEditorController {
   private static final int STARTUP_MAP_COLS = 10;
   private static final int STARTUP_MAP_ROWS = 10;
+  private final List<Color> colors;
+  private final MapEditorState mapEditorView;
+  private final ResourceManager resources;
+
   private HashMap<Color, Player> players;
   private List<MapEditorControl> controls;
-  private List<Color> colors;
   private Map<Tile> map;
-
   private int activeID, colorID;
-
-  private MapEditorState mapEditorView;
   private final int panelCount;
-  private ResourceManager resources;
 
   public MapEditorController(MapEditorState mapEditorState, ResourceManager resources, int panelCount) {
     this.resources = resources;

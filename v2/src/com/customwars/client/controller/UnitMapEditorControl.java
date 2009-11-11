@@ -1,4 +1,4 @@
-package com.customwars.client.MapMaker.control;
+package com.customwars.client.controller;
 
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.Unit;
