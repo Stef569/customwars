@@ -4,7 +4,7 @@ import com.customwars.client.App;
 import com.customwars.client.SFX;
 import com.customwars.client.action.ActionFactory;
 import com.customwars.client.action.CWAction;
-import com.customwars.client.action.ShowPopupMenu;
+import com.customwars.client.action.ShowPopupMenuAction;
 import com.customwars.client.action.city.StartLaunchRocketAction;
 import com.customwars.client.action.unit.SelectAction;
 import com.customwars.client.action.unit.ShowAttackZoneAction;
@@ -40,7 +40,7 @@ public class HumanUnitController extends UnitController {
   private InGameContext context;
   private MapRenderer mapRenderer;
   private List<Unit> unitsInTransport;
-  private ShowPopupMenu showMenu;
+  private ShowPopupMenuAction showMenuAction;
   private boolean canStartDropGroundUnit, canTakeOff, canCapture, canSupply, canStartAttack, canWait, canJoin, canLoad;
   private boolean canLaunchRocketFromCity, canTransformTerrain;
   private boolean canFireFlare;
@@ -91,7 +91,7 @@ public class HumanUnitController extends UnitController {
 
   private void addDropLocation(Tile location) {
     // The menu option clicked on is the index of the unit in the transport
-    int popupOption = showMenu.getCurrentOption();
+    int popupOption = showMenuAction.getCurrentOption();
     context.addDropLocation(location, unitsInTransport.get(popupOption));
   }
 
@@ -116,19 +116,19 @@ public class HumanUnitController extends UnitController {
 
     buildUnitActionMenu(from, selected);
 
-    if (showMenu.atLeastHasOneItem()) {
-      context.doAction(showMenu);
+    if (showMenuAction.atLeastHasOneItem()) {
+      context.doAction(showMenuAction);
     }
   }
 
-  private ShowPopupMenu buildUnitActionMenu(Tile from, Tile selected) {
-    ShowPopupMenu showMenu = null;
+  private ShowPopupMenuAction buildUnitActionMenu(Tile from, Tile selected) {
+    ShowPopupMenuAction showMenuAction = null;
     if (isActiveUnit() && canMove(from, selected)) {
       if (context.isUnitDropMode()) {
         // In drop mode teleport the transporter to the 2ND selected tile
         Tile to = context.getClick(2);
         map.teleport(from, to, unit);
-        showMenu = buildDropModeMenu(from, to, selected);
+        showMenuAction = buildDropModeMenu(from, to, selected);
         map.teleport(to, from, unit);
       } else {
         // Temporarily teleport the active unit to the selected tile
@@ -136,14 +136,14 @@ public class HumanUnitController extends UnitController {
         map.teleport(from, selected, unit);
         initUnitActions(selected);
         map.teleport(selected, from, unit);
-        showMenu = buildUnitActionMenu(selected);
+        showMenuAction = buildUnitActionMenu(selected);
       }
     }
-    return showMenu;
+    return showMenuAction;
   }
 
-  private ShowPopupMenu buildDropModeMenu(Tile from, Tile to, Tile selected) {
-    showMenu = new ShowPopupMenu("Unit drop menu", selected);
+  private ShowPopupMenuAction buildDropModeMenu(Tile from, Tile to, Tile selected) {
+    showMenuAction = new ShowPopupMenuAction("Unit drop menu", selected);
     unitsInTransport.clear();
 
     if (canWait(to)) {
@@ -162,10 +162,10 @@ public class HumanUnitController extends UnitController {
       if (context.isUnitDropMode()) {
         CWAction dropAction = ActionFactory.buildDropAction(unit, from, to, context.getDropCount(), context.getUnitsToBeDropped());
         MenuItem waitItem = new MenuItem(App.translate("wait"), context.getContainer());
-        showMenu.addAction(dropAction, waitItem);
+        showMenuAction.addAction(dropAction, waitItem);
       }
     }
-    return showMenu;
+    return showMenuAction;
   }
 
   /**
@@ -213,8 +213,8 @@ public class HumanUnitController extends UnitController {
    * Create the actions the unit can perform on the selected tile
    * The unit is on the from Tile
    */
-  private ShowPopupMenu buildUnitActionMenu(Tile selected) {
-    showMenu = new ShowPopupMenu("Unit context menu", selected);
+  private ShowPopupMenuAction buildUnitActionMenu(Tile selected) {
+    showMenuAction = new ShowPopupMenuAction("Unit context menu", selected);
     Tile from = context.getClick(1);
     Tile to = context.getClick(2);
 
@@ -298,7 +298,7 @@ public class HumanUnitController extends UnitController {
       CWAction waitAction = ActionFactory.buildWaitAction(unit, to);
       addToMenu(waitAction, App.translate("wait"));
     }
-    return showMenu;
+    return showMenuAction;
   }
 
   private Terrain getTransformToTerrain(Tile tile) {
@@ -319,6 +319,6 @@ public class HumanUnitController extends UnitController {
    */
   private void addToMenu(CWAction action, String menuItemName) {
     MenuItem menuItem = new MenuItem(menuItemName, context.getContainer());
-    showMenu.addAction(action, menuItem);
+    showMenuAction.addAction(action, menuItem);
   }
 }

@@ -4,7 +4,7 @@ import com.customwars.client.SFX;
 import com.customwars.client.action.ActionFactory;
 import com.customwars.client.action.CWAction;
 import com.customwars.client.action.ClearInGameStateAction;
-import com.customwars.client.action.ShowPopupMenu;
+import com.customwars.client.action.ShowPopupMenuAction;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Unit;
@@ -52,19 +52,19 @@ public class GameController {
       context.handleCityAPress(city);
     } else if (context.isDefaultMode()) {
       new ClearInGameStateAction().invoke(context);
-      ShowPopupMenu showContextMenu = buildContextMenu();
-      showContextMenu.setLocation(cursorLocation);
-      context.doAction(showContextMenu);
+      ShowPopupMenuAction showContextMenuAction = buildContextMenu();
+      showContextMenuAction.setLocation(cursorLocation);
+      context.doAction(showContextMenuAction);
     } else {
       logger.warn("could not handle A press");
     }
   }
 
-  private ShowPopupMenu buildContextMenu() {
-    ShowPopupMenu showContextMenu = new ShowPopupMenu("Context menu");
+  private ShowPopupMenuAction buildContextMenu() {
+    ShowPopupMenuAction showContextMenuAction = new ShowPopupMenuAction("Context menu");
     MenuItem endTurnMenuItem = new MenuItem("End turn", guiContext);
-    showContextMenu.addAction(ActionFactory.buildEndTurnAction(stateChanger), endTurnMenuItem);
-    return showContextMenu;
+    showContextMenuAction.addAction(ActionFactory.buildEndTurnAction(stateChanger), endTurnMenuItem);
+    return showContextMenuAction;
   }
 
   public void handleB(Unit activeUnit, Unit selectedUnit) {

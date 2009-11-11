@@ -2,7 +2,7 @@ package com.customwars.client.controller;
 
 import com.customwars.client.action.ActionFactory;
 import com.customwars.client.action.CWAction;
-import com.customwars.client.action.ShowPopupMenu;
+import com.customwars.client.action.ShowPopupMenuAction;
 import com.customwars.client.io.ResourceManager;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Unit;
@@ -53,8 +53,8 @@ public class HumanCityController extends CityController {
    * Get Unit copies, display units that this city can build
    * Units that cannot be bought show a darker unit image and have a null action when clicked on.
    */
-  private ShowPopupMenu buildMenu(Tile selected) {
-    ShowPopupMenu showCityPopupMenu = new ShowPopupMenu("Buy unit menu", selected);
+  private ShowPopupMenuAction buildMenu(Tile selected) {
+    ShowPopupMenuAction showCityPopupMenuAction = new ShowPopupMenuAction("Buy unit menu", selected);
 
     for (Unit unit : UnitFactory.getAllUnits()) {
       if (city.canBuild(unit)) {
@@ -64,13 +64,13 @@ public class HumanCityController extends CityController {
         if (canAffordUnit) {
           unit.setOwner(city.getOwner());
           CWAction action = ActionFactory.buildAddUnitToTileAction(unit, selected, false);
-          showCityPopupMenu.addAction(action, menuItem);
+          showCityPopupMenuAction.addAction(action, menuItem);
         } else {
-          showCityPopupMenu.addAction(null, menuItem);
+          showCityPopupMenuAction.addAction(null, menuItem);
         }
       }
     }
-    return showCityPopupMenu;
+    return showCityPopupMenuAction;
   }
 
   private MenuItem buildMenuItem(Unit unit, boolean active) {
