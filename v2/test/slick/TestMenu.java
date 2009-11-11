@@ -1,6 +1,5 @@
 package slick;
 
-import com.customwars.client.io.img.slick.ImageStrip;
 import com.customwars.client.ui.MenuItem;
 import com.customwars.client.ui.PopupMenu;
 import com.customwars.client.ui.state.CWState;
@@ -26,17 +25,14 @@ public class TestMenu extends CWState implements ComponentListener {
   private PopupMenu testmenu;
 
   public void init(GameContainer container, StateBasedGame stateBasedGame) throws SlickException {
-    backgroundMusic = new Music("resources/testData/shortBackground.ogg");
+    backgroundMusic = new Music("testData/shortBackground.ogg");
     backgroundMusic.setVolume(0.5F);
 
-    image = new Image("resources/testData/main.png");
-    Image whiteSquare = new Image("resources/testData/white.png");
-    ImageStrip cursor = new ImageStrip("resources/testData/point.png", 15, 11);
-
-    Image mapOption = new Image("resources/testData/mapTerrain.png");
-    Image keyInputOption = new Image("resources/testData/keyConfig.png");
-    Image gameOption = new Image("resources/testData/newGame.png");
-    Image endTurn = new Image("resources/testData/mapEditor.png");
+    image = new Image("testData/main.png");
+    Image mapOption = new Image("testData/mapTerrain.png");
+    Image keyInputOption = new Image("testData/keyConfig.png");
+    Image gameOption = new Image("testData/newGame.png");
+    Image endTurn = new Image("testData/mapEditor.png");
 
     testmenu = new PopupMenu(container);
     testmenu.addItems(
@@ -47,7 +43,7 @@ public class TestMenu extends CWState implements ComponentListener {
     );
 
     testmenu.setLocation(220, 50);
-    testmenu.setMenuTickSound(new Sound("resources/testData/menutick.wav"));
+    testmenu.setMenuTickSound(new Sound("testData/menutick.wav"));
     testmenu.addListener(this);
   }
 
@@ -100,16 +96,16 @@ public class TestMenu extends CWState implements ComponentListener {
     PopupMenu popupMenu = (PopupMenu) source;
     switch (popupMenu.getCurrentItem()) {
       case 0:
-        changeGameState("terrainmenu");
+        changeToState("terrainmenu");
         break;
       case 1:
-        changeGameState("keymenu");
+        changeToState("keymenu");
         break;
       case 2:
-        changeGameState("IN_GAME");
+        changeToState("IN_GAME");
         break;
       case 3:
-        changeGameState("MAP_EDITOR");
+        changeToState("MAP_EDITOR");
         break;
     }
   }

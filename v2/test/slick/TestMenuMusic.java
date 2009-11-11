@@ -1,5 +1,6 @@
 package slick;
 
+import com.customwars.client.SFX;
 import com.customwars.client.ui.MenuItem;
 import com.customwars.client.ui.PopupMenu;
 import com.customwars.client.ui.state.CWState;
@@ -72,7 +73,7 @@ public class TestMenuMusic extends CWState implements ComponentListener {
   }
 
   public void controlPressed(CWCommand command, CWInput cwInput) {
-    if (command == cwInput.SELECT) {
+    if (command == CWInput.SELECT) {
       menuTickSound.play();
     }
 
@@ -81,7 +82,7 @@ public class TestMenuMusic extends CWState implements ComponentListener {
 
   public void keyReleased(int key, char c) {
     if (key == Input.KEY_S) {
-      super.toggleMusic(backgroundMusic);
+      SFX.toggleMusic(backgroundMusic);
     }
   }
 
@@ -104,10 +105,10 @@ public class TestMenuMusic extends CWState implements ComponentListener {
     PopupMenu popupMenu = (PopupMenu) source;
     switch (popupMenu.getCurrentItem()) {
       case 0:
-        changeGameState("terrainmenu");
+        changeToState("terrainmenu");
         break;
       case 1:
-        changeGameState("keymenu");
+        changeToState("keymenu");
         break;
     }
   }
