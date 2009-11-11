@@ -22,8 +22,8 @@ import java.util.List;
  *
  * @author stefan
  */
-public class ShowPopupMenu extends DirectAction implements ComponentListener {
-  private static final Logger logger = Logger.getLogger(ShowPopupMenu.class);
+public class ShowPopupMenuAction extends DirectAction implements ComponentListener {
+  private static final Logger logger = Logger.getLogger(ShowPopupMenuAction.class);
   private InGameContext context;
   private HUD hud;
   private CursorController cursorControl;
@@ -34,11 +34,11 @@ public class ShowPopupMenu extends DirectAction implements ComponentListener {
   private int currentOption;
   private Location popupLocation;
 
-  public ShowPopupMenu(String name) {
+  public ShowPopupMenuAction(String name) {
     this(name, null);
   }
 
-  public ShowPopupMenu(String popupName, Location popupLocation) {
+  public ShowPopupMenuAction(String popupName, Location popupLocation) {
     super(popupName);
     this.popupName = popupName;
     this.popupLocation = popupLocation;
