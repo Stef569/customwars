@@ -1,8 +1,8 @@
 package com.customwars.client.model.gameobject;
 
 import com.customwars.client.model.map.Direction;
-import tools.Args;
-import tools.StringUtil;
+import com.customwars.client.tools.Args;
+import com.customwars.client.tools.StringUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;

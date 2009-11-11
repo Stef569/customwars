@@ -5,7 +5,7 @@ import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.model.map.TileMap;
-import tools.MapUtil;
+import com.customwars.client.tools.MapUtil;
 
 public class UnitMapEditorControl implements MapEditorControl {
   private final TileMap<Tile> map;

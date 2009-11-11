@@ -3,7 +3,7 @@ package com.customwars.client.model.map;
 import com.customwars.client.model.Observable;
 import com.customwars.client.model.gameobject.Locatable;
 import com.customwars.client.model.gameobject.Terrain;
-import tools.Args;
+import com.customwars.client.tools.Args;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;

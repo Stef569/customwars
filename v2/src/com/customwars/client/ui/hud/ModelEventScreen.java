@@ -1,12 +1,13 @@
 package com.customwars.client.ui.hud;
 
 import com.customwars.client.model.game.Game;
+import com.customwars.client.model.game.TurnBasedGame;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
+import com.customwars.client.tools.IOUtil;
 import org.apache.log4j.Logger;
-import tools.IOUtil;
 
 import javax.swing.AbstractAction;
 import javax.swing.DefaultListModel;
@@ -34,14 +35,16 @@ import java.util.List;
  * Shows Events send from the model in a swing Jlist
  * This is usefull for debugging,
  * the list can be cleared and saved to a file
+ * Some events are less usefull so they can be ignored by adding the
+ * Class and the event to ignore to the filters Map
  *
  * @author stefan
  */
 public class ModelEventScreen implements PropertyChangeListener {
   private static final Logger logger = Logger.getLogger(ModelEventScreen.class);
-  private JPanel content = new JPanel(new BorderLayout());
-  private JList list;
-  private DefaultListModel listModel = new DefaultListModel();
+  private final JPanel content = new JPanel(new BorderLayout());
+  private final JList list;
+  private final DefaultListModel listModel = new DefaultListModel();
   private HashMap<Class, List<String>> filters;
   private Game game;
 
@@ -70,9 +73,8 @@ public class ModelEventScreen implements PropertyChangeListener {
 
   /**
    * Registers for events from game
-   * if there was a previous game then stop receiving events from that game
-   *
-   * @param game
+   * if the event screen was showing events from a previous game
+   * then stop receiving events from that game.
    */
   public void setGame(Game game) {
     if (this.game != null || game == null) {
@@ -83,7 +85,7 @@ public class ModelEventScreen implements PropertyChangeListener {
     this.game = game;
   }
 
-  private void addModelEventListeners(Game game) {
+  private void addModelEventListeners(TurnBasedGame game) {
     game.addPropertyChangeListener(this);
     Map<Tile> map = game.getMap();
 

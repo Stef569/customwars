@@ -1,4 +1,4 @@
-package tools;
+package com.customwars.client.tools;
 
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.City;

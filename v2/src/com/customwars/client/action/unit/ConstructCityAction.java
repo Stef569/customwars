@@ -7,9 +7,9 @@ import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
+import com.customwars.client.tools.MapUtil;
 import com.customwars.client.ui.state.InGameContext;
 import org.apache.log4j.Logger;
-import tools.MapUtil;
 
 public class ConstructCityAction extends DirectAction {
   private static final Logger logger = Logger.getLogger(ConstructCityAction.class);

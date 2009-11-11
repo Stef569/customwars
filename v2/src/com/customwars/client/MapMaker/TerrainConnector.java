@@ -6,8 +6,8 @@ import com.customwars.client.model.gameobject.TerrainFactory;
 import com.customwars.client.model.map.Direction;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.model.map.TileMap;
+import com.customwars.client.tools.Args;
 import org.apache.log4j.Logger;
-import tools.Args;
 
 import java.util.ArrayList;
 import java.util.Collection;

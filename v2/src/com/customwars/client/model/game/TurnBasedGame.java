@@ -4,8 +4,8 @@ import com.customwars.client.model.Observable;
 import com.customwars.client.model.gameobject.GameObjectState;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
+import com.customwars.client.tools.Args;
 import org.apache.log4j.Logger;
-import tools.Args;
 
 import java.awt.Color;
 import java.beans.PropertyChangeListener;

@@ -1,6 +1,6 @@
 package com.customwars.client.model.map;
 
-import tools.Args;
+import com.customwars.client.tools.Args;
 
 /**
  * Defines an inclusive range between a Min and Max value.

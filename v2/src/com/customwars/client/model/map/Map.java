@@ -11,8 +11,8 @@ import com.customwars.client.model.gameobject.Terrain;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.path.Mover;
 import com.customwars.client.model.map.path.PathFinder;
+import com.customwars.client.tools.Args;
 import org.apache.log4j.Logger;
-import tools.Args;
 
 import java.util.ArrayList;
 import java.util.Arrays;

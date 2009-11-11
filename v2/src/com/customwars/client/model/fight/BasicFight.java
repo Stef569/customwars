@@ -1,7 +1,7 @@
 package com.customwars.client.model.fight;
 
 import com.customwars.client.model.map.TileMap;
-import tools.Args;
+import com.customwars.client.tools.Args;
 
 /**
  * Allows an Attacker to attack a Defender

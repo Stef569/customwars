@@ -2,11 +2,11 @@ package com.customwars.client.io.img;
 
 import com.customwars.client.io.ResourceManager;
 import com.customwars.client.io.img.slick.SpriteSheet;
+import com.customwars.client.tools.ColorUtil;
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.loading.DeferredResource;
 import org.newdawn.slick.loading.LoadingList;
-import tools.ColorUtil;
 
 import java.awt.Color;
 import java.io.IOException;

@@ -2,11 +2,11 @@ package com.customwars.client.io.loading;
 
 import static com.customwars.client.io.ErrConstants.ERR_READING_LINE;
 import static com.customwars.client.io.ErrConstants.ERR_WRONG_NUM_ARGS;
+import com.customwars.client.tools.IOUtil;
+import com.customwars.client.tools.StringUtil;
 import org.newdawn.slick.Music;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.Sound;
-import tools.IOUtil;
-import tools.StringUtil;
 
 import java.io.BufferedReader;
 import java.io.IOException;

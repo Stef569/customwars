@@ -3,8 +3,8 @@ package com.customwars.client.model.map.path;
 import com.customwars.client.model.map.Direction;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.TileMap;
+import com.customwars.client.tools.Args;
 import org.apache.log4j.Logger;
-import tools.Args;
 
 import java.awt.Point;
 import java.util.ArrayList;

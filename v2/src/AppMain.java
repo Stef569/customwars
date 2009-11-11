@@ -2,6 +2,7 @@ import com.customwars.client.App;
 import com.customwars.client.Config;
 import com.customwars.client.SFX;
 import com.customwars.client.io.ResourceManager;
+import com.customwars.client.tools.Log4JUtil;
 import com.customwars.client.ui.slick.CWStateBasedGame;
 import com.customwars.client.ui.state.CWStates;
 import org.apache.log4j.Logger;
@@ -10,7 +11,6 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.loading.LoadingList;
 import org.newdawn.slick.state.StateBasedGame;
-import tools.Log4JUtil;
 
 /**
  * Starts The client

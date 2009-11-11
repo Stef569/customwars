@@ -13,13 +13,13 @@ import com.customwars.client.model.gameobject.UnitFight;
 import com.customwars.client.model.gameobject.Weapon;
 import com.customwars.client.model.gameobject.WeaponFactory;
 import com.customwars.client.model.map.Range;
+import com.customwars.client.tools.IOUtil;
+import com.customwars.client.tools.XStreamUtil;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 import org.newdawn.slick.loading.DeferredResource;
 import org.newdawn.slick.loading.LoadingList;
 import org.newdawn.slick.util.ResourceLoader;
-import tools.IOUtil;
-import tools.XStreamUtil;
 
 import java.io.IOException;
 import java.io.InputStream;

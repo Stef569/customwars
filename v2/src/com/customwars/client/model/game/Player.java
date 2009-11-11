@@ -4,8 +4,8 @@ import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.GameObject;
 import com.customwars.client.model.gameobject.GameObjectState;
 import com.customwars.client.model.gameobject.Unit;
-import tools.Args;
-import tools.ColorUtil;
+import com.customwars.client.tools.Args;
+import com.customwars.client.tools.ColorUtil;
 
 import java.awt.Color;
 import java.util.Iterator;

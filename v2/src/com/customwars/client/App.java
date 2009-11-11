@@ -1,7 +1,7 @@
 package com.customwars.client;
 
-import tools.Args;
-import tools.ColorUtil;
+import com.customwars.client.tools.Args;
+import com.customwars.client.tools.ColorUtil;
 
 import java.awt.Color;
 import java.util.Properties;

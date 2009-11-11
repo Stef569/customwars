@@ -3,7 +3,7 @@ package com.customwars.client.model.map.path;
 import com.customwars.client.model.gameobject.Terrain;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Tile;
-import tools.Args;
+import com.customwars.client.tools.Args;
 
 /**
  * Default Move strategy for units

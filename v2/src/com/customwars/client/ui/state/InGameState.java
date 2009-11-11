@@ -16,6 +16,7 @@ import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.model.map.path.MoveTraverse;
+import com.customwars.client.tools.ColorUtil;
 import com.customwars.client.ui.Camera2D;
 import com.customwars.client.ui.GUI;
 import com.customwars.client.ui.HUD;
@@ -29,7 +30,6 @@ import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.gui.GUIContext;
 import org.newdawn.slick.state.StateBasedGame;
-import tools.ColorUtil;
 
 import java.awt.Dimension;
 import java.beans.PropertyChangeEvent;

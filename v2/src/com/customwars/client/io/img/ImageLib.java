@@ -4,10 +4,10 @@ import com.customwars.client.io.img.awt.AwtImageLib;
 import com.customwars.client.io.img.slick.ImageStrip;
 import com.customwars.client.io.img.slick.SlickImageFactory;
 import com.customwars.client.io.img.slick.SpriteSheet;
+import com.customwars.client.tools.ColorUtil;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.loading.DeferredResource;
 import org.newdawn.slick.loading.LoadingList;
-import tools.ColorUtil;
 
 import java.awt.Color;
 import java.io.IOException;

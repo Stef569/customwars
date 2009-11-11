@@ -4,8 +4,8 @@ import com.customwars.client.model.map.Direction;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.model.map.TileMap;
+import com.customwars.client.tools.Args;
 import org.apache.log4j.Logger;
-import tools.Args;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -59,9 +59,9 @@ public class MoveTraverse {
       this.movePath = pathFinder.getMovementPath(mover, destination);
     } else {
       logger.warn("Could not prepare move" +
-              " from " + mover.getLocation().getCol() + "," + mover.getLocation().getRow() +
-              " to " + destination.getCol() + "," + destination.getRow() +
-              " for " + mover);
+        " from " + mover.getLocation().getCol() + "," + mover.getLocation().getRow() +
+        " to " + destination.getCol() + "," + destination.getRow() +
+        " for " + mover);
 
       setPathMoveComplete();
       setTrapped();
@@ -96,7 +96,7 @@ public class MoveTraverse {
 
   private boolean canMoveFurther() {
     return withinPath(pathIndex) && withinPath(pathIndex + 1) &&
-            mover.canMove() && !trapperOnNextLocation();
+      mover.canMove() && !trapperOnNextLocation();
   }
 
   private boolean trapperOnNextLocation() {

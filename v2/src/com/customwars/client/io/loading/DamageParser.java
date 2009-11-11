@@ -1,6 +1,6 @@
 package com.customwars.client.io.loading;
 
-import tools.IOUtil;
+import com.customwars.client.tools.IOUtil;
 
 import java.io.BufferedReader;
 import java.io.IOException;

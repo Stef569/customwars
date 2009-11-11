@@ -5,10 +5,10 @@ import static com.customwars.client.io.ErrConstants.ERR_WRONG_NUM_ARGS;
 import com.customwars.client.io.img.ImageLib;
 import com.customwars.client.io.img.slick.ImageStrip;
 import com.customwars.client.io.img.slick.SpriteSheet;
+import com.customwars.client.tools.IOUtil;
+import com.customwars.client.tools.StringUtil;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
-import tools.IOUtil;
-import tools.StringUtil;
 
 import java.io.BufferedReader;
 import java.io.IOException;
