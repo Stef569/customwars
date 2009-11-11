@@ -14,12 +14,15 @@ import java.awt.Dimension;
  * @author stefan
  */
 public class Camera2D {
+  private static final double MIN_ZOOM_LVL = 0.3;
+  private static final double MAX_ZOOM_LVL = 1.6;
   private static final float ZOOM_STEP = 0.05f;
+  private final Dimension world;
+  private final Dimension camera;
+  private final int tileSize;
   private float zoomLvl = 1;
-  private Dimension world;
-  private Dimension camera;
   private int cameraX, cameraY;
-  private int tileSize;
+  private boolean zoomEnabled;
 
   public Camera2D(Dimension cameraSize, Dimension worldSize, int tileSize) {
     this.camera = new Dimension(cameraSize);
@@ -44,15 +47,19 @@ public class Camera2D {
   }
 
   public void zoomIn() {
-    setZoomLvl(zoomLvl + ZOOM_STEP);
+    if (zoomEnabled) {
+      setZoomLvl(zoomLvl + ZOOM_STEP);
+    }
   }
 
   public void zoomOut() {
-    setZoomLvl(zoomLvl - ZOOM_STEP);
+    if (zoomEnabled) {
+      setZoomLvl(zoomLvl - ZOOM_STEP);
+    }
   }
 
   private void setZoomLvl(float newZoomLvl) {
-    if (newZoomLvl > 0.3 && newZoomLvl < 1.6) {
+    if (newZoomLvl > MIN_ZOOM_LVL && newZoomLvl < MAX_ZOOM_LVL) {
       this.zoomLvl = newZoomLvl;
     }
   }
@@ -93,7 +100,12 @@ public class Camera2D {
       setY(cameraY + amount);
   }
 
+  public void setZoomingEnabled(boolean enable) {
+    this.zoomEnabled = enable;
+  }
+
   /**
+   * Set the horizontal camera position
    * Make sure the camera doesn't scroll off the map
    *
    * @param cameraX the new camera position on the x axis
@@ -107,6 +119,7 @@ public class Camera2D {
   }
 
   /**
+   * Set the vertical camera position
    * Make sure the camera doesn't scroll off the map
    *
    * @param cameraY the new camera position on the y axis
@@ -185,6 +198,6 @@ public class Camera2D {
   public boolean canFitWithin(int x, int y, int width, int height) {
     int maxX = x + width;
     int maxY = y + height;
-    return x > getX() && maxX < getMaxX() && y > getY() && maxY < getMaxY();
+    return x > cameraX && maxX < getMaxX() && y > cameraY && maxY < getMaxY();
   }
 }

@@ -135,6 +135,8 @@ public class InGameState extends CWState implements PropertyChangeListener {
     Dimension screenSize = new Dimension(guiContext.getWidth(), guiContext.getHeight());
     Dimension worldSize = new Dimension(map.getWidth(), map.getHeight());
     this.camera = new Camera2D(screenSize, worldSize, map.getTileSize());
+    boolean zoomEnabled = App.getBoolean("display.zoom");
+    camera.setZoomingEnabled(zoomEnabled);
   }
 
   private void initCursors(Map<Tile> map) {
@@ -212,7 +214,6 @@ public class InGameState extends CWState implements PropertyChangeListener {
           unit = selectedUnit;
         }
 
-        boolean zoomEnabled = App.getBoolean("display.zoom");
         switch (command.getEnum()) {
           case SELECT:
             gameControl.handleA(unit, city, cursorLocation);
@@ -224,14 +225,10 @@ public class InGameState extends CWState implements PropertyChangeListener {
             gameControl.endTurn(stateChanger);
             break;
           case ZOOM_IN:
-            if (zoomEnabled) {
-              camera.zoomIn();
-            }
+            camera.zoomIn();
             break;
           case ZOOM_OUT:
-            if (zoomEnabled) {
-              camera.zoomOut();
-            }
+            camera.zoomOut();
         }
       }
     }
@@ -302,8 +299,7 @@ public class InGameState extends CWState implements PropertyChangeListener {
   }
 
   public void mouseWheelMoved(int newValue) {
-    boolean zoomEnabled = App.getBoolean("display.zoom");
-    if (entered && zoomEnabled) {
+    if (entered) {
       if (newValue > 0) {
         camera.zoomIn();
       } else {
