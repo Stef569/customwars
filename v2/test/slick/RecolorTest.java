@@ -4,6 +4,7 @@ import com.customwars.client.io.img.ImageLib;
 import com.customwars.client.io.img.slick.ImageStrip;
 import com.customwars.client.io.img.slick.SpriteSheet;
 import com.customwars.client.io.loading.ImageFilterParser;
+import com.customwars.client.tools.ColorUtil;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.BasicGame;
 import org.newdawn.slick.GameContainer;
@@ -12,7 +13,6 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.util.Log;
 import org.newdawn.slick.util.ResourceLoader;
-import tools.ColorUtil;
 
 import java.awt.Color;
 import java.io.IOException;

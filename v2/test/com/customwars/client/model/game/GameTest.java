@@ -8,6 +8,7 @@ import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.gameobject.UnitFactory;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
+import com.customwars.client.tools.MapUtil;
 import junit.framework.JUnit4TestAdapter;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -15,7 +16,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import tools.MapUtil;
 
 import java.awt.Color;
 import java.util.Arrays;

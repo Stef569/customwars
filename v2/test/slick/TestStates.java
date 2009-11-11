@@ -5,6 +5,7 @@ import com.customwars.client.Config;
 import com.customwars.client.SFX;
 import com.customwars.client.io.ResourceManager;
 import com.customwars.client.model.game.Game;
+import com.customwars.client.tools.StringUtil;
 import com.customwars.client.ui.GUI;
 import com.customwars.client.ui.slick.CWStateBasedGame;
 import com.customwars.client.ui.state.ControlBindingState;
@@ -16,7 +17,6 @@ import com.customwars.client.ui.state.input.CWCommand;
 import org.apache.log4j.Logger;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.command.InputProviderListener;
-import tools.StringUtil;
 
 import java.io.IOException;
 

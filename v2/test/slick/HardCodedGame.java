@@ -11,7 +11,7 @@ import com.customwars.client.model.gameobject.Terrain;
 import com.customwars.client.model.gameobject.TerrainFactory;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
-import tools.MapUtil;
+import com.customwars.client.tools.MapUtil;
 
 import java.awt.Color;
 import java.util.Arrays;
