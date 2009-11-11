@@ -2,7 +2,6 @@ package com.customwars.client.controller;
 
 import com.customwars.client.App;
 import com.customwars.client.io.ResourceManager;
-import com.customwars.client.io.loading.map.MapParser;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Terrain;
@@ -76,8 +75,8 @@ public class MapEditorController {
   public void createEmptyMap(int cols, int rows) {
     int tileSize = App.getInt("plugin.tilesize");
     String version = App.get("game.version");
-
     Terrain plain = TerrainFactory.getTerrain(0);
+
     Map<Tile> map = new Map<Tile>(cols, rows, tileSize, false, plain);
     map.putProperty("VERSION", version);
     setMap(map);
@@ -100,7 +99,8 @@ public class MapEditorController {
 
   private boolean isValidMapFile(File file) {
     String fileName = file.getName();
-    return fileName != null && fileName.endsWith(MapParser.MAP_FILE_EXTENSION);
+    String mapFileExtension = App.get("map.file.extension");
+    return fileName != null && fileName.endsWith(mapFileExtension);
   }
 
   public void saveMap(String mapName, String mapDescription, String author) throws IOException {
@@ -111,7 +111,8 @@ public class MapEditorController {
   }
 
   public void saveMap(String fileName) throws IOException {
-    String mapName = StringUtil.appendTrailingSuffix(fileName, MapParser.MAP_FILE_EXTENSION);
+    String mapFileExtension = App.get("map.file.extension");
+    String mapName = StringUtil.appendTrailingSuffix(fileName, mapFileExtension);
     String mapDir = App.get("home.maps.dir");
     File newMapFile = new File(mapDir, mapName);
 
@@ -122,25 +123,13 @@ public class MapEditorController {
     }
   }
 
-  public void setMapName(String mapName) {
-    map.putProperty("NAME", mapName);
-  }
-
-  public void setAuthor(String author) {
-    map.putProperty("AUTHOR", author);
-  }
-
-  public void setDescription(String description) {
-    map.putProperty("DESCRIPTION", description);
-  }
-
   private void setMap(Map<Tile> map) {
     this.map = map;
     mapEditorView.setMap(map);
-    buildControls();
+    buildControls(map);
   }
 
-  private void buildControls() {
+  private void buildControls(Map<Tile> map) {
     controls = new ArrayList<MapEditorControl>();
     controls.add(new TerrainMapEditorControl(map));
     controls.add(new CityMapEditorControl(map));

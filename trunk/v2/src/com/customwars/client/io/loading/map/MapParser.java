@@ -11,8 +11,6 @@ import java.io.OutputStream;
  * Interface for objects that can read/write a Map object from/to a stream
  */
 public interface MapParser {
-  public static final String MAP_FILE_EXTENSION = ".map";
-
   /**
    * Read a map object from the inputstream
    *
