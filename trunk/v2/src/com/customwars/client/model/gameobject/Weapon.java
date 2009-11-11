@@ -2,8 +2,8 @@ package com.customwars.client.model.gameobject;
 
 import com.customwars.client.model.ArmyBranch;
 import com.customwars.client.model.map.Range;
-import tools.Args;
-import tools.NumberUtil;
+import com.customwars.client.tools.Args;
+import com.customwars.client.tools.NumberUtil;
 
 import java.util.ArrayList;
 import java.util.List;

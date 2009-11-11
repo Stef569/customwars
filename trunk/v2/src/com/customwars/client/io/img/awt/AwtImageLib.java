@@ -1,11 +1,11 @@
 package com.customwars.client.io.img.awt;
 
+import com.customwars.client.tools.ColorUtil;
+import com.customwars.client.tools.ImageUtil;
 import org.apache.log4j.Logger;
 import org.newdawn.slick.loading.DeferredResource;
 import org.newdawn.slick.loading.LoadingList;
 import org.newdawn.slick.util.ResourceLoader;
-import tools.ColorUtil;
-import tools.ImageUtil;
 
 import javax.imageio.ImageIO;
 import java.awt.Color;
@@ -87,7 +87,7 @@ public class AwtImageLib {
     ImgFilter filter = imgFilters.get(filterName.toUpperCase());
     if (filter == null)
       throw new IllegalArgumentException(
-              "No ImgFilter found for " + filterName.toUpperCase() + " available filters: " + imgFilters.keySet());
+        "No ImgFilter found for " + filterName.toUpperCase() + " available filters: " + imgFilters.keySet());
 
     BufferedImage awtImg = getAwImg(baseImgName);
     filter.setReplacementColor(recolorTo);

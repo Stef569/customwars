@@ -1,11 +1,11 @@
 package com.customwars.client;
 
 import com.customwars.client.io.ResourceManager;
+import com.customwars.client.tools.IOUtil;
+import com.customwars.client.tools.StringUtil;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.newdawn.slick.util.ResourceLoader;
-import tools.IOUtil;
-import tools.StringUtil;
 
 import java.io.File;
 import java.io.IOException;

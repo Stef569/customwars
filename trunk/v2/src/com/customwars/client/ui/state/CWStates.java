@@ -4,6 +4,7 @@ import com.customwars.client.App;
 import com.customwars.client.Config;
 import com.customwars.client.SFX;
 import com.customwars.client.io.ResourceManager;
+import com.customwars.client.tools.IOUtil;
 import com.customwars.client.ui.GUI;
 import com.customwars.client.ui.slick.CWStateBasedGame;
 import com.customwars.client.ui.state.input.CWCommand;
@@ -11,7 +12,6 @@ import com.customwars.client.ui.state.menu.MainMenuState;
 import com.customwars.client.ui.state.menu.OptionMenuState;
 import com.customwars.client.ui.state.menu.SinglePlayerMenuState;
 import org.apache.log4j.Logger;
-import tools.IOUtil;
 
 import java.io.IOException;
 import java.util.Properties;

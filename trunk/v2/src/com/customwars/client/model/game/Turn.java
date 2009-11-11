@@ -1,6 +1,6 @@
 package com.customwars.client.model.game;
 
-import tools.Args;
+import com.customwars.client.tools.Args;
 
 /**
  * Stores the current turn/day and their limits

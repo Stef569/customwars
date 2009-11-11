@@ -1,6 +1,6 @@
 package com.customwars.client.io.img.awt;
 
-import tools.ColorUtil;
+import com.customwars.client.tools.ColorUtil;
 
 import java.awt.Color;
 import java.awt.image.RGBImageFilter;

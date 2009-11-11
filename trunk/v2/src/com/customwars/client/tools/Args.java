@@ -1,4 +1,4 @@
-package tools;
+package com.customwars.client.tools;
 
 import java.util.ArrayList;
 import java.util.List;

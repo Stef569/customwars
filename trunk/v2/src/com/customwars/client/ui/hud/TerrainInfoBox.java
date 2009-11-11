@@ -6,6 +6,7 @@ import com.customwars.client.io.img.slick.ImageStrip;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Terrain;
 import com.customwars.client.model.map.Tile;
+import com.customwars.client.tools.NumberUtil;
 import com.customwars.client.ui.layout.Box;
 import com.customwars.client.ui.layout.ImageBox;
 import com.customwars.client.ui.layout.TextBox;
@@ -16,7 +17,6 @@ import org.newdawn.slick.Font;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.gui.GUIContext;
-import tools.NumberUtil;
 
 public class TerrainInfoBox extends BasicComponent {
   private static final Color backgroundColor = new Color(0, 0, 0, 0.40f);

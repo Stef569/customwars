@@ -5,8 +5,8 @@ import com.customwars.client.model.TurnHandler;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.map.Direction;
 import com.customwars.client.model.map.Location;
-import tools.Args;
-import tools.NumberUtil;
+import com.customwars.client.tools.Args;
+import com.customwars.client.tools.NumberUtil;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;

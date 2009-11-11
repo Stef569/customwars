@@ -1,5 +1,6 @@
 package com.customwars.client.ui.slick;
 
+import com.customwars.client.tools.StringUtil;
 import com.customwars.client.ui.state.input.CWInput;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.command.Command;
@@ -8,7 +9,6 @@ import org.newdawn.slick.command.KeyControl;
 import org.newdawn.slick.gui.ComponentListener;
 import org.newdawn.slick.gui.GUIContext;
 import org.newdawn.slick.gui.TextField;
-import tools.StringUtil;
 
 import java.util.List;
 

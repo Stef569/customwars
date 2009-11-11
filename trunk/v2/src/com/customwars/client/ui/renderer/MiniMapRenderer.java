@@ -6,12 +6,12 @@ import com.customwars.client.model.gameobject.Terrain;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
+import com.customwars.client.tools.ColorUtil;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.geom.Circle;
 import org.newdawn.slick.geom.Shape;
-import tools.ColorUtil;
 
 import java.awt.Dimension;
 import java.awt.Point;

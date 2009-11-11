@@ -7,7 +7,7 @@ import com.customwars.client.model.gameobject.TerrainFactory;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.model.map.TileMap;
-import tools.MapUtil;
+import com.customwars.client.tools.MapUtil;
 
 public class CityMapEditorControl implements MapEditorControl {
   private TileMap<Tile> map;

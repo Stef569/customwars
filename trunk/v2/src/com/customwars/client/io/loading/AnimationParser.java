@@ -5,11 +5,11 @@ import com.customwars.client.io.img.AnimLib;
 import com.customwars.client.io.img.ImageLib;
 import com.customwars.client.io.img.slick.ImageStrip;
 import com.customwars.client.io.img.slick.SpriteSheet;
+import com.customwars.client.tools.IOUtil;
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.loading.DeferredResource;
 import org.newdawn.slick.loading.LoadingList;
-import tools.IOUtil;
 
 import java.awt.Point;
 import java.io.BufferedReader;

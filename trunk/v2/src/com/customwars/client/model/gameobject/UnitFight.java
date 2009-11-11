@@ -2,7 +2,7 @@ package com.customwars.client.model.gameobject;
 
 import com.customwars.client.model.fight.BasicFight;
 import com.customwars.client.model.map.Tile;
-import tools.NumberUtil;
+import com.customwars.client.tools.NumberUtil;
 
 /**
  * Handles Fights between 2 units

@@ -1,11 +1,11 @@
 package com.customwars.client.io.loading;
 
+import com.customwars.client.tools.Args;
 import com.customwars.client.ui.state.input.CWInput;
 import com.customwars.client.ui.state.input.LwjglControlUtil;
 import org.newdawn.slick.command.BasicCommand;
 import org.newdawn.slick.command.Command;
 import org.newdawn.slick.command.Control;
-import tools.Args;
 
 import java.util.ArrayList;
 import java.util.List;

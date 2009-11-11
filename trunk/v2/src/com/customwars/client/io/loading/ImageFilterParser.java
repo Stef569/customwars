@@ -2,10 +2,10 @@ package com.customwars.client.io.loading;
 
 import com.customwars.client.io.img.awt.AwtImageLib;
 import com.customwars.client.io.img.awt.ImgFilter;
+import com.customwars.client.tools.IOUtil;
+import com.customwars.client.tools.Xml;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-import tools.IOUtil;
-import tools.Xml;
 
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
