@@ -1,4 +1,4 @@
-package com.customwars.client.MapMaker;
+package com.customwars.client.model.map.connector;
 
 import com.customwars.client.model.gameobject.Terrain;
 import com.customwars.client.model.gameobject.TerrainFactory;
@@ -15,9 +15,9 @@ import java.util.List;
  * Data store for surrounding tile and terrain information around a center tile
  */
 public class SurroundingTileData {
-  private TileMap<Tile> map;
-  private Tile center;
-  private Terrain terrain;
+  private final TileMap<Tile> map;
+  private final Tile center;
+  private final Terrain terrain;
 
   private List<Tile> surroundingTiles;
   private List<Tile> surroundingTilesWithSameTerrain;
