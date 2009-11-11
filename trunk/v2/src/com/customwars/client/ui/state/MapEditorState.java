@@ -167,6 +167,8 @@ public class MapEditorState extends CWState {
     Dimension screenSize = new Dimension(guiContext.getWidth(), guiContext.getHeight());
     Dimension worldSize = new Dimension(map.getWidth(), map.getHeight());
     this.camera = new Camera2D(screenSize, worldSize, map.getTileSize());
+    boolean zoomEnabled = App.getBoolean("display.zoom");
+    camera.setZoomingEnabled(zoomEnabled);
   }
 
   private void initCursors() {
