@@ -42,11 +42,7 @@ public class PathFinder implements MovementCost {
     calculatePaths(mover);
 
     List<Point> points = dijkstra.getMoveZone();
-    List<Location> tiles = new ArrayList<Location>(points.size());
-    for (Point p : points) {
-      tiles.add(map.getTile(p.x, p.y));
-    }
-    return tiles;
+    return pointsToTiles(points);
   }
 
   /**
@@ -67,6 +63,15 @@ public class PathFinder implements MovementCost {
     }
     List<Point> points = dijkstra.getRoute(destination.getCol(), destination.getRow());
     List<Location> tiles = new ArrayList<Location>(points.size());
+    return pointsToTiles(points);
+  }
+
+  /**
+   * Convert the points collection to Locations within the map
+   */
+  private List<Location> pointsToTiles(List<Point> points) {
+    List<Location> tiles = new ArrayList<Location>(points.size());
+
     for (Point p : points) {
       tiles.add(map.getTile(p.x, p.y));
     }

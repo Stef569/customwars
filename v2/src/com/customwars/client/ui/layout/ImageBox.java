@@ -5,6 +5,10 @@ import org.newdawn.slick.Image;
 
 import java.awt.Insets;
 
+/**
+ * An Image box is an image within a box
+ * The box can be larger then the image by having insets
+ */
 public class ImageBox extends Box {
   private Image img;
   private Insets insets;
@@ -24,7 +28,7 @@ public class ImageBox extends Box {
   }
 
   protected void init() {
-    width = getImgBoxWith();
+    width = getImgBoxWidth();
     height = getImgBoxHeight();
     center.x = center(width, getImgWidth());
     center.y = center(height, getImgHeight());
@@ -35,7 +39,7 @@ public class ImageBox extends Box {
       g.drawImage(img, x + center.x, y + center.y);
   }
 
-  private int getImgBoxWith() {
+  private int getImgBoxWidth() {
     int totalWidth;
     int imgWidth = getImgWidth();
 
