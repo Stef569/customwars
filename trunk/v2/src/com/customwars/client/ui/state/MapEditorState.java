@@ -6,6 +6,7 @@ import com.customwars.client.controller.MapEditorController;
 import com.customwars.client.model.map.Direction;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
+import com.customwars.client.model.map.TileMap;
 import com.customwars.client.ui.Camera2D;
 import com.customwars.client.ui.GUI;
 import com.customwars.client.ui.Scroller;
@@ -24,8 +25,6 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.gui.GUIContext;
-import org.newdawn.slick.loading.DeferredResource;
-import org.newdawn.slick.loading.LoadingList;
 import org.newdawn.slick.state.StateBasedGame;
 
 import javax.swing.JFileChooser;
@@ -65,27 +64,6 @@ public class MapEditorState extends CWState {
   public void init(GameContainer gameContainer, StateBasedGame stateBasedGame) throws SlickException {
     this.guiContext = gameContainer;
     createPanels(gameContainer);
-
-    if (LoadingList.isDeferredLoading()) {
-      LoadingList.get().add(
-        new DeferredResource() {
-          public void load() throws IOException {
-            init();
-          }
-
-          public String getDescription() {
-            return "init map editor";
-          }
-        }
-      );
-    } else {
-      init();
-    }
-  }
-
-  private void init() {
-    mapEditorController = new MapEditorController(this, resources, panels.size());
-    recolorPanels();
   }
 
   private void createPanels(GameContainer gameContainer) {
@@ -106,6 +84,13 @@ public class MapEditorState extends CWState {
     }
   }
 
+  @Override
+  public void enter(GameContainer container, StateBasedGame game) throws SlickException {
+    super.enter(container, game);
+    mapEditorController = new MapEditorController(this, resources, panels.size());
+    recolorPanels();
+  }
+
   private void recolorPanels() {
     for (int panelIndex = 0; panelIndex < panels.size(); panelIndex++) {
       this.activePanelID = panelIndex;
@@ -124,14 +109,16 @@ public class MapEditorState extends CWState {
   }
 
   public void render(GameContainer container, Graphics g) throws SlickException {
-    g.scale(camera.getZoomLvl(), camera.getZoomLvl());
-    g.translate(-camera.getX(), -camera.getY());
-    mapRenderer.render(g);
-    g.translate(camera.getX(), camera.getY());
+    if (entered) {
+      g.scale(camera.getZoomLvl(), camera.getZoomLvl());
+      g.translate(-camera.getX(), -camera.getY());
+      mapRenderer.render(g);
+      g.translate(camera.getX(), camera.getY());
 
-    getActivePanel().render(container, g);
-    renderControls(g);
-    g.resetTransform();
+      getActivePanel().render(container, g);
+      renderControls(g);
+      g.resetTransform();
+    }
   }
 
   private void renderControls(Graphics g) {
@@ -163,7 +150,7 @@ public class MapEditorState extends CWState {
     initCursors();
   }
 
-  private void initCamera(Map<Tile> map) {
+  private void initCamera(TileMap<Tile> map) {
     Dimension screenSize = new Dimension(guiContext.getWidth(), guiContext.getHeight());
     Dimension worldSize = new Dimension(map.getWidth(), map.getHeight());
     this.camera = new Camera2D(screenSize, worldSize, map.getTileSize());

@@ -16,6 +16,7 @@ import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -159,6 +160,8 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
   /**
    * Activate the units of the given player
    * if fog is enabled the vision range for each owned and allied unit/city is set.
+   *
+   * @param player The player to reset the map for
    */
   public void resetMap(Player player) {
     resetUnits(player);
@@ -204,7 +207,7 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
   }
 
   public void resetAllHiddenUnits(Player player) {
-    for (Tile t : getAllTiles()) {
+    for (Location t : getAllTiles()) {
       Unit unit = getUnitOn(t);
 
       if (unit != null) {
@@ -373,7 +376,7 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
     return false;
   }
 
-  private boolean isAdjacentOfLocations(Location location, List<Location> locations) {
+  private boolean isAdjacentOfLocations(Location location, Collection<Location> locations) {
     for (Location loc : locations) {
       if (isAdjacent(location, loc)) return true;
     }
@@ -511,7 +514,7 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
   }
 
   public void putProperty(String key, String value) {
-    properties.put(key, value);
+    properties.setProperty(key, value);
   }
 
   /**
@@ -542,13 +545,16 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
   }
 
   /**
-   * @param tile        The tile to be checked if it is a valid drop location
-   * @param transporter The unit that attempts to drop a unit to tile
+   * Determines if the transporter unit can drop any unit to the given drop location
+   *
+   * @param dropLocation The tile to be checked if it is a valid drop location
+   * @param transporter  The unit that attempts to drop a unit to tile
    * @return Can the transporter drop a unit to the given tile
    */
-  public boolean isFreeDropLocation(Tile tile, Unit transporter) {
-    Unit unitOnDropLocation = getUnitOn(tile);
-    return tile.isFogged() || tile.getLocatableCount() == 0 ||
+  public boolean isFreeDropLocation(Tile dropLocation, Unit transporter) {
+    Unit unitOnDropLocation = getUnitOn(dropLocation);
+
+    return dropLocation.isFogged() || dropLocation.getLocatableCount() == 0 ||
       unitOnDropLocation.isHidden() || unitOnDropLocation == transporter;
   }
 
