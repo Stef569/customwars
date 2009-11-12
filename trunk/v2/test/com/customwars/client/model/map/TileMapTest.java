@@ -28,7 +28,7 @@ public class TileMapTest {
   @Before
   public void beforeEachTest() {
     plain = TerrainFactory.getTerrain(TestData.PLAIN);
-    map = new Map<Tile>(10, 15, 32, false, plain);
+    map = new Map<Tile>(10, 15, 32, plain);
   }
 
   @AfterClass
@@ -118,7 +118,7 @@ public class TileMapTest {
       boolean eastTile = t.getCol() == 1 && t.getRow() == 0;
       boolean southTile = t.getCol() == 0 && t.getRow() == 1;
       Assert.assertNotNull(t);
-      Assert.assertEquals(true, eastTile || southTile);
+      Assert.assertTrue(eastTile || southTile);
     }
   }
 
@@ -133,23 +133,23 @@ public class TileMapTest {
 
     // Connected Tiles should return correct compass direction
     dir = map.getDirectionTo(baseTile, left);
-    Assert.assertEquals(dir, Direction.WEST);
+    Assert.assertEquals(Direction.WEST, dir);
 
     dir = map.getDirectionTo(baseTile, right);
-    Assert.assertEquals(dir, Direction.EAST);
+    Assert.assertEquals(Direction.EAST, dir);
 
     dir = map.getDirectionTo(baseTile, up);
-    Assert.assertEquals(dir, Direction.NORTH);
+    Assert.assertEquals(Direction.NORTH, dir);
 
     dir = map.getDirectionTo(baseTile, down);
-    Assert.assertEquals(dir, Direction.SOUTH);
+    Assert.assertEquals(Direction.SOUTH, dir);
 
     dir = map.getDirectionTo(baseTile, baseTile);
-    Assert.assertEquals(dir, Direction.STILL);
+    Assert.assertEquals(Direction.STILL, dir);
 
     // Not connected should return STILL
     dir = map.getDirectionTo(left, right);
-    Assert.assertEquals(dir, Direction.STILL);
+    Assert.assertEquals(Direction.STILL, dir);
   }
 
   @Test
@@ -346,7 +346,7 @@ public class TileMapTest {
   @Test
   public void quadrantWithUnEvenMapSize() {
     Location middle = new Location2D(5, 7);
-    Map<Tile> map = new Map<Tile>(10, 15, 32, false, plain);
+    Map<Tile> map = new Map<Tile>(10, 15, 32, plain);
     Direction quadrant = map.getQuadrantFor(middle);
     Assert.assertNotNull(quadrant);
   }
@@ -355,7 +355,7 @@ public class TileMapTest {
   public void testRandomTile() {
     Tile random = map.getRandomTile();
 
-    Assert.assertTrue(random != null);
+    Assert.assertNotNull(random);
     Assert.assertTrue(map.isValid(random));
   }
 

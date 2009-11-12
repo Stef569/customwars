@@ -1,5 +1,6 @@
 package com.customwars.client.io.loading.map;
 
+import com.customwars.client.App;
 import com.customwars.client.io.FileSystemManager;
 import com.customwars.client.io.ResourceManager;
 import com.customwars.client.model.map.Map;
@@ -20,9 +21,9 @@ import java.util.List;
  */
 public class MapLoader {
   private static final Logger logger = Logger.getLogger(MapLoader.class);
-  private List<String> mapPaths;
-  private MapParser mapParser;
-  private ResourceManager resources;
+  private final List<String> mapPaths;
+  private final MapParser mapParser;
+  private final ResourceManager resources;
 
   public MapLoader(List<String> mapPaths, MapParser mapParser, ResourceManager resources) {
     this.mapPaths = mapPaths;
@@ -49,8 +50,8 @@ public class MapLoader {
       FileSystemManager fsm = new FileSystemManager(mapPath);
 
       // Current dir
-      File f = new File(mapPath);
-      readMapsFromDir(fsm, f);
+      File mapsDir = new File(mapPath);
+      readMapsFromDir(fsm, mapsDir);
 
       // Subdirs
       for (File category : fsm.getDirs()) {
@@ -60,19 +61,20 @@ public class MapLoader {
   }
 
   private void readMapsFromDir(FileSystemManager fsm, File dir) throws IOException {
+    String mapExtension = App.get("map.file.extension");
     for (File mapFile : fsm.getFiles(dir)) {
-      if (mapFile.getName().endsWith(".map")) {
+      if (mapFile.getName().endsWith(mapExtension)) {
         InputStream in = ResourceLoader.getResourceAsStream(mapFile.getPath());
         loadMap(in);
       } else {
-        logger.warn("Skipping " + mapFile + " wrong extension expected .map");
+        logger.warn("Skipping " + mapFile + " wrong extension expected " + mapExtension);
       }
     }
   }
 
   private void loadMap(InputStream in) throws IOException {
     Map<Tile> map = mapParser.readMap(in);
-    String mapName = map.getProperty("NAME");
+    String mapName = map.getMapName();
     resources.addMap(mapName, map);
   }
 

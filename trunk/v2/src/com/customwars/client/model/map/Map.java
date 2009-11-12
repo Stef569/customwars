@@ -14,14 +14,13 @@ import com.customwars.client.model.map.path.PathFinder;
 import com.customwars.client.tools.Args;
 import org.apache.log4j.Logger;
 
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Properties;
 import java.util.Set;
 
 /**
@@ -42,29 +41,35 @@ import java.util.Set;
  */
 public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
   private static final Logger logger = Logger.getLogger(Map.class);
-  private Properties properties;    // The properties of the map
+  private String mapName, author, description;    // The properties of the map
   private boolean fogOfWarOn;       // Is fog of war in effect
   private PathFinder pathFinder;    // To builds paths within the map
 
-  public Map(int cols, int rows, int tileSize, boolean fogOfWar, Terrain startTerrain, Properties properties) {
-    this(cols, rows, tileSize, fogOfWar, startTerrain);
-    this.properties = properties == null ? new Properties() : properties;
+  /**
+   * Create an anonymous map
+   */
+  public Map(int cols, int rows, int tileSize, Terrain startTerrain) {
+    this("empty", "anonymous", "empty", cols, rows, tileSize, startTerrain);
+
   }
 
   /**
-   * Create a new Map
+   * Create a new named Map
    *
+   * @param mapName      The name of the map
+   * @param author       The creator of this map
+   * @param description  A short message explaining what this map is all about
    * @param cols         width in tiles
    * @param rows         height in tiles
    * @param tileSize     square size of 1 tile in pixels
-   * @param fogOfWar     indicates if fow is on
    * @param startTerrain the terrain that is used to fill the map
    */
-  public Map(int cols, int rows, int tileSize, boolean fogOfWar, Terrain startTerrain) {
+  public Map(String mapName, String author, String description, int cols, int rows, int tileSize, Terrain startTerrain) {
     super(cols, rows, tileSize);
-    this.fogOfWarOn = fogOfWar;
+    this.mapName = mapName;
+    this.author = author;
+    this.description = description;
     this.pathFinder = new PathFinder(this);
-    this.properties = new Properties();
     fillMap(cols, rows, startTerrain);
     validateMap();
   }
@@ -105,9 +110,10 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
    * @param otherMap map to copy
    */
   public Map(Map<Tile> otherMap) {
-    this(otherMap.getCols(), otherMap.getRows(), otherMap.getTileSize(), otherMap.fogOfWarOn, otherMap.getTile(0, 0).getTerrain());
-    this.properties = new Properties();
-    properties.putAll(otherMap.properties);
+    this(otherMap.getCols(), otherMap.getRows(), otherMap.getTileSize(), otherMap.getTile(0, 0).getTerrain());
+    this.mapName = otherMap.mapName;
+    this.author = otherMap.author;
+    this.description = otherMap.description;
     copyMapData(otherMap);
   }
 
@@ -499,7 +505,7 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
    * @param baseTile The center of the vision range that is being cleared
    * @return If the tile should be cleared of fog.
    */
-  public boolean canClearFog(Tile baseTile, Tile tile) {
+  public boolean canClearFog(Location baseTile, Tile tile) {
     Terrain terrain = tile.getTerrain();
     boolean adjacent = isAdjacent(tile, baseTile);
 
@@ -511,10 +517,6 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
     boolean oldVal = this.fogOfWarOn;
     this.fogOfWarOn = fogOfWarOn;
     firePropertyChange("fogofwar", oldVal, fogOfWarOn);
-  }
-
-  public void putProperty(String key, String value) {
-    properties.setProperty(key, value);
   }
 
   /**
@@ -586,32 +588,51 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
     return players;
   }
 
-  public String getProperty(String key) {
-    return properties.getProperty(key);
+  public String getMapName() {
+    return mapName;
   }
 
-  public boolean hasProperty(String key) {
-    return properties.containsKey(key);
+  public void setMapName(String mapName) {
+    this.mapName = mapName;
   }
 
-  public Iterable<String> getPropertyKeys() {
-    final Iterator it = properties.keySet().iterator();
-    return new Iterable<String>() {
-      public Iterator<String> iterator() {
-        return new Iterator<String>() {
-          public boolean hasNext() {
-            return it.hasNext();
-          }
+  public String getAuthor() {
+    return author;
+  }
 
-          public String next() {
-            return (String) it.next();
-          }
+  public void setAuthor(String author) {
+    this.author = author;
+  }
 
-          public void remove() {
-            throw new UnsupportedOperationException("Removing properties is not allowed");
-          }
-        };
-      }
-    };
+  public String getDescription() {
+    return description;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
+  }
+
+  public void addListenerToAllTilesUnitsAndCities(PropertyChangeListener listener) {
+    for (Tile t : getAllTiles()) {
+      t.addPropertyChangeListener(listener);
+
+      Unit unit = getUnitOn(t);
+      if (unit != null) unit.addPropertyChangeListener(listener);
+
+      City city = getCityOn(t);
+      if (city != null) city.addPropertyChangeListener(listener);
+    }
+  }
+
+  public void removeListenerFromAllTilesUnitsAndCities(PropertyChangeListener listener) {
+    for (Tile t : getAllTiles()) {
+      t.removePropertyChangeListener(listener);
+
+      Unit unit = getUnitOn(t);
+      if (unit != null) unit.removePropertyChangeListener(listener);
+
+      City city = getCityOn(t);
+      if (city != null) city.removePropertyChangeListener(listener);
+    }
   }
 }

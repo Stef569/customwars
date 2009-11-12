@@ -28,7 +28,7 @@ public class CityTest {
     player1 = new Player(0, Color.RED, false, null, "Stef", Integer.MAX_VALUE, 0, false);
     player2 = new Player(1, Color.BLUE, false, null, "JSR", 8500, 1, false);
     Terrain plain = TerrainFactory.getTerrain(TestData.PLAIN);
-    map = new Map<Tile>(10, 10, 32, true, plain);
+    map = new Map<Tile>(10, 10, 32, plain);
   }
 
   @AfterClass
@@ -106,7 +106,7 @@ public class CityTest {
     unit.setOwner(player1);
     tile.add(unit);
 
-    Assert.assertEquals(true, city.canHeal(unit));
+    Assert.assertTrue(city.canHeal(unit));
     city.heal(unit);
     int expectedHp = UNIT_HP + TestData.CITY_HEAL_RATE;
     Assert.assertEquals(expectedHp, unit.getHp());
@@ -131,7 +131,7 @@ public class CityTest {
     unit.setOwner(player1);
     tile.add(unit);
 
-    Assert.assertEquals(true, city.canSupply(unit));
+    Assert.assertTrue(city.canSupply(unit));
     city.supply(unit);
     Assert.assertEquals(unit.getMaxSupplies(), unit.getSupplies());
   }
@@ -145,6 +145,6 @@ public class CityTest {
     factory.setOwner(player1);
 
     Unit unit = UnitFactory.getUnit(TestData.INF);
-    Assert.assertEquals(true, factory.canBuild(unit));
+    Assert.assertTrue(factory.canBuild(unit));
   }
 }

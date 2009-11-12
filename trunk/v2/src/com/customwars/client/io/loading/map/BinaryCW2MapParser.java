@@ -54,7 +54,9 @@ import java.util.Set;
  * <CW2_HEADER_START> txt
  * <COLS> int
  * <ROWS> int
- * <FOG_ON> boolean
+ * <MAP_NAME>
+ * <AUTHOR>
+ * <DESCRIPTION>
  *
  * PLAYER HEADER:
  * <NUM_PLAYERS> byte
@@ -63,12 +65,6 @@ import java.util.Set;
  * <PLAYER_RGB> int
  * <PLAYER_HQ_COL> int
  * <PLAYER_HQ_ROW> int
- *
- * MAP PROPERTIES HEADER:
- * <DYNAMIC_HEADER_SIZE> int
- * for each map property:
- * <MAP_PROPERTY_NAME> txt
- * <MAP_PROPERTY_VALUE> txt
  *
  * MAP DATA:
  * <TILE COL> int
@@ -109,10 +105,10 @@ public class BinaryCW2MapParser implements MapParser {
     binMapParser.write();
   }
 
-  private class BinaryMapReader {
-    private DataInputStream in;
-    private java.util.Map<Integer, Player> players = new HashMap<Integer, Player>();
-    private java.util.Map<Player, Location2D> hqLocations = new HashMap<Player, Location2D>();
+  private static class BinaryMapReader {
+    private final DataInputStream in;
+    private final java.util.Map<Integer, Player> players = new HashMap<Integer, Player>();
+    private final java.util.Map<Player, Location2D> hqLocations = new HashMap<Player, Location2D>();
 
     public BinaryMapReader(DataInputStream in) {
       this.in = in;
@@ -132,7 +128,7 @@ public class BinaryCW2MapParser implements MapParser {
       return map;
     }
 
-    private void validateStream(DataInputStream in) throws IOException {
+    private static void validateStream(DataInputStream in) throws IOException {
       String headerStart = in.readUTF();
 
       if (!headerStart.equals(CW2_HEADER_START)) {
@@ -148,22 +144,23 @@ public class BinaryCW2MapParser implements MapParser {
 
     private Map<Tile> readHeader() throws IOException {
       Map<Tile> map = readStaticHeader();
-      readMapPlayers(map);
-      readMapProperties(map);
+      readMapPlayers();
       return map;
     }
 
     private Map<Tile> readStaticHeader() throws IOException {
       int cols = in.readInt();
       int rows = in.readInt();
-      boolean fogOn = in.readBoolean();
+      String mapName = in.readUTF();
+      String author = in.readUTF();
+      String description = in.readUTF();
 
       Terrain plain = TerrainFactory.getTerrain(0);
       int tileSize = App.getInt("plugin.tilesize");
-      return new Map<Tile>(cols, rows, tileSize, fogOn, plain);
+      return new Map<Tile>(mapName, author, description, cols, rows, tileSize, plain);
     }
 
-    private void readMapPlayers(Map<Tile> map) throws IOException {
+    private void readMapPlayers() throws IOException {
       int numPlayers = in.readByte();
       for (int i = 0; i < numPlayers; i++) {
         int id = in.readByte();
@@ -193,18 +190,6 @@ public class BinaryCW2MapParser implements MapParser {
         throw new MapFormatException("Duplicate player ID(" + player.getId() + ")");
       } else {
         players.put(player.getId(), player);
-      }
-    }
-
-    private void readMapProperties(Map<Tile> map) throws IOException {
-      int dynamicHeaderSize = in.readInt();
-      int bytesRead = 0;
-
-      while (bytesRead < dynamicHeaderSize) {
-        String property = in.readUTF();
-        String value = in.readUTF();
-        map.putProperty(property, value);
-        bytesRead += (property.getBytes().length + value.getBytes().length);
       }
     }
 
@@ -247,9 +232,8 @@ public class BinaryCW2MapParser implements MapParser {
         city.setLocation(tile);
       }
 
-      Unit unit;
       if (nextBytesIsUnit()) {
-        unit = readUnit();
+        Unit unit = readUnit();
 
         if (unit != null) {
           tile.add(unit);
@@ -352,9 +336,9 @@ public class BinaryCW2MapParser implements MapParser {
     }
   }
 
-  private class BinaryMapWriter {
-    private Map<Tile> map;
-    private DataOutputStream out;
+  private static class BinaryMapWriter {
+    private final Map<Tile> map;
+    private final DataOutputStream out;
 
     public BinaryMapWriter(Map<Tile> map, DataOutputStream out) {
       this.map = map;
@@ -377,14 +361,15 @@ public class BinaryCW2MapParser implements MapParser {
     private void writeHeader() throws IOException {
       writeStaticHeader();
       writePlayers();
-      writeMapProperties();
     }
 
     private void writeStaticHeader() throws IOException {
       writeTxt(out, CW2_HEADER_START);
       out.writeInt(map.getCols());
       out.writeInt(map.getRows());
-      out.writeBoolean(map.isFogOfWarOn());
+      writeTxt(out, map.getMapName());
+      writeTxt(out, map.getAuthor());
+      writeTxt(out, map.getDescription());
     }
 
     /**
@@ -410,26 +395,6 @@ public class BinaryCW2MapParser implements MapParser {
         out.writeInt(-1);
         out.writeInt(-1);
       }
-    }
-
-    private void writeMapProperties() throws IOException {
-      out.writeInt(getPropertiesByteSize());
-
-      for (String property : map.getPropertyKeys()) {
-        String value = map.getProperty(property);
-        writeTxt(out, property);
-        writeTxt(out, value);
-      }
-    }
-
-    private int getPropertiesByteSize() {
-      int headerSize = 0;
-      for (String property : map.getPropertyKeys()) {
-        String value = map.getProperty(property);
-        headerSize += property.getBytes().length;
-        headerSize += value.getBytes().length;
-      }
-      return headerSize;
     }
 
     private void writeMapData() throws IOException {
@@ -500,7 +465,11 @@ public class BinaryCW2MapParser implements MapParser {
       }
     }
 
-    private void writeTxt(DataOutputStream out, String txt) throws IOException {
+    /**
+     * This util method makes sure some text is always written
+     * to the outputstream, even if the given txt is null
+     */
+    private static void writeTxt(DataOutputStream out, String txt) throws IOException {
       if (txt == null) {
         txt = "";
       }

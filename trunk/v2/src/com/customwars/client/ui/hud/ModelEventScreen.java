@@ -2,9 +2,7 @@ package com.customwars.client.ui.hud;
 
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.game.TurnBasedGame;
-import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Unit;
-import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.tools.IOUtil;
 import org.apache.log4j.Logger;
@@ -87,32 +85,12 @@ public class ModelEventScreen implements PropertyChangeListener {
 
   private void addModelEventListeners(TurnBasedGame game) {
     game.addPropertyChangeListener(this);
-    Map<Tile> map = game.getMap();
-
-    for (Tile t : map.getAllTiles()) {
-      t.addPropertyChangeListener(this);
-
-      Unit unit = map.getUnitOn(t);
-      if (unit != null) unit.addPropertyChangeListener(this);
-
-      City city = map.getCityOn(t);
-      if (city != null) city.addPropertyChangeListener(this);
-    }
+    game.getMap().addListenerToAllTilesUnitsAndCities(this);
   }
 
   private void removeModelEventListeners(Game game) {
     game.removePropertyChangeListener(this);
-    Map<Tile> map = game.getMap();
-
-    for (Tile t : map.getAllTiles()) {
-      t.removePropertyChangeListener(this);
-
-      Unit unit = map.getUnitOn(t);
-      if (unit != null) unit.removePropertyChangeListener(this);
-
-      City city = map.getCityOn(t);
-      if (city != null) city.removePropertyChangeListener(this);
-    }
+    game.getMap().removeListenerFromAllTilesUnitsAndCities(this);
   }
 
   public void propertyChange(PropertyChangeEvent evt) {
