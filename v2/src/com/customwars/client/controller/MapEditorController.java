@@ -74,11 +74,9 @@ public class MapEditorController {
 
   public void createEmptyMap(int cols, int rows) {
     int tileSize = App.getInt("plugin.tilesize");
-    String version = App.get("game.version");
     Terrain plain = TerrainFactory.getTerrain(0);
 
-    Map<Tile> map = new Map<Tile>(cols, rows, tileSize, false, plain);
-    map.putProperty("VERSION", version);
+    Map<Tile> map = new Map<Tile>(cols, rows, tileSize, plain);
     setMap(map);
   }
 
@@ -104,9 +102,9 @@ public class MapEditorController {
   }
 
   public void saveMap(String mapName, String mapDescription, String author) throws IOException {
-    map.putProperty("NAME", mapName);
-    map.putProperty("DESCRIPTION", mapDescription);
-    map.putProperty("AUTHOR", author);
+    map.setMapName(mapName);
+    map.setDescription(mapDescription);
+    map.setAuthor(author);
     saveMap(mapName);
   }
 
@@ -201,13 +199,13 @@ public class MapEditorController {
     return activeID;
   }
 
-  private MapEditorControl getControl(Class c) {
+  private MapEditorControl getControl(Class controlClass) {
     for (MapEditorControl control : controls) {
-      if (control.isTypeOf(c)) {
+      if (control.isTypeOf(controlClass)) {
         return control;
       }
     }
-    throw new IllegalArgumentException("No control for " + c);
+    throw new IllegalArgumentException("No control for " + controlClass);
   }
 
   private MapEditorControl getActiveControl() {

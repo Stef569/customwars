@@ -44,7 +44,7 @@ public class HardCodedGame {
   public static Map<Tile> getMap() {
     int tileSize = App.getInt("plugin.tilesize", 32);
     Terrain plain = TerrainFactory.getTerrain(TestData.PLAIN);
-    map = new Map<Tile>(15, 20, tileSize, true, plain);
+    map = new Map<Tile>(15, 20, tileSize, plain);
     initMapProperties();
     initTerrains();
 
@@ -107,9 +107,8 @@ public class HardCodedGame {
   }
 
   private static void initMapProperties() {
-    map.putProperty("NAME", "test map");
-    map.putProperty("VERSION", "1.0");
-    map.putProperty("CREATOR", "Joe");
-    map.putProperty("DESCRIPTION", "A small [10x10] test map containing a couple of units and some cities.");
+    map.setMapName("test map");
+    map.setAuthor("Joe");
+    map.setDescription("A small [10x10] test map containing a couple of units and some cities.");
   }
 }

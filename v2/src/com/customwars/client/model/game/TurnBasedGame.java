@@ -11,10 +11,10 @@ import java.awt.Color;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 /**
  * A basic game that has
@@ -37,7 +37,7 @@ public class TurnBasedGame implements Observable {
   Map<Tile> map;                // The map containing all the tiles
   Turn turn;                    // The current turn+turn limit
   final Player neutralPlayer;   // Idle neutral player for cities that are not owned.
-  private List<Player> players; // The Human and AI players that are in this game
+  private final List<Player> players; // The Human and AI players that are in this game
   private Player activePlayer;  // There can only be one active player in a game at any time
   private GameState state;
 
@@ -69,11 +69,11 @@ public class TurnBasedGame implements Observable {
     setActivePlayer(gameStarter);
     setState(GameState.STARTED);
     startTurn(activePlayer);
-    logger.debug("Game with map " + map.getProperty("NAME") + " has started");
+    logger.debug("Game with map " + map.getMapName() + " has started");
   }
 
   public void endTurn() throws NotYourTurnException {
-    endTurn(getActivePlayer());
+    endTurn(activePlayer);
   }
 
   /**
@@ -241,9 +241,10 @@ public class TurnBasedGame implements Observable {
 
   /**
    * Get a game player by his playerName
-   * playerName is case sensitive
    *
-   * @throws IllegalArgumentException if the player could not be found
+   * @param playerName The Name of the player to retrieve(case sensitive)
+   * @return A Player within this game
+   * @throws IllegalArgumentException if no player matches the given player name
    */
   public Player getPlayerByName(String playerName) {
     Player result = null;
@@ -263,9 +264,10 @@ public class TurnBasedGame implements Observable {
 
   /**
    * Get a player by his ID
-   * The ID can be of a game player or of the neutral player
    *
-   * @throws IllegalArgumentException if the player could not be found
+   * @param playerID The ID of a game player or of the neutral player
+   * @return A Player within this game
+   * @throws IllegalArgumentException if no player matches the given player ID
    */
   public Player getPlayerByID(int playerID) {
     Player result = null;
@@ -314,7 +316,7 @@ public class TurnBasedGame implements Observable {
     }
 
     // Each player must be unique
-    Set<Player> uniquePlayers = new HashSet<Player>(players);
+    Collection<Player> uniquePlayers = new HashSet<Player>(players);
     if (players.size() != uniquePlayers.size()) {
       throw new IllegalStateException("duplicate player found " + players);
     }

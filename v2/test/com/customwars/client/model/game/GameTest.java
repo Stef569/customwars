@@ -32,7 +32,7 @@ public class GameTest {
   @Before
   public void beforeEachTest() {
     Terrain plain = TerrainFactory.getTerrain(TestData.PLAIN);
-    map = new Map<Tile>(10, 10, 32, true, plain);
+    map = new Map<Tile>(10, 10, 32, plain);
   }
 
   @After
@@ -119,7 +119,7 @@ public class GameTest {
     game.endTurn();  // p4
 
     // Game has ended:
-    Assert.assertEquals(true, game.isGameOver());
+    Assert.assertTrue(game.isGameOver());
 
     // Attempts to end the turn after the game has ended will result in an IllegalStateException
     game.endTurn();

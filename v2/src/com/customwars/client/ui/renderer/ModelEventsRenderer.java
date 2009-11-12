@@ -2,7 +2,6 @@ package com.customwars.client.ui.renderer;
 
 import com.customwars.client.io.ResourceManager;
 import com.customwars.client.model.game.Game;
-import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Map;
@@ -54,15 +53,7 @@ public class ModelEventsRenderer implements PropertyChangeListener, Renderable {
 
   private void addModelEventListeners(Game game) {
     game.addPropertyChangeListener(this);
-    Map<Tile> map = game.getMap();
-
-    for (Tile t : map.getAllTiles()) {
-      Unit unit = map.getUnitOn(t);
-      if (unit != null) unit.addPropertyChangeListener(this);
-
-      City city = map.getCityOn(t);
-      if (city != null) city.addPropertyChangeListener(this);
-    }
+    game.getMap().addListenerToAllTilesUnitsAndCities(this);
   }
 
   public void removeAllListeners() {
@@ -72,15 +63,7 @@ public class ModelEventsRenderer implements PropertyChangeListener, Renderable {
 
   private void removeModelEventListeners(Game game) {
     game.removePropertyChangeListener(this);
-    Map<Tile> map = game.getMap();
-
-    for (Tile t : map.getAllTiles()) {
-      Unit unit = map.getUnitOn(t);
-      if (unit != null) unit.removePropertyChangeListener(this);
-
-      City city = map.getCityOn(t);
-      if (city != null) city.removePropertyChangeListener(this);
-    }
+    game.getMap().removeListenerFromAllTilesUnitsAndCities(this);
   }
 
   public void loadResources(ResourceManager resources) {

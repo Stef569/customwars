@@ -81,7 +81,7 @@ public class BinCW2MapParserTest {
     Assert.assertEquals(hardCodedMap.getTileSize(), loadedMap.getTileSize());
     Assert.assertEquals(hardCodedMap.getNumPlayers(), loadedMap.getNumPlayers());
     Assert.assertEquals(hardCodedMap.countTiles(), loadedMap.countTiles());
-    Assert.assertEquals(hardCodedMap.getProperty("NAME"), loadedMap.getProperty("NAME"));
+    Assert.assertEquals(hardCodedMap.getMapName(), loadedMap.getMapName());
 
     for (Tile t : hardCodedMap.getAllTiles()) {
       Tile loadedMapTile = loadedMap.getTile(t);

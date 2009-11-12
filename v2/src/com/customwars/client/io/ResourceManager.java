@@ -256,7 +256,7 @@ public class ResourceManager {
 
   public void saveMap(Map<Tile> map, OutputStream out) throws IOException {
     mapParser.writeMap(map, out);
-    String mapName = map.getProperty("NAME");
+    String mapName = map.getMapName();
     maps.put(mapName, map);
   }
 
@@ -419,7 +419,7 @@ public class ResourceManager {
 
   public Map<Tile> loadMap(File file) throws IOException {
     Map<Tile> map = mapParser.readMap(new FileInputStream(file));
-    String mapName = map.getProperty("NAME");
+    String mapName = map.getMapName();
     addMap(mapName, map);
     return map;
   }
