@@ -1,7 +1,7 @@
 package com.customwars.client.action.city;
 
 import com.customwars.client.action.DirectAction;
-import com.customwars.client.ui.renderer.MapRenderer;
+import com.customwars.client.controller.CursorController;
 import com.customwars.client.ui.state.InGameContext;
 
 /**
@@ -10,8 +10,8 @@ import com.customwars.client.ui.state.InGameContext;
  * @author stefan
  */
 public class StartLaunchRocketAction extends DirectAction {
-  MapRenderer mapRenderer;
   private InGameContext context;
+  private CursorController cursorControl;
 
   public StartLaunchRocketAction() {
     super("Start launch rocket", true);
@@ -20,18 +20,18 @@ public class StartLaunchRocketAction extends DirectAction {
   @Override
   protected void init(InGameContext context) {
     this.context = context;
-    mapRenderer = context.getMapRenderer();
+    cursorControl = context.getCursorController();
   }
 
   @Override
   protected void invokeAction() {
     context.setInputMode(InGameContext.INPUT_MODE.LAUNCH_ROCKET);
-    mapRenderer.activateCursor("SILO");
+    cursorControl.activateCursor("SILO");
   }
 
   @Override
   public void undo() {
     context.setInputMode(InGameContext.INPUT_MODE.DEFAULT);
-    mapRenderer.activateCursor("SELECT");
+    cursorControl.activateCursor("SELECT");
   }
 }

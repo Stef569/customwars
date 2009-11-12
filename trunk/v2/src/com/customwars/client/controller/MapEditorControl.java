@@ -4,6 +4,9 @@ import com.customwars.client.model.game.Player;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
 
+/**
+ * Handles interaction with game objects in map editor mode
+ */
 public interface MapEditorControl {
   /**
    * Add a new game object of ID to the given Tile t owned by the player p
@@ -22,7 +25,7 @@ public interface MapEditorControl {
   void fillMap(Map<Tile> map, int id);
 
   /**
-   * @Return true when the impl supports the gameobject of type c
+   * @return true when the impl supports the gameobject of type c
    */
   boolean isTypeOf(Class c);
 }

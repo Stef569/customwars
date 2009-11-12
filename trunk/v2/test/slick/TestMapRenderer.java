@@ -57,9 +57,9 @@ public class TestMapRenderer extends CWState {
     TileSprite selectCursor = resources.createCursor(map, App.get("user.selectcursor"));
     TileSprite attackCursor = resources.createCursor(map, App.get("user.attackcursor"));
 
-    mapRenderer.addCursor("SELECT", selectCursor);
-    mapRenderer.addCursor("ATTACK", attackCursor);
-    mapRenderer.activateCursor("SELECT");
+    cursorControl.addCursor("SELECT", selectCursor);
+    cursorControl.addCursor("ATTACK", attackCursor);
+    cursorControl.activateCursor("SELECT");
   }
 
   public void update(GameContainer container, int delta) throws SlickException {
@@ -131,13 +131,13 @@ public class TestMapRenderer extends CWState {
   @Override
   public void keyReleased(int key, char c) {
     if (key == Input.KEY_0) {
-      mapRenderer.activateCursor("DOES_NOT_EXISTS");
+      cursorControl.activateCursor("DOES_NOT_EXISTS");
     }
     if (key == Input.KEY_1) {
-      mapRenderer.activateCursor("ATTACK");
+      cursorControl.activateCursor("ATTACK");
     }
     if (key == Input.KEY_2) {
-      mapRenderer.activateCursor("SELECT");
+      cursorControl.activateCursor("SELECT");
     }
     if (key == Input.KEY_3) {
       camera.centerOnTile(0, 0);

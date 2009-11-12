@@ -16,7 +16,6 @@ import com.customwars.client.ui.GUI;
 import com.customwars.client.ui.HUD;
 import com.customwars.client.ui.Scroller;
 import com.customwars.client.ui.sprite.SpriteManager;
-import com.customwars.client.ui.sprite.TileSprite;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 
@@ -36,25 +35,20 @@ public class GameRenderer implements Renderable, PropertyChangeListener {
 
   // Control
   private boolean renderHUD = true, renderEvents = true;
-  private GameController gameControl;
-  private Scroller scroller;
+  private final GameController gameControl;
+  private final Scroller scroller;
 
   // GUI
-  private MapRenderer mapRenderer;
-  private ModelEventsRenderer eventsRenderer;
-  private SpriteManager spriteManager;
-  private Camera2D camera;
-  private HUD hud;
+  private final MapRenderer mapRenderer;
+  private final ModelEventsRenderer eventsRenderer;
+  private final SpriteManager spriteManager;
+  private final Camera2D camera;
+  private final HUD hud;
 
   // Data
-  private Game game;
-  private Map<Tile> map;
-  private Fight fight;
-
-  public GameRenderer(Game game, Camera2D camera, MoveTraverse moveTraverse) {
-    this(game, camera, null, moveTraverse);
-    renderHUD = false;
-  }
+  private final Game game;
+  private final Map<Tile> map;
+  private final Fight fight;
 
   public GameRenderer(Game game, Camera2D camera, HUD hud, MoveTraverse moveTraverse) {
     this.game = game;
@@ -167,14 +161,6 @@ public class GameRenderer implements Renderable, PropertyChangeListener {
       g.setColor(prevColor);
       g.drawString(dmgTxt, boxX + BOX_MARGIN, boxY + BOX_MARGIN);
     }
-  }
-
-  public void addCursor(String cursorName, TileSprite cursorSprite) {
-    spriteManager.addCursor(cursorName, cursorSprite);
-  }
-
-  public void activateCursor(String cursorName) {
-    spriteManager.setActiveCursor(cursorName);
   }
 
   public Tile getCursorLocation() {

@@ -9,7 +9,6 @@ import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.ui.sprite.SpriteManager;
-import com.customwars.client.ui.sprite.TileSprite;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
@@ -40,7 +39,7 @@ public class MapRenderer implements Renderable {
   // Graphics
   private SpriteManager spriteManager;
   private ImageStrip terrainStrip;
-  private Color fogColor = Color.lightGray;
+  private final Color fogColor = Color.lightGray;
   private MapEffectsRenderer effectsRenderer;
 
   // Data
@@ -63,7 +62,7 @@ public class MapRenderer implements Renderable {
     spriteManager.loadResources(resources);
     spriteManager.loadSprites();
     effectsRenderer.loadResources(resources);
-    setTerrainStrip(resources.getSlickImgStrip("terrains"));
+    terrainStrip = resources.getSlickImgStrip("terrains");
   }
 
   public void update(int elapsedTime) {
@@ -146,14 +145,6 @@ public class MapRenderer implements Renderable {
     int py = (location.getRow() * tileHeight) - imgHeightOffset;
 
     g.drawImage(img, px, py, color);
-  }
-
-  public void activateCursor(String cursorName) {
-    spriteManager.setActiveCursor(cursorName);
-  }
-
-  public void addCursor(String cursorName, TileSprite cursor) {
-    spriteManager.addCursor(cursorName, cursor);
   }
 
   public void removeUnit(Unit unit) {
