@@ -5,16 +5,15 @@ import com.customwars.client.SFX;
 import com.customwars.client.controller.ControllerManager;
 import com.customwars.client.controller.CursorController;
 import com.customwars.client.controller.GameController;
-import com.customwars.client.io.ResourceManager;
 import com.customwars.client.model.Statistics;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.game.Player;
-import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Direction;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
+import com.customwars.client.model.map.TileMap;
 import com.customwars.client.model.map.path.MoveTraverse;
 import com.customwars.client.tools.ColorUtil;
 import com.customwars.client.ui.Camera2D;
@@ -77,14 +76,14 @@ public class InGameState extends CWState implements PropertyChangeListener {
     this.game = game;
     this.map = game.getMap();
     initCamera(map);
-    initScriptObjects(game, resources);
+    GUI.init(container, camera);
+    initScriptObjects();
 
     MoveTraverse moveTraverse = new MoveTraverse(map);
     hud = new HUD(container);
 
     gameRenderer = new GameRenderer(game, camera, hud, moveTraverse);
     gameRenderer.loadResources(resources);
-    initCursors(map);
 
     inGameContext = new InGameContext();
     inGameContext.setMoveTraverse(moveTraverse);
@@ -106,13 +105,13 @@ public class InGameState extends CWState implements PropertyChangeListener {
 
     controllerManager.initCityControllers();
     controllerManager.initUnitControllers();
+    initCursors(map);
   }
 
   /**
    * We add various objects to beanshell, accessible by their name
    */
-  private void initScriptObjects(Game game, ResourceManager resources) {
-    GUI.init(guiContext, camera);
+  private void initScriptObjects() {
     GUI.setGame(game);
     for (Player p : game.getAllPlayers()) {
       String colorName = ColorUtil.toString(p.getColor());
@@ -131,7 +130,7 @@ public class InGameState extends CWState implements PropertyChangeListener {
     game.addPropertyChangeListener(this);
   }
 
-  private void initCamera(Map<Tile> map) {
+  private void initCamera(TileMap<Tile> map) {
     Dimension screenSize = new Dimension(guiContext.getWidth(), guiContext.getHeight());
     Dimension worldSize = new Dimension(map.getWidth(), map.getHeight());
     this.camera = new Camera2D(screenSize, worldSize, map.getTileSize());
@@ -147,10 +146,10 @@ public class InGameState extends CWState implements PropertyChangeListener {
     TileSprite siloCursor = resources.createCursor(map, App.get("user.silocursor"));
     siloCursor.addPropertyChangeListener(this);
 
-    gameRenderer.addCursor("SELECT", selectCursor);
-    gameRenderer.addCursor("ATTACK", attackCursor);
-    gameRenderer.addCursor("SILO", siloCursor);
-    gameRenderer.activateCursor("SELECT");
+    cursorControl.addCursor("SELECT", selectCursor);
+    cursorControl.addCursor("ATTACK", attackCursor);
+    cursorControl.addCursor("SILO", siloCursor);
+    cursorControl.activateCursor("SELECT");
   }
 
   @Override
@@ -203,26 +202,16 @@ public class InGameState extends CWState implements PropertyChangeListener {
         hud.controlPressed(command);
       } else {
         Tile cursorLocation = gameRenderer.getCursorLocation();
-        Unit activeUnit = game.getActiveUnit();
-        Unit selectedUnit = map.getUnitOn(cursorLocation);
-        City city = map.getCityOn(cursorLocation);
-
-        Unit unit;
-        if (activeUnit != null) {
-          unit = activeUnit;
-        } else {
-          unit = selectedUnit;
-        }
 
         switch (command.getEnum()) {
           case SELECT:
-            gameControl.handleA(unit, city, cursorLocation);
+            gameControl.handleA(cursorLocation);
             break;
           case CANCEL:
-            gameControl.handleB(activeUnit, selectedUnit);
+            gameControl.handleB(cursorLocation);
             break;
           case END_TURN:
-            gameControl.endTurn(stateChanger);
+            gameControl.endTurn();
             break;
           case ZOOM_IN:
             camera.zoomIn();

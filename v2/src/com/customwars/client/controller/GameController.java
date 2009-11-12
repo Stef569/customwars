@@ -3,11 +3,11 @@ package com.customwars.client.controller;
 import com.customwars.client.SFX;
 import com.customwars.client.action.ActionFactory;
 import com.customwars.client.action.CWAction;
-import com.customwars.client.action.ClearInGameStateAction;
 import com.customwars.client.action.ShowPopupMenuAction;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Unit;
+import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.ui.MenuItem;
 import com.customwars.client.ui.renderer.GameRenderer;
@@ -22,42 +22,58 @@ import org.newdawn.slick.gui.GUIContext;
  */
 public class GameController {
   private static final Logger logger = Logger.getLogger(GameController.class);
-  private GameRenderer gameRenderer;
-  private CursorController cursorController;
+  private final GameRenderer gameRenderer;
+  private final CursorController cursorController;
   private InGameContext context;
   private GUIContext guiContext;
-  private Game game;
+  private final Game game;
+  private final Map<Tile> map;
   private StateChanger stateChanger;
 
   public GameController(Game game, GameRenderer gameRenderer, SpriteManager spriteManager) {
     this.game = game;
+    this.map = game.getMap();
     this.gameRenderer = gameRenderer;
     this.cursorController = new CursorController(game.getMap(), spriteManager);
   }
 
-  public CursorController getCursorController() {
-    return cursorController;
-  }
+  public void handleA(Tile cursorLocation) {
+    City city = map.getCityOn(cursorLocation);
+    Unit unit = getUnit(cursorLocation);
 
-  public void undo() {
-    SFX.playSound("cancel");
-    context.undo();
-  }
-
-  public void handleA(Unit unit, City city, Tile cursorLocation) {
-    if (unit != null && unit.isActive() || context.isInUnitMode()) {
+    if (canUnitAct(unit)) {
       context.handleUnitAPress(unit);
-    } else if (!cursorLocation.isFogged() && cursorLocation.getLocatableCount() == 0 &&
-      city != null && city.getOwner() == game.getActivePlayer() && city.canBuild()) {
+    } else if (isCityPressed(city)) {
       context.handleCityAPress(city);
     } else if (context.isDefaultMode()) {
-      new ClearInGameStateAction().invoke(context);
       ShowPopupMenuAction showContextMenuAction = buildContextMenu();
       showContextMenuAction.setLocation(cursorLocation);
       context.doAction(showContextMenuAction);
     } else {
       logger.warn("could not handle A press");
     }
+  }
+
+  /**
+   * Return true
+   * when the given unit is active or
+   * when a unit is selected and is going to perform an action
+   */
+  private boolean canUnitAct(Unit unit) {
+    return unit != null && unit.isActive() || context.isInUnitMode();
+  }
+
+  /**
+   * Return true
+   * when the city is visible, can build a unit
+   * and is owned by the active player
+   */
+  private boolean isCityPressed(City city) {
+    if (city == null) return false;
+    Tile cityLocation = (Tile) city.getLocation();
+
+    return !cityLocation.isFogged() && cityLocation.getLocatableCount() == 0 &&
+      city.isOwnedBy(game.getActivePlayer()) && city.canBuild();
   }
 
   private ShowPopupMenuAction buildContextMenu() {
@@ -67,10 +83,32 @@ public class GameController {
     return showContextMenuAction;
   }
 
-  public void handleB(Unit activeUnit, Unit selectedUnit) {
+  public void handleB(Tile cursorLocation) {
+    Unit selectedUnit = getUnit(cursorLocation);
     if (selectedUnit != null) {
       context.handleUnitBPress(selectedUnit);
     }
+  }
+
+  /**
+   * Return the active unit(if set)
+   * or the selected unit(if present on the cursor location)
+   * or null(both are not set)
+   */
+  private Unit getUnit(Tile cursorLocation) {
+    Unit activeUnit = game.getActiveUnit();
+    Unit selectedUnit = map.getUnitOn(cursorLocation);
+
+    if (activeUnit != null) {
+      return activeUnit;
+    } else {
+      return selectedUnit;
+    }
+  }
+
+  public void undo() {
+    SFX.playSound("cancel");
+    context.undo();
   }
 
   public void setInGameContext(InGameContext inGameContext) {
@@ -82,8 +120,12 @@ public class GameController {
     this.stateChanger = stateChanger;
   }
 
-  public void endTurn(StateChanger stateChanger) {
+  public void endTurn() {
     CWAction endTurn = ActionFactory.buildEndTurnAction(stateChanger);
     context.doAction(endTurn);
+  }
+
+  public CursorController getCursorController() {
+    return cursorController;
   }
 }

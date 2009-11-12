@@ -44,7 +44,7 @@ public class StartAttackAction extends DirectAction {
     List<Location> enemyLocationsInRange = getEnemyLocations(enemiesInRange);
 
     mapRenderer.removeMoveZone();
-    mapRenderer.activateCursor("ATTACK");
+    cursorControl.activateCursor("ATTACK");
     cursorControl.startCursorTraversal(enemyLocationsInRange);
     mapRenderer.setAttackZone(enemyLocationsInRange);
     context.setInputMode(InGameContext.INPUT_MODE.UNIT_ATTACK);
@@ -61,6 +61,6 @@ public class StartAttackAction extends DirectAction {
   public void undo() {
     mapRenderer.removeAttackZone();
     cursorControl.stopCursorTraversal();
-    mapRenderer.activateCursor("SELECT");
+    cursorControl.activateCursor("SELECT");
   }
 }

@@ -173,8 +173,8 @@ public class MapEditorState extends CWState {
 
   private void initCursors() {
     TileSprite selectCursor = resources.createCursor(map, App.get("user.selectcursor"));
-    mapRenderer.addCursor("SELECT", selectCursor);
-    mapRenderer.activateCursor("SELECT");
+    cursorController.addCursor("SELECT", selectCursor);
+    cursorController.activateCursor("SELECT");
   }
 
   @Override

@@ -2,7 +2,7 @@ package com.customwars.client.action;
 
 import com.customwars.client.controller.CursorController;
 import com.customwars.client.model.map.Location;
-import com.customwars.client.model.map.Tile;
+import com.customwars.client.tools.Args;
 import com.customwars.client.ui.HUD;
 import com.customwars.client.ui.MenuItem;
 import com.customwars.client.ui.PopupMenu;
@@ -28,9 +28,9 @@ public class ShowPopupMenuAction extends DirectAction implements ComponentListen
   private HUD hud;
   private CursorController cursorControl;
 
-  private String popupName;
-  private List<CWAction> actions;
-  private List<MenuItem> menuItems;
+  private final String popupName;
+  private final List<CWAction> actions;
+  private final List<MenuItem> menuItems;
   private int currentOption;
   private Location popupLocation;
 
@@ -48,17 +48,13 @@ public class ShowPopupMenuAction extends DirectAction implements ComponentListen
 
   protected void init(InGameContext context) {
     this.context = context;
-    hud = context.getHud();
-    cursorControl = context.getCursorController();
+    this.hud = context.getHud();
+    this.cursorControl = context.getCursorController();
   }
 
   protected void invokeAction() {
-    if (actions.size() == 0) {
-      logger.warn("No actions set");
-    }
-    if (popupLocation == null) {
-      throw new IllegalArgumentException("Location is null");
-    }
+    Args.validate(actions.isEmpty(), "No actions set");
+    Args.checkForNull(popupLocation, "Location is null");
 
     hud.showPopUp(popupLocation, popupName, menuItems, this);
     context.setInputMode(InGameContext.INPUT_MODE.GUI);
@@ -92,14 +88,14 @@ public class ShowPopupMenuAction extends DirectAction implements ComponentListen
   }
 
   public boolean atLeastHasOneItem() {
-    return menuItems.size() > 0;
+    return !menuItems.isEmpty();
   }
 
   public int getCurrentOption() {
     return currentOption;
   }
 
-  public void setLocation(Tile popupLocation) {
+  public void setLocation(Location popupLocation) {
     this.popupLocation = popupLocation;
   }
 }
