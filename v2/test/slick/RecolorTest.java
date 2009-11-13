@@ -57,7 +57,7 @@ public class RecolorTest extends BasicGame {
   }
 
   private void loadImgFilters() {
-    ImageFilterParser imgFilterParser = new ImageFilterParser();
+    ImageFilterParser imgFilterParser = new ImageFilterParser(imageLib);
     InputStream in = ResourceLoader.getResourceAsStream(IMAGE_FILTER_FILE);
     try {
       imgFilterParser.loadConfigFile(in);

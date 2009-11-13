@@ -1,6 +1,6 @@
 package com.customwars.client.io.loading;
 
-import com.customwars.client.io.img.awt.AwtImageLib;
+import com.customwars.client.io.img.ImageLib;
 import com.customwars.client.io.img.awt.ImgFilter;
 import com.customwars.client.tools.IOUtil;
 import com.customwars.client.tools.Xml;
@@ -31,6 +31,11 @@ public class ImageFilterParser {
   private static final String XML_EL_IGNORED_COLORS = "ignoredColors";
   private static final String XML_EL_REPLACEMENT_COLOR = "replacementColor";
   private static final String XML_EL_REPLACEMENT_COLORS = "replacementColors";
+  private final ImageLib imageLib;
+
+  public ImageFilterParser(ImageLib imageLib) {
+    this.imageLib = imageLib;
+  }
 
   public void loadConfigFile(InputStream colorStream) throws IOException {
     try {
@@ -67,7 +72,7 @@ public class ImageFilterParser {
       Element el = Xml.nodeToElement(replaceColorNodes.item(i));
       addReplacementColor(el, filter);
     }
-    AwtImageLib.addImgFilter(imgFilterName, filter);
+    imageLib.addImgFilter(imgFilterName, filter);
   }
 
   private void addReplacementColor(Element element, ImgFilter filter) {
