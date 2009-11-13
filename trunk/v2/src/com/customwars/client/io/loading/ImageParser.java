@@ -31,7 +31,7 @@ public class ImageParser {
   private final static Character MATRIX_IMAGE_SYMBOL = 'm';
   private final static String COMMENT_PREFIX = "//";
 
-  private ImageLib imageLib;
+  private final ImageLib imageLib;
   private String fullImgPath;
 
   public ImageParser(ImageLib imageLib) {
@@ -121,12 +121,12 @@ public class ImageParser {
       String imgPath = fullImgPath + tokens.nextToken();
       int tileWidth = Integer.parseInt(tokens.nextToken());
       int tileHeight = Integer.parseInt(tokens.nextToken());
-      boolean storeAsAwt = false;
+      boolean recolor = false;
       if (tokens.hasMoreTokens()) {
-        storeAsAwt = Boolean.parseBoolean(tokens.nextToken());
+        recolor = Boolean.parseBoolean(tokens.nextToken());
       }
 
-      if (storeAsAwt) {
+      if (recolor) {
         imageLib.loadAwtImg(imgName, imgPath);
         imageLib.loadSlickImageStrip(imgName, tileWidth, tileHeight);
       } else {
@@ -151,12 +151,12 @@ public class ImageParser {
       String imgPath = fullImgPath + tokens.nextToken();
       int tileWidth = Integer.parseInt(tokens.nextToken());
       int tileHeight = Integer.parseInt(tokens.nextToken());
-      boolean storeAsAwt = false;
+      boolean recolor = false;
       if (tokens.hasMoreTokens()) {
-        storeAsAwt = Boolean.parseBoolean(tokens.nextToken());
+        recolor = Boolean.parseBoolean(tokens.nextToken());
       }
 
-      if (storeAsAwt) {
+      if (recolor) {
         imageLib.loadAwtImg(imgName, imgPath);
         imageLib.loadSlickSpriteSheet(imgName, tileWidth, tileHeight);
       } else {
