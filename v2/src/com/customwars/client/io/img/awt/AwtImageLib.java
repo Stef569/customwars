@@ -3,8 +3,6 @@ package com.customwars.client.io.img.awt;
 import com.customwars.client.tools.ColorUtil;
 import com.customwars.client.tools.ImageUtil;
 import org.apache.log4j.Logger;
-import org.newdawn.slick.loading.DeferredResource;
-import org.newdawn.slick.loading.LoadingList;
 import org.newdawn.slick.util.ResourceLoader;
 
 import javax.imageio.ImageIO;
@@ -27,7 +25,7 @@ import java.util.Set;
  */
 public class AwtImageLib {
   private static final Logger logger = Logger.getLogger(AwtImageLib.class);
-  private Map<String, BufferedImage> bufferedImgCache;  // Contains the base images that can be recolored by a filter
+  private final Map<String, BufferedImage> bufferedImgCache;  // Contains the base images that can be recolored by a filter
   private static Map<String, ImgFilter> imgFilters;     // Can recolor a base image from base color to replacement color
   private static Set<Color> supportedColors;            // The colors supported by each filter
 
@@ -39,14 +37,10 @@ public class AwtImageLib {
 
   public void loadImg(String awtImgPath, String imgName) {
     String key = imgName.toUpperCase();
-    if (LoadingList.isDeferredLoading()) {
-      LoadingList.get().add(new DeferredAwtImgLoader(awtImgPath, key));
-    } else {
-      try {
-        loadImage(awtImgPath, key);
-      } catch (IOException e) {
-        throw new RuntimeException(e);
-      }
+    try {
+      loadImage(awtImgPath, key);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
     }
   }
 
@@ -65,8 +59,6 @@ public class AwtImageLib {
   //----------------------------------------------------------------------------
   /**
    * load, Recolor and store awt image
-   *
-   * if deferredLoading is on, recolor at a later time
    *
    * @param recolorTo    The color to use for the recolored unit img
    * @param darkPerc     percentage to darken the image, 0 = ignore
@@ -123,7 +115,7 @@ public class AwtImageLib {
     }
   }
 
-  public static void addImgFilter(String filterName, ImgFilter filter) {
+  public void addImgFilter(String filterName, ImgFilter filter) {
     if (filterName != null && filter != null)
       imgFilters.put(filterName.toUpperCase(), filter);
   }
@@ -193,23 +185,5 @@ public class AwtImageLib {
 
   public Set<String> getStoredImgNames() {
     return bufferedImgCache.keySet();
-  }
-
-  private class DeferredAwtImgLoader implements DeferredResource {
-    private String imgPath;
-    private String imgName;
-
-    public DeferredAwtImgLoader(String imgPath, String imgName) {
-      this.imgPath = imgPath;
-      this.imgName = imgName;
-    }
-
-    public void load() throws IOException {
-      loadImage(imgPath, imgName);
-    }
-
-    public String getDescription() {
-      return imgName;
-    }
   }
 }

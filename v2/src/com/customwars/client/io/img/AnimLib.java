@@ -5,11 +5,8 @@ import com.customwars.client.io.img.slick.SpriteSheet;
 import com.customwars.client.tools.ColorUtil;
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Image;
-import org.newdawn.slick.loading.DeferredResource;
-import org.newdawn.slick.loading.LoadingList;
 
 import java.awt.Color;
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -29,8 +26,11 @@ public class AnimLib {
   public static final String ANIM_INACTIVE = "INACTIVE";
   public static final String ANIM_FOGGED = "FOGGED";
   private static final int NO_DURATION = 999;
+  private final Map<String, Animation> animations;
 
-  private static Map<String, Animation> animations = new HashMap<String, Animation>();
+  public AnimLib() {
+    animations = new HashMap<String, Animation>();
+  }
 
   public void addAnim(String animName, Animation anim) {
     String key = animName.toUpperCase();
@@ -59,30 +59,10 @@ public class AnimLib {
     return Collections.unmodifiableCollection(animations.values());
   }
 
-  public void createUnitAnimations(Color baseColor, ResourceManager resources, Color color) {
-    if (LoadingList.isDeferredLoading()) {
-      LoadingList.get().add(
-        new DeferredUnitAnimationsCreator(baseColor, color, resources)
-      );
-    } else {
-      createUnitAnimationsNow(baseColor, color, resources);
-    }
-  }
-
-  public void createCityAnimations(Color baseColor, ResourceManager resources, Color color) {
-    if (LoadingList.isDeferredLoading()) {
-      LoadingList.get().add(
-        new DeferredCityAnimationsCreator(baseColor, color, resources)
-      );
-    } else {
-      createCityAnimationsNow(baseColor, color, resources);
-    }
-  }
-
   //----------------------------------------------------------------------------
   // City Animation
   //----------------------------------------------------------------------------
-  private void createCityAnimationsNow(Color baseColor, Color color, ResourceManager resources) {
+  public void createCityAnimations(Color baseColor, Color color, ResourceManager resources) {
     SpriteSheet citySpriteSheet = resources.getSlickSpriteSheet("city", color);
     SpriteSheet darkerCitySpriteSheet = resources.getSlickSpriteSheet("city", color, "darker");
 
@@ -139,7 +119,7 @@ public class AnimLib {
    * @param baseColor base color for a unit
    * @param color     the color of the unitSpriteSheet, used to store the animations ie UNIT_0_BLUE
    */
-  private void createUnitAnimationsNow(Color baseColor, Color color, ResourceManager resources) {
+  public void createUnitAnimations(Color baseColor, Color color, ResourceManager resources) {
     SpriteSheet unitSpriteSheet = resources.getSlickSpriteSheet("unit", color);
     SpriteSheet inactiveUnitSpriteSheet = resources.getSlickSpriteSheet("unit", color, "darker");
 
@@ -219,45 +199,5 @@ public class AnimLib {
       col++;
     }
     return anim;
-  }
-
-  private class DeferredUnitAnimationsCreator implements DeferredResource {
-    private final Color baseColor;
-    private final ResourceManager resources;
-    private final Color color;
-
-    public DeferredUnitAnimationsCreator(Color baseColor, Color color, ResourceManager resources) {
-      this.baseColor = baseColor;
-      this.resources = resources;
-      this.color = color;
-    }
-
-    public void load() throws IOException {
-      createUnitAnimationsNow(baseColor, color, resources);
-    }
-
-    public String getDescription() {
-      return "Creating unit animations";
-    }
-  }
-
-  private class DeferredCityAnimationsCreator implements DeferredResource {
-    private final Color baseColor;
-    private final Color color;
-    private final ResourceManager resources;
-
-    public DeferredCityAnimationsCreator(Color baseColor, Color color, ResourceManager resources) {
-      this.baseColor = baseColor;
-      this.color = color;
-      this.resources = resources;
-    }
-
-    public void load() throws IOException {
-      createCityAnimationsNow(baseColor, color, resources);
-    }
-
-    public String getDescription() {
-      return "Creating city animations";
-    }
   }
 }

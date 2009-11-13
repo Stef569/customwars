@@ -1,16 +1,14 @@
 package com.customwars.client.io.img;
 
 import com.customwars.client.io.img.awt.AwtImageLib;
+import com.customwars.client.io.img.awt.ImgFilter;
 import com.customwars.client.io.img.slick.ImageStrip;
 import com.customwars.client.io.img.slick.SlickImageFactory;
 import com.customwars.client.io.img.slick.SpriteSheet;
 import com.customwars.client.tools.ColorUtil;
 import org.newdawn.slick.Image;
-import org.newdawn.slick.loading.DeferredResource;
-import org.newdawn.slick.loading.LoadingList;
 
 import java.awt.Color;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -145,18 +143,7 @@ public class ImageLib {
       storeImgName += "_" + suffix;
     }
 
-    if (LoadingList.isDeferredLoading()) {
-      LoadingList.get().add(
-        new DeferredAwtImgRecolorer(recolorTo, imgFilterName, baseImgName, storeImgName, darkPercentage)
-      );
-    } else {
-      recolorImgNow(recolorTo, imgFilterName, baseImgName, storeImgName, darkPercentage);
-    }
-  }
-
-  private void recolorImgNow(Color recolorTo, String imgFilterName, String baseImgName, String storeImgName, int darkPercentage) {
     String key = storeImgName.toUpperCase();
-
     if (isSlickImgLoaded(key)) {
       return;
     }
@@ -169,19 +156,9 @@ public class ImageLib {
    * Get the base slick image
    * get the tileWidth/tileHeight
    * create slick img
-   *
-   * This method ignores deferred loading because
-   * 1. recoloring already is deferred @see DeferredImgRecoloring
-   * 2. With deferredloading the SlickImageFactory will load the image data later
-   * by adding a DeferredResource to the <b>end</b> of the loadingList.
-   *
-   * But the methods after recolorImg need the image data!
-   * so we force SlickImageFactory to load the image data instantly.
    */
   private void createSlickImg(String baseImgName, String storeImgName) {
     Image img = getSlickImg(baseImgName);
-    boolean origValue = SlickImageFactory.isDeferredLoading();
-    SlickImageFactory.setDeferredLoading(false);
 
     if (img instanceof SpriteSheet) {
       SpriteSheet sheet = (SpriteSheet) img;
@@ -192,7 +169,6 @@ public class ImageLib {
     } else {
       loadSlickImage(storeImgName, baseImgName);
     }
-    SlickImageFactory.setDeferredLoading(origValue);
   }
 
   public boolean isSlickImgLoaded(String slickImgName) {
@@ -240,27 +216,8 @@ public class ImageLib {
     return slickImgCache.keySet().toString();
   }
 
-  private class DeferredAwtImgRecolorer implements DeferredResource {
-    private final Color recolorTo;
-    private final String imgFilterName;
-    private final String baseImgName;
-    private final String storeImgName;
-    private final int darkPercentage;
-
-    public DeferredAwtImgRecolorer(Color recolorTo, String imgFilterName, String baseImgName, String storeImgName, int darkPercentage) {
-      this.recolorTo = recolorTo;
-      this.imgFilterName = imgFilterName;
-      this.baseImgName = baseImgName;
-      this.storeImgName = storeImgName;
-      this.darkPercentage = darkPercentage;
-    }
-
-    public void load() throws IOException {
-      recolorImgNow(recolorTo, imgFilterName, baseImgName, storeImgName, darkPercentage);
-    }
-
-    public String getDescription() {
-      return "recoloring " + baseImgName + " storing as " + storeImgName;
-    }
+  public void addImgFilter(String imgFilterName, ImgFilter filter) {
+    awtImageLib.addImgFilter(imgFilterName, filter);
+    buildColorsFromImgFilters();
   }
 }

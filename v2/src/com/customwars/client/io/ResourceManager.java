@@ -1,18 +1,11 @@
 package com.customwars.client.io;
 
-import com.customwars.client.App;
 import com.customwars.client.io.img.AnimLib;
 import com.customwars.client.io.img.ImageLib;
 import com.customwars.client.io.img.slick.ImageStrip;
-import com.customwars.client.io.img.slick.SlickImageFactory;
 import com.customwars.client.io.img.slick.SpriteSheet;
-import com.customwars.client.io.loading.AnimationParser;
-import com.customwars.client.io.loading.ImageFilterParser;
-import com.customwars.client.io.loading.ImageParser;
-import com.customwars.client.io.loading.ModelLoader;
-import com.customwars.client.io.loading.SoundParser;
+import com.customwars.client.io.loading.ResourcesLoader;
 import com.customwars.client.io.loading.map.BinaryCW2MapParser;
-import com.customwars.client.io.loading.map.MapLoader;
 import com.customwars.client.io.loading.map.MapParser;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Direction;
@@ -20,32 +13,23 @@ import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.tools.Args;
 import com.customwars.client.tools.ColorUtil;
-import com.customwars.client.tools.FileUtil;
 import com.customwars.client.ui.sprite.TileSprite;
 import org.apache.log4j.Logger;
-import org.newdawn.slick.AngelCodeFont;
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Font;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.Music;
-import org.newdawn.slick.SlickException;
 import org.newdawn.slick.Sound;
-import org.newdawn.slick.loading.DeferredResource;
-import org.newdawn.slick.loading.LoadingList;
-import org.newdawn.slick.util.ResourceLoader;
 
 import java.awt.Color;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -60,188 +44,47 @@ import java.util.Set;
  */
 public class ResourceManager {
   private static final Logger logger = Logger.getLogger(ResourceManager.class);
-  private static final String IMAGE_LOADER_FILE = "imageLoader.txt";
-  private static final String ANIM_LOADER_FILE = "animLoader.txt";
-  private static final String SOUND_LOADER_FILE = "soundLoader.txt";
-  private static final String COLORS_FILE = "colors.xml";
-  private static final int CURSOR_ANIM_COUNT = 2;
-  private static final int CURSOR_ANIM_SPEED = 250;
-  private static final ModelLoader modelLoader = new ModelLoader();
   private MapParser mapParser;
   private int darkPercentage;
 
   private ImageLib imageLib;
   private AnimLib animLib;
 
-  private HashMap<String, Sound> sounds = new HashMap<String, Sound>();
-  private HashMap<String, Music> music = new HashMap<String, Music>();
-  private HashMap<String, Map<Tile>> maps = new HashMap<String, Map<Tile>>();
-  private HashMap<String, Font> fonts = new HashMap<String, Font>();
-  private HashMap<String, TileSprite> cursors = new HashMap<String, TileSprite>();
-
-  private String imgPath, cursorImgPath, soundPath, dataPath, fontPath;
-  private List<String> mapPaths;
-  private MapLoader mapLoader;
+  private final HashMap<String, Sound> sounds = new HashMap<String, Sound>();
+  private final HashMap<String, Music> music = new HashMap<String, Music>();
+  private final HashMap<String, Map<Tile>> maps = new HashMap<String, Map<Tile>>();
+  private final HashMap<String, Font> fonts = new HashMap<String, Font>();
+  private final HashMap<String, TileSprite> cursors = new HashMap<String, TileSprite>();
+  private final ResourcesLoader resourceLoader;
 
   public ResourceManager() {
     this(new ImageLib(), new AnimLib());
-    this.mapPaths = new ArrayList<String>();
   }
 
   /**
-   * @param imageLib The cache to load the image to
+   * @param imageLib The cache to load the images to
    * @param animLib  The cache to load the animations to
    */
   public ResourceManager(ImageLib imageLib, AnimLib animLib) {
     this.imageLib = imageLib;
     this.animLib = animLib;
-    SlickImageFactory.setDeferredLoading(LoadingList.isDeferredLoading());
     this.mapParser = new BinaryCW2MapParser();
-  }
-
-  public void loadAll() {
-    logger.info("Loading resources");
-    loadModel();
-    try {
-      loadResources();
-    } catch (IOException e) {
-      throw new RuntimeException("Failed to load resource " + e);
-    }
-  }
-
-  public void loadModel() {
-    modelLoader.setModelResPath(dataPath);
-    modelLoader.loadModel();
-  }
-
-  public void loadResources() throws IOException {
-    loadCursors();
-    loadColorsFromFile();
-    loadImagesFromFile();
-    loadAnimationsFromFile();
-    recolor();
-    loadSoundFromFile();
-    loadMaps();
-    loadFonts();
-    releaseUnneededResources();
+    this.resourceLoader = new ResourcesLoader(imageLib, animLib, this, mapParser);
   }
 
   /**
-   * Load all the images from the cursorImgPath
-   * A cursor images contains CURSOR_ANIM_COUNT horizontal images of the same width
-   * Create animation and TileSprite
-   * Add the cursor to the cursor collection
+   * Add a path where resources can be loaded from
+   * eg img.path = /home/van/the/man/images/
+   *
+   * @param pathName The path name, used to lookup a loading path
+   * @param path     The loading path
    */
-  private void loadCursors() {
-    // When deferred loading is on make sure the cursor images are loaded before
-    // the loadCursorsNow method
-    FileSystemManager fsm = new FileSystemManager(cursorImgPath);
-    for (File file : fsm.getFiles()) {
-      String cursorName = FileUtil.getFileNameWithoutExtension(file);
-      imageLib.loadAwtImg(cursorName, file.getPath());
-      imageLib.loadSlickImage(cursorName);
-    }
-
-    if (LoadingList.isDeferredLoading()) {
-      LoadingList.get().add(new DeferredResource() {
-        public void load() throws IOException {
-          loadCursorsNow();
-        }
-
-        public String getDescription() {
-          return "cursors";
-        }
-      });
-    } else {
-      loadCursorsNow();
-    }
+  public void putLoadPath(String pathName, String path) {
+    resourceLoader.putLoadPath(pathName, path);
   }
 
-  private void loadCursorsNow() {
-    FileSystemManager fsm = new FileSystemManager(cursorImgPath);
-    for (File cursorImgFile : fsm.getFiles()) {
-      String cursorName = FileUtil.getFileNameWithoutExtension(cursorImgFile);
-      TileSprite cursor = createCursor(cursorName);
-      addCursor(cursorName, cursor);
-    }
-  }
-
-
-  private TileSprite createCursor(String cursorName) {
-    Image cursorImg = imageLib.getSlickImg(cursorName);
-    int cursorWidth = cursorImg.getWidth() / CURSOR_ANIM_COUNT;
-    int cursorHeight = cursorImg.getHeight();
-    ImageStrip cursorImgs = new ImageStrip(cursorImg, cursorWidth, cursorHeight);
-    TileSprite cursor = new TileSprite(cursorImgs, CURSOR_ANIM_SPEED, null, null);
-
-    // Use the cursor image height to calculate the tile effect range ie
-    // If the image has a height of 160/32=5 tiles 5/2 rounded to int becomes 2.
-    // most cursors have a effect range of 1 ie
-    // 40/32=1 and 1/2=0 max(0,1) becomes 1
-    int tileSize = App.getInt("plugin.tilesize");
-    int cursorEffectRange = Math.max(cursorImg.getHeight() / tileSize / 2, 1);
-    cursor.setEffectRange(cursorEffectRange);
-    return cursor;
-  }
-
-  private void addCursor(String cursorName, TileSprite cursor) {
-    String upperCaseCursorName = cursorName.toUpperCase();
-    if (cursors.containsKey(upperCaseCursorName)) {
-      throw new IllegalArgumentException(upperCaseCursorName + " already stored " + cursors);
-    } else {
-      cursors.put(upperCaseCursorName, cursor);
-    }
-  }
-
-  private void loadColorsFromFile() throws IOException {
-    ImageFilterParser imgFilterParser = new ImageFilterParser();
-    InputStream in = ResourceLoader.getResourceAsStream(dataPath + COLORS_FILE);
-    imgFilterParser.loadConfigFile(in);
-    imageLib.buildColorsFromImgFilters();
-  }
-
-  private void loadImagesFromFile() throws IOException {
-    ImageParser imgParser = new ImageParser(imageLib);
-    InputStream in = ResourceLoader.getResourceAsStream(imgPath + IMAGE_LOADER_FILE);
-    imgParser.setImgPath(imgPath);
-    imgParser.loadConfigFile(in);
-  }
-
-  private void loadAnimationsFromFile() throws IOException {
-    AnimationParser animParser = new AnimationParser(imageLib, animLib);
-    InputStream in = ResourceLoader.getResourceAsStream(imgPath + ANIM_LOADER_FILE);
-    animParser.loadConfigFile(in);
-  }
-
-  private void recolor() {
-    Set<Color> supportedColors = getSupportedColors();
-    List<Color> colors = new ArrayList<Color>(supportedColors);
-    recolor(colors.toArray(new Color[colors.size()]));
-  }
-
-  private void loadSoundFromFile() throws IOException {
-    SoundParser soundParser = new SoundParser(sounds, music);
-    InputStream in = ResourceLoader.getResourceAsStream(soundPath + SOUND_LOADER_FILE);
-    soundParser.setSoundPath(soundPath);
-    soundParser.loadConfigFile(in);
-  }
-
-  private void loadMaps() throws IOException {
-    mapLoader = new MapLoader(mapPaths, mapParser, this);
-    mapLoader.loadAllMaps();
-  }
-
-  private void loadFonts() throws IOException {
-  }
-
-  public Font loadDefaultFont() throws IOException {
-    Font defaultFont;
-    try {
-      defaultFont = new AngelCodeFont(fontPath + "default.fnt", fontPath + "default_00.tga");
-    } catch (SlickException ex) {
-      throw new IOException(ex);
-    }
-    return defaultFont;
+  public void loadAll() {
+    resourceLoader.loadAll();
   }
 
   public void addFont(String fontID, Font font) {
@@ -250,8 +93,13 @@ public class ResourceManager {
     fonts.put(fontID.toUpperCase(), font);
   }
 
-  private void releaseUnneededResources() {
-    imageLib.clearImageSources();
+  public void addCursor(String cursorName, TileSprite cursor) {
+    String upperCaseCursorName = cursorName.toUpperCase();
+    if (!cursors.containsKey(upperCaseCursorName)) {
+      cursors.put(upperCaseCursorName, cursor);
+    } else {
+      throw new IllegalArgumentException(upperCaseCursorName + " already stored " + cursors);
+    }
   }
 
   public void saveMap(Map<Tile> map, OutputStream out) throws IOException {
@@ -288,44 +136,20 @@ public class ResourceManager {
 
     for (Color color : colors) {
       checkIsColorSupported(color);
-      animLib.createUnitAnimations(unitBaseColor, this, color);
-      animLib.createCityAnimations(cityBaseColor, this, color);
+      animLib.createUnitAnimations(unitBaseColor, color, this);
+      animLib.createCityAnimations(cityBaseColor, color, this);
     }
   }
 
   private void checkIsColorSupported(Color color) {
     if (!imageLib.getSupportedColors().contains(color)) {
       throw new IllegalArgumentException(
-        "Color " + color + " is not supported, add the color info to " + COLORS_FILE);
+        "Color " + color + " is not supported, add the color");
     }
   }
 
   public void setDarkPercentage(int darkPercentage) {
     this.darkPercentage = darkPercentage;
-  }
-
-  public void setImgPath(String path) {
-    this.imgPath = path;
-  }
-
-  public void setCursorImgsPath(String cursorImgPath) {
-    this.cursorImgPath = cursorImgPath;
-  }
-
-  public void setDataPath(String path) {
-    this.dataPath = path;
-  }
-
-  public void setSoundPath(String soundPath) {
-    this.soundPath = soundPath;
-  }
-
-  public void addMapPath(String mapPath) {
-    this.mapPaths.add(mapPath);
-  }
-
-  public void setFontPath(String fontPath) {
-    this.fontPath = fontPath;
   }
 
   public boolean isSlickImgLoaded(String slickImgName) {
@@ -521,5 +345,22 @@ public class ResourceManager {
     cursor.setMap(map);
     cursor.setLocation(map.getRandomTile());
     return cursor;
+  }
+
+  public Font loadDefaultFont() {
+    try {
+      return resourceLoader.loadDefaultFont();
+    } catch (IOException e) {
+      logger.warn("Could not load default font");
+    }
+    return null;
+  }
+
+  public void addSound(String soundName, Sound sound) {
+    sounds.put(soundName, sound);
+  }
+
+  public void addMusic(String musicName, Music music) {
+    this.music.put(musicName, music);
   }
 }

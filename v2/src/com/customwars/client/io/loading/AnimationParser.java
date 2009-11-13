@@ -8,8 +8,6 @@ import com.customwars.client.io.img.slick.SpriteSheet;
 import com.customwars.client.tools.IOUtil;
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Image;
-import org.newdawn.slick.loading.DeferredResource;
-import org.newdawn.slick.loading.LoadingList;
 
 import java.awt.Point;
 import java.io.BufferedReader;
@@ -26,11 +24,10 @@ import java.util.StringTokenizer;
  *
  * @author stefan
  */
-public class AnimationParser implements DeferredResource {
+public class AnimationParser {
   private final static String COMMENT_PREFIX = "//";
-  private InputStream stream;
-  private ImageLib imageLib;
-  private AnimLib animLib;
+  private final ImageLib imageLib;
+  private final AnimLib animLib;
 
   public AnimationParser(ImageLib imageLib, AnimLib animLib) {
     this.imageLib = imageLib;
@@ -39,23 +36,13 @@ public class AnimationParser implements DeferredResource {
 
   /**
    * @param stream the config stream
-   * @throws java.io.IOException when the stream could not be read
+   * @throws IOException when the stream could not be read
    */
   public void loadConfigFile(InputStream stream) throws IOException {
-    if (LoadingList.isDeferredLoading()) {
-      this.stream = stream;
-      LoadingList.get().add(this);
-    } else {
-      loadNow(stream);
-    }
-  }
-
-  private void loadNow(InputStream stream) throws IOException {
-    String line;
-
     BufferedReader br = new BufferedReader(new InputStreamReader(stream));
 
     try {
+      String line;
       while ((line = br.readLine()) != null) {
         if (line.length() == 0)
           continue;
@@ -65,7 +52,6 @@ public class AnimationParser implements DeferredResource {
       }
     } finally {
       IOUtil.closeStream(stream);
-      this.stream = null;
     }
   }
 
@@ -138,13 +124,5 @@ public class AnimationParser implements DeferredResource {
     Animation anim = new Animation(result.toArray(new Image[result.size()]), frameDuration);
     anim.setAutoUpdate(loop);
     return anim;
-  }
-
-  public void load() throws IOException {
-    loadNow(stream);
-  }
-
-  public String getDescription() {
-    return "Animations";
   }
 }

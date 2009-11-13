@@ -6,8 +6,6 @@ import com.customwars.client.io.ResourceManager;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
 import org.apache.log4j.Logger;
-import org.newdawn.slick.loading.DeferredResource;
-import org.newdawn.slick.loading.LoadingList;
 import org.newdawn.slick.util.ResourceLoader;
 
 import java.io.File;
@@ -38,14 +36,6 @@ public class MapLoader {
    * Maps are searched for in the current map path and all subdirs
    */
   public void loadAllMaps() throws IOException {
-    if (LoadingList.isDeferredLoading()) {
-      LoadingList.get().add(new DeferredMapLoader());
-    } else {
-      loadAllMapsNow();
-    }
-  }
-
-  private void loadAllMapsNow() throws IOException {
     for (String mapPath : mapPaths) {
       FileSystemManager fsm = new FileSystemManager(mapPath);
 
@@ -76,15 +66,5 @@ public class MapLoader {
     Map<Tile> map = mapParser.readMap(in);
     String mapName = map.getMapName();
     resources.addMap(mapName, map);
-  }
-
-  private class DeferredMapLoader implements DeferredResource {
-    public void load() throws IOException {
-      loadAllMapsNow();
-    }
-
-    public String getDescription() {
-      return "Loading maps";
-    }
   }
 }

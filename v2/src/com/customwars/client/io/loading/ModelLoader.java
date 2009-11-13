@@ -17,8 +17,6 @@ import com.customwars.client.tools.IOUtil;
 import com.customwars.client.tools.XStreamUtil;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
-import org.newdawn.slick.loading.DeferredResource;
-import org.newdawn.slick.loading.LoadingList;
 import org.newdawn.slick.util.ResourceLoader;
 
 import java.io.IOException;
@@ -48,14 +46,6 @@ public class ModelLoader {
   private String modelResPath;
 
   public void loadModel() {
-    if (LoadingList.isDeferredLoading()) {
-      LoadingList.get().add(new DeferredModelLoader());
-    } else {
-      loadModelNow();
-    }
-  }
-
-  private void loadModelNow() {
     loadTerrains();
     loadWeapons();
     loadUnits();
@@ -137,15 +127,5 @@ public class ModelLoader {
 
   public void setModelResPath(String modelResPath) {
     this.modelResPath = modelResPath;
-  }
-
-  private class DeferredModelLoader implements DeferredResource {
-    public void load() throws IOException {
-      loadModelNow();
-    }
-
-    public String getDescription() {
-      return "Model data";
-    }
   }
 }

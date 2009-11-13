@@ -19,11 +19,10 @@ import org.newdawn.slick.command.Command;
 import org.newdawn.slick.command.InputProviderListener;
 import org.newdawn.slick.state.StateBasedGame;
 
-import java.io.IOException;
 import java.lang.reflect.Field;
 
 public abstract class CWStateBasedGame extends StateBasedGame implements InputProviderListener {
-  private Logger logger = Logger.getLogger(CWStateBasedGame.class);
+  private static final Logger logger = Logger.getLogger(CWStateBasedGame.class);
   protected final ResourceManager resources;
   protected final Config config;
   protected final StateSession stateSession;
@@ -55,7 +54,7 @@ public abstract class CWStateBasedGame extends StateBasedGame implements InputPr
   /**
    * Retrieve the Command -> control binds from the user properties
    * bind each command -> control in cwInput
-   * An event is send when a control that is binded to a command is pressed.
+   * Listen for events send when a control that is binded to a command is pressed.
    */
   private void loadInput() {
     this.cwInput = new CWInput(gameContainer.getInput());
@@ -65,14 +64,8 @@ public abstract class CWStateBasedGame extends StateBasedGame implements InputPr
   }
 
   private void loadDefaultFont() {
-    Font defaultFont;
-
-    try {
-      defaultFont = resources.loadDefaultFont();
-      setDefaultFont(defaultFont);
-    } catch (IOException e) {
-      logger.warn("Could not load default font");
-    }
+    Font defaultFont = resources.loadDefaultFont();
+    setDefaultFont(defaultFont);
   }
 
   /**
@@ -83,11 +76,12 @@ public abstract class CWStateBasedGame extends StateBasedGame implements InputPr
       gameContainer.setDefaultFont(defaultFont);
 
       try {
-        Field f = Graphics.class.getDeclaredField("DEFAULT_FONT");
-        f.setAccessible(true);
-        Fields.write(f, null, defaultFont);
-        f.setAccessible(false);
+        Field defaultFontField = Graphics.class.getDeclaredField("DEFAULT_FONT");
+        defaultFontField.setAccessible(true);
+        Fields.write(defaultFontField, null, defaultFont);
+        defaultFontField.setAccessible(false);
       } catch (NoSuchFieldException e) {
+        logger.warn("No field DEFAULT_FONT in slick Graphics class");
         e.printStackTrace();
       }
     }
