@@ -8,7 +8,6 @@ import org.apache.log4j.Logger;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.SlickException;
-import org.newdawn.slick.loading.LoadingList;
 import org.newdawn.slick.state.StateBasedGame;
 import slick.TestStates;
 
@@ -17,7 +16,7 @@ import slick.TestStates;
  *
  * Command line arguments:
  * -startstate startStateName The state to start the program in, defaults to the main menu,
- * see {@link slick.TestStates#buildStateList()} for a list of state names that can be used.
+ * see {@link TestStates#buildStateList()} for a list of state names that can be used.
  *
  * -datafiles path     The path to load the resources from, defaults to the working directory
  *
@@ -75,7 +74,6 @@ public class TestMain {
     handleArgs(args);
 
     try {
-      LoadingList.setDeferredLoading(false);
       new TestMain();
     } catch (Exception e) {
       logAndExit(e);
@@ -93,10 +91,9 @@ public class TestMain {
 
   private static void handleArgs(String[] args) {
     int i = 0;
-    String arg;
 
     while (i < args.length && args[i].startsWith("-")) {
-      arg = args[i++];
+      String arg = args[i++];
 
       // use this type of check for arguments that require arguments
       if (arg.equals("-startstate")) {

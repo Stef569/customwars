@@ -16,11 +16,8 @@ import com.customwars.client.ui.state.MapEditorState;
 import com.customwars.client.ui.state.input.CWCommand;
 import org.apache.log4j.Logger;
 import org.newdawn.slick.Input;
-import org.newdawn.slick.command.InputProviderListener;
 
-import java.io.IOException;
-
-public class TestStates extends CWStateBasedGame implements InputProviderListener {
+public class TestStates extends CWStateBasedGame {
   private static final Logger logger = Logger.getLogger(TestStates.class);
 
   public TestStates(String startStateName, ResourceManager resources, Config config) {
@@ -49,12 +46,7 @@ public class TestStates extends CWStateBasedGame implements InputProviderListene
 
   private void loadResources() {
     logger.info("Loading resources");
-    try {
-      resources.loadModel();
-      resources.loadResources();
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
+    resources.loadAll();
   }
 
   private void initTestMode() {
@@ -79,6 +71,7 @@ public class TestStates extends CWStateBasedGame implements InputProviderListene
         break;
       case TOGGLE_EVENT_VIEWER:
         GUI.toggleEventFrame();
+        break;
       case TOGGLE_FPS:
         gameContainer.setShowFPS(!gameContainer.isShowingFPS());
         break;

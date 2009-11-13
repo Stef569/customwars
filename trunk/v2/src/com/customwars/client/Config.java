@@ -149,17 +149,17 @@ public class Config {
   }
 
   private void initResourceManager(String pluginPath) {
-    resources.setImgPath(pluginPath + "/images/");
-    resources.setCursorImgsPath(pluginPath + "/images/cursors/");
-    resources.setSoundPath(pluginPath + "/sound/");
-    resources.setDataPath(pluginPath + "/data/");
+    resources.putLoadPath("img.path", pluginPath + "/images/");
+    resources.putLoadPath("cursorimg.path", pluginPath + "/images/cursors/");
+    resources.putLoadPath("sound.path", pluginPath + "/sound/");
+    resources.putLoadPath("data.path", pluginPath + "/data/");
 
     // Maps can be stored on 2 places
     // 1. The user can create maps and put them in his HOME_DIR
     // 2. Maps included within the release are in the RES_DIR
-    resources.addMapPath(MAPS_DIR);
-    resources.addMapPath(resourcesPath + "/maps/");
-    resources.setFontPath(resourcesPath + "/data/fonts/");
+    resources.putLoadPath("map.path1", MAPS_DIR);
+    resources.putLoadPath("map.path2", resourcesPath + "/maps/");
+    resources.putLoadPath("font.path", resourcesPath + "/data/fonts/");
     resources.setDarkPercentage(App.getInt("display.darkpercentage"));
   }
 

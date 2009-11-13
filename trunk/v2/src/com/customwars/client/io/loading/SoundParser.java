@@ -2,6 +2,7 @@ package com.customwars.client.io.loading;
 
 import static com.customwars.client.io.ErrConstants.ERR_READING_LINE;
 import static com.customwars.client.io.ErrConstants.ERR_WRONG_NUM_ARGS;
+import com.customwars.client.io.ResourceManager;
 import com.customwars.client.tools.IOUtil;
 import com.customwars.client.tools.StringUtil;
 import org.newdawn.slick.Music;
@@ -12,7 +13,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.HashMap;
 import java.util.StringTokenizer;
 
 /**
@@ -24,21 +24,18 @@ public class SoundParser {
   private final static String COMMENT_PREFIX = "//";
   private static final char SOUND_SYMBOL = 's';
   private static final char MUSIC_SYMBOL = 'm';
-  private HashMap<String, Sound> sounds;
-  private HashMap<String, Music> music;
   private String fullSoundPath;
+  private final ResourceManager resources;
 
-  public SoundParser(HashMap<String, Sound> sounds, HashMap<String, Music> music) {
-    this.sounds = sounds;
-    this.music = music;
+  public SoundParser(ResourceManager resources) {
+    this.resources = resources;
   }
 
   public void loadConfigFile(InputStream in) throws IOException {
-    String line;
-
     BufferedReader br = new BufferedReader(new InputStreamReader(in));
 
     try {
+      String line;
       while ((line = br.readLine()) != null) {
         if (line.length() == 0)
           continue;
@@ -80,7 +77,7 @@ public class SoundParser {
       tokens.nextToken();    // skip command label
       String soundName = tokens.nextToken().toUpperCase();
       String soundPath = fullSoundPath + tokens.nextToken();
-      sounds.put(soundName, new Sound(soundPath));
+      resources.addSound(soundName, new Sound(soundPath));
     }
   }
 
@@ -98,7 +95,7 @@ public class SoundParser {
       tokens.nextToken();    // skip command label
       String musicName = tokens.nextToken().toUpperCase();
       String musicPath = fullSoundPath + tokens.nextToken();
-      music.put(musicName, new Music(musicPath));
+      resources.addMusic(musicName, new Music(musicPath));
     }
   }
 
