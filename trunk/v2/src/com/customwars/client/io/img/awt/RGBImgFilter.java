@@ -48,7 +48,7 @@ import java.util.Set;
  *
  * @author Stefan
  */
-public class ImgFilter extends RGBImageFilter {
+public class RGBImgFilter extends RGBImageFilter {
   private Color baseColor;
   private Color replacementColor;
   private Set<Integer> ignoredPixels;                 // Pixels that will not be Filtered
@@ -56,7 +56,7 @@ public class ImgFilter extends RGBImageFilter {
   private Map<Color, List<Color>> replacementColors;  // Key=ReplacementColor, Val=replacement colors
   private int darkenPercentage;   // The percentage that each px should be darkened
 
-  public ImgFilter(Color baseColor) {
+  public RGBImgFilter(Color baseColor) {
     this.baseColor = baseColor;
     this.replacementColors = new HashMap<Color, List<Color>>();
     this.knownColors = new HashMap<Integer, Integer>();

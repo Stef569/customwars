@@ -1,7 +1,7 @@
 package com.customwars.client.io.loading;
 
 import com.customwars.client.io.img.ImageLib;
-import com.customwars.client.io.img.awt.ImgFilter;
+import com.customwars.client.io.img.slick.RecolorData;
 import com.customwars.client.tools.IOUtil;
 import com.customwars.client.tools.Xml;
 import org.w3c.dom.Element;
@@ -25,10 +25,9 @@ import java.util.List;
 public class ImageFilterParser {
   public static final String ROOT_ELEMENT_TAGNAME = "colorFilters";
   private static final String XML_EL_COLOR_FILTER = "colorFilter";
-  private static final String XML_EL_NAME = "name";
+  private static final String XML_EL_FILTER_NAME = "name";
   private static final String XML_EL_BASE_COLOR = "baseColor";
   private static final String XML_EL_ORIGINAL_COLORS = "originalColors";
-  private static final String XML_EL_IGNORED_COLORS = "ignoredColors";
   private static final String XML_EL_REPLACEMENT_COLOR = "replacementColor";
   private static final String XML_EL_REPLACEMENT_COLORS = "replacementColors";
   private final ImageLib imageLib;
@@ -50,19 +49,17 @@ public class ImageFilterParser {
   }
 
   public void fromXml(Element element) {
-    String imgFilterName = Xml.getTextValue(element, XML_EL_NAME);
+    String filterRef = Xml.getTextValue(element, XML_EL_FILTER_NAME);
     Color baseColor = Xml.getColorValue(element, XML_EL_BASE_COLOR);
     List<Color> originalColors = Xml.getColorListFromHex(element, XML_EL_ORIGINAL_COLORS);
-    List<Color> ignoredColors = Xml.getColorListFromHex(element, XML_EL_IGNORED_COLORS);
 
-    ImgFilter filter = new ImgFilter(baseColor);
-    filter.addIgnoredPixels(ignoredColors.toArray(new Color[ignoredColors.size()]));
-    filter.addKnownColors(originalColors.toArray(new Color[originalColors.size()]));
+    RecolorData recolorData = new RecolorData(baseColor);
+    recolorData.addKnownColors(originalColors);
 
     XPath xPath = XPathFactory.newInstance().newXPath();
     NodeList replaceColorNodes;
     try {
-      String expr = "/" + ROOT_ELEMENT_TAGNAME + "/" + XML_EL_COLOR_FILTER + "[" + XML_EL_NAME + "='" + imgFilterName + "']/" + XML_EL_REPLACEMENT_COLOR;
+      String expr = "/" + ROOT_ELEMENT_TAGNAME + "/" + XML_EL_COLOR_FILTER + "[" + XML_EL_FILTER_NAME + "='" + filterRef + "']/" + XML_EL_REPLACEMENT_COLOR;
       replaceColorNodes = (NodeList) xPath.evaluate(expr, element, XPathConstants.NODESET);
     } catch (XPathExpressionException e) {
       throw new RuntimeException(e);
@@ -70,13 +67,13 @@ public class ImageFilterParser {
 
     for (int i = 0; i < replaceColorNodes.getLength(); i++) {
       Element el = Xml.nodeToElement(replaceColorNodes.item(i));
-      addReplacementColor(el, filter);
+      addReplacementColor(el, recolorData);
     }
-    imageLib.addImgFilter(imgFilterName, filter);
+    imageLib.getRecolorManager().addRecolorData(filterRef, recolorData);
   }
 
-  private void addReplacementColor(Element element, ImgFilter filter) {
-    Color replaceColorName = Xml.getColorValue(element, XML_EL_NAME);
+  private void addReplacementColor(Element element, RecolorData filter) {
+    Color replaceColorName = Xml.getColorValue(element, XML_EL_FILTER_NAME);
     List<Color> repLaceColors = Xml.getColorListFromHex(element, XML_EL_REPLACEMENT_COLORS);
     filter.addReplacementColors(replaceColorName, repLaceColors);
   }

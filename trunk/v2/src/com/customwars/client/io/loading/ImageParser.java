@@ -3,12 +3,8 @@ package com.customwars.client.io.loading;
 import static com.customwars.client.io.ErrConstants.ERR_READING_LINE;
 import static com.customwars.client.io.ErrConstants.ERR_WRONG_NUM_ARGS;
 import com.customwars.client.io.img.ImageLib;
-import com.customwars.client.io.img.slick.ImageStrip;
-import com.customwars.client.io.img.slick.SpriteSheet;
 import com.customwars.client.tools.IOUtil;
 import com.customwars.client.tools.StringUtil;
-import org.newdawn.slick.Image;
-import org.newdawn.slick.SlickException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -73,25 +69,21 @@ public class ImageParser {
 
   public void parseCmd(String line) throws IOException {
     char ch = Character.toLowerCase(line.charAt(0));
-    try {
-      if (ch == SINGLE_IMAGE_SYMBOL) {                // 1 image, it's put into a strip
-        loadSingleImage(line);
-      } else if (ch == STRIP_IMAGE_SYMBOL) {          // an images strip
-        loadStripImages(line);
-      } else if (ch == MATRIX_IMAGE_SYMBOL) {         // a Matrix images accessable by row, col
-        loadSpriteSheet(line);
-      } else
-        throw new IllegalArgumentException(ERR_READING_LINE + line + ", unknown Char: " + ch);
-    } catch (SlickException e) {
-      throw new RuntimeException(e);
-    }
+    if (ch == SINGLE_IMAGE_SYMBOL) {                // 1 image, it's put into a strip
+      loadSingleImage(line);
+    } else if (ch == STRIP_IMAGE_SYMBOL) {          // an images strip
+      loadStripImage(line);
+    } else if (ch == MATRIX_IMAGE_SYMBOL) {         // a Matrix images accessable by row, col
+      loadSpriteSheet(line);
+    } else
+      throw new IllegalArgumentException(ERR_READING_LINE + line + ", unknown Char: " + ch);
   }
 
   /**
    * format:
    * o <imgName> <fileName> (<storeAsAwt>)
    */
-  private void loadSingleImage(String line) throws NumberFormatException, IOException, SlickException {
+  private void loadSingleImage(String line) throws NumberFormatException {
     StringTokenizer tokens = new StringTokenizer(line);
 
     if (tokens.countTokens() < 3)
@@ -99,9 +91,9 @@ public class ImageParser {
         " Usage " + SINGLE_IMAGE_SYMBOL + " <imgName> <fileName>");
     else {
       tokens.nextToken();    // skip command label
-      String imgName = tokens.nextToken();
+      String imgRef = tokens.nextToken();
       String imgPath = fullImgPath + tokens.nextToken();
-      imageLib.addSlickImg(imgName, new Image(imgPath));
+      imageLib.loadSlickImage(imgRef, imgPath);
     }
   }
 
@@ -109,7 +101,7 @@ public class ImageParser {
    * format:
    * s <imgName> <fileName> <tileWidth> <tileHeight> (<storeAsAwt>)
    */
-  private void loadStripImages(String line) throws NumberFormatException, IOException, SlickException {
+  private void loadStripImage(String line) throws NumberFormatException {
     StringTokenizer tokens = new StringTokenizer(line);
 
     if (tokens.countTokens() < 5)
@@ -117,7 +109,7 @@ public class ImageParser {
         " Usage: " + STRIP_IMAGE_SYMBOL + " <imgName> <fileName> <tileWidth> <tileHeight>");
     else {
       tokens.nextToken();    // skip command label
-      String imgName = tokens.nextToken();
+      String imgRef = tokens.nextToken();
       String imgPath = fullImgPath + tokens.nextToken();
       int tileWidth = Integer.parseInt(tokens.nextToken());
       int tileHeight = Integer.parseInt(tokens.nextToken());
@@ -127,10 +119,9 @@ public class ImageParser {
       }
 
       if (recolor) {
-        imageLib.loadAwtImg(imgName, imgPath);
-        imageLib.loadSlickImageStrip(imgName, tileWidth, tileHeight);
+        imageLib.getRecolorManager().setBaseRecolorImageStrip(imgRef, imgPath, tileWidth, tileHeight);
       } else {
-        imageLib.addSlickImg(imgName, new ImageStrip(imgPath, tileWidth, tileHeight));
+        imageLib.loadSlickImageStrip(imgRef, imgPath, tileWidth, tileHeight);
       }
     }
   }
@@ -139,7 +130,7 @@ public class ImageParser {
    * format:
    * m <imgName> <fileName> <tileWidth> <tileHeight> (<storeAsAwt>)
    */
-  private void loadSpriteSheet(String line) throws NumberFormatException, IOException, SlickException {
+  private void loadSpriteSheet(String line) throws NumberFormatException {
     StringTokenizer tokens = new StringTokenizer(line);
 
     if (tokens.countTokens() < 5)
@@ -147,7 +138,7 @@ public class ImageParser {
         " Usage: " + MATRIX_IMAGE_SYMBOL + " <imgName> <fileName> <tileWidth> <tileHeight>");
     else {
       tokens.nextToken();    // skip command label
-      String imgName = tokens.nextToken();
+      String imgRef = tokens.nextToken();
       String imgPath = fullImgPath + tokens.nextToken();
       int tileWidth = Integer.parseInt(tokens.nextToken());
       int tileHeight = Integer.parseInt(tokens.nextToken());
@@ -157,10 +148,9 @@ public class ImageParser {
       }
 
       if (recolor) {
-        imageLib.loadAwtImg(imgName, imgPath);
-        imageLib.loadSlickSpriteSheet(imgName, tileWidth, tileHeight);
+        imageLib.getRecolorManager().setBaseRecolorSpriteSheet(imgRef, imgPath, tileWidth, tileHeight);
       } else {
-        imageLib.addSlickImg(imgName, new SpriteSheet(imgPath, tileWidth, tileHeight));
+        imageLib.loadSlickSpriteSheet(imgRef, imgPath, tileWidth, tileHeight);
       }
     }
   }

@@ -13,10 +13,10 @@ s moveZone moveTile.png 32 32
 s attackZone attackTile.png 32 32
 s numbers numbers.png 16 14
 
-m unit_red units_RED.png 32 40 true
+m unit units_RED.png 32 40 true
 s unitDecoration unitDecorations.png 16 16
 
-m CITY_RED cities_RED.png 32 60 true
+m city cities_RED.png 32 60 true
 s cityDecorations cityDecorations.png 16 16
 
 o trapped trapped.png

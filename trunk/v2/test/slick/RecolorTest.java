@@ -1,7 +1,7 @@
 package slick;
 
 import com.customwars.client.io.img.ImageLib;
-import com.customwars.client.io.img.slick.ImageStrip;
+import com.customwars.client.io.img.slick.RecolorManager;
 import com.customwars.client.io.img.slick.SpriteSheet;
 import com.customwars.client.io.loading.ImageFilterParser;
 import com.customwars.client.tools.ColorUtil;
@@ -17,6 +17,8 @@ import org.newdawn.slick.util.ResourceLoader;
 import java.awt.Color;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Tests:
@@ -26,21 +28,19 @@ import java.io.InputStream;
  */
 public class RecolorTest extends BasicGame {
   private static final String IMAGE_FILTER_FILE = "res/plugin/default/data/colors.xml";
-  private static final String UNIT_IMG = "res/plugin/default/images/units_RED.png";
-  private static final String CITY_IMG = "res/plugin/default/images/cities_RED.png";
-  private static final String UNIT_IMG_FILTER = "unit";
-  private static final String UNIT_IMG_PREFIX = "UNIT_";
+  private static final String UNIT_IMG_PATH = "res/plugin/default/images/units_RED.png";
+  private static final String CITY_IMG_PATH = "res/plugin/default/images/cities_RED.png";
 
   // Images
   private ImageLib imageLib;
-  private ImageStrip imageStrip;
+  private RecolorManager recolorManager;
   private SpriteSheet currentUnitImgStrip;
   private Image currentUnitImg;
   private Image currentCityImg;
 
   // Recoloring
-  private static Color[] colors;
-  private int currentColorPos = 0;
+  private static List<Color> colors;
+  private int currentColorPos;
   private boolean darker;
 
   public RecolorTest() {
@@ -49,9 +49,10 @@ public class RecolorTest extends BasicGame {
 
   public void init(GameContainer container) throws SlickException {
     imageLib = new ImageLib();
+    recolorManager = imageLib.getRecolorManager();
 
     // Load the image filters, they provide the data needed to recolor images
-    // Store the colors they support in colors[]
+    // Store the colors they support in colors
     loadImgFilters();
     load();
   }
@@ -64,43 +65,25 @@ public class RecolorTest extends BasicGame {
     } catch (IOException e) {
       Log.error("Could not load img filter", e);
     }
-    imageLib.buildColorsFromImgFilters();
-    colors = imageLib.getSupportedColors().toArray(new Color[0]);
+    colors = new ArrayList<Color>(recolorManager.getSupportedColors());
   }
 
   public void load() {
-    // Load unit awt image
-    imageLib.loadAwtImg(UNIT_IMG_PREFIX + "RED", UNIT_IMG);
-    imageLib.loadSlickSpriteSheet("UNIT_RED", 32, 40);
-
-    // Load City awt image
-    imageLib.loadAwtImg("CITY_RED", CITY_IMG);
-    imageLib.loadSlickSpriteSheet("CITY_RED", 32, 40);
+    recolorManager.setBaseRecolorSpriteSheet("unit", UNIT_IMG_PATH, 32, 40);
+    recolorManager.setBaseRecolorSpriteSheet("city", CITY_IMG_PATH, 32, 40);
 
     recolorImages();
 
-    // Create Slick images from the recolored awt Images
-    loadSlickImages();
-
-    // Retrieve some slick images
-    imageStrip = imageLib.getSlickImgStrip(UNIT_IMG_PREFIX + "AS_STRIP");
-    currentUnitImgStrip = imageLib.getSlickSpriteSheet(UNIT_IMG_PREFIX + "AS_SPRITESHEET");
+    // Retrieve a slick images, case doesn't matter
+    currentUnitImgStrip = (SpriteSheet) imageLib.getSlickImg("UNIT_BluE");
   }
 
   private void recolorImages() {
-    for (Color color : colors) {
-      imageLib.recolorImg(color, "unit", "", UNIT_IMG_FILTER, 0);
-      imageLib.recolorImg(color, "city", "", "city", 0);
-    }
-    for (Color color : colors) {
-      imageLib.recolorImg(color, "unit", "darker", UNIT_IMG_FILTER, 60);
-      imageLib.recolorImg(color, "city", "", "city", 60);
-    }
-  }
-
-  private void loadSlickImages() {
-    imageLib.loadSlickImageStrip(UNIT_IMG_PREFIX + "AS_STRIP", UNIT_IMG_PREFIX + "RED", 32, 42);
-    imageLib.loadSlickSpriteSheet(UNIT_IMG_PREFIX + "AS_SPRITESHEET", UNIT_IMG_PREFIX + "RED", 32, 42);
+    recolorManager.recolor("unit", colors);
+    recolorManager.recolor("city", colors);
+    recolorManager.recolor("unit", "darker", colors, 60);
+    recolorManager.recolor("city", "darker", colors, 20);
+    imageLib.clearImageSources();
   }
 
   public void update(GameContainer container, int delta) throws SlickException {
@@ -110,7 +93,7 @@ public class RecolorTest extends BasicGame {
     g.setColor(org.newdawn.slick.Color.white);
     g.drawString("LOADING COMPLETED   scroll to see what has been loaded", 100, 50);
 
-    Color currentColor = colors[currentColorPos];
+    Color currentColor = colors.get(currentColorPos);
     g.setColor(new org.newdawn.slick.Color(currentColor.getRGB()));
     String darkTxt = darker ? "Darker " : "";
     g.drawString(darkTxt + ColorUtil.toString(currentColor), 50, 70);
@@ -119,7 +102,6 @@ public class RecolorTest extends BasicGame {
       currentUnitImgStrip.getSubImage(0, 1).draw(100, 100);
       currentUnitImgStrip.getSubImage(1, 1).draw(100, 140);
       currentUnitImgStrip.getSubImage(1, 2).draw(100, 180);
-      imageStrip.getSubImage(5).draw(150, 100);
     } else {
       g.drawImage(currentUnitImg, 100, 100);
       if (currentCityImg != null) g.drawImage(currentCityImg, 500, 100);
@@ -131,12 +113,12 @@ public class RecolorTest extends BasicGame {
   }
 
   private void recolor(int i) {
-    if (i >= colors.length) {
+    if (i >= colors.size()) {
       i = 0;
     }
 
     if (i < 0) {
-      i = colors.length - 1;
+      i = colors.size() - 1;
     }
 
     currentColorPos = i;
@@ -144,14 +126,15 @@ public class RecolorTest extends BasicGame {
   }
 
   private void recolor() {
-    Color color = colors[currentColorPos];
+    Color color = colors.get(currentColorPos);
     this.darker = !darker;
+    String colorName = ColorUtil.toString(color);
     if (darker) {
-      currentUnitImg = imageLib.getSlickImg(UNIT_IMG_PREFIX + ColorUtil.toString(color) + "_darker");
-      currentCityImg = imageLib.getSlickImg("city_" + ColorUtil.toString(color));
+      currentUnitImg = imageLib.getSlickImg("UNIT_" + colorName + "_darker");
+      currentCityImg = imageLib.getSlickImg("city_" + colorName + "_darker");
     } else {
-      currentUnitImg = imageLib.getSlickImg(UNIT_IMG_PREFIX + ColorUtil.toString(color));
-      currentCityImg = imageLib.getSlickImg("city_" + ColorUtil.toString(color));
+      currentUnitImg = imageLib.getSlickImg("UNIT_" + colorName);
+      currentCityImg = imageLib.getSlickImg("city_" + colorName);
     }
   }
 
