@@ -48,7 +48,7 @@ public class AnimationParser {
           continue;
         if (line.startsWith(COMMENT_PREFIX))
           continue;
-        getAnim(line);
+        parseAnim(line);
       }
     } finally {
       IOUtil.closeStream(stream);
@@ -60,30 +60,30 @@ public class AnimationParser {
    * AM AnimName imgName frameDuration firstFrameCol firstFrameRow lastFrameCol lastFrameRow loopForever
    * AS AnimName imgName frameDuration startFrame totalframecount loopForever
    */
-  private void getAnim(String line) throws NumberFormatException {
+  private void parseAnim(String line) throws NumberFormatException {
     StringTokenizer tokens = new StringTokenizer(line);
     Scanner cmdScanner = new Scanner(line);
 
     if (!(tokens.countTokens() >= 5))
       throw new IllegalArgumentException(ERR_WRONG_NUM_ARGS + " for " + line);
     else {
-      char imgType = Character.toLowerCase(cmdScanner.next().charAt(0));
+      char animType = Character.toLowerCase(cmdScanner.next().charAt(0));
       String animName = cmdScanner.next();
-      String imgName = cmdScanner.next();
+      String imgRef = cmdScanner.next();
       int frameDuration = cmdScanner.nextInt();
 
       Animation anim;
-      switch (imgType) {
+      switch (animType) {
         case 's':
-          ImageStrip imageStrip = imageLib.getSlickImgStrip(imgName);
+          ImageStrip imageStrip = (ImageStrip) imageLib.getSlickImg(imgRef);
           anim = parseImagestripAnimations(cmdScanner, imageStrip, frameDuration);
           break;
         case 'm':
-          SpriteSheet spriteSheet = imageLib.getSlickSpriteSheet(imgName);
+          SpriteSheet spriteSheet = (SpriteSheet) imageLib.getSlickImg(imgRef);
           anim = parseImageSpriteSheetAnimation(cmdScanner, spriteSheet, frameDuration);
           break;
         default:
-          throw new IllegalArgumentException("Don't know about ImageType " + imgType + " use S(Strip) or M(Matrix) instead, Problem line: " + line);
+          throw new IllegalArgumentException("Don't know about animation type " + animType + " use S(Strip) or M(Matrix) instead, Problem line: " + line);
       }
       animLib.addAnim(animName, anim);
     }

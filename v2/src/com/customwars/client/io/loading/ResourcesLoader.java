@@ -3,6 +3,7 @@ package com.customwars.client.io.loading;
 import com.customwars.client.io.ResourceManager;
 import com.customwars.client.io.img.AnimLib;
 import com.customwars.client.io.img.ImageLib;
+import com.customwars.client.io.img.slick.RecolorManager;
 import com.customwars.client.io.loading.map.MapLoader;
 import com.customwars.client.io.loading.map.MapParser;
 import org.apache.log4j.Logger;
@@ -121,7 +122,8 @@ public class ResourcesLoader {
   }
 
   private void recolor() {
-    Collection<Color> supportedColors = imageLib.getSupportedColors();
+    RecolorManager recolorManager = imageLib.getRecolorManager();
+    Collection<Color> supportedColors = recolorManager.getSupportedColors();
     resources.recolor(supportedColors);
   }
 

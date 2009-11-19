@@ -3,6 +3,7 @@ package com.customwars.client.io;
 import com.customwars.client.io.img.AnimLib;
 import com.customwars.client.io.img.ImageLib;
 import com.customwars.client.io.img.slick.ImageStrip;
+import com.customwars.client.io.img.slick.RecolorManager;
 import com.customwars.client.io.img.slick.SpriteSheet;
 import com.customwars.client.io.loading.ResourcesLoader;
 import com.customwars.client.io.loading.map.BinaryCW2MapParser;
@@ -13,6 +14,7 @@ import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.tools.Args;
 import com.customwars.client.tools.ColorUtil;
+import com.customwars.client.tools.UCaseMap;
 import com.customwars.client.ui.sprite.TileSprite;
 import org.apache.log4j.Logger;
 import org.newdawn.slick.Animation;
@@ -50,11 +52,11 @@ public class ResourceManager {
   private ImageLib imageLib;
   private AnimLib animLib;
 
-  private final HashMap<String, Sound> sounds = new HashMap<String, Sound>();
-  private final HashMap<String, Music> music = new HashMap<String, Music>();
-  private final HashMap<String, Map<Tile>> maps = new HashMap<String, Map<Tile>>();
-  private final HashMap<String, Font> fonts = new HashMap<String, Font>();
-  private final HashMap<String, TileSprite> cursors = new HashMap<String, TileSprite>();
+  private final java.util.Map<String, Sound> sounds = new UCaseMap<Sound>();
+  private final java.util.Map<String, Music> music = new UCaseMap<Music>();
+  private final java.util.Map<String, Map<Tile>> maps = new HashMap<String, Map<Tile>>();
+  private final java.util.Map<String, Font> fonts = new UCaseMap<Font>();
+  private final java.util.Map<String, TileSprite> cursors = new UCaseMap<TileSprite>();
   private final ResourcesLoader resourceLoader;
 
   public ResourceManager() {
@@ -90,15 +92,14 @@ public class ResourceManager {
   public void addFont(String fontID, Font font) {
     Args.checkForNull(fontID);
     Args.checkForNull(font);
-    fonts.put(fontID.toUpperCase(), font);
+    fonts.put(fontID, font);
   }
 
   public void addCursor(String cursorName, TileSprite cursor) {
-    String upperCaseCursorName = cursorName.toUpperCase();
-    if (!cursors.containsKey(upperCaseCursorName)) {
-      cursors.put(upperCaseCursorName, cursor);
+    if (!cursors.containsKey(cursorName)) {
+      cursors.put(cursorName, cursor);
     } else {
-      throw new IllegalArgumentException(upperCaseCursorName + " already stored " + cursors);
+      throw new IllegalArgumentException(cursorName + " already stored " + cursors);
     }
   }
 
@@ -118,16 +119,11 @@ public class ResourceManager {
   }
 
   private void recolorImages(Collection<Color> colors) {
-    for (Color color : colors) {
-      checkIsColorSupported(color);
-      imageLib.recolorImg(color, "unit");
-      imageLib.recolorImg(color, "city");
-    }
-
-    for (Color color : colors) {
-      imageLib.recolorImg(color, "unit", "darker", "unit", darkPercentage);
-      imageLib.recolorImg(color, "city", "darker", "city", darkPercentage);
-    }
+    RecolorManager recolorManager = imageLib.getRecolorManager();
+    recolorManager.recolor("unit", colors, 0);
+    recolorManager.recolor("city", colors, 0);
+    recolorManager.recolor("unit", "darker", colors, darkPercentage);
+    recolorManager.recolor("city", "darker", colors, darkPercentage);
   }
 
   private void createRecoloredAnimations(Collection<Color> colors) {
@@ -135,25 +131,13 @@ public class ResourceManager {
     Color cityBaseColor = getBaseColor("city");
 
     for (Color color : colors) {
-      checkIsColorSupported(color);
       animLib.createUnitAnimations(unitBaseColor, color, this);
       animLib.createCityAnimations(cityBaseColor, color, this);
     }
   }
 
-  private void checkIsColorSupported(Color color) {
-    if (!imageLib.getSupportedColors().contains(color)) {
-      throw new IllegalArgumentException(
-        "Color " + color + " is not supported, add the color");
-    }
-  }
-
   public void setDarkPercentage(int darkPercentage) {
     this.darkPercentage = darkPercentage;
-  }
-
-  public boolean isSlickImgLoaded(String slickImgName) {
-    return imageLib.isSlickImgLoaded(slickImgName);
   }
 
   public Image getSlickImg(String imgName) {
@@ -183,11 +167,11 @@ public class ResourceManager {
   }
 
   public Color getBaseColor(String filterName) {
-    return imageLib.getBaseColor(filterName);
+    return imageLib.getRecolorManager().getBaseColor(filterName);
   }
 
   public Set<Color> getSupportedColors() {
-    return imageLib.getSupportedColors();
+    return imageLib.getRecolorManager().getSupportedColors();
   }
 
   public Animation getAnim(String animName) {
@@ -211,19 +195,19 @@ public class ResourceManager {
   }
 
   public Font getFont(String fontName) {
-    String key = fontName.toUpperCase();
-    if (!fonts.containsKey(key)) {
-      throw new IllegalArgumentException("no font stored for " + key);
+    if (fonts.containsKey(fontName)) {
+      return fonts.get(fontName);
+    } else {
+      throw new IllegalArgumentException("no font stored for " + fontName);
     }
-    return fonts.get(key);
   }
 
   public Music getMusic(String musicName) {
-    return music.get(musicName.toUpperCase());
+    return music.containsKey(musicName) ? music.get(musicName) : null;
   }
 
   public Sound getSound(String soundName) {
-    return sounds.get(soundName.toUpperCase());
+    return sounds.containsKey(soundName) ? sounds.get(soundName) : null;
   }
 
   /**
@@ -231,10 +215,11 @@ public class ResourceManager {
    * @return a copy of the Map with mapName
    */
   public Map<Tile> getMap(String mapName) {
-    if (!maps.containsKey(mapName)) {
+    if (maps.containsKey(mapName)) {
+      return new Map<Tile>(maps.get(mapName));
+    } else {
       throw new IllegalArgumentException("no map stored for " + mapName);
     }
-    return new Map<Tile>(maps.get(mapName));
   }
 
   public boolean isMapCached(String mapName) {
@@ -249,10 +234,10 @@ public class ResourceManager {
   }
 
   public void addMap(String mapName, Map<Tile> map) {
-    if (maps.containsKey(mapName)) {
-      throw new IllegalArgumentException(mapName + " is already stored " + maps);
-    } else {
+    if (!maps.containsKey(mapName)) {
       maps.put(mapName, map);
+    } else {
+      throw new IllegalArgumentException(mapName + " is already stored " + maps);
     }
   }
 
@@ -325,11 +310,10 @@ public class ResourceManager {
   }
 
   public TileSprite getCursor(String cursorName) {
-    String upperCaseCursorName = cursorName.toUpperCase();
-    if (cursors.containsKey(upperCaseCursorName)) {
-      return cursors.get(upperCaseCursorName);
+    if (cursors.containsKey(cursorName)) {
+      return cursors.get(cursorName);
     } else {
-      throw new IllegalArgumentException("No cursor stored for " + upperCaseCursorName + cursors.keySet());
+      throw new IllegalArgumentException("No cursor stored for " + cursorName + cursors.keySet());
     }
   }
 
@@ -351,7 +335,7 @@ public class ResourceManager {
     try {
       return resourceLoader.loadDefaultFont();
     } catch (IOException e) {
-      logger.warn("Could not load default font");
+      logger.warn("Could not load default font", e);
     }
     return null;
   }

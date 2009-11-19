@@ -3,13 +3,13 @@ package com.customwars.client.io.img;
 import com.customwars.client.io.ResourceManager;
 import com.customwars.client.io.img.slick.SpriteSheet;
 import com.customwars.client.tools.ColorUtil;
+import com.customwars.client.tools.UCaseMap;
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Image;
 
 import java.awt.Color;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -29,15 +29,13 @@ public class AnimLib {
   private final Map<String, Animation> animations;
 
   public AnimLib() {
-    animations = new HashMap<String, Animation>();
+    animations = new UCaseMap<Animation>();
   }
 
   public void addAnim(String animName, Animation anim) {
-    String key = animName.toUpperCase();
-
     if (anim.getFrameCount() > 0) {
-      if (!isAnimLoaded(key)) {
-        animations.put(key, anim);
+      if (!isAnimLoaded(animName)) {
+        animations.put(animName, anim);
       }
     }
   }
