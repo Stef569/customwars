@@ -2,6 +2,7 @@ package com.customwars.client.io;
 
 import com.customwars.client.io.img.AnimLib;
 import com.customwars.client.io.img.ImageLib;
+import com.customwars.client.io.img.slick.CWImageLib;
 import com.customwars.client.io.img.slick.ImageStrip;
 import com.customwars.client.io.img.slick.RecolorManager;
 import com.customwars.client.io.img.slick.SpriteSheet;
@@ -13,7 +14,6 @@ import com.customwars.client.model.map.Direction;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.tools.Args;
-import com.customwars.client.tools.ColorUtil;
 import com.customwars.client.tools.UCaseMap;
 import com.customwars.client.ui.sprite.TileSprite;
 import org.apache.log4j.Logger;
@@ -50,6 +50,7 @@ public class ResourceManager {
   private int darkPercentage;
 
   private ImageLib imageLib;
+  private CWImageLib cwImageLib;
   private AnimLib animLib;
 
   private final java.util.Map<String, Sound> sounds = new UCaseMap<Sound>();
@@ -69,6 +70,7 @@ public class ResourceManager {
    */
   public ResourceManager(ImageLib imageLib, AnimLib animLib) {
     this.imageLib = imageLib;
+    this.cwImageLib = new CWImageLib(imageLib);
     this.animLib = animLib;
     this.mapParser = new BinaryCW2MapParser();
     this.resourceLoader = new ResourcesLoader(imageLib, animLib, this, mapParser);
@@ -89,26 +91,9 @@ public class ResourceManager {
     resourceLoader.loadAll();
   }
 
-  public void addFont(String fontID, Font font) {
-    Args.checkForNull(fontID);
-    Args.checkForNull(font);
-    fonts.put(fontID, font);
-  }
-
-  public void addCursor(String cursorName, TileSprite cursor) {
-    if (!cursors.containsKey(cursorName)) {
-      cursors.put(cursorName, cursor);
-    } else {
-      throw new IllegalArgumentException(cursorName + " already stored " + cursors);
-    }
-  }
-
-  public void saveMap(Map<Tile> map, OutputStream out) throws IOException {
-    mapParser.writeMap(map, out);
-    String mapName = map.getMapName();
-    maps.put(mapName, map);
-  }
-
+  //----------------------------------------------------------------------------
+  // Images : Recoloring
+  //----------------------------------------------------------------------------
   public void recolor(Color... colors) {
     recolor(Arrays.asList(colors));
   }
@@ -140,32 +125,6 @@ public class ResourceManager {
     this.darkPercentage = darkPercentage;
   }
 
-  public Image getSlickImg(String imgName) {
-    return imageLib.getSlickImg(imgName);
-  }
-
-  public ImageStrip getSlickImgStrip(String imgName) {
-    return (ImageStrip) imageLib.getSlickImg(imgName);
-  }
-
-  public SpriteSheet getSlickSpriteSheet(String imgName, Color color, String suffix) {
-    String colorName = ColorUtil.toString(color);
-    return getSlickSpriteSheet(imgName + "_" + colorName + "_" + suffix);
-  }
-
-  public SpriteSheet getSlickSpriteSheet(String imgName, Color color) {
-    String colorName = ColorUtil.toString(color);
-    return getSlickSpriteSheet(imgName + "_" + colorName);
-  }
-
-  public SpriteSheet getSlickSpriteSheet(String imgName) {
-    return (SpriteSheet) imageLib.getSlickImg(imgName);
-  }
-
-  public int countSlickImages() {
-    return imageLib.countSlickImages();
-  }
-
   public Color getBaseColor(String filterName) {
     return imageLib.getRecolorManager().getBaseColor(filterName);
   }
@@ -174,6 +133,64 @@ public class ResourceManager {
     return imageLib.getRecolorManager().getSupportedColors();
   }
 
+  //----------------------------------------------------------------------------
+  // Images : Getters
+  //----------------------------------------------------------------------------
+  public Image getSlickImg(String imgRef) {
+    return imageLib.getSlickImg(imgRef);
+  }
+
+  public ImageStrip getSlickImgStrip(String imgRef) {
+    return (ImageStrip) imageLib.getSlickImg(imgRef);
+  }
+
+  public SpriteSheet getSlickSpriteSheet(String imgRef) {
+    return (SpriteSheet) imageLib.getSlickImg(imgRef);
+  }
+
+  public SpriteSheet getSlickSpriteSheet(String imgRef, Color color, String suffix) {
+    return cwImageLib.getSlickSpriteSheet(imgRef, color, suffix);
+  }
+
+  public SpriteSheet getSlickSpriteSheet(String imgRef, Color color) {
+    return cwImageLib.getSlickSpriteSheet(imgRef, color);
+  }
+
+  public SpriteSheet getCitySpriteSheet(Color color) {
+    return cwImageLib.getCitySpriteSheet(color);
+  }
+
+  public SpriteSheet getUnitSpriteSheet(Color color) {
+    return cwImageLib.getUnitSpriteSheet(color);
+  }
+
+  public Image getUnitImg(Unit unit, Direction direction) {
+    return cwImageLib.getUnitImg(unit, direction);
+  }
+
+  public Image getUnitImg(Unit unit, Color color, Direction direction) {
+    return cwImageLib.getUnitImg(unit, color, direction);
+  }
+
+  public SpriteSheet getShadedUnitSpriteSheet(Color color) {
+    return cwImageLib.getShadedUnitSpriteSheet(color);
+  }
+
+  public Image getShadedUnitImg(Unit unit, Direction direction) {
+    return cwImageLib.getShadedUnitImg(unit, direction);
+  }
+
+  public Image getShadedUnitImg(Unit unit, Color color, Direction direction) {
+    return cwImageLib.getShadedUnitImg(unit, color, direction);
+  }
+
+  public int countSlickImages() {
+    return imageLib.countSlickImages();
+  }
+
+  //----------------------------------------------------------------------------
+  // Animation
+  //----------------------------------------------------------------------------
   public Animation getAnim(String animName) {
     return animLib.getAnim(animName);
   }
@@ -194,6 +211,24 @@ public class ResourceManager {
     return animLib.getAllAnimations();
   }
 
+  //----------------------------------------------------------------------------
+  // Fonts
+  //----------------------------------------------------------------------------
+  public Font loadDefaultFont() {
+    try {
+      return resourceLoader.loadDefaultFont();
+    } catch (IOException e) {
+      logger.warn("Could not load default font", e);
+    }
+    return null;
+  }
+
+  public void addFont(String fontID, Font font) {
+    Args.checkForNull(fontID);
+    Args.checkForNull(font);
+    fonts.put(fontID, font);
+  }
+
   public Font getFont(String fontName) {
     if (fonts.containsKey(fontName)) {
       return fonts.get(fontName);
@@ -202,12 +237,47 @@ public class ResourceManager {
     }
   }
 
+  //----------------------------------------------------------------------------
+  // Sound & Music
+  //----------------------------------------------------------------------------
+  public void addMusic(String musicName, Music music) {
+    this.music.put(musicName, music);
+  }
+
   public Music getMusic(String musicName) {
     return music.containsKey(musicName) ? music.get(musicName) : null;
   }
 
+  public void addSound(String soundName, Sound sound) {
+    sounds.put(soundName, sound);
+  }
+
   public Sound getSound(String soundName) {
     return sounds.containsKey(soundName) ? sounds.get(soundName) : null;
+  }
+
+  //----------------------------------------------------------------------------
+  // Maps
+  //----------------------------------------------------------------------------
+  public Map<Tile> loadMap(File file) throws IOException {
+    Map<Tile> map = mapParser.readMap(new FileInputStream(file));
+    String mapName = map.getMapName();
+    addMap(mapName, map);
+    return map;
+  }
+
+  public void saveMap(Map<Tile> map, OutputStream out) throws IOException {
+    mapParser.writeMap(map, out);
+    String mapName = map.getMapName();
+    maps.put(mapName, map);
+  }
+
+  public void addMap(String mapName, Map<Tile> map) {
+    if (!maps.containsKey(mapName)) {
+      maps.put(mapName, map);
+    } else {
+      throw new IllegalArgumentException(mapName + " is already stored " + maps);
+    }
   }
 
   /**
@@ -226,87 +296,29 @@ public class ResourceManager {
     return maps.containsKey(mapName);
   }
 
-  public Map<Tile> loadMap(File file) throws IOException {
-    Map<Tile> map = mapParser.readMap(new FileInputStream(file));
-    String mapName = map.getMapName();
-    addMap(mapName, map);
-    return map;
-  }
-
-  public void addMap(String mapName, Map<Tile> map) {
-    if (!maps.containsKey(mapName)) {
-      maps.put(mapName, map);
-    } else {
-      throw new IllegalArgumentException(mapName + " is already stored " + maps);
-    }
-  }
-
   public Set<String> getAllMapNames() {
     return Collections.unmodifiableSet(maps.keySet());
   }
 
-  public SpriteSheet getUnitSpriteSheet(Color color) {
-    String colorName = ColorUtil.toString(color);
-    return getSlickSpriteSheet("UNIT_" + colorName);
-  }
-
-  public Image getUnitImg(Unit unit, Direction direction) {
-    Color playerColor = unit.getOwner().getColor();
-    return getUnitImg(unit, playerColor, direction);
-  }
-
-  public Image getUnitImg(Unit unit, Color color, Direction direction) {
-    SpriteSheet unitSpriteSheet = getUnitSpriteSheet(color);
-    int row = unit.getImgRowID();
-    return cropUnitImg(unitSpriteSheet, direction, row);
-  }
-
-  public SpriteSheet getShadedUnitSpriteSheet(Color color) {
-    String colorName = ColorUtil.toString(color);
-    return getSlickSpriteSheet("UNIT_" + colorName + "_darker");
-  }
-
-  public Image getShadedUnitImg(Unit unit, Direction direction) {
-    Color playerColor = unit.getOwner().getColor();
-    return getShadedUnitImg(unit, playerColor, direction);
-  }
-
-  public Image getShadedUnitImg(Unit unit, Color color, Direction direction) {
-    SpriteSheet unitSpriteSheet = getShadedUnitSpriteSheet(color);
-    int row = unit.getImgRowID();
-    return cropUnitImg(unitSpriteSheet, direction, row);
-  }
-
+  //----------------------------------------------------------------------------
+  // Cursor
+  //----------------------------------------------------------------------------
   /**
-   * Crop a unit from a spritesheet
-   * that is looking in the given direction
-   * Supported directions(N,E,S,W) all other directions will throw an IllegalArgumentException
+   * Create a new Cursor and place it in the map on a random tile
    */
-  private Image cropUnitImg(SpriteSheet unitSpriteSheet, Direction direction, int row) {
-    Image unitImg;
-
-    switch (direction) {
-      case NORTH:
-        unitImg = unitSpriteSheet.getSubImage(10, row);
-        break;
-      case EAST:
-        unitImg = unitSpriteSheet.getSubImage(4, row);
-        break;
-      case SOUTH:
-        unitImg = unitSpriteSheet.getSubImage(7, row);
-        break;
-      case WEST:
-        unitImg = unitSpriteSheet.getSubImage(1, row);
-        break;
-      default:
-        throw new IllegalArgumentException("Direction " + direction + " is not supported for a unit");
-    }
-    return unitImg;
+  public TileSprite createCursor(Map<Tile> map, String cursorName) {
+    TileSprite cursor = getCursor(cursorName);
+    cursor.setMap(map);
+    cursor.setLocation(map.getRandomTile());
+    return cursor;
   }
 
-  public SpriteSheet getCitySpriteSheet(Color color) {
-    String colorName = ColorUtil.toString(color);
-    return getSlickSpriteSheet("CITY_" + colorName);
+  public void addCursor(String cursorName, TileSprite cursor) {
+    if (!cursors.containsKey(cursorName)) {
+      cursors.put(cursorName, cursor);
+    } else {
+      throw new IllegalArgumentException(cursorName + " already stored " + cursors);
+    }
   }
 
   public TileSprite getCursor(String cursorName) {
@@ -319,32 +331,5 @@ public class ResourceManager {
 
   public Collection<TileSprite> getAllCursors() {
     return cursors.values();
-  }
-
-  /**
-   * Create a new Cursor and place it in the map on a random tile
-   */
-  public TileSprite createCursor(Map<Tile> map, String cursorName) {
-    TileSprite cursor = getCursor(cursorName);
-    cursor.setMap(map);
-    cursor.setLocation(map.getRandomTile());
-    return cursor;
-  }
-
-  public Font loadDefaultFont() {
-    try {
-      return resourceLoader.loadDefaultFont();
-    } catch (IOException e) {
-      logger.warn("Could not load default font", e);
-    }
-    return null;
-  }
-
-  public void addSound(String soundName, Sound sound) {
-    sounds.put(soundName, sound);
-  }
-
-  public void addMusic(String musicName, Music music) {
-    this.music.put(musicName, music);
   }
 }
