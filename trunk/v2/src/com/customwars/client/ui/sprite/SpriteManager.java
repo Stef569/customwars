@@ -3,7 +3,6 @@ package com.customwars.client.ui.sprite;
 import com.customwars.client.io.ResourceManager;
 import com.customwars.client.io.img.AnimLib;
 import com.customwars.client.io.img.slick.ImageStrip;
-import com.customwars.client.io.img.slick.SpriteSheet;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Locatable;
@@ -17,6 +16,7 @@ import org.apache.log4j.Logger;
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
+import org.newdawn.slick.SpriteSheet;
 
 import java.awt.Color;
 import java.beans.PropertyChangeEvent;
