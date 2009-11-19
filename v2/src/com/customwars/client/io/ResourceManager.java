@@ -5,7 +5,6 @@ import com.customwars.client.io.img.ImageLib;
 import com.customwars.client.io.img.slick.CWImageLib;
 import com.customwars.client.io.img.slick.ImageStrip;
 import com.customwars.client.io.img.slick.RecolorManager;
-import com.customwars.client.io.img.slick.SpriteSheet;
 import com.customwars.client.io.loading.ResourcesLoader;
 import com.customwars.client.io.loading.map.BinaryCW2MapParser;
 import com.customwars.client.io.loading.map.MapParser;
@@ -22,6 +21,7 @@ import org.newdawn.slick.Font;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.Music;
 import org.newdawn.slick.Sound;
+import org.newdawn.slick.SpriteSheet;
 
 import java.awt.Color;
 import java.io.File;
@@ -37,8 +37,8 @@ import java.util.Set;
 /**
  * Handles and stores all kind of resources: Images, Sounds, Music, Animations
  * Each of these resources is mapped to a string ie "SELECT_SOUND" -> Sound object
- * Other classes can now ask this class to play the sound
- * ie resourceManager.playSound("SELECT_SOUND")
+ * Other classes can now ask this class to get the sound
+ * ie resourceManager.getSound("SELECT_SOUND")
  *
  * Before loading, the paths where the resources are located should be set
  *

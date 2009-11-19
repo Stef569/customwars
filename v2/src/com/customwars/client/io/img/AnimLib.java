@@ -1,11 +1,12 @@
 package com.customwars.client.io.img;
 
 import com.customwars.client.io.ResourceManager;
-import com.customwars.client.io.img.slick.SpriteSheet;
 import com.customwars.client.tools.ColorUtil;
+import com.customwars.client.tools.StringUtil;
 import com.customwars.client.tools.UCaseMap;
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Image;
+import org.newdawn.slick.SpriteSheet;
 
 import java.awt.Color;
 import java.util.Collection;
@@ -49,7 +50,7 @@ public class AnimLib {
     return animations.get(key);
   }
 
-  public boolean isAnimLoaded(String animName) {
+  boolean isAnimLoaded(String animName) {
     return animations.containsKey(animName.toUpperCase());
   }
 
@@ -66,11 +67,11 @@ public class AnimLib {
 
     // Read frame count and durations from the base animations
     Animation baseAnim = getCityBaseAnimation(baseColor);
-    int[] durations = baseAnim.getDurations();
+    int duration = baseAnim.getDurations()[0];
     int totalFrames = baseAnim.getFrameCount();
 
     for (int row = 0; row < citySpriteSheet.getVerticalCount(); row++) {
-      Animation animActive = createAnim(citySpriteSheet, 0, totalFrames, row, durations);
+      Animation animActive = createAnim(citySpriteSheet, 0, totalFrames, row, duration);
       addCityAnim(row, color, "", animActive);
 
       Animation animFogged = new Animation(false);
@@ -80,7 +81,7 @@ public class AnimLib {
   }
 
   private Animation getCityBaseAnimation(Color baseColor) {
-    String cityAnimName = createCityAnimName(0, baseColor);
+    String cityAnimName = createCityAnimName(0, baseColor, "");
     return getAnim(cityAnimName);
   }
 
@@ -89,23 +90,16 @@ public class AnimLib {
     addAnim(cityAnimName, cityAnim);
   }
 
-  public String createCityAnimName(int cityID, Color color) {
-    String colorName = ColorUtil.toString(color);
-    return "city_" + cityID + "_" + colorName;
-  }
-
   public Animation getCityAnim(int cityID, Color color, String suffix) {
     String cityAnimName = createCityAnimName(cityID, color, suffix);
     return getAnim(cityAnimName);
   }
 
-  public String createCityAnimName(int cityID, Color color, String suffix) {
+  private String createCityAnimName(int cityID, Color color, String suffix) {
     String colorName = ColorUtil.toString(color);
-    if (suffix != null && suffix.trim().length() > 0) {
-      return "city_" + cityID + "_" + colorName + "_" + suffix;
-    } else {
-      return "city_" + cityID + "_" + colorName;
-    }
+    return StringUtil.hasContent(suffix) ?
+      "city_" + cityID + "_" + colorName + "_" + suffix :
+      "city_" + cityID + "_" + colorName;
   }
 
   //----------------------------------------------------------------------------
@@ -116,6 +110,7 @@ public class AnimLib {
    *
    * @param baseColor base color for a unit
    * @param color     the color of the unitSpriteSheet, used to store the animations ie UNIT_0_BLUE
+   * @param resources The resources Manager containing the unit SpriteSheets
    */
   public void createUnitAnimations(Color baseColor, Color color, ResourceManager resources) {
     SpriteSheet unitSpriteSheet = resources.getSlickSpriteSheet("unit", color);
@@ -131,10 +126,10 @@ public class AnimLib {
     int animRightFrameCount = baseAnimRight.getFrameCount();
     int animUpFrameCount = baseAnimUp.getFrameCount();
     int animDownFrameCount = baseAnimDown.getFrameCount();
-    int[] animLeftFrameDurations = baseAnimLeft.getDurations();
-    int[] animRightFrameDurations = baseAnimRight.getDurations();
-    int[] animUpFrameDurations = baseAnimUp.getDurations();
-    int[] animDownFrameDuractions = baseAnimDown.getDurations();
+    int animLeftFrameDurations = baseAnimLeft.getDurations()[0];
+    int animRightFrameDurations = baseAnimRight.getDurations()[0];
+    int animUpFrameDurations = baseAnimUp.getDurations()[0];
+    int animDownFrameDuractions = baseAnimDown.getDurations()[0];
 
     // For each row get LEFT, RIGHT, DOWN and UP Images and create Animations out of them.
     // THE ORDER IN WHICH IMAGES ARE READ IS IMPORTANT!
@@ -168,6 +163,10 @@ public class AnimLib {
     }
   }
 
+  private Animation createAnim(SpriteSheet sheet, int col, int cols, int row, int duration) {
+    return new Animation(sheet, col, row, cols - 1, row, true, duration, true);
+  }
+
   private Animation getUnitBaseAnimation(Color baseColor, String suffix) {
     String unitAnimName = createUnitAnimName(0, baseColor, suffix);
     return getAnim(unitAnimName);
@@ -183,19 +182,8 @@ public class AnimLib {
     return getAnim(unitAnimName);
   }
 
-  public String createUnitAnimName(int rowID, Color color, String suffix) {
+  private String createUnitAnimName(int rowID, Color color, String suffix) {
     String colorName = ColorUtil.toString(color);
     return "unit_" + rowID + "_" + colorName + "_" + suffix;
-  }
-
-  private Animation createAnim(SpriteSheet sheet, int col, int cols, int row, int[] durations) {
-    Animation anim = new Animation();
-    int duractionCount = 0;
-    while (col < cols) {
-      Image frame = sheet.getSubImage(col, row);
-      anim.addFrame(frame, durations[duractionCount++]);
-      col++;
-    }
-    return anim;
   }
 }

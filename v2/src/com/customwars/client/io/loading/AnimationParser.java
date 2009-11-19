@@ -4,12 +4,11 @@ import static com.customwars.client.io.ErrConstants.ERR_WRONG_NUM_ARGS;
 import com.customwars.client.io.img.AnimLib;
 import com.customwars.client.io.img.ImageLib;
 import com.customwars.client.io.img.slick.ImageStrip;
-import com.customwars.client.io.img.slick.SpriteSheet;
 import com.customwars.client.tools.IOUtil;
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Image;
+import org.newdawn.slick.SpriteSheet;
 
-import java.awt.Point;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -118,11 +117,6 @@ public class AnimationParser {
     int lastFrameRow = cmdScanner.nextInt();
     boolean loop = cmdScanner.nextBoolean();
 
-    Point startFrame = new Point(firstFrameCol, firstFrameRow);
-    Point endFrame = new Point(lastFrameCol, lastFrameRow);
-    List<Image> result = sheet.getInnerList(startFrame, endFrame);
-    Animation anim = new Animation(result.toArray(new Image[result.size()]), frameDuration);
-    anim.setAutoUpdate(loop);
-    return anim;
+    return new Animation(sheet, firstFrameCol, firstFrameRow, lastFrameCol, lastFrameRow, true, frameDuration, loop);
   }
 }
