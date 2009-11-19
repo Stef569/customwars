@@ -14,7 +14,6 @@ import org.apache.log4j.Logger;
 import org.newdawn.slick.Font;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
-import org.newdawn.slick.SlickException;
 import org.newdawn.slick.command.Command;
 import org.newdawn.slick.command.InputProviderListener;
 import org.newdawn.slick.state.StateBasedGame;
@@ -41,7 +40,7 @@ public abstract class CWStateBasedGame extends StateBasedGame implements InputPr
     this.stateChanger = new StateChanger(this);
   }
 
-  public final void initStatesList(GameContainer gameContainer) throws SlickException {
+  public final void initStatesList(GameContainer gameContainer) {
     this.gameContainer = gameContainer;
     loadInput();
     loadDefaultFont();
@@ -82,7 +81,6 @@ public abstract class CWStateBasedGame extends StateBasedGame implements InputPr
         defaultFontField.setAccessible(false);
       } catch (NoSuchFieldException e) {
         logger.warn("No field DEFAULT_FONT in slick Graphics class");
-        e.printStackTrace();
       }
     }
   }

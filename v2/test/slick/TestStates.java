@@ -80,6 +80,7 @@ public class TestStates extends CWStateBasedGame {
 
   @Override
   public void keyPressed(int key, char c) {
+    super.keyPressed(key, c);
     if (key == Input.KEY_ENTER) {
       changeToState("MAIN_MenU");
     }
