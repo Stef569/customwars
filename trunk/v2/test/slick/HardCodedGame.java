@@ -22,9 +22,9 @@ import java.util.List;
  */
 public class HardCodedGame {
   // 3 Game Players
-  public static Player p_RED = new Player(0, Color.RED, false, null, "Stef", 19800, 0, false);
-  public static Player p_BLUE = new Player(1, Color.BLUE, false, null, "JSR", 35500, 1, false);
-  public static Player p_GREEN = new Player(2, Color.GREEN, false, null, "Kiwi", 25000, 2, false);
+  public static final Player p_RED = new Player(0, Color.RED, false, null, "Stef", 19800, 0, false);
+  public static final Player p_BLUE = new Player(1, Color.BLUE, false, null, "JSR", 35500, 1, false);
+  public static final Player p_GREEN = new Player(2, Color.GREEN, false, null, "Kiwi", 25000, 2, false);
   private static Map<Tile> map;
 
   /**
@@ -45,6 +45,7 @@ public class HardCodedGame {
     int tileSize = App.getInt("plugin.tilesize", 32);
     Terrain plain = TerrainFactory.getTerrain(TestData.PLAIN);
     map = new Map<Tile>(15, 20, tileSize, plain);
+    map.setFogOfWarOn(true);
     initMapProperties();
     initTerrains();
 
