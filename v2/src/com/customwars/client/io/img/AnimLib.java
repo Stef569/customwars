@@ -1,5 +1,6 @@
 package com.customwars.client.io.img;
 
+import com.customwars.client.App;
 import com.customwars.client.io.ResourceManager;
 import com.customwars.client.tools.ColorUtil;
 import com.customwars.client.tools.StringUtil;
@@ -64,6 +65,7 @@ public class AnimLib {
   public void createCityAnimations(Color baseColor, Color color, ResourceManager resources) {
     SpriteSheet citySpriteSheet = resources.getSlickSpriteSheet("city", color);
     SpriteSheet darkerCitySpriteSheet = resources.getSlickSpriteSheet("city", color, "darker");
+    boolean cityAnimationsOn = App.getBoolean("display.city.animate");
 
     // Read frame count and durations from the base animations
     Animation baseAnim = getCityBaseAnimation(baseColor);
@@ -72,6 +74,7 @@ public class AnimLib {
 
     for (int row = 0; row < citySpriteSheet.getVerticalCount(); row++) {
       Animation animActive = createAnim(citySpriteSheet, 0, totalFrames, row, duration);
+      animActive.setLooping(cityAnimationsOn);
       addCityAnim(row, color, "", animActive);
 
       Animation animFogged = new Animation(false);
@@ -164,7 +167,7 @@ public class AnimLib {
   }
 
   private Animation createAnim(SpriteSheet sheet, int col, int cols, int row, int duration) {
-    return new Animation(sheet, col, row, cols - 1, row, true, duration, true);
+    return new Animation(sheet, col, row, cols - 1, row, true, duration, false);
   }
 
   private Animation getUnitBaseAnimation(Color baseColor, String suffix) {
