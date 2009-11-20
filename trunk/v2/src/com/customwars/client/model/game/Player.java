@@ -13,15 +13,15 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Represent a player that can participates in a game, can be either a human, AI or neutral player.
- * Can be allied with another Player
+ * Represent a player that can participate in a game, can be either a human, AI or neutral player.
+ * Can be allied with another Player by being in the same team
  * Each non neutral player has an unique ID, neutral players always have the same NEUTRAL_PLAYER_ID
  *
  * @author stefan
  */
 public class Player extends GameObject {
   public static final int NEUTRAL_PLAYER_ID = -1;
-  private int id;           // Unique Number
+  private final int id;     // Unique Number
   private String name;      // Name for this player,not unique
   private Color color;      // Unique Color
   private int team;         // The team this player is in
@@ -30,30 +30,24 @@ public class Player extends GameObject {
   private City hq;          // Headquarters
 
   private int budget;         // Amount of money that can be spend
-  private List<Unit> army;    // All the units of this player
-  private List<City> cities;  // All the cities of this player
+  private final List<Unit> army;    // All the units of this player
+  private final List<City> cities;  // All the cities of this player
   private boolean createdFirstUnit; // Has this player created his first unit
 
   public Player(int id) {
     this.id = id;
-    army = new LinkedList<Unit>();
-    cities = new LinkedList<City>();
+    this.army = new LinkedList<Unit>();
+    this.cities = new LinkedList<City>();
   }
 
-  public Player(int id, City hq) {
-    this(id);
-    this.hq = hq;
-  }
-
-  public Player(int id, Color color, boolean neutral, City hq) {
+  public Player(int id, Color color, boolean neutral) {
     this(id);
     this.color = color;
     this.neutral = neutral;
-    this.hq = hq;
   }
 
-  public Player(int id, Color color, boolean neutral, City hq, String name, int startBudget, int team, boolean ai) {
-    this(id, color, neutral, hq);
+  public Player(int id, Color color, boolean neutral, String name, int startBudget, int team, boolean ai) {
+    this(id, color, neutral);
     this.name = name;
     this.budget = startBudget;
     this.team = team;
@@ -96,8 +90,8 @@ public class Player extends GameObject {
    * Remove all units from army, until there are none left
    * unit.destroy() removes the unit from this player's army.
    */
-  public void destroyAllUnits() {
-    while (army.size() > 0) {
+  private void destroyAllUnits() {
+    while (!army.isEmpty()) {
       Unit unit = army.get(army.size() - 1);
       unit.destroy();
     }
@@ -105,8 +99,10 @@ public class Player extends GameObject {
 
   /**
    * Change the owner of each city owned by this player to newOwner
+   *
+   * @param newOwner The new owner of the cities owned by this player
    */
-  public void changeCityOwnersTo(Player newOwner) {
+  private void changeCityOwnersTo(Player newOwner) {
     for (City city : getAllCities()) {
       newOwner.addCity(city);
     }
@@ -158,7 +154,10 @@ public class Player extends GameObject {
   public void addUnit(Unit unit) {
     Args.checkForNull(unit, "null unit cannot be added");
     Args.validate(army.contains(unit), "army already contains the same unit");
-    if (army.size() == 0) createdFirstUnit = true;
+
+    if (army.isEmpty()) {
+      createdFirstUnit = true;
+    }
 
     army.add(unit);
     unit.setOwner(this);
@@ -192,18 +191,6 @@ public class Player extends GameObject {
     firePropertyChange("name", oldVal, name);
   }
 
-  public void setColor(Color color) {
-    Color oldVal = this.color;
-    this.color = color;
-    firePropertyChange("color", oldVal, color);
-  }
-
-  public void setTeam(int team) {
-    int oldVal = this.team;
-    this.team = team;
-    firePropertyChange("team", oldVal, team);
-  }
-
   public void setHq(City hq) {
     this.hq = hq;
   }
@@ -222,10 +209,6 @@ public class Player extends GameObject {
 
   public int getBudget() {
     return budget;
-  }
-
-  public int getTeam() {
-    return team;
   }
 
   public int getArmyCount() {
@@ -249,7 +232,7 @@ public class Player extends GameObject {
   }
 
   public boolean isAlliedWith(Player p) {
-    return p.getTeam() == team;
+    return p.team == team;
   }
 
   public City getHq() {

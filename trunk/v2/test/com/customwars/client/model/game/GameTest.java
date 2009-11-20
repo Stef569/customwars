@@ -57,8 +57,8 @@ public class GameTest {
     int CITY_FUNDS = 1200;
 
     buildHardCodedMap(2);
-    Player p1 = new Player(0, Color.RED, false, null, "Stef", P1_START_BUDGET, 0, false);
-    Player p2 = new Player(1, Color.BLACK, false, null, "JSR", P2_START_BUDGET, 5, false);
+    Player p1 = new Player(0, Color.RED, false, "Stef", P1_START_BUDGET, 0, false);
+    Player p2 = new Player(1, Color.BLACK, false, "JSR", P2_START_BUDGET, 5, false);
     GameConfig gc = new GameConfig();
     gc.setCityfunds(CITY_FUNDS);
 
@@ -92,8 +92,8 @@ public class GameTest {
   @Test(expected = NotYourTurnException.class)
   public void testEndTurnWithNonActivePlayer() {
     buildHardCodedMap(2);
-    Player p1 = new Player(0, Color.RED, false, null, "Stef", 0, 0, false);
-    Player p2 = new Player(1, Color.BLACK, false, null, "JSR", 0, 1, false);
+    Player p1 = new Player(0, Color.RED, false, "Stef", 0, 0, false);
+    Player p2 = new Player(1, Color.BLACK, false, "JSR", 0, 1, false);
     startGame(new GameConfig(), p1, p2);
 
     game.endTurn(p2);
@@ -105,10 +105,10 @@ public class GameTest {
   @Test(expected = IllegalStateException.class)
   public void testEndTurnOnLastTurn() {
     buildHardCodedMap(4);
-    Player p1 = new Player(0, Color.RED, false, null, "Stef", 0, 0, false);
-    Player p2 = new Player(1, Color.RED, false, null, "JSR", 0, 0, false);
-    Player p3 = new Player(2, Color.RED, false, null, "Ben", 0, 0, false);
-    Player p4 = new Player(3, Color.BLACK, false, null, "Joop", 0, 5, false);
+    Player p1 = new Player(0, Color.RED, false, "Stef", 0, 0, false);
+    Player p2 = new Player(1, Color.RED, false, "JSR", 0, 0, false);
+    Player p3 = new Player(2, Color.RED, false, "Ben", 0, 0, false);
+    Player p4 = new Player(3, Color.BLACK, false, "Joop", 0, 5, false);
     GameConfig gc = new GameConfig();
     gc.setDayLimit(2);
     startGame(gc, p1, p1, p2, p3, p4);
@@ -134,10 +134,10 @@ public class GameTest {
     int END_TURN_ITERATIONS = 1500;
 
     buildHardCodedMap(4);
-    Player p1 = new Player(0, Color.RED, false, null, "Stef", 0, 0, false);
-    Player p2 = new Player(1, Color.GREEN, false, null, "Jan", 0, 0, false);
-    Player p3 = new Player(2, Color.BLUE, false, null, "JSR", 0, 0, false);
-    Player p4 = new Player(3, Color.BLACK, false, null, "Joop", 0, 1, false);
+    Player p1 = new Player(0, Color.RED, false, "Stef", 0, 0, false);
+    Player p2 = new Player(1, Color.GREEN, false, "Jan", 0, 0, false);
+    Player p3 = new Player(2, Color.BLUE, false, "JSR", 0, 0, false);
+    Player p4 = new Player(3, Color.BLACK, false, "Joop", 0, 1, false);
     startGame(new GameConfig(), p1, p2, p3, p4);
 
     for (int counter = 0; counter < END_TURN_ITERATIONS; counter++) {
@@ -151,21 +151,21 @@ public class GameTest {
   @Test(expected = IllegalStateException.class)
   public void testDuplicatePlayers() {
     buildHardCodedMap(5);
-    Player p1 = new Player(0, Color.RED, false, null, "Stef", 0, 0, false);
-    Player p2 = new Player(1, Color.RED, false, null, "Jan", 0, 0, false);
-    Player p3 = new Player(2, Color.RED, false, null, "Jsr", 0, 0, false);
-    Player p4 = new Player(3, Color.BLACK, false, null, "Joop", 0, 5, false);
-    Player p5 = new Player(4, Color.YELLOW, false, null, "Kembo", 0, 4, false);
+    Player p1 = new Player(0, Color.RED, false, "Stef", 0, 0, false);
+    Player p2 = new Player(1, Color.RED, false, "Jan", 0, 0, false);
+    Player p3 = new Player(2, Color.RED, false, "Jsr", 0, 0, false);
+    Player p4 = new Player(3, Color.BLACK, false, "Joop", 0, 5, false);
+    Player p5 = new Player(4, Color.YELLOW, false, "Kembo", 0, 4, false);
     startGame(new GameConfig(), p3, p3, p1, p2, p4, p5);
   }
 
   @Test
   public void testGameOverByLastPlayerRemaining() {
     buildHardCodedMap(4);
-    Player p1 = new Player(0, Color.RED, false, null, "Stef", 0, 0, false);
-    Player p2 = new Player(1, Color.BLUE, false, null, "Jan", 0, 0, false);
-    Player p3 = new Player(2, Color.YELLOW, false, null, "JSR", 0, 0, false);
-    Player p4 = new Player(3, Color.BLACK, false, null, "Kembo", 0, 0, false);
+    Player p1 = new Player(0, Color.RED, false, "Stef", 0, 0, false);
+    Player p2 = new Player(1, Color.BLUE, false, "Jan", 0, 0, false);
+    Player p3 = new Player(2, Color.YELLOW, false, "JSR", 0, 0, false);
+    Player p4 = new Player(3, Color.BLACK, false, "Kembo", 0, 0, false);
     startGame(new GameConfig(), p1, p2, p3, p4);
 
     // Give p2 a unit
@@ -196,10 +196,10 @@ public class GameTest {
   @Test
   public void testGameOverByAlliedVictory() {
     buildHardCodedMap(4);
-    Player p1 = new Player(0, Color.RED, false, null, "Stef", Integer.MAX_VALUE, 1, false);
-    Player p2 = new Player(1, Color.BLUE, false, null, "JSR", 8500, 1, false);
-    Player p3 = new Player(2, Color.GREEN, false, null, "Ben", 500, 2, false);
-    Player p4 = new Player(3, Color.BLACK, false, null, "Joop", 1000, 2, false);
+    Player p1 = new Player(0, Color.RED, false, "Stef", Integer.MAX_VALUE, 1, false);
+    Player p2 = new Player(1, Color.BLUE, false, "JSR", 8500, 1, false);
+    Player p3 = new Player(2, Color.GREEN, false, "Ben", 500, 2, false);
+    Player p4 = new Player(3, Color.BLACK, false, "Joop", 1000, 2, false);
     startGame(new GameConfig(), p1, p2, p3, p4);
 
     // p1 builds up his army
@@ -245,11 +245,11 @@ public class GameTest {
     MapUtil.addUnitToMap(map, 9, 0, TestData.INF, mapPlayer4);
     MapUtil.addUnitToMap(map, 0, 1, TestData.INF, mapPlayer5);
 
-    Player p1 = new Player(0, Color.RED, false, null, "Stef", 0, 0, false);
-    Player p2 = new Player(1, Color.BLUE, false, null, "Jan", 0, 0, false);
-    Player p3 = new Player(2, Color.WHITE, false, null, "Jsr", 0, 0, false);
-    Player p4 = new Player(3, Color.BLACK, false, null, "Joop", 0, 5, false);
-    Player p5 = new Player(4, Color.YELLOW, false, null, "Kembo", 0, 3, false);
+    Player p1 = new Player(0, Color.RED, false, "Stef", 0, 0, false);
+    Player p2 = new Player(1, Color.BLUE, false, "Jan", 0, 0, false);
+    Player p3 = new Player(2, Color.WHITE, false, "Jsr", 0, 0, false);
+    Player p4 = new Player(3, Color.BLACK, false, "Joop", 0, 5, false);
+    Player p5 = new Player(4, Color.YELLOW, false, "Kembo", 0, 3, false);
     startGame(new GameConfig(), p1, p2, p3, p4, p5);
 
     // Only player1 has active units

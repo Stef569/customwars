@@ -22,9 +22,9 @@ import java.util.List;
  */
 public class HardCodedGame {
   // 3 Game Players
-  public static final Player p_RED = new Player(0, Color.RED, false, null, "Stef", 19800, 0, false);
-  public static final Player p_BLUE = new Player(1, Color.BLUE, false, null, "JSR", 35500, 1, false);
-  public static final Player p_GREEN = new Player(2, Color.GREEN, false, null, "Kiwi", 25000, 2, false);
+  public static final Player p_RED = new Player(0, Color.RED, false, "Stef", 19800, 0, false);
+  public static final Player p_BLUE = new Player(1, Color.BLUE, false, "JSR", 35500, 1, false);
+  public static final Player p_GREEN = new Player(2, Color.GREEN, false, "Kiwi", 25000, 2, false);
   private static Map<Tile> map;
 
   /**
@@ -50,10 +50,10 @@ public class HardCodedGame {
     initTerrains();
 
     // 3 Map Players, colors are suggestions game players overwrite them
-    Player neutral = new Player(Player.NEUTRAL_PLAYER_ID, Color.GRAY, true, null);
-    Player p1 = new Player(0, Color.GREEN, false, null);
-    Player p2 = new Player(1, Color.BLUE, false, null);
-    Player p3 = new Player(2, Color.YELLOW, false, null);
+    Player neutral = new Player(Player.NEUTRAL_PLAYER_ID, Color.GRAY, true);
+    Player p1 = new Player(0, Color.GREEN, false);
+    Player p2 = new Player(1, Color.BLUE, false);
+    Player p3 = new Player(2, Color.YELLOW, false);
 
     City greenHQ = MapUtil.addCityToMap(map, 0, 2, TestData.HQ, p1);
     City blueHQ = MapUtil.addCityToMap(map, 8, 5, TestData.HQ, p2);

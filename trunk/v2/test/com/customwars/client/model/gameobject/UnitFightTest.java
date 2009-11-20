@@ -29,8 +29,8 @@ public class UnitFightTest {
   public void beforeEachTest() {
     map = HardCodedGame.getMap();
     // 2 Non allied Players
-    p1 = new Player(8, Color.GREEN, false, null, "Jos", 0, 0, false);
-    p2 = new Player(250, Color.BLUE, false, null, "Bob", 0, 1, false);
+    p1 = new Player(8, Color.GREEN, false, "Jos", 0, 0, false);
+    p2 = new Player(250, Color.BLUE, false, "Bob", 0, 1, false);
   }
 
   @AfterClass

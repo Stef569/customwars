@@ -3,12 +3,14 @@ package com.customwars.client.model.game;
 import com.customwars.client.model.ArmyBranch;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Unit;
+import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -33,7 +35,7 @@ public class Game extends TurnBasedGame implements PropertyChangeListener {
     init();
   }
 
-  public void applyGameConfig(GameConfig gameConfig) {
+  private void applyGameConfig(GameConfig gameConfig) {
     this.weather = gameConfig.getStartWeather();
     this.cityFunds = gameConfig.getCityFunds();
   }
@@ -135,12 +137,12 @@ public class Game extends TurnBasedGame implements PropertyChangeListener {
    * Search for air, naval units that have 0 supplies -> Destroy them
    */
   private void checkSupplyConditions(Player player) {
-    List<Unit> unitsToDestroy = new ArrayList<Unit>();
+    Collection<Unit> unitsToDestroy = new ArrayList<Unit>();
 
     for (Unit unit : player.getArmy()) {
       // Skip units located in a transport
       if (unit.getLocation() instanceof Tile) {
-        Tile tile = (Tile) unit.getLocation();
+        Location tile = unit.getLocation();
         City city = map.getCityOn(tile);
 
         if (city != null) {
@@ -163,7 +165,7 @@ public class Game extends TurnBasedGame implements PropertyChangeListener {
     }
   }
 
-  private boolean isDestroyedWhenOutOfSupplies(ArmyBranch armyBranch) {
+  private static boolean isDestroyedWhenOutOfSupplies(ArmyBranch armyBranch) {
     return armyBranch == ArmyBranch.AIR || armyBranch == ArmyBranch.NAVAL;
   }
 
@@ -192,7 +194,7 @@ public class Game extends TurnBasedGame implements PropertyChangeListener {
    *
    * @param evt Event send by a hq
    */
-  private void hqOwnerChange(PropertyChangeEvent evt) {
+  private static void hqOwnerChange(PropertyChangeEvent evt) {
     Player oldOwner = (Player) evt.getOldValue();
     Player newOwner = (Player) evt.getNewValue();
 
@@ -234,9 +236,9 @@ public class Game extends TurnBasedGame implements PropertyChangeListener {
       return true;
     }
 
-    int team = activePlayers.get(0).getTeam();
+    Player p = activePlayers.get(0);
     for (Player player : activePlayers) {
-      if (player.getTeam() != team) {
+      if (!player.isAlliedWith(p)) {
         return false;
       }
     }
