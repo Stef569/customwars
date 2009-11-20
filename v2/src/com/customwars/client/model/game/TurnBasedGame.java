@@ -34,8 +34,8 @@ public class TurnBasedGame implements Observable {
     IDLE, STARTED, GAME_OVER
   }
 
-  Map<Tile> map;                // The map containing all the tiles
-  Turn turn;                    // The current turn+turn limit
+  final Map<Tile> map;          // The map containing all the tiles
+  private final Turn turn;      // The current turn + limits
   final Player neutralPlayer;   // Idle neutral player for cities that are not owned.
   private final List<Player> players; // The Human and AI players that are in this game
   private Player activePlayer;  // There can only be one active player in a game at any time
@@ -49,7 +49,7 @@ public class TurnBasedGame implements Observable {
 
     this.map = map;
     this.players = players;
-    this.neutralPlayer = new Player(Player.NEUTRAL_PLAYER_ID, Color.GRAY, true, null, "Neutral", 0, -1, false);
+    this.neutralPlayer = new Player(Player.NEUTRAL_PLAYER_ID, Color.GRAY, true, "Neutral", 0, -1, false);
     this.turn = new Turn(0, 1, turnLimit, dayLimit);
     this.state = GameState.IDLE;
   }
@@ -366,7 +366,7 @@ public class TurnBasedGame implements Observable {
 
     if (invoker != activePlayer) {
       throw new NotYourTurnException("Player " + invoker + " cannot end his turn , because it is not the Active player in the Game\n" +
-        "Expected=" + getActivePlayer().getName());
+        "Expected=" + activePlayer.getName());
     }
   }
 

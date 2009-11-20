@@ -12,7 +12,6 @@ import com.customwars.client.model.map.Location2D;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.tools.IOUtil;
-import org.apache.log4j.Logger;
 
 import java.awt.Color;
 import java.io.DataInputStream;
@@ -88,7 +87,6 @@ import java.util.Set;
  * @author stefan
  */
 public class BinaryCW2MapParser implements MapParser {
-  private static final Logger logger = Logger.getLogger(BinaryCW2MapParser.class);
   private static final String CW2_HEADER_START = "CW2.map";
   private static final byte TERRAIN_START = 0;
   private static final byte CITY_START = 1;
@@ -166,7 +164,7 @@ public class BinaryCW2MapParser implements MapParser {
         int id = in.readByte();
         int rgb = in.readInt();
         Color color = new Color(rgb);
-        Player mapPlayer = new Player(id, color, false, null, "Map player " + id, 0, 0, false);
+        Player mapPlayer = new Player(id, color, false, "Map player " + id, 0, 0, false);
         Location2D hqLocation = readHQLocation();
 
         addPlayer(mapPlayer);
@@ -174,7 +172,7 @@ public class BinaryCW2MapParser implements MapParser {
       }
 
       // Always add the neutral player so neutral cities can be looked up
-      Player neutral = new Player(Player.NEUTRAL_PLAYER_ID, Color.GRAY, true, null, "neutral map player", 0, -1, false);
+      Player neutral = new Player(Player.NEUTRAL_PLAYER_ID, Color.GRAY, true, "neutral map player", 0, -1, false);
       addPlayer(neutral);
     }
 

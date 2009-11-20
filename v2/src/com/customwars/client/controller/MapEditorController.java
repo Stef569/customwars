@@ -63,9 +63,9 @@ public class MapEditorController {
     for (Color color : colors) {
       Player player;
       if (color.equals(neutralColor)) {
-        player = new Player(Player.NEUTRAL_PLAYER_ID, color, true, null);
+        player = new Player(Player.NEUTRAL_PLAYER_ID, color, true);
       } else {
-        player = new Player(nextPlayerID++, color, false, null);
+        player = new Player(nextPlayerID++, color, false);
       }
 
       players.put(color, player);
