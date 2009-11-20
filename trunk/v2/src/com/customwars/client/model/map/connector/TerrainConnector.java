@@ -120,14 +120,15 @@ public class TerrainConnector {
   }
 
   private Terrain getBestMatchingTerrain() {
+    // Remove terrains that don't have the same name from the results
+    // They are removed here, because terrains with different names can connect to each other
+    // When placing a shoal terrain we don't expect to see a coast
+    // When placing a pipe seam we don't expect to see a pipe, ...
+    removeTerrainsWithDifferentNamesFrom(perfectMatchingTerrains);
+    removeTerrainsWithDifferentNamesFrom(perfectAdjacentMatchingTerrains);
+    removeTerrainsWithDifferentNamesFrom(matchingTerrains);
+
     Terrain bestMatch = null;
-
-    if (isShoal(terrainToAdd)) {
-      removeAllNonShoalTerrainsFrom(perfectMatchingTerrains);
-      removeAllNonShoalTerrainsFrom(perfectAdjacentMatchingTerrains);
-      removeAllNonShoalTerrainsFrom(matchingTerrains);
-    }
-
     if (specialMatchingTerrain != null)
       bestMatch = specialMatchingTerrain;
     else if (!perfectMatchingTerrains.isEmpty()) {
@@ -145,19 +146,15 @@ public class TerrainConnector {
     return bestMatch;
   }
 
-  private void removeAllNonShoalTerrainsFrom(Collection<Terrain> collection) {
+  private void removeTerrainsWithDifferentNamesFrom(Collection<Terrain> collection) {
     Iterator<Terrain> it = collection.iterator();
 
     while (it.hasNext()) {
       Terrain terrain = it.next();
-      if (!isShoal(terrain)) {
+      if (!terrain.getName().equalsIgnoreCase(terrainToAdd.getName())) {
         it.remove();
       }
     }
-  }
-
-  private boolean isShoal(Terrain terrain) {
-    return terrain.getName().equalsIgnoreCase("shoal");
   }
 
   /**
