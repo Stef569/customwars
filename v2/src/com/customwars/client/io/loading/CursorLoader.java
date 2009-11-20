@@ -4,23 +4,26 @@ import com.customwars.client.App;
 import com.customwars.client.io.FileSystemManager;
 import com.customwars.client.io.ResourceManager;
 import com.customwars.client.io.img.slick.ImageStrip;
+import com.customwars.client.io.img.slick.SlickImageFactory;
 import com.customwars.client.tools.FileUtil;
 import com.customwars.client.ui.sprite.TileSprite;
 import org.newdawn.slick.Image;
-import org.newdawn.slick.SlickException;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * Load and add cursors to the resource Manager
  */
-public class CursorLoader {
+public class CursorLoader implements CWResourceLoader {
   private static final int CURSOR_ANIM_COUNT = 2;
   private static final int CURSOR_ANIM_SPEED = 250;
   private final ResourceManager resources;
+  private final String cursorImgPath;
 
-  public CursorLoader(ResourceManager resources) {
+  public CursorLoader(ResourceManager resources, String cursorImgPath) {
     this.resources = resources;
+    this.cursorImgPath = cursorImgPath;
   }
 
   /**
@@ -29,21 +32,13 @@ public class CursorLoader {
    * Create animation and TileSprite
    * Add the cursor to the cursor collection
    */
-  public void loadCursors(String cursorImgPath) {
+  public void load() throws IOException {
     FileSystemManager fsm = new FileSystemManager(cursorImgPath);
     for (File cursorImgFile : fsm.getFiles()) {
       String cursorName = FileUtil.getFileNameWithoutExtension(cursorImgFile);
-      Image cursorImg = createImage(cursorImgFile);
+      Image cursorImg = SlickImageFactory.createImage(cursorImgFile.getPath());
       TileSprite cursor = createCursor(cursorImg);
       resources.addCursor(cursorName, cursor);
-    }
-  }
-
-  private Image createImage(File cursorImgFile) {
-    try {
-      return new Image(cursorImgFile.getPath());
-    } catch (SlickException e) {
-      throw new RuntimeException(e);
     }
   }
 
