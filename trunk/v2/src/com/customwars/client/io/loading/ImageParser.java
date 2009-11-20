@@ -3,13 +3,9 @@ package com.customwars.client.io.loading;
 import static com.customwars.client.io.ErrConstants.ERR_READING_LINE;
 import static com.customwars.client.io.ErrConstants.ERR_WRONG_NUM_ARGS;
 import com.customwars.client.io.img.ImageLib;
-import com.customwars.client.tools.IOUtil;
-import com.customwars.client.tools.StringUtil;
+import org.newdawn.slick.util.ResourceLoader;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
 /**
@@ -21,55 +17,31 @@ import java.util.StringTokenizer;
  *
  * @author stefan
  */
-public class ImageParser {
+public class ImageParser extends LineParser {
   private final static Character SINGLE_IMAGE_SYMBOL = 'o';
   private final static Character STRIP_IMAGE_SYMBOL = 's';
   private final static Character MATRIX_IMAGE_SYMBOL = 'm';
-  private final static String COMMENT_PREFIX = "//";
 
   private final ImageLib imageLib;
-  private String fullImgPath;
+  private final String imgPath;
 
-  public ImageParser(ImageLib imageLib) {
+  public ImageParser(ImageLib imageLib, String imagePath, String imageLoaderFileName) {
+    super(ResourceLoader.getResourceAsStream(imagePath + imageLoaderFileName));
     this.imageLib = imageLib;
+    this.imgPath = imagePath;
   }
 
-  /**
-   * Loads a Image into the ImageLib by parsing a string command.
-   *
-   * @param line The command
-   * @throws IOException when the image could not be found
-   */
-  public void loadImageByCmd(String line) throws IOException {
-    parseCmd(line);
-  }
-
-  /**
-   * @param stream the config file stream
-   * @throws IOException when an image could not be loaded
-   */
-  public void loadConfigFile(InputStream stream) throws IOException {
-    String line = "";
-    BufferedReader br = new BufferedReader(new InputStreamReader(stream));
-
+  public void parseLine(String line) {
     try {
-      while ((line = br.readLine()) != null) {
-        if (line.length() == 0)
-          continue;
-        if (line.startsWith(COMMENT_PREFIX))
-          continue;
-        parseCmd(line);
-      }
+      parseCmd(line);
     } catch (IOException ex) {
-      throw new IOException("Could not load image for line " + line);
-    } finally {
-      IOUtil.closeStream(stream);
+      throw new RuntimeException("Could not load image for line " + line, ex);
     }
   }
 
   public void parseCmd(String line) throws IOException {
     char ch = Character.toLowerCase(line.charAt(0));
-    if (ch == SINGLE_IMAGE_SYMBOL) {                // 1 image, it's put into a strip
+    if (ch == SINGLE_IMAGE_SYMBOL) {                // 1 image
       loadSingleImage(line);
     } else if (ch == STRIP_IMAGE_SYMBOL) {          // an images strip
       loadStripImage(line);
@@ -83,7 +55,7 @@ public class ImageParser {
    * format:
    * o <imgName> <fileName> (<storeAsAwt>)
    */
-  private void loadSingleImage(String line) throws NumberFormatException {
+  private void loadSingleImage(String line) {
     StringTokenizer tokens = new StringTokenizer(line);
 
     if (tokens.countTokens() < 3)
@@ -92,7 +64,7 @@ public class ImageParser {
     else {
       tokens.nextToken();    // skip command label
       String imgRef = tokens.nextToken();
-      String imgPath = fullImgPath + tokens.nextToken();
+      String imgPath = this.imgPath + tokens.nextToken();
       imageLib.loadSlickImage(imgRef, imgPath);
     }
   }
@@ -101,7 +73,7 @@ public class ImageParser {
    * format:
    * s <imgName> <fileName> <tileWidth> <tileHeight> (<storeAsAwt>)
    */
-  private void loadStripImage(String line) throws NumberFormatException {
+  private void loadStripImage(String line) {
     StringTokenizer tokens = new StringTokenizer(line);
 
     if (tokens.countTokens() < 5)
@@ -110,7 +82,7 @@ public class ImageParser {
     else {
       tokens.nextToken();    // skip command label
       String imgRef = tokens.nextToken();
-      String imgPath = fullImgPath + tokens.nextToken();
+      String imgPath = this.imgPath + tokens.nextToken();
       int tileWidth = Integer.parseInt(tokens.nextToken());
       int tileHeight = Integer.parseInt(tokens.nextToken());
       boolean recolor = false;
@@ -130,7 +102,7 @@ public class ImageParser {
    * format:
    * m <imgName> <fileName> <tileWidth> <tileHeight> (<storeAsAwt>)
    */
-  private void loadSpriteSheet(String line) throws NumberFormatException {
+  private void loadSpriteSheet(String line) {
     StringTokenizer tokens = new StringTokenizer(line);
 
     if (tokens.countTokens() < 5)
@@ -139,7 +111,7 @@ public class ImageParser {
     else {
       tokens.nextToken();    // skip command label
       String imgRef = tokens.nextToken();
-      String imgPath = fullImgPath + tokens.nextToken();
+      String imgPath = this.imgPath + tokens.nextToken();
       int tileWidth = Integer.parseInt(tokens.nextToken());
       int tileHeight = Integer.parseInt(tokens.nextToken());
       boolean recolor = false;
@@ -153,10 +125,5 @@ public class ImageParser {
         imageLib.loadSlickSpriteSheet(imgRef, imgPath, tileWidth, tileHeight);
       }
     }
-  }
-
-  public void setImgPath(String fullImgPath) {
-    fullImgPath = StringUtil.appendTrailingSuffix(fullImgPath, "/");
-    this.fullImgPath = fullImgPath;
   }
 }

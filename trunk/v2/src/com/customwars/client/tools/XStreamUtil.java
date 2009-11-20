@@ -3,6 +3,7 @@ package com.customwars.client.tools;
 import com.thoughtworks.xstream.XStream;
 
 import java.io.BufferedWriter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -23,15 +24,13 @@ public final class XStreamUtil {
     }
   }
 
-  public static void writeObject(XStream xStream, OutputStream os, Object obj) {
+  public static void writeObject(XStream xStream, OutputStream os, Object obj) throws IOException {
     BufferedWriter osw;
     try {
       osw = new BufferedWriter(new OutputStreamWriter(os, ENCODING));
       String data = xStream.toXML(obj);
       data = "<?xml version=\"1.0\" encoding=\"" + ENCODING + "\"?>\n" + data;
       osw.write(data);
-    } catch (Exception e) {
-      throw new RuntimeException("Could not write object to stream.", e);
     } finally {
       IOUtil.closeStream(os);
     }

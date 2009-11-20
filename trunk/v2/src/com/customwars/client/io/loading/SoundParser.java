@@ -3,53 +3,33 @@ package com.customwars.client.io.loading;
 import static com.customwars.client.io.ErrConstants.ERR_READING_LINE;
 import static com.customwars.client.io.ErrConstants.ERR_WRONG_NUM_ARGS;
 import com.customwars.client.io.ResourceManager;
-import com.customwars.client.tools.IOUtil;
-import com.customwars.client.tools.StringUtil;
 import org.newdawn.slick.Music;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.Sound;
+import org.newdawn.slick.util.ResourceLoader;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
 /**
- * Parse a text command into a function that will create a sound or music object
+ * Parse a text line into a function that will create a sound or music object
  *
  * @author stefan
  */
-public class SoundParser {
-  private final static String COMMENT_PREFIX = "//";
+public class SoundParser extends LineParser {
   private static final char SOUND_SYMBOL = 's';
   private static final char MUSIC_SYMBOL = 'm';
-  private String fullSoundPath;
+  private final String soundPath;
   private final ResourceManager resources;
 
-  public SoundParser(ResourceManager resources) {
+  public SoundParser(ResourceManager resources, String soundPath, String soundLoaderFileName) {
+    super(ResourceLoader.getResourceAsStream(soundPath + soundLoaderFileName));
     this.resources = resources;
+    this.soundPath = soundPath;
   }
 
-  public void loadConfigFile(InputStream in) throws IOException {
-    BufferedReader br = new BufferedReader(new InputStreamReader(in));
-
-    try {
-      String line;
-      while ((line = br.readLine()) != null) {
-        if (line.length() == 0)
-          continue;
-        if (line.startsWith(COMMENT_PREFIX))
-          continue;
-        parseCmd(line);
-      }
-    } finally {
-      IOUtil.closeStream(in);
-    }
-  }
-
-  public void parseCmd(String line) throws IOException {
+  public void parseLine(String line) {
     char ch = Character.toLowerCase(line.charAt(0));
+
     try {
       if (ch == SOUND_SYMBOL) {
         loadSound(line);
@@ -76,7 +56,7 @@ public class SoundParser {
     else {
       tokens.nextToken();    // skip command label
       String soundName = tokens.nextToken().toUpperCase();
-      String soundPath = fullSoundPath + tokens.nextToken();
+      String soundPath = this.soundPath + tokens.nextToken();
       resources.addSound(soundName, new Sound(soundPath));
     }
   }
@@ -94,13 +74,8 @@ public class SoundParser {
     else {
       tokens.nextToken();    // skip command label
       String musicName = tokens.nextToken().toUpperCase();
-      String musicPath = fullSoundPath + tokens.nextToken();
+      String musicPath = soundPath + tokens.nextToken();
       resources.addMusic(musicName, new Music(musicPath));
     }
-  }
-
-  public void setSoundPath(String fullSoundPath) {
-    fullSoundPath = StringUtil.appendTrailingSuffix(fullSoundPath, "/");
-    this.fullSoundPath = fullSoundPath;
   }
 }

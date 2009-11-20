@@ -4,6 +4,7 @@ import com.customwars.client.io.img.ImageLib;
 import com.customwars.client.io.img.slick.RecolorData;
 import com.customwars.client.tools.IOUtil;
 import com.customwars.client.tools.Xml;
+import org.newdawn.slick.util.ResourceLoader;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
@@ -17,12 +18,12 @@ import java.io.InputStream;
 import java.util.List;
 
 /**
- * Handles xml for 1 ImgFilter class
+ * Handles xml for 1 RecolorData class
  * Only loading is supported
  *
  * @author stefan
  */
-public class ImageFilterParser {
+public class RecolorDataParser implements CWResourceLoader {
   public static final String ROOT_ELEMENT_TAGNAME = "colorFilters";
   private static final String XML_EL_COLOR_FILTER = "colorFilter";
   private static final String XML_EL_FILTER_NAME = "name";
@@ -31,20 +32,24 @@ public class ImageFilterParser {
   private static final String XML_EL_REPLACEMENT_COLOR = "replacementColor";
   private static final String XML_EL_REPLACEMENT_COLORS = "replacementColors";
   private final ImageLib imageLib;
+  private final String colorFilePath;
 
-  public ImageFilterParser(ImageLib imageLib) {
+  public RecolorDataParser(ImageLib imageLib, String colorFilePath) {
     this.imageLib = imageLib;
+    this.colorFilePath = colorFilePath;
   }
 
-  public void loadConfigFile(InputStream colorStream) throws IOException {
+  public void load() throws IOException {
+    InputStream reColorDataStream = ResourceLoader.getResourceAsStream(colorFilePath);
+
     try {
-      NodeList colorNodes = Xml.parseXmlStreamToNodeList(colorStream, XML_EL_COLOR_FILTER);
+      NodeList colorNodes = Xml.parseXmlStreamToNodeList(reColorDataStream, XML_EL_COLOR_FILTER);
       for (int i = 0; i < colorNodes.getLength(); i++) {
         Element colorElement = Xml.nodeToElement(colorNodes.item(i));
         fromXml(colorElement);
       }
     } finally {
-      IOUtil.closeStream(colorStream);
+      IOUtil.closeStream(reColorDataStream);
     }
   }
 

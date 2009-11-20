@@ -33,7 +33,7 @@ import java.util.Collection;
  *
  * @author stefan
  */
-public class ModelLoader {
+public class ModelLoader implements CWResourceLoader {
   private static final String XML_DATA_TERRAIN_FILE = "baseTerrains.xml";
   private static final String XML_DATA_ALL_TERRAIN_FILE = "terrains.xml";
   private static final String XML_DATA_WEAPONS_FILE = "weapons.xml";
@@ -42,10 +42,13 @@ public class ModelLoader {
   private static final String BASE_DMG_FILE = "baseDMG.txt";
   private static final String ALT_DMG_FILE = "altDMG.txt";
   private static final XStream xStream = new XStream(new DomDriver());
-  private static final DamageParser damageParser = new DamageParser();
-  private String modelResPath;
+  private final String modelResPath;
 
-  public void loadModel() {
+  public ModelLoader(String modelResPath) {
+    this.modelResPath = modelResPath;
+  }
+
+  public void load() throws IOException {
     loadTerrains();
     loadWeapons();
     loadUnits();
@@ -108,24 +111,24 @@ public class ModelLoader {
     CityFactory.addCities(cities);
   }
 
-  private void loadDamageTables() {
+  private void loadDamageTables() throws IOException {
     InputStream baseDamageStream = null, altDamageStream = null;
 
     try {
       baseDamageStream = ResourceLoader.getResourceAsStream(modelResPath + BASE_DMG_FILE);
-      altDamageStream = ResourceLoader.getResourceAsStream(modelResPath + ALT_DMG_FILE);
+      UnitFight.setBaseDMG(loadDamageTable(baseDamageStream));
 
-      UnitFight.setBaseDMG(damageParser.read(baseDamageStream));
-      UnitFight.setAltDMG(damageParser.read(altDamageStream));
-    } catch (IOException e) {
-      throw new RuntimeException("Could not read damage table", e);
+      altDamageStream = ResourceLoader.getResourceAsStream(modelResPath + ALT_DMG_FILE);
+      UnitFight.setAltDMG(loadDamageTable(altDamageStream));
     } finally {
       IOUtil.closeStream(baseDamageStream);
       IOUtil.closeStream(altDamageStream);
     }
   }
 
-  public void setModelResPath(String modelResPath) {
-    this.modelResPath = modelResPath;
+  private static int[][] loadDamageTable(InputStream stream) throws IOException {
+    DamageParser damageParser = new DamageParser(stream);
+    damageParser.load();
+    return damageParser.getDmgTable();
   }
 }

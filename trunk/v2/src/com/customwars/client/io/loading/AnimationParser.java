@@ -4,15 +4,11 @@ import static com.customwars.client.io.ErrConstants.ERR_WRONG_NUM_ARGS;
 import com.customwars.client.io.img.AnimLib;
 import com.customwars.client.io.img.ImageLib;
 import com.customwars.client.io.img.slick.ImageStrip;
-import com.customwars.client.tools.IOUtil;
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SpriteSheet;
+import org.newdawn.slick.util.ResourceLoader;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -23,35 +19,14 @@ import java.util.StringTokenizer;
  *
  * @author stefan
  */
-public class AnimationParser {
-  private final static String COMMENT_PREFIX = "//";
+public class AnimationParser extends LineParser {
   private final ImageLib imageLib;
   private final AnimLib animLib;
 
-  public AnimationParser(ImageLib imageLib, AnimLib animLib) {
+  public AnimationParser(ImageLib imageLib, AnimLib animLib, String animLoaderFilePath) {
+    super(ResourceLoader.getResourceAsStream(animLoaderFilePath));
     this.imageLib = imageLib;
     this.animLib = animLib;
-  }
-
-  /**
-   * @param stream the config stream
-   * @throws IOException when the stream could not be read
-   */
-  public void loadConfigFile(InputStream stream) throws IOException {
-    BufferedReader br = new BufferedReader(new InputStreamReader(stream));
-
-    try {
-      String line;
-      while ((line = br.readLine()) != null) {
-        if (line.length() == 0)
-          continue;
-        if (line.startsWith(COMMENT_PREFIX))
-          continue;
-        parseAnim(line);
-      }
-    } finally {
-      IOUtil.closeStream(stream);
-    }
   }
 
   /**
@@ -59,7 +34,7 @@ public class AnimationParser {
    * AM AnimName imgName frameDuration firstFrameCol firstFrameRow lastFrameCol lastFrameRow loopForever
    * AS AnimName imgName frameDuration startFrame totalframecount loopForever
    */
-  private void parseAnim(String line) throws NumberFormatException {
+  public void parseLine(String line) {
     StringTokenizer tokens = new StringTokenizer(line);
     Scanner cmdScanner = new Scanner(line);
 

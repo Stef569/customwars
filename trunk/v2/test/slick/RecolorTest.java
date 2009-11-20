@@ -2,7 +2,7 @@ package slick;
 
 import com.customwars.client.io.img.ImageLib;
 import com.customwars.client.io.img.slick.RecolorManager;
-import com.customwars.client.io.loading.ImageFilterParser;
+import com.customwars.client.io.loading.RecolorDataParser;
 import com.customwars.client.tools.ColorUtil;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.BasicGame;
@@ -12,11 +12,9 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.util.Log;
-import org.newdawn.slick.util.ResourceLoader;
 
 import java.awt.Color;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,10 +56,10 @@ public class RecolorTest extends BasicGame {
   }
 
   private void loadImgFilters() {
-    ImageFilterParser imgFilterParser = new ImageFilterParser(imageLib);
-    InputStream in = ResourceLoader.getResourceAsStream(IMAGE_FILTER_FILE);
+    RecolorDataParser imgFilterParser = new RecolorDataParser(imageLib, IMAGE_FILTER_FILE);
+
     try {
-      imgFilterParser.loadConfigFile(in);
+      imgFilterParser.load();
     } catch (IOException e) {
       Log.error("Could not load img filter", e);
     }

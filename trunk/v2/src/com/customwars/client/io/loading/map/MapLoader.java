@@ -3,6 +3,7 @@ package com.customwars.client.io.loading.map;
 import com.customwars.client.App;
 import com.customwars.client.io.FileSystemManager;
 import com.customwars.client.io.ResourceManager;
+import com.customwars.client.io.loading.CWResourceLoader;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
 import org.apache.log4j.Logger;
@@ -17,7 +18,7 @@ import java.util.List;
  * Load maps from the map path locations
  * and add them to the resourceManager
  */
-public class MapLoader {
+public class MapLoader implements CWResourceLoader {
   private static final Logger logger = Logger.getLogger(MapLoader.class);
   private final List<String> mapPaths;
   private final MapParser mapParser;
@@ -35,7 +36,7 @@ public class MapLoader {
    *
    * Maps are searched for in the current map path and all subdirs
    */
-  public void loadAllMaps() throws IOException {
+  public void load() throws IOException {
     for (String mapPath : mapPaths) {
       FileSystemManager fsm = new FileSystemManager(mapPath);
 
