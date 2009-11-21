@@ -12,9 +12,9 @@ import org.apache.log4j.Logger;
  * @author stefan
  */
 public class JoinAction extends DirectAction {
-  private Logger logger = Logger.getLogger(JoinAction.class);
+  private static final Logger logger = Logger.getLogger(JoinAction.class);
   private ControllerManager controllerManager;
-  private Unit target, unit;
+  private final Unit target, unit;
   private InGameContext context;
 
   public JoinAction(Unit unit, Unit target) {
@@ -52,11 +52,8 @@ public class JoinAction extends DirectAction {
       target.addAmmo(unit.getAvailableWeapon().getAmmo());
     }
 
-    // todo make the dived state of the unit being moved onto the same as the one moving
-    //    target.setDived(activeUnit.isDived());
-
-    // Remove Unit, unit.destroy() will trigger an unwanted explosion.
-    unit.removeSelf();
+    target.setUnitState(unit.getUnitState());
+    unit.destroy(false);
     controllerManager.removeUnitController(unit);
   }
 }

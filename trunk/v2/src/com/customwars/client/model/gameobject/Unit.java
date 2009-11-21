@@ -14,6 +14,7 @@ import com.customwars.client.model.map.path.Mover;
 import com.customwars.client.tools.Args;
 import com.customwars.client.tools.NumberUtil;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -36,25 +37,25 @@ import java.util.Map;
 public class Unit extends GameObject implements Mover, Location, TurnHandler, Attacker, Defender {
   public static final Direction DEFAULT_ORIENTATION = Direction.EAST;
   private final int unitID;     // The unit Type ie(1->INF, 2->APC,...)
-  private final int imgRowID;      // The id, used to retrieve the images for this unit
+  private final int imgRowID;   // The id, used to retrieve the images for this unit
   private String name;          // Full name ie Infantry, Tank, ...
   private String description;   // Information about this Unit
-  private int price;            // The price for buying this Unit
-  private int movement;         // The move points
-  private int vision;           // The amount of tiles this unit can see in all directions aka line of sight
+  private final int price;      // The price for buying this Unit
+  private final int movement;   // The move points
+  private final int vision;     // The amount of tiles this unit can see in all directions aka line of sight
 
   private int maxExperience;      // The maximum experience this unit can have
-  private int maxHp;              // The value when this unit is 100% Healthy
+  private final int maxHp;        // The value when this unit is 100% Healthy
   private Range supplyRange;      // Range in which the unit can supply
-  private int maxSupplies;        // The value when this unit has 100% supplies
-  private int maxTransportCount;  // Amount of units that can be transported
-  private int dailyUse;           // Amount of supplies that are subtracted each turn from supplies
+  private final int maxSupplies;        // The value when this unit has 100% supplies
+  private final int maxTransportCount;  // Amount of units that can be transported
+  private final int dailyUse;           // Amount of supplies that are subtracted each turn from supplies
 
-  private boolean canCapture;     // Abilities
-  private boolean canDive;
-  private boolean canSupply;
-  private boolean canTransport;
-  private boolean canJoin;
+  private final boolean canCapture;     // Abilities
+  private final boolean canDive;
+  private final boolean canSupply;
+  private final boolean canTransport;
+  private final boolean canJoin;
   private boolean canFlare;
   private boolean canHide;
 
@@ -62,8 +63,8 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   private Map<Integer, Integer> buildCities;        // City Ids this unit can build on given terrains
   private List<Integer> buildUnits;      // Units that can be build
 
-  private ArmyBranch armyBranch;       // Naval, Ground, Air
-  private int movementType;     // Inf, Mech, Tires, Tread, Air, Naval ...
+  private final ArmyBranch armyBranch;  // Naval, Ground, Air
+  private final int movementType;       // Inf, Mech, Tires, Tread, Air, Naval ...
   private MoveStrategy moveStrategy;
 
   private City constructingCity; // A City that is being build by this unit
@@ -198,48 +199,40 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
 
   /**
    * Destroy this unit
-   * The unit fires 1 event GameObjectState -> destroyed
-   * This allows listeners to take an action when this unit is destroyed.
+   *
+   * @param fireEvent if true 1 event is fired GameObjectState -> destroyed
+   *                  This allows listeners to take an action when this unit is destroyed.
    */
-  public void destroy() {
+  public void destroy(boolean fireEvent) {
     clearTransport();
     owner.removeUnit(this);
     owner = null;
     location.remove(this);
     location = null;
-    setState(GameObjectState.DESTROYED);
-  }
 
-  /**
-   * Removes all references to this unit
-   * so that it can be garbage collected
-   */
-  public void removeSelf() {
-    clearTransport();
-    location.remove(this);
-    setLocation(null);
-    owner.removeUnit(this);
-    setOwner(null);
+    if (fireEvent) {
+      setState(GameObjectState.DESTROYED);
+    }
   }
 
   /**
    * Destroy each unit in the transport
    */
   private void clearTransport() {
-    while (transport.size() > 0) {
+    while (!transport.isEmpty()) {
       Locatable locatable = transport.get(transport.size() - 1);
 
       if (locatable instanceof Unit) {
         Unit unit = (Unit) locatable;
-        unit.destroy();
+        unit.destroy(false);
       }
     }
   }
 
-  public void startTurn(Player player) {
+  public void startTurn(Player currentPlayer) {
   }
 
-  public void endTurn(Player invoker) {
+  public void endTurn(Player currentPlayer) {
     addSupplies(-dailyUse);
   }
 
@@ -331,7 +324,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   }
 
   public List<Location> getAttackZone() {
-    return attZone;
+    return Collections.unmodifiableList(attZone);
   }
 
   // ---------------------------------------------------------------------------
@@ -353,22 +346,18 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
     return getLocatable(transport.size() - 1);
   }
 
-  public Locatable getLocatable(int id) {
-    if (!transport.isEmpty()) {
-      return transport.get(id);
-    } else {
-      return null;
-    }
+  public Locatable getLocatable(int index) {
+    return !transport.isEmpty() ? transport.get(index) : null;
   }
 
   public boolean remove(Locatable locatable) {
     if (!contains(locatable) || locatable == null) {
       return false;
-    } else {
-      locatable.setLocation(null);    // Keep locatable and tile in sync
-      transport.remove(locatable);
-      firePropertyChange("transport", locatable, null);
     }
+
+    locatable.setLocation(null);    // Keep locatable and tile in sync
+    transport.remove(locatable);
+    firePropertyChange("transport", locatable, null);
     return true;
   }
 
@@ -387,7 +376,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   public boolean canAdd(Locatable locatable) {
     if (locatable instanceof Unit) {
       Unit unit = (Unit) locatable;
-      return canTransport(unit.getMovementType()) && transport.size() < maxTransportCount;
+      return canTransport(unit.movementType) && transport.size() < maxTransportCount;
     } else {
       return false;
     }
@@ -441,7 +430,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
    * @return Can this unit supply the given unit
    */
   public boolean canSupply(Unit unit) {
-    return canSupply && unit != null && !isFullySupplied(unit) && owner == unit.getOwner();
+    return canSupply && unit != null && !isFullySupplied(unit) && owner == unit.owner;
   }
 
   /**
@@ -451,8 +440,8 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
    */
   private boolean isFullySupplied(Unit unit) {
     boolean fullSupplies = unit.getSuppliesPercentage() == 100;
-    boolean priWeaponAmmoIsFull = !unit.hasPrimaryWeapon() || unit.getPrimaryWeapon().getAmmoPercentage() == 100;
-    boolean secWeaponAmmiIsFull = !unit.hasSecondaryWeapon() || unit.getSecondaryWeapon().getAmmoPercentage() == 100;
+    boolean priWeaponAmmoIsFull = !unit.hasPrimaryWeapon() || unit.primaryWeapon.getAmmoPercentage() == 100;
+    boolean secWeaponAmmiIsFull = !unit.hasSecondaryWeapon() || unit.secondaryWeapon.getAmmoPercentage() == 100;
     return fullSupplies && priWeaponAmmoIsFull && secWeaponAmmiIsFull;
   }
 
@@ -556,8 +545,9 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   }
 
   protected void setHp(int hp) {
-    if (hp <= 0)
-      destroy();
+    if (hp <= 0) {
+      destroy(true);
+    }
 
     int oldVal = this.hp;
     this.hp = Args.getBetweenZeroMax(hp, maxHp);
@@ -597,12 +587,6 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
     List<Location> oldVal = this.attZone;
     this.attZone = attackZone;
     firePropertyChange("attackZone", oldVal, attackZone);
-  }
-
-  public void setPrice(int price) {
-    int oldVal = this.price;
-    this.price = price;
-    firePropertyChange("price", oldVal, price);
   }
 
   public void setUnitState(UnitState unitState) {
@@ -654,9 +638,9 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
    * @return if this unit can fire on the defender
    */
   public boolean canFireOn(Defender defender) {
-    ArmyBranch armyBranch = defender.getArmyBranch();
-    return hasPrimaryWeapon() && primaryWeapon.canFire(armyBranch) ||
-      hasSecondaryWeapon() && secondaryWeapon.canFire(armyBranch);
+    ArmyBranch defenderArmyBranch = defender.getArmyBranch();
+    return hasPrimaryWeapon() && primaryWeapon.canFire(defenderArmyBranch) ||
+      hasSecondaryWeapon() && secondaryWeapon.canFire(defenderArmyBranch);
   }
 
   /**
@@ -684,11 +668,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
 
   public Range getAttackRange() {
     Weapon weapon = getAvailableWeapon();
-    if (weapon != null) {
-      return weapon.getRange();
-    } else {
-      return new Range(0, 0);
-    }
+    return weapon != null ? weapon.getRange() : new Range(0, 0);
   }
 
   // ---------------------------------------------------------------------------
@@ -805,7 +785,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   }
 
   public List<Location> getMoveZone() {
-    return moveZone;
+    return Collections.unmodifiableList(moveZone);
   }
 
   // ---------------------------------------------------------------------------
@@ -912,8 +892,8 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
     return getHp();
   }
 
-  public List<Integer> getUnitsThatCanBeBuild() {
-    return buildUnits;
+  public Iterable<Integer> getUnitsThatCanBeBuild() {
+    return Collections.unmodifiableList(buildUnits);
   }
 
   @Override
