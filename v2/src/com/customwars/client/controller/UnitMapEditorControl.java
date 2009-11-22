@@ -20,7 +20,7 @@ public class UnitMapEditorControl implements MapEditorControl {
 
   public void removeFromTile(Tile t) {
     Unit unit = (Unit) t.getLastLocatable();
-    unit.destroy();
+    unit.destroy(true);
   }
 
   public void fillMap(Map<Tile> map, int id) {

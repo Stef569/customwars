@@ -133,7 +133,7 @@ public class CityTest {
 
     Assert.assertTrue(city.canSupply(unit));
     city.supply(unit);
-    Assert.assertEquals(unit.getMaxSupplies(), unit.getSupplies());
+    Assert.assertEquals(unit.getStats().getMaxSupplies(), unit.getSupplies());
   }
 
   @Test

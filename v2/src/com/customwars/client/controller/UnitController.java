@@ -8,6 +8,7 @@ import com.customwars.client.model.gameobject.Locatable;
 import com.customwars.client.model.gameobject.Terrain;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.gameobject.UnitState;
+import com.customwars.client.model.gameobject.UnitStats;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
@@ -102,7 +103,7 @@ public abstract class UnitController {
     boolean droppingGroundUnit = unitToDrop != null && unitToDrop.getArmyBranch() == ArmyBranch.LAND;
     boolean dropCountInRange = dropCount > 0 && dropCount <= unit.getLocatableCount();
 
-    return unit.canTransport() && unitToDrop != null && !emptyTiles.isEmpty() &&
+    return unit.getStats().canTransport() && unitToDrop != null && !emptyTiles.isEmpty() &&
       droppingGroundUnit && dropCountInRange;
   }
 
@@ -113,7 +114,7 @@ public abstract class UnitController {
       unitToTakeOff = (Unit) unit.getLastLocatable();
     }
 
-    return unit.canTransport() && unitToTakeOff != null && unitToTakeOff.getArmyBranch() == ArmyBranch.AIR;
+    return unit.getStats().canTransport() && unitToTakeOff != null && unitToTakeOff.getArmyBranch() == ArmyBranch.AIR;
   }
 
   /**
@@ -134,7 +135,7 @@ public abstract class UnitController {
    * @return true If this unit can drop a unit on the given tile
    */
   boolean canDrop(Tile tile) {
-    return unit.canTransport() && unit.getLocatableCount() > 0 && map.isFreeDropLocation(tile, unit);
+    return unit.getStats().canTransport() && unit.getLocatableCount() > 0 && map.isFreeDropLocation(tile, unit);
   }
 
   /**
@@ -166,12 +167,14 @@ public abstract class UnitController {
   boolean canJoin(Tile selected) {
     // Get the target we want to join with
     Unit target = (Unit) selected.getLocatable(0);
+    UnitStats unitStats = unit.getStats();
+    UnitStats targetStats = target.getStats();
 
     if (target != null && target != unit) {
-      if (selected.getLastLocatable() == unit && unit.getID() == target.getID()) {
+      if (selected.getLastLocatable() == unit && unitStats.getID() == targetStats.getID()) {
         if (target.getOwner() == unit.getOwner() && target.getHpPercentage() <= 50) {
-          if (target.canJoin() && unit.canJoin()) {
-            if (target.canTransport()) {
+          if (targetStats.canJoin() && unitStats.canJoin()) {
+            if (targetStats.canTransport()) {
               if (target.getLocatableCount() == 0 && unit.getLocatableCount() == 0) {
                 return true;
               }
@@ -191,16 +194,16 @@ public abstract class UnitController {
   }
 
   boolean canTransformTerrain(Tile selected) {
-    return unit.canTransformTerrain(selected.getTerrain());
+    return unit.getStats().canTransformTerrain(selected.getTerrain());
   }
 
   boolean canFireFlare(Tile from) {
-    return unit.canFlare() && map.isFogOfWarOn() &&
+    return unit.getStats().canFlare() && map.isFogOfWarOn() &&
       !isDirectUnitMoved(from) && unit.getAvailableWeapon().hasAmmoLeft();
   }
 
   boolean canBuildCity(Tile selected) {
-    return unit.canBuildCityOn(selected.getTerrain());
+    return unit.getStats().canBuildCityOn(selected.getTerrain());
   }
 
   boolean canBuildUnit() {
@@ -208,12 +211,12 @@ public abstract class UnitController {
   }
 
   boolean canDive() {
-    return unit.canDive() && unit.getUnitState() != UnitState.SUBMERGED;
+    return unit.getStats().canDive() && unit.getUnitState() != UnitState.SUBMERGED;
   }
 
   boolean canSurface() {
     // if a unit can dive it can also surface...
-    return unit.canDive() && unit.getUnitState() == UnitState.SUBMERGED;
+    return unit.getStats().canDive() && unit.getUnitState() == UnitState.SUBMERGED;
   }
 
   boolean isActiveUnitInGame() {

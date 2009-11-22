@@ -42,7 +42,7 @@ public class UnitFight extends BasicFight {
 
   private int getBaseDamage(Unit attacker, Unit defender) {
     if (attacker.canFirePrimaryWeapon()) {
-      return baseDMG[attacker.getID()][defender.getID()];
+      return baseDMG[attacker.getStats().getID()][defender.getStats().getID()];
     } else {
       return 0;
     }
@@ -50,7 +50,7 @@ public class UnitFight extends BasicFight {
 
   private int getAltDamage(Unit attacker, Unit defender) {
     if (attacker.canFireSecondaryWeapon()) {
-      return altDMG[attacker.getID()][defender.getID()];
+      return altDMG[attacker.getStats().getID()][defender.getStats().getID()];
     } else {
       return 0;
     }

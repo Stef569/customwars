@@ -33,7 +33,7 @@ public class ProduceUnitAction extends DirectAction {
   }
 
   private void produce() {
-    logger.debug(producer.getName() + " producing a " + unitToBuild.getName());
+    logger.debug(producer.getStats().getName() + " producing a " + unitToBuild.getStats().getName());
     producer.getOwner().addUnit(unitToBuild);
     producer.add(unitToBuild);
 

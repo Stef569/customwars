@@ -22,7 +22,7 @@ public class TakeOffAction extends DirectAction {
 
   @Override
   protected void invokeAction() {
-    logger.debug(unitReadyForTakeOff.getName() + " taking off from " + launcher);
+    logger.debug(unitReadyForTakeOff.getStats().getName() + " taking off from " + launcher);
 
     launcher.remove(unitReadyForTakeOff);
     launcher.getLocation().add(unitReadyForTakeOff);

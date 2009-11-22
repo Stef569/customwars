@@ -118,7 +118,7 @@ public class UnitInfoBox extends BasicComponent {
     this.unit = unit;
 
     if (unit != null) {
-      this.unitName = unit.getName();
+      this.unitName = unit.getStats().getName();
     } else {
       this.unitName = null;
     }

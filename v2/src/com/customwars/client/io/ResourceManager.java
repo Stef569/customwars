@@ -204,7 +204,7 @@ public class ResourceManager {
   }
 
   public Animation getUnitAnim(Unit unit, Color color, String suffix) {
-    return animLib.getUnitAnim(unit.getImgRowID(), color, suffix);
+    return animLib.getUnitAnim(unit.getStats().getImgRowID(), color, suffix);
   }
 
   public Collection<Animation> getAllAnims() {

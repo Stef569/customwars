@@ -153,7 +153,7 @@ public class HumanUnitController extends UnitController {
           unitsInTransport.add(unitInTransport);
           if (canStartDrop(to, dropCount + 1)) {
             CWAction dropAction = new StartDropAction(to, unit);
-            addToMenu(dropAction, App.translate("drop") + " " + unitInTransport.getName());
+            addToMenu(dropAction, App.translate("drop") + " " + unitInTransport.getStats().getName());
           }
         }
       }
@@ -225,14 +225,14 @@ public class HumanUnitController extends UnitController {
     } else if (canTakeOff) {
       Unit unitToTakeOff = (Unit) unit.getLastLocatable();
       CWAction buildUnitAction = ActionFactory.buildTakeOffUnitAction(unit, unitToTakeOff);
-      addToMenu(buildUnitAction, App.translate("launch") + " - " + unitToTakeOff.getName());
+      addToMenu(buildUnitAction, App.translate("launch") + " - " + unitToTakeOff.getStats().getName());
     }
 
     if (canBuildUnit) {
-      for (int unitID : unit.getUnitsThatCanBeBuild()) {
+      for (int unitID : unit.getStats().getUnitsThatCanBeBuild()) {
         Unit unitThatCanBeBuild = UnitFactory.getUnit(unitID);
         CWAction buildUnitAction = ActionFactory.buildProduceUnitAction(unit, unitThatCanBeBuild, to);
-        addToMenu(buildUnitAction, App.translate("build") + " - " + unitThatCanBeBuild.getName());
+        addToMenu(buildUnitAction, App.translate("build") + " - " + unitThatCanBeBuild.getStats().getName());
       }
     }
 
@@ -302,12 +302,12 @@ public class HumanUnitController extends UnitController {
   }
 
   private Terrain getTransformToTerrain(Tile tile) {
-    int tranformID = unit.getTransformTerrainFor(tile.getTerrain());
+    int tranformID = unit.getStats().getTransformTerrainFor(tile.getTerrain());
     return TerrainFactory.getTerrain(tranformID);
   }
 
   private City getCityThatCanBeBuildOn(Tile tile) {
-    int cityID = unit.getCityToBuildOnTerrain(tile.getTerrain());
+    int cityID = unit.getStats().getCityToBuildOnTerrain(tile.getTerrain());
     return CityFactory.getCity(cityID);
   }
 

@@ -8,8 +8,8 @@ import com.customwars.client.model.map.Tile;
 import com.customwars.client.ui.state.InGameContext;
 
 public class TransformTerrainAction extends DirectAction {
-  private Unit unit;
-  private Tile tile;
+  private final Unit unit;
+  private final Tile tile;
   private InGameContext context;
 
   public TransformTerrainAction(Unit unit, Tile tile) {
@@ -32,7 +32,7 @@ public class TransformTerrainAction extends DirectAction {
   }
 
   private Terrain getTransformToTerrain() {
-    int tranformID = unit.getTransformTerrainFor(tile.getTerrain());
+    int tranformID = unit.getStats().getTransformTerrainFor(tile.getTerrain());
     return TerrainFactory.getTerrain(tranformID);
   }
 }

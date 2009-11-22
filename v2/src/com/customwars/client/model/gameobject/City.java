@@ -236,7 +236,7 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
   }
 
   public boolean canBeCapturedBy(Unit unit) {
-    return unit != null && canBeCaptureBy.contains(unit.getID()) && unit.getLocation() == location;
+    return unit != null && canBeCaptureBy.contains(unit.getStats().getID()) && unit.getLocation() == location;
   }
 
   public boolean canBuild(Unit unit) {
@@ -261,7 +261,7 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
   }
 
   public boolean canLaunchRocket(Unit unit) {
-    return unit != null && canLaunchRocket() && canBeLaunchedBy.contains(unit.getID());
+    return unit != null && canLaunchRocket() && canBeLaunchedBy.contains(unit.getStats().getID());
   }
 
   public boolean canLaunchRocket() {

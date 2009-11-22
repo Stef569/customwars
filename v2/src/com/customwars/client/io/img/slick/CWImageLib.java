@@ -36,7 +36,7 @@ public class CWImageLib {
 
   public Image getUnitImg(Unit unit, Color color, Direction direction) {
     SpriteSheet unitSpriteSheet = getUnitSpriteSheet(color);
-    int row = unit.getImgRowID();
+    int row = unit.getStats().getImgRowID();
     return cropUnitImg(unitSpriteSheet, direction, row);
   }
 
@@ -52,7 +52,7 @@ public class CWImageLib {
 
   public Image getShadedUnitImg(Unit unit, Color color, Direction direction) {
     SpriteSheet unitSpriteSheet = getShadedUnitSpriteSheet(color);
-    int row = unit.getImgRowID();
+    int row = unit.getStats().getImgRowID();
     return cropUnitImg(unitSpriteSheet, direction, row);
   }
 

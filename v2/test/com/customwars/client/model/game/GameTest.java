@@ -181,9 +181,9 @@ public class GameTest {
     MapUtil.addUnitToMap(map, 2, 0, inf4, p4);
 
     // p1 slays them all:
-    inf2.destroy();
-    inf3.destroy();
-    inf4.destroy();
+    inf2.destroy(true);
+    inf3.destroy(true);
+    inf4.destroy(true);
 
     // Game is now over
     Assert.assertTrue(game.isGameOver());
@@ -211,8 +211,8 @@ public class GameTest {
     MapUtil.addUnitToMap(map, 1, 0, inf2, p2);
 
     // team 2 comes along and kills all units of team 1
-    inf1.destroy();
-    inf2.destroy();
+    inf1.destroy(true);
+    inf2.destroy(true);
 
     Assert.assertTrue(p1.isDestroyed());
     Assert.assertTrue(p2.isDestroyed());

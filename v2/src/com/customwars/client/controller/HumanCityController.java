@@ -58,7 +58,7 @@ public class HumanCityController extends CityController {
 
     for (Unit unit : UnitFactory.getAllUnits()) {
       if (city.canBuild(unit)) {
-        boolean canAffordUnit = city.getOwner().isWithinBudget(unit.getPrice());
+        boolean canAffordUnit = city.getOwner().isWithinBudget(unit.getStats().getPrice());
         MenuItem menuItem = buildMenuItem(unit, canAffordUnit);
 
         if (canAffordUnit) {
@@ -74,7 +74,7 @@ public class HumanCityController extends CityController {
   }
 
   private MenuItem buildMenuItem(Unit unit, boolean active) {
-    String unitInfo = unit.getName() + " " + unit.getPrice();
+    String unitInfo = unit.getStats().getName() + " " + unit.getStats().getPrice();
     Color cityColor = city.getOwner().getColor();
     Image unitImage = getUnitImg(unit, cityColor, active);
     return new MenuItem(unitImage, unitInfo, context.getContainer());

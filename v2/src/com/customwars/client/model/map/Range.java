@@ -7,16 +7,13 @@ import com.customwars.client.tools.Args;
  * There is one pre condition min should be smaller then max
  */
 public class Range {
-  int minRange, maxRange;
+  public static final Range ZERO_RANGE = new Range(0, 0);
+  private final int minRange, maxRange;
 
   public Range(int minRange, int maxRange) {
-    setRange(minRange, maxRange);
-  }
-
-  private void setRange(int min, int max) {
-    Args.validate(min > max, "min range " + minRange + " cannot be smaller then the max range " + maxRange);
-    this.minRange = min;
-    this.maxRange = max;
+    Args.validate(minRange > maxRange, "min range " + minRange + " cannot be smaller then the max range " + maxRange);
+    this.minRange = minRange;
+    this.maxRange = maxRange;
   }
 
   public int getMinRange() {

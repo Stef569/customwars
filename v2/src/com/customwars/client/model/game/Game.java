@@ -161,7 +161,7 @@ public class Game extends TurnBasedGame implements PropertyChangeListener {
     }
 
     for (Unit unit : unitsToDestroy) {
-      unit.destroy();
+      unit.destroy(true);
     }
   }
 

@@ -11,7 +11,9 @@ import com.customwars.client.model.gameobject.Terrain;
 import com.customwars.client.model.gameobject.TerrainFactory;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.gameobject.UnitFactory;
+import com.customwars.client.model.gameobject.UnitStats;
 import com.customwars.client.model.map.Map;
+import com.customwars.client.model.map.Range;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.model.map.connector.TerrainConnector;
 import com.customwars.client.tools.FileUtil;
@@ -107,11 +109,11 @@ public class CW1MapConverter {
 
     for (int playerIndex = 0; playerIndex < numArmies; playerIndex++) {
       Color color = getColor(in.readByte());
-      players.add(new Player(playerIndex, color, false, null));
+      players.add(new Player(playerIndex, color, false));
     }
 
     // Add the neutral player
-    players.add(new Player(Player.NEUTRAL_PLAYER_ID, Color.GRAY, true, null));
+    players.add(new Player(Player.NEUTRAL_PLAYER_ID, Color.GRAY, true));
 
     Terrain plain = new Terrain(0, "dummy", "dum", "my", 0, 0, false, 0, Arrays.asList(5));
     Map<Tile> map = new Map<Tile>(width, height, 32, plain);
@@ -416,7 +418,9 @@ public class CW1MapConverter {
    * Create a unit with the given id
    */
   private Unit createUnit(int id) {
-    return new Unit(id, 0, "dummy unit", "", 0, 0, 0, 0, 0, 0, 0, false, false, false, false, false, null, ArmyBranch.LAND, 0, null);
+    UnitStats unitStats = new UnitStats(id, 0, "dummy unit", "", 0, 0, 0, 0, 0, 0, 0, 0,
+      false, false, false, false, false, false, false, null, ArmyBranch.LAND, 0, Range.ZERO_RANGE);
+    return new Unit(unitStats);
   }
 
   private Terrain createTerrain(int id) {
