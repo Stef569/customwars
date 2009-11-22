@@ -22,10 +22,10 @@ import java.util.Map;
  * @author stefan
  */
 public class UnitFactory {
-  private static Map<Integer, Unit> units = new HashMap<Integer, Unit>();
+  private static final Map<Integer, Unit> units = new HashMap<Integer, Unit>();
   private static final Comparator<Unit> SORT_UNIT_ON_ID = new Comparator<Unit>() {
     public int compare(Unit unitA, Unit unitB) {
-      return unitA.getID() - unitB.getID();
+      return unitA.getStats().getID() - unitB.getStats().getID();
     }
   };
 
@@ -36,12 +36,12 @@ public class UnitFactory {
   }
 
   public static void addUnit(Unit unit) {
-    int unitID = unit.getID();
+    int unitID = unit.getStats().getID();
     if (units.containsKey(unitID)) {
       throw new IllegalArgumentException("Unit ID " + unitID + " is already used by " + getUnit(unitID));
     }
     unit.init();
-    units.put(unit.getID(), unit);
+    units.put(unit.getStats().getID(), unit);
   }
 
   public static Unit getUnit(int id) {
@@ -61,7 +61,7 @@ public class UnitFactory {
     List<Unit> unitCopies = new ArrayList<Unit>(units.values().size());
 
     for (Unit unit : units.values()) {
-      unitCopies.add(getUnit(unit.getID()));
+      unitCopies.add(getUnit(unit.getStats().getID()));
     }
     Collections.sort(unitCopies, SORT_UNIT_ON_ID);
     return Collections.unmodifiableList(unitCopies);

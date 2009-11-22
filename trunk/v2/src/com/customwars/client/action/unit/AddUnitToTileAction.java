@@ -32,7 +32,7 @@ public class AddUnitToTileAction extends DirectAction {
   }
 
   protected void invokeAction() {
-    unitOwner.addToBudget(-unit.getPrice());
+    unitOwner.addToBudget(-unit.getStats().getPrice());
     unitOwner.addUnit(unit);
 
     tile.add(unit);

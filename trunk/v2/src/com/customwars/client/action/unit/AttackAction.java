@@ -14,11 +14,11 @@ import org.apache.log4j.Logger;
  * @author stefan
  */
 public class AttackAction extends DirectAction {
-  private Logger logger = Logger.getLogger(AttackAction.class);
+  private static final Logger logger = Logger.getLogger(AttackAction.class);
   private InGameContext context;
   private ControllerManager controllerManager;
   private UnitFight unitFight;
-  private Unit attacker, defender;
+  private final Unit attacker, defender;
 
   public AttackAction(Unit attacker, Unit defender) {
     super("Attack", false);
@@ -68,7 +68,7 @@ public class AttackAction extends DirectAction {
     String defenderHP = defenderHPPreFight + "/" + defender.getInternalMaxHp();
 
     logger.debug(String.format("%s(%s) is attacking %s(%s) dmg:%s%% Outcome: attacker(%s) defender(%s)",
-      attacker.getName(), attackerHP, defender.getName(), defenderHP,
+      attacker.getStats().getName(), attackerHP, defender.getStats().getName(), defenderHP,
       damagePercentage, attacker.getInternalHp(), defender.getInternalHp()));
   }
 }

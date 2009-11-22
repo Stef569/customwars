@@ -35,7 +35,7 @@ public class SupplyAction extends DirectAction {
 
   private void supply() {
     for (Unit unit : game.getMap().getSuppliablesInRange(supplier)) {
-      logger.debug(unit.getName() + " is supplied by " + supplier.getName());
+      logger.debug(unit.getStats().getName() + " is supplied by " + supplier.getStats().getName());
       supplier.supply(unit);
     }
   }

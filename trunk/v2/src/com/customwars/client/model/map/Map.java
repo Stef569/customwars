@@ -29,12 +29,6 @@ import java.util.Set;
  * Zones: move zone, attack zone
  * Surrounding information: suppliables, enemies in a Range
  *
- * Properties contains game specific text eg:
- * NAME -> the map name
- * VERSION -> for what version is this map made
- * AUTHOR -> who made this map
- * DESCRIPTION -> Small text describing what this map is all about
- *
  * At each start of a turn the map is reset see {@link #resetMap(Player)}
  *
  * @author stefan
@@ -266,8 +260,10 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
    */
   public List<Unit> getSuppliablesInRange(Unit supplier) {
     List<Unit> units = new ArrayList<Unit>();
+    Location supplierLocation = supplier.getLocation();
+    Range supplyRange = supplier.getStats().getSupplyRange();
 
-    for (Tile t : getSurroundingTiles(supplier.getLocation(), supplier.getSupplyRange())) {
+    for (Tile t : getSurroundingTiles(supplierLocation, supplyRange)) {
       Unit unitInRange = getUnitOn(t);
 
       if (unitInRange != null) {
@@ -440,7 +436,7 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
 
       if (unit != null && unit.getOwner().isAlliedWith(player)) {
         int visionBonus = getUnitVisionBonus(unit);
-        int vision = unit.getVision();
+        int vision = unit.getStats().getVision();
         clearSight(t, vision + visionBonus);
       }
 

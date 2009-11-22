@@ -42,7 +42,7 @@ public class CaptureAction extends DirectAction {
     unit.setUnitState(UnitState.CAPTURING);
     city.capture(unit);
     logger.debug(String.format("%s(%s) is capturing %s captured:%s",
-      unit.getName(), unit.getHp(), city.getName(), city.getCapCount()));
+      unit.getStats().getName(), unit.getHp(), city.getName(), city.getCapCount()));
 
     if (city.isCapturedBy(unit)) {
       unit.setUnitState(UnitState.IDLE);

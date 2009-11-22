@@ -432,7 +432,7 @@ public class BinaryCW2MapParser implements MapParser {
     private void writeUnit(Unit unit) throws IOException {
       if (unit != null) {
         out.writeByte(UNIT_START);
-        out.writeByte(unit.getID());
+        out.writeByte(unit.getStats().getID());
         out.writeByte(unit.getOwner().getId());
         writeUnitsInTransport(unit);
       } else {
@@ -451,7 +451,7 @@ public class BinaryCW2MapParser implements MapParser {
     private void writeUnitsInTransport(Unit unit) throws IOException {
       int unitsInTransport = unit.getLocatableCount();
 
-      if (unit.canTransport() && unitsInTransport > 0) {
+      if (unit.getStats().canTransport() && unitsInTransport > 0) {
         out.writeByte(unitsInTransport);
 
         for (int i = 0; i < unitsInTransport; i++) {

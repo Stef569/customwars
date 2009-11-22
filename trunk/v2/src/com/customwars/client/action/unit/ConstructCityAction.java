@@ -57,12 +57,12 @@ public class ConstructCityAction extends DirectAction {
     if (unit.isConstructionComplete()) {
       logger.debug(
         String.format("%s constructed a %s",
-          unit.getName(), city.getName())
+          unit.getStats().getName(), city.getName())
       );
     } else {
       logger.debug(
         String.format("%s is constructing a %s constructed:%s%%",
-          unit.getName(), city.getName(), city.getCapCountPercentage())
+          unit.getStats().getName(), city.getName(), city.getCapCountPercentage())
       );
     }
   }

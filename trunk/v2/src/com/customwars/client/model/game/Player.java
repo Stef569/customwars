@@ -93,7 +93,7 @@ public class Player extends GameObject {
   private void destroyAllUnits() {
     while (!army.isEmpty()) {
       Unit unit = army.get(army.size() - 1);
-      unit.destroy();
+      unit.destroy(true);
     }
   }
 

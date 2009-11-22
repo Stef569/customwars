@@ -30,7 +30,7 @@ public class DropAction extends MoveAnimatedAction {
     unit = context.getNextUnitToBeDropped();
 
     logger.debug(String.format("Dropping %s to %s from transport %s",
-      unit.getName(), to.getLocationString(), transport.getName()));
+      unit.getStats().getName(), to.getLocationString(), transport.getStats().getName()));
 
     // MoveTraverse doesn't allow to move outside a transport location.
     // Put the unit on the transport location in the map.

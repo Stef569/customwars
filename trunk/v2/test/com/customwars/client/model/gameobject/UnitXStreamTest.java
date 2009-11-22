@@ -34,9 +34,9 @@ public class UnitXStreamTest {
     xStream.registerConverter(new UnitWeaponConverter());
 
     // id, imgRowID and name are read from attributes, not elements
-    xStream.useAttributeFor(Unit.class, "unitID");
-    xStream.useAttributeFor(Unit.class, "imgRowID");
-    xStream.useAttributeFor(Unit.class, "name");
+    xStream.useAttributeFor(UnitStats.class, "unitID");
+    xStream.useAttributeFor(UnitStats.class, "imgRowID");
+    xStream.useAttributeFor(UnitStats.class, "name");
   }
 
   @Before
@@ -51,29 +51,34 @@ public class UnitXStreamTest {
 
   @Test
   public void validUnitXml() {
-    String unitXml = "<unit id='0' name='Inf'>" +
+    String unitXml = "<unit>" +
+      "<stats unitID='1' name='Inf'>" +
       "  <description></description>" +
       "  <price>3000</price>" +
       "  <movement>3</movement>" +
       "  <vision>5</vision>" +
       "  <maxHp>20</maxHp>" +
       "  <maxSupplies>20</maxSupplies>" +
-      "  <dailyUse>0</dailyUse>" +
+      "  <suppliesPerTurn>0</suppliesPerTurn>" +
       "  <canCapture>true</canCapture>" +
       "  <armyBranch>LAND</armyBranch>" +
       "  <movementType>0</movementType>" +
+      "</stats>" +
       "</unit>";
     Unit unit = (Unit) xStream.fromXML(unitXml);
     UnitFactory.addUnit(unit);
-    Unit unitCopy = UnitFactory.getRandomUnit();
+    Unit unitCopy = UnitFactory.getUnit(1);
 
-    Assert.assertEquals(true, unitCopy.canCapture());
-    Assert.assertTrue(unitCopy.getArmyBranch() == ArmyBranch.LAND);
+    Assert.assertEquals(1, unitCopy.getStats().getID());
+    Assert.assertEquals("Inf", unitCopy.getStats().getName());
+    Assert.assertTrue(unitCopy.getStats().canCapture());
+    Assert.assertSame(unitCopy.getArmyBranch(), ArmyBranch.LAND);
   }
 
   @Test
   public void unitWithWeapon() {
-    String unitXml = "<unit id='0' name='Infantry'>" +
+    String unitXml = "<unit>" +
+      "<stats unitID='0' name='Infantry'/>" +
       "<primaryWeapon id='0'>" +
       "<ammo>99</ammo>" +
       "</primaryWeapon>" +
@@ -88,7 +93,8 @@ public class UnitXStreamTest {
 
   @Test
   public void unitWithPrimaryandSecondaryWeapon() {
-    String unitXml = "<unit id='0' name='Infantry'>" +
+    String unitXml = "<unit>" +
+      "<stats unitID='0' name='Infantry'/>" +
       "<primaryWeapon id='0'>" +
       "<ammo>99</ammo>" +
       "</primaryWeapon>" +
@@ -121,13 +127,14 @@ public class UnitXStreamTest {
    * to avoid nullPointerExceptions.
    */
   public void unitWithNoInfo() {
-    String unitXml = "<unit id='0'>" +
+    String unitXml = "<unit>" +
+      "<stats unitID='0'/>" +
       "</unit>";
     Unit unit = (Unit) xStream.fromXML(unitXml);
     UnitFactory.addUnit(unit);
     Unit unitCopy = UnitFactory.getUnit(0);
 
-    Assert.assertEquals("", unitCopy.getDescription());
-    Assert.assertEquals("", unitCopy.getName());
+    Assert.assertEquals("", unitCopy.getStats().getDescription());
+    Assert.assertEquals("", unitCopy.getStats().getName());
   }
 }

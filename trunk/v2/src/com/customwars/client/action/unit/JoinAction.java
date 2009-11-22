@@ -41,7 +41,7 @@ public class JoinAction extends DirectAction {
     int excessHP = unit.getHp() + target.getHp() - target.getMaxHp();
 
     if (excessHP > 0) {
-      target.getOwner().addToBudget((excessHP * unit.getPrice()) / unit.getMaxHp());
+      target.getOwner().addToBudget((excessHP * unit.getStats().getPrice()) / unit.getMaxHp());
     }
 
     // add HP, supplies, ammo to target
