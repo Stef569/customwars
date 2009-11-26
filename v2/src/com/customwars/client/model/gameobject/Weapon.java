@@ -15,18 +15,16 @@ import java.util.List;
  * @author Stefan
  */
 public class Weapon extends GameObject {
-  public static int UNLIMITED_AMMO = 99;
-  private int id;
-  private String name;
-  private String description;
-  private Range fireRange;
-  private int maxAmmo;
-  private boolean balistic;         // Gives this weapon indirect firing ability even after moving
-  private List<ArmyBranch> attacks;    // The Armybranches this weapon can attack
+  public static final int UNLIMITED_AMMO = 99;
+  private final String name;
+  private final String description;
+  private final Range fireRange;
+  private final int maxAmmo;
+  private final boolean balistic;             // Gives this weapon indirect firing ability even after moving
+  private final List<ArmyBranch> attacks;     // The Armybranches this weapon can attack
   private int ammo;
 
-  public Weapon(int id, String name, String description, Range fireRange, int maxAmmo, boolean balistic, List<ArmyBranch> attacks) {
-    this.id = id;
+  public Weapon(String name, String description, Range fireRange, int maxAmmo, boolean balistic, List<ArmyBranch> attacks) {
     this.name = name;
     this.description = description;
     this.fireRange = fireRange;
@@ -37,12 +35,13 @@ public class Weapon extends GameObject {
   }
 
   public void init() {
-    Args.checkForNull(attacks, "Weapon " + name + " cannot attack any armybranch");
-    Args.validate(attacks.size() == 0, "Weapon " + name + " cannot attack any armybranch");
-    if (fireRange == null) fireRange = new Range(0, 0);
-    Args.validate(fireRange.getMinRange() < 0, "minRange should be positive");
-    Args.validate(fireRange.getMaxRange() < 0, "maxRange should be positive");
-    Args.validate(maxAmmo < 0, "maxAmmo should be positive");
+    String weaponName = "Weapon " + name;
+    Args.checkForNull(attacks, weaponName + " cannot attack any armybranch");
+    Args.validate(attacks.isEmpty(), weaponName + " cannot attack any armybranch");
+    Args.checkForNull(fireRange, weaponName + " needs a range");
+    Args.validate(fireRange.getMinRange() < 0, weaponName + " minRange should be positive");
+    Args.validate(fireRange.getMaxRange() < 0, weaponName + " maxRange should be positive");
+    Args.validate(maxAmmo < 0, weaponName + " maxAmmo should be positive");
   }
 
   /**
@@ -51,7 +50,6 @@ public class Weapon extends GameObject {
    * @param otherWeapon the weapon to be copied
    */
   Weapon(Weapon otherWeapon) {
-    id = otherWeapon.id;
     name = otherWeapon.name;
     description = otherWeapon.description;
     fireRange = otherWeapon.fireRange;
@@ -81,10 +79,6 @@ public class Weapon extends GameObject {
     int oldAmmo = this.ammo;
     this.ammo = Args.getBetweenZeroMax(ammo, maxAmmo);
     firePropertyChange("ammo", oldAmmo, this.ammo);
-  }
-
-  public int getID() {
-    return id;
   }
 
   public String getName() {
@@ -134,16 +128,16 @@ public class Weapon extends GameObject {
 
     Weapon weapon = (Weapon) o;
 
-    return id == weapon.id;
+    return name == weapon.name;
   }
 
   @Override
   public int hashCode() {
-    return id;
+    return name.hashCode();
   }
 
   @Override
   public String toString() {
-    return String.format("[name=%s id=%s ammo=%s/%s range=%s]", name, id, ammo, maxAmmo, fireRange);
+    return String.format("[name=%s ammo=%s/%s range=%s]", name, ammo, maxAmmo, fireRange);
   }
 }
