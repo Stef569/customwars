@@ -1,13 +1,11 @@
 package com.customwars.client.io.loading;
 
 import com.customwars.client.io.converter.TerrainConverter;
-import com.customwars.client.io.converter.UnitWeaponConverter;
 import com.customwars.client.model.ArmyBranch;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.CityFactory;
 import com.customwars.client.model.gameobject.Terrain;
 import com.customwars.client.model.gameobject.TerrainFactory;
-import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.gameobject.UnitFactory;
 import com.customwars.client.model.gameobject.UnitFight;
 import com.customwars.client.model.gameobject.UnitStats;
@@ -25,12 +23,12 @@ import java.io.InputStream;
 import java.util.Collection;
 
 /**
- * Loads: Damage tables,
- * Model classes to their Factories ie
+ * Loads: Damage tables and Model classes to their Factories ie
  * Terrain -> TerrainFactory
  * Weapon -> WeaponFactory
  * Unit -> UnitFactory
  * City -> CityFactory
+ * Dmg tbls -> UnitFight
  *
  * @author stefan
  */
@@ -76,7 +74,6 @@ public class ModelLoader implements CWResourceLoader {
   @SuppressWarnings("unchecked")
   private void loadWeapons() {
     xStream.alias("weapon", Weapon.class);
-    xStream.useAttributeFor(Weapon.class, "id");
     xStream.useAttributeFor(Weapon.class, "name");
     xStream.alias("fireRange", Range.class);
     xStream.alias("armyBranch", ArmyBranch.class);
@@ -87,17 +84,14 @@ public class ModelLoader implements CWResourceLoader {
 
   @SuppressWarnings("unchecked")
   private void loadUnits() {
-    xStream.registerConverter(new UnitWeaponConverter());
-    xStream.alias("unit", Unit.class);
-    xStream.alias("primaryWeapon", Weapon.class);
-    xStream.alias("secondaryWeapon", Weapon.class);
+    xStream.alias("unit", UnitStats.class);
     xStream.useAttributeFor(UnitStats.class, "unitID");
     xStream.useAttributeFor(UnitStats.class, "imgRowID");
     xStream.useAttributeFor(UnitStats.class, "name");
     xStream.alias("supplyRange", Range.class);
     InputStream unitStream = ResourceLoader.getResourceAsStream(modelResPath + XML_DATA_UNITS_FILE);
-    Collection<Unit> units = (Collection<Unit>) XStreamUtil.readObject(xStream, unitStream);
-    UnitFactory.addUnits(units);
+    Collection<UnitStats> unitStats = (Collection<UnitStats>) XStreamUtil.readObject(xStream, unitStream);
+    UnitFactory.addUnits(unitStats);
   }
 
   @SuppressWarnings("unchecked")

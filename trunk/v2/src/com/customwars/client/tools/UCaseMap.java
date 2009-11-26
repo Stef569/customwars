@@ -24,8 +24,12 @@ public class UCaseMap<T> implements Map<String, T> {
   }
 
   public boolean containsKey(Object key) {
-    String s = (String) key;
-    return cache.containsKey(s.toUpperCase());
+    if (key != null) {
+      String s = (String) key;
+      return cache.containsKey(s.toUpperCase());
+    } else {
+      return false;
+    }
   }
 
   public boolean containsValue(Object value) {
@@ -33,6 +37,10 @@ public class UCaseMap<T> implements Map<String, T> {
   }
 
   public T get(Object objKey) {
+    if (objKey == null) {
+      throw new IllegalArgumentException("objKey cannot be null");
+    }
+
     String strKey = (String) objKey;
     String uCaseKey = strKey.toUpperCase();
 
@@ -86,5 +94,10 @@ public class UCaseMap<T> implements Map<String, T> {
 
   public Set<Entry<String, T>> entrySet() {
     return cache.entrySet();
+  }
+
+  @Override
+  public String toString() {
+    return cache.toString();
   }
 }

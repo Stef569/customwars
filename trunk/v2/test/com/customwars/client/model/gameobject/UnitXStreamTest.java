@@ -1,6 +1,5 @@
 package com.customwars.client.model.gameobject;
 
-import com.customwars.client.io.converter.UnitWeaponConverter;
 import com.customwars.client.model.ArmyBranch;
 import com.customwars.client.model.TestData;
 import com.thoughtworks.xstream.XStream;
@@ -17,7 +16,7 @@ import org.junit.Test;
  * @author stefan
  */
 public class UnitXStreamTest {
-  private static XStream xStream = new XStream(new DomDriver());
+  private static final XStream xStream = new XStream(new DomDriver());
 
   @BeforeClass
   public static void beforeAllTests() {
@@ -28,10 +27,6 @@ public class UnitXStreamTest {
   public static void beforeAllTest() {
     // When we find a unit tag, create a Unit object
     xStream.alias("unit", Unit.class);
-    // When we find a Weapon, use our own converter
-    xStream.alias("primaryWeapon", Weapon.class);
-    xStream.alias("secondaryWeapon", Weapon.class);
-    xStream.registerConverter(new UnitWeaponConverter());
 
     // id, imgRowID and name are read from attributes, not elements
     xStream.useAttributeFor(UnitStats.class, "unitID");
@@ -73,51 +68,6 @@ public class UnitXStreamTest {
     Assert.assertEquals("Inf", unitCopy.getStats().getName());
     Assert.assertTrue(unitCopy.getStats().canCapture());
     Assert.assertSame(unitCopy.getArmyBranch(), ArmyBranch.LAND);
-  }
-
-  @Test
-  public void unitWithWeapon() {
-    String unitXml = "<unit>" +
-      "<stats unitID='0' name='Infantry'/>" +
-      "<primaryWeapon id='0'>" +
-      "<ammo>99</ammo>" +
-      "</primaryWeapon>" +
-      "</unit>";
-
-    // Magic! the weapon is retrieved from the UnitFactory and added to the unit as primaryWeapon
-    Unit unit = (Unit) xStream.fromXML(unitXml);
-    Assert.assertEquals(TestData.SMG, unit.getPrimaryWeapon().getID());
-    Assert.assertEquals(WeaponFactory.getWeapon(TestData.SMG).getName(), unit.getPrimaryWeapon().getName());
-    Assert.assertEquals(99, unit.getPrimaryWeapon().getAmmo());
-  }
-
-  @Test
-  public void unitWithPrimaryandSecondaryWeapon() {
-    String unitXml = "<unit>" +
-      "<stats unitID='0' name='Infantry'/>" +
-      "<primaryWeapon id='0'>" +
-      "<ammo>99</ammo>" +
-      "</primaryWeapon>" +
-      "<secondaryWeapon id='0'>" +
-      "<ammo>12</ammo>" +
-      "</secondaryWeapon>" +
-      "</unit>";
-
-    // Magic! the weapon is retrieved from the Weaponfactory and added to the unit as primaryWeapon
-    Unit unit = (Unit) xStream.fromXML(unitXml);
-    UnitFactory.addUnit(unit);
-    Unit unitCopy = UnitFactory.getRandomUnit();
-
-    Weapon smg = WeaponFactory.getWeapon(TestData.SMG);
-    Assert.assertEquals(TestData.SMG, unitCopy.getPrimaryWeapon().getID());
-    Assert.assertEquals(smg.getName(), unitCopy.getPrimaryWeapon().getName());
-    Assert.assertEquals(99, unitCopy.getPrimaryWeapon().getAmmo());
-    Assert.assertEquals(99, unitCopy.getPrimaryWeapon().getMaxAmmo());
-
-    Assert.assertEquals(smg.getID(), unitCopy.getSecondaryWeapon().getID());
-    Assert.assertEquals(smg.getName(), unitCopy.getSecondaryWeapon().getName());
-    Assert.assertEquals(12, unitCopy.getSecondaryWeapon().getAmmo());
-    Assert.assertEquals(12, unitCopy.getSecondaryWeapon().getMaxAmmo());
   }
 
   @Test

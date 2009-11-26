@@ -15,8 +15,8 @@ import java.util.Map;
 public class UnitStats {
   final int unitID;       // The unit Type ie(1->INF, 2->APC,...)
   final int imgRowID;     // The id, used to retrieve the images for this unit
-  String name;            // Full name ie Infantry, Tank, ...
-  String description;     // Information about this Unit
+  final String name;            // Full name ie Infantry, Tank, ...
+  final String description;     // Information about this Unit
   final int price;        // The price for buying this Unit
   final int movement;     // The move points
   final int vision;       // The amount of tiles this unit can see in all directions aka line of sight
@@ -43,12 +43,15 @@ public class UnitStats {
   final ArmyBranch armyBranch;                // Naval, Ground, Air
   final int movementType;                     // Inf, Mech, Tires, Tread, Air, Naval ...
 
+  private final String primaryWeaponName;     // Weapons, "" means no weapon
+  private final String secondaryWeaponName;
+
   public UnitStats(int unitID, int imgRowID, String name, String description,
                    int price, int movement, int vision, int maxExperience,
                    int maxHp, int maxSupplies, int maxTransportCount, int suppliesPerTurn,
                    boolean canCapture, boolean canDive, boolean canSupply, boolean canTransport, boolean canJoin,
                    boolean canFlare, boolean canHide, List<Integer> transports,
-                   ArmyBranch armyBranch, int movementType, Range supplyRange) {
+                   ArmyBranch armyBranch, int movementType, Range supplyRange, String primaryWeaponName, String secondaryWeaponName) {
     this.unitID = unitID;
     this.imgRowID = imgRowID;
     this.name = name;
@@ -75,6 +78,8 @@ public class UnitStats {
     this.armyBranch = armyBranch;
     this.movementType = movementType;
     this.supplyRange = supplyRange;
+    this.primaryWeaponName = primaryWeaponName;
+    this.secondaryWeaponName = secondaryWeaponName;
     validate();
   }
 
@@ -84,8 +89,8 @@ public class UnitStats {
     buildCities = buildCities == null ? new HashMap<Integer, Integer>() : buildCities;
     buildUnits = Args.createEmptyListIfNull(buildUnits);
     supplyRange = supplyRange == null ? Range.ZERO_RANGE : supplyRange;
-    if (name == null) name = "";
-    if (description == null) description = "";
+    Args.checkForNull(name, "please provide a name for unitID " + unitID);
+    Args.checkForNull(description, "please provide a description for unitID " + unitID);
   }
 
   public ArmyBranch getArmyBranch() {
@@ -220,6 +225,14 @@ public class UnitStats {
     return Collections.unmodifiableList(buildUnits);
   }
 
+  public String getSecondaryWeaponName() {
+    return secondaryWeaponName;
+  }
+
+  public String getPrimaryWeaponName() {
+    return primaryWeaponName;
+  }
+
   @Override
   public String toString() {
     return "UnitStats{" +
@@ -249,6 +262,8 @@ public class UnitStats {
       ", transports=" + transports +
       ", armyBranch=" + armyBranch +
       ", movementType=" + movementType +
+      ", primaryWeaponName='" + primaryWeaponName + '\'' +
+      ", secondaryWeaponName='" + secondaryWeaponName + '\'' +
       '}';
   }
 }
