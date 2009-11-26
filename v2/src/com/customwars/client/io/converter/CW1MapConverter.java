@@ -416,10 +416,12 @@ public class CW1MapConverter {
 
   /**
    * Create a unit with the given id
+   * All the other values are defaults, they should be ignored
    */
   private Unit createUnit(int id) {
     UnitStats unitStats = new UnitStats(id, 0, "dummy unit", "", 0, 0, 0, 0, 0, 0, 0, 0,
-      false, false, false, false, false, false, false, null, ArmyBranch.LAND, 0, Range.ZERO_RANGE);
+      false, false, false, false, false, false, false, null, ArmyBranch.LAND, 0, Range.ZERO_RANGE, "", "");
+
     return new Unit(unitStats);
   }
 

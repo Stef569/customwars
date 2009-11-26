@@ -1,6 +1,6 @@
 <!DOCTYPE list [
         <!ELEMENT list (weapon*)>
-        <!ELEMENT weapon (fireRange, attacks, maxAmmo, description?)>
+        <!ELEMENT weapon (fireRange, attacks, maxAmmo, description)>
         <!ATTLIST weapon name CDATA #REQUIRED>
 
         <!ELEMENT fireRange (minRange, maxRange)>
@@ -23,6 +23,7 @@
             <armyBranch>LAND</armyBranch>
         </attacks>
         <maxAmmo>99</maxAmmo>
+        <description></description>
     </weapon>
     <weapon name="BAZOOKA">
         <fireRange>
@@ -55,6 +56,7 @@
             <armyBranch>LAND</armyBranch>
         </attacks>
         <maxAmmo>9</maxAmmo>
+        <description></description>
     </weapon>
     <weapon name="MEDIUM_TANK_MAIN_GUN">
         <fireRange>
@@ -65,6 +67,7 @@
             <armyBranch>LAND</armyBranch>
         </attacks>
         <maxAmmo>8</maxAmmo>
+        <description></description>
     </weapon>
     <weapon name="RECON_MAIN_GUN">
         <fireRange>
@@ -75,6 +78,7 @@
             <armyBranch>LAND</armyBranch>
         </attacks>
         <maxAmmo>5</maxAmmo>
+        <description></description>
     </weapon>
     <weapon name="LONG_RANGE_CANNON">
         <fireRange>
@@ -98,6 +102,7 @@
             <armyBranch>AIR</armyBranch>
         </attacks>
         <maxAmmo>9</maxAmmo>
+        <description>none</description>
     </weapon>
     <weapon name="ROCKETS">
         <fireRange>
@@ -109,7 +114,7 @@
             <armyBranch>NAVAL</armyBranch>
         </attacks>
         <maxAmmo>6</maxAmmo>
-        <description>none</description>
+        <description></description>
     </weapon>
     <weapon name="ANTI_AIR_ROCKETS">
         <fireRange>
@@ -120,6 +125,7 @@
             <armyBranch>AIR</armyBranch>
         </attacks>
         <maxAmmo>6</maxAmmo>
+        <description></description>
     </weapon>
     <weapon name="NAVAL_CANNON">
         <fireRange>
@@ -131,6 +137,7 @@
             <armyBranch>NAVAL</armyBranch>
         </attacks>
         <maxAmmo>6</maxAmmo>
+        <description></description>
     </weapon>
     <weapon name="TORPEDO">
         <fireRange>
@@ -141,6 +148,7 @@
             <armyBranch>NAVAL</armyBranch>
         </attacks>
         <maxAmmo>6</maxAmmo>
+        <description></description>
     </weapon>
     <weapon name="ANTI_SHIP_MISSLE">
         <fireRange>
@@ -151,6 +159,7 @@
             <armyBranch>NAVAL</armyBranch>
         </attacks>
         <maxAmmo>9</maxAmmo>
+        <description></description>
     </weapon>
     <weapon name="NAVAL_ANTI_AIR_MISSLE">
         <fireRange>
@@ -161,6 +170,7 @@
             <armyBranch>AIR</armyBranch>
         </attacks>
         <maxAmmo>99</maxAmmo>
+        <description></description>
     </weapon>
     <weapon name="AIRCRAFT_ANTI_AIR_MISSLE">
         <fireRange>
@@ -171,6 +181,7 @@
             <armyBranch>AIR</armyBranch>
         </attacks>
         <maxAmmo>6</maxAmmo>
+        <description></description>
     </weapon>
     <weapon name="BOMB">
         <fireRange>
@@ -182,6 +193,7 @@
             <armyBranch>NAVAL</armyBranch>
         </attacks>
         <maxAmmo>6</maxAmmo>
+        <description></description>
     </weapon>
     <weapon name="HELI_GROUND_MISSLE">
         <fireRange>
@@ -193,6 +205,7 @@
             <armyBranch>NAVAL</armyBranch>
         </attacks>
         <maxAmmo>6</maxAmmo>
+        <description></description>
     </weapon>
     <weapon name="NEON_TANK_MAIN_GUN">
         <fireRange>
@@ -203,5 +216,6 @@
             <armyBranch>LAND</armyBranch>
         </attacks>
         <maxAmmo>6</maxAmmo>
+        <description></description>
     </weapon>
 </list>

@@ -29,9 +29,26 @@ public class UnitFactory {
     }
   };
 
-  public static void addUnits(Collection<Unit> units) {
-    for (Unit unit : units) {
+  public static void addUnits(Collection<UnitStats> unitStats) {
+    for (UnitStats unitStat : unitStats) {
+      Unit unit = new Unit(unitStat);
+      armUnit(unit);
       addUnit(unit);
+    }
+  }
+
+  private static void armUnit(Unit unit) {
+    String priWeaponName = unit.getStats().getPrimaryWeaponName();
+    String secWeaponName = unit.getStats().getSecondaryWeaponName();
+
+    if (WeaponFactory.hasWeapon(priWeaponName)) {
+      Weapon primaryWeapon = WeaponFactory.getWeapon(priWeaponName);
+      unit.setPrimaryWeapon(primaryWeapon);
+    }
+
+    if (WeaponFactory.hasWeapon(secWeaponName)) {
+      Weapon secondaryWeapon = WeaponFactory.getWeapon(secWeaponName);
+      unit.setSecondaryWeapon(secondaryWeapon);
     }
   }
 

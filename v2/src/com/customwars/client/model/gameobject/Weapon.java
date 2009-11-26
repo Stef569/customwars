@@ -42,6 +42,7 @@ public class Weapon extends GameObject {
     Args.validate(fireRange.getMinRange() < 0, weaponName + " minRange should be positive");
     Args.validate(fireRange.getMaxRange() < 0, weaponName + " maxRange should be positive");
     Args.validate(maxAmmo < 0, weaponName + " maxAmmo should be positive");
+    Args.checkForNull(description, "Please provide a description for " + weaponName);
   }
 
   /**
