@@ -72,19 +72,23 @@ public class UnitXStreamTest {
 
   @Test
   /**
-   * Xstream defaults to null when description or name is not included in the xml
-   * Make sure that when the unit is added to the UnitFactory the name and description are set to "" instead of null
-   * to avoid nullPointerExceptions.
+   * The case of:
+   * armybranch LAND matters
+   * true doesn't matter
    */
-  public void unitWithNoInfo() {
+  public void unitFromXMLStringCaseCheck() {
     String unitXml = "<unit>" +
-      "<stats unitID='0'/>" +
+      "<stats unitID='1' name='Inf'>" +
+      "  <canCapture>TrUe</canCapture>" +
+      "  <armyBranch>LAND</armyBranch>" +
+      "  <description></description>" +
+      "</stats>" +
       "</unit>";
     Unit unit = (Unit) xStream.fromXML(unitXml);
     UnitFactory.addUnit(unit);
-    Unit unitCopy = UnitFactory.getUnit(0);
+    Unit unitCopy = UnitFactory.getUnit(1);
 
-    Assert.assertEquals("", unitCopy.getStats().getDescription());
-    Assert.assertEquals("", unitCopy.getStats().getName());
+    Assert.assertTrue(unitCopy.getStats().canCapture());
+    Assert.assertSame(unitCopy.getArmyBranch(), ArmyBranch.LAND);
   }
 }

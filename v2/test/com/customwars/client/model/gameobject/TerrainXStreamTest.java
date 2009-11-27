@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.util.List;
 
 public class TerrainXStreamTest {
-  private static XStream xStream = new XStream(new DomDriver());
+  private static final XStream xStream = new XStream(new DomDriver());
 
   @BeforeClass
   public static void beforeAllTest() {
@@ -70,6 +70,7 @@ public class TerrainXStreamTest {
       "</list>";
 
     // Magic, we retrieve a list of Terrain objects!
+    @SuppressWarnings("unchecked")
     List<Terrain> terrains = (List<Terrain>) xStream.fromXML(terrainXML);
     for (Terrain terrain : terrains) {
       Assert.assertNotNull(terrain);
@@ -82,7 +83,7 @@ public class TerrainXStreamTest {
 
     // Description is not set in the xml, default to ""!
     Assert.assertEquals("", firstTerrain.getDescription());
-    Assert.assertEquals(TerrainFactory.countTerrains(), 2);
+    Assert.assertEquals(2, TerrainFactory.countTerrains());
   }
 
   /**
@@ -138,6 +139,7 @@ public class TerrainXStreamTest {
       "  </terrain>" +
       "</list>";
 
+    @SuppressWarnings("unchecked")
     List<Terrain> terrainsFromXml = (List<Terrain>) xStream.fromXML(invalidTerrainXML);
     for (Terrain terrain : terrainsFromXml) {
       TerrainFactory.addTerrain(terrain);
@@ -168,6 +170,7 @@ public class TerrainXStreamTest {
       "  </terrain>" +
       "</list>";
 
+    @SuppressWarnings("unchecked")
     List<Terrain> terrainsFromXml = (List<Terrain>) xStream.fromXML(invalidTerrainXML);
     for (Terrain terrain : terrainsFromXml) {
       TerrainFactory.addTerrain(terrain);
