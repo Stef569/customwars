@@ -6,7 +6,6 @@ import com.customwars.client.ui.slick.MouseOverArea;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
-import org.newdawn.slick.Input;
 import org.newdawn.slick.gui.AbstractComponent;
 import org.newdawn.slick.gui.ComponentListener;
 import org.newdawn.slick.gui.GUIContext;
@@ -24,13 +23,15 @@ import java.util.List;
  * @author stefan
  */
 public abstract class SelectPanel extends BasicComponent implements ComponentListener {
-  private List<MouseOverArea> mouseOverAreas = new ArrayList<MouseOverArea>();
-  private int tileSize;
+  private static final int PANEL_SCROLL_DELAY = 150;
+  private final List<MouseOverArea> mouseOverAreas = new ArrayList<MouseOverArea>();
+  private final int tileSize;
+  private final int scrollMargin;
   private int selectedIndex;
+  private int timeTaken;
   private boolean inited;
-  private int timeTaken, panelScrollDelay = 150, scrollMargin;
 
-  public SelectPanel(GUIContext container) {
+  protected SelectPanel(GUIContext container) {
     super(container);
     tileSize = App.getInt("plugin.tilesize");
     scrollMargin = tileSize;
@@ -59,11 +60,9 @@ public abstract class SelectPanel extends BasicComponent implements ComponentLis
   }
 
   public void update(int delta) {
-    Input input = container.getInput();
-
-    if (!canFitToContainer() && isWithinComponentY(input.getMouseY())) {
+    if (!canFitToContainer() && isWithinComponent(0, input.getMouseY())) {
       timeTaken += delta;
-      if (timeTaken >= panelScrollDelay) {
+      if (timeTaken >= PANEL_SCROLL_DELAY) {
         boolean nearLeftEdge = input.getMouseX() < scrollMargin;
         boolean nearRightEdge = input.getMouseX() > container.getWidth() - scrollMargin;
         timeTaken = 0;
@@ -79,10 +78,6 @@ public abstract class SelectPanel extends BasicComponent implements ComponentLis
 
   private boolean canFitToContainer() {
     return getWidth() <= container.getWidth() && getHeight() <= container.getHeight();
-  }
-
-  private boolean isWithinComponentY(int y) {
-    return y >= getY() && y <= getY() + getHeight();
   }
 
   @Override
@@ -155,4 +150,11 @@ public abstract class SelectPanel extends BasicComponent implements ComponentLis
   }
 
   public abstract void recolor(java.awt.Color color);
+
+  @Override
+  public boolean isWithinComponent(int x, int y) {
+    // The coordinates are within the component when
+    // y is within the vertical space
+    return y >= getY() && y <= getY() + getHeight();
+  }
 }

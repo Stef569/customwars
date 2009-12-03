@@ -230,4 +230,8 @@ public class MapRenderer implements Renderable {
   public void removeAttackZone() {
     effectsRenderer.removeAttackZone();
   }
+
+  public boolean canCenterMap(int width, int height) {
+    return map.getWidth() < width && map.getHeight() < height;
+  }
 }
