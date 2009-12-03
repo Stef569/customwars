@@ -155,7 +155,7 @@ public class InGameState extends CWState implements PropertyChangeListener {
   @Override
   public void leave(GameContainer container, StateBasedGame stateBasedGame) throws SlickException {
     super.leave(container, stateBasedGame);
-    cwInput.resetInputTransition();
+    cwInput.resetInputTransform();
   }
 
   @Override

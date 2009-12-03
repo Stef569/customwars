@@ -95,9 +95,8 @@ public class CWInput extends InputProvider {
     return false;
   }
 
-  public void resetInputTransition() {
-    input.setOffset(0, 0);
-    input.setScale(1, 1);
+  public void resetInputTransform() {
+    input.resetInputTransform();
   }
 
   public Command getCommandByName(String commandName) {
@@ -124,6 +123,14 @@ public class CWInput extends InputProvider {
 
   public int getMouseY() {
     return input.getMouseY();
+  }
+
+  public int getAbsoluteMouseX() {
+    return input.getAbsoluteMouseX();
+  }
+
+  public int getAbsoluteMouseY() {
+    return input.getAbsoluteMouseY();
   }
 
   @SuppressWarnings("unchecked")

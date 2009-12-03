@@ -7,11 +7,14 @@ import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Terrain;
 import com.customwars.client.model.gameobject.TerrainFactory;
 import com.customwars.client.model.gameobject.Unit;
+import com.customwars.client.model.map.Direction;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.tools.FileUtil;
 import com.customwars.client.tools.StringUtil;
-import com.customwars.client.ui.state.MapEditorState;
+import com.customwars.client.ui.renderer.MapEditorRenderer;
+import com.customwars.client.ui.sprite.SpriteManager;
+import com.customwars.client.ui.sprite.TileSprite;
 
 import java.awt.Color;
 import java.io.File;
@@ -30,33 +33,43 @@ import java.util.List;
 public class MapEditorController {
   private static final int STARTUP_MAP_COLS = 10;
   private static final int STARTUP_MAP_ROWS = 10;
-  private final List<Color> colors;
-  private final MapEditorState mapEditorView;
+  private final MapEditorRenderer mapEditorView;
   private final ResourceManager resources;
+  private CursorController cursorController;
 
-  private HashMap<Color, Player> players;
+  private final HashMap<Color, Player> players;
+  private final List<Color> colors;
   private List<MapEditorControl> controls;
-  private Map<Tile> map;
-  private int activeID, colorID;
   private final int panelCount;
+  private int activePanelID, colorID;
+  private Map<Tile> map;
 
-  public MapEditorController(MapEditorState mapEditorState, ResourceManager resources, int panelCount) {
+  public MapEditorController(MapEditorRenderer mapEditorView, ResourceManager resources) {
     this.resources = resources;
-    this.mapEditorView = mapEditorState;
-    this.panelCount = panelCount;
+    this.mapEditorView = mapEditorView;
+    this.panelCount = mapEditorView.getPanelCount();
     this.colors = new ArrayList<Color>(resources.getSupportedColors());
+    this.players = new HashMap<Color, Player>();
+
     init();
   }
 
   private void init() {
     createEmptyMap(STARTUP_MAP_COLS, STARTUP_MAP_ROWS);
     buildPlayers();
+    recolorPanels();
     changeToPanel(0);
-    nextColor();
+  }
+
+  public void createEmptyMap(int cols, int rows) {
+    int tileSize = App.getInt("plugin.tilesize");
+    Terrain plain = TerrainFactory.getTerrain(0);
+
+    Map<Tile> emptyMap = new Map<Tile>(cols, rows, tileSize, plain);
+    setMap(emptyMap);
   }
 
   private void buildPlayers() {
-    players = new HashMap<Color, Player>();
     Color neutralColor = App.getColor("plugin.neutral_color", Color.GRAY);
     int nextPlayerID = 0;
 
@@ -72,12 +85,11 @@ public class MapEditorController {
     }
   }
 
-  public void createEmptyMap(int cols, int rows) {
-    int tileSize = App.getInt("plugin.tilesize");
-    Terrain plain = TerrainFactory.getTerrain(0);
-
-    Map<Tile> map = new Map<Tile>(cols, rows, tileSize, plain);
-    setMap(map);
+  private void recolorPanels() {
+    for (int panelIndex = 0; panelIndex < mapEditorView.getPanelCount(); panelIndex++) {
+      changeToPanel(panelIndex);
+      changeToColor(0);
+    }
   }
 
   public void loadMap(File file) throws IOException {
@@ -85,13 +97,8 @@ public class MapEditorController {
       throw new IllegalArgumentException(file.getName() + " is not a valid CW2 map file");
     }
 
-    Map<Tile> map;
     String mapName = FileUtil.StripFileExtension(file.getName());
-    if (resources.isMapCached(mapName)) {
-      map = resources.getMap(mapName);
-    } else {
-      map = resources.loadMap(file);
-    }
+    Map<Tile> map = resources.isMapCached(mapName) ? resources.getMap(mapName) : resources.loadMap(file);
     setMap(map);
   }
 
@@ -123,8 +130,11 @@ public class MapEditorController {
 
   private void setMap(Map<Tile> map) {
     this.map = map;
-    mapEditorView.setMap(map);
+    SpriteManager spriteManager = new SpriteManager(map);
+    mapEditorView.setMap(map, spriteManager);
+    this.cursorController = new CursorController(map, spriteManager);
     buildControls(map);
+    initCursors(map);
   }
 
   private void buildControls(Map<Tile> map) {
@@ -132,6 +142,12 @@ public class MapEditorController {
     controls.add(new TerrainMapEditorControl(map));
     controls.add(new CityMapEditorControl(map));
     controls.add(new UnitMapEditorControl(map));
+  }
+
+  private void initCursors(Map<Tile> map) {
+    TileSprite selectCursor = resources.createCursor(map, App.get("user.selectcursor"));
+    cursorController.addCursor("SELECT", selectCursor);
+    cursorController.activateCursor("SELECT");
   }
 
   public void add(Tile t, int selectedIndex) {
@@ -180,12 +196,12 @@ public class MapEditorController {
     mapEditorView.recolor(color);
   }
 
-  public int nextPanel() {
-    return changeToPanel(activeID + 1);
+  public void nextPanel() {
+    changeToPanel(activePanelID + 1);
   }
 
-  public int previousPanel() {
-    return changeToPanel(activeID - 1);
+  public void previousPanel() {
+    changeToPanel(activePanelID - 1);
   }
 
   private int changeToPanel(int newPanelID) {
@@ -195,8 +211,9 @@ public class MapEditorController {
       newPanelID = panelCount;
     }
 
-    activeID = newPanelID;
-    return activeID;
+    activePanelID = newPanelID;
+    mapEditorView.setActivePanelID(activePanelID);
+    return activePanelID;
   }
 
   private MapEditorControl getControl(Class controlClass) {
@@ -209,10 +226,18 @@ public class MapEditorController {
   }
 
   private MapEditorControl getActiveControl() {
-    return controls.get(activeID);
+    return controls.get(activePanelID);
   }
 
   private Color getActiveColor() {
     return colors.get(colorID);
+  }
+
+  public void moveCursor(Direction direction) {
+    cursorController.moveCursor(direction);
+  }
+
+  public void moveCursor(int x, int y) {
+    cursorController.moveCursor(x, y);
   }
 }

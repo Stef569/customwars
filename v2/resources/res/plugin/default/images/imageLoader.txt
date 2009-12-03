@@ -31,3 +31,5 @@ o editor menu/mapeditor.png
 o gametest menu/gametest.png
 o key menu/keyconfig.png
 o back menu/back.png
+
+o questionMark questionMark.png
