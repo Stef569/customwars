@@ -1,5 +1,6 @@
 package com.customwars.client.controller;
 
+import com.customwars.client.App;
 import com.customwars.client.action.ActionFactory;
 import com.customwars.client.action.CWAction;
 import com.customwars.client.action.ShowPopupMenuAction;
@@ -23,9 +24,9 @@ import java.awt.Color;
  * @author stefan
  */
 public class HumanCityController extends CityController {
-  private InGameContext context;
-  private MapRenderer mapRenderer;
-  private ResourceManager resources;
+  private final InGameContext context;
+  private final MapRenderer mapRenderer;
+  private final ResourceManager resources;
 
   public HumanCityController(City city, InGameContext inGameContext) {
     super(city, inGameContext.getGame());
@@ -74,7 +75,7 @@ public class HumanCityController extends CityController {
   }
 
   private MenuItem buildMenuItem(Unit unit, boolean active) {
-    String unitInfo = unit.getStats().getName() + " " + unit.getStats().getPrice();
+    String unitInfo = App.translate(unit.getStats().getName()) + ' ' + unit.getStats().getPrice();
     Color cityColor = city.getOwner().getColor();
     Image unitImage = getUnitImg(unit, cityColor, active);
     return new MenuItem(unitImage, unitInfo, context.getContainer());

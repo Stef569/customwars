@@ -1,5 +1,6 @@
 package com.customwars.client.ui.hud;
 
+import com.customwars.client.App;
 import com.customwars.client.io.ResourceManager;
 import com.customwars.client.io.img.slick.ImageStrip;
 import com.customwars.client.model.gameobject.Unit;
@@ -116,12 +117,7 @@ public class UnitInfoBox extends BasicComponent {
 
   public void setUnit(Unit unit) {
     this.unit = unit;
-
-    if (unit != null) {
-      this.unitName = unit.getStats().getName();
-    } else {
-      this.unitName = null;
-    }
+    this.unitName = unit != null ? App.translate(unit.getStats().getName()) : null;
   }
 
   /**
@@ -130,8 +126,8 @@ public class UnitInfoBox extends BasicComponent {
    * The row always has the height of the tallest box
    */
   private class Row extends Box {
-    private Box imageBox;
-    private TextBox textBox;
+    private final Box imageBox;
+    private final TextBox textBox;
     private int horizontalSpacing;
 
     private Row(Box imageBox, TextBox textBox) {

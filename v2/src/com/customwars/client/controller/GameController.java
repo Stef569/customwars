@@ -1,5 +1,6 @@
 package com.customwars.client.controller;
 
+import com.customwars.client.App;
 import com.customwars.client.SFX;
 import com.customwars.client.action.ActionFactory;
 import com.customwars.client.action.CWAction;
@@ -78,7 +79,7 @@ public class GameController {
 
   private ShowPopupMenuAction buildContextMenu() {
     ShowPopupMenuAction showContextMenuAction = new ShowPopupMenuAction("Context menu");
-    MenuItem endTurnMenuItem = new MenuItem("End turn", guiContext);
+    MenuItem endTurnMenuItem = new MenuItem(App.translate("end_turn"), guiContext);
     showContextMenuAction.addAction(ActionFactory.buildEndTurnAction(stateChanger), endTurnMenuItem);
     return showContextMenuAction;
   }
