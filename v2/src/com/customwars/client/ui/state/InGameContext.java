@@ -18,6 +18,7 @@ import com.customwars.client.ui.renderer.GameRenderer;
 import com.customwars.client.ui.renderer.MapRenderer;
 import org.newdawn.slick.GameContainer;
 
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -48,6 +49,7 @@ public class InGameContext {
   private INPUT_MODE inputMode;
   private boolean trapped;
   private boolean moving;
+  private final List<Unit> unitsInTransport;
   private final DropLocationsQueue dropQueue;
   private final ActionManager actionManager;
 
@@ -64,6 +66,7 @@ public class InGameContext {
     dropQueue = new DropLocationsQueue();
     actionManager = new ActionManager(this);
     inputMode = INPUT_MODE.DEFAULT;
+    unitsInTransport = new LinkedList<Unit>();
   }
 
   public void handleUnitAPress(Unit unit) {
@@ -255,6 +258,18 @@ public class InGameContext {
     return inputMode == INPUT_MODE.UNIT_FLARE;
   }
 
+  public void addUnitInTransport(Unit unitInTransport) {
+    unitsInTransport.add(unitInTransport);
+  }
+
+  public Unit getUnitInTransport(int index) {
+    return unitsInTransport.get(index);
+  }
+
+  public void clearUnitsInTransport() {
+    unitsInTransport.clear();
+  }
+
   public void addDropLocation(Tile location, Unit unit) {
     dropQueue.addDropLocation(location, unit);
   }
@@ -273,10 +288,8 @@ public class InGameContext {
     return dropQueue.isDropLocationTaken(dropLocation);
   }
 
-  /**
-   * Remove the history of drop locations
-   */
-  public void clearDropLocations() {
+  public void clearDropHistory() {
+    unitsInTransport.clear();
     dropQueue.clearDropLocations();
   }
 
