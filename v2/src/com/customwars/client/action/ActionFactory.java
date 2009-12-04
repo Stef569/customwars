@@ -26,7 +26,7 @@ import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.ui.state.StateChanger;
 
-import java.util.List;
+import java.util.Collection;
 
 /**
  * Create in game actions
@@ -34,15 +34,15 @@ import java.util.List;
  * @author stefan
  */
 public class ActionFactory {
-  public static CWAction buildDropAction(Unit transport, Location from, Location moveTo, int dropCount, List<Unit> unitsToBeDropped) {
+  public static CWAction buildDropAction(Unit transport, Location from, Location moveTo, Collection<Unit> unitsToBeDropped) {
     ActionBag dropActions = new ActionBag("Drop");
     dropActions.add(new InitAction());
     dropActions.add(new MoveAnimatedAction(transport, from, moveTo));
     dropActions.add(new WaitAction(transport));
 
-    for (int drop = 0; drop < dropCount; drop++) {
+    for (Unit unit : unitsToBeDropped) {
       dropActions.add(new DropAction(transport));
-      dropActions.add(new WaitAction(unitsToBeDropped.get(unitsToBeDropped.size() - 1 - drop)));
+      dropActions.add(new WaitAction(unit));
     }
     dropActions.add(new ClearInGameStateAction());
     return dropActions;

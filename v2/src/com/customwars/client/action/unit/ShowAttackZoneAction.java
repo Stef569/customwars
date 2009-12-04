@@ -14,7 +14,7 @@ import com.customwars.client.ui.state.InGameContext;
 public class ShowAttackZoneAction extends DirectAction {
   private InGameContext context;
   private MapRenderer mapRenderer;
-  private Unit unit;
+  private final Unit unit;
 
   public ShowAttackZoneAction(Unit unit) {
     super("Show Attack zone");
@@ -27,7 +27,7 @@ public class ShowAttackZoneAction extends DirectAction {
   }
 
   protected void invokeAction() {
-    context.discartAllEdits();
+    context.clearUndoHistory();
 
     mapRenderer.removeZones();
     mapRenderer.setAttackZone(unit.getAttackZone());

@@ -32,8 +32,8 @@ public class ClearInGameStateAction extends DirectAction {
 
   protected void invokeAction() {
     context.setInputMode(InGameContext.INPUT_MODE.DEFAULT);
-    context.discartAllEdits();
-    context.clearClicks();
+    context.clearUndoHistory();
+    context.clearClickHistory();
     context.setMoving(false);
     context.setTrapped(false);
     context.clearDropLocations();

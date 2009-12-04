@@ -37,10 +37,10 @@ import java.util.List;
 public class HumanUnitController extends UnitController {
   private static final Logger logger = Logger.getLogger(HumanUnitController.class);
   private static final int DROP_LIMIT = 4;
-  private InGameContext context;
-  private MapRenderer mapRenderer;
-  private List<Unit> unitsInTransport;
-  private ShowPopupMenuAction showMenuAction;
+  private final InGameContext context;
+  private final MapRenderer mapRenderer;
+  private final List<Unit> unitsInTransport;
+  private ShowPopupMenuAction menu;
   private boolean canStartDropGroundUnit, canTakeOff, canCapture, canSupply, canStartAttack, canWait, canJoin, canLoad;
   private boolean canLaunchRocketFromCity, canTransformTerrain;
   private boolean canFireFlare;
@@ -58,9 +58,16 @@ public class HumanUnitController extends UnitController {
     Tile selected = mapRenderer.getCursorLocation();
     Tile to = context.getClick(2);
 
-    if (context.isUnitDropMode() && canDrop(selected)) {
-      addDropLocation(selected);
-      initUnitActionMenu(selected);
+    if (context.isUnitDropMode()) {
+      // The menu option clicked on is the index of the unit in the transport List
+      int popupOptionIndex = menu.getCurrentOption();
+
+      if (canDrop(selected, popupOptionIndex)) {
+        context.addDropLocation(selected, unitsInTransport.get(popupOptionIndex));
+        initUnitActionMenu(selected);
+      } else {
+        logger.warn("Trying to drop unit on " + selected + " failed");
+      }
     } else if (context.isUnitAttackMode() && canAttack(selected)) {
       Unit defender = (Unit) selected.getLastLocatable();
       CWAction attackAction = ActionFactory.buildAttackAction(unit, defender, to);
@@ -74,25 +81,19 @@ public class HumanUnitController extends UnitController {
       context.doAction(fireFlare);
     } else if (unit.getMoveZone().contains(selected)) {
       if (canShowMenu()) {
-        context.setClick(2, selected);
+        context.registerClick(2, selected);
         initUnitActionMenu(selected);
       } else if (canSelect(selected)) {
         logger.debug("Selecting " + unit);
-        context.clearClicks();
-        context.discartAllEdits();
-        context.setClick(1, selected);
+        context.clearClickHistory();
+        context.clearUndoHistory();
+        context.registerClick(1, selected);
         context.doAction(new SelectAction(selected));
       }
     } else {
       SFX.playSound("cancel");
       context.undo();
     }
-  }
-
-  private void addDropLocation(Tile location) {
-    // The menu option clicked on is the index of the unit in the transport
-    int popupOption = showMenuAction.getCurrentOption();
-    context.addDropLocation(location, unitsInTransport.get(popupOption));
   }
 
   public void handleBPress() {
@@ -116,19 +117,19 @@ public class HumanUnitController extends UnitController {
 
     buildUnitActionMenu(from, selected);
 
-    if (showMenuAction.atLeastHasOneItem()) {
-      context.doAction(showMenuAction);
+    if (menu.atLeastHasOneItem()) {
+      context.doAction(menu);
     }
   }
 
   private ShowPopupMenuAction buildUnitActionMenu(Tile from, Tile selected) {
-    ShowPopupMenuAction showMenuAction = null;
+    ShowPopupMenuAction menu = null;
     if (isActiveUnit() && canMove(from, selected)) {
       if (context.isUnitDropMode()) {
         // In drop mode teleport the transporter to the 2ND selected tile
         Tile to = context.getClick(2);
         map.teleport(from, to, unit);
-        showMenuAction = buildDropModeMenu(from, to, selected);
+        menu = buildDropMenu(from, to, selected);
         map.teleport(to, from, unit);
       } else {
         // Temporarily teleport the active unit to the selected tile
@@ -136,36 +137,38 @@ public class HumanUnitController extends UnitController {
         map.teleport(from, selected, unit);
         initUnitActions(selected);
         map.teleport(selected, from, unit);
-        showMenuAction = buildUnitActionMenu(selected);
+        menu = buildUnitActionMenu(selected);
       }
     }
-    return showMenuAction;
+    return menu;
   }
 
-  private ShowPopupMenuAction buildDropModeMenu(Tile from, Tile to, Tile selected) {
-    showMenuAction = new ShowPopupMenuAction("Unit drop menu", selected);
+  private ShowPopupMenuAction buildDropMenu(Tile from, Tile to, Tile selected) {
+    menu = new ShowPopupMenuAction("Unit drop menu", selected);
     unitsInTransport.clear();
 
     if (canWait(to)) {
-      for (int dropCount = 0; dropCount < DROP_LIMIT; dropCount++) {
-        if (dropCount < unit.getLocatableCount() && !context.isUnitDropped(unit.getLocatable(dropCount))) {
-          Unit unitInTransport = (Unit) unit.getLocatable(dropCount);
+      for (int dropIndex = 0; dropIndex < DROP_LIMIT && dropIndex < unit.getLocatableCount(); dropIndex++) {
+        Unit unitInTransport = (Unit) unit.getLocatable(dropIndex);
+        boolean unitIsAlreadyDropped = context.isUnitDropped(unitInTransport);
+
+        // Build start drop actions for each unit in the transport
+        // If there is at least 1 free tile(canStartDrop) and the unit has not already been dropped
+        if (canStartDrop() && !unitIsAlreadyDropped) {
           unitsInTransport.add(unitInTransport);
-          if (canStartDrop(to, dropCount + 1)) {
-            CWAction dropAction = new StartDropAction(to, unit);
-            addToMenu(dropAction, App.translate("drop") + " " + unitInTransport.getStats().getName());
-          }
+          CWAction dropAction = new StartDropAction(to, unit, unitInTransport);
+          addToMenu(dropAction, App.translate("drop") + ' ' + unitInTransport.getStats().getName());
         }
       }
 
       // In drop mode the wait Button acts as the drop Action
       if (context.isUnitDropMode()) {
-        CWAction dropAction = ActionFactory.buildDropAction(unit, from, to, context.getDropCount(), context.getUnitsToBeDropped());
+        CWAction dropAction = ActionFactory.buildDropAction(unit, from, to, context.getUnitsToBeDropped());
         MenuItem waitItem = new MenuItem(App.translate("wait"), context.getContainer());
-        showMenuAction.addAction(dropAction, waitItem);
+        menu.addAction(dropAction, waitItem);
       }
     }
-    return showMenuAction;
+    return menu;
   }
 
   /**
@@ -190,10 +193,10 @@ public class HumanUnitController extends UnitController {
 
     if (canWait(selected)) {
       canTakeOff = canAirplaneTakeOffFromUnit();
-      canStartDropGroundUnit = canStartDrop(selected, 1);
+      canStartDropGroundUnit = canStartDrop();
       canCapture = canCapture(selected);
       canSupply = canSupply(selected);
-      canStartAttack = canStartAttack(from, selected);
+      canStartAttack = canStartAttack(from);
       canLaunchRocketFromCity = canLaunchRocket(selected);
       canWait = canWait(selected);
       canTransformTerrain = canTransformTerrain(selected);
@@ -214,13 +217,13 @@ public class HumanUnitController extends UnitController {
    * The unit is on the from Tile
    */
   private ShowPopupMenuAction buildUnitActionMenu(Tile selected) {
-    showMenuAction = new ShowPopupMenuAction("Unit context menu", selected);
+    menu = new ShowPopupMenuAction("Unit context menu", selected);
     Tile from = context.getClick(1);
     Tile to = context.getClick(2);
 
     if (canStartDropGroundUnit) {
       map.teleport(from, to, unit);
-      buildDropModeMenu(from, to, selected);
+      buildDropMenu(from, to, selected);
       map.teleport(to, from, unit);
     } else if (canTakeOff) {
       Unit unitToTakeOff = (Unit) unit.getLastLocatable();
@@ -298,7 +301,7 @@ public class HumanUnitController extends UnitController {
       CWAction waitAction = ActionFactory.buildWaitAction(unit, to);
       addToMenu(waitAction, App.translate("wait"));
     }
-    return showMenuAction;
+    return menu;
   }
 
   private Terrain getTransformToTerrain(Tile tile) {
@@ -319,6 +322,6 @@ public class HumanUnitController extends UnitController {
    */
   private void addToMenu(CWAction action, String menuItemName) {
     MenuItem menuItem = new MenuItem(menuItemName, context.getContainer());
-    showMenuAction.addAction(action, menuItem);
+    menu.addAction(action, menuItem);
   }
 }

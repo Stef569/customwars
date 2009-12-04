@@ -13,7 +13,7 @@ import org.apache.log4j.Logger;
  */
 public class DropAction extends MoveAnimatedAction {
   private static final Logger logger = Logger.getLogger(DropAction.class);
-  private Unit transport;
+  private final Unit transport;
 
   public DropAction(Unit transport) {
     super(null, transport.getLocation(), null);
@@ -26,8 +26,8 @@ public class DropAction extends MoveAnimatedAction {
       return;
     }
 
-    to = context.getNextDropLocation();
-    unit = context.getNextUnitToBeDropped();
+    to = context.removeNextDropLocation();
+    unit = context.removeNextUnitToBeDropped();
 
     logger.debug(String.format("Dropping %s to %s from transport %s",
       unit.getStats().getName(), to.getLocationString(), transport.getStats().getName()));
