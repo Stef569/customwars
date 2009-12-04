@@ -543,7 +543,25 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
   }
 
   /**
-   * Determines if the transporter unit can drop any unit to the given drop location
+   * Retrieve a list of adjacent drop locations where a unit
+   * can be dropped to, taking into account fog and hidden units.
+   *
+   * @return a list of locations where units can be dropped on
+   */
+  public List<Location> getFreeDropLocations(Unit transport) {
+    List<Location> surroundingTiles = new ArrayList<Location>();
+    for (Tile tile : getSurroundingTiles(transport.getLocation(), 1, 1)) {
+      if (isFreeDropLocation(tile, transport)) {
+        surroundingTiles.add(tile);
+      }
+    }
+    return surroundingTiles;
+  }
+
+  /**
+   * Determines if the transporting unit can drop a given unit(by index)
+   * from the transport to the given drop location.
+   * while taking into account the visibility of the active player
    *
    * @param dropLocation The tile to be checked if it is a valid drop location
    * @param transporter  The unit that attempts to drop a unit to tile

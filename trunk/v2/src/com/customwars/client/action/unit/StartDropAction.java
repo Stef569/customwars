@@ -25,13 +25,15 @@ public class StartDropAction extends DirectAction {
   private CursorController cursorControl;
   private MapRenderer mapRenderer;
   private Map<Tile> map;
-  private Location center;
-  private Unit transport;
+  private final Location center;
+  private final Unit transport;
+  private final Unit unitToBeDropped;
 
-  public StartDropAction(Location center, Unit transport) {
+  public StartDropAction(Location center, Unit transport, Unit unitToBeDropped) {
     super("Start drop", true);
     this.center = center;
     this.transport = transport;
+    this.unitToBeDropped = unitToBeDropped;
   }
 
   protected void init(InGameContext context) {
@@ -57,16 +59,24 @@ public class StartDropAction extends DirectAction {
 
   /**
    * @param transportLocation the location of the transporting unit
-   * @return a list of locations where a unit can be dropped on
+   * @return a list of locations where the unit to be dropped can be dropped on
    */
   private List<Location> getEmptyAjacentTiles(Location transportLocation) {
     List<Location> surroundingTiles = new ArrayList<Location>();
-    for (Tile tile : map.getSurroundingTiles(transportLocation, 1, 1)) {
-      if (!context.isDropLocationTaken(tile) && map.isFreeDropLocation(tile, transport)) {
-        surroundingTiles.add(tile);
+    for (Tile adjacentTile : map.getSurroundingTiles(transportLocation, 1, 1)) {
+      if (!context.isDropLocationTaken(adjacentTile)) {
+        if (map.isFreeDropLocation(adjacentTile, transport)) {
+          if (canUnitMoveOverTerrain(adjacentTile)) {
+            surroundingTiles.add(adjacentTile);
+          }
+        }
       }
     }
     return surroundingTiles;
+  }
+
+  private boolean canUnitMoveOverTerrain(Tile tile) {
+    return tile.getTerrain().canBeTraverseBy(unitToBeDropped.getMovementType());
   }
 
   /**

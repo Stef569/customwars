@@ -15,7 +15,6 @@ import com.customwars.client.model.map.Tile;
 import com.customwars.client.model.map.path.MoveTraverse;
 import com.customwars.client.ui.state.InGameContext;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -97,15 +96,33 @@ public abstract class UnitController {
       transporter.getOwner() == unit.getOwner();
   }
 
-  boolean canStartDrop(Tile center, int dropCount) {
-    List<Location> emptyTiles = getEmptyAjacentTiles(center);
-    Unit unitToDrop = (Unit) unit.getLastLocatable();
-    boolean droppingGroundUnit = unitToDrop != null && unitToDrop.getArmyBranch() == ArmyBranch.LAND;
-    boolean dropCountInRange = dropCount > 0 && dropCount <= unit.getLocatableCount();
+  /**
+   * Can the transport drop any ground units
+   * #1 This controller controls a unit with transport abilities
+   * #2 There is at least 1 free adjacent tile
+   * #3 There is at least 1 ground unit in the transport
+   *
+   * @return true if the transport can drop at least 1 ground unit
+   */
+  boolean canStartDrop() {
+    List<Location> emptyTiles = map.getFreeDropLocations(unit);
 
-    return unit.getStats().canTransport() && unitToDrop != null && !emptyTiles.isEmpty() &&
-      droppingGroundUnit && dropCountInRange;
+    int groundUnitsInTransportCount = 0;
+    for (int i = 0; i < unit.getLocatableCount(); i++) {
+      Unit unitInTransport = (Unit) unit.getLocatable(i);
+
+      if (unitInTransport.getArmyBranch() == ArmyBranch.LAND) {
+        groundUnitsInTransportCount++;
+      }
+    }
+
+    boolean isTransportingUnit = unit.getStats().canTransport();
+    boolean atleast1FreeAdjacentTile = !emptyTiles.isEmpty();
+    boolean atLeast1GroundUnit = groundUnitsInTransportCount > 0;
+
+    return isTransportingUnit && atleast1FreeAdjacentTile && atLeast1GroundUnit;
   }
+
 
   boolean canAirplaneTakeOffFromUnit() {
     Unit unitToTakeOff = null;
@@ -118,32 +135,26 @@ public abstract class UnitController {
   }
 
   /**
-   * @return a list of locations where a unit can be dropped on
+   * Can this transporting unit drop a unit at dropIndex on the given tile
+   *
+   * @param tile      The tile the unit is going to be dropped to
+   * @param dropIndex The index of the unit in the transport(0 based)
+   * @return true If this transport can drop the unit in the transport at the given index
+   *         on the given tile
    */
-  private List<Location> getEmptyAjacentTiles(Location transportLocation) {
-    List<Location> surroundingTiles = new ArrayList<Location>();
-    for (Tile tile : map.getSurroundingTiles(transportLocation, 1, 1)) {
-      if (tile.isFogged() || tile.getLocatableCount() == 0 || map.getUnitOn(tile).isHidden()) {
-        surroundingTiles.add(tile);
-      }
+  boolean canDrop(Tile tile, int dropIndex) {
+    if (unit.getStats().canTransport() && unit.getLocatableCount() > dropIndex) {
+      return map.isFreeDropLocation(tile, unit);
+    } else {
+      return false;
     }
-    return surroundingTiles;
-  }
-
-  /**
-   * @param tile The tile the unit is going to be dropped to
-   * @return true If this unit can drop a unit on the given tile
-   */
-  boolean canDrop(Tile tile) {
-    return unit.getStats().canTransport() && unit.getLocatableCount() > 0 && map.isFreeDropLocation(tile, unit);
   }
 
   /**
    * @param origUnitLocation Where the unit was located(used to determine if the unit has moved)
-   * @param selected         the location that has been clicked on
    * @return if this unit can attack
    */
-  boolean canStartAttack(Location origUnitLocation, Tile selected) {
+  boolean canStartAttack(Location origUnitLocation) {
     if (isDirectUnitMoved(origUnitLocation)) return false;
 
     Unit activeUnit = game.getActiveUnit();
@@ -195,6 +206,10 @@ public abstract class UnitController {
 
   boolean canTransformTerrain(Tile selected) {
     return unit.getStats().canTransformTerrain(selected.getTerrain());
+  }
+
+  public boolean canFlare(Tile selected) {
+    return unit.getAttackZone().contains(selected);
   }
 
   boolean canFireFlare(Tile from) {
