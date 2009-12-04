@@ -36,7 +36,7 @@ public class ClearInGameStateAction extends DirectAction {
     context.clearClickHistory();
     context.setMoving(false);
     context.setTrapped(false);
-    context.clearDropLocations();
+    context.clearDropHistory();
     context.getContainer().getInput().resume();
 
     cursorControl.activateCursor("Select");
