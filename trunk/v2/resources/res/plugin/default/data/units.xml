@@ -56,7 +56,7 @@
         <!ENTITY NAVAL "5">
         ]>
 <list>
-    <unit name="Infantry" unitID="0" imgRowID="0">
+    <unit name="infantry" unitID="0" imgRowID="0">
         <price>1000</price>
         <movement>3</movement>
         <vision>2</vision>
@@ -74,7 +74,7 @@
         <secondaryWeaponName>SMG</secondaryWeaponName>
         <description></description>
     </unit>
-    <unit name="Mech" unitID="1" imgRowID="1">
+    <unit name="mech" unitID="1" imgRowID="1">
         <price>3000</price>
         <movement>2</movement>
         <vision>2</vision>
@@ -95,7 +95,7 @@
         <description>Infantry units that are equiped to take out Tanks, they have a machin gun as secondary weapon.
         </description>
     </unit>
-    <unit name="Tank" unitID="2" imgRowID="2">
+    <unit name="tank" unitID="2" imgRowID="2">
         <price>7000</price>
         <movement>6</movement>
         <vision>3</vision>
@@ -113,7 +113,7 @@
         <secondaryWeaponName>TANK_MACHIN_GUN</secondaryWeaponName>
         <description>Fast Armoured unit, great for scouting.</description>
     </unit>
-    <unit name="Medium Tank" unitID="3" imgRowID="3">
+    <unit name="medium_tank" unitID="3" imgRowID="3">
         <price>16000</price>
         <movement>5</movement>
         <vision>1</vision>
@@ -131,7 +131,7 @@
         <secondaryWeaponName>TANK_MACHIN_GUN</secondaryWeaponName>
         <description></description>
     </unit>
-    <unit name="Recon" unitID="4" imgRowID="4">
+    <unit name="recon" unitID="4" imgRowID="4">
         <price>4000</price>
         <movement>8</movement>
         <vision>5</vision>
@@ -166,7 +166,7 @@
         <secondaryWeaponName>TANK_MACHIN_GUN</secondaryWeaponName>
         <description>Useful against Infantry and Mech, and for providing sight in fog of war.</description>
     </unit>
-    <unit name="Anti-Air" unitID="5" imgRowID="5">
+    <unit name="anti_air" unitID="5" imgRowID="5">
         <price>8000</price>
         <movement>6</movement>
         <vision>2</vision>
@@ -183,7 +183,7 @@
         <primaryWeaponName>ANTI_AIR</primaryWeaponName>
         <description>For popping airplanes out of the sky</description>
     </unit>
-    <unit name="Missiles" unitID="6" imgRowID="6">
+    <unit name="missiles" unitID="6" imgRowID="6">
         <price>22000</price>
         <movement>4</movement>
         <vision>5</vision>
@@ -200,7 +200,7 @@
         <primaryWeaponName>ANTI_AIR_ROCKETS</primaryWeaponName>
         <description>To pop airplanes out of the sky</description>
     </unit>
-    <unit name="Artillery" unitID="7" imgRowID="7">
+    <unit name="artillery" unitID="7" imgRowID="7">
         <price>6000</price>
         <movement>5</movement>
         <vision>2</vision>
@@ -217,7 +217,7 @@
         <primaryWeaponName>LONG_RANGE_CANNON</primaryWeaponName>
         <description>To bombard stuff in short range</description>
     </unit>
-    <unit name="Rockets" unitID="8" imgRowID="8">
+    <unit name="rockets" unitID="8" imgRowID="8">
         <price>15000</price>
         <movement>2</movement>
         <vision>1</vision>
@@ -236,7 +236,7 @@
             units.
         </description>
     </unit>
-    <unit name="APC" unitID="9" imgRowID="9">
+    <unit name="apc" unitID="9" imgRowID="9">
         <price>5000</price>
         <movement>6</movement>
         <vision>1</vision>
@@ -262,7 +262,7 @@
         <movementType>&TREAD;</movementType>
         <description>Can transport other units they also have the ability to supply.</description>
     </unit>
-    <unit name="Lander" unitID="10" imgRowID="10">
+    <unit name="lander" unitID="10" imgRowID="10">
         <price>10000</price>
         <movement>6</movement>
         <vision>1</vision>
@@ -291,7 +291,7 @@
         <movementType>&NAVAL;</movementType>
         <description>Can transport 2 ground units</description>
     </unit>
-    <unit name="Cruiser" unitID="11" imgRowID="11">
+    <unit name="cruiser" unitID="11" imgRowID="11">
         <price>16000</price>
         <movement>6</movement>
         <vision>5</vision>
@@ -307,7 +307,7 @@
         <secondaryWeaponName>NAVAL_ANTI_AIR_MISSLE</secondaryWeaponName>
         <description>Strong against air units and submarines</description>
     </unit>
-    <unit name="Sub" unitID="12" imgRowID="12">
+    <unit name="sub" unitID="12" imgRowID="12">
         <price>20000</price>
         <movement>6</movement>
         <vision>5</vision>
@@ -324,7 +324,7 @@
         <primaryWeaponName>TORPEDO</primaryWeaponName>
         <description>After diving this unit remains hidden unless enemy units are adjacent</description>
     </unit>
-    <unit name="Battleship" unitID="13" imgRowID="13">
+    <unit name="battleship" unitID="13" imgRowID="13">
         <price>25000</price>
         <movement>5</movement>
         <vision>3</vision>
@@ -339,7 +339,7 @@
         <primaryWeaponName>NAVAL_CANNON</primaryWeaponName>
         <description>Most powerful naval ship</description>
     </unit>
-    <unit name="TCopter" unitID="14" imgRowID="14">
+    <unit name="tcopter" unitID="14" imgRowID="14">
         <price>5000</price>
         <movement>6</movement>
         <vision>1</vision>
@@ -359,7 +359,7 @@
         <movementType>&AIR;</movementType>
         <description>Carries 1 inf or mech unit</description>
     </unit>
-    <unit name="BCopter" unitID="15" imgRowID="15">
+    <unit name="bcopter" unitID="15" imgRowID="15">
         <price>9000</price>
         <movement>6</movement>
         <vision>2</vision>
@@ -374,7 +374,7 @@
         <secondaryWeaponName>HELI_GROUND_MISSLE</secondaryWeaponName>
         <description>Can attack ground,naval and other helicopter units</description>
     </unit>
-    <unit name="Fighter" unitID="16" imgRowID="16">
+    <unit name="fighter" unitID="16" imgRowID="16">
         <price>20000</price>
         <movement>9</movement>
         <vision>5</vision>
@@ -390,7 +390,7 @@
         <primaryWeaponName>AIRCRAFT_ANTI_AIR_MISSLE</primaryWeaponName>
         <description>Can attack other air units</description>
     </unit>
-    <unit name="Bomber" unitID="17" imgRowID="17">
+    <unit name="bomber" unitID="17" imgRowID="17">
         <price>20000</price>
         <movement>7</movement>
         <vision>3</vision>
@@ -406,7 +406,7 @@
         <primaryWeaponName>BOMB</primaryWeaponName>
         <description>Can bombard ground and naval units</description>
     </unit>
-    <unit name="Neon Tank" unitID="18" imgRowID="18">
+    <unit name="neo_tank" unitID="18" imgRowID="18">
         <price>15000</price>
         <movement>6</movement>
         <vision>1</vision>
@@ -424,7 +424,7 @@
         <secondaryWeaponName>TANK_MACHIN_GUN</secondaryWeaponName>
         <description></description>
     </unit>
-    <unit name="Carrier" unitID="19" imgRowID="19">
+    <unit name="carrier" unitID="19" imgRowID="19">
         <price>28000</price>
         <movement>5</movement>
         <vision>4</vision>
@@ -449,7 +449,7 @@
         <secondaryWeaponName>NAVAL_ANTI_AIR_MISSLE</secondaryWeaponName>
         <description>Can produce and carry 2 air units</description>
     </unit>
-    <unit name="Stealth" unitID="20" imgRowID="20">
+    <unit name="stealth" unitID="20" imgRowID="20">
         <price>22000</price>
         <movement>7</movement>
         <vision>3</vision>
@@ -464,7 +464,7 @@
         <movementType>&AIR;</movementType>
         <description></description>
     </unit>
-    <unit name="Gun boat" unitID="21" imgRowID="21">
+    <unit name="gun_boat" unitID="21" imgRowID="21">
         <price>28000</price>
         <movement>5</movement>
         <vision>4</vision>
