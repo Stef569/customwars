@@ -9,6 +9,7 @@ import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.ui.renderer.MapRenderer;
 import com.customwars.client.ui.state.InGameContext;
+import org.apache.log4j.Logger;
 
 /**
  * Select the last unit on selectTile and make it the active unit in the game. This is the first action
@@ -17,11 +18,12 @@ import com.customwars.client.ui.state.InGameContext;
  * @author stefan
  */
 public class SelectAction extends DirectAction {
+  private static final Logger logger = Logger.getLogger(SelectAction.class);
   private InGameContext context;
   private MapRenderer mapRenderer;
   private CursorController cursorControl;
   private Game game;
-  private Location selectTile;
+  private final Location selectTile;
 
   public SelectAction(Location selectTile) {
     super("Select");
@@ -43,6 +45,7 @@ public class SelectAction extends DirectAction {
   }
 
   private void selectUnit(Unit unit) {
+    logger.debug("Selecting " + unit);
     game.setActiveUnit(unit);
     mapRenderer.setActiveUnit(unit);
     mapRenderer.removeZones();

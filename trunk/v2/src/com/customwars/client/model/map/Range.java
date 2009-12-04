@@ -33,6 +33,6 @@ public class Range {
 
   @Override
   public String toString() {
-    return minRange + " /" + maxRange;
+    return minRange + "/" + maxRange;
   }
 }

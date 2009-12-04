@@ -69,7 +69,7 @@ public class TurnBasedGame implements Observable {
     setActivePlayer(gameStarter);
     setState(GameState.STARTED);
     startTurn(activePlayer);
-    logger.debug("Game with map " + map.getMapName() + " has started");
+    logger.debug("Game with map '" + map.getMapName() + "' has started");
   }
 
   public void endTurn() throws NotYourTurnException {

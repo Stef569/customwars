@@ -84,7 +84,6 @@ public class HumanUnitController extends UnitController {
         context.registerClick(2, selected);
         initUnitActionMenu(selected);
       } else if (canSelect(selected)) {
-        logger.debug("Selecting " + unit);
         context.clearClickHistory();
         context.clearUndoHistory();
         context.registerClick(1, selected);
