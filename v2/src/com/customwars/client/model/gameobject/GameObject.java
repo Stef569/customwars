@@ -70,7 +70,7 @@ public class GameObject implements Observable {
   }
 
   public void removePropertyChangeListener(PropertyChangeListener listener) {
-    changeSupport.addPropertyChangeListener(listener);
+    changeSupport.removePropertyChangeListener(listener);
   }
 
   public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
