@@ -93,8 +93,9 @@ public class Config {
       String configPath = resourcesPath + "/data/config";
       loadLog4JProperties(configPath);
       loadGameProperties(configPath);
-      Properties userProperties = loadUserProperties(configPath);
+      logger.info("CW2 version #" + App.get("game.version"));
 
+      Properties userProperties = loadUserProperties(configPath);
       String language = userProperties.getProperty("user.lang");
       String pluginName = userProperties.getProperty("user.activeplugin");
       String pluginPath = resourcesPath + "/plugin/" + pluginName;

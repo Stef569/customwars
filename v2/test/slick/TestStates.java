@@ -45,7 +45,6 @@ public class TestStates extends CWStateBasedGame {
   }
 
   private void loadResources() {
-    logger.info("Loading resources");
     resources.loadAll();
   }
 

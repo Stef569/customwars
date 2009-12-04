@@ -737,8 +737,8 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
 
   @Override
   public String toString() {
-    return String.format("[%s owner=%s location=%s transport=%s unit state=%s state=%s]",
-      stats, getOwnerText(), getLocationText(), transport, unitState, getState());
+    return String.format("%s(ID=%s) location=%s stats=%s branch=%s owner=%s unit state=%s",
+      stats.getName(), stats.getID(), getLocationText(), getStatsText(), stats.getArmyBranch(), getOwnerText(), unitState);
   }
 
   private String getLocationText() {
@@ -747,5 +747,10 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
 
   private String getOwnerText() {
     return owner == null ? "Not owned" : owner.toString();
+  }
+
+  private String getStatsText() {
+    return String.format("hp=%s/%s supplies=%s/%s exp=%s/%s transport=%s/%s",
+      hp, stats.getMaxHp(), supplies, stats.getMaxSupplies(), experience, stats.getMaxExperience(), transport.size(), stats.getMaxTransportCount());
   }
 }

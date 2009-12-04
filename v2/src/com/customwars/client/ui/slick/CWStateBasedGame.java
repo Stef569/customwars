@@ -47,7 +47,7 @@ public abstract class CWStateBasedGame extends StateBasedGame implements InputPr
     initStatesList();
     changeToState(startStateName);
 
-    logger.debug("Startup complete starting state=" + (startStateName == null ? "Default" : startStateName));
+    logger.info("Startup complete starting state=" + (startStateName == null ? "Default" : startStateName));
   }
 
   /**
