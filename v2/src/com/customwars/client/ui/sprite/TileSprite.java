@@ -63,9 +63,9 @@ public class TileSprite extends Sprite implements Locatable, Observable {
   }
 
   public void activate() {
-    // Make sure an location event is fired
+    // Make sure a location event is fired
     setLocation(getX() - 1, getY());
-    setLocation(getX(), getY());
+    setLocation(getX() + 1, getY());
   }
 
   public void render(Graphics g) {
