@@ -11,11 +11,11 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 
 public class GameOverState extends CWState {
-  private Logger logger = Logger.getLogger(GameOverState.class);
-  List<TextBox> table = new ArrayList<TextBox>();
+  private static final Logger logger = Logger.getLogger(GameOverState.class);
+  private final Collection<TextBox> table = new ArrayList<TextBox>();
 
   public void init(GameContainer gameContainer, StateBasedGame stateBasedGame) throws SlickException {
   }
@@ -64,6 +64,13 @@ public class GameOverState extends CWState {
   }
 
   public void update(GameContainer container, int delta) throws SlickException {
+  }
+
+  @Override
+  public void keyPressed(int key, char c) {
+    stateSession.clear();
+    stateChanger.clearPreviousStatesHistory();
+    changeToState("MAIN_MENU");
   }
 
   public int getID() {

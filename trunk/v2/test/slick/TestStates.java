@@ -4,7 +4,6 @@ import com.customwars.client.App;
 import com.customwars.client.Config;
 import com.customwars.client.SFX;
 import com.customwars.client.io.ResourceManager;
-import com.customwars.client.model.game.Game;
 import com.customwars.client.tools.StringUtil;
 import com.customwars.client.ui.GUI;
 import com.customwars.client.ui.slick.CWStateBasedGame;
@@ -30,7 +29,6 @@ public class TestStates extends CWStateBasedGame {
   public void initStatesList() {
     buildStateList();
     loadResources();
-    initTestMode();
   }
 
   private void buildStateList() {
@@ -46,13 +44,6 @@ public class TestStates extends CWStateBasedGame {
 
   private void loadResources() {
     resources.loadAll();
-  }
-
-  private void initTestMode() {
-    logger.info("Init debug Mode");
-    Game game = HardCodedGame.getGame();
-    stateSession.game = game;
-    stateSession.map = game.getMap();
   }
 
   @Override

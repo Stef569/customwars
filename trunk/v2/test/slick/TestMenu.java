@@ -1,5 +1,6 @@
 package slick;
 
+import com.customwars.client.model.game.Game;
 import com.customwars.client.ui.MenuItem;
 import com.customwars.client.ui.PopupMenu;
 import com.customwars.client.ui.state.CWState;
@@ -37,10 +38,10 @@ public class TestMenu extends CWState implements ComponentListener {
 
     testmenu = new PopupMenu(container);
     testmenu.addItems(
-            new MenuItem(mapOption, container),
-            new MenuItem(keyInputOption, container),
-            new MenuItem(gameOption, "", container),
-            new MenuItem(endTurn, container));
+      new MenuItem(mapOption, container),
+      new MenuItem(keyInputOption, container),
+      new MenuItem(gameOption, "", container),
+      new MenuItem(endTurn, container));
 
     testmenu.setLocation(220, 50);
     testmenu.setMenuTickSound(new Sound("testData/menutick.wav"));
@@ -98,12 +99,19 @@ public class TestMenu extends CWState implements ComponentListener {
         changeToState("keymenu");
         break;
       case 2:
+        loadHardCodedMap();
         changeToState("IN_GAME");
         break;
       case 3:
         changeToState("MAP_EDITOR");
         break;
     }
+  }
+
+  private void loadHardCodedMap() {
+    Game game = HardCodedGame.getGame();
+    stateSession.game = game;
+    stateSession.map = game.getMap();
   }
 
   public int getID() {

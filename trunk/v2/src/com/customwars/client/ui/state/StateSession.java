@@ -14,4 +14,10 @@ public class StateSession {
   public Game game;
   public Map<Tile> map;
   public Statistics stats;
+
+  public void clear() {
+    game = null;
+    map = null;
+    stats = null;
+  }
 }
