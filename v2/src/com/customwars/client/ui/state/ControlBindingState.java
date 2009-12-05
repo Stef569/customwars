@@ -117,6 +117,6 @@ public class ControlBindingState extends CWState {
   }
 
   public int getID() {
-    return 5;
+    return 31;
   }
 }

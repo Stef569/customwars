@@ -20,6 +20,7 @@ import org.newdawn.slick.state.StateBasedGame;
  * @author Crecen
  */
 public class TestMenu extends CWState implements ComponentListener {
+
   private Music backgroundMusic;
   private Image image;
   private PopupMenu testmenu;
@@ -36,11 +37,10 @@ public class TestMenu extends CWState implements ComponentListener {
 
     testmenu = new PopupMenu(container);
     testmenu.addItems(
-      new MenuItem(mapOption, container),
-      new MenuItem(keyInputOption, container),
-      new MenuItem(gameOption, "", container),
-      new MenuItem(endTurn, container)
-    );
+            new MenuItem(mapOption, container),
+            new MenuItem(keyInputOption, container),
+            new MenuItem(gameOption, "", container),
+            new MenuItem(endTurn, container));
 
     testmenu.setLocation(220, 50);
     testmenu.setMenuTickSound(new Sound("testData/menutick.wav"));
@@ -88,10 +88,6 @@ public class TestMenu extends CWState implements ComponentListener {
     backgroundMusic.stop();
   }
 
-  public int getID() {
-    return 0;
-  }
-
   public void componentActivated(AbstractComponent source) {
     PopupMenu popupMenu = (PopupMenu) source;
     switch (popupMenu.getCurrentItem()) {
@@ -108,5 +104,9 @@ public class TestMenu extends CWState implements ComponentListener {
         changeToState("MAP_EDITOR");
         break;
     }
+  }
+
+  public int getID() {
+    return 100;
   }
 }

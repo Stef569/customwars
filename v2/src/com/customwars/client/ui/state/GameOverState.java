@@ -67,6 +67,6 @@ public class GameOverState extends CWState {
   }
 
   public int getID() {
-    return 10;
+    return 16;
   }
 }
