@@ -58,7 +58,13 @@ public class SinglePlayerMenuState extends CWState implements ComponentListener 
 
   }
 
+  @Override
   public void controlPressed(CWCommand command, CWInput cwInput) {
+    if (command == CWInput.CANCEL) {
+      changeToPreviousState();
+      return;
+    }
+
     mainMenu.controlPressed(command);
   }
 
@@ -69,7 +75,7 @@ public class SinglePlayerMenuState extends CWState implements ComponentListener 
         changeToState("MAP_EDITOR");
         break;
       case 1:
-        changeToState("MAIN_MENU");
+        changeToPreviousState();
         break;
     }
   }
