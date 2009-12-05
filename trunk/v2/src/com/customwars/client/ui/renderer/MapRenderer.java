@@ -13,7 +13,7 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 
-import java.util.List;
+import java.util.Collection;
 
 /**
  * A Map has 2 layers that need to be rendered
@@ -187,7 +187,7 @@ public class MapRenderer implements Renderable {
     return (Tile) spriteManager.getCursorLocation();
   }
 
-  public List<Location> getCursorEffectRange() {
+  public int getCursorEffectRange() {
     return spriteManager.getCursorEffectRange();
   }
 
@@ -199,19 +199,19 @@ public class MapRenderer implements Renderable {
     effectsRenderer.showArrows(showArrows);
   }
 
-  public void setMoveZone(List<Location> moveZone) {
+  public void setMoveZone(Collection<Location> moveZone) {
     effectsRenderer.setMoveZone(moveZone);
   }
 
-  public void setDropLocations(List<Location> dropLocations, Location transportLocation) {
+  public void setDropLocations(Collection<Tile> dropLocations, Location transportLocation) {
     effectsRenderer.setDropLocations(dropLocations, transportLocation);
   }
 
-  public void setExplosionArea(List<Location> explosionArea) {
+  public void setExplosionArea(Collection<Location> explosionArea) {
     effectsRenderer.setExplosionArea(explosionArea);
   }
 
-  public void setAttackZone(List<Location> attackZone) {
+  public void setAttackZone(Collection<Location> attackZone) {
     effectsRenderer.setAttackZone(attackZone);
   }
 

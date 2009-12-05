@@ -123,12 +123,12 @@ public class ActionFactory {
     return endTurnAction;
   }
 
-  public static CWAction buildLaunchRocketAction(Unit unit, City city, Tile to) {
+  public static CWAction buildLaunchRocketAction(Unit unit, City city, Tile to, Tile rocketDestination) {
     ActionBag launchRocketAction = new ActionBag("Launch Rocket");
     launchRocketAction.add(new InitAction());
     launchRocketAction.add(new MoveAnimatedAction(unit.getLocation(), to));
     launchRocketAction.add(new WaitAction(unit));
-    launchRocketAction.add(new LaunchRocketAction(city, unit));
+    launchRocketAction.add(new LaunchRocketAction(city, unit, rocketDestination));
     launchRocketAction.add(new ClearInGameStateAction());
     return launchRocketAction;
   }
