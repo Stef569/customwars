@@ -78,6 +78,6 @@ public class TestMapParser extends CWState {
   }
 
   public int getID() {
-    return 6;
+    return 102;
   }
 }

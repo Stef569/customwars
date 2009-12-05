@@ -323,6 +323,6 @@ public class InGameState extends CWState implements PropertyChangeListener {
 
   @Override
   public int getID() {
-    return 3;
+    return 14;
   }
 }

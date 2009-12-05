@@ -76,6 +76,6 @@ public class SinglePlayerMenuState extends CWState implements ComponentListener 
 
   @Override
   public int getID() {
-    return 6;
+    return 10;
   }
 }

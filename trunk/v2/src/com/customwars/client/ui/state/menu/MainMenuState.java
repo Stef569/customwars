@@ -85,7 +85,7 @@ public class MainMenuState extends CWState implements ComponentListener {
 
   @Override
   public int getID() {
-    return 2;
+    return 1;
   }
 }
 

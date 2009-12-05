@@ -179,6 +179,6 @@ public class TestMapRenderer extends CWState {
   }
 
   public int getID() {
-    return 1;
+    return 101;
   }
 }

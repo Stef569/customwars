@@ -77,7 +77,7 @@ public class OptionMenuState extends CWState implements ComponentListener {
 
   @Override
   public int getID() {
-    return 7;
+    return 30;
   }
 }
 
