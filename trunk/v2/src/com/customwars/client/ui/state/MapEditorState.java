@@ -84,6 +84,9 @@ public class MapEditorState extends CWState {
       case OPEN:
         openMap();
         break;
+      case NEW:
+        createNewMap();
+        break;
       default:
         if (command.isMoveCommand()) {
           moveCursor(command);
@@ -113,6 +116,30 @@ public class MapEditorState extends CWState {
     cwInput.setActive(true);
   }
 
+  public void handleSaveMapDialogInput(int eventType, Dialog dialog) {
+    if (eventType == JOptionPane.OK_OPTION) {
+      String mapName = dialog.getFieldValue("map name");
+      String mapDescription = dialog.getFieldValue("map description");
+      String author = dialog.getFieldValue("author");
+
+      try {
+        mapEditorController.saveMap(mapName, mapDescription, author);
+        GUI.showdialog(
+          String.format("%s your map '%s'\nhas been saved to %s", author, mapName, App.get("home.maps.dir")),
+          "Saved"
+        );
+      } catch (IOException e) {
+        logger.error(e);
+        GUI.showExceptionDialog(
+          String.format("Could not save the map '%s'", mapName), e,
+          "Error while saving"
+        );
+      } catch (Exception e) {
+        logger.error(e);
+      }
+    }
+  }
+
   private void openMap() {
     cwInput.setActive(false);
     JFileChooser fileChooser = new JFileChooser(App.get("home.maps.dir"));
@@ -139,23 +166,49 @@ public class MapEditorState extends CWState {
     }
   }
 
-  public void handleSaveMapDialogInput(int eventType, Dialog dialog) {
+  private void createNewMap() {
+    cwInput.setActive(false);
+    Dialog dialog = new Dialog("New Map");
+    dialog.addTextField("Cols");
+    dialog.addTextField("Rows");
+
+    int eventType = dialog.show();
+    handleNewMapDialogInput(eventType, dialog);
+    cwInput.setActive(true);
+  }
+
+  private void handleNewMapDialogInput(int eventType, Dialog dialog) {
     if (eventType == JOptionPane.OK_OPTION) {
-      String mapName = dialog.getFieldValue("map name");
-      String mapDescription = dialog.getFieldValue("map description");
-      String author = dialog.getFieldValue("author");
+      String colsVal = dialog.getFieldValue("cols");
+      String rowsVal = dialog.getFieldValue("rows");
+      String errTitle = "Error while creating new map";
 
       try {
-        mapEditorController.saveMap(mapName, mapDescription, author);
-        GUI.showdialog(
-          String.format("%s your map '%s'\nhas been saved to %s", author, mapName, App.get("home.maps.dir")),
-          "Saved"
-        );
-      } catch (IOException e) {
+        int cols = Integer.parseInt(colsVal);
+        int rows = Integer.parseInt(rowsVal);
+
+        if (cols <= 1) {
+          GUI.showErrDialog(
+            cols + " is too small, please increase the cols value(>1)",
+            errTitle
+          );
+          return;
+        }
+
+        if (rows <= 1) {
+          GUI.showErrDialog(
+            rows + " is too small, please increase the rows value(>1)",
+            errTitle
+          );
+          return;
+        }
+
+        mapEditorController.createEmptyMap(cols, rows);
+      } catch (NumberFormatException e) {
         logger.error(e);
         GUI.showExceptionDialog(
-          String.format("Could not save the map '%s'", mapName), e,
-          "Error while saving"
+          "Please enter a numeric value", e,
+          errTitle
         );
       } catch (Exception e) {
         logger.error(e);

@@ -40,6 +40,7 @@ public class CWInput extends InputProvider {
   public static final Command TOGGLE_EVENT_VIEWER = new CWCommand(CommandEnum.TOGGLE_EVENT_VIEWER);
   public static final Command SAVE = new CWCommand(CommandEnum.SAVE);
   public static final Command OPEN = new CWCommand(CommandEnum.OPEN);
+  public static final Command NEW = new CWCommand(CommandEnum.NEW);
 
   private final Input input;
   private final List<Command> commands = buildCommandList();
