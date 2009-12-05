@@ -56,6 +56,7 @@ public class ControlBindingState extends CWState {
     InputField inputField = new InputField(container, x, y, INPUT_FIELD_WIDTH, FIELD_HEIGHT, command, cwInput);
     inputField.setBindingLimit(10);
     inputField.initDisplayText();
+    inputField.setAcceptingInput(false);
     return inputField;
   }
 
