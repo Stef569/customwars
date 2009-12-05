@@ -10,27 +10,29 @@ import com.customwars.client.model.map.Tile;
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Graphics;
 
+import java.util.Collection;
 import java.util.List;
 
 public class MapEffectsRenderer {
+  // Control
   private boolean renderArrows = true;
-  private MapRenderer mapRenderer;
 
   // Data
-  private Map<Tile> map;
-  private int tileSize;
+  private final Map<Tile> map;
+  private final int tileSize;
   private Unit activeUnit;
-  private List<Location> explosionArea;
-  private List<Location> dropLocations;
+  private Collection<Location> explosionArea;
+  private Collection<Tile> dropLocations;
   private Location transportLocation;
-  private List<Location> moveZone;
-  private List<Location> attackZone;
+  private Collection<Location> moveZone;
+  private Collection<Location> attackZone;
 
   // View
+  private final MapRenderer mapRenderer;
   private Animation explosionAnim;
   private Animation moveZoneAnim;
   private Animation attackZoneAnim;
-  public static ImageStrip arrowImages;
+  private ImageStrip arrowImages;
 
   public MapEffectsRenderer(MapRenderer mapRenderer, Map<Tile> map) {
     this.mapRenderer = mapRenderer;
@@ -121,7 +123,7 @@ public class MapEffectsRenderer {
    *
    * nextLocation starts at the unit location and is set to the next location in the path in each loop
    */
-  public void renderArrowPath(Graphics g, List<Direction> directionPath) {
+  private void renderArrowPath(Graphics g, List<Direction> directionPath) {
     Location nextLocation = activeUnit.getLocation();
 
     for (int i = 0; i < directionPath.size(); i++) {
@@ -167,14 +169,15 @@ public class MapEffectsRenderer {
     } else if (nextDirection == Direction.WEST) {
       if (previousDirection == Direction.NORTH)
         g.drawImage(arrowImages.getSubImage(3), x, y);
-      else if (previousDirection == Direction.SOUTH)
+      else if (previousDirection == Direction.SOUTH) {
         g.drawImage(arrowImages.getSubImage(4), x, y);
-      else
+      } else {
         g.drawImage(arrowImages.getSubImage(0), x, y);
+      }
     }
   }
 
-  public void renderArrowHead(Graphics g, Direction baseDirection, Location location) {
+  private void renderArrowHead(Graphics g, Direction baseDirection, Location location) {
     int x = location.getCol() * tileSize;
     int y = location.getRow() * tileSize;
 
@@ -200,42 +203,42 @@ public class MapEffectsRenderer {
     this.renderArrows = showArrow;
   }
 
+  /**
+   * Show the attack zone for the active unit
+   */
   public void showAttackZone() {
-    if (activeUnit != null)
-      this.attackZone = activeUnit.getAttackZone();
-    else
-      this.attackZone = null;
+    this.attackZone = activeUnit != null ? activeUnit.getAttackZone() : null;
   }
 
   public void removeAttackZone() {
     this.attackZone = null;
   }
 
+  /**
+   * Show the move zone for the active unit
+   */
   public void showMoveZone() {
-    if (activeUnit != null)
-      this.moveZone = activeUnit.getMoveZone();
-    else
-      this.moveZone = null;
+    this.moveZone = activeUnit != null ? activeUnit.getMoveZone() : null;
   }
 
   public void removeMoveZone() {
     this.moveZone = null;
   }
 
-  public void setMoveZone(List<Location> moveZone) {
+  public void setMoveZone(Collection<Location> moveZone) {
     this.moveZone = moveZone;
   }
 
-  public void setAttackZone(List<Location> attackZone) {
+  public void setAttackZone(Collection<Location> attackZone) {
     this.attackZone = attackZone;
   }
 
-  public void setDropLocations(List<Location> dropLocations, Location transportLocation) {
+  public void setDropLocations(Collection<Tile> dropLocations, Location transportLocation) {
     this.dropLocations = dropLocations;
     this.transportLocation = transportLocation;
   }
 
-  public void setExplosionArea(List<Location> explosionArea) {
+  public void setExplosionArea(Collection<Location> explosionArea) {
     if (explosionAnim.isStopped()) {
       explosionAnim.restart();
     }

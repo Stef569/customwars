@@ -24,7 +24,6 @@ import java.beans.PropertyChangeListener;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -399,7 +398,7 @@ public class SpriteManager implements PropertyChangeListener {
     }
   }
 
-  public List<Location> getCursorEffectRange() {
+  public int getCursorEffectRange() {
     return activeCursor.getEffectRange();
   }
 
@@ -426,8 +425,7 @@ public class SpriteManager implements PropertyChangeListener {
       if (sprites.next().getLocation() == newTileSprite.getLocation()) {
         sprites.remove();
         spriteRemoved = true;
-        Tile tile = (Tile) newTileSprite.getLocation();
-        logger.debug("Removing Sprite on same location " + tile.getLocationString());
+        logger.debug("Removing Sprite on same location " + newTileSprite.getLocation().getLocationString());
       }
     }
     return spriteRemoved;
@@ -553,8 +551,7 @@ public class SpriteManager implements PropertyChangeListener {
 
   private void addUnit(Unit newUnit) {
     if (newUnit != null && !unitSprites.containsKey(newUnit)) {
-      Tile t = (Tile) newUnit.getLocation();
-      logger.debug("Found 1 new Unit, Creating sprite @ " + t.getLocationString());
+      logger.debug("Found 1 new Unit, Creating sprite @ " + newUnit.getLocation().getLocationString());
       loadUnitSprite(newUnit);
     }
   }

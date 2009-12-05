@@ -10,10 +10,6 @@ import org.newdawn.slick.Animation;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 /**
  * TiledSprite extends Sprite adding a tile Location.
  * it will handle animations that don't fit to a tile by
@@ -139,14 +135,7 @@ public class TileSprite extends Sprite implements Locatable, Observable {
     return location;
   }
 
-  public List<Location> getEffectRange() {
-    List<Location> effectRange = new ArrayList<Location>();
-    // Effect range always includes the current location
-    effectRange.add(location);
-
-    for (Location tile : map.getSurroundingTiles(this.location, 1, this.effectRange)) {
-      effectRange.add(tile);
-    }
-    return Collections.unmodifiableList(effectRange);
+  public int getEffectRange() {
+    return effectRange;
   }
 }

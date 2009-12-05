@@ -42,7 +42,7 @@ public class HumanUnitController extends UnitController {
     } else if (inGameContext.isUnitAttackMode() && canAttack(selected)) {
       attackUnit(selected, to);
     } else if (inGameContext.isRocketLaunchMode()) {
-      launchRocket(to);
+      launchRocket(selected, to);
     } else if (inGameContext.isUnitFlareMode() && unit.getAttackZone().contains(selected)) {
       fireFlare(selected, to);
     } else if (unit.getMoveZone().contains(selected)) {
@@ -72,9 +72,9 @@ public class HumanUnitController extends UnitController {
     inGameContext.doAction(attackAction);
   }
 
-  private void launchRocket(Tile to) {
+  private void launchRocket(Tile selected, Tile to) {
     City city = map.getCityOn(inGameContext.getClick(2));
-    CWAction launchRocket = ActionFactory.buildLaunchRocketAction(unit, city, to);
+    CWAction launchRocket = ActionFactory.buildLaunchRocketAction(unit, city, to, selected);
     inGameContext.doAction(launchRocket);
   }
 
