@@ -14,6 +14,7 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * A Map has 2 layers that need to be rendered
@@ -196,14 +197,23 @@ public class MapRenderer implements Renderable {
   }
 
   public void showArrows(boolean showArrows) {
-    effectsRenderer.showArrows(showArrows);
+    effectsRenderer.setRenderArrowHead(showArrows);
+    effectsRenderer.setRenderArrowPath(showArrows);
+  }
+
+  public void showArrowPath(boolean showArrowPath) {
+    effectsRenderer.setRenderArrowPath(showArrowPath);
+  }
+
+  public void showArrowHead(boolean showArrowHead) {
+    effectsRenderer.setRenderArrowHead(showArrowHead);
   }
 
   public void setMoveZone(Collection<Location> moveZone) {
     effectsRenderer.setMoveZone(moveZone);
   }
 
-  public void setDropLocations(Collection<Tile> dropLocations, Location transportLocation) {
+  public void setDropLocations(List<Location> dropLocations, Location transportLocation) {
     effectsRenderer.setDropLocations(dropLocations, transportLocation);
   }
 
