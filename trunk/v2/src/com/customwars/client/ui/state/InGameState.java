@@ -194,15 +194,14 @@ public class InGameState extends CWState implements PropertyChangeListener {
         return;
       }
 
-      if (command.isMoveCommand()) {
-        moveCursor(command);
-      }
-
       if (inGameContext.isGUIMode()) {
         hud.controlPressed(command);
       } else {
-        Tile cursorLocation = gameRenderer.getCursorLocation();
+        if (command.isMoveCommand()) {
+          moveCursor(command);
+        }
 
+        Tile cursorLocation = gameRenderer.getCursorLocation();
         switch (command.getEnum()) {
           case SELECT:
             gameControl.handleA(cursorLocation);
