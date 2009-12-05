@@ -72,6 +72,10 @@ public abstract class CWState extends BasicGameState {
     stateChanger.changeTo(stateName);
   }
 
+  protected void changeToPreviousState() {
+    stateChanger.changeToPrevious();
+  }
+
   public void setStateChanger(StateChanger stateChanger) {
     CWState.stateChanger = stateChanger;
   }

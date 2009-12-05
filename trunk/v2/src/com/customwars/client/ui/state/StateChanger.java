@@ -1,11 +1,11 @@
 package com.customwars.client.ui.state;
 
+import com.customwars.client.tools.UCaseMap;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.state.transition.FadeInTransition;
 
 import java.util.Deque;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
@@ -18,25 +18,24 @@ import java.util.Map;
  * This allows to go back 1 state, clearPreviousStates removes all stored stateID's from the previousStates queue.
  */
 public class StateChanger {
-  private static final int PREVIOUS_STATE_LIMIT = 20;
-  private StateBasedGame stategame;
-  private Deque<Integer> previousStates;
-  private Map<String, Integer> states;
+  private static final int PREVIOUS_STATE_LIMIT = 10;
+  private final StateBasedGame stategame;
+  private final Deque<Integer> previousStates;
+  private final Map<String, Integer> states;
 
   public StateChanger(StateBasedGame game) {
     this.stategame = game;
-    this.states = new HashMap<String, Integer>();
+    this.states = new UCaseMap<Integer>();
     this.previousStates = new LinkedList<Integer>();
   }
 
   public void addState(String stateName, int stateID) {
     if (stateName != null) {
-      String key = stateName.toUpperCase();
-      states.put(key, stateID);
+      states.put(stateName, stateID);
     }
   }
 
-  public void clearPreviousStates() {
+  public void clearPreviousStatesHistory() {
     previousStates.clear();
   }
 
@@ -45,19 +44,22 @@ public class StateChanger {
    *
    * @param stateName case insensitive state name
    * @throws IllegalArgumentException thrown when a stateName is not mapped to a stateID
-   * or when the stateID is not within state bounds(>0 <states.size)
+   *                                  or when the stateID is not within state bounds(>0 <states.size)
    */
   public void changeTo(String stateName) {
-    if (stateName != null) {
-      gotoState(stateName.toUpperCase());
+    if (states.containsKey(stateName)) {
+      int stateID = states.get(stateName);
+      gotoState(stateID);
+    } else {
+      throw new IllegalArgumentException(
+        "Attention: " + stateName + " does not exist!!! states:" + states.keySet());
     }
   }
 
   public void changeToPrevious() {
-    if (!previousStates.isEmpty()) {
-      int lastStateID = previousStates.removeLast();
-      gotoState(lastStateID);
-    }
+    int currentStateID = previousStates.removeLast();
+    int previousStateID = previousStates.removeLast();
+    gotoState(previousStateID);
   }
 
   /**
@@ -73,24 +75,20 @@ public class StateChanger {
     }
   }
 
-  private void gotoState(String stateName) {
-    if (states.containsKey(stateName)) {
-      int stateID = states.get(stateName);
-      gotoState(stateID);
+  private void gotoState(int stateID) {
+    if (stateID >= 0) {
+      stategame.enterState(stateID, null, new FadeInTransition(Color.black, 250));
+      storeStateID(stateID);
     } else {
       throw new IllegalArgumentException(
-              "Attention: " + stateName + " does not exist!!! states:" + states.keySet());
+        "StateID " + stateID + " is not within state bounds >=0");
     }
   }
 
-  public void gotoState(int stateID) throws IllegalArgumentException {
-    if (stateID >= 0) {
-      stategame.enterState(stateID, null, new FadeInTransition(Color.black, 250));
-      if (previousStates.size() < PREVIOUS_STATE_LIMIT)
-        previousStates.add(stateID);
-    } else {
-      throw new IllegalArgumentException(
-              "StateID " + stateID + " is not within state bounds >=0");
+  private void storeStateID(int stateID) {
+    if (previousStates.size() > PREVIOUS_STATE_LIMIT) {
+      previousStates.removeFirst();
     }
+    previousStates.add(stateID);
   }
 }
