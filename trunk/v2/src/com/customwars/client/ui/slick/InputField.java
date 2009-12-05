@@ -39,26 +39,24 @@ public class InputField extends TextField {
    * as a ',' separated list
    */
   public void initDisplayText() {
-    String controlsAsText = getControlsAsText(command, bindingLimit);
+    String controlsAsText = getControlsAsText();
     setText(controlsAsText);
   }
 
-  private String getControlsAsText(Command command, int bindingLimit) {
+  private String getControlsAsText() {
     StringBuilder controlsBuilder = new StringBuilder(bindingLimit * 2);
     List<String> controlsAsText = cwInput.getControlsAsText(command);
 
-    if (controlsAsText.size() > bindingLimit) {
-      for (int i = 0; i < controlsAsText.size(); i++) {
-        if (i < bindingLimit) {
-          controlsBuilder.append(controlsAsText.get(i));
-          controlsBuilder.append(", ");
-        } else {
-          controlsAsText.remove(i);
-        }
+    for (int i = 0; i < controlsAsText.size() && controlsAsText.size() < bindingLimit; i++) {
+      if (i < bindingLimit) {
+        controlsBuilder.append(controlsAsText.get(i));
+        controlsBuilder.append(", ");
+      } else {
+        controlsAsText.remove(i);
       }
     }
 
-    // Remove , and space
+    // Remove ', '
     return StringUtil.removeCharsFromEnd(controlsBuilder.toString(), 2);
   }
 
