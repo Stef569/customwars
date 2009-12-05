@@ -34,7 +34,7 @@ import java.util.Set;
  * Each unique animation is stored and updated, if we would update each sprite animation
  * there would be a small interval between other sprite animations.
  *
- * It listens for changes from the model and updates the graphical representation(the Sprite)
+ * This class listens for changes from the model and updates the graphical representations
  *
  * For example when a city is captured a new Player is set.
  * This class receives a PropertyChangeEvent and recolors the city to the new owner color.
@@ -54,7 +54,7 @@ public class SpriteManager implements PropertyChangeListener {
 
   private TileSprite activeCursor;
   private Color neutralColor = Color.GRAY;
-  private ImageStripFont numbers;
+  private ImageStripFont numbersFont;
   private boolean renderSprites = true;
 
   public SpriteManager(TileMap<Tile> map) {
@@ -69,7 +69,7 @@ public class SpriteManager implements PropertyChangeListener {
     this.resources = resources;
     unitDecorationStrip = resources.getSlickImgStrip("unitDecoration");
     ImageStrip numberStrip = resources.getSlickImgStrip("numbers");
-    numbers = new ImageStripFont(numberStrip, '1');
+    numbersFont = new ImageStripFont(numberStrip, '1');
   }
 
   /**
@@ -144,7 +144,6 @@ public class SpriteManager implements PropertyChangeListener {
     if (map != null) {
       uniqueAnimations.clear();
       initCursors();
-      initColors();
       initMapSprites();
     }
   }
@@ -161,29 +160,7 @@ public class SpriteManager implements PropertyChangeListener {
     }
 
     if (activeCursor != null)
-      uniqueAnimations.add(activeCursor.anim);
-  }
-
-  /**
-   * Search for units and cities,
-   * get their Color, recoloring might take a while.
-   */
-  private void initColors() {
-    Set<Color> colorsInMap = new HashSet<Color>(6);
-    for (Tile t : map.getAllTiles()) {
-      Locatable locatable = t.getLastLocatable();
-      Terrain terrain = t.getTerrain();
-
-      if (locatable instanceof Unit) {
-        Unit unit = (Unit) locatable;
-        colorsInMap.add(unit.getOwner().getColor());
-      }
-
-      if (terrain instanceof City) {
-        City city = (City) terrain;
-        colorsInMap.add(city.getOwner().getColor());
-      }
-    }
+      addUniqueSprite(activeCursor);
   }
 
   /**
@@ -213,11 +190,12 @@ public class SpriteManager implements PropertyChangeListener {
 
   /**
    * Make a Graphical representation(UnitSprite) for the unit.
-   * Preconditions:
    * The Unit should:
    * be owned by a Player to get the color
    * have a location to set the sprite position
    * have an id, this is used to retrieve the image
+   *
+   * @param unit Unit to make a sprite for
    */
   public void loadUnitSprite(Unit unit) {
     Color unitColor = unit.getOwner().getColor();
@@ -236,26 +214,24 @@ public class SpriteManager implements PropertyChangeListener {
   private UnitSprite createUnitSprite(Unit unit) {
     UnitSprite unitSprite;
 
-    if (unitSprites.containsKey(unit)) {
-      throw new IllegalArgumentException("Unit " + unit + " is already cached...");
-    } else {
-      Tile t = (Tile) unit.getLocation();
+    if (!unitSprites.containsKey(unit)) {
       Animation animDying = resources.getAnim("EXPLOSION_" + unit.getArmyBranch());
       animDying.stopAt(animDying.getFrameCount() - 1);
-      unitSprite = new UnitSprite(t, map, unit, unitDecorationStrip);
+      unitSprite = new UnitSprite(map, unit, unitDecorationStrip);
       unitSprite.setAnimDying(animDying);
-      unitSprite.setFont(numbers);
-      unitSprite.setVisible(!t.isFogged());
+      unitSprite.setFont(numbersFont);
+    } else {
+      throw new IllegalArgumentException("Unit " + unit + " is already cached.");
     }
     return unitSprite;
   }
 
-  private void recolorUnitSprite(UnitSprite sprite, Color c, Unit unit) {
-    Animation animLeft = resources.getUnitAnim(unit, c, AnimLib.ANIM_LEFT);
-    Animation animRight = resources.getUnitAnim(unit, c, AnimLib.ANIM_RIGHT);
-    Animation animUp = resources.getUnitAnim(unit, c, AnimLib.ANIM_UP);
-    Animation animDown = resources.getUnitAnim(unit, c, AnimLib.ANIM_DOWN);
-    Animation animInactive = resources.getUnitAnim(unit, c, AnimLib.ANIM_INACTIVE);
+  private void recolorUnitSprite(UnitSprite sprite, Color color, Unit unit) {
+    Animation animLeft = resources.getUnitAnim(unit, color, AnimLib.ANIM_LEFT);
+    Animation animRight = resources.getUnitAnim(unit, color, AnimLib.ANIM_RIGHT);
+    Animation animUp = resources.getUnitAnim(unit, color, AnimLib.ANIM_UP);
+    Animation animDown = resources.getUnitAnim(unit, color, AnimLib.ANIM_DOWN);
+    Animation animInactive = resources.getUnitAnim(unit, color, AnimLib.ANIM_INACTIVE);
     sprite.setAnimLeft(animLeft);
     sprite.setAnimRight(animRight);
     sprite.setAnimUp(animUp);
@@ -267,7 +243,7 @@ public class SpriteManager implements PropertyChangeListener {
   private void addUnitSprite(Unit unit, UnitSprite unitSprite) {
     checkTileSprites(unitSprite, unitSprites.values().iterator());
     unitSprites.put(unit, unitSprite);
-    uniqueAnimations.add(unitSprite.anim);
+    addUniqueSprite(unitSprite);
   }
 
   /**
@@ -276,6 +252,8 @@ public class SpriteManager implements PropertyChangeListener {
    * be owned by a Player to get the color
    * have a location to set the sprite position
    * have an id, this is used to retrieve the image
+   *
+   * @param city City to create a sprite for
    */
   private void loadCitySprite(City city) {
     Color cityColor = city.getOwner().getColor();
@@ -290,10 +268,10 @@ public class SpriteManager implements PropertyChangeListener {
   private CitySprite createCitySprite(City city) {
     CitySprite citySprite;
 
-    if (citySprites.containsKey(city)) {
-      throw new IllegalArgumentException("City " + city + "  is already cached...");
+    if (!citySprites.containsKey(city)) {
+      citySprite = new CitySprite(map, city);
     } else {
-      citySprite = new CitySprite(city.getLocation(), map, city);
+      throw new IllegalArgumentException("City " + city + "  is already cached.");
     }
     return citySprite;
   }
@@ -301,19 +279,19 @@ public class SpriteManager implements PropertyChangeListener {
   /**
    * Launch platforms are always neutral and don't animate
    */
-  private void recolorCitySprite(City city, CitySprite sprite, Color c, int cityID) {
-    Animation animActive = getActiveCityAnim(city, c, cityID);
-    Animation animInActive = getInActiveCityAnim(city, c, cityID);
-    Animation animFogged = getFoggedCityAnim(city, sprite.isHQ(), c, cityID);
+  private void recolorCitySprite(City city, CitySprite sprite, Color color, int cityID) {
+    Animation animActive = getActiveCityAnim(city, color, cityID);
+    Animation animInActive = getInActiveCityAnim(city, cityID);
+    Animation animFogged = getFoggedCityAnim(city, sprite.isHQ(), color, cityID);
     sprite.setAnimActive(animActive);
     sprite.setAnimInActive(animInActive);
     sprite.setAnimFogged(animFogged);
     sprite.updateAnim();
   }
 
-  private Animation getInActiveCityAnim(City city, Color c, int cityID) {
+  private Animation getInActiveCityAnim(City city, int cityID) {
     if (city.canLaunchRocket()) {
-      // Grab the last Image of the city silo image row in the city spritesheet.
+      // Grab the last Image of the missle silo image row in the city spritesheet.
       SpriteSheet citySpriteSheet = resources.getCitySpriteSheet(neutralColor);
       Image lastImg = citySpriteSheet.getSubImage(citySpriteSheet.getHorizontalCount() - 1, cityID);
       Image[] images = new Image[]{lastImg};
@@ -323,7 +301,7 @@ public class SpriteManager implements PropertyChangeListener {
     }
   }
 
-  private Animation getActiveCityAnim(City city, Color c, int cityID) {
+  private Animation getActiveCityAnim(City city, Color color, int cityID) {
     if (city.canLaunchRocket()) {
       // Grab the first Image of the city silo image row in the city spritesheet.
       SpriteSheet citySpriteSheet = resources.getCitySpriteSheet(neutralColor);
@@ -331,21 +309,21 @@ public class SpriteManager implements PropertyChangeListener {
       Image[] images = new Image[]{firstImg};
       return new Animation(images, 1);
     }
-    return resources.getCityAnim(cityID, c);
+    return resources.getCityAnim(cityID, color);
   }
 
   /**
    * The HQ owner color is always visible, even in fow
    * all other cities are neutral.
    */
-  private Animation getFoggedCityAnim(City city, boolean hq, Color c, int cityID) {
-    Animation animFogged;
+  private Animation getFoggedCityAnim(City city, boolean hq, Color color, int cityID) {
     if (city.canLaunchRocket()) {
-      c = neutralColor;
+      color = neutralColor;
     }
 
+    Animation animFogged;
     if (hq) {
-      animFogged = resources.getCityAnim(cityID, c, AnimLib.ANIM_FOGGED);
+      animFogged = resources.getCityAnim(cityID, color, AnimLib.ANIM_FOGGED);
     } else {
       animFogged = resources.getCityAnim(cityID, neutralColor, AnimLib.ANIM_FOGGED);
     }
@@ -355,7 +333,7 @@ public class SpriteManager implements PropertyChangeListener {
   private void addCitySprite(City city, CitySprite citySprite) {
     checkTileSprites(citySprite, citySprites.values().iterator());
     citySprites.put(city, citySprite);
-    uniqueAnimations.add(citySprite.anim);
+    addUniqueSprite(citySprite);
   }
 
   /**
@@ -370,11 +348,16 @@ public class SpriteManager implements PropertyChangeListener {
       }
       TileSprite cursor = cursorSprites.get(cursorName.toUpperCase());
       cursor.activate();
-      uniqueAnimations.add(cursor.anim);
+      addUniqueSprite(cursor);
       this.activeCursor = cursor;
     } else {
       logger.warn(cursorName + " is not available, cursors:" + cursorSprites.keySet());
     }
+  }
+
+  private void addUniqueSprite(Sprite sprite) {
+    assert sprite.anim != null : "Sprite can not have null anim";
+    uniqueAnimations.add(sprite.anim);
   }
 
   public void setRenderSprites(boolean renderSprites) {
