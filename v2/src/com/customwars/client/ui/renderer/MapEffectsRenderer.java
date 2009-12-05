@@ -15,14 +15,15 @@ import java.util.List;
 
 public class MapEffectsRenderer {
   // Control
-  private boolean renderArrows = true;
+  private boolean renderArrowPath = true;
+  private boolean renderArrowHead = true;
 
   // Data
   private final Map<Tile> map;
   private final int tileSize;
   private Unit activeUnit;
   private Collection<Location> explosionArea;
-  private Collection<Tile> dropLocations;
+  private Collection<Location> dropLocations;
   private Location transportLocation;
   private Collection<Location> moveZone;
   private Collection<Location> attackZone;
@@ -78,7 +79,7 @@ public class MapEffectsRenderer {
       }
     }
 
-    if (renderArrows && activeUnit != null) {
+    if (renderArrowPath && activeUnit != null) {
       renderArrowPath(g);
     }
   }
@@ -133,7 +134,7 @@ public class MapEffectsRenderer {
       // Get the next location to render the arrow on.
       nextLocation = map.getRelativeTile(nextLocation, currentDirection);
 
-      if (i == directionPath.size() - 1) {
+      if (renderArrowHead && i == directionPath.size() - 1) {
         renderArrowHead(g, currentDirection, nextLocation);
       } else {
         renderArrow(g, currentDirection, nextDirection, nextLocation);
@@ -199,10 +200,6 @@ public class MapEffectsRenderer {
     removeAttackZone();
   }
 
-  public void showArrows(boolean showArrow) {
-    this.renderArrows = showArrow;
-  }
-
   /**
    * Show the attack zone for the active unit
    */
@@ -233,7 +230,7 @@ public class MapEffectsRenderer {
     this.attackZone = attackZone;
   }
 
-  public void setDropLocations(Collection<Tile> dropLocations, Location transportLocation) {
+  public void setDropLocations(List<Location> dropLocations, Location transportLocation) {
     this.dropLocations = dropLocations;
     this.transportLocation = transportLocation;
   }
@@ -245,15 +242,15 @@ public class MapEffectsRenderer {
     this.explosionArea = explosionArea;
   }
 
-  public void setRenderArrows(boolean renderArrows) {
-    this.renderArrows = renderArrows;
+  public void setRenderArrowPath(boolean renderArrowPath) {
+    this.renderArrowPath = renderArrowPath;
+  }
+
+  public void setRenderArrowHead(boolean renderArrowHead) {
+    this.renderArrowHead = renderArrowHead;
   }
 
   public void setActiveUnit(Unit activeUnit) {
     this.activeUnit = activeUnit;
-  }
-
-  public boolean isRenderingArrows() {
-    return renderArrows;
   }
 }

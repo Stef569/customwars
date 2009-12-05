@@ -1,6 +1,7 @@
 package com.customwars.client.controller;
 
 import com.customwars.client.model.gameobject.Unit;
+import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Tile;
 
 import java.util.Collections;
@@ -17,15 +18,15 @@ import java.util.List;
  * Unit u = queue.removeNextUnitToBeDropped ();
  */
 public class DropLocationsQueue {
-  private final LinkedList<Tile> dropLocations;
+  private final LinkedList<Location> dropLocations;
   private final LinkedList<Unit> unitsToBeDropped;
 
   public DropLocationsQueue() {
     unitsToBeDropped = new LinkedList<Unit>();
-    dropLocations = new LinkedList<Tile>();
+    dropLocations = new LinkedList<Location>();
   }
 
-  public void addDropLocation(Tile location, Unit unit) {
+  public void addDropLocation(Location location, Unit unit) {
     unitsToBeDropped.add(unit);
     dropLocations.add(location);
   }
@@ -43,7 +44,7 @@ public class DropLocationsQueue {
     unitsToBeDropped.clear();
   }
 
-  public Tile removeNextDropLocation() {
+  public Location removeNextDropLocation() {
     return dropLocations.removeFirst();
   }
 
@@ -53,5 +54,9 @@ public class DropLocationsQueue {
 
   public List<Unit> getUnitsToBeDropped() {
     return Collections.unmodifiableList(unitsToBeDropped);
+  }
+
+  public List<Location> getDropLocations() {
+    return Collections.unmodifiableList(dropLocations);
   }
 }
