@@ -269,7 +269,7 @@ public class ResourceManager {
   public void saveMap(Map<Tile> map, OutputStream out) throws IOException {
     mapParser.writeMap(map, out);
     String mapName = map.getMapName();
-    maps.put(mapName, map);
+    maps.put(mapName, new Map<Tile>(map));
   }
 
   public void addMap(String mapName, Map<Tile> map) {
