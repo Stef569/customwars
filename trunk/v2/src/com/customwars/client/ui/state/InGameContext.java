@@ -11,6 +11,7 @@ import com.customwars.client.io.ResourceManager;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Unit;
+import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.model.map.path.MoveTraverse;
 import com.customwars.client.ui.HUD;
@@ -294,7 +295,7 @@ public class InGameContext {
   }
 
   public Tile removeNextDropLocation() {
-    return dropQueue.removeNextDropLocation();
+    return (Tile) dropQueue.removeNextDropLocation();
   }
 
   public Unit removeNextUnitToBeDropped() {
@@ -303,6 +304,10 @@ public class InGameContext {
 
   public List<Unit> getUnitsToBeDropped() {
     return dropQueue.getUnitsToBeDropped();
+  }
+
+  public List<Location> getDropLocations() {
+    return dropQueue.getDropLocations();
   }
 
   public String toString() {

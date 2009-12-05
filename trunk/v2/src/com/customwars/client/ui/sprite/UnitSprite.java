@@ -29,7 +29,7 @@ public class UnitSprite extends TileSprite implements PropertyChangeListener {
   private static final int LOW_AMMO = 3;
   private static final int LOW_SUPPLIES = 4;
 
-  private ImageStrip decorations;
+  private final ImageStrip decorations;
   private Font font;
 
   private Animation animLeft;
@@ -39,19 +39,22 @@ public class UnitSprite extends TileSprite implements PropertyChangeListener {
   private Animation animInActive;
   private Animation animDying;
 
-  private Unit unit;
+  private final Unit unit;
   private boolean lowHp, lowAmmo, lowSupplies;
-  private boolean remove = false;
+  private boolean remove;
 
-  public UnitSprite(Tile tile, TileMap map, Unit unit, ImageStrip decorations) {
-    super(tile, map);
+  public UnitSprite(TileMap<Tile> map, Unit unit, ImageStrip decorations) {
+    super(unit.getLocation(), map);
     this.unit = unit;
     this.decorations = decorations;
     lowHp = unit.hasLowHp();
     lowAmmo = unit.hasLowAmmo();
     lowSupplies = unit.hasLowSupplies();
+
+    // Hide the unit when it is on a fogged location
+    Tile unitLocation = (Tile) unit.getLocation();
+    setVisible(!unitLocation.isFogged());
     addUnitListeners();
-    assert tile == unit.getLocation() : "Unitsprite should have same location as the unit";
   }
 
   private void addUnitListeners() {

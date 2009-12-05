@@ -10,15 +10,17 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 public class CitySprite extends TileSprite implements PropertyChangeListener {
-  private City city;
+  private final City city;
   private Animation animActive;
   private Animation animInActive;
   private Animation animFogged;
   private boolean renderFogged, renderActive = true;
 
-  public CitySprite(Location tile, TileMap map, City city) {
-    super(tile, map);
+  public CitySprite(TileMap<Tile> map, City city) {
+    super(city.getLocation(), map);
     this.city = city;
+    Tile cityLocation = (Tile) city.getLocation();
+    this.renderFogged = cityLocation.isFogged();
     city.addPropertyChangeListener(this);
   }
 
