@@ -3,6 +3,7 @@ package com.customwars.client.tools;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.CityFactory;
+import com.customwars.client.model.gameobject.Locatable;
 import com.customwars.client.model.gameobject.Terrain;
 import com.customwars.client.model.gameobject.TerrainFactory;
 import com.customwars.client.model.gameobject.Unit;
@@ -11,6 +12,8 @@ import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.model.map.TileMap;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -110,5 +113,19 @@ public class MapUtil {
   public static void addTerrainToMap(TileMap<Tile> map, int col, int row, int terrainID) {
     Terrain terrain = TerrainFactory.getTerrain(terrainID);
     map.getTile(col, row).setTerrain(terrain);
+  }
+
+  /**
+   * Return the locations of the locatables
+   *
+   * @param locatables the locatables to retrieve the locations from
+   * @return a list of locations of the locatables
+   */
+  public static List<Location> getLocationsFor(Collection<Locatable> locatables) {
+    List<Location> locations = new ArrayList<Location>();
+    for (Locatable locatable : locatables) {
+      locations.add(locatable.getLocation());
+    }
+    return locations;
   }
 }

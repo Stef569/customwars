@@ -515,6 +515,18 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
     firePropertyChange("fogofwar", oldVal, fogOfWarOn);
   }
 
+  public void setAuthor(String author) {
+    this.author = author;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
+  }
+
+  public void setMapName(String mapName) {
+    this.mapName = mapName;
+  }
+
   /**
    * @param location the location to retrieve a unit from
    * @return The last added unit from location
@@ -574,10 +586,9 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
       unitOnDropLocation.isHidden() || unitOnDropLocation == transporter;
   }
 
-  public boolean isFogOfWarOn() {
-    return fogOfWarOn;
-  }
-
+  /**
+   * @return Amount of human players in this map
+   */
   public int getNumPlayers() {
     return getUniquePlayers().size();
   }
@@ -602,28 +613,37 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
     return players;
   }
 
-  public String getMapName() {
-    return mapName;
+  /**
+   * Get all the units of the active player that have not performed an action.
+   *
+   * @return All active units in the map
+   */
+  public Collection<Unit> getActiveUnits() {
+    Collection<Unit> units = new ArrayList<Unit>();
+    for (Tile t : getAllTiles()) {
+      Unit unit = getUnitOn(t);
+
+      if (unit != null && unit.isActive()) {
+        units.add(unit);
+      }
+    }
+    return units;
   }
 
-  public void setMapName(String mapName) {
-    this.mapName = mapName;
+  public String getMapName() {
+    return mapName;
   }
 
   public String getAuthor() {
     return author;
   }
 
-  public void setAuthor(String author) {
-    this.author = author;
-  }
-
   public String getDescription() {
     return description;
   }
 
-  public void setDescription(String description) {
-    this.description = description;
+  public boolean isFogOfWarOn() {
+    return fogOfWarOn;
   }
 
   public void addListenerToAllTilesUnitsAndCities(PropertyChangeListener listener) {

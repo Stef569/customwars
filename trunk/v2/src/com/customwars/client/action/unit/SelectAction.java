@@ -41,6 +41,10 @@ public class SelectAction extends DirectAction {
     Locatable locatable = selectTile.getLastLocatable();
     selectUnit((Unit) locatable);
     SFX.playSound("select");
+
+    if (cursorControl.isTraversing()) {
+      cursorControl.stopCursorTraversal();
+    }
     context.setInputMode(InGameContext.INPUT_MODE.UNIT_SELECT);
   }
 
