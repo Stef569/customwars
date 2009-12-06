@@ -217,6 +217,10 @@ public class InGameState extends CWState implements PropertyChangeListener {
             break;
           case ZOOM_OUT:
             camera.zoomOut();
+            break;
+          case UNIT_CYCLE:
+            gameControl.startUnitCycle();
+            break;
         }
       }
     }

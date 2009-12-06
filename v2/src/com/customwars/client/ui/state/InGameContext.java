@@ -44,7 +44,8 @@ public class InGameContext {
     UNIT_ATTACK,    // Clicking on a unit will attack it
     UNIT_DROP,      // Clicking on empty space drops the unit
     LAUNCH_ROCKET,  // Clicking on a tile fires the rocket
-    UNIT_FLARE      // Clicking on a tile fires a flare
+    UNIT_FLARE,     // Clicking on a tile fires a flare
+    UNIT_CYCLE      // Start Iterating between units
   }
 
   private INPUT_MODE inputMode;
@@ -257,6 +258,10 @@ public class InGameContext {
 
   public boolean isUnitFlareMode() {
     return inputMode == INPUT_MODE.UNIT_FLARE;
+  }
+
+  public boolean isUnitCycleMode() {
+    return inputMode == INPUT_MODE.UNIT_CYCLE;
   }
 
   public void addUnitInTransport(Unit unitInTransport) {

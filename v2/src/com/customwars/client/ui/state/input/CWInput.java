@@ -41,6 +41,7 @@ public class CWInput extends InputProvider {
   public static final Command SAVE = new CWCommand(CommandEnum.SAVE);
   public static final Command OPEN = new CWCommand(CommandEnum.OPEN);
   public static final Command NEW = new CWCommand(CommandEnum.NEW);
+  public static final Command UNIT_CYCLE = new CWCommand(CommandEnum.UNIT_CYCLE);
 
   private final Input input;
   private final List<Command> commands = buildCommandList();
