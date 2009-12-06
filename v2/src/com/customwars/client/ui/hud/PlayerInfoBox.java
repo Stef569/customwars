@@ -7,7 +7,7 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.gui.GUIContext;
 
 public class PlayerInfoBox extends BasicComponent {
-  private Game game;
+  private final Game game;
 
   public PlayerInfoBox(GUIContext container, Game game) {
     super(container);
@@ -17,9 +17,11 @@ public class PlayerInfoBox extends BasicComponent {
   @Override
   public void renderimpl(GUIContext container, Graphics g) {
     if (game != null) {
-      g.drawString(App.translate("day") + ":" + game.getDay(), getX(), getY() + 10);
-      g.drawString(App.translate("player") + ":" + game.getActivePlayer().getName(), getX(), getY() + 20);
-      g.drawString(App.translate("money") + ":" + game.getActivePlayer().getBudget(), getX(), getY() + 30);
+      String day = App.translate("day") + ':' + game.getDay();
+      String player = App.translate("player") + ':' + game.getActivePlayer().getName();
+      String money = App.translate("money") + ':' + game.getActivePlayer().getBudget();
+
+      g.drawString("     " + day + ' ' + player + ' ' + money, getX(), getY());
     }
   }
 }
