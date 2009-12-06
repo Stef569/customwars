@@ -26,7 +26,7 @@ import java.beans.PropertyChangeListener;
  * Renders the game, The rendering is delegated to the following subComponents:
  * the map     ->  MapRenderer
  * game events ->  EventsRenderer
- * hud         ->  HUD(optional)
+ * pop up      ->  HUD
  *
  * The map is scrolled when the cursor is near the edge of the map {@link Scroller}
  */
@@ -34,9 +34,8 @@ public class GameRenderer implements Renderable, PropertyChangeListener {
   private static final Color DAMAGE_PERCENTAGE_BACKGROUND_COLOR = new Color(0, 0, 0, 0.4f);
 
   // Control
-  private boolean renderHUD = true, renderEvents = true;
+  private boolean renderEvents = true, renderAttackDamage;
   private final GameController gameControl;
-  private final Scroller scroller;
 
   // GUI
   private final MapRenderer mapRenderer;
@@ -44,6 +43,7 @@ public class GameRenderer implements Renderable, PropertyChangeListener {
   private final SpriteManager spriteManager;
   private final Camera2D camera;
   private final HUD hud;
+  private final Scroller scroller;
 
   // Data
   private final Game game;
@@ -53,7 +53,6 @@ public class GameRenderer implements Renderable, PropertyChangeListener {
   public GameRenderer(Game game, Camera2D camera, HUD hud, MoveTraverse moveTraverse) {
     this.game = game;
     this.camera = camera;
-    this.hud = hud;
 
     this.fight = new UnitFight();
     this.game.addPropertyChangeListener(this);
@@ -65,17 +64,16 @@ public class GameRenderer implements Renderable, PropertyChangeListener {
     this.mapRenderer = new MapRenderer(map, spriteManager);
     this.gameControl = new GameController(game, this, spriteManager);
 
-    if (hud != null) {
-      hud.setSpriteManager(spriteManager);
-      hud.setCamera(camera);
-      hud.setGame(game);
-    }
+    this.hud = hud;
+    hud.setSpriteManager(spriteManager);
+    hud.setCamera(camera);
+    hud.setGame(game);
   }
 
   public void loadResources(ResourceManager resources) {
     mapRenderer.loadResources(resources);
     eventsRenderer.loadResources(resources);
-    if (hud != null) hud.loadResources(resources);
+    hud.loadResources(resources);
   }
 
   public void update(int elapsedTime) {
@@ -88,16 +86,11 @@ public class GameRenderer implements Renderable, PropertyChangeListener {
 
   public void render(Graphics g) {
     g.scale(camera.getZoomLvl(), camera.getZoomLvl());
-
-    // Map moves upwards
     g.translate(-camera.getX(), -camera.getY());
     mapRenderer.render(g);
     if (renderEvents) eventsRenderer.render(g);
+    if (renderAttackDamage) renderAttackDamagePercentage(g);
     hud.renderPopup(g);
-
-    // other components move down
-    g.translate(camera.getX(), camera.getY());
-    if (renderHUD) hud.render(g);
     g.resetTransform();
   }
 
@@ -106,12 +99,12 @@ public class GameRenderer implements Renderable, PropertyChangeListener {
    *
    * @param g Graphics to render the dmg percentage to
    */
-  public void renderAttackDamagePercentage(Graphics g) {
+  private void renderAttackDamagePercentage(Graphics g) {
     Location cursorLocation = getCursorLocation();
     Unit attacker = game.getActiveUnit();
     Unit defender = map.getUnitOn(cursorLocation);
 
-    if (defender != null) {
+    if (attacker != null && defender != null) {
       fight.initFight(attacker, defender);
       int tileSize = map.getTileSize();
       int cursorX = cursorLocation.getCol() * tileSize + tileSize / 2;
@@ -161,6 +154,14 @@ public class GameRenderer implements Renderable, PropertyChangeListener {
       g.setColor(prevColor);
       g.drawString(dmgTxt, boxX + BOX_MARGIN, boxY + BOX_MARGIN);
     }
+  }
+
+  public void setRenderAttackDamage(boolean renderAttackDamage) {
+    this.renderAttackDamage = renderAttackDamage;
+  }
+
+  public void setRenderEvents(boolean renderEvents) {
+    this.renderEvents = renderEvents;
   }
 
   public Tile getCursorLocation() {

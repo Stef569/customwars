@@ -24,12 +24,17 @@ public class GUI {
   private static ModelEventScreen modelEventScreen;
   private static GUIContext guiContext;
   private static Camera2D camera;
+  private static boolean inited;
 
   public static void init(GUIContext guiContext, Camera2D camera2D) {
     GUI.guiContext = guiContext;
     GUI.camera = camera2D;
-    initConsole();
-    initEventScreen();
+
+    if (!inited) {
+      initConsole();
+      initEventScreen();
+      inited = true;
+    }
   }
 
   private static void initConsole() {
@@ -161,6 +166,10 @@ public class GUI {
     Point leftTop = new Point();
     int centerX = (containerWidth / 2) - (innerComponentWidth / 2);
     int centerY = (containerHeight / 2) - (innerComponentHeight / 2);
+
+    // Don't allow the center to go off the screen
+    if (centerX < 0) centerX = 0;
+    if (centerY < 0) centerY = 0;
     leftTop.setLocation(centerX, centerY);
     return leftTop;
   }

@@ -4,6 +4,7 @@ import com.customwars.client.model.Observable;
 import com.customwars.client.model.gameobject.Locatable;
 import org.apache.log4j.Logger;
 
+import java.awt.Dimension;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
@@ -559,6 +560,13 @@ public class TileMap<T extends Location> implements Observable {
    */
   public int getHeight() {
     return rows * tileSize;
+  }
+
+  /**
+   * @return The size in pixels
+   */
+  public Dimension getSize() {
+    return new Dimension(getWidth(), getHeight());
   }
 
   public T getRandomTile() {
