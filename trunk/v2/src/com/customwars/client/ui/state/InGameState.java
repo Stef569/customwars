@@ -31,6 +31,7 @@ import org.newdawn.slick.gui.GUIContext;
 import org.newdawn.slick.state.StateBasedGame;
 
 import java.awt.Dimension;
+import java.awt.Point;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
@@ -47,6 +48,7 @@ public class InGameState extends CWState implements PropertyChangeListener {
   private HUD hud;
   private Camera2D camera;
   private GameRenderer gameRenderer;
+  private Point center;
 
   // Control
   private GameController gameControl;
@@ -66,19 +68,24 @@ public class InGameState extends CWState implements PropertyChangeListener {
 
     if (!game.isStarted() && !game.isGameOver()) {
       game.startGame();
-      setGame(game, container);
+      initGame(game, container);
+      initGameContext(game, container);
       stateSession.stats = new Statistics(game);
     }
+    hud.moveOverTile(gameRenderer.getCursorLocation());
   }
 
-  private void setGame(Game game, GameContainer container) {
+  private void initGame(Game game, GameContainer container) {
     initGameListener(game);
     this.game = game;
     this.map = game.getMap();
     initCamera(map);
     GUI.init(container, camera);
+    center = GUI.getCenteredRenderPoint(map.getSize(), guiContext);
     initScriptObjects();
+  }
 
+  private void initGameContext(Game game, GameContainer container) {
     MoveTraverse moveTraverse = new MoveTraverse(map);
     hud = new HUD(container);
 
@@ -160,29 +167,26 @@ public class InGameState extends CWState implements PropertyChangeListener {
 
   @Override
   public void update(GameContainer container, int delta) throws SlickException {
-    if (gameRenderer != null) {
+    if (entered) {
       gameRenderer.update(delta);
+      gameRenderer.setRenderAttackDamage(inGameContext.isUnitAttackMode());
 
       inGameContext.update(delta);
       if (gameOver && isInputAllowed()) {
         changeToState("GAME_OVER");
         gameOver = false;
       }
-      input.setOffset(camera.getX(), camera.getY());
+      input.setOffset(camera.getX() - center.x, camera.getY() - center.y);
     }
   }
 
   @Override
   public void render(GameContainer container, Graphics g) throws SlickException {
-    // gameRenderer is only assigned when init has been completed
-    // render can be invoked before init by a transition see StateBasedGame
-    if (gameRenderer != null) {
+    if (entered) {
+      g.translate(center.x, center.y);
       gameRenderer.render(g);
-      g.translate(-camera.getX(), -camera.getY());
-      if (inGameContext.isUnitAttackMode()) {
-        gameRenderer.renderAttackDamagePercentage(g);
-      }
       g.resetTransform();
+      hud.render(g);
     }
   }
 
