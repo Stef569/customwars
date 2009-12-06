@@ -77,8 +77,8 @@ public class HUD {
     bottomComponents.add(transportInfoBox);
 
     PlayerInfoBox playerInfoBox = new PlayerInfoBox(guiContext, game);
-    playerInfoBox.setWidth(150);
-    playerInfoBox.setHeight(80);
+    playerInfoBox.setWidth(240);
+    playerInfoBox.setHeight(20);
     topComponents.add(playerInfoBox);
   }
 
