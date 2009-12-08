@@ -31,10 +31,10 @@ public class CWStates extends CWStateBasedGame {
 
   public void initStatesList() {
     buildStateList();
+    loadResources();
   }
 
   private void buildStateList() {
-    addState("STARTUP", new StartupState());
     addState("MAIN_MENU", new MainMenuState());
     addState("KEY_MENU", new OptionMenuState());
     addState("SINGLE_PLAYER", new SinglePlayerMenuState());

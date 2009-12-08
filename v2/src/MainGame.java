@@ -18,17 +18,17 @@ import org.newdawn.slick.state.StateBasedGame;
  *
  * @author stefan
  */
-public class AppMain {
-  private static final Logger logger = Logger.getLogger(AppMain.class);
+public class MainGame {
+  private static final Logger logger = Logger.getLogger(MainGame.class);
   private static CWStateBasedGame cwStates;
   private static Config config;
   private static String resourcesLocation = "";
 
-  public AppMain() throws SlickException {
+  public MainGame() throws SlickException {
     ResourceManager resources = new ResourceManager();
     loadConfiguration(resources);
 
-    cwStates = new CWStates("STARTUP", resources, config);
+    cwStates = new CWStates("MAIN_MENU", resources, config);
     AppGameContainer container = createContainer(cwStates);
     init(container, resources);
     run(container);
@@ -69,7 +69,7 @@ public class AppMain {
     handleArgs(argv);
 
     try {
-      new AppMain();
+      new MainGame();
     } catch (Exception e) {
       logAndExit(e);
     }

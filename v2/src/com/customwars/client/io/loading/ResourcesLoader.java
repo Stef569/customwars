@@ -7,9 +7,6 @@ import com.customwars.client.io.img.slick.RecolorManager;
 import com.customwars.client.io.loading.map.MapLoader;
 import com.customwars.client.io.loading.map.MapParser;
 import org.apache.log4j.Logger;
-import org.newdawn.slick.AngelCodeFont;
-import org.newdawn.slick.Font;
-import org.newdawn.slick.SlickException;
 
 import java.awt.Color;
 import java.io.IOException;
@@ -28,6 +25,7 @@ public class ResourcesLoader {
   private static final String IMAGE_LOADER_FILE = "imageLoader.txt";
   private static final String ANIM_LOADER_FILE = "animLoader.txt";
   private static final String SOUND_LOADER_FILE = "soundLoader.txt";
+  private static final String FONT_LOADER_FILE = "fontLoader.txt";
   private static final String COLORS_FILE = "colors.xml";
 
   private final ImageLib imageLib;
@@ -47,6 +45,7 @@ public class ResourcesLoader {
   /**
    * Add a path where resources can be loaded from keyed by pathName
    * eg img.path = /home/van/the/man/images/
+   * The path should end with a '/' char
    *
    * @param pathName The path name, used to lookup a loading path
    * @param path     The loading path
@@ -65,7 +64,7 @@ public class ResourcesLoader {
       loadModel();
       loadResources();
     } catch (IOException e) {
-      throw new RuntimeException("Failed to load resource " + e);
+      throw new RuntimeException("Failed to load resource", e);
     }
   }
 
@@ -132,18 +131,9 @@ public class ResourcesLoader {
   }
 
   private void loadFonts() throws IOException {
-  }
-
-  public Font loadDefaultFont() throws IOException {
     String fontPath = getPath("font.path");
-
-    Font defaultFont;
-    try {
-      defaultFont = new AngelCodeFont(fontPath + "default.fnt", fontPath + "default_00.tga");
-    } catch (SlickException ex) {
-      throw new IOException(ex);
-    }
-    return defaultFont;
+    CWResourceLoader fontParser = new FontParser(resources, fontPath, FONT_LOADER_FILE, imageLib);
+    fontParser.load();
   }
 
   /**

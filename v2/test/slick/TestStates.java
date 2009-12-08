@@ -44,10 +44,6 @@ public class TestStates extends CWStateBasedGame {
     addState("MAP_EDITOR", new MapEditorState());
   }
 
-  private void loadResources() {
-    resources.loadAll();
-  }
-
   /**
    * Put a test game on the session
    * This allows to skip all the menus when startState="IN_GAME"

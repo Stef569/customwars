@@ -12,7 +12,6 @@ import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Direction;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
-import com.customwars.client.tools.Args;
 import com.customwars.client.tools.UCaseMap;
 import com.customwars.client.ui.sprite.TileSprite;
 import org.apache.log4j.Logger;
@@ -46,12 +45,11 @@ import java.util.Set;
  */
 public class ResourceManager {
   private static final Logger logger = Logger.getLogger(ResourceManager.class);
-  private MapParser mapParser;
+  private final MapParser mapParser;
+  private final ImageLib imageLib;
+  private final CWImageLib cwImageLib;
+  private final AnimLib animLib;
   private int darkPercentage;
-
-  private ImageLib imageLib;
-  private CWImageLib cwImageLib;
-  private AnimLib animLib;
 
   private final java.util.Map<String, Sound> sounds = new UCaseMap<Sound>();
   private final java.util.Map<String, Music> music = new UCaseMap<Music>();
@@ -61,17 +59,9 @@ public class ResourceManager {
   private final ResourcesLoader resourceLoader;
 
   public ResourceManager() {
-    this(new ImageLib(), new AnimLib());
-  }
-
-  /**
-   * @param imageLib The cache to load the images to
-   * @param animLib  The cache to load the animations to
-   */
-  public ResourceManager(ImageLib imageLib, AnimLib animLib) {
-    this.imageLib = imageLib;
+    this.imageLib = new ImageLib();
     this.cwImageLib = new CWImageLib(imageLib);
-    this.animLib = animLib;
+    this.animLib = new AnimLib();
     this.mapParser = new BinaryCW2MapParser();
     this.resourceLoader = new ResourcesLoader(imageLib, animLib, this, mapParser);
   }
@@ -79,6 +69,7 @@ public class ResourceManager {
   /**
    * Add a path where resources can be loaded from
    * eg img.path = /home/van/the/man/images/
+   * The path should end with a '/' char
    *
    * @param pathName The path name, used to lookup a loading path
    * @param path     The loading path
@@ -214,19 +205,8 @@ public class ResourceManager {
   //----------------------------------------------------------------------------
   // Fonts
   //----------------------------------------------------------------------------
-  public Font loadDefaultFont() {
-    try {
-      return resourceLoader.loadDefaultFont();
-    } catch (IOException e) {
-      logger.warn("Could not load default font", e);
-    }
-    return null;
-  }
-
-  public void addFont(String fontID, Font font) {
-    Args.checkForNull(fontID);
-    Args.checkForNull(font);
-    fonts.put(fontID, font);
+  public void addFont(String fontName, Font font) {
+    fonts.put(fontName, font);
   }
 
   public Font getFont(String fontName) {
