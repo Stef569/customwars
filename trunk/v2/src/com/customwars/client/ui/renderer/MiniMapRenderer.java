@@ -45,10 +45,12 @@ public class MiniMapRenderer implements Renderable {
   }
 
   public void render(Graphics g) {
-    for (Tile t : map.getAllTiles()) {
-      int x = location.x + t.getCol() * TILE_SIZE;
-      int y = location.y + t.getRow() * TILE_SIZE;
-      renderTile(x, y, g, t);
+    if (map != null) {
+      for (Tile t : map.getAllTiles()) {
+        int x = location.x + t.getCol() * TILE_SIZE;
+        int y = location.y + t.getRow() * TILE_SIZE;
+        renderTile(x, y, g, t);
+      }
     }
   }
 
@@ -110,11 +112,11 @@ public class MiniMapRenderer implements Renderable {
   }
 
   public int getWidth() {
-    return map.getCols() * TILE_SIZE;
+    return map != null ? map.getCols() * TILE_SIZE : 0;
   }
 
   public int getHeight() {
-    return map.getRows() * TILE_SIZE;
+    return map != null ? map.getRows() * TILE_SIZE : 0;
   }
 
   public Dimension getSize() {
