@@ -32,8 +32,8 @@ public class FontParser extends LineParser {
 
   /**
    * format:
-   * S  fontName imgName startCharacter
-   * A fontName fntFile imgName
+   * s  <fontName> <imgRef> <startCharacter>
+   * a <fontName> <fntFile> <imgName>
    */
   public void parseLine(String line) {
     StringTokenizer tokens = new StringTokenizer(line);
