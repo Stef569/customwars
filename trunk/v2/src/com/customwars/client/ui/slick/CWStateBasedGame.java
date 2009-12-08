@@ -43,7 +43,6 @@ public abstract class CWStateBasedGame extends StateBasedGame implements InputPr
   public final void initStatesList(GameContainer gameContainer) {
     this.gameContainer = gameContainer;
     loadInput();
-    loadDefaultFont();
     initStatesList();
     changeToState(startStateName);
 
@@ -62,8 +61,13 @@ public abstract class CWStateBasedGame extends StateBasedGame implements InputPr
     cwInput.addListener(this);
   }
 
-  private void loadDefaultFont() {
-    Font defaultFont = resources.loadDefaultFont();
+  public void loadResources() {
+    resources.loadAll();
+    overWriteDefaultFont();
+  }
+
+  private void overWriteDefaultFont() {
+    Font defaultFont = resources.getFont("default");
     setDefaultFont(defaultFont);
   }
 

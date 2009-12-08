@@ -22,15 +22,15 @@ import slick.TestStates;
  *
  * @author stefan
  */
-public class TestMain {
-  private static final Logger logger = Logger.getLogger(TestMain.class);
+public class TestGame {
+  private static final Logger logger = Logger.getLogger(TestGame.class);
   private final CWStateBasedGame testStates;
   private Config config;
 
   private static String startStateName = "";
   private static String resourcesLocation = "";
 
-  public TestMain() throws SlickException {
+  public TestGame() throws SlickException {
     ResourceManager resources = new ResourceManager();
     loadConfiguration(resources);
 
@@ -74,7 +74,7 @@ public class TestMain {
     handleArgs(args);
 
     try {
-      new TestMain();
+      new TestGame();
     } catch (Exception e) {
       logAndExit(e);
     }

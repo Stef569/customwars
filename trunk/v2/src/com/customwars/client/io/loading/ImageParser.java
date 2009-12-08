@@ -5,7 +5,6 @@ import static com.customwars.client.io.ErrConstants.ERR_WRONG_NUM_ARGS;
 import com.customwars.client.io.img.ImageLib;
 import org.newdawn.slick.util.ResourceLoader;
 
-import java.io.IOException;
 import java.util.StringTokenizer;
 
 /**
@@ -32,14 +31,10 @@ public class ImageParser extends LineParser {
   }
 
   public void parseLine(String line) {
-    try {
-      parseCmd(line);
-    } catch (IOException ex) {
-      throw new RuntimeException("Could not load image for line " + line, ex);
-    }
+    parseCmd(line);
   }
 
-  public void parseCmd(String line) throws IOException {
+  public void parseCmd(String line) {
     char ch = Character.toLowerCase(line.charAt(0));
     if (ch == SINGLE_IMAGE_SYMBOL) {                // 1 image
       loadSingleImage(line);

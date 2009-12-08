@@ -1,4 +1,7 @@
+// S soundName soundFile
+// M musicName musicFile
 // Removing one of these lines results in not playing that sound
+
 S select ok.wav
 S cancel cancel.wav
 S explode explode.wav
