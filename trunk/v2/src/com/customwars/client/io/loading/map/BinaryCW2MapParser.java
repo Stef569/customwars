@@ -60,7 +60,6 @@ import java.util.Set;
  * PLAYER HEADER:
  * <NUM_PLAYERS> byte
  * for each player (excluding the neutral player)
- * <PlAYER_ID> byte
  * <PLAYER_RGB> int
  * <PLAYER_HQ_COL> int
  * <PLAYER_HQ_ROW> int
@@ -160,11 +159,10 @@ public class BinaryCW2MapParser implements MapParser {
 
     private void readMapPlayers() throws IOException {
       int numPlayers = in.readByte();
-      for (int i = 0; i < numPlayers; i++) {
-        int id = in.readByte();
+      for (int playerIndex = 0; playerIndex < numPlayers; playerIndex++) {
         int rgb = in.readInt();
         Color color = new Color(rgb);
-        Player mapPlayer = new Player(id, color, false, "Map player " + id, 0, 0, false);
+        Player mapPlayer = new Player(playerIndex, color, false, "Map player " + playerIndex, 0, 0, false);
         Location2D hqLocation = readHQLocation();
 
         addPlayer(mapPlayer);
@@ -379,7 +377,6 @@ public class BinaryCW2MapParser implements MapParser {
 
       out.writeByte(players.size());
       for (Player p : players) {
-        out.writeByte(p.getId());
         out.writeInt(p.getColor().getRGB());
         writeHQ(p.getHq());
       }
