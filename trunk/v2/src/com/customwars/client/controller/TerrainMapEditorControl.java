@@ -17,17 +17,27 @@ public class TerrainMapEditorControl implements MapEditorControl {
 
   public void addToTile(Tile t, int id, Player player) {
     Terrain userChosenTerrain = getTerrain(id);
-    Terrain newTerrain = terrainConnector.connectTerrain(t, userChosenTerrain);
-    t.setTerrain(newTerrain);
-    terrainConnector.turnSurroundingTerrains(t, newTerrain);
+    addTerrain(t, userChosenTerrain);
   }
 
   public void removeFromTile(Tile t) {
-    t.setTerrain(TerrainFactory.getTerrain(0));
+    Terrain plainTerrain = getTerrain(0);
+    addTerrain(t, plainTerrain);
   }
 
   public void fillMap(Map<Tile> map, int terrainID) {
     map.fillWithTerrain(getTerrain(terrainID));
+  }
+
+  /**
+   * #1 Find the best matching terrain and add the best matching terrain
+   * to Tile t.
+   * #2 Connect surrounding terrains
+   */
+  private void addTerrain(Tile t, Terrain terrain) {
+    Terrain bestMatch = terrainConnector.connectTerrain(t, terrain);
+    t.setTerrain(bestMatch);
+    terrainConnector.turnSurroundingTerrains(t, bestMatch);
   }
 
   private Terrain getTerrain(int terrainID) {

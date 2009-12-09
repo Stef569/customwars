@@ -2,6 +2,7 @@ package com.customwars.client.controller;
 
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.City;
+import com.customwars.client.model.gameobject.Terrain;
 import com.customwars.client.model.gameobject.TerrainFactory;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
@@ -24,7 +25,9 @@ public class CityMapEditorControl implements MapEditorControl {
   }
 
   public void removeFromTile(Tile t) {
-    t.setTerrain(TerrainFactory.getTerrain(0));
+    Terrain terrain = TerrainFactory.getTerrain(0);
+    t.setTerrain(terrain);
+    terrainConnector.turnSurroundingTerrains(t, terrain);
   }
 
   public void fillMap(Map<Tile> map, int id) {
