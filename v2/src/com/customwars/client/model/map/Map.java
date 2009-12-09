@@ -509,6 +509,37 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
     return !terrain.isHidden() || adjacent;
   }
 
+  /**
+   * Normalise this map
+   * #1 Make players start with ID 0, next players id increases by 1
+   */
+  public void normalise() {
+    Collection<Player> currentPlayers = getUniquePlayers();
+
+    int playerIndex = 0;
+    for (Player currentPlayer : currentPlayers) {
+      Player newPlayer = new Player(playerIndex++, currentPlayer.getColor(), false);
+      replacePlayer(currentPlayer, newPlayer);
+    }
+  }
+
+  /**
+   * Replace each instance of oldPlayer with newPlayer in the map
+   */
+  private void replacePlayer(Player oldPlayer, Player newPlayer) {
+    for (Tile t : getAllTiles()) {
+      Unit unit = getUnitOn(t);
+      if (unit != null && unit.getOwner() == oldPlayer) {
+        unit.setOwner(newPlayer);
+      }
+
+      City city = getCityOn(t);
+      if (city != null && city.getOwner() == oldPlayer) {
+        city.setOwner(newPlayer);
+      }
+    }
+  }
+
   public void setFogOfWarOn(boolean fogOfWarOn) {
     boolean oldVal = this.fogOfWarOn;
     this.fogOfWarOn = fogOfWarOn;
@@ -596,7 +627,7 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
   /**
    * @return Each unique player in the map excluding the neutral player
    */
-  public Set<Player> getUniquePlayers() {
+  public Collection<Player> getUniquePlayers() {
     Set<Player> players = new HashSet<Player>();
     for (Tile t : getAllTiles()) {
       Unit unit = getUnitOn(t);
@@ -610,7 +641,7 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
         players.add(city.getOwner());
       }
     }
-    return players;
+    return Collections.unmodifiableCollection(players);
   }
 
   /**
