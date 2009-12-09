@@ -65,7 +65,6 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
     this.description = description;
     this.pathFinder = new PathFinder(this);
     fillMap(cols, rows, startTerrain);
-    validateMap();
   }
 
   @SuppressWarnings("unchecked")
@@ -78,7 +77,7 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
     }
   }
 
-  private void validateMap() {
+  public void validate() {
     for (Tile t : getAllTiles()) {
       City city = getCityOn(t);
       Unit unit = getUnitOn(t);
