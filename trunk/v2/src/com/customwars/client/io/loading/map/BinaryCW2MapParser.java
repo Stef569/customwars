@@ -20,8 +20,8 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.Set;
 
 /**
  * Converts a CW2 map objects to and from a binary file.
@@ -375,7 +375,7 @@ public class BinaryCW2MapParser implements MapParser {
      * player size, playerID, color and hq location
      */
     private void writePlayers() throws IOException {
-      Set<Player> players = map.getUniquePlayers();
+      Collection<Player> players = map.getUniquePlayers();
 
       out.writeByte(players.size());
       for (Player p : players) {
