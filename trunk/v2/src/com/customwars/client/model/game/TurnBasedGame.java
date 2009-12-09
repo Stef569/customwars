@@ -303,6 +303,7 @@ public class TurnBasedGame implements Observable {
     }
 
     validatePlayers();
+    map.validate();
   }
 
   private void validatePlayers() {
