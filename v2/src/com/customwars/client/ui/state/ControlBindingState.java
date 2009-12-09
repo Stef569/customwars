@@ -22,10 +22,14 @@ import java.util.List;
  */
 public class ControlBindingState extends CWState {
   private static final boolean DEBUG = false;
-  private static final int LBL_FIELD_WIDTH = 120;
-  private static final int INPUT_FIELD_WIDTH = 430;
+  private static final int LBL_FIELD_WIDTH = 130;
+  private static final int INPUT_FIELD_WIDTH = 170;
   private static final int FIELD_HEIGHT = 20;
-  private static final Point leftTop = new Point(10, 80);
+  private static final int COLUMN_MARGIN = 20;
+  private static final int LEFT_MARGIN = 10;
+
+  private static final int BIND_LIMIT = LEFT_MARGIN;
+  private static final Point leftTop = new Point(LEFT_MARGIN, 50);
   private static final List<TextField> fields = new ArrayList<TextField>();
   private Input input;
 
@@ -33,18 +37,30 @@ public class ControlBindingState extends CWState {
     this.input = container.getInput();
     int rowCount = 0;
 
-    for (Object obj : cwInput.getUniqueCommands()) {
-      BasicCommand command = (BasicCommand) obj;
+    List commands = cwInput.getUniqueCommands();
+    for (int i = 0; i < commands.size(); i++) {
+      boolean hasNextCommand = i + 1 < commands.size();
+      BasicCommand commandLeft = (BasicCommand) commands.get(i);
+      BasicCommand commandRight = hasNextCommand ? (BasicCommand) commands.get(++i) : null;
+
       int px = leftTop.x;
       int py = leftTop.y + (rowCount * FIELD_HEIGHT);
 
-      TextField label = createLabel(container, px, py, command);
-      fields.add(label);
+      addLblAndField(container, commandLeft, px, py);
 
-      TextField inputField = createInputField(container, px + LBL_FIELD_WIDTH, py, command);
-      fields.add(inputField);
+      if (hasNextCommand) {
+        addLblAndField(container, commandRight, px + LBL_FIELD_WIDTH + INPUT_FIELD_WIDTH + COLUMN_MARGIN, py);
+      }
       rowCount++;
     }
+  }
+
+  private void addLblAndField(GameContainer container, BasicCommand command, int x, int y) {
+    TextField label = createLabel(container, x, y, command);
+    fields.add(label);
+
+    TextField inputField = createInputField(container, x + LBL_FIELD_WIDTH, y, command);
+    fields.add(inputField);
   }
 
   private TextField createLabel(GameContainer container, int x, int y, BasicCommand command) {
@@ -58,7 +74,7 @@ public class ControlBindingState extends CWState {
 
   private TextField createInputField(GameContainer container, int x, int y, BasicCommand command) {
     InputField inputField = new InputField(container, x, y, INPUT_FIELD_WIDTH, FIELD_HEIGHT, command, cwInput);
-    inputField.setBindingLimit(10);
+    inputField.setBindingLimit(BIND_LIMIT);
     inputField.initDisplayText();
     inputField.setAcceptingInput(false);
     return inputField;
@@ -85,8 +101,8 @@ public class ControlBindingState extends CWState {
   }
 
   public void render(GameContainer container, Graphics g) throws SlickException {
-    g.drawString("Click on a key to select, Press any key to change, backspace clears the selected mappings", 10, 45);
-    g.drawString("Limit = 10", 10, 60);
+    g.drawString("Click on a key to select, Press any key to change, backspace clears the selected mappings", LEFT_MARGIN, 15);
+    g.drawString("Limit = " + BIND_LIMIT + " right click to return to the previous menu.", LEFT_MARGIN, 30);
 
     for (TextField field : fields) {
       if (DEBUG) {
@@ -123,6 +139,7 @@ public class ControlBindingState extends CWState {
 
   @Override
   public void mousePressed(int button, int x, int y) {
+    // CWInput is disabled, check for right click
     if (input.isMousePressed(1)) {
       changeToPreviousState();
     }
