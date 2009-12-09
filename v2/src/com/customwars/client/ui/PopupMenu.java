@@ -280,4 +280,12 @@ public class PopupMenu extends BasicComponent {
     anim.setAutoUpdate(false);
     setCursorAnim(anim);
   }
+
+  @Override
+  public void setAcceptingInput(boolean acceptingInput) {
+    super.setAcceptingInput(acceptingInput);
+    for (MenuItem menuItem : menuItems) {
+      menuItem.setAcceptingInput(acceptingInput);
+    }
+  }
 }

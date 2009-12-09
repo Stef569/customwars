@@ -33,6 +33,7 @@ public class MainMenuState extends CWState implements ComponentListener {
     );
 
     mainMenu.addListener(this);
+    mainMenu.setAcceptingInput(false);
     Point center = GUI.getCenteredRenderPoint(mainMenu.getSize(), container);
     mainMenu.setLocation(center.x + 20, center.y - 100);
   }
@@ -62,6 +63,18 @@ public class MainMenuState extends CWState implements ComponentListener {
 
   @Override
   public void update(GameContainer container, int delta) throws SlickException {
+  }
+
+  @Override
+  public void enter(GameContainer container, StateBasedGame game) throws SlickException {
+    super.enter(container, game);
+    mainMenu.setAcceptingInput(true);
+  }
+
+  @Override
+  public void leave(GameContainer container, StateBasedGame game) throws SlickException {
+    super.leave(container, game);
+    mainMenu.setAcceptingInput(false);
   }
 
   public void controlPressed(CWCommand command, CWInput cwInput) {
