@@ -11,14 +11,13 @@ import com.customwars.client.model.map.Direction;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.tools.FileUtil;
-import com.customwars.client.tools.StringUtil;
 import com.customwars.client.ui.renderer.MapEditorRenderer;
 import com.customwars.client.ui.sprite.SpriteManager;
 import com.customwars.client.ui.sprite.TileSprite;
 
 import java.awt.Color;
 import java.io.File;
-import java.io.FileOutputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -98,7 +97,8 @@ public class MapEditorController {
     }
 
     String mapName = FileUtil.StripFileExtension(file.getName());
-    Map<Tile> map = resources.isMapCached(mapName) ? resources.getMap(mapName) : resources.loadMap(file);
+    boolean isCached = resources.isMapCached(mapName);
+    Map<Tile> map = isCached ? resources.getMap(mapName) : resources.loadMap(new FileInputStream(file));
     setMap(map);
   }
 
@@ -112,20 +112,7 @@ public class MapEditorController {
     map.setMapName(mapName);
     map.setDescription(mapDescription);
     map.setAuthor(author);
-    saveMap(mapName);
-  }
-
-  public void saveMap(String fileName) throws IOException {
-    String mapFileExtension = App.get("map.file.extension");
-    String mapName = StringUtil.appendTrailingSuffix(fileName, mapFileExtension);
-    String mapDir = App.get("home.maps.dir");
-    File newMapFile = new File(mapDir, mapName);
-
-    if (newMapFile.exists()) {
-      throw new IOException("The map " + fileName + " already exists");
-    } else {
-      resources.saveMap(map, new FileOutputStream(newMapFile));
-    }
+    resources.saveMap(map);
   }
 
   private void setMap(Map<Tile> map) {

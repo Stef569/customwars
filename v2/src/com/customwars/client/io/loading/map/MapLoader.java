@@ -53,19 +53,20 @@ public class MapLoader implements CWResourceLoader {
 
   private void readMapsFromDir(FileSystemManager fsm, File dir) throws IOException {
     String mapExtension = App.get("map.file.extension");
+    String parentDir = dir.getName();
+
     for (File mapFile : fsm.getFiles(dir)) {
       if (mapFile.getName().endsWith(mapExtension)) {
         InputStream in = ResourceLoader.getResourceAsStream(mapFile.getPath());
-        loadMap(in);
+        loadMap(parentDir, in);
       } else {
         logger.warn("Skipping " + mapFile + " wrong extension expected " + mapExtension);
       }
     }
   }
 
-  private void loadMap(InputStream in) throws IOException {
+  private void loadMap(String category, InputStream in) throws IOException {
     Map<Tile> map = mapParser.readMap(in);
-    String mapName = map.getMapName();
-    resources.addMap(mapName, map);
+    resources.addMap(category, map);
   }
 }
