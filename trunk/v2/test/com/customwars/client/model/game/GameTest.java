@@ -1,6 +1,7 @@
 package com.customwars.client.model.game;
 
 import com.customwars.client.model.TestData;
+import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.GameObjectState;
 import com.customwars.client.model.gameobject.Terrain;
 import com.customwars.client.model.gameobject.TerrainFactory;
@@ -220,6 +221,46 @@ public class GameTest {
   }
 
   /**
+   * p1 conquers p2 by capturing the HQ
+   * all cities that belonged to p2 are now owned by p1
+   * p2 units are destroyed
+   */
+  @Test
+  public void testGameOverByHQCapture() {
+    buildHardCodedMap(2);
+    Player mapPlayer2 = new Player(1);
+    City HQ = MapUtil.addCityToMap(map, 1, 0, TestData.HQ, mapPlayer2);
+    mapPlayer2.setHq(HQ);
+
+    Player p1 = new Player(0, Color.RED, false, "p1", 50, 1, false);
+    Player p2 = new Player(1, Color.BLUE, false, "p2", 50, 2, false);
+    startGame(new GameConfig(), p1, p2);
+
+    // p1 builds up his army
+    Unit inf1 = UnitFactory.getUnit(TestData.INF);
+    MapUtil.addUnitToMap(map, 0, 0, inf1, p1);
+    game.endTurn();
+
+    // p2 builds up his army
+    Unit inf2 = UnitFactory.getUnit(TestData.INF);
+    MapUtil.addUnitToMap(map, 1, 0, inf2, p2);
+    game.endTurn();
+
+    Assert.assertSame(p1, game.getActivePlayer());
+
+    // p1 inf1 Captures the HQ of p2
+    p2.getHq().capture(inf1);
+    p2.getHq().capture(inf1);
+
+    Assert.assertTrue(inf2.isDestroyed());
+    Assert.assertTrue(p2.getHq().isCapturedBy(inf1));
+    Assert.assertSame(p1, p2.getHq().getOwner());
+    Assert.assertTrue(map.getCityOn(map.getTile(1, 0)).getOwner() == p1);
+    Assert.assertTrue(p2.isDestroyed());
+    Assert.assertTrue(game.isGameOver());
+  }
+
+  /**
    * When the game has started the starting player(p1) contains active units
    * all the other players contain idle units
    */
@@ -253,15 +294,15 @@ public class GameTest {
     startGame(new GameConfig(), p1, p2, p3, p4, p5);
 
     // Only player1 has active units
-    checkState(p1.getArmy(), GameObjectState.ACTIVE);
-    checkState(p2.getArmy(), GameObjectState.IDLE);
-    checkState(p3.getArmy(), GameObjectState.IDLE);
-    checkState(p4.getArmy(), GameObjectState.IDLE);
-    checkState(p5.getArmy(), GameObjectState.IDLE);
+    checkUnitState(p1.getArmy(), GameObjectState.ACTIVE);
+    checkUnitState(p2.getArmy(), GameObjectState.IDLE);
+    checkUnitState(p3.getArmy(), GameObjectState.IDLE);
+    checkUnitState(p4.getArmy(), GameObjectState.IDLE);
+    checkUnitState(p5.getArmy(), GameObjectState.IDLE);
   }
 
   // Util Functions
-  private void checkState(Iterable<Unit> units, GameObjectState state) {
+  private void checkUnitState(Iterable<Unit> units, GameObjectState state) {
     for (Unit unit : units) {
       Assert.assertEquals(unit.getState(), state);
     }
