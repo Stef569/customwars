@@ -116,21 +116,22 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
       int col = t.getCol();
       int row = t.getRow();
       boolean fogged = t.isFogged();
+      Terrain terrain = t.getTerrain();
+      Terrain terrainCopy = terrain instanceof City ? new City((City) terrain) : terrain;
 
-      Tile tileCopy = new Tile(col, row, copyTerrain(t.getTerrain()), fogged);
+      Tile tileCopy = new Tile(col, row, terrainCopy, fogged);
+      copyCityLocation(tileCopy);
       copyUnits(t, tileCopy);
       setTile((T) tileCopy);
     }
   }
 
-  private Terrain copyTerrain(Terrain terrain) {
-    Terrain terrainCopy;
-    if (terrain instanceof City) {
-      terrainCopy = new City((City) terrain);
-    } else {
-      terrainCopy = terrain;
+  private void copyCityLocation(Location tileCopy) {
+    City city = getCityOn(tileCopy);
+
+    if (city != null) {
+      city.setLocation(tileCopy);
     }
-    return terrainCopy;
   }
 
   private void copyUnits(Tile oldTile, Tile newTile) {
