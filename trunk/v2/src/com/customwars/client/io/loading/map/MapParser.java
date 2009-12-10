@@ -13,8 +13,9 @@ import java.io.OutputStream;
 public interface MapParser {
   /**
    * Read a map object from the inputstream
+   * The stream is closed by the parser
    *
-   * @param in The styream to load the Map from
+   * @param in The stream to load the Map from
    * @return The map object loaded from the mapFile
    * @throws IOException        when the stream is not valid
    * @throws MapFormatException thrown when the format of the file does not adhere to the format specified by this parser
@@ -28,7 +29,7 @@ public interface MapParser {
    * readMap(in) from the same physical location returns an equal map.
    *
    * @param map the map object to save
-   * @param out the stream where the map is going to be saved to
+   * @param out the stream to save the map to
    * @throws IOException        when the stream is not valid
    * @throws MapFormatException thrown when the format of the file does not adhere to the format specified by this parser
    */
