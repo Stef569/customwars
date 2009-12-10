@@ -11,9 +11,9 @@ import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.model.map.TileMap;
-import com.customwars.client.ui.slick.ImageStripFont;
 import org.apache.log4j.Logger;
 import org.newdawn.slick.Animation;
+import org.newdawn.slick.Font;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SpriteSheet;
@@ -54,7 +54,7 @@ public class SpriteManager implements PropertyChangeListener {
 
   private TileSprite activeCursor;
   private Color neutralColor = Color.GRAY;
-  private ImageStripFont numbersFont;
+  private Font numbersFont;
   private boolean renderSprites = true;
 
   public SpriteManager(TileMap<Tile> map) {
@@ -68,8 +68,7 @@ public class SpriteManager implements PropertyChangeListener {
   public void loadResources(ResourceManager resources) {
     this.resources = resources;
     unitDecorationStrip = resources.getSlickImgStrip("unitDecoration");
-    ImageStrip numberStrip = resources.getSlickImgStrip("numbers");
-    numbersFont = new ImageStripFont(numberStrip, '1');
+    numbersFont = resources.getFont("numbers");
   }
 
   /**
