@@ -26,7 +26,8 @@ o exit menu/exit.png
 o options menu/options.png
 o multi menu/multi.png
 o single menu/single.png
-o menu menu/mainmenu.png
+o light_menu_background menu/lightmenubackground.png
+o dark_menu_background menu/darkmenubackground.png
 o editor menu/mapeditor.png
 o gametest menu/gametest.png
 o key menu/keyconfig.png

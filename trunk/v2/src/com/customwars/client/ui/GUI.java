@@ -146,6 +146,14 @@ public class GUI {
    * Get the left top point of the inner component
    * so that the component is centered within the container
    */
+  public static Point getCenteredRenderPoint(Dimension innerComponentSize, Dimension containerSize) {
+    return getCenteredRenderPoint(innerComponentSize.width, innerComponentSize.height, containerSize.width, containerSize.height);
+  }
+
+  /**
+   * Get the left top point of the inner component
+   * so that the component is centered within the container
+   */
   public static Point getCenteredRenderPoint(Dimension innerComponentSize, GUIContext guiContext) {
     return getCenteredRenderPoint(innerComponentSize.width, innerComponentSize.height, guiContext.getWidth(), guiContext.getHeight());
   }

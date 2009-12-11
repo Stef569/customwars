@@ -8,8 +8,8 @@ import com.customwars.client.tools.IOUtil;
 import com.customwars.client.ui.GUI;
 import com.customwars.client.ui.slick.CWStateBasedGame;
 import com.customwars.client.ui.state.input.CWCommand;
+import com.customwars.client.ui.state.menu.GameOptionsMenuState;
 import com.customwars.client.ui.state.menu.MainMenuState;
-import com.customwars.client.ui.state.menu.OptionMenuState;
 import com.customwars.client.ui.state.menu.SinglePlayerMenuState;
 import org.apache.log4j.Logger;
 
@@ -36,13 +36,14 @@ public class CWStates extends CWStateBasedGame {
 
   private void buildStateList() {
     addState("MAIN_MENU", new MainMenuState());
-    addState("KEY_MENU", new OptionMenuState());
     addState("SINGLE_PLAYER", new SinglePlayerMenuState());
+    addState("MAP_EDITOR", new MapEditorState());
+    addState("GAME_OPTIONS", new GameOptionsMenuState());
+    addState("REMAP_CONTROLS", new ControlBindingState());
+    addState("MAP_SELECT", new MapSelectState());
     addState("IN_GAME", new InGameState());
     addState("END_TURN", new EndTurnState());
     addState("GAME_OVER", new GameOverState());
-    addState("REMAP_CONTROLS", new ControlBindingState());
-    addState("MAP_EDITOR", new MapEditorState());
   }
 
   protected void handleGlobalInput(CWCommand command) {
