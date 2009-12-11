@@ -18,7 +18,7 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.gui.GUIContext;
 
-public class TerrainInfoBox extends BasicComponent {
+public class TerrainInfoPanel extends BasicComponent {
   private static final Color backgroundColor = new Color(0, 0, 0, 0.40f);
   private static final Color textColor = Color.white;
   private static final int INFO_BOXES_LEFT_MARGIN = 3;
@@ -31,7 +31,7 @@ public class TerrainInfoBox extends BasicComponent {
   private Row defenseRow, captureRow;
   private Tile tile;
 
-  public TerrainInfoBox(GUIContext container, SpriteManager spriteManager) {
+  public TerrainInfoPanel(GUIContext container, SpriteManager spriteManager) {
     super(container);
     this.spriteManager = spriteManager;
   }

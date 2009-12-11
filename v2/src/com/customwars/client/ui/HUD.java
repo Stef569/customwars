@@ -8,9 +8,9 @@ import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.ui.hud.PlayerInfoBox;
-import com.customwars.client.ui.hud.TerrainInfoBox;
-import com.customwars.client.ui.hud.TransportInfoBox;
-import com.customwars.client.ui.hud.UnitInfoBox;
+import com.customwars.client.ui.hud.TerrainInfoPanel;
+import com.customwars.client.ui.hud.TransportInfoPanel;
+import com.customwars.client.ui.hud.UnitInfoPanel;
 import com.customwars.client.ui.slick.BasicComponent;
 import com.customwars.client.ui.sprite.SpriteManager;
 import com.customwars.client.ui.state.input.CWCommand;
@@ -49,9 +49,9 @@ public class HUD {
   private SpriteManager spriteManager;
   private Camera2D camera;
   private PopupMenu popupMenu;
-  private TerrainInfoBox terrainInfoBox;
-  private UnitInfoBox unitInfoBox;
-  private TransportInfoBox transportInfoBox;
+  private TerrainInfoPanel terrainInfoPanel;
+  private UnitInfoPanel unitInfoPanel;
+  private TransportInfoPanel transportInfoPanel;
 
   public HUD(GUIContext guiContext) {
     this.guiContext = guiContext;
@@ -70,20 +70,20 @@ public class HUD {
   }
 
   private void initComponents() {
-    terrainInfoBox = new TerrainInfoBox(guiContext, spriteManager);
-    terrainInfoBox.setWidth(56);
-    terrainInfoBox.setHeight(INFO_BOX_HEIGH);
-    bottomComponents.add(terrainInfoBox);
+    terrainInfoPanel = new TerrainInfoPanel(guiContext, spriteManager);
+    terrainInfoPanel.setWidth(56);
+    terrainInfoPanel.setHeight(INFO_BOX_HEIGH);
+    bottomComponents.add(terrainInfoPanel);
 
-    unitInfoBox = new UnitInfoBox(guiContext);
-    unitInfoBox.setWidth(65);
-    unitInfoBox.setHeight(INFO_BOX_HEIGH);
-    bottomComponents.add(unitInfoBox);
+    unitInfoPanel = new UnitInfoPanel(guiContext);
+    unitInfoPanel.setWidth(65);
+    unitInfoPanel.setHeight(INFO_BOX_HEIGH);
+    bottomComponents.add(unitInfoPanel);
 
-    transportInfoBox = new TransportInfoBox(guiContext);
-    transportInfoBox.setWidth(tileSize);
-    transportInfoBox.setHeight(INFO_BOX_HEIGH);
-    bottomComponents.add(transportInfoBox);
+    transportInfoPanel = new TransportInfoPanel(guiContext);
+    transportInfoPanel.setWidth(tileSize);
+    transportInfoPanel.setHeight(INFO_BOX_HEIGH);
+    bottomComponents.add(transportInfoPanel);
 
     PlayerInfoBox playerInfoBox = new PlayerInfoBox(guiContext, game);
     playerInfoBox.setWidth(240);
@@ -97,22 +97,26 @@ public class HUD {
    * @param tile the tile to show information for
    */
   public void moveOverTile(Tile tile) {
-    if (terrainInfoBox != null && camera != null) {
-      terrainInfoBox.setTile(tile);
+    if (terrainInfoPanel != null && camera != null) {
+      terrainInfoPanel.setTile(tile);
       Unit unit = map.getUnitOn(tile);
 
-      if (unit != null && !tile.isFogged() && !unit.isHidden()) {
-        unitInfoBox.setVisible(true);
-        unitInfoBox.setUnit(unit);
-        transportInfoBox.setVisible(true);
-        transportInfoBox.setUnit(unit);
+      if (isUnitVisible(tile, unit)) {
+        unitInfoPanel.setVisible(true);
+        unitInfoPanel.setUnit(unit);
+        transportInfoPanel.setVisible(true);
+        transportInfoPanel.setUnit(unit);
       } else {
-        unitInfoBox.setVisible(false);
-        transportInfoBox.setVisible(false);
+        unitInfoPanel.setVisible(false);
+        transportInfoPanel.setVisible(false);
       }
       Direction quadrant = map.getQuadrantFor(tile);
       locateInfoBoxes(quadrant);
     }
+  }
+
+  private boolean isUnitVisible(Tile tile, Unit unit) {
+    return unit != null && !tile.isFogged() && !unit.isHidden();
   }
 
   /**

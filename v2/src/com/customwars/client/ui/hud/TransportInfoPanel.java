@@ -10,14 +10,14 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.gui.GUIContext;
 
-public class TransportInfoBox extends BasicComponent {
+public class TransportInfoPanel extends BasicComponent {
   private static final Color backgroundColor = new Color(0, 0, 0, 0.40f);
   private static final Color textColor = Color.white;
   private Unit unit;
   private ImageBox unitInTransportBox1, unitInTransportBox2;
   private ResourceManager resources;
 
-  public TransportInfoBox(GUIContext container) {
+  public TransportInfoPanel(GUIContext container) {
     super(container);
     unitInTransportBox1 = new ImageBox();
     unitInTransportBox2 = new ImageBox();

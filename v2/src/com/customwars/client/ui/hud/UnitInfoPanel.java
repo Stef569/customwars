@@ -17,7 +17,7 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.gui.GUIContext;
 
-public class UnitInfoBox extends BasicComponent {
+public class UnitInfoPanel extends BasicComponent {
   private static final Color backgroundColor = new Color(0, 0, 0, 0.40f);
   private static final Color textColor = Color.white;
   private static final int INFO_BOXES_LEFT_MARGIN = 3;
@@ -31,7 +31,7 @@ public class UnitInfoBox extends BasicComponent {
   private Row suppliesRow, ammoRow, hpRow;
   private Font font;
 
-  public UnitInfoBox(GUIContext container) {
+  public UnitInfoPanel(GUIContext container) {
     super(container);
     unitImgBox = new ImageBox();
   }
