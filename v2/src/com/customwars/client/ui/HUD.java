@@ -115,17 +115,13 @@ public class HUD {
    * @param quadrant 1 of the 4 quadrants in the map
    */
   public final void locateInfoBoxes(Direction quadrant) {
-    if (isInWestQuadrant(quadrant)) {
+    if (Direction.isWestQuadrant(quadrant)) {
       locateRightToLeft(topComponents, TOP_MARGIN);
       locateRightToLeft(bottomComponents, camera.getHeight() - INFO_BOX_HEIGH);
     } else {
       locateLeftToRight(topComponents, TOP_MARGIN);
       locateLeftToRight(bottomComponents, camera.getHeight() - INFO_BOX_HEIGH);
     }
-  }
-
-  private boolean isInWestQuadrant(Direction quadrant) {
-    return quadrant == Direction.NORTHWEST || quadrant == Direction.SOUTHWEST;
   }
 
   private void locateRightToLeft(List<BasicComponent> components, int topMargin) {

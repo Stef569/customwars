@@ -20,4 +20,20 @@ public enum Direction {
   public static Direction getDirection(String enumName) {
     return Direction.valueOf(enumName.trim().toUpperCase());
   }
+
+  public static boolean isNorthQuadrant(Direction quadrant) {
+    return quadrant == Direction.NORTHEAST || quadrant == Direction.NORTHWEST;
+  }
+
+  public static boolean isEastQuadrant(Direction quadrant) {
+    return quadrant == Direction.NORTHEAST || quadrant == Direction.SOUTHEAST;
+  }
+
+  public static boolean isSouthQuadrant(Direction quadrant) {
+    return quadrant == Direction.SOUTHEAST || quadrant == Direction.SOUTHWEST;
+  }
+
+  public static boolean isWestQuadrant(Direction quadrant) {
+    return quadrant == Direction.NORTHWEST || quadrant == Direction.SOUTHWEST;
+  }
 }
