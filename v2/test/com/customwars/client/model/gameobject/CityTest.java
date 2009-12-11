@@ -25,8 +25,8 @@ public class CityTest {
   @Before
   public void beforeEachTest() {
     city = CityFactory.getCity(TestData.BASE);
-    player1 = new Player(0, Color.RED, false, "Stef", Integer.MAX_VALUE, 0, false);
-    player2 = new Player(1, Color.BLUE, false, "JSR", 8500, 1, false);
+    player1 = new Player(0, Color.RED, "Stef", Integer.MAX_VALUE, 0, false);
+    player2 = new Player(1, Color.BLUE, "JSR", 8500, 1, false);
     Terrain plain = TerrainFactory.getTerrain(TestData.PLAIN);
     map = new Map<Tile>(10, 10, 32, plain);
   }

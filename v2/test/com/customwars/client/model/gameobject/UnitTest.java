@@ -31,7 +31,7 @@ public class UnitTest {
 
   @Before
   public void beforeEachTest() {
-    player1 = new Player(0, Color.RED, false, "John", 1500, 0, false);
+    player1 = new Player(0, Color.RED, "John", 1500, 0, false);
     Game game = HardCodedGame.getGame();
     map = game.getMap();
     inGameContext = new InGameContext();

@@ -46,7 +46,11 @@ public class Player extends GameObject {
     this.color = color;
   }
 
-  public Player(int id, Color color, boolean neutral, String name, int startBudget, int team, boolean ai) {
+  public Player(int id, Color color, String name, int startBudget, int team, boolean ai) {
+    this(id, color, false, name, startBudget, team, ai);
+  }
+
+  private Player(int id, Color color, boolean neutral, String name, int startBudget, int team, boolean ai) {
     this(id, color);
     this.neutral = neutral;
     this.name = name;

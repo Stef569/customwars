@@ -164,7 +164,7 @@ public class BinaryCW2MapParser implements MapParser {
         int id = in.readByte();
         int rgb = in.readInt();
         Color color = new Color(rgb);
-        Player mapPlayer = new Player(id, color, false, "Map player " + id, 0, 0, false);
+        Player mapPlayer = new Player(id, color, "Map player " + id, 0, 0, false);
         Location2D hqLocation = readHQLocation();
 
         addPlayer(mapPlayer);
