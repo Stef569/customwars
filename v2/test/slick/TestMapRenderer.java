@@ -37,7 +37,7 @@ public class TestMapRenderer extends CWState {
 
   public void enter(GameContainer container, StateBasedGame game) throws SlickException {
     super.enter(container, game);
-    this.map = stateSession.map;
+    this.map = HardCodedGame.getMap();
     initMap(map);
   }
 

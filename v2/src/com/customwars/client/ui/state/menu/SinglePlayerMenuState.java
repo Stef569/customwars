@@ -24,7 +24,7 @@ public class SinglePlayerMenuState extends CWState implements ComponentListener 
     mainMenu.setBackGroundColor(new Color(0, 0, 0));
     mainMenu.setHoverColor(new Color(255, 255, 255, 0.20f));
     mainMenu.addItems(
-      new MenuItem(resources.getSlickImg("editor"), container),
+      new MenuItem(resources.getSlickImg("single"), container),
       new MenuItem(resources.getSlickImg("back"), container)
     );
 
@@ -32,21 +32,19 @@ public class SinglePlayerMenuState extends CWState implements ComponentListener 
     mainMenu.setAcceptingInput(false);
     mainMenu.init();
     Point center = GUI.getCenteredRenderPoint(mainMenu.getSize(), container);
-    mainMenu.setLocation(center.x + 20, center.y - 100);
+    mainMenu.setLocation(center.x + 20, center.y - 80);
   }
 
   @Override
   public void render(GameContainer container, Graphics g) throws SlickException {
-    mainMenu.render(container, g);
-
-    g.drawImage(resources.getSlickImg("menu"), 0, 0);
+    g.drawImage(resources.getSlickImg("dark_menu_background"), 0, 0);
     g.setColor(Color.white);
     mainMenu.render(container, g);
 
     g.setColor(Color.lightGray);
     switch (mainMenu.getCurrentItem()) {
       case 0:
-        g.drawString("Save/Load maps with this editor", 210, 440);
+        g.drawString("New Game", 210, 440);
         break;
       case 1:
         g.drawString("Go back to menu", 210, 440);
@@ -85,7 +83,7 @@ public class SinglePlayerMenuState extends CWState implements ComponentListener 
     PopupMenu popupMenu = (PopupMenu) source;
     switch (popupMenu.getCurrentItem()) {
       case 0:
-        changeToState("MAP_EDITOR");
+        changeToState("MAP_SELECT");
         break;
       case 1:
         changeToPreviousState();

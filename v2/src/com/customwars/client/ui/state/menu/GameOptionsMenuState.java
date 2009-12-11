@@ -16,7 +16,10 @@ import org.newdawn.slick.state.StateBasedGame;
 
 import java.awt.Point;
 
-public class OptionMenuState extends CWState implements ComponentListener {
+/**
+ * Allow to change game configuration settings
+ */
+public class GameOptionsMenuState extends CWState implements ComponentListener {
   private PopupMenu mainMenu;
 
   public void init(GameContainer container, StateBasedGame game) throws SlickException {
@@ -32,14 +35,12 @@ public class OptionMenuState extends CWState implements ComponentListener {
     mainMenu.setAcceptingInput(false);
     mainMenu.init();
     Point center = GUI.getCenteredRenderPoint(mainMenu.getSize(), container);
-    mainMenu.setLocation(center.x + 20, center.y - 100);
+    mainMenu.setLocation(center.x + 20, center.y - 80);
   }
 
   @Override
   public void render(GameContainer container, Graphics g) throws SlickException {
-    mainMenu.render(container, g);
-
-    g.drawImage(resources.getSlickImg("menu"), 0, 0);
+    g.drawImage(resources.getSlickImg("dark_menu_background"), 0, 0);
     g.setColor(Color.white);
     mainMenu.render(container, g);
 
@@ -85,7 +86,7 @@ public class OptionMenuState extends CWState implements ComponentListener {
     PopupMenu popupMenu = (PopupMenu) source;
     switch (popupMenu.getCurrentItem()) {
       case 0:
-        changeToState("KEY_MENU");
+        changeToState("REMAP_CONTROLS");
         break;
       case 1:
         changeToPreviousState();

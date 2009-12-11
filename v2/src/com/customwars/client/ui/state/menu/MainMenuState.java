@@ -28,34 +28,39 @@ public class MainMenuState extends CWState implements ComponentListener {
     mainMenu.addItems(
       new MenuItem(resources.getSlickImg("single"), container),
       new MenuItem(resources.getSlickImg("multi"), container),
+      new MenuItem(resources.getSlickImg("editor"), container),
       new MenuItem(resources.getSlickImg("options"), container),
       new MenuItem(resources.getSlickImg("exit"), container)
     );
 
     mainMenu.addListener(this);
     mainMenu.setAcceptingInput(false);
+    mainMenu.init();
     Point center = GUI.getCenteredRenderPoint(mainMenu.getSize(), container);
-    mainMenu.setLocation(center.x + 20, center.y - 100);
+    mainMenu.setLocation(center.x + 20, center.y - 80);
   }
 
   @Override
   public void render(GameContainer container, Graphics g) throws SlickException {
-    g.drawImage(resources.getSlickImg("menu"), 0, 0);
+    g.drawImage(resources.getSlickImg("dark_menu_background"), 0, 0);
     g.setColor(Color.white);
     mainMenu.render(container, g);
 
     g.setColor(Color.lightGray);
     switch (mainMenu.getCurrentItem()) {
       case 0:
-        g.drawString("Single-player games and options", 210, 440);
+        g.drawString("Single-player game", 210, 440);
         break;
       case 1:
         g.drawString("Play with more than one person", 210, 440);
         break;
       case 2:
-        g.drawString("Choose between a list of options", 210, 440);
+        g.drawString("Create save and load maps with this editor", 210, 440);
         break;
       case 3:
+        g.drawString("Fine tune the options", 210, 440);
+        break;
+      case 4:
         g.drawString("Quit the game", 210, 440);
         break;
     }
@@ -88,9 +93,12 @@ public class MainMenuState extends CWState implements ComponentListener {
         changeToState("SINGLE_PLAYER");
         break;
       case 2:
-        changeToState("REMAP_CONTROLS");
+        changeToState("MAP_EDITOR");
         break;
       case 3:
+        changeToState("GAME_OPTIONS");
+        break;
+      case 4:
         gameContainer.exit();
         break;
     }
