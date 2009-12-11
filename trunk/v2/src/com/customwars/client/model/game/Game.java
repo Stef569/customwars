@@ -16,6 +16,8 @@ import java.util.List;
 /**
  * CW Impl of a Turnbase game
  * The Players in the map(map players) will be replaced by players from the players list(game players).
+ * map players have an ID, Color and a HQ(if any), all other player values are default or null values.
+ *
  * Usage:
  * Game game = new Game(map,players,gameConfig)
  * game.startGame();
@@ -30,7 +32,7 @@ public class Game extends TurnBasedGame implements PropertyChangeListener {
   private Unit activeUnit;        // There can only be one active unit in a game at any time
 
   public Game(Map<Tile> map, List<Player> players, GameConfig gameConfig) {
-    super(map, players, gameConfig.getTurnLimit(), gameConfig.getDayLimit());
+    super(map, players, gameConfig.getTurnLimit());
     applyGameConfig(gameConfig);
     init();
   }
@@ -64,7 +66,7 @@ public class Game extends TurnBasedGame implements PropertyChangeListener {
 
   private void initCity(City city) {
     Player mapPlayer = city.getOwner();
-    Player gamePlayer = getGamePlayer(mapPlayer);
+    Player gamePlayer = getPlayerByID(mapPlayer.getId());
 
     if (mapPlayer.getHq() == city) {
       gamePlayer.setHq(city);
@@ -75,20 +77,14 @@ public class Game extends TurnBasedGame implements PropertyChangeListener {
   }
 
   private void initUnit(Unit unit) {
-    Player gamePlayer = getGamePlayer(unit.getOwner());
+    Player mapPlayer = unit.getOwner();
+    Player gamePlayer = getPlayerByID(mapPlayer.getId());
     gamePlayer.addUnit(unit);
 
     for (int i = 0; i < unit.getLocatableCount(); i++) {
       Unit unitInTransport = (Unit) unit.getLocatable(i);
       gamePlayer.addUnit(unitInTransport);
     }
-  }
-
-  private Player getGamePlayer(Player dummy) {
-    Player gamePlayer = getPlayerByID(dummy.getId());
-    if (gamePlayer == null)
-      throw new IllegalArgumentException("No game player found for player id " + dummy.getId());
-    return gamePlayer;
   }
 
   /**

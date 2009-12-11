@@ -35,6 +35,7 @@ import java.util.List;
 public class Unit extends GameObject implements Mover, Location, TurnHandler, Attacker, Defender {
   public static final Direction DEFAULT_ORIENTATION = Direction.EAST;
   private static final int LOW_AMMO_PERCENTAGE = 33;
+  private static final int LOW_SUPPLIES = 20;
 
   private final UnitStats stats;
   private City constructingCity; // A City that is being build by this unit
@@ -51,8 +52,8 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
 
   private Weapon primaryWeapon, secondaryWeapon;
   private List<Locatable> transport;  // Locatables that are within this Transport
-  private MoveStrategy moveStrategy;
-  private boolean hideAbilityEnabled;
+  private MoveStrategy moveStrategy;  // Determines how a unit moves
+  private boolean hideAbilityEnabled; // Allows to hide for a longer time
 
   public Unit(UnitStats unitStats) {
     super(GameObjectState.ACTIVE);
@@ -176,8 +177,8 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   }
 
   public boolean canAttack(Defender defender) {
-    return defender != null && canFireOn(defender) && !isDestroyed() &&
-      !defender.isDestroyed() && !defender.getOwner().isAlliedWith(owner);
+    boolean validDefender = defender != null && !defender.isDestroyed() && !defender.getOwner().isAlliedWith(owner);
+    return validDefender && canFireOn(defender) && !isDestroyed();
   }
 
   private void tryToFireWeapon(Fight fight) {
@@ -218,8 +219,10 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
    * #4 it has a weapon that can return fire to the attacker
    */
   public boolean canCounterAttack(Attacker attacker) {
-    return !isDestroyed() && getAttackRange().getMinRange() == 1 &&
-      attacker instanceof Defender && canFireOn((Defender) attacker);
+    boolean adjacent = getAttackRange().getMinRange() == 1;
+    boolean attackerIsDefender = attacker instanceof Defender;
+    boolean canReturnFire = attackerIsDefender && !isDestroyed() && canFireOn((Defender) attacker);
+    return adjacent && canReturnFire;
   }
 
   public List<Location> getAttackZone() {
@@ -275,14 +278,18 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   public boolean canAdd(Locatable locatable) {
     if (locatable instanceof Unit) {
       Unit unit = (Unit) locatable;
-      return canTransport(unit.getMovementType()) && transport.size() < stats.maxTransportCount;
+      return canTransport(unit.getMovementType());
     } else {
       return false;
     }
   }
 
   public boolean canTransport(int id) {
-    return stats.canTransport && stats.canTransport(id);
+    return canTransport() && stats.canTransport(id);
+  }
+
+  private boolean canTransport() {
+    return stats.canTransport && transport.size() < stats.maxTransportCount;
   }
 
   /**
@@ -293,7 +300,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   }
 
   // ----------------------------------------------------------------------------
-  // Actions :: supply, heal, capture
+  // Actions :: supply, heal
   // ----------------------------------------------------------------------------
   /**
    * Restore
@@ -302,10 +309,10 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
    */
   public void resupply() {
     setSupplies(stats.maxSupplies);
-    restock();
+    restockWeapons();
   }
 
-  public void restock() {
+  private void restockWeapons() {
     if (hasPrimaryWeapon()) {
       primaryWeapon.restock();
     }
@@ -329,18 +336,18 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
    * @return Can this unit supply the given unit
    */
   public boolean canSupply(Unit unit) {
-    return unit != null && stats.canSupply && !isFullySupplied(unit) && owner == unit.getOwner();
+    return unit != null && stats.canSupply && !unit.isFullySupplied() && owner == unit.owner;
   }
 
   /**
-   * return true when
-   * #1 the unit is 100% supplied
-   * #2 The weapons of the unit both have 100% ammo, when one of the weapons is null it has 100% ammo.
+   * @return true when
+   *         #1 the unit is 100% supplied
+   *         #2 The weapons of the unit both have 100% ammo, when one of the weapons is null it has 100% ammo.
    */
-  private boolean isFullySupplied(Unit unit) {
-    boolean fullSupplies = unit.getSuppliesPercentage() == 100;
-    boolean priWeaponAmmoIsFull = !unit.hasPrimaryWeapon() || unit.primaryWeapon.getAmmoPercentage() == 100;
-    boolean secWeaponAmmiIsFull = !unit.hasSecondaryWeapon() || unit.secondaryWeapon.getAmmoPercentage() == 100;
+  public boolean isFullySupplied() {
+    boolean fullSupplies = getSuppliesPercentage() == 100;
+    boolean priWeaponAmmoIsFull = !hasPrimaryWeapon() || primaryWeapon.getAmmoPercentage() == 100;
+    boolean secWeaponAmmiIsFull = !hasSecondaryWeapon() || secondaryWeapon.getAmmoPercentage() == 100;
     return fullSupplies && priWeaponAmmoIsFull && secWeaponAmmiIsFull;
   }
 
@@ -500,13 +507,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
    * @return The first available weapon, null when no weapons are available
    */
   public Weapon getAvailableWeapon() {
-    if (canFirePrimaryWeapon()) {
-      return primaryWeapon;
-    } else if (canFireSecondaryWeapon()) {
-      return secondaryWeapon;
-    } else {
-      return null;
-    }
+    return canFirePrimaryWeapon() ? primaryWeapon : canFireSecondaryWeapon() ? secondaryWeapon : null;
   }
 
   public Weapon getPrimaryWeapon() {
@@ -520,7 +521,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   /**
    * @return if this unit can fire on the defender
    */
-  public boolean canFireOn(Defender defender) {
+  private boolean canFireOn(Defender defender) {
     ArmyBranch defenderArmyBranch = defender.getArmyBranch();
     boolean canFirePrimaryWeapon = hasPrimaryWeapon() && primaryWeapon.canFire(defenderArmyBranch);
     boolean canFireSecondaryWeapon = hasSecondaryWeapon() && secondaryWeapon.canFire(defenderArmyBranch);
@@ -589,11 +590,11 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   }
 
   public boolean hasLowSupplies() {
-    return getSuppliesPercentage() <= 20;
+    return getSuppliesPercentage() <= LOW_SUPPLIES;
   }
 
   /**
-   * Converts the internal hp to a number between 0 - 10 rounding up to the nearest absolute value.
+   * Converts the internal hp to a number between 0 - 10 rounding up to the nearest value.
    * hp=25
    * getHp() return 3
    * hp=19
@@ -606,7 +607,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   }
 
   /**
-   * Converts the internal maxhp to a number between 0 - 10 rounding up to the nearest absolute value.
+   * Converts the internal maxhp to a number between 0 - 10 rounding up to the nearest value.
    * maxhp=99
    * getMaxHp() return 10
    * maxhp=79
@@ -631,7 +632,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   }
 
   /**
-   * @return if the hp dropped at least 10 under the max hp
+   * @return if the hp dropped at least 10% under the max hp
    */
   public boolean hasLowHp() {
     // Don't use the internal hp because 99/100 is not low hp, 9/10 is
@@ -721,10 +722,14 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   }
 
   /**
+   * Can this unit build units:
+   * #1 Only transporting units can build a unit
+   * #2 There is 1 free place in this transport
+   *
    * @return Can this unit build units
    */
   public boolean canBuildUnit() {
-    return getLocatableCount() < stats.maxTransportCount && stats.canTransport;
+    return canTransport();
   }
 
   public boolean canHide() {

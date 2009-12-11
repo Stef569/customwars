@@ -111,7 +111,7 @@ public class GameTest {
     Player p3 = new Player(2, Color.RED, false, "Ben", 0, 0, false);
     Player p4 = new Player(3, Color.BLACK, false, "Joop", 0, 5, false);
     GameConfig gc = new GameConfig();
-    gc.setDayLimit(2);
+    gc.setTurnLimit(2);
     startGame(gc, p1, p1, p2, p3, p4);
 
     game.endTurn();  // p1

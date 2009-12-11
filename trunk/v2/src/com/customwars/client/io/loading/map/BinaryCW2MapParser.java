@@ -172,7 +172,7 @@ public class BinaryCW2MapParser implements MapParser {
       }
 
       // Always add the neutral player so neutral cities can be looked up
-      Player neutral = new Player(Player.NEUTRAL_PLAYER_ID, Color.GRAY, true, "neutral map player", 0, -1, false);
+      Player neutral = Player.createNeutralPlayer(App.getColor("plugin.neutral_color"));
       addPlayer(neutral);
     }
 

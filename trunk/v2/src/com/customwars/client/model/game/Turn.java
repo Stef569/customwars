@@ -3,20 +3,23 @@ package com.customwars.client.model.game;
 import com.customwars.client.tools.Args;
 
 /**
- * Stores the current turn/day and their limits
+ * Stores the current turn/day and the day limit
  */
 public class Turn {
   public static final int UNLIMITED = -1;
+  private final int dayLimit;
   private int turn;
-  private int turnLimit;
   private int day;
-  private int dayLimit;
 
-  public Turn(int turn, int day, int turnLimit, int dayLimit) {
+  public Turn(int dayLimit) {
+    this(0, 1, dayLimit);
+  }
+
+  public Turn(int turn, int day, int dayLimit) {
     this.turn = turn;
     this.day = day;
-    this.turnLimit = turnLimit;
     this.dayLimit = dayLimit;
+    Args.validateBetweenMinMax(dayLimit, -1, Integer.MAX_VALUE, "day limit");
   }
 
   public void increaseDay() {
@@ -36,39 +39,26 @@ public class Turn {
   }
 
   private void setTurn(int turn) {
-    if (turnLimit != UNLIMITED)
-      this.turn = Args.getBetweenZeroMax(turn, turnLimit);
-    else {
-      this.turn = Args.getBetweenZeroMax(turn, Integer.MAX_VALUE);
-    }
+    this.turn = Args.getBetweenZeroMax(turn, Integer.MAX_VALUE);
   }
 
   public int getTurnCount() {
     return turn;
   }
 
-  public int getTurnLimit() {
-    return turnLimit;
-  }
-
   public int getDay() {
     return day;
   }
 
-
-  public int getDayLimit() {
+  public int getLimit() {
     return dayLimit;
   }
 
-  public boolean isTurnLimitReached() {
-    return turn == UNLIMITED || turn == turnLimit;
-  }
-
-  public boolean isDayLimitReached() {
+  public boolean isLimitReached() {
     return day == UNLIMITED || day == dayLimit;
   }
 
   public String toString() {
-    return String.format("[Turn %s/%s %s/%s]", turn, turnLimit, day, dayLimit);
+    return String.format("[Turn %s %s/%s]", turn, day, dayLimit);
   }
 }

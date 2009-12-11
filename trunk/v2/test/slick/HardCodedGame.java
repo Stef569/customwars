@@ -21,10 +21,6 @@ import java.util.List;
  * Hardcoded game, useful for using in Slick tests
  */
 public class HardCodedGame {
-  // 3 Game Players
-  public static final Player p_RED = new Player(0, Color.RED, false, "Stef", 19800, 0, false);
-  public static final Player p_BLUE = new Player(1, Color.BLUE, false, "JSR", 35500, 1, false);
-  public static final Player p_GREEN = new Player(2, Color.GREEN, false, "Kiwi", 25000, 2, false);
   private static Map<Tile> map;
 
   /**
@@ -32,10 +28,13 @@ public class HardCodedGame {
    * The game is not inited and not started
    */
   public static Game getGame() {
+    // 3 Game Players
+    Player p_RED = new Player(0, Color.RED, false, "Stef", 19800, 0, false);
+    Player p_BLUE = new Player(1, Color.BLUE, false, "JSR", 35500, 1, false);
+    Player p_GREEN = new Player(2, Color.GREEN, false, "Kiwi", 25000, 2, false);
     List<Player> players = Arrays.asList(p_RED, p_BLUE, p_GREEN);
     GameConfig gc = new GameConfig();
     gc.setTurnLimit(Turn.UNLIMITED);
-    gc.setDayLimit(Turn.UNLIMITED);
     gc.setCityfunds(1000);
 
     return new Game(getMap(), players, gc);
@@ -50,10 +49,10 @@ public class HardCodedGame {
     initTerrains();
 
     // 3 Map Players, colors are suggestions game players overwrite them
-    Player neutral = new Player(Player.NEUTRAL_PLAYER_ID, Color.GRAY, true);
-    Player p1 = new Player(0, Color.GREEN, false);
-    Player p2 = new Player(1, Color.BLUE, false);
-    Player p3 = new Player(2, Color.YELLOW, false);
+    Player neutral = Player.createNeutralPlayer(Color.GRAY);
+    Player p1 = new Player(0, Color.GREEN);
+    Player p2 = new Player(1, Color.BLUE);
+    Player p3 = new Player(2, Color.YELLOW);
 
     City greenHQ = MapUtil.addCityToMap(map, 0, 2, TestData.HQ, p1);
     City blueHQ = MapUtil.addCityToMap(map, 8, 5, TestData.HQ, p2);
