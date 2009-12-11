@@ -5,6 +5,7 @@ import com.customwars.client.model.game.Game;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Direction;
 import com.customwars.client.model.map.Location;
+import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.ui.hud.PlayerInfoBox;
 import com.customwars.client.ui.hud.TerrainInfoBox;
@@ -24,15 +25,24 @@ import java.util.List;
 
 /**
  * Render following components:
- * Popups, tile info, unitInfo, units in a transport
+ * Popups, tile info, unit info and units in a transport
+ * These components are always rendered on top.
  *
  * @author stefan
  */
 public class HUD {
   private static final int INFO_BOX_HEIGH = 110;
   private static final int TOP_MARGIN = 10;
-  private Game game;
 
+  // Control
+  private boolean renderInfoPanels = true;
+
+  // Model
+  private Game game;
+  private Map map;
+  private int tileSize;
+
+  // GUI
   private final GUIContext guiContext;
   private final List<BasicComponent> topComponents;
   private final List<BasicComponent> bottomComponents;
@@ -71,7 +81,6 @@ public class HUD {
     bottomComponents.add(unitInfoBox);
 
     transportInfoBox = new TransportInfoBox(guiContext);
-    int tileSize = game.getMap().getTileSize();
     transportInfoBox.setWidth(tileSize);
     transportInfoBox.setHeight(INFO_BOX_HEIGH);
     bottomComponents.add(transportInfoBox);
@@ -90,7 +99,7 @@ public class HUD {
   public void moveOverTile(Tile tile) {
     if (terrainInfoBox != null && camera != null) {
       terrainInfoBox.setTile(tile);
-      Unit unit = game.getMap().getUnitOn(tile);
+      Unit unit = map.getUnitOn(tile);
 
       if (unit != null && !tile.isFogged() && !unit.isHidden()) {
         unitInfoBox.setVisible(true);
@@ -101,7 +110,7 @@ public class HUD {
         unitInfoBox.setVisible(false);
         transportInfoBox.setVisible(false);
       }
-      Direction quadrant = game.getMap().getQuadrantFor(tile);
+      Direction quadrant = map.getQuadrantFor(tile);
       locateInfoBoxes(quadrant);
     }
   }
@@ -164,10 +173,8 @@ public class HUD {
 
   public void showPopUp(Location popUpLocation, String popUpName, List<MenuItem> items, ComponentListener componentListener) {
     PopupMenu popup = buildPopupMenu(items);
-    int x, y;
-    int tileSize = game.getMap().getTileSize();
-    x = popUpLocation.getCol() * tileSize + tileSize / 2;
-    y = popUpLocation.getRow() * tileSize + tileSize / 2;
+    int x = popUpLocation.getCol() * tileSize + tileSize / 2;
+    int y = popUpLocation.getRow() * tileSize + tileSize / 2;
 
     if (!GUI.canFitToScreen(x, y, popup.getWidth(), popup.getHeight())) {
       x = camera.getX() + tileSize / 2;
@@ -189,12 +196,19 @@ public class HUD {
   }
 
   public void showPopUp(int x, int y, ComponentListener componentListener) {
+    renderInfoPanels = false;
     popupMenu.setLocation(x, y);
     popupMenu.init();
     popupMenu.addListener(componentListener);
   }
 
   public void render(Graphics g) {
+    if (renderInfoPanels) {
+      renderInfoPanels(g);
+    }
+  }
+
+  private void renderInfoPanels(Graphics g) {
     for (BasicComponent comp : topComponents) {
       comp.render(guiContext, g);
     }
@@ -208,11 +222,14 @@ public class HUD {
   }
 
   public void hidePopup() {
+    renderInfoPanels = true;
     popupMenu = null;
   }
 
   public void setGame(Game game) {
     this.game = game;
+    this.map = game.getMap();
+    this.tileSize = map.getTileSize();
   }
 
   public void setCamera(Camera2D camera) {
