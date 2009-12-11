@@ -29,12 +29,12 @@ public class HardCodedGame {
    */
   public static Game getGame() {
     // 3 Game Players
-    Player p_RED = new Player(0, Color.RED, false, "Stef", 19800, 0, false);
-    Player p_BLUE = new Player(1, Color.BLUE, false, "JSR", 35500, 1, false);
-    Player p_GREEN = new Player(2, Color.GREEN, false, "Kiwi", 25000, 2, false);
+    Player p_RED = new Player(0, Color.RED, "Stef", 19800, 0, false);
+    Player p_BLUE = new Player(1, Color.BLUE, "JSR", 35500, 1, false);
+    Player p_GREEN = new Player(2, Color.GREEN, "Kiwi", 25000, 2, false);
     List<Player> players = Arrays.asList(p_RED, p_BLUE, p_GREEN);
     GameConfig gc = new GameConfig();
-    gc.setTurnLimit(Turn.UNLIMITED);
+    gc.setDayLimit(Turn.UNLIMITED);
     gc.setCityfunds(1000);
 
     return new Game(getMap(), players, gc);
