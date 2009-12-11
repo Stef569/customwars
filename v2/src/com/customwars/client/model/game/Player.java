@@ -31,27 +31,32 @@ public class Player extends GameObject {
 
   private int budget;         // Amount of money that can be spend
   private final List<Unit> army;    // All the units of this player
-  private final List<City> cities;  // All the cities of this player
+  private final List<City> cities;  // All the cities of this player, including the HQ
   private boolean createdFirstUnit; // Has this player created his first unit
 
   public Player(int id) {
     this.id = id;
+    this.name = "Unnamed";
     this.army = new LinkedList<Unit>();
     this.cities = new LinkedList<City>();
   }
 
-  public Player(int id, Color color, boolean neutral) {
+  public Player(int id, Color color) {
     this(id);
     this.color = color;
-    this.neutral = neutral;
   }
 
   public Player(int id, Color color, boolean neutral, String name, int startBudget, int team, boolean ai) {
-    this(id, color, neutral);
+    this(id, color);
+    this.neutral = neutral;
     this.name = name;
     this.budget = startBudget;
     this.team = team;
     this.ai = ai;
+  }
+
+  public static Player createNeutralPlayer(Color color) {
+    return new Player(NEUTRAL_PLAYER_ID, color, true, "Neutral", 0, -1, false);
   }
 
   public void startTurn() {
@@ -140,6 +145,9 @@ public class Player extends GameObject {
     firePropertyChange("city", city, null);
   }
 
+  /**
+   * @return All the cities owned by this player including the HQ
+   */
   public Iterable<City> getAllCities() {
     return new Iterable<City>() {
       public Iterator<City> iterator() {

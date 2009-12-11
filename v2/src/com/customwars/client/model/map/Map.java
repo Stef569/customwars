@@ -518,7 +518,7 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
 
     int playerIndex = 0;
     for (Player currentPlayer : currentPlayers) {
-      Player newPlayer = new Player(playerIndex++, currentPlayer.getColor(), false);
+      Player newPlayer = new Player(playerIndex++, currentPlayer.getColor());
       replacePlayer(currentPlayer, newPlayer);
     }
   }

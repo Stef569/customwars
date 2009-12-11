@@ -109,11 +109,11 @@ public class CW1MapConverter {
 
     for (int playerIndex = 0; playerIndex < numArmies; playerIndex++) {
       Color color = getColor(in.readByte());
-      players.add(new Player(playerIndex, color, false));
+      players.add(new Player(playerIndex, color));
     }
 
     // Add the neutral player
-    players.add(new Player(Player.NEUTRAL_PLAYER_ID, Color.GRAY, true));
+    players.add(Player.createNeutralPlayer(Color.GRAY));
 
     Terrain plain = new Terrain(0, "dummy", "dum", "my", 0, 0, false, 0, Arrays.asList(5));
     Map<Tile> map = new Map<Tile>(width, height, 32, plain);

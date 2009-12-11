@@ -1,5 +1,6 @@
 package com.customwars.client.model.game;
 
+import com.customwars.client.App;
 import com.customwars.client.model.Observable;
 import com.customwars.client.model.gameobject.GameObjectState;
 import com.customwars.client.model.map.Map;
@@ -7,7 +8,6 @@ import com.customwars.client.model.map.Tile;
 import com.customwars.client.tools.Args;
 import org.apache.log4j.Logger;
 
-import java.awt.Color;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
@@ -41,16 +41,14 @@ public class TurnBasedGame implements Observable {
   private Player activePlayer;  // There can only be one active player in a game at any time
   private GameState state;
 
-  public TurnBasedGame(Map<Tile> map, List<Player> players, int turnLimit, int dayLimit) {
+  public TurnBasedGame(Map<Tile> map, List<Player> players, int dayLimit) {
     Args.checkForNull(map);
     Args.checkForNull(players);
-    Args.validateBetweenMinMax(turnLimit, -1, Integer.MAX_VALUE, "turn limit");
-    Args.validateBetweenMinMax(dayLimit, -1, Integer.MAX_VALUE, "day limit");
 
     this.map = map;
     this.players = players;
-    this.neutralPlayer = new Player(Player.NEUTRAL_PLAYER_ID, Color.GRAY, true, "Neutral", 0, -1, false);
-    this.turn = new Turn(0, 1, turnLimit, dayLimit);
+    this.neutralPlayer = Player.createNeutralPlayer(App.getColor("plugin.neutral_color"));
+    this.turn = new Turn(dayLimit);
     this.state = GameState.IDLE;
   }
 
@@ -99,16 +97,11 @@ public class TurnBasedGame implements Observable {
     int oldVal = getTurn();
     turn.increaseTurn();
 
-    if (turn.isTurnLimitReached()) {
-      logger.debug("Turn limit reached " + turn);
-      setState(GameState.GAME_OVER);
-    }
-
     if (getTurn() % getActivePlayerCount() == 0) {
       turn.increaseDay();
     }
 
-    if (turn.isDayLimitReached()) {
+    if (turn.isLimitReached()) {
       logger.debug("Day limit reached " + turn);
       setState(GameState.GAME_OVER);
     }
@@ -143,7 +136,7 @@ public class TurnBasedGame implements Observable {
   }
 
   public int getDayLimit() {
-    return turn.getDayLimit();
+    return turn.getLimit();
   }
 
   public int getDay() {
@@ -187,6 +180,12 @@ public class TurnBasedGame implements Observable {
     return map;
   }
 
+  /**
+   * Get All players playing in this game
+   * excluding the neutral player
+   *
+   * @return all players in this game
+   */
   public Iterable<Player> getAllPlayers() {
     return new Iterable<Player>() {
       public Iterator<Player> iterator() {
@@ -294,7 +293,7 @@ public class TurnBasedGame implements Observable {
       throw new IllegalStateException("Game is in a Illegal state " + state + " to start, a game cannot be started 2X.");
     }
 
-    if (turn.isTurnLimitReached()) {
+    if (turn.isLimitReached()) {
       throw new IllegalStateException("Turn limit reached");
     }
 
@@ -307,9 +306,6 @@ public class TurnBasedGame implements Observable {
   }
 
   private void validatePlayers() {
-    if (players == null)
-      throw new IllegalArgumentException("No players set");
-
     // game players must be equal to num players in map
     if (map.getNumPlayers() != players.size()) {
       throw new IllegalStateException("The amount of players in the map (" + map.getNumPlayers() + ") " +
