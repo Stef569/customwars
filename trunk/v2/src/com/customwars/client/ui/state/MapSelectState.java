@@ -10,9 +10,7 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.thingle.Page;
-import org.newdawn.slick.thingle.Thingle;
 import org.newdawn.slick.thingle.Widget;
-import org.newdawn.slick.thingle.internal.slick.SlickThinletFactory;
 
 import java.util.Collection;
 import java.util.List;
@@ -24,8 +22,6 @@ public class MapSelectState extends CWState {
   private CityCountWidgetRenderer cityCountRenderer;
 
   public void init(GameContainer gameContainer, StateBasedGame stateBasedGame) throws SlickException {
-    Thingle.init(new SlickThinletFactory(gameContainer));
-
     miniMapRenderer = new MiniMapWidgetRenderer(resources);
     cityCountRenderer = new CityCountWidgetRenderer(resources);
     MapSelectController controller = new MapSelectController(resources, miniMapRenderer, cityCountRenderer, stateChanger, stateSession);
