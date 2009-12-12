@@ -4,13 +4,13 @@
     <panel columns="2" gap="5">
         <panel gap="4">
             <label text="Category:"/>
-            <combobox name="mapCategories" weightx="1" action="filterMapsOnCategory(mapCategories.text)"/>
+            <combobox name="map_categories" weightx="1" action="filterMapsOnCategory(map_categories.text)"/>
         </panel>
         <label name="map_name" width="350" text="map name"/>
-        <list name="mapList" width="250" height="360" rowspan="2" action="mapSelected(this)"/>
+        <list name="map_list" width="250" height="360" rowspan="2" action="mapSelected()"/>
         <panel name="mini_map" height="300"/>
         <panel border="true">
-            <panel name="map_properties" weightx="1" halign="center"/>
+            <panel name="map_city_count" weightx="1" halign="center"/>
         </panel>
     </panel>
     <panel width="250" height="50" weighty="1" top="10">

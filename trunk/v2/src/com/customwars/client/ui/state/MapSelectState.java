@@ -2,7 +2,7 @@ package com.customwars.client.ui.state;
 
 import com.customwars.client.controller.MapSelectController;
 import com.customwars.client.io.loading.ThinglePageLoader;
-import com.customwars.client.ui.renderer.widget.MapCitiesWidgetRenderer;
+import com.customwars.client.ui.renderer.widget.CityCountWidgetRenderer;
 import com.customwars.client.ui.renderer.widget.MiniMapWidgetRenderer;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -20,25 +20,28 @@ import java.util.List;
 public class MapSelectState extends CWState {
   private Page page;
   private Image backGroundImage;
+  private MiniMapWidgetRenderer miniMapRenderer;
+  private CityCountWidgetRenderer cityCountRenderer;
 
   public void init(GameContainer gameContainer, StateBasedGame stateBasedGame) throws SlickException {
     Thingle.init(new SlickThinletFactory(gameContainer));
 
-    MiniMapWidgetRenderer miniMapRenderer = new MiniMapWidgetRenderer(resources);
-    MapCitiesWidgetRenderer mapCitiesRenderer = new MapCitiesWidgetRenderer(resources);
-    MapSelectController controller = new MapSelectController(resources, miniMapRenderer, mapCitiesRenderer, stateChanger, stateSession);
+    miniMapRenderer = new MiniMapWidgetRenderer(resources);
+    cityCountRenderer = new CityCountWidgetRenderer(resources);
+    MapSelectController controller = new MapSelectController(resources, miniMapRenderer, cityCountRenderer, stateChanger, stateSession);
 
     initPage(controller);
-
-    Widget miniMapPanel = page.getWidget("mini_map");
-    miniMapPanel.setRenderer(miniMapRenderer);
-    Widget mapCityCountPanel = page.getWidget("map_properties");
-    mapCityCountPanel.setRenderer(mapCitiesRenderer);
+    initWidgetRenderers();
 
     List<String> mapCategories = resources.getAllMapCategories();
     initPageContent(mapCategories);
     initFilter(mapCategories, controller);
     backGroundImage = resources.getSlickImg("light_menu_background");
+  }
+
+  private void initWidgetRenderers() {
+    page.getWidget("mini_map").setRenderer(miniMapRenderer);
+    page.getWidget("map_city_count").setRenderer(cityCountRenderer);
   }
 
   private void initPage(MapSelectController controller) {
@@ -49,7 +52,7 @@ public class MapSelectState extends CWState {
 
   private void initPageContent(List<String> mapCategories) {
     if (!mapCategories.isEmpty()) {
-      Widget mapCategoryCbo = page.getWidget("mapCategories");
+      Widget mapCategoryCbo = page.getWidget("map_categories");
       for (String mapCategory : mapCategories) {
         Widget cboItem = page.createWidget("choice");
         cboItem.setText(mapCategory);
