@@ -1,6 +1,5 @@
 package com.customwars.client.io.loading;
 
-import com.customwars.client.ui.slick.ThemeLoader;
 import org.newdawn.slick.thingle.Page;
 import org.newdawn.slick.thingle.Theme;
 import org.newdawn.slick.thingle.spi.ThingleException;
