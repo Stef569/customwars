@@ -1,5 +1,6 @@
 package com.customwars.client.ui.state.menu;
 
+import com.customwars.client.App;
 import com.customwars.client.ui.GUI;
 import com.customwars.client.ui.MenuItem;
 import com.customwars.client.ui.PopupMenu;
@@ -7,6 +8,7 @@ import com.customwars.client.ui.state.CWState;
 import com.customwars.client.ui.state.input.CWCommand;
 import com.customwars.client.ui.state.input.CWInput;
 import org.newdawn.slick.Color;
+import org.newdawn.slick.Font;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
@@ -27,26 +29,27 @@ public class MainMenuState extends CWState implements ComponentListener {
     this.gameContainer = container;
     mainMenu = new PopupMenu(container);
     mainMenu.setBackGroundColor(new Color(0, 0, 0));
-    mainMenu.setHoverColor(new Color(255, 255, 255, 0.20f));
+    mainMenu.setHoverColor(new Color(255, 255, 255, 0.08f));
+    Font font = resources.getFont("menu");
+
     mainMenu.addItems(
-      new MenuItem(resources.getSlickImg("single"), container),
-      new MenuItem(resources.getSlickImg("multi"), container),
-      new MenuItem(resources.getSlickImg("editor"), container),
-      new MenuItem(resources.getSlickImg("options"), container),
-      new MenuItem(resources.getSlickImg("exit"), container)
+      new MenuItem(App.translate("single_player"), font, container),
+      new MenuItem(App.translate("multi_player"), font, container),
+      new MenuItem(App.translate("map_editor"), font, container),
+      new MenuItem(App.translate("options"), font, container),
+      new MenuItem(App.translate("exit"), font, container)
     );
 
     mainMenu.addListener(this);
     mainMenu.setAcceptingInput(false);
     mainMenu.init();
     Point center = GUI.getCenteredRenderPoint(mainMenu.getSize(), container);
-    mainMenu.setLocation(center.x + 20, center.y - 80);
+    mainMenu.setLocation(center.x + 30, center.y - 60);
   }
 
   @Override
   public void render(GameContainer container, Graphics g) throws SlickException {
     g.drawImage(resources.getSlickImg("dark_menu_background"), 0, 0);
-    g.setColor(Color.white);
     mainMenu.render(container, g);
 
     g.setColor(Color.lightGray);

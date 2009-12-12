@@ -1,5 +1,6 @@
 package com.customwars.client.ui.state.menu;
 
+import com.customwars.client.App;
 import com.customwars.client.ui.GUI;
 import com.customwars.client.ui.MenuItem;
 import com.customwars.client.ui.PopupMenu;
@@ -7,6 +8,7 @@ import com.customwars.client.ui.state.CWState;
 import com.customwars.client.ui.state.input.CWCommand;
 import com.customwars.client.ui.state.input.CWInput;
 import org.newdawn.slick.Color;
+import org.newdawn.slick.Font;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
@@ -25,17 +27,18 @@ public class GameOptionsMenuState extends CWState implements ComponentListener {
   public void init(GameContainer container, StateBasedGame game) throws SlickException {
     mainMenu = new PopupMenu(container);
     mainMenu.setBackGroundColor(new Color(0, 0, 0));
-    mainMenu.setHoverColor(new Color(255, 255, 255, 0.20f));
+    mainMenu.setHoverColor(new Color(255, 255, 255, 0.08f));
+    Font font = resources.getFont("menu");
     mainMenu.addItems(
-      new MenuItem(resources.getSlickImg("key"), container),
-      new MenuItem(resources.getSlickImg("back"), container)
+      new MenuItem(App.translate("key_configure"), font, container),
+      new MenuItem(App.translate("back"), font, container)
     );
 
     mainMenu.addListener(this);
     mainMenu.setAcceptingInput(false);
     mainMenu.init();
     Point center = GUI.getCenteredRenderPoint(mainMenu.getSize(), container);
-    mainMenu.setLocation(center.x + 20, center.y - 80);
+    mainMenu.setLocation(center.x + 30, center.y - 60);
   }
 
   @Override
