@@ -66,7 +66,7 @@ public class UnitMenuBuilder {
   }
 
   private ShowPopupMenuAction buildDropMenu(Tile from, Tile to, Tile selected) {
-    menu = new ShowPopupMenuAction("Unit drop menu", selected);
+    menu = ShowPopupMenuAction.createPopupInMap("Unit drop menu", selected);
     inGameContext.clearUnitsInTransport();
 
     if (controller.canWait(to)) {
@@ -134,7 +134,7 @@ public class UnitMenuBuilder {
    * The unit is on the from Tile
    */
   private ShowPopupMenuAction buildUnitContextMenu(Tile selected) {
-    menu = new ShowPopupMenuAction("Unit context menu", selected);
+    menu = ShowPopupMenuAction.createPopupInMap("Unit context menu", selected);
     Tile from = inGameContext.getClick(1);
     Tile to = inGameContext.getClick(2);
 

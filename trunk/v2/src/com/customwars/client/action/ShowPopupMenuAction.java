@@ -8,8 +8,10 @@ import com.customwars.client.ui.MenuItem;
 import com.customwars.client.ui.PopupMenu;
 import com.customwars.client.ui.state.InGameContext;
 import org.apache.log4j.Logger;
+import org.newdawn.slick.Color;
 import org.newdawn.slick.gui.AbstractComponent;
 import org.newdawn.slick.gui.ComponentListener;
+import org.newdawn.slick.gui.GUIContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,48 +26,75 @@ import java.util.List;
  */
 public class ShowPopupMenuAction extends DirectAction implements ComponentListener {
   private static final Logger logger = Logger.getLogger(ShowPopupMenuAction.class);
-  private InGameContext context;
+  private InGameContext inGameContext;
+  private GUIContext guiContext;
   private HUD hud;
   private CursorController cursorControl;
 
   private final String popupName;
-  private final List<CWAction> actions;
-  private final List<MenuItem> menuItems;
+  private List<CWAction> actions;
+  private List<MenuItem> menuItems;
   private int currentOption;
   private Location popupLocation;
 
-  public ShowPopupMenuAction(String name) {
-    this(name, null);
-  }
-
-  public ShowPopupMenuAction(String popupName, Location popupLocation) {
+  private ShowPopupMenuAction(String popupName) {
     super(popupName);
     this.popupName = popupName;
-    this.popupLocation = popupLocation;
-    this.actions = new ArrayList<CWAction>();
-    this.menuItems = new ArrayList<MenuItem>();
   }
 
-  protected void init(InGameContext context) {
-    this.context = context;
-    this.hud = context.getHud();
-    this.cursorControl = context.getCursorController();
+  public static ShowPopupMenuAction createCenteredPopup(String popupName) {
+    return createPopupInMap(popupName, null);
+  }
+
+  public static ShowPopupMenuAction createPopupInMap(String popupName, Location popupLocation) {
+    ShowPopupMenuAction menu = new ShowPopupMenuAction(popupName);
+    menu.popupLocation = popupLocation;
+    menu.actions = new ArrayList<CWAction>();
+    menu.menuItems = new ArrayList<MenuItem>();
+    return menu;
+  }
+
+  protected void init(InGameContext inGameContext) {
+    this.inGameContext = inGameContext;
+    this.guiContext = inGameContext.getContainer();
+    this.hud = inGameContext.getHud();
+    this.cursorControl = inGameContext.getCursorController();
   }
 
   protected void invokeAction() {
     Args.validate(actions.isEmpty(), "No actions set");
-    Args.checkForNull(popupLocation, "Location is null");
 
-    hud.showPopUp(popupLocation, popupName, menuItems, this);
-    context.setInputMode(InGameContext.INPUT_MODE.GUI);
+    PopupMenu popup = buildPopupMenu();
+    showPopup(popup);
+    inGameContext.setInputMode(InGameContext.INPUT_MODE.GUI);
 
     cursorControl.moveCursor(popupLocation);
     cursorControl.setCursorLocked(true);
   }
 
+  private PopupMenu buildPopupMenu() {
+    PopupMenu popupMenu = new PopupMenu(guiContext);
+    popupMenu.setBackGroundColor(new Color(0, 0, 0, 0.4f));
+    popupMenu.setHoverColor(new Color(0, 0, 0, 0.20f));
+
+    for (MenuItem item : menuItems) {
+      popupMenu.addItem(item);
+    }
+    popupMenu.init();
+    return popupMenu;
+  }
+
+  private void showPopup(PopupMenu popup) {
+    if (popupLocation == null) {
+      hud.showPopup(popupName, popup, this);
+    } else {
+      hud.showPopUpInMap(popupLocation, popupName, popup, this);
+    }
+  }
+
   public void undo() {
     hud.hidePopup();
-    context.setInputMode(InGameContext.INPUT_MODE.DEFAULT);
+    inGameContext.setInputMode(InGameContext.INPUT_MODE.DEFAULT);
     cursorControl.setCursorLocked(false);
   }
 
@@ -74,17 +103,12 @@ public class ShowPopupMenuAction extends DirectAction implements ComponentListen
     menuItems.add(menuItemName);
   }
 
-  public void clear() {
-    actions.clear();
-    menuItems.clear();
-  }
-
   public void componentActivated(AbstractComponent abstractComponent) {
     PopupMenu popupMenu = (PopupMenu) abstractComponent;
     currentOption = popupMenu.getCurrentItem();
     CWAction action = actions.get(popupMenu.getCurrentItem());
     this.undo();    // Hide the popup when clicked on a item
-    context.doAction(action);
+    inGameContext.doAction(action);
   }
 
   public boolean atLeastHasOneItem() {
@@ -93,9 +117,5 @@ public class ShowPopupMenuAction extends DirectAction implements ComponentListen
 
   public int getCurrentOption() {
     return currentOption;
-  }
-
-  public void setLocation(Location popupLocation) {
-    this.popupLocation = popupLocation;
   }
 }

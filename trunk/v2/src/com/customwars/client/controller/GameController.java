@@ -48,8 +48,7 @@ public class GameController {
     } else if (isCityPressed(city)) {
       inGameContext.handleCityAPress(city);
     } else if (inGameContext.isDefaultMode()) {
-      ShowPopupMenuAction showContextMenuAction = buildContextMenu();
-      showContextMenuAction.setLocation(cursorLocation);
+      ShowPopupMenuAction showContextMenuAction = buildContextMenu(cursorLocation);
       inGameContext.doAction(showContextMenuAction);
     } else {
       logger.warn("could not handle A press");
@@ -78,8 +77,8 @@ public class GameController {
       city.isOwnedBy(game.getActivePlayer()) && city.canBuild();
   }
 
-  private ShowPopupMenuAction buildContextMenu() {
-    ShowPopupMenuAction showContextMenuAction = new ShowPopupMenuAction("Context menu");
+  private ShowPopupMenuAction buildContextMenu(Tile menuLocation) {
+    ShowPopupMenuAction showContextMenuAction = ShowPopupMenuAction.createPopupInMap("Game menu", menuLocation);
     MenuItem endTurnMenuItem = new MenuItem(App.translate("end_turn"), guiContext);
     showContextMenuAction.addAction(ActionFactory.buildEndTurnAction(stateChanger), endTurnMenuItem);
     return showContextMenuAction;

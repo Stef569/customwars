@@ -14,7 +14,7 @@ import com.customwars.client.ui.hud.UnitInfoPanel;
 import com.customwars.client.ui.slick.BasicComponent;
 import com.customwars.client.ui.sprite.SpriteManager;
 import com.customwars.client.ui.state.input.CWCommand;
-import org.newdawn.slick.Color;
+import org.apache.log4j.Logger;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.gui.ComponentListener;
 import org.newdawn.slick.gui.GUIContext;
@@ -31,7 +31,8 @@ import java.util.List;
  * @author stefan
  */
 public class HUD {
-  private static final int INFO_BOX_HEIGH = 110;
+  private static final Logger logger = Logger.getLogger(HUD.class);
+  private static final int INFO_PANEL_HEIGHT = 110;
   private static final int TOP_MARGIN = 10;
 
   // Control
@@ -52,6 +53,7 @@ public class HUD {
   private TerrainInfoPanel terrainInfoPanel;
   private UnitInfoPanel unitInfoPanel;
   private TransportInfoPanel transportInfoPanel;
+  private boolean renderPopupInMap;
 
   public HUD(GUIContext guiContext) {
     this.guiContext = guiContext;
@@ -72,17 +74,17 @@ public class HUD {
   private void initComponents() {
     terrainInfoPanel = new TerrainInfoPanel(guiContext, spriteManager);
     terrainInfoPanel.setWidth(56);
-    terrainInfoPanel.setHeight(INFO_BOX_HEIGH);
+    terrainInfoPanel.setHeight(INFO_PANEL_HEIGHT);
     bottomComponents.add(terrainInfoPanel);
 
     unitInfoPanel = new UnitInfoPanel(guiContext);
     unitInfoPanel.setWidth(65);
-    unitInfoPanel.setHeight(INFO_BOX_HEIGH);
+    unitInfoPanel.setHeight(INFO_PANEL_HEIGHT);
     bottomComponents.add(unitInfoPanel);
 
     transportInfoPanel = new TransportInfoPanel(guiContext);
     transportInfoPanel.setWidth(tileSize);
-    transportInfoPanel.setHeight(INFO_BOX_HEIGH);
+    transportInfoPanel.setHeight(INFO_PANEL_HEIGHT);
     bottomComponents.add(transportInfoPanel);
 
     PlayerInfoBox playerInfoBox = new PlayerInfoBox(guiContext, game);
@@ -130,10 +132,10 @@ public class HUD {
   public final void locateInfoBoxes(Direction quadrant) {
     if (Direction.isWestQuadrant(quadrant)) {
       locateRightToLeft(topComponents, TOP_MARGIN);
-      locateRightToLeft(bottomComponents, camera.getHeight() - INFO_BOX_HEIGH);
+      locateRightToLeft(bottomComponents, camera.getHeight() - INFO_PANEL_HEIGHT);
     } else {
       locateLeftToRight(topComponents, TOP_MARGIN);
-      locateLeftToRight(bottomComponents, camera.getHeight() - INFO_BOX_HEIGH);
+      locateLeftToRight(bottomComponents, camera.getHeight() - INFO_PANEL_HEIGHT);
     }
   }
 
@@ -175,40 +177,57 @@ public class HUD {
     }
   }
 
-  public void showPopUp(Location popUpLocation, String popUpName, List<MenuItem> items, ComponentListener componentListener) {
-    PopupMenu popup = buildPopupMenu(items);
-    int x = popUpLocation.getCol() * tileSize + tileSize / 2;
-    int y = popUpLocation.getRow() * tileSize + tileSize / 2;
+  public void showPopUpInMap(Location popupLocation, String popupName, PopupMenu popup, ComponentListener componentListener) {
+    int x = popupLocation.getCol() * tileSize + tileSize / 2;
+    int y = popupLocation.getRow() * tileSize + tileSize / 2;
 
     if (!GUI.canFitToScreen(x, y, popup.getWidth(), popup.getHeight())) {
       x = camera.getX() + tileSize / 2;
       y = camera.getY() + tileSize / 2;
+
+      if (!GUI.canFitToScreen(x, y, popup.getWidth(), popup.getHeight())) {
+        logger.warn("popup " + popupName + " cannot fit within the map");
+      }
     }
-    showPopUp(x, y, componentListener);
+    this.renderPopupInMap = true;
+    showPopup(new Point(x, y), popupName, popup, componentListener);
   }
 
-  private PopupMenu buildPopupMenu(List<MenuItem> items) {
-    popupMenu = new PopupMenu(guiContext);
-    popupMenu.setBackGroundColor(new Color(0, 0, 0, 0.4f));
-    popupMenu.setHoverColor(new Color(0, 0, 0, 0.20f));
+  /**
+   * Show the popup centered within the container
+   * if the popup can fit the container show it in the center
+   * if the popup cannot fit split the popup up into 2 popups
+   */
+  public void showPopup(String popupName, PopupMenu popup, ComponentListener componentListener) {
+    Point center = GUI.getCenteredRenderPoint(popup.getSize(), guiContext);
 
-    for (MenuItem item : items) {
-      popupMenu.addItem(item);
+    if (!GUI.canFitToScreen(center.x, center.y, popup.getWidth(), popup.getHeight())) {
+      logger.warn("popup " + popupName + " cannot fit within the screen");
     }
-    popupMenu.init();
-    return popupMenu;
+    this.renderPopupInMap = false;
+    showPopup(center, popupName, popup, componentListener);
   }
 
-  public void showPopUp(int x, int y, ComponentListener componentListener) {
+  public void showPopup(Point popupLocation, String popupName, PopupMenu popup, ComponentListener componentListener) {
+    this.popupMenu = popup;
     renderInfoPanels = false;
-    popupMenu.setLocation(x, y);
+    popupMenu.setLocation(popupLocation.x, popupLocation.y);
     popupMenu.init();
     popupMenu.addListener(componentListener);
   }
 
-  public void render(Graphics g) {
+  /**
+   * Render content with the top left Point is the top left point of the container
+   *
+   * @param g non translated graphics
+   */
+  public void renderAbsolute(Graphics g) {
     if (renderInfoPanels) {
       renderInfoPanels(g);
+    }
+
+    if (!renderPopupInMap) {
+      renderPopup(g);
     }
   }
 
@@ -221,12 +240,25 @@ public class HUD {
     }
   }
 
-  public void renderPopup(Graphics g) {
+  /**
+   * Render content that is translated
+   * Various translations could be performed like: Scrolling, Centering
+   *
+   * @param g translated graphics
+   */
+  public void renderTranslated(Graphics g) {
+    if (renderPopupInMap) {
+      renderPopup(g);
+    }
+  }
+
+  private void renderPopup(Graphics g) {
     if (isPopupVisible()) popupMenu.render(guiContext, g);
   }
 
   public void hidePopup() {
     renderInfoPanels = true;
+    renderPopupInMap = false;
     popupMenu = null;
   }
 
@@ -252,5 +284,13 @@ public class HUD {
     if (isPopupVisible()) {
       popupMenu.controlPressed(command);
     }
+  }
+
+  public boolean isRenderingPopupInMap() {
+    return isPopupVisible() && renderPopupInMap;
+  }
+
+  public boolean isRenderingAbsolutePopup() {
+    return isPopupVisible() && !renderPopupInMap;
   }
 }
