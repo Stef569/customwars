@@ -17,6 +17,8 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.command.Command;
 import org.newdawn.slick.command.InputProviderListener;
 import org.newdawn.slick.state.StateBasedGame;
+import org.newdawn.slick.thingle.Thingle;
+import org.newdawn.slick.thingle.internal.slick.SlickThinletFactory;
 
 import java.lang.reflect.Field;
 
@@ -41,6 +43,7 @@ public abstract class CWStateBasedGame extends StateBasedGame implements InputPr
   }
 
   public final void initStatesList(GameContainer gameContainer) {
+    Thingle.init(new SlickThinletFactory(gameContainer));
     this.gameContainer = gameContainer;
     loadInput();
     initStatesList();
