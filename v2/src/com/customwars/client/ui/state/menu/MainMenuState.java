@@ -13,6 +13,8 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.gui.AbstractComponent;
 import org.newdawn.slick.gui.ComponentListener;
 import org.newdawn.slick.state.StateBasedGame;
+import org.newdawn.slick.thingle.Thingle;
+import org.newdawn.slick.thingle.internal.slick.SlickThinletFactory;
 
 import java.awt.Point;
 
@@ -21,6 +23,7 @@ public class MainMenuState extends CWState implements ComponentListener {
   private PopupMenu mainMenu;
 
   public void init(GameContainer container, StateBasedGame game) throws SlickException {
+    Thingle.init(new SlickThinletFactory(container));
     this.gameContainer = container;
     mainMenu = new PopupMenu(container);
     mainMenu.setBackGroundColor(new Color(0, 0, 0));
