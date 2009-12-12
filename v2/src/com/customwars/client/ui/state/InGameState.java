@@ -176,7 +176,12 @@ public class InGameState extends CWState implements PropertyChangeListener {
         changeToState("GAME_OVER");
         gameOver = false;
       }
-      input.setOffset(camera.getX() - center.x, camera.getY() - center.y);
+
+      if (hud.isRenderingAbsolutePopup()) {
+        input.setOffset(0, 0);
+      } else {
+        input.setOffset(camera.getX() - center.x, camera.getY() - center.y);
+      }
     }
   }
 
@@ -186,7 +191,7 @@ public class InGameState extends CWState implements PropertyChangeListener {
       g.translate(center.x, center.y);
       gameRenderer.render(g);
       g.resetTransform();
-      hud.render(g);
+      hud.renderAbsolute(g);
     }
   }
 

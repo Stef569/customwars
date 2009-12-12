@@ -90,7 +90,7 @@ public class GameRenderer implements Renderable, PropertyChangeListener {
     mapRenderer.render(g);
     if (renderEvents) eventsRenderer.render(g);
     if (renderAttackDamage) renderAttackDamagePercentage(g);
-    hud.renderPopup(g);
+    hud.renderTranslated(g);
     g.resetTransform();
   }
 

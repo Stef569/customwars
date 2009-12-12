@@ -55,7 +55,7 @@ public class HumanCityController extends CityController {
    * Units that cannot be bought show a darker unit image and have a null action when clicked on.
    */
   private ShowPopupMenuAction buildMenu(Tile selected) {
-    ShowPopupMenuAction showCityPopupMenuAction = new ShowPopupMenuAction("Buy unit menu", selected);
+    ShowPopupMenuAction showCityPopupMenuAction = ShowPopupMenuAction.createCenteredPopup("Buy city menu");
 
     for (Unit unit : UnitFactory.getAllUnits()) {
       if (city.canBuild(unit)) {
