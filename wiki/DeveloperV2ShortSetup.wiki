@@ -12,7 +12,7 @@
 
 #5 now the code should compile
 
-#6 Make sure the src, res and test packages are included in the classpath.(Blue color in intelliJ)
+#6 Make sure the src, resources and test packages are included in the classpath.(Blue color in intelliJ)
 
 #7 attempt to run the main method will throw 
 Exception in thread "main" java.lang.UnsatisfiedLinkError: no lwjgl in java.library.path
