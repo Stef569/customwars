@@ -22,7 +22,7 @@ public abstract class BasicFight implements Fight {
    */
   public void startFight() {
     fightComplete = false;
-    startFightSequense(attacker, defender);
+    startFightSequence(attacker, defender);
   }
 
   private void init(Attacker attacker, Defender defender) {
@@ -32,7 +32,7 @@ public abstract class BasicFight implements Fight {
     this.defender = defender;
   }
 
-  private void startFightSequense(Attacker attacker, Defender defender) {
+  private void startFightSequence(Attacker attacker, Defender defender) {
     if (canAttack()) {
       attacker.attack(defender, this);
 
@@ -62,12 +62,12 @@ public abstract class BasicFight implements Fight {
   }
 
   protected boolean isSuicidalCounterAttack() {
-    return getAttackDamagePercentage() >= 100;
+    return false;
   }
 
   private void counterAttack() {
     fightComplete = true;
-    startFightSequense(attacker, defender);
+    startFightSequence(attacker, defender);
   }
 
   /**
