@@ -39,7 +39,11 @@ public class TextBox extends Box {
 
   public void renderImpl(Graphics g) {
     if (txt != null) {
-      g.drawString(txt, x + center.x, y + center.y);
+      if (font != null) {
+        font.drawString(x + center.x, y + center.y, txt);
+      } else {
+        g.drawString(txt, x + center.x, y + center.y);
+      }
     }
   }
 
