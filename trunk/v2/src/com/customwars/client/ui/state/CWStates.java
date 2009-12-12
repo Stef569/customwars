@@ -41,6 +41,7 @@ public class CWStates extends CWStateBasedGame {
     addState("GAME_OPTIONS", new GameOptionsMenuState());
     addState("REMAP_CONTROLS", new ControlBindingState());
     addState("MAP_SELECT", new MapSelectState());
+    addState("GAME_RULES", new GameRulesState());
     addState("IN_GAME", new InGameState());
     addState("END_TURN", new EndTurnState());
     addState("GAME_OVER", new GameOverState());

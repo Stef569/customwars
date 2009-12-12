@@ -48,7 +48,9 @@ public class ThemeLoader {
 
     try {
       Field field = Theme.class.getDeclaredField(themeProperty);
+      field.setAccessible(true);
       Fields.write(field, theme, thingleColor);
+      field.setAccessible(false);
     } catch (NoSuchFieldException e) {
       throw new RuntimeException(e);
     }
