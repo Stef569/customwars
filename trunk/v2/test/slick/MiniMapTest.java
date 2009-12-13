@@ -31,7 +31,7 @@ public class MiniMapTest extends BasicGame {
 
   @Override
   public void update(GameContainer container, int delta) throws SlickException {
-
+    miniMapRenderer.update();
   }
 
   public void render(GameContainer container, Graphics g) throws SlickException {

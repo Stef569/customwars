@@ -18,14 +18,22 @@ import java.awt.Point;
 
 /**
  * Render a scaled version of a Map
- * Scaled terrain Images are retrieved from an terrain minimap Image
- * Units and cities are manually rendered
+ * Scaled terrain Images are retrieved from the minimap Image
+ * The minimap image should contain sub images of equal width and height
+ * The tilesize is based on the minimap image.
+ *
+ * Units are rendered as circles
+ * Cities are rendered as squares
  */
 public class MiniMapRenderer implements Renderable {
-  private static final int TILE_SIZE = 4;
+  private static final int HQ_ALPHA_STEP = 7;
+  private static final int HQ_MAX_ALPHA = 255;
+  private static final int HQ_MIN_ALPHA = 0;
   private ImageStrip terrainMiniMap;
   private Map<Tile> map;
+  private int tileSize;
   private Point location;
+  private int hqAlpha;
 
   public MiniMapRenderer() {
     this(null);
@@ -38,17 +46,26 @@ public class MiniMapRenderer implements Renderable {
 
   public void setTerrainMiniMap(ImageStrip terrainMiniMap) {
     this.terrainMiniMap = terrainMiniMap;
+    this.tileSize = terrainMiniMap.getTileWidth();
   }
 
   public void setMap(Map<Tile> map) {
     this.map = map;
   }
 
+  public void update() {
+    if (hqAlpha >= HQ_MAX_ALPHA) {
+      hqAlpha -= HQ_ALPHA_STEP;
+    } else if (hqAlpha < HQ_MIN_ALPHA) {
+      hqAlpha += HQ_ALPHA_STEP;
+    }
+  }
+
   public void render(Graphics g) {
     if (map != null) {
       for (Tile t : map.getAllTiles()) {
-        int x = location.x + t.getCol() * TILE_SIZE;
-        int y = location.y + t.getRow() * TILE_SIZE;
+        int x = location.x + t.getCol() * tileSize;
+        int y = location.y + t.getRow() * tileSize;
         renderTile(x, y, g, t);
       }
     }
@@ -76,19 +93,23 @@ public class MiniMapRenderer implements Renderable {
 
   private void renderCity(int x, int y, Graphics g, City city) {
     Color color = ColorUtil.convertToSlickColor(city.getOwner().getColor());
-    renderSquare(x, y, g, color);
+    renderSquare(x, y, g, color, city.getName().equals("hq"));
   }
 
-  private void renderSquare(int x, int y, Graphics g, Color color) {
+  private void renderSquare(int x, int y, Graphics g, Color color, boolean animate) {
     Color prevColor = g.getColor();
     g.setColor(color);
-    g.fillRect(x, y, TILE_SIZE, TILE_SIZE);
-    g.setColor(Color.black);
+    g.fillRect(x, y, tileSize, tileSize);
 
-    // Draw border from right top -> right bottom
+    // Draw from right top -> right bottom
     // and from left bottom -> right bottom
-    g.drawLine(x + TILE_SIZE - 1, y, x + TILE_SIZE - 1, y + TILE_SIZE - 1);
-    g.drawLine(x, y + TILE_SIZE - 1, x + TILE_SIZE - 1, y + TILE_SIZE - 1);
+    if (animate) {
+      g.setColor(new Color(0, 0, 0, hqAlpha));
+    } else {
+      g.setColor(Color.black);
+    }
+    g.drawLine(x + tileSize - 1, y, x + tileSize - 1, y + tileSize - 1);
+    g.drawLine(x, y + tileSize - 1, x + tileSize - 1, y + tileSize - 1);
     g.setColor(prevColor);
   }
 
@@ -100,7 +121,7 @@ public class MiniMapRenderer implements Renderable {
   private void drawCircle(int x, int y, Graphics g, Color color) {
     Color prevColor = g.getColor();
     g.setColor(color);
-    Shape circle = new Circle(x + TILE_SIZE / 2, y + TILE_SIZE / 2, TILE_SIZE / 2);
+    Shape circle = new Circle(x + tileSize / 2, y + tileSize / 2, tileSize / 2);
     g.fill(circle);
     g.setColor(Color.white);
     g.drawLine(x + 1, y + 1, x + 1, y + 1);
@@ -112,11 +133,11 @@ public class MiniMapRenderer implements Renderable {
   }
 
   public int getWidth() {
-    return map != null ? map.getCols() * TILE_SIZE : 0;
+    return map != null ? map.getCols() * tileSize : 0;
   }
 
   public int getHeight() {
-    return map != null ? map.getRows() * TILE_SIZE : 0;
+    return map != null ? map.getRows() * tileSize : 0;
   }
 
   public Dimension getSize() {
