@@ -109,7 +109,7 @@ public class TerrainInfoPanel extends BasicComponent {
   private void renderTerrainName(Graphics g) {
     g.setColor(textColor);
     Terrain terrain = tile.getTerrain();
-    g.drawString(App.translate(terrain.getName().toLowerCase()), getX() + TERRAIN_NAME_LEFT_MARGIN, getY());
+    g.drawString(App.translate(terrain.getName()), getX() + TERRAIN_NAME_LEFT_MARGIN, getY());
   }
 
   public void setTile(Tile tile) {

@@ -9,7 +9,7 @@
     Naval
 -->
 <list>
-    <city name="City" id="0" type='Road'>
+    <city name="base" id="0" type='road'>
         <hidden>true</hidden>
         <defenseBonus>3</defenseBonus>
         <moveCosts>
@@ -33,7 +33,7 @@
         <maxCapCount>20</maxCapCount>
         <description>They give you money and heal units inside them.</description>
     </city>
-    <city name="Factory" id="1" type='Road'>
+    <city name="factory" id="1" type='road'>
         <hidden>true</hidden>
         <defenseBonus>3</defenseBonus>
         <moveCosts>
@@ -60,7 +60,7 @@
         <maxCapCount>20</maxCapCount>
         <description>Factories heal, provide supplies and can create new ground units.</description>
     </city>
-    <city name="Airport" id="2" type='Road'>
+    <city name="airport" id="2" type='road'>
         <hidden>true</hidden>
         <defenseBonus>3</defenseBonus>
         <moveCosts>
@@ -87,7 +87,7 @@
         <maxCapCount>20</maxCapCount>
         <description>empty</description>
     </city>
-    <city name="Port" id="3" type='Road'>
+    <city name="port" id="3" type='road'>
         <hidden>true</hidden>
         <defenseBonus>3</defenseBonus>
         <moveCosts>
@@ -113,7 +113,7 @@
         </builds>
         <maxCapCount>20</maxCapCount>
     </city>
-    <city name="HQ" id="4" type='Road'>
+    <city name="hq" id="4" type='road'>
         <hidden>true</hidden>
         <defenseBonus>3</defenseBonus>
         <moveCosts>
@@ -136,7 +136,7 @@
         </canBeCaptureBy>
         <maxCapCount>20</maxCapCount>
     </city>
-    <city name="Missle_silo" id="5" type='Road'>
+    <city name="missle_silo" id="5" type='road'>
         <hidden>true</hidden>
         <defenseBonus>3</defenseBonus>
         <moveCosts>
