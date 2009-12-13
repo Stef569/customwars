@@ -420,7 +420,7 @@
         <armyBranch>LAND</armyBranch>
         <movementType>&TREAD;</movementType>
 
-        <primaryWeaponName>NEON_TANK_MAIN_GUN</primaryWeaponName>
+        <primaryWeaponName>NEO_TANK_MAIN_GUN</primaryWeaponName>
         <secondaryWeaponName>TANK_MACHIN_GUN</secondaryWeaponName>
         <description></description>
     </unit>

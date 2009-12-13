@@ -14,7 +14,7 @@
         <!ELEMENT description (#PCDATA)>
         ]>
 <list>
-    <weapon name="SMG">
+    <weapon name="smg">
         <fireRange>
             <minRange>1</minRange>
             <maxRange>1</maxRange>
@@ -25,7 +25,7 @@
         <maxAmmo>99</maxAmmo>
         <description></description>
     </weapon>
-    <weapon name="BAZOOKA">
+    <weapon name="bazooka">
         <fireRange>
             <minRange>1</minRange>
             <maxRange>1</maxRange>
@@ -36,7 +36,7 @@
         <maxAmmo>3</maxAmmo>
         <description>For taking out tanks in close Combat</description>
     </weapon>
-    <weapon name="TANK_MACHIN_GUN">
+    <weapon name="tank_machin_gun">
         <fireRange>
             <minRange>1</minRange>
             <maxRange>1</maxRange>
@@ -47,7 +47,7 @@
         <maxAmmo>99</maxAmmo>
         <description>For taking out units in close Combat</description>
     </weapon>
-    <weapon name="TANK_MAIN_GUN">
+    <weapon name="tank_main_gun">
         <fireRange>
             <minRange>1</minRange>
             <maxRange>1</maxRange>
@@ -58,7 +58,7 @@
         <maxAmmo>9</maxAmmo>
         <description></description>
     </weapon>
-    <weapon name="MEDIUM_TANK_MAIN_GUN">
+    <weapon name="medium_tank_main_gun">
         <fireRange>
             <minRange>1</minRange>
             <maxRange>1</maxRange>
@@ -69,7 +69,7 @@
         <maxAmmo>8</maxAmmo>
         <description></description>
     </weapon>
-    <weapon name="RECON_MAIN_GUN">
+    <weapon name="recon_main_gun">
         <fireRange>
             <minRange>1</minRange>
             <maxRange>1</maxRange>
@@ -80,7 +80,7 @@
         <maxAmmo>5</maxAmmo>
         <description></description>
     </weapon>
-    <weapon name="LONG_RANGE_CANNON">
+    <weapon name="long_range_cannon">
         <fireRange>
             <minRange>2</minRange>
             <maxRange>5</maxRange>
@@ -92,7 +92,7 @@
         <maxAmmo>9</maxAmmo>
         <description>none</description>
     </weapon>
-    <weapon name="ANTI_AIR">
+    <weapon name="anti_air">
         <fireRange>
             <minRange>1</minRange>
             <maxRange>1</maxRange>
@@ -104,7 +104,7 @@
         <maxAmmo>9</maxAmmo>
         <description>none</description>
     </weapon>
-    <weapon name="ROCKETS">
+    <weapon name="rockets">
         <fireRange>
             <minRange>3</minRange>
             <maxRange>5</maxRange>
@@ -116,7 +116,7 @@
         <maxAmmo>6</maxAmmo>
         <description></description>
     </weapon>
-    <weapon name="ANTI_AIR_ROCKETS">
+    <weapon name="anti_air_rockets">
         <fireRange>
             <minRange>3</minRange>
             <maxRange>5</maxRange>
@@ -127,7 +127,7 @@
         <maxAmmo>6</maxAmmo>
         <description></description>
     </weapon>
-    <weapon name="NAVAL_CANNON">
+    <weapon name="naval_cannon">
         <fireRange>
             <minRange>3</minRange>
             <maxRange>5</maxRange>
@@ -139,7 +139,7 @@
         <maxAmmo>6</maxAmmo>
         <description></description>
     </weapon>
-    <weapon name="TORPEDO">
+    <weapon name="torpedo">
         <fireRange>
             <minRange>1</minRange>
             <maxRange>1</maxRange>
@@ -150,7 +150,7 @@
         <maxAmmo>6</maxAmmo>
         <description></description>
     </weapon>
-    <weapon name="ANTI_SHIP_MISSLE">
+    <weapon name="anti_ship_missle">
         <fireRange>
             <minRange>1</minRange>
             <maxRange>1</maxRange>
@@ -161,7 +161,7 @@
         <maxAmmo>9</maxAmmo>
         <description></description>
     </weapon>
-    <weapon name="NAVAL_ANTI_AIR_MISSLE">
+    <weapon name="naval_anti_air_missle">
         <fireRange>
             <minRange>1</minRange>
             <maxRange>2</maxRange>
@@ -172,7 +172,7 @@
         <maxAmmo>99</maxAmmo>
         <description></description>
     </weapon>
-    <weapon name="AIRCRAFT_ANTI_AIR_MISSLE">
+    <weapon name="aircraft_anti_air_missle">
         <fireRange>
             <minRange>1</minRange>
             <maxRange>1</maxRange>
@@ -183,7 +183,7 @@
         <maxAmmo>6</maxAmmo>
         <description></description>
     </weapon>
-    <weapon name="BOMB">
+    <weapon name="bomb">
         <fireRange>
             <minRange>1</minRange>
             <maxRange>1</maxRange>
@@ -195,7 +195,7 @@
         <maxAmmo>6</maxAmmo>
         <description></description>
     </weapon>
-    <weapon name="HELI_GROUND_MISSLE">
+    <weapon name="heli_ground_missle">
         <fireRange>
             <minRange>1</minRange>
             <maxRange>1</maxRange>
@@ -207,7 +207,7 @@
         <maxAmmo>6</maxAmmo>
         <description></description>
     </weapon>
-    <weapon name="NEON_TANK_MAIN_GUN">
+    <weapon name="neo_tank_main_gun">
         <fireRange>
             <minRange>1</minRange>
             <maxRange>1</maxRange>

@@ -43,11 +43,11 @@ public class TestData {
   public static final int ROCKETS = 8;
   public static final int APC = 9;
 
-  public static final String SMG = "SMG";
-  public static final String CANNON = "CANNON";
-  public static final String ROCKET = "ROCKET";
-  public static final String ART_CANNON = "ART_CANNON";
-  public static final String TANK_CANNON = "TANK_CANNON";
+  public static final String SMG = "smg";
+  public static final String CANNON = "cannon";
+  public static final String ROCKET = "rocket";
+  public static final String ART_CANNON = "art_cannon";
+  public static final String TANK_CANNON = "tank_cannon";
 
   public static final int BASE = 0;
   public static final int FACTORY = 1;
@@ -73,22 +73,22 @@ public class TestData {
 
   // Terrains
   private static Terrain plain = new Terrain(0, "plain", "plain", "", 0, 0, false, 0, plainMoveCosts);
-  private static Terrain verticalRiver = new Terrain(20, "River", "Vertical River", "", 0, -1, false, 0, riverMoveCosts);
-  private static Terrain mountain = new Terrain(17, "Mountain", "Mountain", "", 4, 2, false, 3, mountainMoveCosts);
-  private static Terrain sea = new Terrain(SEA, "Ocean", "Sea", "", 0, -2, false, 0, seaMoveCosts);
+  private static Terrain verticalRiver = new Terrain(20, "river", "river", "", 0, -1, false, 0, riverMoveCosts);
+  private static Terrain mountain = new Terrain(17, "mountain", "mountain", "", 4, 2, false, 3, mountainMoveCosts);
+  private static Terrain sea = new Terrain(SEA, "ocean", "ocean", "", 0, -2, false, 0, seaMoveCosts);
 
   // Units
-  private static UnitStats infStats = new UnitStats(INF, INF, "Infantry", "", 3000, 3, 3, 10, UNIT_MAX_HP, MAX_UNIT_SUPPLIES, 0, 0, true, false, false, false, true, false, false, null, ArmyBranch.LAND, MOVE_INF, new Range(0, 0), "SMG", "");
+  private static UnitStats infStats = new UnitStats(INF, INF, "infantry", "", 3000, 3, 3, 10, UNIT_MAX_HP, MAX_UNIT_SUPPLIES, 0, 0, true, false, false, false, true, false, false, null, ArmyBranch.LAND, MOVE_INF, new Range(0, 0), "SMG", "");
   private static Unit infantry = new Unit(infStats);
-  private static UnitStats mechStats = new UnitStats(MECH, MECH, "Mech", "", 3000, 3, 3, 10, UNIT_MAX_HP, MAX_UNIT_SUPPLIES, 0, 0, true, false, false, false, true, false, false, null, ArmyBranch.LAND, MOVE_MECH, new Range(0, 0), "BAZOOKA", "SMG");
+  private static UnitStats mechStats = new UnitStats(MECH, MECH, "mech", "", 3000, 3, 3, 10, UNIT_MAX_HP, MAX_UNIT_SUPPLIES, 0, 0, true, false, false, false, true, false, false, null, ArmyBranch.LAND, MOVE_MECH, new Range(0, 0), "BAZOOKA", "SMG");
   private static Unit mech = new Unit(mechStats);
-  private static UnitStats apcStats = new UnitStats(APC, APC, "Apc", "", 8000, 5, 1, 10, UNIT_MAX_HP, MAX_UNIT_SUPPLIES, 3, 0, false, false, true, true, true, false, false, Arrays.asList(MOVE_INF, MOVE_MECH), ArmyBranch.LAND, MOVE_TREAD, new Range(1, 1), "", "");
+  private static UnitStats apcStats = new UnitStats(APC, APC, "apc", "", 8000, 5, 1, 10, UNIT_MAX_HP, MAX_UNIT_SUPPLIES, 3, 0, false, false, true, true, true, false, false, Arrays.asList(MOVE_INF, MOVE_MECH), ArmyBranch.LAND, MOVE_TREAD, new Range(1, 1), "", "");
   private static Unit apc = new Unit(apcStats);
-  private static UnitStats tankStats = new UnitStats(TANK, TANK, "Tank", "", 7000, 6, 3, 10, UNIT_MAX_HP, MAX_UNIT_SUPPLIES, 0, 0, false, false, false, false, true, false, false, null, ArmyBranch.LAND, MOVE_TIRES, new Range(0, 0), "TANK_MAIN_GUN", "TANK_MACHIN_GUN");
+  private static UnitStats tankStats = new UnitStats(TANK, TANK, "tank", "", 7000, 6, 3, 10, UNIT_MAX_HP, MAX_UNIT_SUPPLIES, 0, 0, false, false, false, false, true, false, false, null, ArmyBranch.LAND, MOVE_TIRES, new Range(0, 0), "TANK_MAIN_GUN", "TANK_MACHIN_GUN");
   private static Unit tank = new Unit(tankStats);
-  private static UnitStats rocketStats = new UnitStats(ROCKETS, ROCKETS, "Rockets", "", 14000, 5, 1, 10, UNIT_MAX_HP, MAX_UNIT_SUPPLIES, 0, 0, false, false, false, false, true, false, false, null, ArmyBranch.LAND, MOVE_TIRES, new Range(0, 0), "ROCKETS", "");
+  private static UnitStats rocketStats = new UnitStats(ROCKETS, ROCKETS, "rockets", "", 14000, 5, 1, 10, UNIT_MAX_HP, MAX_UNIT_SUPPLIES, 0, 0, false, false, false, false, true, false, false, null, ArmyBranch.LAND, MOVE_TIRES, new Range(0, 0), "ROCKETS", "");
   private static Unit rocket = new Unit(rocketStats);
-  private static UnitStats artilleryStats = new UnitStats(ARTILLERY, ARTILLERY, "Artillery", "", 6000, 5, 1, 10, UNIT_MAX_HP, 50, 0, 0, false, false, false, false, true, false, false, null, ArmyBranch.LAND, MOVE_TREAD, new Range(0, 0), "LONG_RANGE_CANNON", "");
+  private static UnitStats artilleryStats = new UnitStats(ARTILLERY, ARTILLERY, "artillery", "", 6000, 5, 1, 10, UNIT_MAX_HP, 50, 0, 0, false, false, false, false, true, false, false, null, ArmyBranch.LAND, MOVE_TREAD, new Range(0, 0), "LONG_RANGE_CANNON", "");
   private static Unit artillery = new Unit(artilleryStats);
 
   // Weapons
@@ -99,22 +99,22 @@ public class TestData {
   private static Weapon artilleryCannon = new Weapon(ART_CANNON, "", new Range(2, 3), 9, false, ARMY_BRANCH_LAND_ONLY);
 
   // City
-  private static City base = new City(0, "Road", "Base", "", 0, 0, plainMoveCosts, 1, true,
+  private static City base = new City(0, "road", "base", "", 0, 0, plainMoveCosts, 1, true,
     cityRoadConnection, ARMY_BRANCH_LAND_ONLY, Arrays.asList(INF, MECH), null, 20, CITY_HEAL_RATE);
 
-  private static City factory = new City(1, "Road", "Factory", "", 0, 0, plainMoveCosts, 1, true,
+  private static City factory = new City(1, "road", "factory", "", 0, 0, plainMoveCosts, 1, true,
     cityRoadConnection, ARMY_BRANCH_LAND_ONLY, Arrays.asList(INF, MECH), ARMY_BRANCH_LAND_ONLY, 20, CITY_HEAL_RATE);
 
-  private static City hq = new City(4, "Road", "HQ", "", 0, 0, plainMoveCosts, 1, true,
+  private static City hq = new City(4, "road", "hq", "", 0, 0, plainMoveCosts, 1, true,
     cityRoadConnection, ARMY_BRANCH_LAND_ONLY, Arrays.asList(INF, MECH), null, 20, CITY_HEAL_RATE);
 
-  private static City airport = new City(AIRPORT, "Road", "Airport", "", 0, 0, plainMoveCosts, 1, true,
+  private static City airport = new City(AIRPORT, "road", "airport", "", 0, 0, plainMoveCosts, 1, true,
     cityRoadConnection, ARMY_BRANCH_AIR_ONLY, Arrays.asList(INF, MECH), ARMY_BRANCH_AIR_ONLY, 20, CITY_HEAL_RATE);
 
-  private static City port = new City(PORT, "Road", "Port", "", 0, 0, plainMoveCosts, 1, true,
+  private static City port = new City(PORT, "road", "port", "", 0, 0, plainMoveCosts, 1, true,
     cityRoadConnection, ARMY_BRANCH_NAVAL_ONLY, Arrays.asList(INF, MECH), ARMY_BRANCH_NAVAL_ONLY, 20, CITY_HEAL_RATE);
 
-  private static City silo = new City(5, "Road", "Missle Silo", "", 0, 0, plainMoveCosts, 1, true,
+  private static City silo = new City(5, "road", "missle_silo", "", 0, 0, plainMoveCosts, 1, true,
     cityRoadConnection, null, null, null, 20, CITY_HEAL_RATE);
 
   public static void storeTestData() {

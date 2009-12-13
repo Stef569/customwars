@@ -109,6 +109,6 @@ public class HardCodedGame {
   private static void initMapProperties() {
     map.setMapName("test map");
     map.setAuthor("Joe");
-    map.setDescription("A small [10x10] test map containing a couple of units and some cities.");
+    map.setDescription("A small [15x20] test map containing a couple of units and some cities.");
   }
 }

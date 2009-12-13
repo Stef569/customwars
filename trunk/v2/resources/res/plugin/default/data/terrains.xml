@@ -4,303 +4,303 @@
  but there are many road types(Vertical, horizontal, bends). Type referes to a baseTerrain inside baseTerrains.xml
 -->
 <list>
-    <terrain id="0" type="Grass"/>
-    <terrain id="1" type="Forest"/>
+    <terrain id="0" type="grass"/>
+    <terrain id="1" type="forest"/>
     <terrain id="2" type="Road">
         <connect>East, West</connect>
     </terrain>
-    <terrain id="3" type="Road">
+    <terrain id="3" type="road">
         <connect>North, South</connect>
     </terrain>
-    <terrain id="4" type="Road">
+    <terrain id="4" type="road">
         <connect>North, East</connect>
     </terrain>
-    <terrain id="5" type="Road">
+    <terrain id="5" type="road">
         <connect>South, East</connect>
     </terrain>
-    <terrain id="6" type="Road">
+    <terrain id="6" type="road">
         <connect>South, West</connect>
     </terrain>
-    <terrain id="7" type="Road">
+    <terrain id="7" type="road">
         <connect>North, West</connect>
     </terrain>
-    <terrain id="8" type="Road">
+    <terrain id="8" type="road">
         <connect>West, North, East</connect>
     </terrain>
-    <terrain id="9" type="Road">
+    <terrain id="9" type="road">
         <connect>North, East, South</connect>
     </terrain>
-    <terrain id="10" type="Road">
+    <terrain id="10" type="road">
         <connect>West, South, East</connect>
     </terrain>
-    <terrain id="11" type="Road">
+    <terrain id="11" type="road">
         <connect>North, West, South</connect>
     </terrain>
-    <terrain id="12" type="Road">
+    <terrain id="12" type="road">
         <connect>North, East, South, West</connect>
     </terrain>
 
     <!--
         Bridges inherit from road types, they connect to roads and
-        span over a River or Ocean depending on the bridge type
+        span over a river or ocean depending on the bridge type
     -->
-    <terrain name="Bridge" id="13" type="Road" spansOver="River">
+    <terrain name="bridge" id="13" type="road" spansOver="river">
         <connect>West, East</connect>
     </terrain>
-    <terrain name="Bridge" id="14" type="Road" spansOver="River">
+    <terrain name="bridge" id="14" type="road" spansOver="river">
         <connect>North, South</connect>
     </terrain>
-    <terrain name="Suspension" id="15" type="Road" spansOver="Ocean">
+    <terrain name="suspension" id="15" type="road" spansOver="ocean">
         <connect>West, East</connect>
     </terrain>
-    <terrain name="Suspension" id="16" type="Road" spansOver="Ocean">
+    <terrain name="suspension" id="16" type="road" spansOver="ocean">
         <connect>North, South</connect>
     </terrain>
 
     <!-- Row 2 -->
-    <terrain id="17" type="Mountain"/>
-    <terrain id="18" type="Plain"/>
-    <terrain id="19" type="River">
+    <terrain id="17" type="mountain"/>
+    <terrain id="18" type="plain"/>
+    <terrain id="19" type="river">
         <connect>West, East</connect>
     </terrain>
-    <terrain id="20" type="River">
+    <terrain id="20" type="river">
         <connect>North, South</connect>
     </terrain>
-    <terrain id="21" type="River">
+    <terrain id="21" type="river">
         <connect>North, East</connect>
     </terrain>
-    <terrain id="22" type="River">
+    <terrain id="22" type="river">
         <connect>South, East</connect>
     </terrain>
-    <terrain id="23" type="River">
+    <terrain id="23" type="river">
         <connect>South, West</connect>
     </terrain>
-    <terrain id="24" type="River">
+    <terrain id="24" type="river">
         <connect>North, West</connect>
     </terrain>
-    <terrain id="25" type="River">
+    <terrain id="25" type="river">
         <connect>West, North, East</connect>
     </terrain>
-    <terrain id="26" type="River">
+    <terrain id="26" type="river">
         <connect>North, East, South</connect>
     </terrain>
-    <terrain id="27" type="River">
+    <terrain id="27" type="river">
         <connect>West, South, East</connect>
     </terrain>
-    <terrain id="28" type="River">
+    <terrain id="28" type="river">
         <connect>north, West, South</connect>
     </terrain>
-    <terrain id="29" type="River">
+    <terrain id="29" type="river">
         <connect>North, East, South, West</connect>
     </terrain>
-    <terrain id="30" type="Ocean">
+    <terrain id="30" type="ocean">
         <connect>North, NorthEast, East, SouthEast, South, SouthWest, West, NorthWest</connect>
     </terrain>
-    <terrain name="Delta" id="31" type="River"/>
-    <terrain name="Delta" id="32" type="River"/>
-    <terrain name="Delta" id="33" type="River"/>
+    <terrain name="delta" id="31" type="river"/>
+    <terrain name="delta" id="32" type="river"/>
+    <terrain name="delta" id="33" type="river"/>
 
     <!-- Row 3 -->
-    <terrain name="Delta" id="34" type="River"/>
-    <terrain id="35" type="Ocean">
+    <terrain name="delta" id="34" type="river"/>
+    <terrain id="35" type="ocean">
         <connect>North, NorthEast, East, South, SouthEast, West, NorthWest</connect>
     </terrain>
-    <terrain name="Ocean" id="36" type="Ocean">
+    <terrain name="ocean" id="36" type="ocean">
         <connect>East, West</connect>
     </terrain>
-    <terrain name="Ocean" id="37" type="Ocean">
+    <terrain name="ocean" id="37" type="ocean">
         <connect>North, South</connect>
     </terrain>
-    <terrain name="Ocean" id="38" type="Ocean">
+    <terrain name="ocean" id="38" type="ocean">
         <connect>North, East</connect>
     </terrain>
-    <terrain name="Ocean" id="39" type="Ocean">
+    <terrain name="ocean" id="39" type="ocean">
         <connect>East, South</connect>
     </terrain>
-    <terrain name="Ocean" id="40" type="Ocean">
+    <terrain name="ocean" id="40" type="ocean">
         <connect>West, South</connect>
     </terrain>
-    <terrain name="Ocean" id="41" type="Ocean">
+    <terrain name="ocean" id="41" type="ocean">
         <connect>North, West</connect>
     </terrain>
-    <terrain name="Ocean" id="42" type="Ocean">
+    <terrain name="ocean" id="42" type="ocean">
         <connect>North</connect>
     </terrain>
-    <terrain name="Ocean" id="43" type="Ocean">
+    <terrain name="ocean" id="43" type="ocean">
         <connect>East</connect>
     </terrain>
-    <terrain name="Ocean" id="44" type="Ocean">
+    <terrain name="ocean" id="44" type="ocean">
         <connect>South</connect>
     </terrain>
-    <terrain name="Ocean" id="45" type="Ocean">
+    <terrain name="ocean" id="45" type="ocean">
         <connect>West</connect>
     </terrain>
-    <terrain name="Ocean" id="46" type="Ocean"/>
-    <terrain name="Ocean" id="47" type="Ocean">
+    <terrain name="ocean" id="46" type="ocean"/>
+    <terrain name="ocean" id="47" type="ocean">
         <connect>North, East, West</connect>
     </terrain>
-    <terrain name="Ocean" id="48" type="Ocean">
+    <terrain name="ocean" id="48" type="ocean">
         <connect>North, East, South</connect>
     </terrain>
-    <terrain name="Ocean" id="49" type="Ocean">
+    <terrain name="ocean" id="49" type="ocean">
         <connect>East, South, West</connect>
     </terrain>
-    <terrain name="Ocean" id="50" type="Ocean">
+    <terrain name="ocean" id="50" type="ocean">
         <connect>North, South, West</connect>
     </terrain>
 
     <!-- Row 4 -->
-    <terrain name="Ocean" id="51" type="Ocean">
+    <terrain name="ocean" id="51" type="ocean">
         <connect>North, East, SouthEast, South, SouthWest, West, NorthWest</connect>
     </terrain>
-    <terrain name="Ocean" id="52" type="Ocean">
+    <terrain name="ocean" id="52" type="ocean">
         <connect>North, East, South, SouthWest, West, NorthWest</connect>
     </terrain>
-    <terrain name="Ocean" id="53" type="Ocean">
+    <terrain name="ocean" id="53" type="ocean">
         <connect>North, NorthEast, East, South, West, NorthWest</connect>
     </terrain>
-    <terrain name="Ocean" id="54" type="Ocean">
+    <terrain name="ocean" id="54" type="ocean">
         <connect>North, East, South, SouthWest, West, NorthWest</connect>
     </terrain>
-    <terrain name="Shoal" id="55" type="Ocean">
+    <terrain name="shoal" id="55" type="ocean">
         <connect>North, East</connect>
     </terrain>
-    <terrain name="Shoal" id="56" type="Ocean">
+    <terrain name="shoal" id="56" type="ocean">
         <connect>East, South</connect>
     </terrain>
-    <terrain name="Shoal" id="57" type="Ocean">
+    <terrain name="shoal" id="57" type="ocean">
         <connect>South, West</connect>
     </terrain>
-    <terrain name="Shoal" id="58" type="Ocean">
+    <terrain name="shoal" id="58" type="ocean">
         <connect>North, West</connect>
     </terrain>
-    <terrain name="Ocean" id="59" type="Ocean">
+    <terrain name="ocean" id="59" type="ocean">
         <connect>North, East, SouthEast, South, SouthWest, West, NorthWest</connect>
     </terrain>
-    <terrain name="Ocean" id="60" type="Ocean">
+    <terrain name="ocean" id="60" type="ocean">
         <connect>North, NorthEast, East, South, SouthWest, West, NorthWest</connect>
     </terrain>
-    <terrain name="Ocean" id="61" type="Ocean">
+    <terrain name="ocean" id="61" type="ocean">
         <connect>North, NorthEast, East, SouthEast, South, West, NorthWest</connect>
     </terrain>
-    <terrain name="Ocean" id="62" type="Ocean">
+    <terrain name="ocean" id="62" type="ocean">
         <connect>North, NorthEast, East, SouthEast, South, SouthWest, West</connect>
     </terrain>
-    <terrain name="Ocean" id="63" type="Ocean">
+    <terrain name="ocean" id="63" type="ocean">
         <connect>North, East, SouthEast, South, SouthWest, West</connect>
     </terrain>
-    <terrain name="Shoal" id="64" type="Ocean">
+    <terrain name="shoal" id="64" type="ocean">
         <connect>North, East, West</connect>
     </terrain>
-    <terrain name="Shoal" id="65" type="Ocean">
+    <terrain name="shoal" id="65" type="ocean">
         <connect>North, East, South</connect>
     </terrain>
-    <terrain name="Shoal" id="66" type="Ocean">
+    <terrain name="shoal" id="66" type="ocean">
         <connect>East, South, West</connect>
     </terrain>
-    <terrain name="Shoal" id="67" type="Ocean">
+    <terrain name="shoal" id="67" type="ocean">
         <connect>North, South, West</connect>
     </terrain>
 
     <!-- Row 5 -->
-    <terrain name="Ocean" id="68" type="Ocean">
+    <terrain name="ocean" id="68" type="ocean">
         <connect>North, NorthEast, East, SouthEast, South, West</connect>
     </terrain>
-    <terrain name="Ocean" id="69" type="Ocean">
+    <terrain name="ocean" id="69" type="ocean">
         <connect>North, NorthEast, East, South, West</connect>
     </terrain>
-    <terrain name="Ocean" id="70" type="Ocean">
+    <terrain name="ocean" id="70" type="ocean">
         <connect>North, East, SouthEast, South, West</connect>
     </terrain>
-    <terrain name="Ocean" id="71" type="Ocean">
+    <terrain name="ocean" id="71" type="ocean">
         <connect>North, East, South, West, NorthWest</connect>
     </terrain>
-    <terrain name="Ocean" id="72" type="Ocean">
+    <terrain name="ocean" id="72" type="ocean">
         <connect>North, East, South, West</connect>
     </terrain>
-    <terrain name="Ocean" id="73" type="Ocean">
+    <terrain name="ocean" id="73" type="ocean">
         <connect>North, East, SouthEast, South, West, NorthWest</connect>
     </terrain>
-    <terrain name="Ocean" id="74" type="Ocean">
+    <terrain name="ocean" id="74" type="ocean">
         <connect>North, NorthEast, East, South, SouthWest, West</connect>
     </terrain>
-    <terrain name="Reef" id="75" type="Ocean"/>
-    <terrain name="Shoal" id="76" type="Ocean">
+    <terrain name="reef" id="75" type="ocean"/>
+    <terrain name="shoal" id="76" type="ocean">
         <connect>North, NorthEast, East, SouthWest, West, NorthWest</connect>
     </terrain>
-    <terrain name="Shoal" id="77" type="Ocean">
+    <terrain name="shoal" id="77" type="ocean">
         <connect>North, NorthEast, East, SouthEast, South, SouthWest, West, NorthWest</connect>
     </terrain>
-    <terrain name="Shoal" id="78" type="Ocean">
+    <terrain name="shoal" id="78" type="ocean">
         <connect>East</connect>
     </terrain>
-    <terrain name="Shoal" id="79" type="Ocean">
+    <terrain name="shoal" id="79" type="ocean">
         <connect>North</connect>
     </terrain>
-    <terrain name="Shoal" id="80" type="Ocean">
+    <terrain name="shoal" id="80" type="ocean">
         <connect>South</connect>
     </terrain>
-    <terrain name="Shoal" id="81" type="Ocean">
+    <terrain name="shoal" id="81" type="ocean">
         <connect>West</connect>
     </terrain>
 
-    <terrain name="Pipe Seam" id="82" type="Pipe">
+    <terrain name="pipe_seam" id="82" type="pipe">
         <connect>East, West</connect>
     </terrain>
-    <terrain name="Pipe Seam" id="83" type="Pipe">
+    <terrain name="pipe_seam" id="83" type="pipe">
         <connect>North, South</connect>
     </terrain>
-    <terrain name="Destroyed Pipe" id="84" type="Pipe">
+    <terrain name="destroyed_pipe" id="84" type="pipe">
         <connect>East, West</connect>
     </terrain>
 
     <!-- Row 5 -->
-    <terrain name="Destroyed Pipe" id="85" type="Pipe">
+    <terrain name="destroyed_pipe" id="85" type="pipe">
         <connect>North, South</connect>
     </terrain>
-    <terrain name="Pipe" id="86" type="Pipe">
+    <terrain name="pipe" id="86" type="pipe">
         <connect>East, West</connect>
     </terrain>
-    <terrain name="Pipe" id="87" type="Pipe">
+    <terrain name="pipe" id="87" type="pipe">
         <connect>North, South</connect>
     </terrain>
-    <terrain name="Pipe" id="88" type="Pipe">
+    <terrain name="pipe" id="88" type="pipe">
         <connect>North, East</connect>
     </terrain>
-    <terrain name="Pipe" id="89" type="Pipe">
+    <terrain name="pipe" id="89" type="pipe">
         <connect>East, South</connect>
     </terrain>
-    <terrain name="Pipe" id="90" type="Pipe">
+    <terrain name="pipe" id="90" type="pipe">
         <connect>South, West</connect>
     </terrain>
-    <terrain name="Pipe" id="91" type="Pipe">
+    <terrain name="pipe" id="91" type="pipe">
         <connect>North, West</connect>
     </terrain>
-    <terrain name="Pipe" id="92" type="Pipe">
+    <terrain name="pipe" id="92" type="pipe">
         <connect>North, East, West</connect>
     </terrain>
-    <terrain name="Pipe" id="93" type="Pipe">
+    <terrain name="pipe" id="93" type="pipe">
         <connect>North, East, South</connect>
     </terrain>
-    <terrain name="Pipe" id="94" type="Pipe">
+    <terrain name="pipe" id="94" type="pipe">
         <connect>East, South, West</connect>
     </terrain>
-    <terrain name="Pipe" id="95" type="Pipe">
+    <terrain name="pipe" id="95" type="pipe">
         <connect>North, South, West</connect>
     </terrain>
-    <terrain name="Pipe" id="96" type="Pipe">
+    <terrain name="pipe" id="96" type="pipe">
         <connect>North, East, South, West</connect>
     </terrain>
-    <terrain name="Pipe" id="97" type="Pipe">
+    <terrain name="pipe" id="97" type="pipe">
         <connect>South</connect>
     </terrain>
-    <terrain name="Pipe" id="98" type="Pipe">
+    <terrain name="pipe" id="98" type="pipe">
         <connect>West</connect>
     </terrain>
-    <terrain name="Pipe" id="99" type="Pipe">
+    <terrain name="pipe" id="99" type="pipe">
         <connect>North</connect>
     </terrain>
-    <terrain name="Pipe" id="100" type="Pipe">
+    <terrain name="pipe" id="100" type="pipe">
         <connect>East</connect>
     </terrain>
 </list>
