@@ -41,6 +41,7 @@ public class MiniMapWidgetRenderer implements WidgetRenderer {
     miniMapRenderer.render(g);
     g.clearClip();
     g.translate(-center.x, -center.y);
+    miniMapRenderer.update();
   }
 
   public int getPreferredWidth() {
