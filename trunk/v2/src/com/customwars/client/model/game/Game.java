@@ -14,7 +14,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * CW Impl of a Turnbase game
+ * CW Impl of a Turnbased game
  * The Players in the map(map players) will be replaced by players from the players list(game players).
  * map players have an ID, Color and a HQ(if any), all other player values are default or null values.
  *
@@ -40,6 +40,7 @@ public class Game extends TurnBasedGame implements PropertyChangeListener {
   private void applyGameConfig(GameConfig gameConfig) {
     this.weather = gameConfig.getStartWeather();
     this.cityFunds = gameConfig.getCityFunds();
+    this.map.setFogOfWarOn(gameConfig.isFogOfWarOn());
   }
 
   /**
