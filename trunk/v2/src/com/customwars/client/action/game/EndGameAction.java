@@ -5,22 +5,22 @@ import com.customwars.client.ui.state.InGameContext;
 import com.customwars.client.ui.state.StateChanger;
 
 /**
- * End the current turn
- *
- * @author stefan
+ * End the current game
  */
-public class EndTurnAction extends DirectAction {
+public class EndGameAction extends DirectAction {
   private StateChanger stateChanger;
 
-  public EndTurnAction() {
-    super("End Turn", false);
+  public EndGameAction() {
+    super("End game");
   }
 
+  @Override
   protected void init(InGameContext context) {
-    this.stateChanger = context.getStateChanger();
+    stateChanger = context.getStateChanger();
   }
 
+  @Override
   protected void invokeAction() {
-    stateChanger.changeTo("END_TURN");
+    stateChanger.changeTo("GAME_OVER");
   }
 }
