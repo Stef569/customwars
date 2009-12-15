@@ -28,15 +28,17 @@ public class App {
   private static ResourceBundle localeResourceBundle;
 
   /**
-   * Set the locale bundle, this is used to translate text
+   * Set the locale resource bundle, this is used to translate text
    * See the translate method
+   *
+   * @param bundle resource bundle that contains key-value pairs
    */
   public static void setLocaleResourceBundle(ResourceBundle bundle) {
     App.localeResourceBundle = bundle;
   }
 
   public static void put(String key, String value) {
-    properties.put(key, value);
+    properties.setProperty(key, value);
   }
 
   public static String get(String key) {
@@ -60,7 +62,7 @@ public class App {
       if (value != null) {
         result = Double.parseDouble(value);
       }
-    } catch (NumberFormatException e) {
+    } catch (NumberFormatException ignore) {
       // Ignoring exception causes specified default to be returned
     }
     return result;
@@ -77,7 +79,7 @@ public class App {
       if (value != null) {
         result = Integer.parseInt(value);
       }
-    } catch (NumberFormatException e) {
+    } catch (NumberFormatException ignore) {
       // Ignoring exception causes specified default to be returned
     }
     return result;
@@ -104,7 +106,7 @@ public class App {
     boolean result = def;
     String value = get(key, null);
     if (value != null) {
-      result = value.equalsIgnoreCase("true");
+      result = Boolean.parseBoolean(value);
     }
 
     return result;
@@ -113,7 +115,7 @@ public class App {
   /**
    * Get a translated String for msg
    *
-   * @param msg lower case key definded in the language properties file
+   * @param msg lower case key defined in the language properties file
    * @return msg translated to the current language
    */
   public static String translate(String msg) {
@@ -140,7 +142,7 @@ public class App {
     Properties userProperties = new Properties();
 
     for (String key : properties.stringPropertyNames()) {
-      if (key.startsWith("user")) {
+      if (key.startsWith("user.")) {
         String val = properties.getProperty(key);
         userProperties.setProperty(key, val);
       }
