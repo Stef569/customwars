@@ -99,13 +99,13 @@ public class InGameState extends CWState implements PropertyChangeListener {
     inGameContext.setContainer(container);
     inGameContext.setHud(hud);
     inGameContext.setGameRenderer(gameRenderer);
+    inGameContext.setStateChanger(stateChanger);
 
     ControllerManager controllerManager = new ControllerManager(inGameContext);
     inGameContext.setControllerManager(controllerManager);
 
     gameControl = gameRenderer.getGameControl();
     gameControl.setInGameContext(inGameContext);
-    gameControl.setStateChanger(stateChanger);
 
     cursorControl = gameControl.getCursorController();
     inGameContext.setGameController(gameControl);
@@ -174,6 +174,7 @@ public class InGameState extends CWState implements PropertyChangeListener {
       inGameContext.update(delta);
       if (gameOver && isInputAllowed()) {
         changeToState("GAME_OVER");
+        inGameContext = null;
         gameOver = false;
       }
 

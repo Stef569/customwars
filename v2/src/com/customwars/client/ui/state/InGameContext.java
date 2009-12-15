@@ -63,6 +63,7 @@ public class InGameContext {
   private ControllerManager controllerManager;
   private ResourceManager resources;
   private GameContainer container;
+  private StateChanger stateChanger;
 
   public InGameContext() {
     dropQueue = new DropLocationsQueue();
@@ -165,6 +166,10 @@ public class InGameContext {
     this.gameControl = gameControl;
   }
 
+  public void setStateChanger(StateChanger stateChanger) {
+    this.stateChanger = stateChanger;
+  }
+
   public Game getGame() {
     return game;
   }
@@ -199,6 +204,10 @@ public class InGameContext {
 
   public GameController getGameController() {
     return gameControl;
+  }
+
+  public StateChanger getStateChanger() {
+    return stateChanger;
   }
 
   public CursorController getCursorController() {

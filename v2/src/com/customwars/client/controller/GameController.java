@@ -15,7 +15,6 @@ import com.customwars.client.ui.MenuItem;
 import com.customwars.client.ui.renderer.GameRenderer;
 import com.customwars.client.ui.sprite.SpriteManager;
 import com.customwars.client.ui.state.InGameContext;
-import com.customwars.client.ui.state.StateChanger;
 import org.apache.log4j.Logger;
 import org.newdawn.slick.gui.GUIContext;
 
@@ -30,7 +29,6 @@ public class GameController {
   private GUIContext guiContext;
   private final Game game;
   private final Map<Tile> map;
-  private StateChanger stateChanger;
 
   public GameController(Game game, GameRenderer gameRenderer, SpriteManager spriteManager) {
     this.game = game;
@@ -79,8 +77,13 @@ public class GameController {
 
   private ShowPopupMenuAction buildContextMenu(Tile menuLocation) {
     ShowPopupMenuAction showContextMenuAction = ShowPopupMenuAction.createPopupInMap("Game menu", menuLocation);
+
     MenuItem endTurnMenuItem = new MenuItem(App.translate("end_turn"), guiContext);
-    showContextMenuAction.addAction(ActionFactory.buildEndTurnAction(stateChanger), endTurnMenuItem);
+    showContextMenuAction.addAction(ActionFactory.buildEndTurnAction(), endTurnMenuItem);
+
+    MenuItem endGameMenuItem = new MenuItem(App.translate("end_game"), guiContext);
+    showContextMenuAction.addAction(ActionFactory.buildEndGameAction(), endGameMenuItem);
+
     return showContextMenuAction;
   }
 
@@ -120,17 +123,13 @@ public class GameController {
   }
 
   public void endTurn() {
-    CWAction endTurn = ActionFactory.buildEndTurnAction(stateChanger);
+    CWAction endTurn = ActionFactory.buildEndTurnAction();
     inGameContext.doAction(endTurn);
   }
 
   public void setInGameContext(InGameContext inGameContext) {
     this.inGameContext = inGameContext;
     this.guiContext = inGameContext.getContainer();
-  }
-
-  public void setStateChanger(StateChanger stateChanger) {
-    this.stateChanger = stateChanger;
   }
 
   public CursorController getCursorController() {

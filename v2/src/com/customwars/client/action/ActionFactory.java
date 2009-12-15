@@ -1,6 +1,7 @@
 package com.customwars.client.action;
 
 import com.customwars.client.action.city.LaunchRocketAction;
+import com.customwars.client.action.game.EndGameAction;
 import com.customwars.client.action.game.EndTurnAction;
 import com.customwars.client.action.unit.AddUnitToTileAction;
 import com.customwars.client.action.unit.AttackAction;
@@ -24,7 +25,6 @@ import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Tile;
-import com.customwars.client.ui.state.StateChanger;
 
 import java.util.Collection;
 
@@ -116,10 +116,10 @@ public class ActionFactory {
     return addToTileAction;
   }
 
-  public static CWAction buildEndTurnAction(StateChanger stateChanger) {
+  public static CWAction buildEndTurnAction() {
     ActionBag endTurnAction = new ActionBag("End Turn");
     endTurnAction.add(new ClearInGameStateAction());
-    endTurnAction.add(new EndTurnAction(stateChanger));
+    endTurnAction.add(new EndTurnAction());
     return endTurnAction;
   }
 
@@ -201,5 +201,9 @@ public class ActionFactory {
     buildUnitAction.add(new ClearInGameStateAction());
     buildUnitAction.add(new SelectAction(launcher.getLocation()));
     return buildUnitAction;
+  }
+
+  public static CWAction buildEndGameAction() {
+    return new EndGameAction();
   }
 }
