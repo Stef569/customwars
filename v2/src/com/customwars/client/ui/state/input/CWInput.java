@@ -18,7 +18,6 @@ import java.util.List;
  * @author stefan
  */
 public class CWInput extends InputProvider {
-  public static final String INPUT_PREFIX = "user.input";
   public static final Command SELECT = new CWCommand(CommandEnum.SELECT);
   public static final Command CANCEL = new CWCommand(CommandEnum.CANCEL);
   public static final Command EXIT = new CWCommand(CommandEnum.EXIT);
