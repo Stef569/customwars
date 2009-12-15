@@ -2,8 +2,8 @@
     <property name="app.name" value="CW2"/>
     <property name="jar.core.name" value="${app.name}.jar"/>
     <property name="jar.test.name" value="${app.name}-tests.jar"/>
-    <property name="jar.core.main.class" value="AppMain"/>
-    <property name="jar.test.main.class" value="TestMain"/>
+    <property name="jar.core.main.class" value="MainGame"/>
+    <property name="jar.test.main.class" value="TestGame"/>
     <property name="batlauncher.core.name" value="CustomWars.bat"/>
     <property name="batlauncher.test.name" value="CustomWars.bat"/>
     <property name="zip.core.name" value="${app.name}.zip"/>
@@ -160,7 +160,8 @@
         </delete>
     </target>
 
-    <target name="release tests" description="Create a zip containing the core jar + test jar" depends="jar_core, jar_tests">
+    <target name="release tests" description="Create a zip containing the core jar + test jar"
+            depends="jar_core, jar_tests">
         <echo file="${dist.dir}/${batlauncher.test.name}" append="false">
             java -Djava.library.path=lib/native/ -jar ${jar.test.name}
             pause
@@ -173,7 +174,7 @@
         <delete file="${dist.dir}/${jar.core.name}"/>
         <delete file="${dist.dir}/${jar.test.name}"/>
         <delete file="${dist.dir}/${batlauncher.test.name}"/>
-        
+
         <delete includeEmptyDirs="true" quiet="true">
             <fileset dir="${dist.dir}/${lib.dir}"/>
             <fileset dir="${dist.dir}/${res.dir}"/>
