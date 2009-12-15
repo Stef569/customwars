@@ -8,7 +8,7 @@ import org.newdawn.slick.command.Command;
 import org.newdawn.slick.command.Control;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 import java.util.Properties;
 
 /**
@@ -35,7 +35,8 @@ import java.util.Properties;
  * @author stefan
  */
 public class ControlsConfigurator {
-  private CWInput inputProvider;
+  private static final String INPUT_PREFIX = "user.input";
+  private final CWInput inputProvider;
 
   public ControlsConfigurator(CWInput inputProvider) {
     this.inputProvider = inputProvider;
@@ -54,8 +55,8 @@ public class ControlsConfigurator {
     for (String key : properties.stringPropertyNames()) {
       String controls = properties.getProperty(key);
 
-      if (key.startsWith(CWInput.INPUT_PREFIX)) {
-        String commandName = key.substring(CWInput.INPUT_PREFIX.length() + 1);  //Skip the prefix and the dot
+      if (key.startsWith(INPUT_PREFIX)) {
+        String commandName = key.substring(INPUT_PREFIX.length() + 1);  //Skip the prefix and the dot
         parseInput(commandName.trim().toLowerCase(), controls.trim().toUpperCase());
       }
     }
@@ -64,12 +65,12 @@ public class ControlsConfigurator {
   private void parseInput(String commandName, String controls) {
     Command command = inputProvider.getCommandByName(commandName);
     String[] controlsArray = controls.split(",");
-    List<Control> controlList = parseControls(controlsArray);
+    Collection<Control> controlList = parseControls(controlsArray);
     bindControls(command, controlList);
   }
 
-  private List<Control> parseControls(String[] controls) {
-    List<Control> controlList = new ArrayList<Control>();
+  private Collection<Control> parseControls(String[] controls) {
+    Collection<Control> controlList = new ArrayList<Control>(6);
 
     for (String controlName : controls) {
       Control control = LwjglControlUtil.getControlByName(controlName);
@@ -83,7 +84,7 @@ public class ControlsConfigurator {
     return controlList;
   }
 
-  private void bindControls(Command command, List<Control> controls) {
+  private void bindControls(Command command, Collection<Control> controls) {
     for (Control control : controls) {
       checkControlAlreadyUsed(control, command);
       inputProvider.bindCommand(control, command);

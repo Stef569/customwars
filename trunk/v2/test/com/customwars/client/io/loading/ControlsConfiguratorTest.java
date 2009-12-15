@@ -30,9 +30,9 @@ public class ControlsConfiguratorTest {
   @Test
   public void testReadingKeyInput() {
     Properties properties = new Properties();
-    properties.put(CWInput.INPUT_PREFIX + ".CanCeL", "x,W,a,9,f5");
-    properties.put(CWInput.INPUT_PREFIX + ".SELECT", "B,C,D,E,F,ESCAPE");
-    properties.put(CWInput.INPUT_PREFIX + ".Toggle_Music", "1");
+    properties.setProperty("user.input.CanCeL", "x,W,a,9,f5");
+    properties.setProperty("user.input.SELECT", "B,C,D,E,F,ESCAPE");
+    properties.setProperty("user.input.Toggle_Music", "1");
 
     controlsConfigurator.configure(properties);
     List commands = inputProvider.getUniqueCommands();
@@ -47,10 +47,10 @@ public class ControlsConfiguratorTest {
   @Test(expected = IllegalArgumentException.class)
   public void testReadingDuplicateKeyInput() {
     Properties properties = new Properties();
-    // Dilema 2 keys binded to 2 different commands
+    // Dilemma 2 keys binded to 2 different commands
     // Throws an exception
-    properties.put(CWInput.INPUT_PREFIX + ".CANCEL", "A");
-    properties.put(CWInput.INPUT_PREFIX + ".SELECT", "A");
+    properties.setProperty("user.input.CANCEL", "A");
+    properties.setProperty("user.input.SELECT", "A");
     controlsConfigurator.configure(properties);
 
     Assert.assertEquals(1, inputProvider.getControlsFor(CWInput.CANCEL).size());
@@ -62,8 +62,8 @@ public class ControlsConfiguratorTest {
     Properties properties = new Properties();
     // 2 commands, the 2nd command overwrites the first command
     // Only B is used as control for CANCEL
-    properties.put(CWInput.INPUT_PREFIX + ".CANCEL", "A");
-    properties.put(CWInput.INPUT_PREFIX + ".CANCEL", "B");
+    properties.setProperty("user.input.CANCEL", "A");
+    properties.setProperty("user.input.CANCEL", "B");
     controlsConfigurator.configure(properties);
   }
 }
