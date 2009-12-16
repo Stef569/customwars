@@ -163,7 +163,7 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
    *
    * @param player The player to reset the map for
    */
-  public void resetMap(Player player) {
+  private void resetMap(Player player) {
     resetUnits(player);
     if (fogOfWarOn) {
       resetFogMap(player);
