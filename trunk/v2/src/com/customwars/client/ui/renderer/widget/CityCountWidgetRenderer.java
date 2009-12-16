@@ -4,6 +4,7 @@ import com.customwars.client.App;
 import com.customwars.client.io.ResourceManager;
 import com.customwars.client.io.img.slick.ImageStrip;
 import com.customwars.client.model.gameobject.City;
+import com.customwars.client.model.gameobject.CityFactory;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.ui.slick.ImageStripFont;
@@ -42,7 +43,7 @@ public class CityCountWidgetRenderer implements WidgetRenderer {
   public void setMap(Map<Tile> map) {
     this.map = map;
     preDeployed = false;
-    mapCitiesCount = new int[5];
+    mapCitiesCount = new int[CityFactory.countCities()];
     calcMapProperties();
     preferredWidth = (mapCitiesCount.length * map.getTileSize() + mapCitiesCount.length * HORIZONTAL_MARGIN) - HORIZONTAL_MARGIN;
   }
@@ -52,23 +53,11 @@ public class CityCountWidgetRenderer implements WidgetRenderer {
       City city = map.getCityOn(t);
 
       if (city != null) {
-        if (city.getName().equalsIgnoreCase("city")) {
-          mapCitiesCount[0]++;
-        } else if (city.getName().equalsIgnoreCase("factory")) {
-          mapCitiesCount[1]++;
-        } else if (city.getName().equalsIgnoreCase("airport")) {
-          mapCitiesCount[2]++;
-        } else if (city.getName().equalsIgnoreCase("port")) {
-          mapCitiesCount[3]++;
-        } else if (city.getName().equalsIgnoreCase("HQ")) {
-          mapCitiesCount[4]++;
-        } else if (city.getName().equalsIgnoreCase("missle_silo")) {
-          mapCitiesCount[5]++;
-        }
+        mapCitiesCount[city.getID()]++;
+      }
 
-        if (map.getUnitOn(t) != null) {
-          preDeployed = true;
-        }
+      if (map.getUnitOn(t) != null) {
+        preDeployed = true;
       }
     }
   }
