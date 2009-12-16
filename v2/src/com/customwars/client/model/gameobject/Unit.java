@@ -90,6 +90,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
     location = otherUnit.location;
     owner = otherUnit.owner;
     transport = new LinkedList<Locatable>(otherUnit.transport);
+    moveStrategy = otherUnit.moveStrategy;
   }
 
   /**
@@ -148,6 +149,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   // ----------------------------------------------------------------------------
   // Actions :: Submarine
   // ----------------------------------------------------------------------------
+
   public void dive() {
     unitState = UnitState.SUBMERGED;
     hideAbilityEnabled = true;
@@ -161,6 +163,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   // ----------------------------------------------------------------------------
   // Actions :: Attack/Defend
   // ----------------------------------------------------------------------------
+
   /**
    * This unit is the attacker
    * and attacking the defender
@@ -232,6 +235,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   // ---------------------------------------------------------------------------
   // Actions :: Transport
   // ---------------------------------------------------------------------------
+
   public int getCol() {
     return location.getCol();
   }
@@ -302,6 +306,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   // ----------------------------------------------------------------------------
   // Actions :: supply, heal
   // ----------------------------------------------------------------------------
+
   /**
    * Restore
    * supplies to max
@@ -374,6 +379,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   // ----------------------------------------------------------------------------
   // Actions :: Construction of City, Transform terrains
   // ----------------------------------------------------------------------------
+
   /**
    * Construct city, This might take more then one invocation
    * isConstructionComplete() will return true when the city is constructed.
@@ -401,6 +407,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   // ---------------------------------------------------------------------------
   // Setters
   // ---------------------------------------------------------------------------
+
   public void setPrimaryWeapon(Weapon priWeapon) {
     Weapon oldVal = this.primaryWeapon;
     primaryWeapon = priWeapon;
@@ -500,6 +507,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   // ---------------------------------------------------------------------------
   // Getters :: Weapon
   // ---------------------------------------------------------------------------
+
   /**
    * Retrieve the first available weapon: Not null and some ammo left
    * starting with the primary weapon
@@ -577,6 +585,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   // ---------------------------------------------------------------------------
   // Getters :: Supplies, hp
   // ---------------------------------------------------------------------------
+
   public UnitStats getStats() {
     return stats;
   }
@@ -642,6 +651,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   // ---------------------------------------------------------------------------
   // Getters :: Moving
   // ---------------------------------------------------------------------------
+
   public Location getLocation() {
     return location;
   }
@@ -690,6 +700,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   // ---------------------------------------------------------------------------
   // Getters :: Other
   // ---------------------------------------------------------------------------
+
   public ArmyBranch getArmyBranch() {
     return stats.armyBranch;
   }
