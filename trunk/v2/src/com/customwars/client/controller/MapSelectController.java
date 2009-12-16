@@ -42,18 +42,20 @@ public class MapSelectController {
   }
 
   public void filterMapsOnCategory(String mapCategory) {
-    Widget mapList = page.getWidget("map_list");
-    mapList.removeChildren();
+    if (resources.isValidMapCategory(mapCategory)) {
+      Widget mapList = page.getWidget("map_list");
+      mapList.removeChildren();
 
-    for (Map<Tile> map : resources.getAllMapsByCategory(mapCategory)) {
-      Widget item = page.createWidget("item");
-      item.setText(map.getMapName());
-      mapList.add(item);
+      for (Map<Tile> map : resources.getAllMapsByCategory(mapCategory)) {
+        Widget item = page.createWidget("item");
+        item.setText(map.getMapName());
+        mapList.add(item);
+      }
+
+      // Select first map in the list
+      mapList.getChild(0).setBoolean("selected", true);
+      mapSelected();
     }
-
-    // Select first map in the list
-    mapList.getChild(0).setBoolean("selected", true);
-    mapSelected();
   }
 
   private Map<Tile> getCurrentSelectedMap() {
