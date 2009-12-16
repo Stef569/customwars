@@ -6,7 +6,7 @@
 
 // Explosions for each armybranch.
 S EXPLOSION_LAND landExplosion 70 False
-S EXPLOSION_NAVAL landExplosion 70 False
+S EXPLOSION_NAVAL seaExplosion 70 False
 S EXPLOSION_AIR landExplosion 70 False
 
 S movezone movezone 150 True
