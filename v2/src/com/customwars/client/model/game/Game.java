@@ -114,14 +114,14 @@ public class Game extends TurnBasedGame implements PropertyChangeListener {
 
   /**
    * Create move/Attack zones for each unit of each player.
-   * fog of war is reset for each player since fog affects zones.
+   * the map is reset for each player since fog and hidden units affects zones.
    */
   public void initZones() {
     for (Player player : getAllPlayers()) {
-      map.resetFogMap(player);
+      map.resetMap(player);
       map.initUnitZonesForPlayer(player);
     }
-    map.resetFogMap(getActivePlayer());
+    map.resetMap(getActivePlayer());
   }
 
   void startTurn(Player player) {

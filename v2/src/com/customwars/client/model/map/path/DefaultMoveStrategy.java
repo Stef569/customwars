@@ -1,6 +1,7 @@
 package com.customwars.client.model.map.path;
 
 import com.customwars.client.model.gameobject.Terrain;
+import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.tools.Args;
@@ -9,7 +10,7 @@ import com.customwars.client.tools.Args;
  * Default Move strategy for units
  */
 public class DefaultMoveStrategy implements MoveStrategy {
-  private Mover mover;
+  private final Mover mover;
 
   public DefaultMoveStrategy(Mover mover) {
     Args.checkForNull(mover);
@@ -26,7 +27,10 @@ public class DefaultMoveStrategy implements MoveStrategy {
    * If a tile cannot be traversed over then Terrain.IMPASSIBLE is returned.
    */
   public int getMoveCost(Tile tile) {
-    if (tile.isFogged()) {
+    Unit unit = (Unit) tile.getLastLocatable();
+    boolean hasHiddenUnit = unit != null && unit.isHidden();
+
+    if (tile.isFogged() || hasHiddenUnit) {
       return getTerrainCost(tile.getTerrain());
     } else if (!tile.isFogged() && mover.hasTrapperOn(tile)) {
       return Terrain.IMPASSIBLE;
