@@ -35,9 +35,12 @@ public class GameRulesState extends CWState {
 
   private void initPageContent() {
     Widget cboDays = page.getWidget("day_limit");
+    fillCboWithNumbers(cboDays, -1, 0, 1);
     fillCboWithNumbers(cboDays, 5, 99, 1);
+
     Widget cboFunds = page.getWidget("funds");
     fillCboWithNumbers(cboFunds, 1000, 10000, 1000);
+
     Widget cboIncome = page.getWidget("income");
     fillCboWithNumbers(cboIncome, 1000, 10000, 1000);
   }
@@ -53,6 +56,7 @@ public class GameRulesState extends CWState {
   @Override
   public void enter(GameContainer container, StateBasedGame game) throws SlickException {
     super.enter(container, game);
+    controller.initValues();
     page.enable();
   }
 
@@ -75,7 +79,7 @@ public class GameRulesState extends CWState {
   @Override
   public void controlPressed(CWCommand command, CWInput cwInput) {
     if (command == CWInput.CANCEL) {
-      stateChanger.changeToPrevious();
+      controller.back();
     }
   }
 

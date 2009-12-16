@@ -22,6 +22,7 @@ public class GameRulesController {
   private final StateSession stateSession;
   private final StateChanger stateChanger;
   private final GameConfig gameConfig;
+  private Page page;
 
   public GameRulesController(StateChanger stateChanger, StateSession stateSession) {
     this.stateChanger = stateChanger;
@@ -30,6 +31,18 @@ public class GameRulesController {
   }
 
   public void init(Page page) {
+    this.page = page;
+  }
+
+  /**
+   * This method will gather default values initialised in gameObject
+   * and show them as the selected value of the cbo
+   */
+  public void initValues() {
+    page.getWidget("fog").setText(gameConfig.isFogOfWarOn() ? "True" : "False");
+    page.getWidget("day_limit").setText(gameConfig.getDayLimit() + "");
+    page.getWidget("funds").setText(gameConfig.getCityFunds() + "");
+    page.getWidget("income").setText(gameConfig.getPlayerIncome() + "");
   }
 
   public void fundsChange(String newValue) {
@@ -43,20 +56,14 @@ public class GameRulesController {
   }
 
   public void fogChange(Widget fogCbo) {
-    boolean fogON = isYesSelected(fogCbo.getSelectedIndex());
-    stateSession.map.setFogOfWarOn(fogON);
+    String selectedText = fogCbo.getChild(fogCbo.getSelectedIndex()).getText();
+    boolean fogON = Boolean.valueOf(selectedText);
+    gameConfig.setFogOfWar(fogON);
   }
 
   public void dayLimitChange(String newValue) {
     int dayLimit = Integer.parseInt(newValue);
     gameConfig.setDayLimit(dayLimit);
-  }
-
-  /**
-   * In a yes/no cbo(combo box) the first index is always yes
-   */
-  private boolean isYesSelected(int selectedIndex) {
-    return selectedIndex == 0;
   }
 
   public void back() {
