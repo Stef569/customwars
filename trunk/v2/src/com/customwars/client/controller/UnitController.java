@@ -71,7 +71,8 @@ public abstract class UnitController {
   }
 
   boolean canWait(Tile selected) {
-    return selected.isFogged() || selected.getLocatableCount() == 1;
+    Unit unit = (Unit) selected.getLocatable(0);
+    return selected.isFogged() || unit.isHidden() || selected.getLocatableCount() == 1;
   }
 
   boolean canSupply(Tile selected) {

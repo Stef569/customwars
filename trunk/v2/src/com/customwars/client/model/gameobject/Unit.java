@@ -744,7 +744,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   }
 
   public boolean canHide() {
-    return stats.canHide && hideAbilityEnabled;
+    return stats.canHide || hideAbilityEnabled;
   }
 
   public int getCaptureRate() {
