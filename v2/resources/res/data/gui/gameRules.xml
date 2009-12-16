@@ -8,22 +8,25 @@ Licensed Carlsbad Cubes - Wolf Paulus-->
            bottom="5" right="5" gap="20" border="true">
         <panel gap="20">
             <label text="Fog"/>
-            <combobox name="fog" weightx="1" halign="right" action="fogChange(this)">
+            <combobox name="fog" weightx="1" halign="right" width="60" editable="false" action="fogChange(this)">
                 <choice text="True"/>
                 <choice text="False"/>
             </combobox>
         </panel>
         <panel gap="20">
             <label text="Days"/>
-            <combobox name="day_limit" weightx="1" halign="right" action="dayLimitChange(day_limit.text)"/>
+            <combobox name="day_limit" weightx="1" halign="right" width="60" editable="false"
+                      action="dayLimitChange(day_limit.text)"/>
         </panel>
         <panel gap="20">
             <label text="Funds"/>
-            <combobox name="funds" weightx="1" halign="right" action="fundsChange(funds.text)"/>
+            <combobox name="funds" weightx="1" halign="right" width="60" editable="false"
+                      action="fundsChange(funds.text)"/>
         </panel>
         <panel gap="20">
             <label text="Income"/>
-            <combobox name="income" weightx="1" halign="right" action="incomeChange(income.text)"/>
+            <combobox name="income" weightx="1" halign="right" width="60" editable="false"
+                      action="incomeChange(income.text)"/>
         </panel>
     </panel>
     <panel name="btnPanel" valign="bottom" left="10" bottom="10" right="10">
