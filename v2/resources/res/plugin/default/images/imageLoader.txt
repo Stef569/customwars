@@ -9,6 +9,8 @@ s miniMap miniMap.png 4 4
 
 s arrows arrows.png 32 32
 s landExplosion landExplosion.png 32 32
+s seaExplosion seaExplosion.png 32 32
+
 s moveZone moveTile.png 32 32
 s attackZone attackTile.png 32 32
 s numbers numbers.png 16 14
