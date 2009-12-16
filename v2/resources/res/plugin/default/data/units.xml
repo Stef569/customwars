@@ -285,6 +285,7 @@
         <maxExperience>10</maxExperience>
         <maxHp>100</maxHp>
         <maxSupplies>99</maxSupplies>
+        <suppliesPerTurn>1</suppliesPerTurn>
         <maxTransportCount>2</maxTransportCount>
 
         <armyBranch>NAVAL</armyBranch>
@@ -299,6 +300,7 @@
         <maxExperience>10</maxExperience>
         <maxHp>100</maxHp>
         <maxSupplies>99</maxSupplies>
+        <suppliesPerTurn>1</suppliesPerTurn>
 
         <armyBranch>NAVAL</armyBranch>
         <movementType>&NAVAL;</movementType>
@@ -317,6 +319,7 @@
         <maxExperience>10</maxExperience>
         <maxHp>100</maxHp>
         <maxSupplies>70</maxSupplies>
+        <suppliesPerTurn>1</suppliesPerTurn>
 
         <armyBranch>NAVAL</armyBranch>
         <movementType>&NAVAL;</movementType>
@@ -332,6 +335,7 @@
         <maxExperience>10</maxExperience>
         <maxHp>100</maxHp>
         <maxSupplies>99</maxSupplies>
+        <suppliesPerTurn>1</suppliesPerTurn>
 
         <armyBranch>NAVAL</armyBranch>
         <movementType>&NAVAL;</movementType>
@@ -353,6 +357,7 @@
         <maxExperience>10</maxExperience>
         <maxHp>100</maxHp>
         <maxSupplies>99</maxSupplies>
+        <suppliesPerTurn>3</suppliesPerTurn>
         <maxTransportCount>1</maxTransportCount>
 
         <armyBranch>AIR</armyBranch>
@@ -367,6 +372,7 @@
         <maxExperience>10</maxExperience>
         <maxHp>100</maxHp>
         <maxSupplies>99</maxSupplies>
+        <suppliesPerTurn>2</suppliesPerTurn>
 
         <armyBranch>AIR</armyBranch>
         <movementType>&AIR;</movementType>
@@ -441,6 +447,7 @@
         <maxExperience>10</maxExperience>
         <maxHp>100</maxHp>
         <maxSupplies>99</maxSupplies>
+        <suppliesPerTurn>1</suppliesPerTurn>
         <maxTransportCount>2</maxTransportCount>
 
         <armyBranch>NAVAL</armyBranch>
@@ -472,6 +479,7 @@
         <maxExperience>10</maxExperience>
         <maxHp>100</maxHp>
         <maxSupplies>99</maxSupplies>
+        <suppliesPerTurn>1</suppliesPerTurn>
 
         <armyBranch>NAVAL</armyBranch>
         <movementType>&NAVAL;</movementType>
