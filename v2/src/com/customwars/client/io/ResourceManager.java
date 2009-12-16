@@ -91,6 +91,7 @@ public class ResourceManager {
   //----------------------------------------------------------------------------
   // Images : Recoloring
   //----------------------------------------------------------------------------
+
   public void recolor(Color... colors) {
     recolor(Arrays.asList(colors));
   }
@@ -133,6 +134,7 @@ public class ResourceManager {
   //----------------------------------------------------------------------------
   // Images : Getters
   //----------------------------------------------------------------------------
+
   public Image getSlickImg(String imgRef) {
     return imageLib.getSlickImg(imgRef);
   }
@@ -188,6 +190,7 @@ public class ResourceManager {
   //----------------------------------------------------------------------------
   // Animation
   //----------------------------------------------------------------------------
+
   public Animation getAnim(String animName) {
     return animLib.getAnim(animName);
   }
@@ -211,6 +214,7 @@ public class ResourceManager {
   //----------------------------------------------------------------------------
   // Fonts
   //----------------------------------------------------------------------------
+
   public void addFont(String fontName, Font font) {
     fonts.put(fontName, font);
   }
@@ -226,6 +230,7 @@ public class ResourceManager {
   //----------------------------------------------------------------------------
   // Sound & Music
   //----------------------------------------------------------------------------
+
   public void addMusic(String musicName, Music music) {
     this.music.put(musicName, music);
   }
@@ -245,6 +250,7 @@ public class ResourceManager {
   //----------------------------------------------------------------------------
   // Maps
   //----------------------------------------------------------------------------
+
   /**
    * Load a map from the inputstream, the map is not added to a category
    * Post:
@@ -376,9 +382,19 @@ public class ResourceManager {
     return mapCats;
   }
 
+  /**
+   * Return true when the given category is a valid map category
+   *
+   * @return if category is a valid map category
+   */
+  public boolean isValidMapCategory(String category) {
+    return mapsByCategory.containsKey(category);
+  }
+
   //----------------------------------------------------------------------------
   // Cursor
   //----------------------------------------------------------------------------
+
   /**
    * Create a new Cursor and place it in the map on a random tile
    */
