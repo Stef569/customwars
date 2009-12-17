@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Locale;
 import java.util.Properties;
-import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 
 /**
@@ -65,22 +64,22 @@ public class Config {
     loadConfigFiles();
   }
 
-  private void storePaths() {
+  private static void storePaths() {
     App.put("home.maps.dir", MAPS_DIR);
     App.put("userproperties.path", HOME_DIR + "/" + USER_PROPERTIES_FILE);
   }
 
-  private void initHomeDir() {
+  private static void initHomeDir() {
     createHomeDirs();
     createEmptyUserPropertyFileIfNonePresent();
   }
 
-  private void createHomeDirs() {
+  private static void createHomeDirs() {
     IOUtil.mkDir(new File(HOME_DIR));
     IOUtil.mkDir(new File(MAPS_DIR));
   }
 
-  private void createEmptyUserPropertyFileIfNonePresent() {
+  private static void createEmptyUserPropertyFileIfNonePresent() {
     File userPropertiesFile = new File(HOME_DIR + "/" + USER_PROPERTIES_FILE);
 
     if (!userPropertiesFile.exists()) {
@@ -108,17 +107,17 @@ public class Config {
     }
   }
 
-  private void loadLog4JProperties(String configPath) throws IOException {
+  private static void loadLog4JProperties(String configPath) throws IOException {
     Properties log4JProperties = loadProperties(configPath + "/" + LOG_PROPERTIES_FILE);
     PropertyConfigurator.configure(log4JProperties);
   }
 
-  private void loadGameProperties(String configPath) throws IOException {
+  private static void loadGameProperties(String configPath) throws IOException {
     Properties gameProperties = loadProperties(configPath + "/" + GAME_PROPERTIES_FILE);
     App.putAll(gameProperties);
   }
 
-  private Properties loadUserProperties(String configPath) throws IOException {
+  private static Properties loadUserProperties(String configPath) throws IOException {
     Properties defaults = loadProperties(configPath + "/" + USER_DEFAULTS_PROPERTIES_FILE);
     Properties userProperties = loadProperties(HOME_DIR + "/" + USER_PROPERTIES_FILE, defaults);
     App.putAll(userProperties);
@@ -135,15 +134,15 @@ public class Config {
     loadLangProperties(locale, resourcesPath + "/data/lang/Languages");
   }
 
-  private void loadLangProperties(Locale locale, String languageBundlePath) throws IOException {
+  private static void loadLangProperties(Locale locale, String languageBundlePath) {
     // Using our own ClassLoader that reads from a folder
     // default classloader just looks into the classpath
-    ResourceBundle bundle = PropertyResourceBundle.getBundle(languageBundlePath, locale, new IOUtil.URLClassLoader());
+    ResourceBundle bundle = ResourceBundle.getBundle(languageBundlePath, locale, new IOUtil.URLClassLoader());
     App.setLocaleResourceBundle(bundle);
     logger.info("Lang=" + locale);
   }
 
-  private void loadPluginProperties(String pluginLocation) throws IOException {
+  private static void loadPluginProperties(String pluginLocation) throws IOException {
     Properties pluginProperties = loadProperties(pluginLocation + "/data/" + PLUGIN_PROPERTIES_FILE);
     App.putAll(pluginProperties);
     logger.info("Plugin=" + pluginLocation);
@@ -160,16 +159,16 @@ public class Config {
     // 2. Maps included within the release are in the RES_DIR
     resources.putLoadPath("map.path1", MAPS_DIR);
     resources.putLoadPath("map.path2", resourcesPath + "/maps/");
-    resources.putLoadPath("font.path", resourcesPath + "/data/fonts/");
+    resources.putLoadPath("font.path", pluginPath + "/fonts/");
     resources.setDarkPercentage(App.getInt("display.darkpercentage"));
   }
 
-  private Properties loadProperties(String location) throws IOException {
+  private static Properties loadProperties(String location) throws IOException {
     InputStream in = ResourceLoader.getResourceAsStream(location);
     return IOUtil.loadProperties(in);
   }
 
-  private Properties loadProperties(String location, Properties defaults) throws IOException {
+  private static Properties loadProperties(String location, Properties defaults) throws IOException {
     InputStream in = ResourceLoader.getResourceAsStream(location);
     return IOUtil.loadProperties(in, defaults);
   }
