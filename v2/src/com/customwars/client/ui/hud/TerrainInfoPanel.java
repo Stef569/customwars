@@ -45,7 +45,7 @@ public class TerrainInfoPanel extends BasicComponent {
     terrainBox = new ImageBox();
     terrainBox.setWidth(getWidth());
 
-    Font defaultFont = container.getDefaultFont();
+    Font defaultFont = resources.getFont("in_game");
     defenseRow = new Row(new ImageBox(defenseImg), new TextBox("", defaultFont));
     defenseRow.setHorizontalSpacing(5);
     captureRow = new Row(new ImageBox(captureImg), new TextBox("", defaultFont));
