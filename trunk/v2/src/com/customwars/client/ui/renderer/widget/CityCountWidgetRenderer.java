@@ -2,82 +2,84 @@ package com.customwars.client.ui.renderer.widget;
 
 import com.customwars.client.App;
 import com.customwars.client.io.ResourceManager;
-import com.customwars.client.io.img.slick.ImageStrip;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.CityFactory;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
-import com.customwars.client.ui.slick.ImageStripFont;
+import org.newdawn.slick.Color;
 import org.newdawn.slick.Font;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
+import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.thingle.Widget;
 import org.newdawn.slick.thingle.WidgetRenderer;
 import org.newdawn.slick.thingle.internal.Rectangle;
 import org.newdawn.slick.thingle.internal.slick.SlickGraphics;
 import org.newdawn.slick.thingle.spi.ThingleGraphics;
 
-import java.awt.Color;
+import java.awt.Dimension;
 
+/**
+ * Render the amount of cities that a map contains
+ */
 public class CityCountWidgetRenderer implements WidgetRenderer {
+  private static final Color BACKGROUND_COLOR = new Color(7, 66, 97);
   private static final int HORIZONTAL_MARGIN = 10;
-  private static final int BACKGROUND_MARGIN = 10;
-  private static final org.newdawn.slick.Color BACKGROUND_COLOR = new org.newdawn.slick.Color(7, 66, 97);
+  private static final int BACKGROUND_MARGIN = 8;
 
   private Map<Tile> map;
+  private int tileSize;
   private int[] mapCitiesCount;
 
-  private boolean preDeployed;
-  private final ResourceManager resources;
-  private final Color neutralColor;
   private final Font numbers;
-  private int preferredWidth;
+  private Dimension preferredSize;
+  private final SpriteSheet neutralCities;
 
   public CityCountWidgetRenderer(ResourceManager resources) {
-    this.resources = resources;
-    neutralColor = App.getColor("plugin.neutral_color");
-    ImageStrip numberStrip = resources.getSlickImgStrip("numbers");
-    numbers = new ImageStripFont(numberStrip, '1');
+    numbers = resources.getFont("numbers");
+    neutralCities = resources.getCitySpriteSheet(App.getColor("plugin.neutral_color"));
   }
 
   public void setMap(Map<Tile> map) {
     this.map = map;
-    preDeployed = false;
-    mapCitiesCount = new int[CityFactory.countCities()];
-    calcMapProperties();
-    preferredWidth = (mapCitiesCount.length * map.getTileSize() + mapCitiesCount.length * HORIZONTAL_MARGIN) - HORIZONTAL_MARGIN;
+    this.tileSize = map.getTileSize();
+    calcCityCount();
+    calcPreferredSize();
   }
 
-  private void calcMapProperties() {
+  private void calcPreferredSize() {
+    int preferredWidth = (mapCitiesCount.length * tileSize + mapCitiesCount.length * HORIZONTAL_MARGIN) - HORIZONTAL_MARGIN;
+    int preferredHeight = neutralCities.getSubImage(0, 0).getHeight();
+    preferredSize = new Dimension(preferredWidth, preferredHeight);
+  }
+
+  private void calcCityCount() {
+    mapCitiesCount = new int[CityFactory.countCities()];
     for (Tile t : map.getAllTiles()) {
       City city = map.getCityOn(t);
 
       if (city != null) {
         mapCitiesCount[city.getID()]++;
       }
-
-      if (map.getUnitOn(t) != null) {
-        preDeployed = true;
-      }
     }
   }
 
   public void paint(ThingleGraphics tg, Widget widget, Rectangle bounds) {
     Graphics g = ((SlickGraphics) tg).getGraphics();
-    g.translate(-getPreferredWidth() / 2, 20);
+    // Note that the thingle graphics start the 0,0 point in the center
+    g.translate(-preferredSize.width / 2, 0);
     renderBackGround(g);
-    g.translate(0, -20);
-    g.setColor(org.newdawn.slick.Color.white);
+    g.setColor(Color.white);
     renderContent(g);
-    g.translate(getPreferredWidth() / 2, 0);
+    g.translate(preferredSize.width / 2, 0);
   }
 
   private void renderBackGround(Graphics g) {
     g.setColor(BACKGROUND_COLOR);
     int x = -BACKGROUND_MARGIN;
-    int y = -BACKGROUND_MARGIN;
-    int width = getPreferredWidth() + BACKGROUND_MARGIN * 2;
-    int height = getPreferredHeight() + BACKGROUND_MARGIN * 2;
+    int y = preferredSize.height - tileSize - BACKGROUND_MARGIN;
+    int width = preferredSize.width + BACKGROUND_MARGIN * 2;
+    int height = tileSize + BACKGROUND_MARGIN * 2;
     g.fillRoundRect(x, y, width, height, 20);
   }
 
@@ -85,13 +87,12 @@ public class CityCountWidgetRenderer implements WidgetRenderer {
     int x = 0;
     for (int cityID = 0; cityID < mapCitiesCount.length; cityID++) {
       paintCityCount(cityID, mapCitiesCount[cityID], x, g);
-      x += map.getTileSize() + HORIZONTAL_MARGIN;
+      x += tileSize + HORIZONTAL_MARGIN;
     }
   }
 
   private void paintCityCount(int cityID, int cityCount, int x, Graphics g) {
-    Image cityImage = resources.getCityAnim(cityID, neutralColor).getImage(0);
-
+    Image cityImage = neutralCities.getSubImage(0, cityID);
     g.drawImage(cityImage, x, 0);
 
     if (cityCount > 0) {
@@ -102,10 +103,10 @@ public class CityCountWidgetRenderer implements WidgetRenderer {
   }
 
   public int getPreferredWidth() {
-    return preferredWidth;
+    return preferredSize.width;
   }
 
   public int getPreferredHeight() {
-    return 40;
+    return preferredSize.height;
   }
 }
