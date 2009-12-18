@@ -38,7 +38,7 @@ public class UnitInfoPanel extends BasicComponent {
 
   @Override
   public void loadResources(ResourceManager resources) {
-    font = container.getDefaultFont();
+    font = resources.getFont("in_game");
     this.resources = resources;
     ImageStrip unitDecorations = resources.getSlickImgStrip("unitDecoration");
     Image ammoImage = unitDecorations.getSubImage(3);

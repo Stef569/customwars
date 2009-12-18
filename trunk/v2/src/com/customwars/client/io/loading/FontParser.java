@@ -23,10 +23,25 @@ public class FontParser extends LineParser {
   private static final char IMAGE_STRIP_FONT_SYMBOL = 's';
   private static final char ANGELCODE_FONT_SYMBOL = 'a';
   private static final char TTF_FONT_SYMBOL = 't';
+  private static final char USE_CACHED_FONT_SYMBOL = 'r';
   private final ResourceManager resources;
   private final ImageLib imageLib;
   private final String fontPath;
 
+  /**
+   * Create a font loader that will load fonts on request see #parseLine (String)
+   */
+  public FontParser(ResourceManager resources, String fontPath, ImageLib imageLib) {
+    super(null);
+    this.resources = resources;
+    this.fontPath = fontPath;
+    this.imageLib = imageLib;
+  }
+
+  /**
+   * Create a font loader that will load fonts from the fontLoaderFile
+   * The fontLoaderFile is expected to be located in the fontPath
+   */
   public FontParser(ResourceManager resources, String fontPath, String fontLoaderFileName, ImageLib imageLib) {
     super(ResourceLoader.getResourceAsStream(fontPath + fontLoaderFileName));
     this.resources = resources;
@@ -36,8 +51,10 @@ public class FontParser extends LineParser {
 
   /**
    * format:
-   * s  <fontName> <imgRef> <startCharacter>
+   * s <fontName> <imgRef> <startCharacter>
    * a <fontName> <fntFile> <imgName>
+   * t <fontName> <ttf>
+   * r <fontName> <=> <font name to reuse>
    */
   public void parseLine(String line) {
     StringTokenizer tokens = new StringTokenizer(line);
@@ -48,23 +65,33 @@ public class FontParser extends LineParser {
     else {
       char fontType = Character.toLowerCase(cmdScanner.next().charAt(0));
       String fontName = cmdScanner.next();
-
-      Font font;
-      switch (fontType) {
-        case IMAGE_STRIP_FONT_SYMBOL:
-          font = parseImageStripFont(cmdScanner);
-          break;
-        case ANGELCODE_FONT_SYMBOL:
-          font = parseAngelCodeFont(cmdScanner);
-          break;
-        case TTF_FONT_SYMBOL:
-          font = parseTTFFont(cmdScanner);
-          break;
-        default:
-          throw new IllegalArgumentException("Don't know about font type " + fontType + " use s(Strip) or a(AngelCodeFont) instead, Problem line: " + line);
-      }
+      Font font = loadFont(line, cmdScanner, fontType);
       resources.addFont(fontName, font);
     }
+  }
+
+  private Font loadFont(String line, Scanner cmdScanner, char fontType) {
+    Font font;
+    switch (fontType) {
+      case IMAGE_STRIP_FONT_SYMBOL:
+        font = parseImageStripFont(cmdScanner);
+        break;
+      case ANGELCODE_FONT_SYMBOL:
+        font = parseAngelCodeFont(cmdScanner);
+        break;
+      case TTF_FONT_SYMBOL:
+        font = parseTTFFont(cmdScanner);
+        break;
+      case USE_CACHED_FONT_SYMBOL:
+        cmdScanner.next();  // Skip '='
+        font = resources.getFont(cmdScanner.next());
+        break;
+      default:
+        throw new IllegalArgumentException(String.format(
+          "Don't know about font type %s use %s(Strip) %s(AngelCodeFont) %s(TTF) instead problem line: %s",
+          fontType, IMAGE_STRIP_FONT_SYMBOL, ANGELCODE_FONT_SYMBOL, TTF_FONT_SYMBOL, line));
+    }
+    return font;
   }
 
   private Font parseImageStripFont(Scanner cmdScanner) {
@@ -74,7 +101,7 @@ public class FontParser extends LineParser {
     return new ImageStripFont(imageStrip, startCharacter);
   }
 
-  public Font parseAngelCodeFont(Scanner cmdScanner) {
+  private Font parseAngelCodeFont(Scanner cmdScanner) {
     String fntFile = cmdScanner.next();
     String imgName = cmdScanner.next();
 
@@ -86,7 +113,7 @@ public class FontParser extends LineParser {
   }
 
   @SuppressWarnings("unchecked")
-  public Font parseTTFFont(Scanner cmdScanner) {
+  private Font parseTTFFont(Scanner cmdScanner) {
     String ttfFile = cmdScanner.next();
     String sizeAsTxt = cmdScanner.next();
     int fontSize = Integer.valueOf(sizeAsTxt);
