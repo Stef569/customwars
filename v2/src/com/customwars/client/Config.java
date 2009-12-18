@@ -10,6 +10,7 @@ import org.newdawn.slick.util.ResourceLoader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.ResourceBundle;
@@ -59,9 +60,18 @@ public class Config {
       this.resourcesPath = "resources/res";
     }
 
+    checkForResourcesInClassPath();
     storePaths();
     initHomeDir();
     loadConfigFiles();
+  }
+
+  private static void checkForResourcesInClassPath() {
+    URL url = Thread.currentThread().getContextClassLoader().getResource("res/data/config");
+
+    if (url == null) {
+      throw new IllegalStateException("Please add the resources dir to the classpath");
+    }
   }
 
   private static void storePaths() {
