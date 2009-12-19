@@ -69,7 +69,7 @@ public class Game extends TurnBasedGame implements PropertyChangeListener {
     Player mapPlayer = city.getOwner();
     Player gamePlayer = getPlayerByID(mapPlayer.getId());
 
-    if (mapPlayer.getHq() == city) {
+    if (city.isHQ()) {
       gamePlayer.setHq(city);
     }
 
@@ -106,8 +106,10 @@ public class Game extends TurnBasedGame implements PropertyChangeListener {
 
     for (Player player : getAllPlayers()) {
       player.addPropertyChangeListener(this);
-      if (player.getHq() != null) {
-        player.getHq().addPropertyChangeListener(this);
+
+      City hq = player.getHq();
+      if (hq != null) {
+        hq.addPropertyChangeListener(this);
       }
     }
   }

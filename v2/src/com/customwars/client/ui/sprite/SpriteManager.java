@@ -136,6 +136,7 @@ public class SpriteManager implements PropertyChangeListener {
   //----------------------------------------------------------------------------
   // load Sprites
   //----------------------------------------------------------------------------
+
   /**
    * Create and locate each Sprite
    */
@@ -281,7 +282,7 @@ public class SpriteManager implements PropertyChangeListener {
   private void recolorCitySprite(City city, CitySprite sprite, Color color, int cityID) {
     Animation animActive = getActiveCityAnim(city, color, cityID);
     Animation animInActive = getInActiveCityAnim(city, cityID);
-    Animation animFogged = getFoggedCityAnim(city, sprite.isHQ(), color, cityID);
+    Animation animFogged = getFoggedCityAnim(city, city.isHQ(), color, cityID);
     sprite.setAnimActive(animActive);
     sprite.setAnimInActive(animInActive);
     sprite.setAnimFogged(animFogged);
