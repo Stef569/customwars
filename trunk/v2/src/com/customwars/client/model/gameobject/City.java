@@ -173,6 +173,7 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
   // ---------------------------------------------------------------------------
   // Setters
   // ---------------------------------------------------------------------------
+
   public void setOwner(Player owner) {
     Player oldVal = this.owner;
     this.owner = owner;
@@ -220,6 +221,7 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
   // ---------------------------------------------------------------------------
   // Getters
   // ---------------------------------------------------------------------------
+
   public boolean canHeal(Unit unit) {
     return canSupply(unit);
   }
@@ -293,6 +295,10 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
 
   public boolean isOwnedBy(Player player) {
     return owner == player;
+  }
+
+  public boolean isHQ() {
+    return owner.getHq() == this;
   }
 
   @Override

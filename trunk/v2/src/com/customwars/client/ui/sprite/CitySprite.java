@@ -59,10 +59,6 @@ public class CitySprite extends TileSprite implements PropertyChangeListener {
     }
   }
 
-  public boolean isHQ() {
-    return city == city.getOwner().getHq();
-  }
-
   public void propertyChange(PropertyChangeEvent evt) {
     String propertyName = evt.getPropertyName();
 
