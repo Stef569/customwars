@@ -1,73 +1,71 @@
 package com.customwars.client.ui.layout;
 
+import com.customwars.client.tools.Args;
+import com.customwars.client.ui.GUI;
 import org.newdawn.slick.Font;
 import org.newdawn.slick.Graphics;
 
 import java.awt.Insets;
+import java.awt.Point;
 
+/**
+ * Render text centered within a box
+ */
 public class TextBox extends Box {
   private String txt;
   private Font font;
   private Insets insets;
-
-  public TextBox() {
-    this.txt = "";
-  }
 
   public TextBox(String txt, Font font) {
     this(txt, font, new Insets(0, 0, 0, 0));
   }
 
   public TextBox(String txt, Font font, Insets insets) {
-    setText(txt);
-    this.font = font;
+    Args.checkForNull(font);
+    Args.checkForNull(insets);
     this.insets = insets;
-    width = getTextBoxWidth();
-    height = getTextBoxHeight();
+    this.font = font;
+    setText(txt);
   }
 
+  /**
+   * Change the text in this box
+   * the width and height of the box are adjusted to the new text size
+   * the center is reset
+   */
   public void setText(String text) {
     this.txt = text;
-    if (!txt.equals(text))
-      init();
+    setWidth(getBoxWidth());
+    setHeight(getBoxHeight());
+    init();
   }
 
-  protected void init() {
-    center.x = center(width, getTextWidth());
-    center.y = center(height, getTextHeight());
+  @Override
+  public void init() {
+    Point center = GUI.getCenteredRenderPoint(getTextWidth(), getTextHeight(), getWidth(), getHeight());
+    setCenter(center.x, center.y);
   }
 
+  @Override
   public void renderImpl(Graphics g) {
     if (txt != null) {
-      if (font != null) {
-        font.drawString(x + center.x, y + center.y, txt);
-      } else {
-        g.drawString(txt, x + center.x, y + center.y);
-      }
+      font.drawString(getX() + getCenterX(), getY() + getCenterY(), txt);
     }
   }
 
-  private int getTextBoxWidth() {
+  private int getBoxWidth() {
     return insets.left + getTextWidth() + insets.right;
   }
 
-  private int getTextWidth() {
-    if (txt != null && font != null) {
-      return font.getWidth(txt);
-    } else {
-      return 0;
-    }
-  }
-
-  private int getTextBoxHeight() {
+  private int getBoxHeight() {
     return insets.top + getTextHeight() + insets.bottom;
   }
 
+  private int getTextWidth() {
+    return txt != null && font != null ? font.getWidth(txt) : 0;
+  }
+
   private int getTextHeight() {
-    if (txt != null && font != null) {
-      return font.getLineHeight();
-    } else {
-      return 0;
-    }
+    return txt != null && font != null ? font.getLineHeight() : 0;
   }
 }

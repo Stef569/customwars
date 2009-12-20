@@ -1,13 +1,14 @@
 package com.customwars.client.ui.slick;
 
 import com.customwars.client.io.ResourceManager;
+import com.customwars.client.ui.Component;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.gui.AbstractComponent;
 import org.newdawn.slick.gui.GUIContext;
 
 import java.awt.Dimension;
 
-public abstract class BasicComponent extends AbstractComponent {
+public abstract class BasicComponent extends AbstractComponent implements Component {
   private int x;
   private int y;
   private int width;
@@ -19,12 +20,18 @@ public abstract class BasicComponent extends AbstractComponent {
    *
    * @param container The container displaying this component
    */
-  public BasicComponent(GUIContext container) {
+  protected BasicComponent(GUIContext container) {
     super(container);
     consumeEvent();
   }
 
   public void loadResources(ResourceManager resources) {
+  }
+
+  public void render(Graphics g) {
+    if (visible) {
+      renderimpl(container, g);
+    }
   }
 
   public final void render(GUIContext container, Graphics g) {
@@ -70,6 +77,14 @@ public abstract class BasicComponent extends AbstractComponent {
 
   public int getY() {
     return y;
+  }
+
+  public int getMaxX() {
+    return x + width;
+  }
+
+  public int getMaxY() {
+    return y + height;
   }
 
   public boolean isVisible() {
