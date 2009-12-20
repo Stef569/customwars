@@ -1,23 +1,30 @@
 package com.customwars.client.ui.layout;
 
+import com.customwars.client.io.ResourceManager;
+import com.customwars.client.ui.Component;
+import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 
 import java.awt.Point;
 
 /**
- * A box is a rectangle that can center it's content
- * and render it
+ * A box is a rectangle that renders it's content in the center
  *
  * @author stefan
  */
-public abstract class Box {
-  int x;
-  int y;
-  int width;
-  int height;
-  Point center = new Point();
+public abstract class Box implements Component {
+  private int x;
+  private int y;
+  private int width;
+  private int height;
+  private Point center = new Point();
   private boolean visible = true;
   private boolean inited;
+  private Color borderColor;
+  private Color backgroundColor;
+
+  public void loadResources(ResourceManager resources) {
+  }
 
   public final void render(Graphics g) {
     if (!inited) {
@@ -25,29 +32,85 @@ public abstract class Box {
       inited = true;
     }
     if (visible) {
+      renderDecoration(g);
       renderImpl(g);
     }
   }
 
-  protected abstract void init();
+  private void renderDecoration(Graphics g) {
+    Color origColor = g.getColor();
+    if (borderColor != null) {
+      renderBorder(g);
+    } else if (backgroundColor != null) {
+      renderBackground(g);
+    }
+    g.setColor(origColor);
+  }
+
+  private void renderBorder(Graphics g) {
+    g.setColor(borderColor);
+    g.drawRect(x, y, width, height);
+  }
+
+  private void renderBackground(Graphics g) {
+    g.setColor(backgroundColor);
+    g.fillRect(x, y, width, height);
+  }
 
   public abstract void renderImpl(Graphics g);
 
   /**
-   * Center inner inside total
-   *
-   * @return The left top point to render inner inside the box
+   * Init this box, this method is called when the box size changes
+   * this allows the box to recenter it's content
    */
-  int center(int box, int inner) {
-    if (inner < box) {
-      return box / 2 - inner / 2;
-    } else {
-      return 0;
-    }
+  public void init() {
   }
 
-  public Point getCenter() {
-    return center;
+  void setCenter(int centerX, int centerY) {
+    center = new Point(centerX, centerY);
+  }
+
+  public void setLocation(int x, int y) {
+    this.x = x;
+    this.y = y;
+  }
+
+  public void setWidth(int width) {
+    this.width = width;
+    init();
+  }
+
+  public void setHeight(int height) {
+    this.height = height;
+    init();
+  }
+
+  public void setVisible(boolean visible) {
+    this.visible = visible;
+  }
+
+  public void setBorderColor(Color borderColor) {
+    this.borderColor = borderColor;
+  }
+
+  public void setBackgroundColor(Color backgroundColor) {
+    this.backgroundColor = backgroundColor;
+  }
+
+  public int getX() {
+    return x;
+  }
+
+  public int getY() {
+    return y;
+  }
+
+  public int getMaxX() {
+    return x + width;
+  }
+
+  public int getMaxY() {
+    return y + height;
   }
 
   public int getWidth() {
@@ -58,22 +121,15 @@ public abstract class Box {
     return height;
   }
 
-  public void setLocation(int x, int y) {
-    this.x = x;
-    this.y = y;
+  int getCenterX() {
+    return center.x;
   }
 
-  public void setWidth(int width) {
-    this.width = width;
-    inited = false;
+  int getCenterY() {
+    return center.y;
   }
 
-  public void setHeight(int height) {
-    this.height = height;
-    inited = false;
-  }
-
-  public void setVisible(boolean visible) {
-    this.visible = visible;
+  public boolean isVisible() {
+    return visible;
   }
 }

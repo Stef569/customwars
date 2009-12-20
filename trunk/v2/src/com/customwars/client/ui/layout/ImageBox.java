@@ -1,9 +1,11 @@
 package com.customwars.client.ui.layout;
 
+import com.customwars.client.ui.GUI;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 
 import java.awt.Insets;
+import java.awt.Point;
 
 /**
  * An Image box is an image within a box
@@ -13,6 +15,9 @@ public class ImageBox extends Box {
   private Image img;
   private Insets insets;
 
+  /**
+   * Create an empty ImageBox
+   */
   public ImageBox() {
     this(null, new Insets(0, 0, 0, 0));
   }
@@ -22,65 +27,48 @@ public class ImageBox extends Box {
   }
 
   public ImageBox(Image img, Insets insets) {
-    this.img = img;
     this.insets = insets;
-    init();
+    this.img = img;
+    setImage(img);
   }
 
-  protected void init() {
-    width = getImgBoxWidth();
-    height = getImgBoxHeight();
-    center.x = center(width, getImgWidth());
-    center.y = center(height, getImgHeight());
+  /**
+   * Change the image in this box
+   * the width and height of the box are adjusted to the new image size
+   * the center is reset
+   */
+  public void setImage(Image img) {
+    this.img = img;
+    setWidth(getBoxWidth());
+    setHeight(getBoxHeight());
   }
 
+  @Override
+  public void init() {
+    Point center = GUI.getCenteredRenderPoint(getImgWidth(), getImgHeight(), getWidth(), getHeight());
+    setCenter(center.x, center.y);
+  }
+
+  @Override
   public void renderImpl(Graphics g) {
-    if (img != null)
-      g.drawImage(img, x + center.x, y + center.y);
+    if (img != null) {
+      g.drawImage(img, getX() + getCenterX(), getY() + getCenterY());
+    }
   }
 
-  private int getImgBoxWidth() {
-    int totalWidth;
-    int imgWidth = getImgWidth();
-
-    if (width < imgWidth) {
-      totalWidth = imgWidth;
-    } else {
-      totalWidth = width;
-    }
-    return insets.left + totalWidth + insets.right;
+  public int getBoxWidth() {
+    return insets.left + getImgWidth() + insets.right;
   }
 
-  private int getImgBoxHeight() {
-    int totalHeight;
-    int imgHeight = getImgHeight();
-
-    if (height < imgHeight) {
-      totalHeight = imgHeight;
-    } else {
-      totalHeight = height;
-    }
-    return insets.top + totalHeight + insets.bottom;
+  public int getBoxHeight() {
+    return insets.top + getImgHeight() + insets.bottom;
   }
 
   private int getImgWidth() {
-    if (img != null) {
-      return img.getWidth();
-    } else {
-      return 0;
-    }
+    return img != null ? img.getWidth() : 0;
   }
 
   private int getImgHeight() {
-    if (img != null) {
-      return img.getHeight();
-    } else {
-      return 0;
-    }
-  }
-
-  public void setImage(Image img) {
-    this.img = img;
-    init();
+    return img != null ? img.getHeight() : 0;
   }
 }

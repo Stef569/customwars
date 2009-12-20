@@ -1,11 +1,9 @@
 package com.customwars.client.ui;
 
-import com.customwars.client.ui.layout.AnimationBox;
 import com.customwars.client.ui.layout.Box;
 import com.customwars.client.ui.layout.ImageBox;
 import com.customwars.client.ui.layout.TextBox;
 import com.customwars.client.ui.slick.MouseOverArea;
-import org.newdawn.slick.Animation;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Font;
 import org.newdawn.slick.Graphics;
@@ -14,7 +12,7 @@ import org.newdawn.slick.gui.GUIContext;
 
 import java.awt.Insets;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 
 /**
  * A single Menu item containing:
@@ -31,46 +29,36 @@ public class MenuItem extends MouseOverArea {
   private static final int MENU_ITEM_MARGIN = 1;
   private Color textColor = Color.white;
 
-  private Box animBox = new AnimationBox();
   private Box imgBox = new ImageBox();
-  private Box textBox = new TextBox();
-  private List<Box> boxes = new ArrayList<Box>();
+  private Box textBox = new TextBox("", container.getDefaultFont());
+  private final Collection<Box> boxes = new ArrayList<Box>();
 
   public MenuItem(GUIContext container) {
     this(null, null, null, container);
   }
 
   public MenuItem(String txt, Font font, GUIContext container) {
-    this(null, null, txt, font, container);
+    this(null, txt, font, container);
   }
 
   public MenuItem(String txt, GUIContext container) {
-    this(null, null, txt, container.getDefaultFont(), container);
+    this(null, txt, container.getDefaultFont(), container);
   }
 
   public MenuItem(Image icon, GUIContext container) {
-    this(null, icon, null, null, container);
-  }
-
-  public MenuItem(Animation cursorAnim, Image icon, GUIContext container) {
-    this(cursorAnim, icon, "", null, container);
-  }
-
-  public MenuItem(Image icon, String txt, Font font, GUIContext container) {
-    this(null, icon, txt, font, container);
+    this(icon, null, null, container);
   }
 
   public MenuItem(Image icon, String txt, GUIContext container) {
-    this(null, icon, txt, container.getDefaultFont(), container);
+    this(icon, txt, container.getDefaultFont(), container);
   }
 
-  public MenuItem(Animation cursorAnim, Image icon, String txt, Font font, GUIContext container) {
+  public MenuItem(Image icon, String txt, Font font, GUIContext container) {
     super(container);
-    init(cursorAnim, icon, txt, font);
+    init(icon, txt, font);
   }
 
-  protected void init(Animation cursorAnim, Image icon, String txt, Font font) {
-    setCursorAnim(cursorAnim);
+  protected void init(Image icon, String txt, Font font) {
     setIcon(icon);
     setText(txt, font);
     initArea();
@@ -85,14 +73,6 @@ public class MenuItem extends MouseOverArea {
     int maxWidth = getMaxWidth() + MENU_ITEM_MARGIN;
     int maxHeight = getMaxHeight() + MENU_ITEM_MARGIN;
     setArea(x, y, maxWidth, maxHeight);
-  }
-
-  public void setCursorAnim(Animation cursorAnim) {
-    if (cursorAnim != null) {
-      Insets insets = new Insets(0, CURSOR_LEFT_MARGIN, 0, CURSOR_RIGHT_MARGIN);
-      animBox = new AnimationBox(cursorAnim, insets);
-      boxes.add(animBox);
-    }
   }
 
   public void setIcon(Image icon) {
@@ -121,14 +101,21 @@ public class MenuItem extends MouseOverArea {
   }
 
   /**
-   * Excess horizontal space goes to the textbox
+   * Excess horizontal space goes
+   * to the text if there is any text
+   * to the image if there is no text
+   *
    * All boxes have the same height as the menu item
    */
   private void initBoxSizes() {
-    textBox.setWidth(getWidth() - animBox.getWidth() - imgBox.getWidth());
+    if (textBox.getWidth() > 0) {
+      textBox.setWidth(getWidth() - imgBox.getWidth());
+    } else {
+      imgBox.setWidth(getWidth() - textBox.getWidth());
+    }
 
-    for (Box b : boxes) {
-      b.setHeight(getHeight());
+    for (Box box : boxes) {
+      box.setHeight(getHeight());
     }
   }
 
@@ -136,15 +123,14 @@ public class MenuItem extends MouseOverArea {
     int x = getX();
     int y = getY();
 
-    animBox.setLocation(x, y);
-    imgBox.setLocation(x + animBox.getWidth(), y);
-    textBox.setLocation(x + animBox.getWidth() + imgBox.getWidth(), y);
+    imgBox.setLocation(x, y);
+    textBox.setLocation(x + imgBox.getWidth(), y);
   }
 
   private int getMaxWidth() {
     int totalWidth = 0;
-    for (Box b : boxes) {
-      totalWidth += b.getWidth();
+    for (Box box : boxes) {
+      totalWidth += box.getWidth();
     }
     return totalWidth;
   }
@@ -152,8 +138,8 @@ public class MenuItem extends MouseOverArea {
   private int getMaxHeight() {
     int highest = 0;
 
-    for (Box b : boxes) {
-      if (b.getHeight() > highest) highest = b.getHeight();
+    for (Box box : boxes) {
+      if (box.getHeight() > highest) highest = box.getHeight();
     }
     return highest;
   }
@@ -166,8 +152,6 @@ public class MenuItem extends MouseOverArea {
 
   private void renderBoxes(Graphics g) {
     g.setColor(textColor);
-    if (isSelected())
-      animBox.render(g);
     imgBox.render(g);
     textBox.render(g);
   }

@@ -2,10 +2,8 @@ package com.customwars.client.ui;
 
 import com.customwars.client.ui.slick.BasicComponent;
 import com.customwars.client.ui.state.input.CWCommand;
-import org.newdawn.slick.Animation;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
-import org.newdawn.slick.Image;
 import org.newdawn.slick.Sound;
 import org.newdawn.slick.gui.AbstractComponent;
 import org.newdawn.slick.gui.GUIContext;
@@ -30,14 +28,13 @@ public class PopupMenu extends BasicComponent {
   private Color backGroundColor = new Color(0, 0, 0, 0.4f);
   private Color hoverColor = new Color(255, 255, 255, 0.20f);
 
-  private List<MenuItem> menuItems;
+  private final List<MenuItem> menuItems;
   private int currItem;
 
   private boolean inited;
   private boolean renderBackground;
-  private int spacingY = 0;                       // The space between menu Items
-  private Sound menuTickSound;                    // Sound to be played when the current menu item changes
-  private Animation cursorAnim;                   // Cursor animation to be shown on all menu items
+  private int spacingY;             // The space between menu Items
+  private Sound menuTickSound;      // Sound to be played when the current menu item changes
 
   public PopupMenu(GUIContext container) {
     super(container);
@@ -53,7 +50,6 @@ public class PopupMenu extends BasicComponent {
   }
 
   public void addItem(MenuItem menuItem) {
-    if (cursorAnim != null) menuItem.setCursorAnim(cursorAnim);
     menuItems.add(menuItem);
   }
 
@@ -202,10 +198,6 @@ public class PopupMenu extends BasicComponent {
     this.menuTickSound = sound;
   }
 
-  public void setCursorAnim(Animation cursorAnim) {
-    this.cursorAnim = cursorAnim;
-  }
-
   public void setVerticalSpacing(int margin) {
     this.spacingY = margin;
   }
@@ -271,14 +263,6 @@ public class PopupMenu extends BasicComponent {
     }
 
     this.listeners.clear();
-  }
-
-  public void setCursor(Image cursor) {
-    Image[] singleImg = new Image[1];
-    singleImg[0] = cursor;
-    Animation anim = new Animation(singleImg, 99);
-    anim.setAutoUpdate(false);
-    setCursorAnim(anim);
   }
 
   @Override

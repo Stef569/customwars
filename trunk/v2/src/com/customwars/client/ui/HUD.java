@@ -7,11 +7,12 @@ import com.customwars.client.model.map.Direction;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
-import com.customwars.client.ui.hud.PlayerInfoBox;
-import com.customwars.client.ui.hud.TerrainInfoPanel;
-import com.customwars.client.ui.hud.TransportInfoPanel;
-import com.customwars.client.ui.hud.UnitInfoPanel;
-import com.customwars.client.ui.slick.BasicComponent;
+import com.customwars.client.ui.hud.panel.InfoPanel;
+import com.customwars.client.ui.hud.panel.PlayerInfoPanel;
+import com.customwars.client.ui.hud.panel.VerticalTerrainInfoPanel;
+import com.customwars.client.ui.hud.panel.VerticalTransportInfoPanel;
+import com.customwars.client.ui.hud.panel.VerticalUnitInfoPanel;
+import com.customwars.client.ui.layout.Layout;
 import com.customwars.client.ui.sprite.SpriteManager;
 import com.customwars.client.ui.state.input.CWCommand;
 import org.apache.log4j.Logger;
@@ -45,52 +46,52 @@ public class HUD {
 
   // GUI
   private final GUIContext guiContext;
-  private final List<BasicComponent> topComponents;
-  private final List<BasicComponent> bottomComponents;
+  private final List<Component> topComponents;
+  private final List<Component> bottomComponents;
   private SpriteManager spriteManager;
   private Camera2D camera;
   private PopupMenu popupMenu;
-  private TerrainInfoPanel terrainInfoPanel;
-  private UnitInfoPanel unitInfoPanel;
-  private TransportInfoPanel transportInfoPanel;
+  private InfoPanel terrainInfoPanel;
+  private InfoPanel unitInfoPanel;
+  private InfoPanel transportInfoPanel;
   private boolean renderPopupInMap;
 
   public HUD(GUIContext guiContext) {
     this.guiContext = guiContext;
-    topComponents = new ArrayList<BasicComponent>();
-    bottomComponents = new ArrayList<BasicComponent>();
+    topComponents = new ArrayList<Component>();
+    bottomComponents = new ArrayList<Component>();
   }
 
   public void loadResources(ResourceManager resources) {
     initComponents();
-    for (BasicComponent comp : topComponents) {
-      comp.loadResources(resources);
+    for (Component panel : topComponents) {
+      panel.loadResources(resources);
     }
-    for (BasicComponent comp : bottomComponents) {
-      comp.loadResources(resources);
+    for (Component panel : bottomComponents) {
+      panel.loadResources(resources);
     }
   }
 
   private void initComponents() {
-    terrainInfoPanel = new TerrainInfoPanel(guiContext, spriteManager);
+    terrainInfoPanel = new VerticalTerrainInfoPanel(spriteManager);
     terrainInfoPanel.setWidth(56);
     terrainInfoPanel.setHeight(INFO_PANEL_HEIGHT);
     bottomComponents.add(terrainInfoPanel);
 
-    unitInfoPanel = new UnitInfoPanel(guiContext);
+    unitInfoPanel = new VerticalUnitInfoPanel();
     unitInfoPanel.setWidth(65);
     unitInfoPanel.setHeight(INFO_PANEL_HEIGHT);
     bottomComponents.add(unitInfoPanel);
 
-    transportInfoPanel = new TransportInfoPanel(guiContext);
+    transportInfoPanel = new VerticalTransportInfoPanel();
     transportInfoPanel.setWidth(tileSize);
     transportInfoPanel.setHeight(INFO_PANEL_HEIGHT);
     bottomComponents.add(transportInfoPanel);
 
-    PlayerInfoBox playerInfoBox = new PlayerInfoBox(guiContext, game);
-    playerInfoBox.setWidth(240);
-    playerInfoBox.setHeight(20);
-    topComponents.add(playerInfoBox);
+    Component playerInfoPanel = new PlayerInfoPanel(game);
+    playerInfoPanel.setWidth(240);
+    playerInfoPanel.setHeight(20);
+    topComponents.add(playerInfoPanel);
   }
 
   /**
@@ -105,9 +106,9 @@ public class HUD {
 
       if (isUnitVisible(tile, unit)) {
         unitInfoPanel.setVisible(true);
-        unitInfoPanel.setUnit(unit);
+        unitInfoPanel.setTile(tile);
         transportInfoPanel.setVisible(true);
-        transportInfoPanel.setUnit(unit);
+        transportInfoPanel.setTile(tile);
       } else {
         unitInfoPanel.setVisible(false);
         transportInfoPanel.setVisible(false);
@@ -131,49 +132,11 @@ public class HUD {
    */
   public final void locateInfoBoxes(Direction quadrant) {
     if (Direction.isWestQuadrant(quadrant)) {
-      locateRightToLeft(topComponents, TOP_MARGIN);
-      locateRightToLeft(bottomComponents, camera.getHeight() - INFO_PANEL_HEIGHT);
+      Layout.locateRightToLeft(topComponents, camera.getWidth(), TOP_MARGIN);
+      Layout.locateRightToLeft(bottomComponents, camera.getWidth(), camera.getHeight() - INFO_PANEL_HEIGHT);
     } else {
-      locateLeftToRight(topComponents, TOP_MARGIN);
-      locateLeftToRight(bottomComponents, camera.getHeight() - INFO_PANEL_HEIGHT);
-    }
-  }
-
-  private void locateRightToLeft(List<BasicComponent> components, int topMargin) {
-    Point startPoint = new Point(camera.getWidth(), topMargin);
-    int currentXPos = startPoint.x;
-
-    for (int i = 0; i < components.size(); i++) {
-      BasicComponent comp = components.get(i);
-      BasicComponent nextComp;
-
-      if (i == 0) {
-        currentXPos = startPoint.x - comp.getWidth();
-      } else {
-        nextComp = components.get(i);
-        currentXPos -= nextComp.getWidth();
-      }
-
-      comp.setLocation(currentXPos, startPoint.y);
-    }
-  }
-
-  private void locateLeftToRight(List<BasicComponent> components, int topMargin) {
-    Point startPoint = new Point(0, topMargin);
-    int currentXPos = 0;
-
-    for (int i = 0; i < components.size(); i++) {
-      BasicComponent comp = components.get(i);
-      BasicComponent nextComp;
-
-      if (i == 0) {
-        currentXPos = startPoint.x;
-      } else {
-        nextComp = components.get(i - 1);
-        currentXPos += nextComp.getWidth();
-      }
-
-      comp.setLocation(currentXPos, startPoint.y);
+      Layout.locateLeftToRight(topComponents, 0, TOP_MARGIN);
+      Layout.locateLeftToRight(bottomComponents, 0, camera.getHeight() - INFO_PANEL_HEIGHT);
     }
   }
 
@@ -232,11 +195,11 @@ public class HUD {
   }
 
   private void renderInfoPanels(Graphics g) {
-    for (BasicComponent comp : topComponents) {
-      comp.render(guiContext, g);
+    for (Component comp : topComponents) {
+      comp.render(g);
     }
-    for (BasicComponent comp : bottomComponents) {
-      comp.render(guiContext, g);
+    for (Component comp : bottomComponents) {
+      comp.render(g);
     }
   }
 
