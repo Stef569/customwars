@@ -52,7 +52,6 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
 
   private Weapon primaryWeapon, secondaryWeapon;
   private List<Locatable> transport;  // Locatables that are within this Transport
-  private MoveStrategy moveStrategy;  // Determines how a unit moves
   private boolean hideAbilityEnabled; // Allows to hide for a longer time
 
   public Unit(UnitStats unitStats) {
@@ -67,6 +66,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
     transport = new LinkedList<Locatable>();
     if (stats.canDive) dive();
     unitState = UnitState.IDLE;
+    stats.moveStrategy = stats.moveStrategy.newInstance(this);
   }
 
   /**
@@ -89,8 +89,16 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
 
     location = otherUnit.location;
     owner = otherUnit.owner;
-    transport = new LinkedList<Locatable>(otherUnit.transport);
-    moveStrategy = otherUnit.moveStrategy;
+    stats.moveStrategy = otherUnit.stats.moveStrategy;
+    copyUnitsInTheTransport(otherUnit.transport);
+  }
+
+  private void copyUnitsInTheTransport(List<Locatable> unitsInTransport) {
+    this.transport = new LinkedList<Locatable>();
+    for (Locatable locatable : unitsInTransport) {
+      Unit unit = (Unit) locatable;
+      this.transport.add(new Unit(unit));
+    }
   }
 
   /**
@@ -352,8 +360,8 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   public boolean isFullySupplied() {
     boolean fullSupplies = getSuppliesPercentage() == 100;
     boolean priWeaponAmmoIsFull = !hasPrimaryWeapon() || primaryWeapon.getAmmoPercentage() == 100;
-    boolean secWeaponAmmiIsFull = !hasSecondaryWeapon() || secondaryWeapon.getAmmoPercentage() == 100;
-    return fullSupplies && priWeaponAmmoIsFull && secWeaponAmmiIsFull;
+    boolean secWeaponAmmoIsFull = !hasSecondaryWeapon() || secondaryWeapon.getAmmoPercentage() == 100;
+    return fullSupplies && priWeaponAmmoIsFull && secWeaponAmmoIsFull;
   }
 
   public void heal(int healRate) {
@@ -499,8 +507,8 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   }
 
   public void setMoveStrategy(MoveStrategy moveStrategy) {
-    MoveStrategy oldVal = this.moveStrategy;
-    this.moveStrategy = moveStrategy;
+    MoveStrategy oldVal = stats.moveStrategy;
+    this.stats.moveStrategy = moveStrategy;
     firePropertyChange("moveStrategy", oldVal, moveStrategy);
   }
 
@@ -661,7 +669,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   }
 
   public MoveStrategy getMoveStrategy() {
-    return moveStrategy;
+    return stats.moveStrategy;
   }
 
   public int getMovePoints() {

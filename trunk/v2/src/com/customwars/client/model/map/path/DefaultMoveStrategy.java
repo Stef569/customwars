@@ -4,7 +4,6 @@ import com.customwars.client.model.gameobject.Terrain;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Tile;
-import com.customwars.client.tools.Args;
 
 /**
  * Default Move strategy for units
@@ -12,9 +11,16 @@ import com.customwars.client.tools.Args;
 public class DefaultMoveStrategy implements MoveStrategy {
   private final Mover mover;
 
+  public DefaultMoveStrategy() {
+    this.mover = null;
+  }
+
   public DefaultMoveStrategy(Mover mover) {
-    Args.checkForNull(mover);
     this.mover = mover;
+  }
+
+  public MoveStrategy newInstance(Mover mover) {
+    return new DefaultMoveStrategy(mover);
   }
 
   public int getMoveCost(Location tile) {
