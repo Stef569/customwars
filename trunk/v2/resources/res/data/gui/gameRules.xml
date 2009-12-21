@@ -7,24 +7,24 @@ Licensed Carlsbad Cubes - Wolf Paulus-->
     <panel name="centerPanel" weightx="1" weighty="1" halign="center" valign="center" columns="2" top="5" left="5"
            bottom="5" right="5" gap="20" border="true">
         <panel gap="20">
-            <label text="Fog"/>
+            <label text="Fog" tooltip="Limit visibility in the game"/>
             <combobox name="fog" weightx="1" halign="right" width="60" editable="false" action="fogChange(this)">
                 <choice text="True"/>
                 <choice text="False"/>
             </combobox>
         </panel>
         <panel gap="20">
-            <label text="Days"/>
+            <label text="Days" tooltip="Configure how many days a game should last"/>
             <combobox name="day_limit" weightx="1" halign="right" width="60" editable="false"
                       action="dayLimitChange(day_limit.text)"/>
         </panel>
         <panel gap="20">
-            <label text="Funds"/>
+            <label text="Funds" tooltip="The funds received from each captured city"/>
             <combobox name="funds" weightx="1" halign="right" width="60" editable="false"
                       action="fundsChange(funds.text)"/>
         </panel>
         <panel gap="20">
-            <label text="Income"/>
+            <label text="Income" tooltip="The start budget for each player"/>
             <combobox name="income" weightx="1" halign="right" width="60" editable="false"
                       action="incomeChange(income.text)"/>
         </panel>
