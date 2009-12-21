@@ -61,7 +61,7 @@ public class GameTest {
     Player p1 = new Player(0, Color.RED, "Stef", P1_START_BUDGET, 0, false);
     Player p2 = new Player(1, Color.BLACK, "JSR", P2_START_BUDGET, 5, false);
     GameConfig gc = new GameConfig();
-    gc.setCityfunds(CITY_FUNDS);
+    gc.setCityFunds(CITY_FUNDS);
 
     // p1 is starting the game
     startGame(p1, gc, p1, p2);
@@ -302,6 +302,7 @@ public class GameTest {
   }
 
   // Util Functions
+
   private void checkUnitState(Iterable<Unit> units, GameObjectState state) {
     for (Unit unit : units) {
       Assert.assertEquals(unit.getState(), state);
