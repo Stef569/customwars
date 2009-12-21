@@ -42,17 +42,17 @@ public class GameRulesController {
     page.getWidget("fog").setText(gameConfig.isFogOfWarOn() ? "True" : "False");
     page.getWidget("day_limit").setText(gameConfig.getDayLimit() + "");
     page.getWidget("funds").setText(gameConfig.getCityFunds() + "");
-    page.getWidget("income").setText(gameConfig.getPlayerIncome() + "");
+    page.getWidget("income").setText(gameConfig.getPlayerBudgetStart() + "");
   }
 
   public void fundsChange(String newValue) {
     int newFunds = Integer.parseInt(newValue);
-    gameConfig.setCityfunds(newFunds);
+    gameConfig.setCityFunds(newFunds);
   }
 
   public void incomeChange(String newValue) {
-    int income = Integer.parseInt(newValue);
-    gameConfig.setPlayerIncome(income);
+    int startBudget = Integer.parseInt(newValue);
+    gameConfig.setPlayerBudgetStart(startBudget);
   }
 
   public void fogChange(Widget fogCbo) {
@@ -87,8 +87,8 @@ public class GameRulesController {
       int id = player.getId();
       Color color = player.getColor();
       String colorName = ColorUtil.toString(color);
-      int income = gameConfig.getPlayerIncome();
-      Player p = new Player(id, color, colorName, income, team++, false);
+      int startBudget = gameConfig.getPlayerBudgetStart();
+      Player p = new Player(id, color, colorName, startBudget, team++, false);
       players.add(p);
     }
     return players;

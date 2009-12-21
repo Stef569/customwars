@@ -35,7 +35,7 @@ public class HardCodedGame {
     List<Player> players = Arrays.asList(p_RED, p_BLUE, p_GREEN);
     GameConfig gc = new GameConfig();
     gc.setDayLimit(Turn.UNLIMITED);
-    gc.setCityfunds(1000);
+    gc.setCityFunds(1000);
 
     return new Game(getMap(), players, gc);
   }
