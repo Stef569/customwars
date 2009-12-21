@@ -5,7 +5,7 @@
                 canHide?, canDive?, canCapture?, canJoin?, canFlare?, canSupply?, canTransport?,
                 transports?, transformTerrains?, buildCities?, buildUnits?,
                 maxExperience, maxHp, supplyRange?, maxSupplies, suppliesPerTurn?, maxTransportCount?, armyBranch,
-                movementType, primaryWeaponName?, secondaryWeaponName?, description)>
+                movementType, primaryWeaponName?, secondaryWeaponName?, moveStrategy?, description)>
         <!ATTLIST unit name CDATA #REQUIRED>
         <!ATTLIST unit unitID CDATA #REQUIRED>
         <!ATTLIST unit imgRowID CDATA #REQUIRED>
@@ -44,6 +44,9 @@
 
         <!ELEMENT primaryWeaponName (#PCDATA) >
         <!ELEMENT secondaryWeaponName (#PCDATA)>
+
+        <!ELEMENT moveStrategy (#PCDATA)>
+        <!ATTLIST moveStrategy class CDATA #REQUIRED>
 
         <!ELEMENT description (#PCDATA)>
 
@@ -92,7 +95,7 @@
         <primaryWeaponName>BAZOOKA</primaryWeaponName>
         <secondaryWeaponName>SMG</secondaryWeaponName>
 
-        <description>Infantry units that are equiped to take out Tanks, they have a machin gun as secondary weapon.
+        <description>Infantry units that are equipped to take out Tanks, they have a machine gun as secondary weapon.
         </description>
     </unit>
     <unit name="tank" unitID="2" imgRowID="2">

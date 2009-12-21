@@ -2,6 +2,8 @@ package com.customwars.client.model.gameobject;
 
 import com.customwars.client.model.ArmyBranch;
 import com.customwars.client.model.map.Range;
+import com.customwars.client.model.map.path.DefaultMoveStrategy;
+import com.customwars.client.model.map.path.MoveStrategy;
 import com.customwars.client.tools.Args;
 
 import java.util.Collections;
@@ -20,6 +22,7 @@ public class UnitStats {
   final int price;        // The price for buying this Unit
   final int movement;     // The move points
   final int vision;       // The amount of tiles this unit can see in all directions aka line of sight
+  MoveStrategy moveStrategy;  // Determines how a unit moves
 
   final int maxExperience;      // The maximum experience this unit can have
   final int maxHp;              // The value when this unit is 100% Healthy
@@ -91,6 +94,7 @@ public class UnitStats {
     supplyRange = supplyRange == null ? Range.ZERO_RANGE : supplyRange;
     Args.checkForNull(name, "please provide a name for unitID " + unitID);
     Args.checkForNull(description, "please provide a description for unitID " + unitID);
+    if (moveStrategy == null) moveStrategy = new DefaultMoveStrategy();
   }
 
   public ArmyBranch getArmyBranch() {
@@ -163,6 +167,10 @@ public class UnitStats {
 
   public int getMovementType() {
     return movementType;
+  }
+
+  public MoveStrategy getMoveStrategy() {
+    return moveStrategy;
   }
 
   public boolean canSupply() {
