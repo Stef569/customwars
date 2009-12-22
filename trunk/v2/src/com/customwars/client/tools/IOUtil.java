@@ -107,12 +107,12 @@ public final class IOUtil {
     String errorMessage = errMsg == null ? "Could not create file: '" + file + "'" : errMsg;
 
     try {
-      boolean successs = file.createNewFile();
-      if (!successs) {
+      boolean success = file.createNewFile();
+      if (!success) {
         throw new RuntimeException(errorMessage);
       }
     } catch (IOException e) {
-      throw new RuntimeException(errorMessage);
+      throw new RuntimeException(errorMessage, e);
     }
   }
 
@@ -151,6 +151,7 @@ public final class IOUtil {
 
   /**
    * Get All non empty lines from an InputStream
+   * A line filled with spaces is considered empty
    */
   public static List<String> getLinesFromFile(InputStream stream) throws IOException {
     BufferedReader br = new BufferedReader(new InputStreamReader(stream));
@@ -159,7 +160,7 @@ public final class IOUtil {
     try {
       String line;
       while ((line = br.readLine()) != null) {
-        if (line.length() != 0) {
+        if (StringUtil.hasContent(line)) {
           lines.add(line);
         }
       }
