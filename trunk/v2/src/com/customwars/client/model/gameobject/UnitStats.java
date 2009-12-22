@@ -169,10 +169,6 @@ public class UnitStats {
     return movementType;
   }
 
-  public MoveStrategy getMoveStrategy() {
-    return moveStrategy;
-  }
-
   public boolean canSupply() {
     return canSupply;
   }

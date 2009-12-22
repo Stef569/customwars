@@ -53,6 +53,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   private Weapon primaryWeapon, secondaryWeapon;
   private List<Locatable> transport;  // Locatables that are within this Transport
   private boolean hideAbilityEnabled; // Allows to hide for a longer time
+  private MoveStrategy moveStrategy;  // A MoveStrategy instance for this unit
 
   public Unit(UnitStats unitStats) {
     super(GameObjectState.ACTIVE);
@@ -66,7 +67,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
     transport = new LinkedList<Locatable>();
     if (stats.canDive) dive();
     unitState = UnitState.IDLE;
-    stats.moveStrategy = stats.moveStrategy.newInstance(this);
+    moveStrategy = stats.moveStrategy.newInstance(this);
   }
 
   /**
@@ -89,7 +90,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
 
     location = otherUnit.location;
     owner = otherUnit.owner;
-    stats.moveStrategy = otherUnit.stats.moveStrategy.newInstance(this);
+    moveStrategy = otherUnit.stats.moveStrategy.newInstance(this);
     copyUnitsInTheTransport(otherUnit.transport);
   }
 
@@ -507,8 +508,8 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   }
 
   public void setMoveStrategy(MoveStrategy moveStrategy) {
-    MoveStrategy oldVal = stats.moveStrategy;
-    this.stats.moveStrategy = moveStrategy;
+    MoveStrategy oldVal = moveStrategy;
+    this.moveStrategy = moveStrategy;
     firePropertyChange("moveStrategy", oldVal, moveStrategy);
   }
 
@@ -669,7 +670,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   }
 
   public MoveStrategy getMoveStrategy() {
-    return stats.moveStrategy;
+    return moveStrategy;
   }
 
   public int getMovePoints() {
