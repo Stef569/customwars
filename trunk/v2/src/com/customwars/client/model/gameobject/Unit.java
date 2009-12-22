@@ -89,7 +89,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
 
     location = otherUnit.location;
     owner = otherUnit.owner;
-    stats.moveStrategy = otherUnit.stats.moveStrategy;
+    stats.moveStrategy = otherUnit.stats.moveStrategy.newInstance(this);
     copyUnitsInTheTransport(otherUnit.transport);
   }
 
