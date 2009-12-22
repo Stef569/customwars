@@ -61,7 +61,7 @@ public class UnitFactory {
 
   public static Unit getUnit(int id) {
     if (!units.containsKey(id)) {
-      throw new IllegalArgumentException("Unit ID " + id + " is not cached " + units);
+      throw new IllegalArgumentException("Unit ID " + id + " is not cached " + units.keySet());
     }
     Unit unit = new Unit(units.get(id));
     unit.reset();
