@@ -1,0 +1,328 @@
+<?xml version="1.0"?>
+<damages>
+    <unit id="light_tank">
+        <enemies>
+            <enemy id="light_tank" basedamage="55" altdamage="6"/>
+            <enemy id="medium_tank" basedamage="15" altdamage="1"/>
+            <enemy id="heavy_tank" basedamage="10" altdamage="1"/>
+            <enemy id="infantry" basedamage="75" altdamage="75"/>
+            <enemy id="mech" basedamage="70" altdamage="70"/>
+            <enemy id="anti_air" basedamage="65" altdamage="6"/>
+            <enemy id="artillery" basedamage="70" altdamage="45"/>
+            <enemy id="apc" basedamage="75" altdamage="45"/>
+            <enemy id="bcopter" basedamage="0" altdamage="10"/>
+            <enemy id="bomber" basedamage="0"/>
+            <enemy id="tcopter" basedamage="1" altdamage="40"/>
+            <enemy id="sub" basedamage="1"/>
+            <enemy id="stealth" basedamage="1"/>
+            <enemy id="cruiser" basedamage="1"/>
+            <enemy id="missiles" basedamage="85" altdamage="30"/>
+            <enemy id="carrier" basedamage="1"/>
+            <enemy id="recon" basedamage="85" altdamage="40"/>
+            <enemy id="rockets" basedamage="85" altdamage="55"/>
+            <enemy id="lander" basedamage="10" altdamage="0"/>
+            <enemy id="battleship" basedamage="1"/>
+        </enemies>
+    </unit>
+
+    <unit id="medium_tank">
+        <enemies>
+            <enemy id="light_tank" basedamage="85" altdamage="8"/>
+            <enemy id="medium_tank" basedamage="55" altdamage="1"/>
+            <enemy id="heavy_tank" basedamage="25" altdamage="1"/>
+            <enemy id="infantry" basedamage="105" altdamage="105"/>
+            <enemy id="mech" basedamage="95" altdamage="95"/>
+            <enemy id="anti_air" basedamage="105" altdamage="7"/>
+            <enemy id="artillery" basedamage="105" altdamage="45"/>
+            <enemy id="apc" basedamage="105" altdamage="45"/>
+            <enemy id="bcopter" basedamage="10"/>
+            <enemy id="tcopter" basedamage="40"/>
+            <enemy id="sub" basedamage="10"/>
+            <enemy id="cruiser" basedamage="30"/>
+            <enemy id="missiles" basedamage="105" altdamage="35"/>
+            <enemy id="recon" basedamage="105" altdamage="45"/>
+            <enemy id="rockets" basedamage="105" altdamage="55"/>
+            <enemy id="lander" basedamage="35"/>
+            <enemy id="battleship" basedamage="10"/>
+        </enemies>
+    </unit>
+
+    <unit id="heavy_tank">
+        <enemies>
+            <enemy id="light_tank" basedamage="180" altdamage="10"/>
+            <enemy id="medium_tank" basedamage="125" altdamage="1"/>
+            <enemy id="heavy_tank" basedamage="65" altdamage="1"/>
+            <enemy id="infantry" basedamage="135" altdamage="125"/>
+            <enemy id="mech" basedamage="125" altdamage="125"/>
+            <enemy id="anti_air" basedamage="195" altdamage="17"/>
+            <enemy id="artillery" basedamage="195" altdamage="65"/>
+            <enemy id="apc" basedamage="195" altdamage="65"/>
+            <enemy id="bcopter" altdamage="22"/>
+            <enemy id="bomber" altdamage="55"/>
+            <enemy id="sub" basedamage="45"/>
+            <enemy id="cruiser" basedamage="65"/>
+            <enemy id="missiles" basedamage="195" altdamage="55"/>
+            <enemy id="recon" basedamage="195" altdamage="65"/>
+            <enemy id="rockets" basedamage="195" altdamage="75"/>
+            <enemy id="lander" basedamage="70"/>
+            <enemy id="battleship" basedamage="45"/>
+        </enemies>
+    </unit>
+
+    <unit id="infantry">
+        <enemies>
+            <enemy id="light_tank" altdamage="5"/>
+            <enemy id="medium_tank" altdamage="1"/>
+            <enemy id="heavy_tank" altdamage="1"/>
+            <enemy id="infantry" altdamage="55"/>
+            <enemy id="mech" altdamage="45"/>
+            <enemy id="anti_air" altdamage="5"/>
+            <enemy id="artillery" altdamage="15"/>
+            <enemy id="apc" altdamage="14"/>
+            <enemy id="missiles" altdamage="26"/>
+            <enemy id="recon" altdamage="12"/>
+            <enemy id="rockets" altdamage="25"/>
+        </enemies>
+    </unit>
+
+    <unit id="mech">
+        <enemies>
+            <enemy id="light_tank" basedamage="55"/>
+            <enemy id="medium_tank" basedamage="15"/>
+            <enemy id="heavy_tank" basedamage="8"/>
+            <enemy id="infantry" altdamage="65"/>
+            <enemy id="mech" altdamage="55"/>
+            <enemy id="anti_air" basedamage="65"/>
+            <enemy id="artillery" basedamage="70"/>
+            <enemy id="apc" basedamage="75"/>
+            <enemy id="bcopter" basedamage="30"/>
+            <enemy id="tcopter" basedamage="35"/>
+            <enemy id="missiles" basedamage="85"/>
+            <enemy id="recon" basedamage="85"/>
+            <enemy id="rockets" basedamage="85"/>
+        </enemies>
+    </unit>
+
+    <unit id="anti_air">
+        <enemies>
+            <enemy id="light_tank" basedamage="25"/>
+            <enemy id="medium_tank" basedamage="10"/>
+            <enemy id="heavy_tank" basedamage="1"/>
+            <enemy id="infantry" basedamage="105"/>
+            <enemy id="mech" basedamage="105"/>
+            <enemy id="anti_air" basedamage="45"/>
+            <enemy id="artillery" basedamage="50"/>
+            <enemy id="apc" basedamage="50"/>
+            <enemy id="bcopter" basedamage="105"/>
+            <enemy id="bomber" basedamage="75"/>
+            <enemy id="tcopter" basedamage="105"/>
+            <enemy id="stealth" basedamage="75"/>
+            <enemy id="missiles" basedamage="55"/>
+            <enemy id="recon" basedamage="60"/>
+            <enemy id="rockets" basedamage="55"/>
+        </enemies>
+    </unit>
+
+    <unit id="artillery">
+        <enemies>
+            <enemy id="light_tank" basedamage="70"/>
+            <enemy id="medium_tank" basedamage="45"/>
+            <enemy id="heavy_tank" basedamage="15"/>
+            <enemy id="infantry" basedamage="90"/>
+            <enemy id="mech" basedamage="85"/>
+            <enemy id="anti_air" basedamage="75"/>
+            <enemy id="artillery" basedamage="75"/>
+            <enemy id="apc" basedamage="70"/>
+            <enemy id="sub" basedamage="60"/>
+            <enemy id="cruiser" basedamage="50"/>
+            <enemy id="missiles" basedamage="80"/>
+            <enemy id="carrier" basedamage="45"/>
+            <enemy id="recon" basedamage="80"/>
+            <enemy id="rockets" basedamage="80"/>
+            <enemy id="lander" basedamage="55"/>
+            <enemy id="battleship" basedamage="40"/>
+        </enemies>
+    </unit>
+
+    <unit id="apc">
+        <enemies/>
+    </unit>
+
+    <unit id="bcopter">
+        <enemies>
+            <enemy id="light_tank" basedamage="55"/>
+            <enemy id="medium_tank" basedamage="25"/>
+            <enemy id="heavy_tank" basedamage="10"/>
+            <enemy id="infantry" basedamage="75"/>
+            <enemy id="mech" basedamage="75"/>
+            <enemy id="anti_air" basedamage="25"/>
+            <enemy id="artillery" basedamage="80"/>
+            <enemy id="apc" basedamage="60"/>
+            <enemy id="bcopter" basedamage="65"/>
+            <enemy id="tcopter" basedamage="95"/>
+            <enemy id="sub" basedamage="25"/>
+            <enemy id="cruiser" basedamage="55"/>
+            <enemy id="missiles" basedamage="65"/>
+            <enemy id="carrier" basedamage="25"/>
+            <enemy id="recon" basedamage="55"/>
+            <enemy id="rockets" basedamage="65"/>
+            <enemy id="lander" basedamage="25"/>
+            <enemy id="battleship" basedamage="25"/>
+        </enemies>
+    </unit>
+
+    <unit id="bomber">
+        <enemies>
+            <enemy id="light_tank" basedamage="105"/>
+            <enemy id="medium_tank" basedamage="95"/>
+            <enemy id="heavy_tank" basedamage="35"/>
+            <enemy id="infantry" basedamage="110"/>
+            <enemy id="mech" basedamage="110"/>
+            <enemy id="anti_air" basedamage="95"/>
+            <enemy id="artillery" basedamage="105"/>
+            <enemy id="apc" basedamage="105"/>
+            <enemy id="sub" basedamage="95"/>
+            <enemy id="cruiser" basedamage="85"/>
+            <enemy id="missiles" basedamage="105"/>
+            <enemy id="carrier" basedamage="75"/>
+            <enemy id="recon" basedamage="105"/>
+            <enemy id="rockets" basedamage="105"/>
+            <enemy id="lander" basedamage="95"/>
+            <enemy id="battleship" basedamage="75"/>
+        </enemies>
+    </unit>
+
+    <unit id="tcopter">
+        <enemies/>
+    </unit>
+
+    <unit id="sub">
+        <enemies>
+            <enemy id="sub" basedamage="55"/>
+            <enemy id="cruiser" basedamage="25"/>
+            <enemy id="carrier" basedamage="75"/>
+            <enemy id="lander" basedamage="95"/>
+            <enemy id="battleship" basedamage="55"/>
+        </enemies>
+    </unit>
+
+    <unit id="stealth">
+        <enemies>
+            <enemy id="light_tank" basedamage="75"/>
+            <enemy id="medium_tank" basedamage="70"/>
+            <enemy id="heavy_tank" basedamage="15"/>
+            <enemy id="infantry" basedamage="90"/>
+            <enemy id="mech" basedamage="90"/>
+            <enemy id="anti_air" basedamage="50"/>
+            <enemy id="artillery" basedamage="75"/>
+            <enemy id="apc" basedamage="85"/>
+            <enemy id="bcopter" basedamage="85"/>
+            <enemy id="bomber" basedamage="70"/>
+            <enemy id="tcopter" basedamage="95"/>
+            <enemy id="sub" basedamage="55"/>
+            <enemy id="stealth" basedamage="55"/>
+            <enemy id="cruiser" basedamage="35"/>
+            <enemy id="missiles" basedamage="85"/>
+            <enemy id="carrier" basedamage="45"/>
+            <enemy id="recon" basedamage="85"/>
+            <enemy id="rockets" basedamage="85"/>
+            <enemy id="lander" basedamage="65"/>
+            <enemy id="battleship" basedamage="45"/>
+        </enemies>
+    </unit>
+
+    <unit id="cruiser">
+        <enemies>
+            <enemy id="bcopter" basedamage="115"/>
+            <enemy id="bomber" basedamage="65"/>
+            <enemy id="tcopter" basedamage="115"/>
+            <enemy id="sub" basedamage="90"/>
+            <enemy id="stealth" basedamage="100"/>
+            <enemy id="carrier" basedamage="5"/>
+        </enemies>
+    </unit>
+
+    <unit id="missiles">
+        <enemies>
+            <enemy id="bcopter" basedamage="120"/>
+            <enemy id="bomber" basedamage="100"/>
+            <enemy id="tcopter" basedamage="120"/>
+            <enemy id="stealth" basedamage="100"/>
+        </enemies>
+    </unit>
+
+    <unit id="carrier">
+        <enemies>
+            <enemy id="bcopter" basedamage="115"/>
+            <enemy id="bomber" basedamage="100"/>
+            <enemy id="tcopter" basedamage="115"/>
+            <enemy id="stealth" basedamage="100"/>
+        </enemies>
+    </unit>
+
+    <unit id="recon">
+        <enemies>
+            <enemy id="light_tank" altdamage="6"/>
+            <enemy id="medium_tank" altdamage="1"/>
+            <enemy id="heavy_tank" altdamage="1"/>
+            <enemy id="infantry" altdamage="80"/>
+            <enemy id="mech" altdamage="65"/>
+            <enemy id="anti_air" altdamage="4"/>
+            <enemy id="artillery" altdamage="45"/>
+            <enemy id="apc" altdamage="45"/>
+            <enemy id="missiles" altdamage="28"/>
+            <enemy id="recon" altdamage="35"/>
+            <enemy id="rockets" altdamage="55"/>
+        </enemies>
+    </unit>
+
+    <unit id="rockets">
+        <enemies>
+            <enemy id="light_tank" basedamage="80"/>
+            <enemy id="medium_tank" basedamage="55"/>
+            <enemy id="heavy_tank" basedamage="25"/>
+            <enemy id="infantry" basedamage="95"/>
+            <enemy id="mech" basedamage="90"/>
+            <enemy id="anti_air" basedamage="85"/>
+            <enemy id="artillery" basedamage="80"/>
+            <enemy id="apc" basedamage="80"/>
+            <enemy id="sub" basedamage="85"/>
+            <enemy id="cruiser" basedamage="60"/>
+            <enemy id="missiles" basedamage="90"/>
+            <enemy id="carrier" basedamage="60"/>
+            <enemy id="recon" basedamage="90"/>
+            <enemy id="rockets" basedamage="85"/>
+            <enemy id="lander" basedamage="60"/>
+            <enemy id="battleship" basedamage="55"/>
+        </enemies>
+    </unit>
+
+    <unit id="lander">
+        <enemies/>
+    </unit>
+
+    <unit id="battleship">
+        <enemies>
+            <enemy id="light_tank" basedamage="80"/>
+            <enemy id="medium_tank" basedamage="55"/>
+            <enemy id="heavy_tank" basedamage="25"/>
+            <enemy id="infantry" basedamage="95"/>
+            <enemy id="mech" basedamage="90"/>
+            <enemy id="anti_air" basedamage="85"/>
+            <enemy id="artillery" basedamage="80"/>
+            <enemy id="apc" basedamage="80"/>
+            <enemy id="sub" basedamage="85"/>
+            <enemy id="cruiser" basedamage="85"/>
+            <enemy id="missiles" basedamage="90"/>
+            <enemy id="carrier" basedamage="60"/>
+            <enemy id="recon" basedamage="90"/>
+            <enemy id="rockets" basedamage="85"/>
+            <enemy id="lander" basedamage="95"/>
+            <enemy id="battleship" basedamage="50"/>
+        </enemies>
+    </unit>
+
+    <unit id="gun_boat">
+        <enemies/>
+    </unit>
+</damages>
