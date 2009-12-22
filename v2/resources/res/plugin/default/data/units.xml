@@ -129,7 +129,7 @@
         <armyBranch>LAND</armyBranch>
         <movementType>&TIRES;</movementType>
 
-        <primaryWeaponName>RECON_TANK_MAIN_GUN</primaryWeaponName>
+        <primaryWeaponName>RECON_MAIN_GUN</primaryWeaponName>
         <secondaryWeaponName>TANK_MACHIN_GUN</secondaryWeaponName>
         <description>Useful against Infantry and Mech, and for providing sight in fog of war.</description>
     </unit>
