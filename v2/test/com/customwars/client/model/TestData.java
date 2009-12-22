@@ -38,10 +38,10 @@ public class TestData {
 
   public static final int INF = 0;
   public static final int MECH = 1;
-  public static final int TANK = 2;
-  public static final int ARTILLERY = 7;
-  public static final int ROCKETS = 8;
-  public static final int APC = 9;
+  public static final int TANK = 6;
+  public static final int ARTILLERY = 9;
+  public static final int ROCKETS = 11;
+  public static final int APC = 13;
 
   public static final String SMG = "smg";
   public static final String CANNON = "cannon";
