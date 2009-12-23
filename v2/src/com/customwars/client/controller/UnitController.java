@@ -11,6 +11,7 @@ import com.customwars.client.model.gameobject.UnitState;
 import com.customwars.client.model.gameobject.UnitStats;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Map;
+import com.customwars.client.model.map.Range;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.model.map.path.MoveTraverse;
 import com.customwars.client.ui.state.InGameContext;
@@ -156,7 +157,7 @@ public abstract class UnitController {
    * @return if this unit can attack
    */
   boolean canStartAttack(Location origUnitLocation) {
-    if (isDirectUnitMoved(origUnitLocation)) return false;
+    if (isInDirectUnitMoved(origUnitLocation)) return false;
 
     Unit activeUnit = game.getActiveUnit();
     List<Unit> enemiesInRange = game.getMap().getEnemiesInRangeOf(activeUnit);
@@ -215,7 +216,7 @@ public abstract class UnitController {
 
   boolean canFireFlare(Tile from) {
     return unit.getStats().canFlare() && map.isFogOfWarOn() &&
-      !isDirectUnitMoved(from) && unit.getAvailableWeapon().hasAmmoLeft();
+      !isInDirectUnitMoved(from) && unit.getAvailableWeapon().hasAmmoLeft();
   }
 
   boolean canBuildCity(Tile selected) {
@@ -247,11 +248,13 @@ public abstract class UnitController {
   }
 
   /**
-   * @return if this unit is a direct fire type and has it moved
+   * @return if this unit is a indirect fire type and has it moved
    */
-  boolean isDirectUnitMoved(Location originalLocation) {
+  boolean isInDirectUnitMoved(Location originalLocation) {
     boolean moved = originalLocation != unit.getLocation();
-    return moved && unit.getAttackRange().getMinRange() > 1;
+    Range attackRange = unit.getAttackRange();
+    boolean indirect = attackRange.getMinRange() >= 1 && attackRange.getMaxRange() > 1;
+    return moved && indirect;
   }
 
   /**
