@@ -19,7 +19,7 @@ public class PlayerInfoPanel extends Box {
       String player = App.translate("player") + ':' + game.getActivePlayer().getName();
       String money = App.translate("money") + ':' + game.getActivePlayer().getBudget();
 
-      g.drawString("     " + day + ' ' + player + " $" + money, getX(), getY());
+      g.drawString("     " + day + ' ' + player + ' ' + money, getX(), getY());
     }
   }
 }
