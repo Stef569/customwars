@@ -1,5 +1,6 @@
 package com.customwars.client.ui;
 
+import com.customwars.client.App;
 import com.customwars.client.io.ResourceManager;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.gameobject.Unit;
@@ -7,6 +8,10 @@ import com.customwars.client.model.map.Direction;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
+import com.customwars.client.tools.NumberUtil;
+import com.customwars.client.ui.hud.panel.HorizontalTerrainInfoPanel;
+import com.customwars.client.ui.hud.panel.HorizontalTransportInfoPanel;
+import com.customwars.client.ui.hud.panel.HorizontalUnitInfoPanel;
 import com.customwars.client.ui.hud.panel.InfoPanel;
 import com.customwars.client.ui.hud.panel.PlayerInfoPanel;
 import com.customwars.client.ui.hud.panel.VerticalTerrainInfoPanel;
@@ -28,13 +33,14 @@ import java.util.List;
  * Render following components:
  * Popups, tile info, unit info and units in a transport
  * These components are always rendered on top.
+ * A Popup can either be shown in the center or within the map at a given tile location
  *
  * @author stefan
  */
 public class HUD {
   private static final Logger logger = Logger.getLogger(HUD.class);
   private static final int INFO_PANEL_HEIGHT = 110;
-  private static final int TOP_MARGIN = 10;
+  private static final int TOP_MARGIN = 30;
 
   // Control
   private boolean renderInfoPanels = true;
@@ -45,6 +51,7 @@ public class HUD {
   private int tileSize;
 
   // GUI
+  private final boolean showHorizontalInfoPanels = App.getBoolean("plugin.horizontal_panels");
   private final GUIContext guiContext;
   private final List<Component> topComponents;
   private final List<Component> bottomComponents;
@@ -73,6 +80,35 @@ public class HUD {
   }
 
   private void initComponents() {
+    if (showHorizontalInfoPanels) {
+      createHorizontalPanels();
+    } else {
+      createVerticalPanels();
+    }
+
+    PlayerInfoPanel playerInfoPanel = new PlayerInfoPanel(game);
+    playerInfoPanel.setWidth(240);
+    playerInfoPanel.setHeight(20);
+    topComponents.add(playerInfoPanel);
+  }
+
+  private void createHorizontalPanels() {
+    terrainInfoPanel = new HorizontalTerrainInfoPanel(guiContext, spriteManager);
+    bottomComponents.add(terrainInfoPanel);
+
+    unitInfoPanel = new HorizontalUnitInfoPanel();
+    bottomComponents.add(unitInfoPanel);
+
+    transportInfoPanel = new HorizontalTransportInfoPanel();
+    transportInfoPanel.setHeight(tileSize);
+    bottomComponents.add(transportInfoPanel);
+
+    int widest = NumberUtil.findHighest(terrainInfoPanel.getWidth(), unitInfoPanel.getWidth());
+    terrainInfoPanel.setWidth(widest);
+    unitInfoPanel.setWidth(widest);
+  }
+
+  private void createVerticalPanels() {
     terrainInfoPanel = new VerticalTerrainInfoPanel(spriteManager);
     terrainInfoPanel.setWidth(56);
     terrainInfoPanel.setHeight(INFO_PANEL_HEIGHT);
@@ -87,11 +123,6 @@ public class HUD {
     transportInfoPanel.setWidth(tileSize);
     transportInfoPanel.setHeight(INFO_PANEL_HEIGHT);
     bottomComponents.add(transportInfoPanel);
-
-    Component playerInfoPanel = new PlayerInfoPanel(game);
-    playerInfoPanel.setWidth(240);
-    playerInfoPanel.setHeight(20);
-    topComponents.add(playerInfoPanel);
   }
 
   /**
@@ -131,6 +162,25 @@ public class HUD {
    * @param quadrant 1 of the 4 quadrants in the map
    */
   public final void locateInfoBoxes(Direction quadrant) {
+    if (showHorizontalInfoPanels) {
+      locateHorizontalPanels(quadrant);
+    } else {
+      locateVerticalPanels(quadrant);
+    }
+  }
+
+  private void locateHorizontalPanels(Direction quadrant) {
+    if (Direction.isWestQuadrant(quadrant)) {
+      int leftOffset = guiContext.getWidth() - bottomComponents.get(0).getWidth();
+      Layout.locateRightToLeft(topComponents, leftOffset, TOP_MARGIN);
+      Layout.locateBottomToTop(bottomComponents, leftOffset, guiContext.getHeight());
+    } else {
+      Layout.locateLeftToRight(topComponents, 0, TOP_MARGIN);
+      Layout.locateBottomToTop(bottomComponents, 0, guiContext.getHeight());
+    }
+  }
+
+  private void locateVerticalPanels(Direction quadrant) {
     if (Direction.isWestQuadrant(quadrant)) {
       Layout.locateRightToLeft(topComponents, camera.getWidth(), TOP_MARGIN);
       Layout.locateRightToLeft(bottomComponents, camera.getWidth(), camera.getHeight() - INFO_PANEL_HEIGHT);
