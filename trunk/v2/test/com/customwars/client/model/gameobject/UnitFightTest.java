@@ -144,9 +144,9 @@ public class UnitFightTest {
     Assert.assertEquals(6, fight.getAttackDamagePercentage());
   }
 
-  @Test
+  @Ignore
   /**
-   * Defender will not counter attack if it will kill him
+   * todo Defender will not counter attack if it will kill him
    */
   public void testSuicidalCounterAttack() {
     Unit tank1 = UnitFactory.getUnit(TestData.TANK);
@@ -166,9 +166,8 @@ public class UnitFightTest {
     Assert.assertEquals(tank1.getHp(), tank1.getMaxHp());
   }
 
-  @Ignore
-  // todo this test doesn't pass!
-  public void completeOwnageTest() {
+  @Test
+  public void testMechAmmoDecreaseAfterFight() {
     Unit tank1 = UnitFactory.getUnit(TestData.TANK);
     map.getTile(0, 1).add(tank1);
     tank1.setOwner(p2);
@@ -178,11 +177,11 @@ public class UnitFightTest {
     mech.setOwner(p1);
     mech.setHp(5);
 
+    int startAmmo = mech.getPrimaryWeapon().getAmmo();
     Fight fight = new UnitFight();
-    fight.initFight(tank1, mech);
+    fight.initFight(mech, tank1);
+    fight.startFight();
 
-    // The fight should return an attack percentage of 100
-    //  or more since the tank is going to kill the mech
-    Assert.assertTrue(fight.getAttackDamagePercentage() >= 100);
+    Assert.assertSame(startAmmo - 1, mech.getPrimaryWeapon().getAmmo());
   }
 }

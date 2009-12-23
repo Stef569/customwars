@@ -44,6 +44,7 @@ public class TestData {
   public static final int APC = 13;
 
   public static final String SMG = "smg";
+  public static final String BAZOOKA = "bazooka";
   public static final String CANNON = "cannon";
   public static final String ROCKET = "rocket";
   public static final String ART_CANNON = "art_cannon";
@@ -80,7 +81,7 @@ public class TestData {
   // Units
   private static UnitStats infStats = new UnitStats(INF, INF, "infantry", "", 3000, 3, 3, 10, UNIT_MAX_HP, MAX_UNIT_SUPPLIES, 0, 0, true, false, false, false, true, false, false, null, ArmyBranch.LAND, MOVE_INF, new Range(0, 0), SMG, "");
   private static Unit infantry = new Unit(infStats);
-  private static UnitStats mechStats = new UnitStats(MECH, MECH, "mech", "", 3000, 3, 3, 10, UNIT_MAX_HP, MAX_UNIT_SUPPLIES, 0, 0, true, false, false, false, true, false, false, null, ArmyBranch.LAND, MOVE_MECH, new Range(0, 0), "BAZOOKA", SMG);
+  private static UnitStats mechStats = new UnitStats(MECH, MECH, "mech", "", 3000, 3, 3, 10, UNIT_MAX_HP, MAX_UNIT_SUPPLIES, 0, 0, true, false, false, false, true, false, false, null, ArmyBranch.LAND, MOVE_MECH, new Range(0, 0), BAZOOKA, SMG);
   private static Unit mech = new Unit(mechStats);
   private static UnitStats apcStats = new UnitStats(APC, APC, "apc", "", 8000, 5, 1, 10, UNIT_MAX_HP, MAX_UNIT_SUPPLIES, 3, 0, false, false, true, true, true, false, false, Arrays.asList(MOVE_INF, MOVE_MECH), ArmyBranch.LAND, MOVE_TREAD, new Range(1, 1), "", "");
   private static Unit apc = new Unit(apcStats);
@@ -93,6 +94,7 @@ public class TestData {
 
   // Weapons
   private static Weapon smg = new Weapon(SMG, "", new Range(1, 1), Weapon.UNLIMITED_AMMO, false, ARMY_BRANCH_LAND_ONLY);
+  private static Weapon bazooka = new Weapon(BAZOOKA, "", new Range(1, 1), 5, false, ARMY_BRANCH_LAND_ONLY);
   private static Weapon tankCannon = new Weapon(TANK_CANNON, "", new Range(1, 1), 9, false, ARMY_BRANCH_LAND_ONLY);
   private static Weapon cannon = new Weapon(CANNON, "", new Range(2, 3), 9, false, ARMY_BRANCH_LAND_ONLY);
   private static Weapon rockets = new Weapon(ROCKET, "", new Range(3, 5), 6, false, ARMY_BRANCH_LAND_ONLY);
@@ -125,6 +127,7 @@ public class TestData {
     TerrainFactory.addTerrain(sea);
 
     WeaponFactory.addWeapon(smg);
+    WeaponFactory.addWeapon(bazooka);
     WeaponFactory.addWeapon(cannon);
     WeaponFactory.addWeapon(tankCannon);
     WeaponFactory.addWeapon(rockets);
