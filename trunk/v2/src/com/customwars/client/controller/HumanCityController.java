@@ -78,7 +78,12 @@ public class HumanCityController extends CityController {
     String unitInfo = App.translate(unit.getStats().getName()) + ' ' + unit.getStats().getPrice();
     Color cityColor = city.getOwner().getColor();
     Image unitImage = getUnitImg(unit, cityColor, active);
-    return new MenuItem(unitImage, unitInfo, context.getContainer());
+    MenuItem item = new MenuItem(unitImage, unitInfo, context.getContainer());
+
+    if (!active) {
+      item.setTextColor(new org.newdawn.slick.Color(255, 255, 255, 100));
+    }
+    return item;
   }
 
   private Image getUnitImg(Unit unit, Color color, boolean active) {
