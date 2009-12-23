@@ -108,6 +108,8 @@ public class HumanUnitController extends UnitController {
   private void showMenu(ShowPopupMenuAction menu) {
     if (menu.atLeastHasOneItem()) {
       inGameContext.doAction(menu);
+    } else {
+      logger.warn("No menu items to show");
     }
   }
 
