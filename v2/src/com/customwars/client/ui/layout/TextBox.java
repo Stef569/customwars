@@ -49,7 +49,10 @@ public class TextBox extends Box {
   @Override
   public void renderImpl(Graphics g) {
     if (txt != null) {
-      font.drawString(getX() + getCenterX(), getY() + getCenterY(), txt);
+      Font origFont = g.getFont();
+      g.setFont(font);
+      g.drawString(txt, getX() + getCenterX(), getY() + getCenterY());
+      g.setFont(origFont);
     }
   }
 
