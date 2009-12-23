@@ -1,5 +1,6 @@
 package com.customwars.client.ui.sprite;
 
+import com.customwars.client.App;
 import com.customwars.client.io.ResourceManager;
 import com.customwars.client.io.img.AnimLib;
 import com.customwars.client.io.img.slick.ImageStrip;
@@ -53,7 +54,7 @@ public class SpriteManager implements PropertyChangeListener {
   private ImageStrip unitDecorationStrip;
 
   private TileSprite activeCursor;
-  private Color neutralColor = Color.GRAY;
+  private Color neutralColor = App.getColor("plugin.neutral_color");
   private Font numbersFont;
   private boolean renderSprites = true;
 
@@ -367,10 +368,6 @@ public class SpriteManager implements PropertyChangeListener {
   public void addCursor(String name, TileSprite cursorSprite) {
     cursorSprite.setRenderInCenter(true);
     this.cursorSprites.put(name.toUpperCase(), cursorSprite);
-  }
-
-  public void setNeutralColor(Color neutralColor) {
-    this.neutralColor = neutralColor;
   }
 
   public Location getCursorLocation() {
