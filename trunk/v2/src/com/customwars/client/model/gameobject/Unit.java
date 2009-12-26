@@ -298,11 +298,11 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   }
 
   public boolean canTransport(int id) {
-    return canTransport() && stats.canTransport(id);
+    return stats.canTransport && stats.canTransport(id) && !isTransportFull();
   }
 
-  private boolean canTransport() {
-    return stats.canTransport && transport.size() < stats.maxTransportCount;
+  private boolean isTransportFull() {
+    return transport.size() >= stats.maxTransportCount;
   }
 
   /**
@@ -310,6 +310,25 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
    */
   public int getLocatableCount() {
     return transport.size();
+  }
+
+  /**
+   * @return The range in tiles around this unit
+   *         where units in this transport can be dropped on
+   */
+  public int getMaxDropRange() {
+    if (stats.canTransport && !transport.isEmpty()) {
+      Unit unitInTransport = (Unit) transport.get(0);
+
+      switch (unitInTransport.getArmyBranch()) {
+        case LAND:
+          return 1;
+        default:
+          return unitInTransport.getMovePoints();
+      }
+    } else {
+      return 1;
+    }
   }
 
   // ----------------------------------------------------------------------------
@@ -749,7 +768,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
    * @return Can this unit build units
    */
   public boolean canBuildUnit() {
-    return canTransport();
+    return isTransportFull();
   }
 
   public boolean canHide() {

@@ -8,6 +8,7 @@ import com.customwars.client.action.city.StartLaunchRocketAction;
 import com.customwars.client.action.unit.StartAttackAction;
 import com.customwars.client.action.unit.StartDropAction;
 import com.customwars.client.action.unit.StartFlareAction;
+import com.customwars.client.model.ArmyBranch;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.CityFactory;
 import com.customwars.client.model.gameobject.Terrain;
@@ -25,8 +26,7 @@ import com.customwars.client.ui.state.InGameContext;
  * When in drop mode a drop menu is build else a context menu is build
  */
 public class UnitMenuBuilder {
-  private static final int DROP_LIMIT = 4;
-  private boolean canStartDropGroundUnit, canTakeOff, canCapture, canSupply, canStartAttack, canWait, canJoin, canLoad;
+  private boolean canDropUnit, canCapture, canSupply, canStartAttack, canWait, canJoin, canLoad;
   private boolean canLaunchRocketFromCity, canTransformTerrain;
   private boolean canFireFlare;
   private boolean canBuildCity, canBuildUnit;
@@ -70,7 +70,7 @@ public class UnitMenuBuilder {
     inGameContext.clearUnitsInTransport();
 
     if (controller.canWait(to)) {
-      for (int dropIndex = 0; dropIndex < DROP_LIMIT && dropIndex < unit.getLocatableCount(); dropIndex++) {
+      for (int dropIndex = 0; dropIndex < unit.getLocatableCount(); dropIndex++) {
         Unit unitInTransport = (Unit) unit.getLocatable(dropIndex);
         boolean unitIsAlreadyDropped = inGameContext.isUnitDropped(unitInTransport);
 
@@ -79,7 +79,8 @@ public class UnitMenuBuilder {
         if (controller.canStartDrop() && !unitIsAlreadyDropped) {
           inGameContext.addUnitInTransport(unitInTransport);
           CWAction dropAction = new StartDropAction(to, unit, unitInTransport);
-          addToMenu(dropAction, App.translate("drop") + ' ' + App.translate(unitInTransport.getStats().getName()));
+          String menuText = getDropMenuItemText(unitInTransport);
+          addToMenu(dropAction, menuText);
         }
       }
 
@@ -90,6 +91,17 @@ public class UnitMenuBuilder {
       }
     }
     return menu;
+  }
+
+  private String getDropMenuItemText(Unit unitInTransport) {
+    String menuText;
+    String unitName = App.translate(unitInTransport.getStats().getName());
+    if (unitInTransport.getArmyBranch() == ArmyBranch.LAND) {
+      menuText = App.translate("drop") + " - " + unitName;
+    } else {
+      menuText = App.translate("launch") + " - " + unitName;
+    }
+    return menuText;
   }
 
   private void buildUnitContextMenu(Tile from, Tile selected) {
@@ -109,8 +121,7 @@ public class UnitMenuBuilder {
     Tile from = inGameContext.getClick(1);
 
     if (controller.canWait(selected)) {
-      canTakeOff = controller.canAirplaneTakeOffFromUnit();
-      canStartDropGroundUnit = controller.canStartDrop();
+      canDropUnit = controller.canStartDrop();
       canCapture = controller.canCapture(selected);
       canSupply = controller.canSupply(selected);
       canStartAttack = controller.canStartAttack(from);
@@ -138,15 +149,10 @@ public class UnitMenuBuilder {
     Tile from = inGameContext.getClick(1);
     Tile to = inGameContext.getClick(2);
 
-    if (canStartDropGroundUnit) {
+    if (canDropUnit) {
       map.teleport(from, to, unit);
       buildDropMenu(from, to, selected);
       map.teleport(to, from, unit);
-    } else if (canTakeOff) {
-      Unit unitToTakeOff = (Unit) unit.getLastLocatable();
-      CWAction buildUnitAction = ActionFactory.buildTakeOffUnitAction(unit, unitToTakeOff);
-      String menuText = App.translate("launch") + " - " + App.translate(unitToTakeOff.getStats().getName());
-      addToMenu(buildUnitAction, menuText);
     }
 
     if (canBuildUnit) {

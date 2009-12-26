@@ -586,14 +586,14 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
   }
 
   /**
-   * Retrieve a list of adjacent drop locations where a unit
+   * Retrieve a list of surrounding drop locations where a unit
    * can be dropped to, taking into account fog and hidden units.
    *
    * @return a list of locations where units can be dropped on
    */
-  public List<Location> getFreeDropLocations(Unit transport) {
-    List<Location> surroundingTiles = new ArrayList<Location>();
-    for (Tile tile : getSurroundingTiles(transport.getLocation(), 1, 1)) {
+  public List<T> getFreeDropLocations(Unit transport) {
+    List<T> surroundingTiles = new ArrayList<T>();
+    for (T tile : getSurroundingTiles(transport.getLocation(), 1, transport.getMaxDropRange())) {
       if (isFreeDropLocation(tile, transport)) {
         surroundingTiles.add(tile);
       }

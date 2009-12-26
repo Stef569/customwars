@@ -14,10 +14,8 @@ import com.customwars.client.action.unit.JoinAction;
 import com.customwars.client.action.unit.LoadAction;
 import com.customwars.client.action.unit.MoveAnimatedAction;
 import com.customwars.client.action.unit.ProduceUnitAction;
-import com.customwars.client.action.unit.SelectAction;
 import com.customwars.client.action.unit.SupplyAction;
 import com.customwars.client.action.unit.SurfaceAction;
-import com.customwars.client.action.unit.TakeOffAction;
 import com.customwars.client.action.unit.TransformTerrainAction;
 import com.customwars.client.action.unit.WaitAction;
 import com.customwars.client.model.game.Player;
@@ -190,16 +188,6 @@ public class ActionFactory {
     buildUnitAction.add(new ProduceUnitAction(producer, unitToBuild));
     buildUnitAction.add(new WaitAction(producer));
     buildUnitAction.add(new ClearInGameStateAction());
-    return buildUnitAction;
-  }
-
-  public static CWAction buildTakeOffUnitAction(Unit launcher, Unit unitToLaunch) {
-    ActionBag buildUnitAction = new ActionBag("Take off");
-    buildUnitAction.add(new InitAction());
-    buildUnitAction.add(new TakeOffAction(launcher, unitToLaunch));
-    buildUnitAction.add(new WaitAction(launcher));
-    buildUnitAction.add(new ClearInGameStateAction());
-    buildUnitAction.add(new SelectAction(launcher.getLocation()));
     return buildUnitAction;
   }
 

@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Allow unit(s) in a transport to be dropped on a free adjacent tile around the center location
+ * Allow unit(s) in a transport to be dropped on a free drop tile around the center location within dropRange
  *
  * @author stefan
  */
@@ -44,32 +44,34 @@ public class StartDropAction extends DirectAction {
   }
 
   protected void invokeAction() {
-    List<Location> adjacentTiles = getEmptyAjacentTiles(center);
+    List<Location> emptyDropTiles = getEmptyDropTiles(center);
 
-    logger.debug("Preparing to drop around tile " + center.getLocationString() + " empty tiles count " + adjacentTiles.size());
-    mapRenderer.removeZones();
-    mapRenderer.showArrowPath(false);
-    mapRenderer.showArrowHead(true);
-    mapRenderer.setDropLocations(context.getDropLocations(), center);
+    if (!emptyDropTiles.isEmpty()) {
+      logger.debug("Preparing to drop around tile " + center.getLocationString() + " empty tiles count " + emptyDropTiles.size());
+      mapRenderer.removeZones();
+      mapRenderer.showArrowPath(false);
+      mapRenderer.showArrowHead(true);
+      mapRenderer.setDropLocations(context.getDropLocations(), center);
 
-    // Only allow the cursor to move within the empty adjacent tiles
-    // show the tiles as a movezone
-    cursorControl.startCursorTraversal(adjacentTiles);
-    mapRenderer.setMoveZone(adjacentTiles);
-    context.setInputMode(InGameContext.INPUT_MODE.UNIT_DROP);
+      // Only allow the cursor to move within the empty adjacent tiles
+      // show the tiles as a movezone
+      cursorControl.startCursorTraversal(emptyDropTiles);
+      mapRenderer.setMoveZone(emptyDropTiles);
+      context.setInputMode(InGameContext.INPUT_MODE.UNIT_DROP);
+    }
   }
 
   /**
    * @param transportLocation the location of the transporting unit
-   * @return a list of locations where the unit to be dropped can be dropped on
+   * @return a list of locations where the unit in the transport can be dropped on
    */
-  private List<Location> getEmptyAjacentTiles(Location transportLocation) {
+  private List<Location> getEmptyDropTiles(Location transportLocation) {
     List<Location> surroundingTiles = new ArrayList<Location>();
-    for (Tile adjacentTile : map.getSurroundingTiles(transportLocation, 1, 1)) {
-      if (!context.isDropLocationTaken(adjacentTile)) {
-        if (map.isFreeDropLocation(adjacentTile, transport)) {
-          if (canUnitMoveOverTerrain(adjacentTile)) {
-            surroundingTiles.add(adjacentTile);
+    for (Tile dropTile : map.getSurroundingTiles(transportLocation, 1, transport.getMaxDropRange())) {
+      if (!context.isDropLocationTaken(dropTile)) {
+        if (map.isFreeDropLocation(dropTile, transport)) {
+          if (canUnitMoveOverTerrain(dropTile)) {
+            surroundingTiles.add(dropTile);
           }
         }
       }
