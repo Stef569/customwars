@@ -1,6 +1,5 @@
 package com.customwars.client.controller;
 
-import com.customwars.client.model.ArmyBranch;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.City;
@@ -99,41 +98,21 @@ public abstract class UnitController {
   }
 
   /**
-   * Can the transport drop any ground units
+   * Can the transport drop any units
    * #1 This controller controls a unit with transport abilities
-   * #2 There is at least 1 free adjacent tile
-   * #3 There is at least 1 ground unit in the transport
+   * #2 There is at least 1 free tile within the drop range
+   * #3 There is at least 1 unit in the transport
    *
-   * @return true if the transport can drop at least 1 ground unit
+   * @return true if the transport can drop at least 1 unit
    */
   boolean canStartDrop() {
-    List<Location> emptyTiles = map.getFreeDropLocations(unit);
-
-    int groundUnitsInTransportCount = 0;
-    for (int i = 0; i < unit.getLocatableCount(); i++) {
-      Unit unitInTransport = (Unit) unit.getLocatable(i);
-
-      if (unitInTransport.getArmyBranch() == ArmyBranch.LAND) {
-        groundUnitsInTransportCount++;
-      }
-    }
+    List<Tile> freeDropLocations = map.getFreeDropLocations(unit);
 
     boolean isTransportingUnit = unit.getStats().canTransport();
-    boolean atleast1FreeAdjacentTile = !emptyTiles.isEmpty();
-    boolean atLeast1GroundUnit = groundUnitsInTransportCount > 0;
+    boolean atleast1FreeDropTile = !freeDropLocations.isEmpty();
+    boolean atLeast1UnitToDrop = unit.getLocatableCount() > 0;
 
-    return isTransportingUnit && atleast1FreeAdjacentTile && atLeast1GroundUnit;
-  }
-
-
-  boolean canAirplaneTakeOffFromUnit() {
-    Unit unitToTakeOff = null;
-
-    if (unit.getLocatableCount() > 0) {
-      unitToTakeOff = (Unit) unit.getLastLocatable();
-    }
-
-    return unit.getStats().canTransport() && unitToTakeOff != null && unitToTakeOff.getArmyBranch() == ArmyBranch.AIR;
+    return isTransportingUnit && atleast1FreeDropTile && atLeast1UnitToDrop;
   }
 
   /**
