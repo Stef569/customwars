@@ -58,12 +58,14 @@ public abstract class HorizontalInfoPanel extends Box implements InfoPanel {
   }
 
   private void renderBackground(Graphics g) {
+    Color origColor = g.getColor();
     g.setColor(BACKGROUND_COLOR);
     g.fillRect(getX(), getY(), getWidth(), getHeight());
     if (renderBorder) {
       g.setColor(BORDER_COLOR);
       g.drawRect(getX(), getY(), getWidth(), getHeight());
     }
+    g.setColor(origColor);
   }
 
   protected abstract void renderName(Graphics g);
