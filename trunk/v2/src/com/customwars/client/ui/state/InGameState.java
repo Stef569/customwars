@@ -3,14 +3,12 @@ package com.customwars.client.ui.state;
 import com.customwars.client.App;
 import com.customwars.client.SFX;
 import com.customwars.client.controller.ControllerManager;
-import com.customwars.client.controller.CursorController;
 import com.customwars.client.controller.GameController;
+import com.customwars.client.controller.InGameCursorController;
 import com.customwars.client.model.Statistics;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.game.Player;
-import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Direction;
-import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.model.map.TileMap;
@@ -34,7 +32,6 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.List;
 
 public class InGameState extends CWState implements PropertyChangeListener {
   // Model
@@ -52,9 +49,8 @@ public class InGameState extends CWState implements PropertyChangeListener {
 
   // Control
   private GameController gameControl;
-  private CursorController cursorControl;
+  private InGameCursorController cursorControl;
   private Input input;
-  private boolean cursorAtZoneEdge, enableCursorZoneCheck;
 
   public void init(GameContainer container, StateBasedGame game) throws SlickException {
     this.guiContext = container;
@@ -107,7 +103,7 @@ public class InGameState extends CWState implements PropertyChangeListener {
     gameControl = gameRenderer.getGameControl();
     gameControl.setInGameContext(inGameContext);
 
-    cursorControl = gameControl.getCursorController();
+    cursorControl = (InGameCursorController) gameControl.getCursorController();
     inGameContext.setGameController(gameControl);
 
     controllerManager.initCityControllers();
@@ -239,18 +235,11 @@ public class InGameState extends CWState implements PropertyChangeListener {
   @Override
   public void controlReleased(CWCommand command, CWInput cwInput) {
     if (command.isMoveCommand()) {
-      cursorControl.setCursorLocked(false);
-
-      if (cursorAtZoneEdge) {
-        enableCursorZoneCheck = false;
-        cursorAtZoneEdge = false;
-      }
+      cursorControl.moveControlReleased();
     }
   }
 
   public void moveCursor(CWCommand command) {
-    Tile originalLocation = gameRenderer.getCursorLocation();
-
     switch (command.getEnum()) {
       case UP:
         cursorControl.moveCursor(Direction.NORTH);
@@ -264,30 +253,6 @@ public class InGameState extends CWState implements PropertyChangeListener {
       case RIGHT:
         cursorControl.moveCursor(Direction.EAST);
         break;
-    }
-
-    lockCursorAtMoveZoneEdge(originalLocation);
-  }
-
-  private void lockCursorAtMoveZoneEdge(Location originalCursorLocation) {
-    Unit activeUnit = game.getActiveUnit();
-
-    if (activeUnit != null) {
-      List<Location> moveZone = activeUnit.getMoveZone();
-      Location cursorLocation = gameRenderer.getCursorLocation();
-
-      if (moveZone.contains(cursorLocation)) {
-        cursorAtZoneEdge = false;
-        enableCursorZoneCheck = true;
-      } else {
-        // The cursor moved outside the moveZone!
-        if (enableCursorZoneCheck) {
-          // Snap the cursor back, until enableCursorZoneCheck is put to false(see controlReleased)
-          cursorControl.moveCursor(originalCursorLocation);
-          cursorControl.setCursorLocked(true);
-          cursorAtZoneEdge = true;
-        }
-      }
     }
   }
 

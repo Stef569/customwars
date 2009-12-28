@@ -34,7 +34,7 @@ public class GameController {
     this.game = game;
     this.map = game.getMap();
     this.gameRenderer = gameRenderer;
-    this.cursorControl = new CursorController(game.getMap(), spriteManager);
+    this.cursorControl = new InGameCursorController(game, game.getMap(), spriteManager);
   }
 
   public void handleA(Tile cursorLocation) {
