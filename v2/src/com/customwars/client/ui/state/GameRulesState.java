@@ -1,5 +1,6 @@
 package com.customwars.client.ui.state;
 
+import com.customwars.client.App;
 import com.customwars.client.controller.GameRulesController;
 import com.customwars.client.io.loading.ThinglePageLoader;
 import com.customwars.client.ui.state.input.CWCommand;
@@ -28,7 +29,7 @@ public class GameRulesState extends CWState {
   }
 
   private void initPage() {
-    ThinglePageLoader thingleLoader = new ThinglePageLoader("res/data/gui/");
+    ThinglePageLoader thingleLoader = new ThinglePageLoader(App.get("gui.path"));
     page = thingleLoader.loadPage("gameRules.xml", "greySkin.properties", controller);
     page.setDrawDesktop(false);
   }

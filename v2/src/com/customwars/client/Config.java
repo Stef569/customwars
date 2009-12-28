@@ -32,7 +32,7 @@ public class Config {
   private static final String PLUGIN_PROPERTIES_FILE = "plugin.properties";
 
   private final ResourceManager resources;
-  private String resourcesPath;
+  private static String resourcesPath;
 
   public Config(ResourceManager resources) {
     this.resources = resources;
@@ -55,9 +55,9 @@ public class Config {
       String resourcesPath = StringUtil.appendTrailingSuffix(resPath, "/");
       resourcesPath += "resources";
       App.put("resources.path", resourcesPath);
-      this.resourcesPath = resourcesPath + "/res";
+      Config.resourcesPath = resourcesPath + "/res";
     } else {
-      this.resourcesPath = "resources/res";
+      Config.resourcesPath = "resources/res";
     }
 
     checkForResourcesInClassPath();
@@ -76,6 +76,7 @@ public class Config {
 
   private static void storePaths() {
     App.put("home.maps.dir", MAPS_DIR);
+    App.put("gui.path", resourcesPath + "/data/gui/");
     App.put("userproperties.path", HOME_DIR + "/" + USER_PROPERTIES_FILE);
   }
 

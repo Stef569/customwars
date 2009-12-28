@@ -1,5 +1,6 @@
 package com.customwars.client.ui.state;
 
+import com.customwars.client.App;
 import com.customwars.client.controller.MapSelectController;
 import com.customwars.client.io.loading.ThinglePageLoader;
 import com.customwars.client.ui.renderer.widget.CityCountWidgetRenderer;
@@ -41,7 +42,7 @@ public class MapSelectState extends CWState {
   }
 
   private void initPage(MapSelectController controller) {
-    ThinglePageLoader thingleLoader = new ThinglePageLoader("res/data/gui/");
+    ThinglePageLoader thingleLoader = new ThinglePageLoader(App.get("gui.path"));
     page = thingleLoader.loadPage("mapSelect.xml", "greySkin.properties", controller);
     page.setDrawDesktop(false);
   }
