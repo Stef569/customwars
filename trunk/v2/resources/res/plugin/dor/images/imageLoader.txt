@@ -1,0 +1,34 @@
+// ImagesFile Formats:
+// o <imgName> <fileName> <recolor=false>      // A single image
+// s <imgName> <fileName> 
+// <tileWidth> <tileHeight> <recolor=false>    // image strip
+// m <imgName> <fileName> 
+// <tileWidth> <tileHeight> <recolor=false>    // Rows of image strips
+// Note: folder and image names are case sensitive!!
+
+s terrains terrains.png 16 30
+s miniMap miniMap.png 4 4
+
+s arrows arrows.png 16 16
+s land_explosion landExplosion.png 16 16
+s air_explosion airExplosion.png 16 16
+s naval_explosion seaExplosion.png 16 16
+
+s moveZone moveTile.png 16 16
+s attackZone attackTile.png 16 16
+s numbers numbers.png 8 7
+
+m unit units.png 16 24 true
+s unitDecoration unitDecorations.png 8 8
+s panel_info panel_info.png 16 16
+
+m city cities.png 16 30 true
+s cityDecorations cityDecorations.png 8 8
+
+o trapped trapped.png
+o supplied supplied.png
+
+o light_menu_background menu/lightmenubackground.png
+o dark_menu_background menu/darkmenubackground.png
+
+o questionmark questionMark.png

@@ -768,7 +768,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
    * @return Can this unit build units
    */
   public boolean canBuildUnit() {
-    return isTransportFull();
+    return stats.canTransport && !isTransportFull();
   }
 
   public boolean canHide() {
