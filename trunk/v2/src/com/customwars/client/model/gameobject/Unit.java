@@ -206,7 +206,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   }
 
   public boolean canAttack(Defender defender) {
-    boolean validDefender = defender != null && !defender.isDestroyed() && !defender.getOwner().isAlliedWith(owner);
+    boolean validDefender = defender != null && !defender.isDestroyed() && !defender.isAlliedWith(owner);
     return validDefender && canFireOn(defender) && !isDestroyed();
   }
 
@@ -732,7 +732,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
 
     if (locatable instanceof Unit) {
       Unit trapper = (Unit) locatable;
-      return !trapper.owner.isAlliedWith(owner);
+      return !trapper.isAlliedWith(owner);
     } else {
       return false;
     }
@@ -752,6 +752,10 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
 
   public Player getOwner() {
     return owner;
+  }
+
+  public boolean isAlliedWith(Player player) {
+    return owner.isAlliedWith(player);
   }
 
   public UnitState getUnitState() {

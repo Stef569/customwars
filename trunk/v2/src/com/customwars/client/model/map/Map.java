@@ -228,7 +228,7 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
    */
   private void resetHiddenUnit(Unit unit, Player player) {
     if (unit.canHide()) {
-      boolean allied = unit.getOwner().isAlliedWith(player);
+      boolean allied = unit.isAlliedWith(player);
       boolean hasAdjacentAlliedUnitOrCity = hasAdjacentAlliedUnitOrCity(unit.getLocation(), player);
 
       if (allied || hasAdjacentAlliedUnitOrCity) {
@@ -243,9 +243,10 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
     for (Tile adjacentTile : getSurroundingTiles(unitLocation, 1, 1)) {
       Unit unit = getUnitOn(adjacentTile);
       City city = getCityOn(adjacentTile);
+      boolean hasAdjacentAlliedUnit = unit != null && unit.isAlliedWith(player);
+      boolean hasAdjacentAlliedCity = city != null && city.isAlliedWith(player);
 
-      if ((unit != null && unit.getOwner().isAlliedWith(player)) ||
-        (city != null && city.getOwner().isAlliedWith(player))) {
+      if (hasAdjacentAlliedUnit || hasAdjacentAlliedCity) {
         return true;
       }
     }
@@ -437,13 +438,13 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
       Unit unit = getUnitOn(t);
       City city = getCityOn(t);
 
-      if (unit != null && unit.getOwner().isAlliedWith(player)) {
+      if (unit != null && unit.isAlliedWith(player)) {
         int visionBonus = getUnitVisionBonus(unit);
         int vision = unit.getStats().getVision();
         clearSight(t, vision + visionBonus);
       }
 
-      if (city != null && city.getOwner().isAlliedWith(player)) {
+      if (city != null && city.isAlliedWith(player)) {
         int vision = city.getVision();
         clearSight(t, vision);
       }
