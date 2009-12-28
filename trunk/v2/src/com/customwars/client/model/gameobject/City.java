@@ -16,15 +16,11 @@ import java.util.List;
  * Cities can be owned by 1 Player
  * are located on a Location
  * They have funds, The player that owns this city receives the funds on each turn start.
- * can heal and supply units of a specific ArmyBranch ID
- * can be captured by a Units of a specific unit ID
+ * can heal and supply units of a specific ArmyBranch ID when they are located on the city
+ * can be captured by a Unit of a specific unit ID
  * can build units of a specific ArmyBranch ID
  * <p/>
- * When a city is captured
- * getCapturePercentage() == 100
- * isCaptured() == true
- * <p/>
- * Preparing for another capture process is triggered when
+ * The capture process is reset when
  * another unit tries to capture this city, or by invoking resetCapturing()
  *
  * A City can fire a rocket once
@@ -36,8 +32,8 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
   private List<Integer> canBeCaptureBy; // The ids this City can be captured by(Empty list means it cannot be captured)
   private List<ArmyBranch> builds;      // The army branches this City can build (Empty list means it cannot build)
   private List<Integer> canBeLaunchedBy;// The ids that can launch a rocket (Empty list means it cannot launch rockets)
-  private int maxCapCount;
-  private int healRate;       // Healing/repairs this city can give to a Unit
+  private final int maxCapCount;
+  private final int healRate;       // Healing/repairs this city can give to a Unit
   private int funds;          // Money that this city produces every turn
 
   private Location location;  // The location this City is on
@@ -58,6 +54,7 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
     init();
   }
 
+  @Override
   public void init() {
     super.init();
     this.heals = Args.createEmptyListIfNull(heals);
@@ -93,14 +90,24 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
 
   /**
    * For every start of a Turn
-   * if this city is owned by the player then
-   * the funds of this city are added to the player budget.
+   * #1 The funds of this city are added to the player budget.
+   * #2 If a friendly unit is located on this city it is healed and supplied.
    *
    * @param player the Player that is active in this turn
    */
   public void startTurn(Player player) {
-    if (owner == player) {
-      player.addToBudget(funds);
+    player.addToBudget(funds);
+    healFriendlyUnitOnCity();
+  }
+
+  private void healFriendlyUnitOnCity() {
+    if (location.getLocatableCount() > 0) {
+      Unit unit = (Unit) location.getLastLocatable();
+
+      if (canSupply(unit) && canHeal(unit)) {
+        supply(unit);
+        heal(unit);
+      }
     }
   }
 
@@ -108,13 +115,14 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
   }
 
   /**
-   * Captures this city
-   * Adds the unit capture rate to the capCount value on each invocation
-   * it remembers the capturing Unit, if another Unit attempts to capture
-   * then the capcount will be reset to 0 again.
-   * when capcount >= the maxCapcount
-   * the city is considered captured and
+   * Captures this city, capturing a city can take multiple turns.
+   * The unit capture rate is added to the capCount on each invocation.
+   * If another Unit attempts to capture then the capcount will be reset to 0 again.
+   * when the capcount >= the maxCapcount the city is considered captured and
    * the player that is owning the capturing unit will be the new owner of this city
+   *
+   * Pre: canBeCapturedBy(unit) == true
+   * Post: isCaptured() == true isCapturedBy(unit) == true
    *
    * @param capturer The Unit that will perform the capture action
    */
@@ -136,6 +144,9 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
     }
   }
 
+  /**
+   * Reset the capture progress and remove the last capturing unit reference
+   */
   public void resetCapturing() {
     setCapCount(0);
     setCapturer(null);
@@ -163,6 +174,9 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
     }
   }
 
+  /**
+   * Launch the single rocket from this city
+   */
   public void launchRocket(Unit unit) {
     if (canLaunchRocket(unit)) {
       launched = true;
@@ -222,6 +236,9 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
   // Getters
   // ---------------------------------------------------------------------------
 
+  /**
+   * @see #canSupply(Unit)
+   */
   public boolean canHeal(Unit unit) {
     return canSupply(unit);
   }
@@ -241,16 +258,24 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
     return unit != null && canBeCaptureBy.contains(unit.getStats().getID()) && unit.getLocation() == location;
   }
 
+  /**
+   * @return does this city has the ability to build the given unit
+   */
   public boolean canBuild(Unit unit) {
     return unit != null && builds.contains(unit.getArmyBranch());
   }
 
+  /**
+   * @return does this city has the ability to build any units
+   */
   public boolean canBuild() {
     return !builds.isEmpty();
   }
 
   /**
-   * This function can only be used before resetCapturing() is invoked
+   * Note that the return value changes when {@link #resetCapturing} is used
+   * Before resetCapturing() true is returned if the unit equals the unit that just captured this city
+   * After resetCapturing() this method always returns false
    *
    * @return if this city is captured by the given unit
    */
@@ -258,20 +283,32 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
     return isCaptured() && this.capturer == unit;
   }
 
+  /**
+   * Note that the return value changes when {@link #resetCapturing} is used
+   * Before resetCapturing() true is returned if the city has been captured
+   * After resetCapturing() this method always returns false
+   *
+   * @return if this city has been captured
+   */
   protected boolean isCaptured() {
     return capCount == maxCapCount;
   }
 
+  /**
+   * Can the given unit launch a rocket from this city
+   *
+   * @param unit The unit that will attempt to launch the rocket
+   * @return if the unit can launch a rocket from this city
+   */
   public boolean canLaunchRocket(Unit unit) {
     return unit != null && canLaunchRocket() && canBeLaunchedBy.contains(unit.getStats().getID());
   }
 
+  /**
+   * @return Does this city has the ability to launch rockets
+   */
   public boolean canLaunchRocket() {
     return !canBeLaunchedBy.isEmpty() && !launched;
-  }
-
-  public boolean isRocketLaunched() {
-    return launched;
   }
 
   /**
