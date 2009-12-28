@@ -145,8 +145,7 @@ public class Game extends TurnBasedGame implements PropertyChangeListener {
     Collection<Unit> unitsToDestroy = new ArrayList<Unit>();
 
     for (Unit unit : player.getArmy()) {
-      // Skip units located in a transport
-      if (unit.getLocation() instanceof Tile) {
+      if (!unit.isInTransport()) {
         if (unit.getSupplies() == 0 && isDestroyedWhenOutOfSupplies(unit.getArmyBranch())) {
           // Don't call unit.destroy() here as it will remove the unit from
           // the player army collection throwing a ConcurrentModificationException
@@ -170,8 +169,7 @@ public class Game extends TurnBasedGame implements PropertyChangeListener {
    */
   private void supplyUnitsAdjacentOfTransport(Player player) {
     for (Unit unit : player.getArmy()) {
-      // Skip units located in a transport
-      if (unit.getLocation() instanceof Tile) {
+      if (!unit.isInTransport()) {
         if (unit.getStats().canTransport() && unit.getArmyBranch() == ArmyBranch.LAND) {
           supplyUnitOnAdjacentTile(unit, Direction.NORTH);
           supplyUnitOnAdjacentTile(unit, Direction.EAST);
