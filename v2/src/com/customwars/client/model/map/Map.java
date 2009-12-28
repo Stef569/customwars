@@ -309,11 +309,14 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
 
   /**
    * Init the move and attack zone of each unit owned by the given player
+   * excluding units within transports
    */
   public void initUnitZonesForPlayer(Player player) {
     for (Unit unit : player.getArmy()) {
-      buildMovementZone(unit);
-      buildAttackZone(unit);
+      if (!unit.isInTransport()) {
+        buildMovementZone(unit);
+        buildAttackZone(unit);
+      }
     }
   }
 

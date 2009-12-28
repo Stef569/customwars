@@ -796,6 +796,10 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
     return getHp();
   }
 
+  public boolean isInTransport() {
+    return location instanceof Unit;
+  }
+
   @Override
   public String toString() {
     return String.format("%s(ID=%s) location=%s %s branch=%s owner=%s unit state=%s",
