@@ -1,0 +1,19 @@
+#summary cw2 readme
+#labels Featured,Phase-Deploy
+
+= Introduction =
+This page explains how to install customwars
+
+== Installing ==
+  * Unpack the downloaded zip file to $install_dir, where install_dir can be any dir you choose for example: (c:/program files/CW2/)
+
+The next steps are different for each OS:
+
+Windows:
+  * go to the $install_dir and double click on CustomWars.bat to launch the game
+
+Linux/mac: 
+  * open up a cmd and cd to the $install_dir copy the java line from CustomWars.bat to the cmd and press enter
+
+Requirements:
+java 1.6+
