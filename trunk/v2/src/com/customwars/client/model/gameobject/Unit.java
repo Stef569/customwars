@@ -22,7 +22,7 @@ import java.util.List;
  * Is a Mover meaning it has the ability to be put on and removed from a Location.
  * Is a Location, meaning it can transport Locatables
  * It has a Facing direction, this is one of the compass Direction(N,S,E,W)
- * Units have 2 weapons(both are optional): 1 Primary and 1 Secundary
+ * Units have 2 weapons(both are optional): 1 Primary and 1 Secondary
  *
  * The internal hp of a unit has a range of 0-maxHp instead of 0-10. This approach allows to take a small damage.
  * and is easier then using a double. getHP and getMaxHP convert the internal hp back to the 0-10 range ie:
@@ -149,6 +149,23 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   }
 
   public void startTurn(Player currentPlayer) {
+    supplyUnitsInTransport();
+  }
+
+  /**
+   * If this unit is transporting units and it can build the unit in the transport
+   * then supply and heal the units in the transport
+   */
+  private void supplyUnitsInTransport() {
+    if (stats.canTransport && !transport.isEmpty()) {
+      for (Locatable locatable : transport) {
+        Unit unit = (Unit) locatable;
+        if (stats.canBuildUnit(unit)) {
+          supply(unit);
+          unit.heal(stats.healRate);
+        }
+      }
+    }
   }
 
   public void endTurn(Player currentPlayer) {
@@ -781,7 +798,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
 
   @Override
   public String toString() {
-    return String.format("%s(ID=%s) location=%s stats=%s branch=%s owner=%s unit state=%s",
+    return String.format("%s(ID=%s) location=%s %s branch=%s owner=%s unit state=%s",
       stats.getName(), stats.getID(), getLocationText(), getStatsText(), stats.getArmyBranch(), getOwnerText(), unitState);
   }
 

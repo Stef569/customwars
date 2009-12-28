@@ -30,6 +30,7 @@ public class UnitStats {
   final int maxSupplies;        // The value when this unit has 100% supplies
   final int maxTransportCount;  // Amount of units that can be transported
   final int suppliesPerTurn;    // Amount of supplies that are subtracted each turn from supplies
+  final int healRate;           // Amount of healing that a transport can give to units that can be build by that transport
 
   final boolean canCapture;     // Abilities
   final boolean canDive;
@@ -41,7 +42,7 @@ public class UnitStats {
 
   private Map<Integer, Integer> transformTerrains;  // Terrain Ids this unit can transform to for a given TerrainId
   private Map<Integer, Integer> buildCities;        // City Ids this unit can build on given terrains
-  private List<Integer> buildUnits;           // Units that can be build
+  private List<Integer> buildUnits;           // Units that can be build/healed
   private List<Integer> transports;           // Units that can be transported (empty when this unit can't transport)
   final ArmyBranch armyBranch;                // Naval, Ground, Air
   final int movementType;                     // Inf, Mech, Tires, Tread, Air, Naval ...
@@ -54,7 +55,7 @@ public class UnitStats {
                    int maxHp, int maxSupplies, int maxTransportCount, int suppliesPerTurn,
                    boolean canCapture, boolean canDive, boolean canSupply, boolean canTransport, boolean canJoin,
                    boolean canFlare, boolean canHide, List<Integer> transports,
-                   ArmyBranch armyBranch, int movementType, Range supplyRange, String primaryWeaponName, String secondaryWeaponName) {
+                   ArmyBranch armyBranch, int movementType, Range supplyRange, String primaryWeaponName, String secondaryWeaponName, int healRate) {
     this.unitID = unitID;
     this.imgRowID = imgRowID;
     this.name = name;
@@ -83,6 +84,7 @@ public class UnitStats {
     this.supplyRange = supplyRange;
     this.primaryWeaponName = primaryWeaponName;
     this.secondaryWeaponName = secondaryWeaponName;
+    this.healRate = healRate;
     validate();
   }
 
