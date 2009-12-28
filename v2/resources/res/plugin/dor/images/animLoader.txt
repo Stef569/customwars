@@ -1,0 +1,35 @@
+// Usage
+// M AnimName imgName firstFrameCol firstFrameRow lastFrameCol lastFrameRow loopForever
+// S AnimName imgName frameDuration startFrame totalframecount loopForever
+// To is INCLUSIVE!
+// If no col or row is provided for a strip, then startFrame=0 and lastFrameCol=total cols in the image
+
+// Explosions for each armybranch.
+S EXPLOSION_LAND land_explosion 70 False
+S EXPLOSION_AIR air_explosion 70 False
+S EXPLOSION_NAVAL naval_explosion 70 False
+
+S movezone movezone 150 True
+S attackzone attackzone 150 True
+
+// City Animation
+// The color RED is the baseColor for that city(see colors.xml)
+// Each frame takes 650 ms
+// The first frame is at col 0
+// The second frame is at col 1
+// The city anim keeps on looping
+M city_0_RED city_RED 650 0 0 1 0 True
+
+// Unit Animations
+// Animations: 3 Left, 3 right, 3 down, 3 up.
+// The color RED is the baseColor for that unit(see colors.xml)
+// Each frame takes 500 ms
+// Facing left is from col 0-3
+// Facing right is from col 3-6
+// Facing down is from col 6-9
+// Facing up is from col 9-11
+// The unit anim keeps on looping
+M unit_0_RED_LEFT 	unit_RED 500 0 0 2 0 True
+M unit_0_RED_RIGHT  unit_RED 500 3 0 5 0 True
+M unit_0_RED_DOWN 	unit_RED 500 6 0 8 0 True
+M unit_0_RED_UP 	unit_RED 500 9 0 11 0 True

@@ -1,0 +1,9 @@
+// Usage
+// To Load a StripImageFont s fontName <image reference> <starting char>
+// To load an AngelCodeFont a fontName <fnt> <tga>
+// To load a ttf font		t fontName <ttf>
+
+s numbers numbers 1
+a default default.fnt default_00.tga
+r in_game = default
+t menu armalite.ttf 30
