@@ -3,6 +3,9 @@ Known Issues - This list contains issues that will not be fixed
 1. When starting the inGameState there is no fade effect.
 2. Zooming does not work for now(disabled)
 3. Reef terrain does not connect in map editor mode
+4. Using the keyboard to scroll and ending the current turn
+moves the in game cursor to the position of the mouse
+The obvious solution is to move the mouse out of the map when using the keyboard keys
 
 For a list of issues we are currently working on goto:
 http://code.google.com/p/customwars/issues/list
