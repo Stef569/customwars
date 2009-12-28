@@ -14,7 +14,7 @@ public interface Defender {
 
   boolean isDestroyed();
 
-  Player getOwner();
+  boolean isAlliedWith(Player player);
 
   ArmyBranch getArmyBranch();
 

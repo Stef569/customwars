@@ -50,7 +50,7 @@ public abstract class UnitController {
     if (terrain instanceof City) {
       City city = (City) terrain;
       boolean validUnit = isUnitOn(selected) && isActiveUnitInGame();
-      boolean canCapture = city.canBeCapturedBy(unit) && !city.getOwner().isAlliedWith(unit.getOwner());
+      boolean canCapture = city.canBeCapturedBy(unit) && !city.isAlliedWith(unit.getOwner());
 
       if (selected.isFogged()) {
         return validUnit && canCapture;
@@ -244,7 +244,7 @@ public abstract class UnitController {
    */
   boolean isUnitVisibleTo(Player player) {
     Tile tile = (Tile) unit.getLocation();
-    boolean alliedUnit = unit.getOwner().isAlliedWith(player);
+    boolean alliedUnit = unit.isAlliedWith(player);
     boolean hiddenEnemyUnit = !alliedUnit && unit.isHidden();
 
     return !tile.isFogged() && !hiddenEnemyUnit;

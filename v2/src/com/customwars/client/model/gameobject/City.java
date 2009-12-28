@@ -334,6 +334,10 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
     return owner == player;
   }
 
+  public boolean isAlliedWith(Player player) {
+    return owner.isAlliedWith(player);
+  }
+
   public boolean isHQ() {
     return owner.getHq() == this;
   }
