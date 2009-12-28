@@ -3,7 +3,7 @@ package com.customwars.client.model.game;
 import com.customwars.client.model.ArmyBranch;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Unit;
-import com.customwars.client.model.map.Location;
+import com.customwars.client.model.map.Direction;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
 
@@ -132,32 +132,24 @@ public class Game extends TurnBasedGame implements PropertyChangeListener {
 
   void startTurn(Player player) {
     super.startTurn(player);
-    checkSupplyConditions(player);
+    destroyUnitsWithoutSupplies(player);
+    supplyUnitsAdjacentOfTransport(player);
   }
 
   /**
-   * Search for a friendly city with a unit on the same tile -> Supply and heal the unit on the city
-   * Search for air, naval units that have 0 supplies -> Destroy them
+   * When a unit has 0 supplies:
+   * Ships sink and airplanes fall out of the sky
+   * Ground units are better off they are just immobilized
    */
-  private void checkSupplyConditions(Player player) {
+  private void destroyUnitsWithoutSupplies(Player player) {
     Collection<Unit> unitsToDestroy = new ArrayList<Unit>();
 
     for (Unit unit : player.getArmy()) {
       // Skip units located in a transport
       if (unit.getLocation() instanceof Tile) {
-        Location tile = unit.getLocation();
-        City city = map.getCityOn(tile);
-
-        if (city != null) {
-          if (city.canSupply(unit) && city.canHeal(unit)) {
-            city.supply(unit);
-            city.heal(unit);
-          }
-        }
-
         if (unit.getSupplies() == 0 && isDestroyedWhenOutOfSupplies(unit.getArmyBranch())) {
           // Don't call unit.destroy() here as it will remove the unit from
-          // the owning player army collection throwing a ConcurrentModificationException
+          // the player army collection throwing a ConcurrentModificationException
           unitsToDestroy.add(unit);
         }
       }
@@ -170,6 +162,32 @@ public class Game extends TurnBasedGame implements PropertyChangeListener {
 
   private static boolean isDestroyedWhenOutOfSupplies(ArmyBranch armyBranch) {
     return armyBranch == ArmyBranch.AIR || armyBranch == ArmyBranch.NAVAL;
+  }
+
+  /**
+   * Locate transports that transport ground units
+   * Check for units that can be supplied around that transport
+   */
+  private void supplyUnitsAdjacentOfTransport(Player player) {
+    for (Unit unit : player.getArmy()) {
+      // Skip units located in a transport
+      if (unit.getLocation() instanceof Tile) {
+        if (unit.getStats().canTransport() && unit.getArmyBranch() == ArmyBranch.LAND) {
+          supplyUnitOnAdjacentTile(unit, Direction.NORTH);
+          supplyUnitOnAdjacentTile(unit, Direction.EAST);
+          supplyUnitOnAdjacentTile(unit, Direction.SOUTH);
+          supplyUnitOnAdjacentTile(unit, Direction.WEST);
+        }
+      }
+    }
+  }
+
+  private void supplyUnitOnAdjacentTile(Unit supplier, Direction direction) {
+    Tile adjacentTile = map.getRelativeTile(supplier.getLocation(), direction);
+    if (adjacentTile.getLocatableCount() > 0) {
+      Unit unit = (Unit) adjacentTile.getLastLocatable();
+      supplier.supply(unit);
+    }
   }
 
   public void propertyChange(PropertyChangeEvent evt) {
