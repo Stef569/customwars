@@ -75,6 +75,7 @@ public class CW1MapConverter {
   }
 
   //reads a .map file (determines which .map type a file is and calls correct reading function)
+
   public Map<Tile> readCW1MAPFile(File file) {
     int fileType = 0;
     DataInputStream inputStream = null;
@@ -217,6 +218,7 @@ public class CW1MapConverter {
   }
 
   //returns a given player by color
+
   public Player getArmy(Color color) {
     for (Player player : players) {
       if (player.getColor().equals(color))
@@ -420,7 +422,7 @@ public class CW1MapConverter {
    */
   private Unit createUnit(int id) {
     UnitStats unitStats = new UnitStats(id, 0, "dummy unit", "", 0, 0, 0, 0, 0, 0, 0, 0,
-      false, false, false, false, false, false, false, null, ArmyBranch.LAND, 0, Range.ZERO_RANGE, "", "");
+      false, false, false, false, false, false, false, null, ArmyBranch.LAND, 0, Range.ZERO_RANGE, "", "", 0);
 
     return new Unit(unitStats);
   }
