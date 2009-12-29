@@ -18,6 +18,7 @@ public class ThinglePageLoader {
     Page page = loadPage(xmlDocName, controller);
     Theme theme = loadTheme(themeName);
     page.setTheme(theme);
+    page.setDrawDesktop(false);
     return page;
   }
 

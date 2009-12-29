@@ -44,7 +44,6 @@ public class MapSelectState extends CWState {
   private void initPage(MapSelectController controller) {
     ThinglePageLoader thingleLoader = new ThinglePageLoader(App.get("gui.path"));
     page = thingleLoader.loadPage("mapSelect.xml", "greySkin.properties", controller);
-    page.setDrawDesktop(false);
   }
 
   private void initPageContent(List<String> mapCategories) {
