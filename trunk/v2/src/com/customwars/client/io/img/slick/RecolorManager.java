@@ -174,10 +174,10 @@ public class RecolorManager {
     RecolorData recolorData = getRecolorData(imgRef);
 
     for (Color color : colors) {
-      if (recolorData.canRecolorTo(color)) {
+      if (recolorData.canRecolor() && recolorData.canRecolorTo(color)) {
         recolor(imgRef, suffix, color, darkPercentage, recolorData);
       } else {
-        logger.warn("Cannot recolor to " + ColorUtil.toString(color));
+        logger.warn("Cannot recolor " + imgRef + " to " + ColorUtil.toString(color));
       }
     }
   }
