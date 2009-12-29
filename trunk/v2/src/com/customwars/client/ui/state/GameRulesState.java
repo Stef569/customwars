@@ -3,6 +3,7 @@ package com.customwars.client.ui.state;
 import com.customwars.client.App;
 import com.customwars.client.controller.GameRulesController;
 import com.customwars.client.io.loading.ThinglePageLoader;
+import com.customwars.client.tools.ThingleUtil;
 import com.customwars.client.ui.state.input.CWCommand;
 import com.customwars.client.ui.state.input.CWInput;
 import org.newdawn.slick.GameContainer;
@@ -11,7 +12,6 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.thingle.Page;
-import org.newdawn.slick.thingle.Widget;
 
 /**
  * Allow the user to define the game rules
@@ -31,27 +31,13 @@ public class GameRulesState extends CWState {
   private void initPage() {
     ThinglePageLoader thingleLoader = new ThinglePageLoader(App.get("gui.path"));
     page = thingleLoader.loadPage("gameRules.xml", "greySkin.properties", controller);
-    page.setDrawDesktop(false);
   }
 
   private void initPageContent() {
-    Widget cboDays = page.getWidget("day_limit");
-    fillCboWithNumbers(cboDays, -1, 0, 1);
-    fillCboWithNumbers(cboDays, 5, 99, 1);
-
-    Widget cboFunds = page.getWidget("funds");
-    fillCboWithNumbers(cboFunds, 1000, 10000, 1000);
-
-    Widget cboIncome = page.getWidget("income");
-    fillCboWithNumbers(cboIncome, 1000, 10000, 1000);
-  }
-
-  private void fillCboWithNumbers(Widget cboWidget, int start, int end, int increment) {
-    for (int i = start; i < end; i += increment) {
-      Widget choice = page.createWidget("choice");
-      choice.setText(i + "");
-      cboWidget.add(choice);
-    }
+    ThingleUtil.fillCboWithNumbers(page, "day_limit", -1, 0, 1);
+    ThingleUtil.fillCboWithNumbers(page, "day_limit", 5, 99, 1);
+    ThingleUtil.fillCboWithNumbers(page, "funds", 1000, 10000, 1000);
+    ThingleUtil.fillCboWithNumbers(page, "income", 1000, 10000, 1000);
   }
 
   @Override
