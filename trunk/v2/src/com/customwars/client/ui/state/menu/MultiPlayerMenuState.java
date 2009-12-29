@@ -18,23 +18,22 @@ import org.newdawn.slick.state.StateBasedGame;
 
 import java.awt.Point;
 
-public class MainMenuState extends CWState implements ComponentListener {
-  private GameContainer gameContainer;
+/**
+ * Allow the user to create/join or log in to a server game
+ */
+public class MultiPlayerMenuState extends CWState implements ComponentListener {
   private PopupMenu mainMenu;
 
   public void init(GameContainer container, StateBasedGame game) throws SlickException {
-    this.gameContainer = container;
     mainMenu = new PopupMenu(container);
     mainMenu.setBackGroundColor(new Color(0, 0, 0));
     mainMenu.setHoverColor(new Color(255, 255, 255, 0.08f));
     Font font = resources.getFont("menu");
 
     mainMenu.addItems(
-      new MenuItem(App.translate("single_player"), font, container),
-      new MenuItem(App.translate("multi_player"), font, container),
-      new MenuItem(App.translate("map_editor"), font, container),
-      new MenuItem(App.translate("options"), font, container),
-      new MenuItem(App.translate("exit"), font, container)
+      new MenuItem(App.translate("create_server_game"), font, container),
+      new MenuItem(App.translate("join_server_game"), font, container),
+      new MenuItem(App.translate("log_into_server_game"), font, container)
     );
 
     mainMenu.addListener(this);
@@ -46,25 +45,19 @@ public class MainMenuState extends CWState implements ComponentListener {
 
   @Override
   public void render(GameContainer container, Graphics g) throws SlickException {
-    g.drawImage(resources.getSlickImg("dark_menu_background"), 0, 0);
+    g.drawImage(resources.getSlickImg("light_menu_background"), 0, 0);
     mainMenu.render(container, g);
 
     g.setColor(Color.lightGray);
     switch (mainMenu.getCurrentItem()) {
       case 0:
-        g.drawString("Single-player game", 210, 440);
+        g.drawString("Create server game", 210, 440);
         break;
       case 1:
-        g.drawString("Play with more than one person", 210, 440);
+        g.drawString("Join server game", 210, 440);
         break;
       case 2:
-        g.drawString("Create save and load maps with this editor", 210, 440);
-        break;
-      case 3:
-        g.drawString("Fine tune the options", 210, 440);
-        break;
-      case 4:
-        g.drawString("Quit the game", 210, 440);
+        g.drawString("Log into server game", 210, 440);
         break;
     }
   }
@@ -93,26 +86,19 @@ public class MainMenuState extends CWState implements ComponentListener {
     PopupMenu popupMenu = (PopupMenu) source;
     switch (popupMenu.getCurrentItem()) {
       case 0:
-        changeToState("SINGLE_PLAYER");
+        changeToState("CREATE_SERVER_GAME");
         break;
       case 1:
-        changeToState("MULTI_PLAYER");
+        changeToState("JOIN_SERVER_GAME");
         break;
       case 2:
-        changeToState("MAP_EDITOR");
-        break;
-      case 3:
-        changeToState("GAME_OPTIONS");
-        break;
-      case 4:
-        gameContainer.exit();
+        changeToState("LOGIN_SERVER_GAME");
         break;
     }
   }
 
   @Override
   public int getID() {
-    return 1;
+    return 20;
   }
 }
-
