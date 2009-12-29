@@ -97,6 +97,10 @@ public class RecolorData {
     return ColorUtil.toString(baseColor);
   }
 
+  public boolean canRecolor() {
+    return baseImg != null;
+  }
+
   /**
    * @return If this ImageFilterData can recolor to color
    */
@@ -133,4 +137,5 @@ public class RecolorData {
 
     return Collections.unmodifiableSet(replaceColors);
   }
+
 }
