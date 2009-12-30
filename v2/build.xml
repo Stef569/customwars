@@ -4,10 +4,10 @@
     <property name="jar.test.name" value="${app.name}-tests.jar"/>
     <property name="jar.core.main.class" value="MainGame"/>
     <property name="jar.test.main.class" value="TestGame"/>
-    <property name="batlauncher.core.name" value="CustomWars.bat"/>
-    <property name="batlauncher.test.name" value="CustomWars.bat"/>
-    <property name="zip.core.name" value="${app.name}.zip"/>
-    <property name="zip.test.name" value="${app.name}-Tests.zip"/>
+    <property name="launcher.win.core.name" value="CustomWars.bat"/>
+    <property name="launcher.linux.core.name" value="CustomWars.sh"/>
+    <property name="zip.core.name" value="${app.name}"/>
+    <property name="zip.test.name" value="${app.name}-Tests"/>
 
     <property name="src.dir" value="src"/>
     <property name="test.dir" value="test"/>
@@ -108,23 +108,51 @@
         </jar>
     </target>
 
-    <target name="release core" description="Create a zip containing the core jar + resources" depends="jar_core">
+    <target name="release core" description="Create a zip containing the core jar + resources"
+            depends="jar_core">
+
         <!-- Don't include test data -->
         <delete includeEmptyDirs="true" quiet="true">
             <fileset dir="${dist.dir}/${res.dir}/${res.testdata.dir}"/>
         </delete>
 
         <!-- create win Launcher bat file for double click launching on windoos-->
-        <echo file="${dist.dir}/${batlauncher.core.name}" append="false">
+        <echo file="${dist.dir}/${launcher.win.core.name}" append="false">
             java -Djava.library.path=lib/native/ -jar ${jar.core.name}
             pause
         </echo>
 
-        <zip destfile="${dist.dir}/${zip.core.name}" basedir="${dist.dir}" excludes="${zip.core.name}"/>
+        <!-- create linux/mac Launcher file -->
+        <echo file="${dist.dir}/${launcher.linux.core.name}" append="false">
+            #!/bin/bash
+            java -Djava.library.path=lib/native/ -jar ${jar.core.name}
+        </echo>
 
-        <!-- Clean up, only the zip file should remain -->
+        <zip destfile="${dist.dir}/${zip.core.name}.zip" basedir="${dist.dir}" excludes="${zip.core.name}.zip "/>
+
+        <!--
+             Tar it
+             Make sure the file permission of the linux launch file are set in the tar archive
+             Can't use a zip file since a zip does not contain file permission attributes.
+        -->
+        <tar destfile="${dist.dir}/${zip.core.name}.tar">
+            <tarfileset dir="${dist.dir}" filemode="755">
+                <include name="${launcher.linux.core.name}"/>
+                <include name="lib/**"/>
+            </tarfileset>
+            <tarfileset dir="${dist.dir}">
+                <include name="**"/>
+                <exclude name="${launcher.linux.core.name}"/>
+                <exclude name="lib/**"/>
+                <exclude name="${zip.core.name}.tar"/>
+                <exclude name="${zip.core.name}.zip"/>
+            </tarfileset>
+        </tar>
+
+        <!-- Clean up, only the archives should remain -->
         <delete file="${dist.dir}/${jar.core.name}"/>
-        <delete file="${dist.dir}/${batlauncher.core.name}"/>
+        <delete file="${dist.dir}/${launcher.win.core.name}"/>
+        <delete file="${dist.dir}/${launcher.linux.core.name}"/>
 
         <delete includeEmptyDirs="true" quiet="true">
             <fileset dir="${dist.dir}/${lib.dir}"/>
@@ -162,18 +190,26 @@
 
     <target name="release tests" description="Create a zip containing the core jar + test jar"
             depends="jar_core, jar_tests">
-        <echo file="${dist.dir}/${batlauncher.test.name}" append="false">
+        <!-- create bat file for double click launching on windoos-->
+        <echo file="${dist.dir}/${launcher.win.core.name}" append="false">
             java -Djava.library.path=lib/native/ -jar ${jar.test.name}
             pause
         </echo>
 
-        <zip destfile="${dist.dir}/${zip.test.name}" basedir="${dist.dir}" excludes="${zip.test.name}"/>
+        <!-- create linux/mac Launcher file -->
+        <echo file="${dist.dir}/${launcher.linux.core.name}" append="false">
+            #!/bin/bash
+            java -Djava.library.path=lib/native/ -jar ${jar.test.name}
+        </echo>
 
-        <!-- Clean up, only the zip file should remain -->
+        <zip destfile="${dist.dir}/${zip.test.name}.zip" basedir="${dist.dir}" excludes="${zip.test.name}.zip"/>
+
+        <!-- Clean up, only the archives should remain -->
         <delete file="${dist.dir}/${jar.test.name}"/>
         <delete file="${dist.dir}/${jar.core.name}"/>
         <delete file="${dist.dir}/${jar.test.name}"/>
-        <delete file="${dist.dir}/${batlauncher.test.name}"/>
+        <delete file="${dist.dir}/${launcher.win.core.name}"/>
+        <delete file="${dist.dir}/${launcher.linux.core.name}"/>
 
         <delete includeEmptyDirs="true" quiet="true">
             <fileset dir="${dist.dir}/${lib.dir}"/>
