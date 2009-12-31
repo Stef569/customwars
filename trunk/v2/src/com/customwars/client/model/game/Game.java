@@ -182,7 +182,7 @@ public class Game extends TurnBasedGame implements PropertyChangeListener {
 
   private void supplyUnitOnAdjacentTile(Unit supplier, Direction direction) {
     Tile adjacentTile = map.getRelativeTile(supplier.getLocation(), direction);
-    if (adjacentTile.getLocatableCount() > 0) {
+    if (adjacentTile != null && adjacentTile.getLocatableCount() > 0) {
       Unit unit = (Unit) adjacentTile.getLastLocatable();
       supplier.supply(unit);
     }

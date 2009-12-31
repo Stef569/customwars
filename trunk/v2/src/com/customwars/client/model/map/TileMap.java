@@ -66,7 +66,7 @@ public class TileMap<T extends Location> implements Observable {
   private void initTiles() {
     tiles.clear();
     for (int col = 0; col < cols; col++) {
-      ArrayList<T> rowList = new ArrayList<T>(rows);
+      List<T> rowList = new ArrayList<T>(rows);
       for (int row = 0; row < rows; row++) {
         rowList.add(null);
       }
@@ -75,10 +75,14 @@ public class TileMap<T extends Location> implements Observable {
   }
 
   /**
-   * Teleports the locatable from Location <tt>from</tt> to Location <tt>to</tt>
+   * Teleport the locatable from Location <tt>from</tt> to Location <tt>to</tt>
    * </p>
    * <tt>from</tt> should contain the locatable else the teleport action will not be executed
    * <tt>to</tt> can already contain a Locatable, in this case the locatable is added to the <tt>to</tt> tile.
+   *
+   * @param from      the location containing a locatable
+   * @param to        the location to teleport the locatable <tt>to</tt>
+   * @param locatable The locatable to teleport from the <tt>from</tt> location to the <tt>to</tt> location
    */
   public void teleport(Location from, Location to, Locatable locatable) {
     if (from.contains(locatable)) {
@@ -92,6 +96,8 @@ public class TileMap<T extends Location> implements Observable {
   /**
    * Iterate over each tile in the map
    * The returned tiles can be null if the map has not been initialised yet.
+   *
+   * @return All the tiles in this map
    */
   public Iterable<T> getAllTiles() {
     return mapIterators.getAllTiles();
@@ -123,27 +129,12 @@ public class TileMap<T extends Location> implements Observable {
   }
 
   /**
-   * Return the adjacent tiles around the given center
-   * The center is not included
-   *
-   * @param center center to iterate around
-   * @return all the adacent tiles around the center, excluding off the map tiles
-   */
-  public Iterable<T> getAdjacentIterator(final Location center) {
-    return mapIterators.getAdjacentIterator(center);
-  }
-
-  /**
-   * Return tiles in the form of a spiral around the center tile within a given range.
-   * The center tile is not included, and all returned positions are within the map
-   */
-  public Iterable<T> getSpiralIterator(final Location center, final Range range) {
-    return mapIterators.getSpiralIterator(center, range);
-  }
-
-  /**
    * Return tiles in the form of a square around the center tile within a given range.
-   * The center tile is not included, and all returned positions are within the map
+   * The center tile is not included, and all returned positions are within the map.
+   *
+   * @param center The center of the square to iterate around
+   * @param range  The range in tiles around the center
+   * @return All tiles in the form of a square around the center withing the given range
    */
   public Iterable<T> getSquareIterator(final Location center, final int range) {
     return mapIterators.getSquareIterator(center, range);
@@ -238,7 +229,7 @@ public class TileMap<T extends Location> implements Observable {
   }
 
   /**
-   * Returns the Location at the specified position in this list.
+   * Returns the Tile object at the specified col, row coordinates.
    *
    * @param col column coordinate in range of 0 - getCols()-1
    * @param row row coordinate in range of 0 - getRows()-1
@@ -248,26 +239,24 @@ public class TileMap<T extends Location> implements Observable {
    *         the map has not yet been filled with tiles.
    */
   public T getTile(int col, int row) {
-    if (isWithinMapBounds(col, row)) {
-      return tiles.get(col).get(row);
-    } else {
-      return null;
-    }
+    return isWithinMapBounds(col, row) ? tiles.get(col).get(row) : null;
   }
 
   /**
    * Get the tile relative to the baseTile in a given direction.
    *
-   * @param direction A Direction where a tile should be retrieved from relative to baseTile.
+   * @param direction The Direction where a tile should be retrieved from relative to baseTile.
    * @param baseTile  The tile of which we want to retrieve the relative tile from.
-   * @return The relative Tile or baseTile if direction is Direction.STILL
+   * @return The relative Tile
+   *         The baseTile if direction is Direction.STILL
+   *         Null if the direction relative to the current tile is out of the map
    */
   public T getRelativeTile(Location baseTile, Direction direction) {
     Location location = getRelativeLocation(baseTile, direction);
     return getTile(location);
   }
 
-  private Location getRelativeLocation(Location baseTile, Direction direction) {
+  private static Location getRelativeLocation(Location baseTile, Direction direction) {
     int row = baseTile.getRow();
     int col = baseTile.getCol();
 
@@ -308,49 +297,63 @@ public class TileMap<T extends Location> implements Observable {
 
   /**
    * Get the direction of the baseTile relative to the tile.
-   * This method never returns null, instead Direction.still is returned when the direction could not be found.
+   * This method never returns null, instead Direction.
+   * Direction.Still is returned when the direction to the relative tile could not be determined.
    *
+   * @param baseTile     The tile of which we want to retrieve the direction to relativeTile from.
+   * @param relativeTile The tile that touches the baseTile
    * @return The Direction of the given tile relative to the baseTile.
-   *         if tile has no relative direction to the baseTile Direction.STILL is returned.
+   *         if the relativeTile does not touch the baseTile Direction.STILL is returned.
    *         if baseTile or tile is null Direction.STILL is returned.
    */
-  public Direction getDirectionTo(Location baseTile, Location tile) {
-    Direction direction = Direction.STILL;
-
-    if (baseTile == null || tile == null) {
+  public Direction getDirectionTo(Location baseTile, Location relativeTile) {
+    if (baseTile == null || relativeTile == null) {
       return Direction.STILL;
     }
 
-    if (getRelativeLocation(baseTile, Direction.NORTH).equals(tile)) {
+    Direction direction = Direction.STILL;
+    if (getRelativeLocation(baseTile, Direction.NORTH).equals(relativeTile)) {
       direction = Direction.NORTH;
-    } else if (getRelativeLocation(baseTile, Direction.EAST).equals(tile)) {
+    } else if (getRelativeLocation(baseTile, Direction.EAST).equals(relativeTile)) {
       direction = Direction.EAST;
-    } else if (getRelativeLocation(baseTile, Direction.SOUTH).equals(tile)) {
+    } else if (getRelativeLocation(baseTile, Direction.SOUTH).equals(relativeTile)) {
       direction = Direction.SOUTH;
-    } else if (getRelativeLocation(baseTile, Direction.WEST).equals(tile)) {
+    } else if (getRelativeLocation(baseTile, Direction.WEST).equals(relativeTile)) {
       direction = Direction.WEST;
-    } else if (getRelativeLocation(baseTile, Direction.NORTHEAST).equals(tile)) {
+    } else if (getRelativeLocation(baseTile, Direction.NORTHEAST).equals(relativeTile)) {
       direction = Direction.NORTHEAST;
-    } else if (getRelativeLocation(baseTile, Direction.NORTHWEST).equals(tile)) {
+    } else if (getRelativeLocation(baseTile, Direction.NORTHWEST).equals(relativeTile)) {
       direction = Direction.NORTHWEST;
-    } else if (getRelativeLocation(baseTile, Direction.SOUTHEAST).equals(tile)) {
+    } else if (getRelativeLocation(baseTile, Direction.SOUTHEAST).equals(relativeTile)) {
       direction = Direction.SOUTHEAST;
-    } else if (getRelativeLocation(baseTile, Direction.SOUTHWEST).equals(tile)) {
+    } else if (getRelativeLocation(baseTile, Direction.SOUTHWEST).equals(relativeTile)) {
       direction = Direction.SOUTHWEST;
     }
     return direction;
   }
 
   /**
+   * Returns the distance in tiles between two locations.
+   * if Location a or b is null, 0 is returned
+   *
+   * @param a one location
+   * @param b another location
    * @return The amount of tiles to traverse to go from a to b.
    */
   public static int getDistanceBetween(Location a, Location b) {
+    if (a == b || a == null || b == null)
+      return 0;
+
     return Math.abs(a.getRow() - b.getRow()) +
       Math.abs(a.getCol() - b.getCol());
   }
 
   /**
-   * @return True if the two tiles are next to each other
+   * Test whether location a is adjacent to location b
+   *
+   * @param a one location
+   * @param b another location
+   * @return True if the two locations are next to each other
    */
   public static boolean isAdjacent(Location a, Location b) {
     if (a == b || a == null || b == null)

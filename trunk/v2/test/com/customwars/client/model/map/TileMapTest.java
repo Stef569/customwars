@@ -36,9 +36,11 @@ public class TileMapTest {
     TestData.clearTestData();
   }
 
-  // Check If getAllTiles realy Returns AllTiles
-  // by counting them and checking them for notNull
-  // All Tiles should at least have a terrain
+  /**
+   * Check If getAllTiles really Returns AllTiles
+   * by counting them and checking them for notNull
+   * All Tiles should at least have a terrain
+   */
   @Test
   public void loopThroughAllTiles() {
     int nTiles = 0;
@@ -102,7 +104,7 @@ public class TileMapTest {
       boolean westTileIsIncluded = t.getCol() == 4 && t.getRow() == 0;
 
       Assert.assertNotNull(t);
-      Assert.assertEquals(true, eastTileIsIncluded || westTileIsIncluded || southTileIsIncluded);
+      Assert.assertTrue(eastTileIsIncluded || westTileIsIncluded || southTileIsIncluded);
     }
   }
 
@@ -124,7 +126,6 @@ public class TileMapTest {
 
   @Test
   public void getDirectionTo() {
-    Direction dir;
     Location baseTile = map.getTile(5, 5);
     Location left = map.getTile(4, 5);
     Location right = map.getTile(6, 5);
@@ -132,7 +133,7 @@ public class TileMapTest {
     Location down = map.getTile(5, 6);
 
     // Connected Tiles should return correct compass direction
-    dir = map.getDirectionTo(baseTile, left);
+    Direction dir = map.getDirectionTo(baseTile, left);
     Assert.assertEquals(Direction.WEST, dir);
 
     dir = map.getDirectionTo(baseTile, right);
@@ -346,7 +347,7 @@ public class TileMapTest {
   @Test
   public void quadrantWithUnEvenMapSize() {
     Location middle = new Location2D(5, 7);
-    Map<Tile> map = new Map<Tile>(10, 15, 32, plain);
+    TileMap map = new Map<Tile>(10, 15, 32, plain);
     Direction quadrant = map.getQuadrantFor(middle);
     Assert.assertNotNull(quadrant);
   }
@@ -367,5 +368,86 @@ public class TileMapTest {
   @Test(expected = IllegalArgumentException.class)
   public void illegalMapInitialisation2() {
     new TileMap(1, 1, -5);
+  }
+
+  @Test
+  public void testRelativeTileOutOfUpperMapBounds() {
+    Location leftCorner = map.getTile(0, 0);
+
+    // The tile relative to the leftCorner in the direction north is out of the map bounds
+    Location outOfMapLocation = map.getRelativeTile(leftCorner, Direction.NORTH);
+    Assert.assertEquals(outOfMapLocation, null);
+  }
+
+  @Test
+  public void testRelativeTileOutOfRightMapBounds() {
+    Location rightEdgeOfTheMap = map.getTile(map.getCols() - 1, 2);
+
+    // The tile relative to the rightEdgeOfTheMap in the direction east is out of the map bounds
+    Location outOfMapLocation = map.getRelativeTile(rightEdgeOfTheMap, Direction.EAST);
+    Assert.assertEquals(outOfMapLocation, outOfMapLocation);
+  }
+
+  @Test
+  public void testRelativeToItself() {
+    Location leftCorner = map.getTile(0, 0);
+
+    // The tile relative to the leftCorner in the direction still is the same tile
+    Location sameRelativeLocation = map.getRelativeTile(leftCorner, Direction.STILL);
+    Assert.assertEquals(leftCorner, sameRelativeLocation);
+  }
+
+  @Test
+  public void testRelativeTileEast() {
+    Location baseTile = map.getTile(2, 2);
+    Location expectedTile = map.getTile(3, 2);
+
+    Location relativeTile = map.getRelativeTile(baseTile, Direction.EAST);
+    Assert.assertEquals(expectedTile, relativeTile);
+  }
+
+  @Test
+  public void testRelativeTileSouth() {
+    Location baseTile = map.getTile(2, 2);
+    Location expectedTile = map.getTile(2, 3);
+
+    Location relativeTile = map.getRelativeTile(baseTile, Direction.SOUTH);
+    Assert.assertEquals(expectedTile, relativeTile);
+  }
+
+  @Test
+  public void testRelativeTileNorth() {
+    Location baseTile = map.getTile(2, 2);
+    Location expectedTile = map.getTile(2, 1);
+
+    Location relativeTile = map.getRelativeTile(baseTile, Direction.NORTH);
+    Assert.assertEquals(expectedTile, relativeTile);
+  }
+
+  @Test
+  public void testRelativeTileWest() {
+    Location baseTile = map.getTile(2, 2);
+    Location expectedTile = map.getTile(1, 2);
+
+    Location relativeTile = map.getRelativeTile(baseTile, Direction.WEST);
+    Assert.assertEquals(expectedTile, relativeTile);
+  }
+
+  @Test
+  public void testRelativeTileNorthWest() {
+    Location baseTile = map.getTile(2, 2);
+    Location expectedTile = map.getTile(1, 1);
+
+    Location relativeTile = map.getRelativeTile(baseTile, Direction.NORTHWEST);
+    Assert.assertEquals(expectedTile, relativeTile);
+  }
+
+  @Test
+  public void testRelativeTileSouthEast() {
+    Location baseTile = map.getTile(2, 2);
+    Location expectedTile = map.getTile(3, 3);
+
+    Location relativeTile = map.getRelativeTile(baseTile, Direction.SOUTHEAST);
+    Assert.assertEquals(expectedTile, relativeTile);
   }
 }
