@@ -279,6 +279,6 @@ public class Player extends GameObject {
   }
 
   public String printStats() {
-    return String.format("%s units(%s) cities(%s) HQ %s", ColorUtil.toString(color), army.size(), cities.size(), hq != null);
+    return String.format("%s units(%s) cities(%s) HQ=%s", ColorUtil.toString(color), army.size(), cities.size(), hq != null);
   }
 }

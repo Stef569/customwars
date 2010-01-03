@@ -63,6 +63,10 @@ public class MapUtil {
     Tile t = map.getTile(col, row);
 
     owner.addCity(city);
+
+    if (city.isHQ()) {
+      owner.setHq(city);
+    }
     city.setLocation(t);
     t.setTerrain(city);
     return city;

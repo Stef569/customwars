@@ -1,6 +1,5 @@
 package com.customwars.client.controller;
 
-import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.Terrain;
 import com.customwars.client.model.gameobject.TerrainFactory;
 import com.customwars.client.model.map.Map;
@@ -8,6 +7,11 @@ import com.customwars.client.model.map.Tile;
 import com.customwars.client.model.map.TileMap;
 import com.customwars.client.model.map.connector.TerrainConnector;
 
+import java.awt.Color;
+
+/**
+ * Add/Remove terrains and fill a map with terrains in map editor mode
+ */
 public class TerrainMapEditorControl implements MapEditorControl {
   private final TerrainConnector terrainConnector;
 
@@ -15,14 +19,15 @@ public class TerrainMapEditorControl implements MapEditorControl {
     terrainConnector = new TerrainConnector(map);
   }
 
-  public void addToTile(Tile t, int id, Player player) {
-    Terrain userChosenTerrain = getTerrain(id);
+  public void addToTile(Tile t, int terrainID, Color color) {
+    Terrain userChosenTerrain = getTerrain(terrainID);
     addTerrain(t, userChosenTerrain);
   }
 
-  public void removeFromTile(Tile t) {
+  public boolean removeFromTile(Tile t) {
     Terrain plainTerrain = getTerrain(0);
     addTerrain(t, plainTerrain);
+    return true;
   }
 
   public void fillMap(Map<Tile> map, int terrainID) {

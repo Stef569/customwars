@@ -339,7 +339,7 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
   }
 
   public boolean isHQ() {
-    return owner.getHq() == this;
+    return getName().equalsIgnoreCase("HQ");
   }
 
   @Override

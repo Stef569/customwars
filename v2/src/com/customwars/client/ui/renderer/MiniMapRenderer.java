@@ -93,7 +93,7 @@ public class MiniMapRenderer implements Renderable {
 
   private void renderCity(int x, int y, Graphics g, City city) {
     Color color = ColorUtil.convertToSlickColor(city.getOwner().getColor());
-    renderSquare(x, y, g, color, city.getName().equals("hq"));
+    renderSquare(x, y, g, color, city.isHQ());
   }
 
   private void renderSquare(int x, int y, Graphics g, Color color, boolean animate) {
