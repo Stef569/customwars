@@ -262,19 +262,23 @@ public class Player extends GameObject {
 
     Player player = (Player) o;
 
-    if (id != player.id) return false;
+    if (color != null ? !color.equals(player.color) : player.color != null) return false;
 
     return true;
   }
 
   @Override
   public int hashCode() {
-    return id;
+    return color != null ? color.hashCode() : 0;
   }
 
   @Override
   public String toString() {
     return String.format("[name=%s id=%s state=%s color=%s budget=%s team=%s]",
       name, id, getState(), ColorUtil.toString(color), budget, team);
+  }
+
+  public String printStats() {
+    return String.format("%s units(%s) cities(%s) HQ %s", ColorUtil.toString(color), army.size(), cities.size(), hq != null);
   }
 }
