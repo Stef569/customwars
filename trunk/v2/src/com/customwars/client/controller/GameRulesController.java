@@ -81,16 +81,20 @@ public class GameRulesController {
    * Create a new game player for each player in the map
    */
   private List<Player> buildGamePlayers(Map<Tile> map) {
-    List<Player> players = new ArrayList<Player>();
+    List<Player> gamePlayers = new ArrayList<Player>();
     int team = 0;
-    for (Player player : map.getUniquePlayers()) {
-      int id = player.getId();
-      Color color = player.getColor();
+    for (Player mapPlayer : map.getUniquePlayers()) {
+      int id = mapPlayer.getId();
+      Color color = mapPlayer.getColor();
       String colorName = ColorUtil.toString(color);
       int startBudget = gameConfig.getPlayerBudgetStart();
-      Player p = new Player(id, color, colorName, startBudget, team++, false);
-      players.add(p);
+      Player gamePlayer = new Player(id, color, colorName, startBudget, team++, false);
+
+      if (mapPlayer.getHq() != null) {
+        gamePlayer.setHq(mapPlayer.getHq());
+      }
+      gamePlayers.add(gamePlayer);
     }
-    return players;
+    return gamePlayers;
   }
 }

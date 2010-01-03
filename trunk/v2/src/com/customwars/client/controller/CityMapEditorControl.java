@@ -6,28 +6,54 @@ import com.customwars.client.model.gameobject.Terrain;
 import com.customwars.client.model.gameobject.TerrainFactory;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
-import com.customwars.client.model.map.TileMap;
 import com.customwars.client.model.map.connector.TerrainConnector;
 import com.customwars.client.tools.MapUtil;
 
+import java.awt.Color;
+
+/**
+ * Add/Remove cities from a map in map editor mode
+ */
 public class CityMapEditorControl implements MapEditorControl {
-  private final TileMap<Tile> map;
+  private final Map<Tile> map;
   private final TerrainConnector terrainConnector;
 
-  public CityMapEditorControl(TileMap<Tile> map) {
+  public CityMapEditorControl(Map<Tile> map) {
     this.map = map;
     terrainConnector = new TerrainConnector(map);
   }
 
-  public void addToTile(Tile t, int id, Player player) {
-    City city = MapUtil.addCityToMap(map, t, id, player);
+  public void addToTile(Tile t, int cityID, Color color) {
+    Player mapPlayer = map.getPlayer(color);
+    removePreviousCity(t);
+
+    City city = MapUtil.addCityToMap(map, t, cityID, mapPlayer);
     terrainConnector.turnSurroundingTerrains(t, city);
   }
 
-  public void removeFromTile(Tile t) {
-    Terrain terrain = TerrainFactory.getTerrain(0);
-    t.setTerrain(terrain);
-    terrainConnector.turnSurroundingTerrains(t, terrain);
+  private void removePreviousCity(Tile t) {
+    // if overriding a city, remove it first
+    if (t.getTerrain() instanceof City) {
+      City city = (City) t.getTerrain();
+      Player cityOwner = city.getOwner();
+      cityOwner.removeCity(city);
+
+      if (city.isHQ()) {
+        cityOwner.setHq(null);
+      }
+    }
+  }
+
+  public boolean removeFromTile(Tile t) {
+    if (t.getTerrain() instanceof City) {
+      removePreviousCity(t);
+      Terrain terrain = TerrainFactory.getTerrain(0);
+      t.setTerrain(terrain);
+      terrainConnector.turnSurroundingTerrains(t, terrain);
+      return true;
+    } else {
+      return false;
+    }
   }
 
   public void fillMap(Map<Tile> map, int id) {

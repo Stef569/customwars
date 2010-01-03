@@ -14,13 +14,13 @@ import com.customwars.client.tools.FileUtil;
 import com.customwars.client.ui.renderer.MapEditorRenderer;
 import com.customwars.client.ui.sprite.SpriteManager;
 import com.customwars.client.ui.sprite.TileSprite;
+import org.apache.log4j.Logger;
 
 import java.awt.Color;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -30,13 +30,13 @@ import java.util.List;
  * @author stefan
  */
 public class MapEditorController {
+  private static final Logger logger = Logger.getLogger(MapEditorController.class);
   private static final int STARTUP_MAP_COLS = 10;
   private static final int STARTUP_MAP_ROWS = 10;
   private final MapEditorRenderer mapEditorView;
   private final ResourceManager resources;
   private CursorController cursorController;
 
-  private final HashMap<Color, Player> players;
   private final List<Color> colors;
   private List<MapEditorControl> controls;
   private final int panelCount;
@@ -48,14 +48,11 @@ public class MapEditorController {
     this.mapEditorView = mapEditorView;
     this.panelCount = mapEditorView.getPanelCount();
     this.colors = new ArrayList<Color>(resources.getSupportedColors());
-    this.players = new HashMap<Color, Player>();
-
     init();
   }
 
   private void init() {
     createEmptyMap(STARTUP_MAP_COLS, STARTUP_MAP_ROWS);
-    buildPlayers();
     recolorPanels();
     changeToPanel(0);
   }
@@ -66,22 +63,6 @@ public class MapEditorController {
 
     Map<Tile> emptyMap = new Map<Tile>(cols, rows, tileSize, plain);
     setMap(emptyMap);
-  }
-
-  private void buildPlayers() {
-    Color neutralColor = App.getColor("plugin.neutral_color", Color.GRAY);
-    int nextPlayerID = 0;
-
-    for (Color color : colors) {
-      Player player;
-      if (color.equals(neutralColor)) {
-        player = Player.createNeutralPlayer(color);
-      } else {
-        player = new Player(nextPlayerID++, color);
-      }
-
-      players.put(color, player);
-    }
   }
 
   private void recolorPanels() {
@@ -139,24 +120,40 @@ public class MapEditorController {
 
   public void add(Tile t, int selectedIndex) {
     Color color = getActiveColor();
-    Player player = players.get(color);
-    getActiveControl().addToTile(t, selectedIndex, player);
+    getActiveControl().addToTile(t, selectedIndex, color);
+
+    // Don't print a log message when adding a terrain
+    if (!getActiveControl().isTypeOf(Terrain.class)) {
+      logCurrentMapSituation();
+    }
   }
 
   public void delete(Tile t) {
-    if (t.getLocatableCount() > 0) {
-      getControl(Unit.class).removeFromTile(t);
-    } else {
-      if (t.getTerrain() instanceof City) {
-        getControl(City.class).removeFromTile(t);
-      } else {
+    boolean removedUnit = getControl(Unit.class).removeFromTile(t);
+    if (!removedUnit) {
+      boolean removedCity = getControl(City.class).removeFromTile(t);
+      if (!removedCity) {
         getControl(Terrain.class).removeFromTile(t);
       }
     }
+
+    logCurrentMapSituation();
   }
 
   public void fill(int selectedIndex) {
     getActiveControl().fillMap(map, selectedIndex);
+  }
+
+  private void logCurrentMapSituation() {
+    StringBuilder mapSituation = new StringBuilder(" " + map.getNumPlayers() + " Player(s) ");
+    for (Player player : map.getUniquePlayers()) {
+      mapSituation.append(player.printStats());
+      mapSituation.append(' ');
+    }
+
+    // Remove last ','
+    mapSituation.setCharAt(mapSituation.length() - 1, ' ');
+    logger.debug(mapSituation.toString());
   }
 
   public void nextColor() {

@@ -132,11 +132,11 @@ public class CW1MapConverter {
         Terrain ter = getTerrain(terrainID);
 
         if (ter instanceof City) {
-          City c = (City) ter;
-          MapUtil.addCityToMap(map, t, c, armyPtr);
+          City city = (City) ter;
+          MapUtil.addCityToMap(map, t, city, armyPtr);
 
-          if (c.getName().equalsIgnoreCase("HQ")) {
-            armyPtr.setHq(c);
+          if (city.isHQ()) {
+            armyPtr.setHq(city);
           }
         } else {
           t.setTerrain(ter);

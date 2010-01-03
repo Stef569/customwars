@@ -4,23 +4,41 @@ import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
-import com.customwars.client.model.map.TileMap;
 import com.customwars.client.tools.MapUtil;
 
-public class UnitMapEditorControl implements MapEditorControl {
-  private final TileMap<Tile> map;
+import java.awt.Color;
 
-  public UnitMapEditorControl(TileMap<Tile> map) {
+/**
+ * Add/Remove units from a map in map editor mode
+ */
+public class UnitMapEditorControl implements MapEditorControl {
+  private final Map<Tile> map;
+
+  public UnitMapEditorControl(Map<Tile> map) {
     this.map = map;
   }
 
-  public void addToTile(Tile t, int id, Player player) {
-    MapUtil.addUnitToMap(map, t, id, player);
+  public void addToTile(Tile t, int unitID, Color color) {
+    Player unitOwner = map.getPlayer(color);
+    removePreviousUnit(t);
+    MapUtil.addUnitToMap(map, t, unitID, unitOwner);
   }
 
-  public void removeFromTile(Tile t) {
-    Unit unit = (Unit) t.getLastLocatable();
-    unit.destroy(true);
+  private void removePreviousUnit(Tile t) {
+    if (t.getLocatableCount() > 0) {
+      Unit unit = map.getUnitOn(t);
+      unit.getOwner().removeUnit(unit);
+    }
+  }
+
+  public boolean removeFromTile(Tile t) {
+    if (t.getLocatableCount() > 0) {
+      Unit unit = map.getUnitOn(t);
+      unit.destroy(true);
+      return true;
+    } else {
+      return false;
+    }
   }
 
   public void fillMap(Map<Tile> map, int id) {

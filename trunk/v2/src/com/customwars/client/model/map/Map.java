@@ -1,5 +1,6 @@
 package com.customwars.client.model.map;
 
+import com.customwars.client.App;
 import com.customwars.client.model.ArmyBranch;
 import com.customwars.client.model.TurnHandler;
 import com.customwars.client.model.fight.Attacker;
@@ -14,6 +15,7 @@ import com.customwars.client.model.map.path.PathFinder;
 import com.customwars.client.tools.Args;
 import org.apache.log4j.Logger;
 
+import java.awt.Color;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,6 +33,10 @@ import java.util.Set;
  *
  * At each start of a turn the map is reset see {@link #resetMap(Player)}
  *
+ * Players in a map are called 'map player'
+ * name and funds are unknown they are used to link units to a player.
+ * They hold the hq location, the default color and the player ID.
+ *
  * @author stefan
  */
 public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
@@ -44,7 +50,6 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
    */
   public Map(int cols, int rows, int tileSize, Terrain startTerrain) {
     this("empty", "anonymous", "empty", cols, rows, tileSize, startTerrain);
-
   }
 
   /**
@@ -539,6 +544,10 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
 
       City city = getCityOn(t);
       if (city != null && city.getOwner() == oldPlayer) {
+        if (city.isHQ()) {
+          newPlayer.setHq(city);
+        }
+
         city.setOwner(newPlayer);
       }
     }
@@ -702,6 +711,73 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
 
       City city = getCityOn(t);
       if (city != null) city.removePropertyChangeListener(listener);
+    }
+  }
+
+  /**
+   * Return a map player from this map for the given color
+   * If the map already contains a player for the given color then that player is returned.
+   * else a new player with an unique ID is returned.
+   */
+  public Player getPlayer(Color color) {
+    boolean createNewPlayer = !hasMapPlayerFor(color);
+
+    if (createNewPlayer) {
+      int nextFreeID = getNextFreeMapPlayerID();
+      Player mapPlayer = new Player(nextFreeID, color);
+      mapPlayer.setName("map player");
+      return mapPlayer;
+    } else {
+      return getMapPlayerFor(color);
+    }
+  }
+
+  private int getNextFreeMapPlayerID() {
+    int id = 0;
+    while (isPlayerIDTaken(id)) {
+      id++;
+    }
+    return id;
+  }
+
+  private boolean isPlayerIDTaken(int id) {
+    for (Player mapPlayer : getUniquePlayers()) {
+      if (mapPlayer.getId() == id) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * @return Does this map contains a player with the given color
+   */
+  public boolean hasMapPlayerFor(Color color) {
+    return getMapPlayerFor(color) != null;
+  }
+
+  /**
+   * Retrieve a map player with the given color from this map
+   * If the color equals the neutral color the neutral player is returned
+   *
+   * If the color is not used by a player in the map and it's not the neutral player
+   * <tt>null</tt> is returned.
+   *
+   * @param color color to retrieve a player for
+   * @return A map player that is defined by the given color
+   */
+  private Player getMapPlayerFor(Color color) {
+    Color neutralColor = App.getColor("plugin.neutral_color");
+    for (Player mapPlayer : getUniquePlayers()) {
+      if (mapPlayer.getColor().equals(color)) {
+        return mapPlayer;
+      }
+    }
+
+    if (color.equals(neutralColor)) {
+      return Player.createNeutralPlayer(color);
+    } else {
+      return null;
     }
   }
 }
