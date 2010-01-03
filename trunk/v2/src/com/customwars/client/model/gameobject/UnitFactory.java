@@ -1,5 +1,6 @@
 package com.customwars.client.model.gameobject;
 
+import com.customwars.client.tools.StringUtil;
 import com.customwars.client.tools.UCaseMap;
 import org.apache.log4j.Logger;
 
@@ -64,18 +65,22 @@ public class UnitFactory {
     String priWeaponName = unit.getStats().getPrimaryWeaponName();
     String secWeaponName = unit.getStats().getSecondaryWeaponName();
 
-    if (WeaponFactory.hasWeapon(priWeaponName)) {
-      Weapon primaryWeapon = WeaponFactory.getWeapon(priWeaponName);
-      unit.setPrimaryWeapon(primaryWeapon);
-    } else if (priWeaponName != null) {
-      logger.warn("The primary weapon " + priWeaponName + " could not be found in the WeaponFactory");
+    if (StringUtil.hasContent(priWeaponName)) {
+      if (WeaponFactory.hasWeapon(priWeaponName)) {
+        Weapon primaryWeapon = WeaponFactory.getWeapon(priWeaponName);
+        unit.setPrimaryWeapon(primaryWeapon);
+      } else {
+        logger.warn("The primary weapon " + priWeaponName + " could not be found in the WeaponFactory");
+      }
     }
 
-    if (WeaponFactory.hasWeapon(secWeaponName)) {
-      Weapon secondaryWeapon = WeaponFactory.getWeapon(secWeaponName);
-      unit.setSecondaryWeapon(secondaryWeapon);
-    } else if (secWeaponName != null) {
-      logger.warn("The secondary weapon " + secWeaponName + " could not be found in the WeaponFactory");
+    if (StringUtil.hasContent(secWeaponName)) {
+      if (WeaponFactory.hasWeapon(secWeaponName)) {
+        Weapon secondaryWeapon = WeaponFactory.getWeapon(secWeaponName);
+        unit.setSecondaryWeapon(secondaryWeapon);
+      } else {
+        logger.warn("The secondary weapon " + secWeaponName + " could not be found in the WeaponFactory");
+      }
     }
   }
 

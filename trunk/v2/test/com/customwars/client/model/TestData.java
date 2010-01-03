@@ -150,6 +150,7 @@ public class TestData {
     UnitFight.setBaseDMG(initBaseDmg());
     UnitFight.setAltDMG(initAltDmg());
 
+    App.put("plugin.neutral_color", "gray");
     App.put("plugin.tilesize", "32");
   }
 
