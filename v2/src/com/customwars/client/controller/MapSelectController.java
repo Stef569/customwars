@@ -3,6 +3,7 @@ package com.customwars.client.controller;
 import com.customwars.client.io.ResourceManager;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
+import com.customwars.client.tools.StringUtil;
 import com.customwars.client.ui.renderer.widget.CityCountWidgetRenderer;
 import com.customwars.client.ui.renderer.widget.MiniMapWidgetRenderer;
 import com.customwars.client.ui.state.StateChanger;
@@ -35,7 +36,14 @@ public class MapSelectController {
 
   public void mapSelected() {
     Map<Tile> map = getCurrentSelectedMap();
-    page.getWidget("map_name").setText(map.getMapName());
+
+    Widget mapNameWidget = page.getWidget("map_name");
+    if (StringUtil.hasContent(map.getAuthor())) {
+      mapNameWidget.setText(map.getMapName() + " by " + map.getAuthor());
+    } else {
+      mapNameWidget.setText(map.getMapName());
+    }
+    page.getWidget("map_description").setText(map.getDescription());
 
     miniMapRenderer.setMap(map);
     citiesRenderer.setMap(map);
