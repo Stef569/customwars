@@ -26,6 +26,11 @@ import java.util.ResourceBundle;
 public class App {
   private static final Properties properties = new Properties();
   private static ResourceBundle localeResourceBundle;
+  private static GAME_MODE gameMode = GAME_MODE.SINGLE_PLAYER;
+
+  public enum GAME_MODE {
+    SINGLE_PLAYER, NETWORK_SNAIL_GAME, LOAD_SAVED_GAME
+  }
 
   /**
    * Set the locale resource bundle, this is used to translate text
@@ -148,5 +153,21 @@ public class App {
       }
     }
     return userProperties;
+  }
+
+  public static boolean isSinglePlayerGame() {
+    return gameMode == GAME_MODE.SINGLE_PLAYER;
+  }
+
+  public static boolean isMultiplayerSnailGame() {
+    return gameMode == GAME_MODE.NETWORK_SNAIL_GAME;
+  }
+
+  public static void changeGameMode(GAME_MODE newGameMode) {
+    gameMode = newGameMode;
+  }
+
+  public static GAME_MODE getGameMode() {
+    return gameMode;
   }
 }

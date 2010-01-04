@@ -33,6 +33,13 @@ import java.awt.Point;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
+/**
+ * In this state the user can play and win a game against opponents
+ * Rendering is handled by GameRenderer and hud
+ * Input is handled by GameController
+ *
+ * The Game to display is read from the session when entering this state.
+ */
 public class InGameState extends CWState implements PropertyChangeListener {
   // Model
   private Game game;
@@ -60,28 +67,59 @@ public class InGameState extends CWState implements PropertyChangeListener {
   @Override
   public void enter(GameContainer container, StateBasedGame stateBasedGame) throws SlickException {
     super.enter(container, stateBasedGame);
-    Game game = stateSession.game;
 
-    if (!game.isStarted() && !game.isGameOver()) {
-      game.startGame();
-      initGame(game, container);
-      initGameContext(game, container);
-      stateSession.stats = new Statistics(game);
+    switch (App.getGameMode()) {
+      case SINGLE_PLAYER:
+        enterSinglePlayerMode(stateSession.game);
+        break;
+      case NETWORK_SNAIL_GAME:
+        enterMultiPlayerMode(stateSession.game);
+        break;
+      case LOAD_SAVED_GAME:
+        initSubSystems(stateSession.game);
+        App.changeGameMode(App.GAME_MODE.SINGLE_PLAYER);
+        break;
     }
+
     hud.moveOverTile(gameRenderer.getCursorLocation());
   }
 
-  private void initGame(Game game, GameContainer container) {
+  /**
+   * In SP mode the game is started once and
+   * game sub systems(gui, ingamecontext) are inited once.
+   */
+  private void enterSinglePlayerMode(Game game) {
+    if (!game.isStarted() && !game.isGameOver()) {
+      game.startGame();
+      initSubSystems(game);
+    }
+  }
+
+  /**
+   * In MP mode the game is never started and
+   * game sub systems(gui, ingamecontext) are inited each time when the user enters this state
+   */
+  private void enterMultiPlayerMode(Game game) {
+    initSubSystems(game);
+  }
+
+  private void initSubSystems(Game game) {
+    initGame(game);
+    initGameContext(game, guiContext);
+    stateSession.stats = new Statistics(game);
+  }
+
+  private void initGame(Game game) {
     initGameListener(game);
     this.game = game;
     this.map = game.getMap();
     initCamera(map);
-    GUI.init(container, camera);
+    GUI.init(guiContext, camera);
     center = GUI.getCenteredRenderPoint(map.getSize(), guiContext);
     initScriptObjects();
   }
 
-  private void initGameContext(Game game, GameContainer container) {
+  private void initGameContext(Game game, GUIContext container) {
     MoveTraverse moveTraverse = new MoveTraverse(map);
     hud = new HUD(container);
 
@@ -92,10 +130,11 @@ public class InGameState extends CWState implements PropertyChangeListener {
     inGameContext.setMoveTraverse(moveTraverse);
     inGameContext.setGame(game);
     inGameContext.setResources(resources);
-    inGameContext.setContainer(container);
+    inGameContext.setContainer((GameContainer) container);
     inGameContext.setHud(hud);
     inGameContext.setGameRenderer(gameRenderer);
     inGameContext.setStateChanger(stateChanger);
+    inGameContext.setStateSession(stateSession);
 
     ControllerManager controllerManager = new ControllerManager(inGameContext);
     inGameContext.setControllerManager(controllerManager);
@@ -112,10 +151,9 @@ public class InGameState extends CWState implements PropertyChangeListener {
   }
 
   /**
-   * We add various objects to beanshell, accessible by their name
+   * Add objects to beanshell, accessible by their name
    */
   private void initScriptObjects() {
-    GUI.setGame(game);
     for (Player p : game.getAllPlayers()) {
       String colorName = ColorUtil.toString(p.getColor());
       GUI.addLiveObjToConsole("p_" + colorName, p);
