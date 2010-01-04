@@ -5,6 +5,8 @@ import com.customwars.client.SFX;
 import com.customwars.client.action.ActionFactory;
 import com.customwars.client.action.CWAction;
 import com.customwars.client.action.ShowPopupMenuAction;
+import com.customwars.client.action.game.LoadGameAction;
+import com.customwars.client.action.game.SaveGameAction;
 import com.customwars.client.action.unit.StartUnitCycleAction;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.gameobject.City;
@@ -80,6 +82,14 @@ public class GameController {
 
     MenuItem endTurnMenuItem = new MenuItem(App.translate("end_turn"), guiContext);
     showContextMenuAction.addAction(ActionFactory.buildEndTurnAction(), endTurnMenuItem);
+
+    if (App.isSinglePlayerGame()) {
+      MenuItem saveGameMenuItem = new MenuItem(App.translate("save_game"), guiContext);
+      showContextMenuAction.addAction(new SaveGameAction(), saveGameMenuItem);
+
+      MenuItem loadGameMenuItem = new MenuItem(App.translate("load_game"), guiContext);
+      showContextMenuAction.addAction(new LoadGameAction(), loadGameMenuItem);
+    }
 
     MenuItem endGameMenuItem = new MenuItem(App.translate("end_game"), guiContext);
     showContextMenuAction.addAction(ActionFactory.buildEndGameAction(), endGameMenuItem);

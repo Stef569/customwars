@@ -70,6 +70,7 @@ public class MultiPlayerMenuState extends CWState implements ComponentListener {
   public void enter(GameContainer container, StateBasedGame game) throws SlickException {
     super.enter(container, game);
     mainMenu.setAcceptingInput(true);
+    App.changeGameMode(App.GAME_MODE.NETWORK_SNAIL_GAME);
   }
 
   @Override
@@ -79,6 +80,11 @@ public class MultiPlayerMenuState extends CWState implements ComponentListener {
   }
 
   public void controlPressed(CWCommand command, CWInput cwInput) {
+    if (command == CWInput.CANCEL) {
+      stateChanger.changeToPrevious();
+      return;
+    }
+
     mainMenu.controlPressed(command);
   }
 

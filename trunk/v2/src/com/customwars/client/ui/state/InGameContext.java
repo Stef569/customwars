@@ -64,6 +64,7 @@ public class InGameContext {
   private ResourceManager resources;
   private GameContainer container;
   private StateChanger stateChanger;
+  private StateSession stateSession;
 
   public InGameContext() {
     dropQueue = new DropLocationsQueue();
@@ -170,6 +171,10 @@ public class InGameContext {
     this.stateChanger = stateChanger;
   }
 
+  public void setStateSession(StateSession stateSession) {
+    this.stateSession = stateSession;
+  }
+
   public Game getGame() {
     return game;
   }
@@ -212,6 +217,10 @@ public class InGameContext {
 
   public CursorController getCursorController() {
     return gameControl.getCursorController();
+  }
+
+  public StateSession getSession() {
+    return stateSession;
   }
 
   public boolean isTrapped() {

@@ -76,6 +76,8 @@ public class Config {
 
   private static void storePaths() {
     App.put("home.maps.dir", MAPS_DIR);
+    App.put("save.path", resourcesPath + "/save/");
+    App.put("quick.save.game.file.name", "quick.save");
     App.put("gui.path", resourcesPath + "/data/gui/");
     App.put("userproperties.path", HOME_DIR + "/" + USER_PROPERTIES_FILE);
   }

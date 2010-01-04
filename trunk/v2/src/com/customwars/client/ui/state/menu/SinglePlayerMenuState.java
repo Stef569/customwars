@@ -63,6 +63,7 @@ public class SinglePlayerMenuState extends CWState implements ComponentListener 
   public void enter(GameContainer container, StateBasedGame game) throws SlickException {
     super.enter(container, game);
     mainMenu.setAcceptingInput(true);
+    App.changeGameMode(App.GAME_MODE.SINGLE_PLAYER);
   }
 
   @Override
