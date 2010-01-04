@@ -2,11 +2,13 @@ package com.customwars.client.model.map;
 
 import com.customwars.client.tools.Args;
 
+import java.io.Serializable;
+
 /**
  * Defines an inclusive range between a Min and Max value.
  * There is one pre condition min should be smaller then max
  */
-public class Range {
+public class Range implements Serializable {
   public static final Range ZERO_RANGE = new Range(0, 0);
   private final int minRange, maxRange;
 

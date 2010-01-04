@@ -1,6 +1,7 @@
 package com.customwars.client.tools;
 
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.converters.reflection.ReflectionConverter;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -34,5 +35,18 @@ public final class XStreamUtil {
     } finally {
       IOUtil.closeStream(os);
     }
+  }
+
+  /**
+   * Force the usage of the ReflectionConverter for the given class.
+   * Xstream can use a different converter like the SerializableConverter when
+   * a readObject() method is defined and the Serializable interface is implemented. in the given class.
+   */
+  public static void useReflectionFor(XStream xStream, final Class aClass) {
+    xStream.registerConverter(new ReflectionConverter(xStream.getMapper(), xStream.getReflectionProvider()) {
+      public boolean canConvert(Class type) {
+        return type.equals(aClass);
+      }
+    });
   }
 }
