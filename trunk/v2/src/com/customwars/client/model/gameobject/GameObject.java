@@ -5,13 +5,14 @@ import com.customwars.client.model.Observable;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.io.Serializable;
 
 /**
  * A Gameobject has a current state and supports sending events and keeping a list of event listeners.
  * Objects that don't have a state but do support events should not extend this class
  * but instead should implement the Observable Interface.
  */
-public class GameObject implements Observable {
+public class GameObject implements Observable, Serializable {
   protected PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
 
   /**

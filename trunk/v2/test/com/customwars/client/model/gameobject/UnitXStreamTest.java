@@ -2,6 +2,7 @@ package com.customwars.client.model.gameobject;
 
 import com.customwars.client.model.ArmyBranch;
 import com.customwars.client.model.TestData;
+import com.customwars.client.tools.XStreamUtil;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 import junit.framework.Assert;
@@ -21,13 +22,10 @@ public class UnitXStreamTest {
   @BeforeClass
   public static void beforeAllTests() {
     TestData.storeTestData();
-  }
 
-  @BeforeClass
-  public static void beforeAllTest() {
     // When we find a unit tag, create a Unit object
     xStream.alias("unit", Unit.class);
-
+    XStreamUtil.useReflectionFor(xStream, Unit.class);
     // id, imgRowID and name are read from attributes, not elements
     xStream.useAttributeFor(UnitStats.class, "unitID");
     xStream.useAttributeFor(UnitStats.class, "imgRowID");

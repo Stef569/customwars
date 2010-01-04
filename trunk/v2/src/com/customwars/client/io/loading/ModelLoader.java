@@ -6,6 +6,7 @@ import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.CityFactory;
 import com.customwars.client.model.gameobject.Terrain;
 import com.customwars.client.model.gameobject.TerrainFactory;
+import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.gameobject.UnitFactory;
 import com.customwars.client.model.gameobject.UnitStats;
 import com.customwars.client.model.gameobject.Weapon;
@@ -55,6 +56,7 @@ public class ModelLoader implements CWResourceLoader {
   @SuppressWarnings("unchecked")
   private void loadTerrains() {
     xStream.alias("terrain", Terrain.class);
+    XStreamUtil.useReflectionFor(xStream, Terrain.class);
     xStream.useAttributeFor(Terrain.class, "id");
     xStream.useAttributeFor(Terrain.class, "name");
     xStream.useAttributeFor(Terrain.class, "type");
@@ -71,6 +73,7 @@ public class ModelLoader implements CWResourceLoader {
   @SuppressWarnings("unchecked")
   private void loadWeapons() {
     xStream.alias("weapon", Weapon.class);
+    XStreamUtil.useReflectionFor(xStream, Weapon.class);
     xStream.useAttributeFor(Weapon.class, "name");
     xStream.alias("fireRange", Range.class);
     xStream.alias("armyBranch", ArmyBranch.class);
@@ -82,6 +85,7 @@ public class ModelLoader implements CWResourceLoader {
   @SuppressWarnings("unchecked")
   private void loadUnits() {
     xStream.alias("unit", UnitStats.class);
+    XStreamUtil.useReflectionFor(xStream, Unit.class);
     xStream.useAttributeFor(UnitStats.class, "unitID");
     xStream.useAttributeFor(UnitStats.class, "imgRowID");
     xStream.useAttributeFor(UnitStats.class, "name");
@@ -94,6 +98,7 @@ public class ModelLoader implements CWResourceLoader {
   @SuppressWarnings("unchecked")
   private void loadCities() {
     xStream.alias("city", City.class);
+    XStreamUtil.useReflectionFor(xStream, City.class);
     xStream.useAttributeFor(Terrain.class, "id");
     xStream.useAttributeFor(Terrain.class, "name");
     xStream.useAttributeFor(Terrain.class, "type");

@@ -1,6 +1,7 @@
 package com.customwars.client.model.gameobject;
 
 import com.customwars.client.model.TestData;
+import com.customwars.client.tools.XStreamUtil;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.ConversionException;
 import com.thoughtworks.xstream.io.xml.DomDriver;
@@ -21,6 +22,8 @@ public class TerrainXStreamTest {
     // When we find a terrain tag, create a Terrain object
     // Using Reflection
     xStream.alias("terrain", Terrain.class);
+    XStreamUtil.useReflectionFor(xStream, Terrain.class);
+
     // id and name are read from attributes, not elements
     xStream.useAttributeFor(Terrain.class, "id");
     xStream.useAttributeFor(Terrain.class, "name");

@@ -2,6 +2,7 @@ package com.customwars.client.model.gameobject;
 
 import com.customwars.client.model.ArmyBranch;
 import com.customwars.client.model.TestData;
+import com.customwars.client.tools.XStreamUtil;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.ConversionException;
 import com.thoughtworks.xstream.io.xml.DomDriver;
@@ -19,6 +20,7 @@ public class CityXStreamTest {
     // When we find a city tag, create a City object
     // Using Reflection
     xStream.alias("city", City.class);
+    XStreamUtil.useReflectionFor(xStream, City.class);
 
     // You can use omitField at deserialization time currently only to tell XStream
     // to omit the val tag if your class no longer has the field to omit. Otherwise

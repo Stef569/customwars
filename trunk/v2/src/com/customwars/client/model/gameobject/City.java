@@ -10,6 +10,8 @@ import com.customwars.client.tools.NumberUtil;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.List;
 
 /**
@@ -367,5 +369,10 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
         resetCapturing();
       }
     }
+  }
+
+  private void readObject(ObjectInputStream in) throws ClassNotFoundException, IOException {
+    in.defaultReadObject();
+    init();
   }
 }

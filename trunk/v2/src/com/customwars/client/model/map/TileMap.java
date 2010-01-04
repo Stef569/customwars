@@ -7,6 +7,9 @@ import org.apache.log4j.Logger;
 import java.awt.Dimension;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,10 +31,10 @@ import java.util.List;
  * @see Locatable
  * @see Direction
  */
-public class TileMap<T extends Location> implements Observable {
+public class TileMap<T extends Location> implements Observable, Serializable {
   private static final Logger logger = Logger.getLogger(TileMap.class);
   private final PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
-  private final MapIterators<T> mapIterators = new MapIterators<T>(this);
+  private transient MapIterators<T> mapIterators = new MapIterators<T>(this);
   private final int tileSize;             // The square size in pixels
   private final int cols, rows;           // The map size in tiles
   private final List<List<T>> tiles;      // The map data, A List is used because it has generic support.
@@ -431,5 +434,10 @@ public class TileMap<T extends Location> implements Observable {
 
   public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
     changeSupport.removePropertyChangeListener(propertyName, listener);
+  }
+
+  private void readObject(ObjectInputStream in) throws ClassNotFoundException, IOException {
+    in.defaultReadObject();
+    mapIterators = new MapIterators<T>(this);
   }
 }

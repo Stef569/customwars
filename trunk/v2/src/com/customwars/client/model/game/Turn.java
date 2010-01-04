@@ -2,10 +2,12 @@ package com.customwars.client.model.game;
 
 import com.customwars.client.tools.Args;
 
+import java.io.Serializable;
+
 /**
  * Stores the current turn/day and the day limit
  */
-public class Turn {
+public class Turn implements Serializable {
   public static final int UNLIMITED = -1;
   private final int dayLimit;
   private int turn;

@@ -2,12 +2,14 @@ package com.customwars.client.model.map;
 
 import com.customwars.client.model.gameobject.Locatable;
 
+import java.io.Serializable;
+
 /**
  * 2D location, containing locatables
  *
  * @author stefan
  */
-public interface Location {
+public interface Location extends Serializable {
   /**
    * Checks if the given Locatable may be added to this Location.
    *

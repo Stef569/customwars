@@ -6,6 +6,7 @@ import com.customwars.client.model.map.path.DefaultMoveStrategy;
 import com.customwars.client.model.map.path.MoveStrategy;
 import com.customwars.client.tools.Args;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -14,7 +15,7 @@ import java.util.Map;
 /**
  * Immutable statistics of a Unit
  */
-public class UnitStats {
+public class UnitStats implements Serializable {
   final int unitID;       // The unit Type ie(1->INF, 2->APC,...)
   final int imgRowID;     // The id, used to retrieve the images for this unit
   final String name;            // Full name ie Infantry, Tank, ...

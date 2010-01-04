@@ -17,6 +17,8 @@ import org.apache.log4j.Logger;
 
 import java.awt.Color;
 import java.beans.PropertyChangeListener;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -43,7 +45,7 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
   private static final Logger logger = Logger.getLogger(Map.class);
   private String mapName, author, description;    // The properties of the map
   private boolean fogOfWarOn;       // Is fog of war in effect
-  private PathFinder pathFinder;    // To builds paths within the map
+  private transient PathFinder pathFinder;        // To builds paths within the map
   private Player neutralPlayer;     // Idle neutral player owner of the neutral cities
 
   /**
@@ -806,5 +808,11 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
     } else {
       return null;
     }
+  }
+
+  private void readObject(ObjectInputStream in) throws ClassNotFoundException, IOException {
+    in.defaultReadObject();
+    this.pathFinder = new PathFinder(this);
+    this.neutralPlayer = Player.createNeutralPlayer(App.getColor("plugin.neutral_color"));
   }
 }
