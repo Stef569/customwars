@@ -24,6 +24,7 @@ import java.util.Arrays;
 public class GameTest {
   private Game game;
   private Map<Tile> map;    // Hardcoded map, see beforeEachTest and buildHardCodedMap
+  private static final Color[] colors = new Color[]{Color.WHITE, Color.GREEN, Color.BLUE, Color.BLACK, Color.RED, Color.YELLOW};
 
   @BeforeClass
   public static void beforeAllTests() {
@@ -318,7 +319,7 @@ public class GameTest {
   private void buildHardCodedMap(int playerCount) {
     int col = 0;
     for (int playerIndex = 0; playerIndex < playerCount; playerIndex++) {
-      Player mapPlayer = new Player(playerIndex);
+      Player mapPlayer = new Player(playerIndex, colors[playerIndex]);
       MapUtil.addCityToMap(map, col++, 0, TestData.BASE, mapPlayer);
     }
   }

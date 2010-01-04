@@ -17,6 +17,8 @@ import java.util.List;
  * Can be allied with another Player by being in the same team
  * Each non neutral player has an unique ID, neutral players always have the same NEUTRAL_PLAYER_ID
  *
+ * A Player is equal to another Player by having the same ID and color
+ *
  * @author stefan
  */
 public class Player extends GameObject {
@@ -258,10 +260,11 @@ public class Player extends GameObject {
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
-    if (!(o instanceof Player)) return false;
+    if (o == null || getClass() != o.getClass()) return false;
 
     Player player = (Player) o;
 
+    if (id != player.id) return false;
     if (color != null ? !color.equals(player.color) : player.color != null) return false;
 
     return true;
@@ -269,7 +272,9 @@ public class Player extends GameObject {
 
   @Override
   public int hashCode() {
-    return color != null ? color.hashCode() : 0;
+    int result = id;
+    result = 31 * result + (color != null ? color.hashCode() : 0);
+    return result;
   }
 
   @Override

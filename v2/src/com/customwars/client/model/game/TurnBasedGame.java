@@ -1,6 +1,5 @@
 package com.customwars.client.model.game;
 
-import com.customwars.client.App;
 import com.customwars.client.model.Observable;
 import com.customwars.client.model.gameobject.GameObjectState;
 import com.customwars.client.model.map.Map;
@@ -36,7 +35,6 @@ public class TurnBasedGame implements Observable {
 
   final Map<Tile> map;          // The map containing all the tiles
   private final Turn turn;      // The current turn + limits
-  final Player neutralPlayer;   // Idle neutral player for cities that are not owned.
   private final List<Player> players; // The Human and AI players that are in this game
   private Player activePlayer;  // There can only be one active player in a game at any time
   private GameState state;
@@ -47,7 +45,6 @@ public class TurnBasedGame implements Observable {
 
     this.map = map;
     this.players = players;
-    this.neutralPlayer = Player.createNeutralPlayer(App.getColor("plugin.neutral_color"));
     this.turn = new Turn(dayLimit);
     this.state = GameState.IDLE;
   }
@@ -264,7 +261,7 @@ public class TurnBasedGame implements Observable {
   /**
    * Get a player by his ID
    *
-   * @param playerID The ID of a game player or of the neutral player
+   * @param playerID The ID of a game player
    * @return A Player within this game
    * @throws IllegalArgumentException if no player matches the given player ID
    */
@@ -275,10 +272,6 @@ public class TurnBasedGame implements Observable {
       if (p.getId() == playerID) {
         result = p;
       }
-    }
-
-    if (neutralPlayer.getId() == playerID) {
-      result = neutralPlayer;
     }
 
     if (result == null) {

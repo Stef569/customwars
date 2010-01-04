@@ -34,8 +34,8 @@ import java.util.Set;
  * At each start of a turn the map is reset see {@link #resetMap(Player)}
  *
  * Players in a map are called 'map player'
- * name and funds are unknown they are used to link units to a player.
- * They hold the hq location, the default color and the player ID.
+ * name and funds are unknown they are used to link units and cities to a player.
+ * They hold the units, cities, hq location, the default color and the player ID.
  *
  * @author stefan
  */
@@ -44,6 +44,7 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
   private String mapName, author, description;    // The properties of the map
   private boolean fogOfWarOn;       // Is fog of war in effect
   private PathFinder pathFinder;    // To builds paths within the map
+  private Player neutralPlayer;     // Idle neutral player owner of the neutral cities
 
   /**
    * Create an anonymous map
@@ -69,6 +70,7 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
     this.author = author;
     this.description = description;
     this.pathFinder = new PathFinder(this);
+    this.neutralPlayer = Player.createNeutralPlayer(App.getColor("plugin.neutral_color"));
     fillMap(cols, rows, startTerrain);
   }
 
@@ -113,6 +115,7 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
     this.author = otherMap.author;
     this.description = otherMap.description;
     copyMapData(otherMap);
+    copyPlayers();
   }
 
   @SuppressWarnings("unchecked")
@@ -520,14 +523,22 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
 
   /**
    * Normalise this map
-   * #1 Make players start with ID 0, next players id increases by 1
+   * A normalised maps contains map players with Id's that start with ID 0 and increase by 1
    */
   public void normalise() {
+    copyPlayers();
+  }
+
+  /**
+   * Replace each player in the map with a new Player Copy
+   * new players start with ID 0, next players id increases by 1
+   */
+  private void copyPlayers() {
     Collection<Player> currentPlayers = getUniquePlayers();
 
-    int playerIndex = 0;
+    int nextPlayerIndex = 0;
     for (Player currentPlayer : currentPlayers) {
-      Player newPlayer = new Player(playerIndex++, currentPlayer.getColor());
+      Player newPlayer = new Player(nextPlayerIndex++, currentPlayer.getColor());
       replacePlayer(currentPlayer, newPlayer);
     }
   }
@@ -535,22 +546,34 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
   /**
    * Replace each instance of oldPlayer with newPlayer in the map
    */
-  private void replacePlayer(Player oldPlayer, Player newPlayer) {
+  public void replacePlayer(Player oldPlayer, Player newPlayer) {
     for (Tile t : getAllTiles()) {
       Unit unit = getUnitOn(t);
       if (unit != null && unit.getOwner() == oldPlayer) {
-        unit.setOwner(newPlayer);
+        replaceUnitOwner(newPlayer, unit);
       }
 
       City city = getCityOn(t);
       if (city != null && city.getOwner() == oldPlayer) {
-        if (city.isHQ()) {
-          newPlayer.setHq(city);
-        }
-
-        city.setOwner(newPlayer);
+        replaceCityOwner(newPlayer, city);
       }
     }
+  }
+
+  private void replaceUnitOwner(Player newPlayer, Unit unit) {
+    newPlayer.addUnit(unit);
+
+    for (int i = 0; i < unit.getLocatableCount(); i++) {
+      Unit unitInTransport = (Unit) unit.getLocatable(i);
+      newPlayer.addUnit(unitInTransport);
+    }
+  }
+
+  private void replaceCityOwner(Player newPlayer, City city) {
+    if (city.isHQ()) {
+      newPlayer.setHq(city);
+    }
+    newPlayer.addCity(city);
   }
 
   public void setFogOfWarOn(boolean fogOfWarOn) {
@@ -690,6 +713,10 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
     return fogOfWarOn;
   }
 
+  public Player getNeutralPlayer() {
+    return neutralPlayer;
+  }
+
   public void addListenerToAllTilesUnitsAndCities(PropertyChangeListener listener) {
     for (Tile t : getAllTiles()) {
       t.addPropertyChangeListener(listener);
@@ -775,7 +802,7 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
     }
 
     if (color.equals(neutralColor)) {
-      return Player.createNeutralPlayer(color);
+      return neutralPlayer;
     } else {
       return null;
     }

@@ -33,7 +33,7 @@ public class Statistics implements PropertyChangeListener {
       }
     }
 
-    Player neutralPlayer = game.getPlayerByID(Player.NEUTRAL_PLAYER_ID);
+    Player neutralPlayer = game.getMap().getNeutralPlayer();
     for (City neutralCity : neutralPlayer.getAllCities()) {
       neutralCity.addPropertyChangeListener(this);
     }

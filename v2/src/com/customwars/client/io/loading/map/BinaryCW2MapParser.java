@@ -143,6 +143,9 @@ public class BinaryCW2MapParser implements MapParser {
     private Map<Tile> readHeader() throws IOException {
       Map<Tile> map = readStaticHeader();
       readMapPlayers();
+
+      // Always add the neutral player so neutral cities can be looked up
+      addPlayer(map.getNeutralPlayer());
       return map;
     }
 
@@ -170,10 +173,6 @@ public class BinaryCW2MapParser implements MapParser {
         addPlayer(mapPlayer);
         hqLocations.put(mapPlayer, hqLocation);
       }
-
-      // Always add the neutral player so neutral cities can be looked up
-      Player neutral = Player.createNeutralPlayer(App.getColor("plugin.neutral_color"));
-      addPlayer(neutral);
     }
 
     private Location2D readHQLocation() throws IOException {
@@ -292,7 +291,7 @@ public class BinaryCW2MapParser implements MapParser {
     private City createCity(int cityID, int ownerID) {
       Player owner = getPlayer(ownerID);
       City city = CityFactory.getCity(cityID);
-      city.setOwner(owner);
+      owner.addCity(city);
       return city;
     }
 
@@ -303,7 +302,7 @@ public class BinaryCW2MapParser implements MapParser {
       if (UnitFactory.hasUnitForID(unitID)) {
         Player owner = getPlayer(unitOwnerID);
         Unit unit = UnitFactory.getUnit(unitID);
-        unit.setOwner(owner);
+        owner.addUnit(unit);
         return unit;
       } else {
         // If this unit is not supported, default to no unit
