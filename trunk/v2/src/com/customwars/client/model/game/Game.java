@@ -45,46 +45,22 @@ public class Game extends TurnBasedGame implements PropertyChangeListener {
 
   /**
    * Replace mapPlayers with GamePlayers
-   * Get all cities, Units from the map
-   * Read their id,
-   * Overwrite the dummy map owner of the city/Unit by
-   * comparing their id to a real player in the Game
-   * add the unit/city to their army/cities
+   * by comparing their ID
    */
   private void init() {
-    for (Tile t : map.getAllTiles()) {
-      City city = map.getCityOn(t);
-      Unit unit = map.getUnitOn(t);
-
-      if (city != null) {
-        initCity(city);
-      }
-      if (unit != null) {
-        initUnit(unit);
-      }
+    Collection<Player> mapPlayers = map.getUniquePlayers();
+    for (Player player : mapPlayers) {
+      Player gamePlayer = getPlayerByID(player.getId());
+      map.replacePlayer(player, gamePlayer);
     }
+    initCityFunds();
   }
 
-  private void initCity(City city) {
-    Player mapPlayer = city.getOwner();
-    Player gamePlayer = getPlayerByID(mapPlayer.getId());
-
-    if (city.isHQ()) {
-      gamePlayer.setHq(city);
-    }
-
-    gamePlayer.addCity(city);
-    city.setFunds(cityFunds);
-  }
-
-  private void initUnit(Unit unit) {
-    Player mapPlayer = unit.getOwner();
-    Player gamePlayer = getPlayerByID(mapPlayer.getId());
-    gamePlayer.addUnit(unit);
-
-    for (int i = 0; i < unit.getLocatableCount(); i++) {
-      Unit unitInTransport = (Unit) unit.getLocatable(i);
-      gamePlayer.addUnit(unitInTransport);
+  private void initCityFunds() {
+    for (Player player : getAllPlayers()) {
+      for (City city : player.getAllCities()) {
+        city.setFunds(cityFunds);
+      }
     }
   }
 
@@ -233,7 +209,7 @@ public class Game extends TurnBasedGame implements PropertyChangeListener {
 
     // If the player is still playing and lost all of his units destroy it.
     if (player.isActive() && player.areAllUnitsDestroyed()) {
-      player.destroy(neutralPlayer);
+      player.destroy(map.getNeutralPlayer());
     }
   }
 
