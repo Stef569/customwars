@@ -4,6 +4,7 @@ import com.customwars.client.App;
 import com.customwars.client.Config;
 import com.customwars.client.io.ResourceManager;
 import com.customwars.client.io.loading.ControlsConfigurator;
+import com.customwars.client.ui.GUI;
 import com.customwars.client.ui.state.CWState;
 import com.customwars.client.ui.state.StateChanger;
 import com.customwars.client.ui.state.StateSession;
@@ -45,6 +46,7 @@ public abstract class CWStateBasedGame extends StateBasedGame implements InputPr
   public final void initStatesList(GameContainer gameContainer) {
     Thingle.init(new SlickThinletFactory(gameContainer));
     this.gameContainer = gameContainer;
+    GUI.init(gameContainer);
     loadInput();
     initStatesList();
     changeToState(startStateName);

@@ -8,6 +8,7 @@ import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
+import com.customwars.client.ui.GUI;
 import com.customwars.client.ui.sprite.SpriteManager;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
@@ -17,19 +18,24 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * A Map has 2 layers that need to be rendered
- * 1. The background(terrains+cities)
- * 2. The sprites on the terrain
- * Both can be enabled/disabled by setRenderSprites(boolean) and setRenderTerrain(boolean)
+ * <p>A Map has 2 layers that need to be rendered:
+ * <ol>
+ * <li>The background(terrains and cities)</li>
+ * <li>The sprites on the terrain(units)</li>
+ * </ol>
+ * Both can be enabled/disabled by {@link #setRenderSprites(boolean)} and {@link #setRenderTerrain(boolean)}</p>
  *
- * Rendering order(left to right, top to bottom)
- * 1. terrains(City or Terrain) can be fogged
- * 2. units
- * 3. active unit
- * 4. cursor
+ * <p>The Rendering order is from <tt>left to right, top to bottom</tt>:
+ * <ol>
+ * <li>Terrains and Cities</li>
+ * <li>Units</li>
+ * <li>The active unit</li>
+ * <li>The active cursor</li>
+ * </ol></p>
  *
- * Cities and units can have a larger image then the tile size, they need to be translated upwards.
- * Units can be partly hidden when they are 1 tile above a city.
+ * <p>Cities and units can have a image that is larger then the tile size, these images need to be translated upwards.
+ * So that the bottom of the image is positioned on the tile bottom. A side effect is that units can be partly hidden
+ * when they are 1 tile above a city. Because the city image overlaps the unit image</p>
  *
  * @author Stefan
  */
@@ -84,7 +90,13 @@ public class MapRenderer implements Renderable {
 
   private void renderMap(Graphics g) {
     for (Tile t : map.getAllTiles()) {
-      renderTile(g, t);
+      int x = t.getCol() * tileSize;
+      int y = t.getRow() * tileSize;
+
+      // Don't render outside of the GUI as it is an expensive operation
+      if (x <= GUI.getWidth() && y <= GUI.getHeight()) {
+        renderTile(g, t);
+      }
     }
   }
 
@@ -184,63 +196,114 @@ public class MapRenderer implements Renderable {
     return spriteManager.isRenderingSprites();
   }
 
+  /**
+   * @see #spriteManager#getCursorLocation
+   */
   public Tile getCursorLocation() {
     return (Tile) spriteManager.getCursorLocation();
   }
 
+  /**
+   * @return The effect range in tiles around the active cursor
+   */
   public int getCursorEffectRange() {
     return spriteManager.getCursorEffectRange();
   }
 
+  /**
+   * @see #effectsRenderer#removeZones
+   */
   public void removeZones() {
     effectsRenderer.removeZones();
   }
 
+  /**
+   * @see #effectsRenderer#setRenderArrowHead
+   * @see #effectsRenderer#setArrowPath
+   */
   public void showArrows(boolean showArrows) {
     effectsRenderer.setRenderArrowHead(showArrows);
     effectsRenderer.setRenderArrowPath(showArrows);
   }
 
+  /**
+   * @see #effectsRenderer#showArrowHead
+   */
   public void showArrowPath(boolean showArrowPath) {
     effectsRenderer.setRenderArrowPath(showArrowPath);
   }
 
+  /**
+   * @see #effectsRenderer#setRenderArrowHead
+   */
   public void showArrowHead(boolean showArrowHead) {
     effectsRenderer.setRenderArrowHead(showArrowHead);
   }
 
+  /**
+   * @see #effectsRenderer#setMoveZone
+   */
   public void setMoveZone(Collection<Location> moveZone) {
     effectsRenderer.setMoveZone(moveZone);
   }
 
+  /**
+   * @see #effectsRenderer#setDropLocations
+   */
   public void setDropLocations(List<Location> dropLocations, Location transportLocation) {
     effectsRenderer.setDropLocations(dropLocations, transportLocation);
   }
 
+  /**
+   * @see #effectsRenderer#setExplosionArea
+   */
   public void setExplosionArea(Collection<Location> explosionArea) {
     effectsRenderer.setExplosionArea(explosionArea);
   }
 
+  /**
+   * @see #effectsRenderer#setAttackZone
+   */
   public void setAttackZone(Collection<Location> attackZone) {
     effectsRenderer.setAttackZone(attackZone);
   }
 
+  /**
+   * @see #effectsRenderer#showMoveZone
+   */
   public void showMoveZone() {
     effectsRenderer.showMoveZone();
   }
 
+  /**
+   * @see #effectsRenderer#removeMoveZone
+   */
   public void removeMoveZone() {
     effectsRenderer.removeMoveZone();
   }
 
+  /**
+   * @see #effectsRenderer#showAttackZone
+   */
   public void showAttackZone() {
     effectsRenderer.showAttackZone();
   }
 
+  /**
+   * @see #effectsRenderer#removeAttackZone
+   */
   public void removeAttackZone() {
     effectsRenderer.removeAttackZone();
   }
 
+  /**
+   * Check if this map can be rendered in the center of the parent component
+   * Where the parent component dimensions are given as width and height parameters
+   *
+   * @param width  width of the parent components this map is rendered in
+   * @param height height of the parent component this map is rendered in
+   * @return If the map can be rendered in the center of the parent components
+   */
   public boolean canCenterMap(int width, int height) {
     return map.getWidth() < width && map.getHeight() < height;
   }
