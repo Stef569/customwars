@@ -82,6 +82,8 @@ public class InGameState extends CWState implements PropertyChangeListener {
     }
 
     hud.moveOverTile(gameRenderer.getCursorLocation());
+    stateChanger.clearPreviousStatesHistory();
+    stateChanger.stopRecordingStateHistory();
   }
 
   /**

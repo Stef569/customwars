@@ -5,6 +5,8 @@ import com.customwars.client.controller.MapSelectController;
 import com.customwars.client.io.loading.ThinglePageLoader;
 import com.customwars.client.ui.renderer.widget.CityCountWidgetRenderer;
 import com.customwars.client.ui.renderer.widget.MiniMapWidgetRenderer;
+import com.customwars.client.ui.state.input.CWCommand;
+import com.customwars.client.ui.state.input.CWInput;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
@@ -21,18 +23,19 @@ public class MapSelectState extends CWState {
   private Image backGroundImage;
   private MiniMapWidgetRenderer miniMapRenderer;
   private CityCountWidgetRenderer cityCountRenderer;
+  private MapSelectController controller;
 
   public void init(GameContainer gameContainer, StateBasedGame stateBasedGame) throws SlickException {
     miniMapRenderer = new MiniMapWidgetRenderer(resources);
     cityCountRenderer = new CityCountWidgetRenderer(resources);
-    MapSelectController controller = new MapSelectController(resources, miniMapRenderer, cityCountRenderer, stateChanger, stateSession);
+    controller = new MapSelectController(resources, miniMapRenderer, cityCountRenderer, stateChanger, stateSession);
 
-    initPage(controller);
+    initPage();
     initWidgetRenderers();
 
     List<String> mapCategories = resources.getAllMapCategories();
     initPageContent(mapCategories);
-    initFilter(mapCategories, controller);
+    initFilter(mapCategories);
     backGroundImage = resources.getSlickImg("light_menu_background");
   }
 
@@ -41,7 +44,7 @@ public class MapSelectState extends CWState {
     page.getWidget("map_city_count").setRenderer(cityCountRenderer);
   }
 
-  private void initPage(MapSelectController controller) {
+  private void initPage() {
     ThinglePageLoader thingleLoader = new ThinglePageLoader(App.get("gui.path"));
     page = thingleLoader.loadPage("mapSelect.xml", "greySkin.properties", controller);
   }
@@ -58,7 +61,7 @@ public class MapSelectState extends CWState {
     }
   }
 
-  private void initFilter(Collection<String> mapCategories, MapSelectController controller) {
+  private void initFilter(Collection<String> mapCategories) {
     if (!mapCategories.isEmpty()) {
       String firstMapCat = mapCategories.toArray(new String[mapCategories.size()])[0];
       controller.filterMapsOnCategory(firstMapCat);
@@ -85,6 +88,13 @@ public class MapSelectState extends CWState {
 
   @Override
   public void update(GameContainer container, int delta) throws SlickException {
+  }
+
+  @Override
+  public void controlPressed(CWCommand command, CWInput cwInput) {
+    if (command == CWInput.CANCEL) {
+      controller.back();
+    }
   }
 
   @Override

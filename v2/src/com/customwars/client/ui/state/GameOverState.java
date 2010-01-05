@@ -68,8 +68,17 @@ public class GameOverState extends CWState {
 
   @Override
   public void keyPressed(int key, char c) {
+    continueToMainMenu();
+  }
+
+  @Override
+  public void mousePressed(int button, int x, int y) {
+    continueToMainMenu();
+  }
+
+  private void continueToMainMenu() {
     stateSession.clear();
-    stateChanger.clearPreviousStatesHistory();
+    stateChanger.resumeRecordingStateHistory();
     changeToState("MAIN_MENU");
   }
 
