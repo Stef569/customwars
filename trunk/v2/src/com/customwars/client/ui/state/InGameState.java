@@ -116,9 +116,8 @@ public class InGameState extends CWState implements PropertyChangeListener {
     this.game = game;
     this.map = game.getMap();
     initCamera(map);
-    GUI.init(guiContext, camera);
-    center = GUI.getCenteredRenderPoint(map.getSize(), guiContext);
     initScriptObjects();
+    center = GUI.getCenteredRenderPoint(map.getSize(), guiContext);
   }
 
   private void initGameContext(Game game, GUIContext container) {
@@ -179,6 +178,7 @@ public class InGameState extends CWState implements PropertyChangeListener {
     this.camera = new Camera2D(screenSize, worldSize, map.getTileSize());
     boolean zoomEnabled = App.getBoolean("display.zoom");
     camera.setZoomingEnabled(zoomEnabled);
+    GUI.setCamera(camera);
   }
 
   private void initCursors(Map<Tile> map) {

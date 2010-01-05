@@ -26,9 +26,8 @@ public class GUI {
   private static Camera2D camera;
   private static boolean inited;
 
-  public static void init(GUIContext guiContext, Camera2D camera2D) {
+  public static void init(GUIContext guiContext) {
     GUI.guiContext = guiContext;
-    GUI.camera = camera2D;
 
     if (!inited) {
       initConsole();
@@ -51,6 +50,10 @@ public class GUI {
     modelEventScreen = new ModelEventScreen(eventFrame);
     eventFrame.add(modelEventScreen.getGui());
     eventFrame.setBounds(0, 0, 350, 750);
+  }
+
+  public static void setCamera(Camera2D camera) {
+    GUI.camera = camera;
   }
 
   public static void toggleConsoleFrame() {
@@ -180,6 +183,14 @@ public class GUI {
     if (centerY < 0) centerY = 0;
     leftTop.setLocation(centerX, centerY);
     return leftTop;
+  }
+
+  public static int getWidth() {
+    return guiContext.getWidth();
+  }
+
+  public static int getHeight() {
+    return guiContext.getHeight();
   }
 
   public static void showExceptionDialog(String errMsg, Exception e, String title) {
