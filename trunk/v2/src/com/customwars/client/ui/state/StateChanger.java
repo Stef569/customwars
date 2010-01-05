@@ -24,6 +24,7 @@ public class StateChanger {
   private final StateBasedGame stateBasedgame;
   private final Deque<Integer> previousStates;
   private final Map<String, Integer> states;
+  private boolean recording = true;
 
   public StateChanger(StateBasedGame game) {
     this.stateBasedgame = game;
@@ -58,10 +59,18 @@ public class StateChanger {
     }
   }
 
+  /**
+   * Try to change to the previous state. This only works
+   * if changeTo(String) or changeToNext() are invoked at least 2x.
+   */
   public void changeToPrevious() {
-    int currentStateID = previousStates.removeLast();
-    int previousStateID = previousStates.removeLast();
-    gotoState(previousStateID);
+    if (previousStates.size() >= 2) {
+      int currentStateID = previousStates.removeLast();
+      int previousStateID = previousStates.removeLast();
+      gotoState(previousStateID);
+    } else {
+      logger.warn("Could not go to the previous state, as there is not enough state history(min 2) " + previousStates);
+    }
   }
 
   /**
@@ -79,20 +88,50 @@ public class StateChanger {
 
   private void gotoState(int stateID) {
     if (stateID >= 0) {
-      logger.debug("Entering [" + stateID + "]");
       stateBasedgame.enterState(stateID, null, new FadeInTransition(Color.black, 250));
       storeStateID(stateID);
+      String stateName = getStateName(stateID);
+      logger.debug("Entering state [" + stateName + "] History=" + previousStates + " Recording=" + recording);
     } else {
       throw new IllegalArgumentException(
         "StateID " + stateID + " is not within state bounds >=0");
     }
   }
 
-  private void storeStateID(int stateID) {
-    if (previousStates.size() > PREVIOUS_STATE_LIMIT) {
-      previousStates.removeFirst();
+  private String getStateName(int stateID) {
+    for (Map.Entry<String, Integer> stateEntry : states.entrySet()) {
+      if (stateEntry.getValue() == stateID) {
+        return stateEntry.getKey();
+      }
     }
-    previousStates.add(stateID);
-    logger.debug("History=" + previousStates);
+    throw new IllegalArgumentException("No state found for " + stateID);
+  }
+
+  private void storeStateID(int stateID) {
+    if (recording) {
+      if (previousStates.size() > PREVIOUS_STATE_LIMIT) {
+        previousStates.removeFirst();
+      }
+      previousStates.add(stateID);
+    }
+  }
+
+  /**
+   * Temporally stop recording states to the previousStates history
+   *
+   * @see #resumeRecordingStateHistory()
+   */
+  public void stopRecordingStateHistory() {
+    recording = false;
+  }
+
+  /**
+   * Record each change to another state so that
+   * the changeToPrevious method changes to the previous state
+   *
+   * @see #stopRecordingStateHistory()
+   */
+  public void resumeRecordingStateHistory() {
+    recording = true;
   }
 }
