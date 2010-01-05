@@ -64,6 +64,9 @@ public class TestData {
   private static final List<ArmyBranch> ARMY_BRANCH_LAND_ONLY = Arrays.asList(ArmyBranch.LAND);
   private static final List<ArmyBranch> ARMY_BRANCH_NAVAL_ONLY = Arrays.asList(ArmyBranch.NAVAL);
   private static final List<ArmyBranch> ARMY_BRANCH_AIR_ONLY = Arrays.asList(ArmyBranch.AIR);
+  private static final List<Integer> allLandUnits = Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12);
+  private static final List<Integer> allAirUnits = Arrays.asList(14, 15, 17, 18, 19);
+  private static final List<Integer> allNavalUnits = Arrays.asList(20, 21, 22, 23, 24, 25);
 
   // Movecosts: INF, MECH, TREAD, TIRES, AIR, NAVAL
   private static int IMP = Terrain.IMPASSIBLE;
@@ -105,16 +108,16 @@ public class TestData {
     cityRoadConnection, ARMY_BRANCH_LAND_ONLY, Arrays.asList(INF, MECH), null, 20, CITY_HEAL_RATE);
 
   private static City factory = new City(1, "road", "factory", "", 0, 0, plainMoveCosts, 1, true,
-    cityRoadConnection, ARMY_BRANCH_LAND_ONLY, Arrays.asList(INF, MECH), ARMY_BRANCH_LAND_ONLY, 20, CITY_HEAL_RATE);
+    cityRoadConnection, ARMY_BRANCH_LAND_ONLY, Arrays.asList(INF, MECH), allLandUnits, 20, CITY_HEAL_RATE);
 
   private static City hq = new City(4, "road", "hq", "", 0, 0, plainMoveCosts, 1, true,
     cityRoadConnection, ARMY_BRANCH_LAND_ONLY, Arrays.asList(INF, MECH), null, 20, CITY_HEAL_RATE);
 
   private static City airport = new City(AIRPORT, "road", "airport", "", 0, 0, plainMoveCosts, 1, true,
-    cityRoadConnection, ARMY_BRANCH_AIR_ONLY, Arrays.asList(INF, MECH), ARMY_BRANCH_AIR_ONLY, 20, CITY_HEAL_RATE);
+    cityRoadConnection, ARMY_BRANCH_AIR_ONLY, Arrays.asList(INF, MECH), allAirUnits, 20, CITY_HEAL_RATE);
 
   private static City port = new City(PORT, "road", "port", "", 0, 0, plainMoveCosts, 1, true,
-    cityRoadConnection, ARMY_BRANCH_NAVAL_ONLY, Arrays.asList(INF, MECH), ARMY_BRANCH_NAVAL_ONLY, 20, CITY_HEAL_RATE);
+    cityRoadConnection, ARMY_BRANCH_NAVAL_ONLY, Arrays.asList(INF, MECH), allNavalUnits, 20, CITY_HEAL_RATE);
 
   private static City silo = new City(5, "road", "missle_silo", "", 0, 0, plainMoveCosts, 1, true,
     cityRoadConnection, null, null, null, 20, CITY_HEAL_RATE);
