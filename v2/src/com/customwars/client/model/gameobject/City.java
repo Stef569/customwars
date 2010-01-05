@@ -20,7 +20,7 @@ import java.util.List;
  * They have funds, The player that owns this city receives the funds on each turn start.
  * can heal and supply units of a specific ArmyBranch ID when they are located on the city
  * can be captured by a Unit of a specific unit ID
- * can build units of a specific ArmyBranch ID
+ * can build units of a specific Unit ID
  * <p/>
  * The capture process is reset when
  * another unit tries to capture this city, or by invoking resetCapturing()
@@ -32,7 +32,7 @@ import java.util.List;
 public class City extends Terrain implements PropertyChangeListener, TurnHandler {
   private List<ArmyBranch> heals;       // The army branches this City can heal(Empty list means it cannot heal)
   private List<Integer> canBeCaptureBy; // The ids this City can be captured by(Empty list means it cannot be captured)
-  private List<ArmyBranch> builds;      // The army branches this City can build (Empty list means it cannot build)
+  private List<Integer> builds;         // The ids this City can build (Empty list means it cannot build)
   private List<Integer> canBeLaunchedBy;// The ids that can launch a rocket (Empty list means it cannot launch rockets)
   private final int maxCapCount;
   private final int healRate;       // Healing/repairs this city can give to a Unit
@@ -46,7 +46,7 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
 
   public City(int id, String type, String name, String description, int defenseBonus, int height, List<Integer> moveCosts,
               int vision, boolean hidden, List<Direction> connectedDirections,
-              List<ArmyBranch> heals, List<Integer> canBeCaptureBy, List<ArmyBranch> builds, int maxCapCount, int healRate) {
+              List<ArmyBranch> heals, List<Integer> canBeCaptureBy, List<Integer> builds, int maxCapCount, int healRate) {
     super(id, type, name, description, defenseBonus, height, hidden, vision, moveCosts, connectedDirections);
     this.heals = heals;
     this.canBeCaptureBy = canBeCaptureBy;
@@ -264,7 +264,7 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
    * @return does this city has the ability to build the given unit
    */
   public boolean canBuild(Unit unit) {
-    return unit != null && builds.contains(unit.getArmyBranch());
+    return unit != null && builds.contains(unit.getStats().getID());
   }
 
   /**
