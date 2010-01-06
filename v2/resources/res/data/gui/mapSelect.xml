@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<panel name="container" init="init(page)" columns="1" top="10" left="10" right="10" bottom="10" border="true">
+<panel name="container" init="init(page)" columns="1" top="10" left="10" right="10" bottom="10" weighty="1">
     <panel columns="2" gap="5">
         <panel gap="4">
             <label text="Category:"/>
             <combobox name="map_categories" weightx="1" action="filterMapsOnCategory(map_categories.text)"/>
         </panel>
-        <label name="map_name" width="362" text="map name"/>
+        <label name="map_name" width="364" text="map name"/>
         <list name="map_list" width="250" height="380" rowspan="3" action="mapSelected()"/>
         <panel name="mini_map" height="300"/>
         <label name="map_description" text="map description"/>
@@ -13,7 +13,7 @@
             <panel name="map_city_count" weightx="1" halign="center"/>
         </panel>
     </panel>
-    <panel name="btnPanel" valign="bottom" top="25">
+    <panel name="btnPanel" valign="bottom" weighty="1">
         <button text="Back" action="back()"/>
         <button weightx="1" halign="right" text="Continue" action="continueToNextState()"/>
     </panel>
