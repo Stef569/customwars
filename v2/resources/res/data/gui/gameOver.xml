@@ -1,0 +1,7 @@
+<panel left='10' top='10' right='10' bottom="10" weightx='1' weighty='1' columns="1">
+    <table name='table' weightx='1' weighty="1"></table>
+
+    <panel name="btnPanel" valign="bottom" weighty="1">
+        <button weightx="1" halign="right" text="Continue" action="continueToNextState()"/>
+    </panel>
+</panel>
