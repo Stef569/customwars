@@ -3,13 +3,12 @@ package com.customwars.client.ui;
 import com.customwars.client.model.map.Location;
 
 import java.awt.Dimension;
+import java.awt.Point;
 
 /**
  * Handles screen and world coordinates
  * The cameraX and cameraY values are used as offset for rendering other components.
  * In reality there is no camera, the components x and y coordinates are just translated.
- *
- * Further improvements can be shaking the screen throught the update method.
  *
  * @author stefan
  */
@@ -24,6 +23,10 @@ public class Camera2D {
   private int cameraX, cameraY;
   private boolean zoomEnabled;
 
+  private Point shakeStartPoint;
+  private int shakeMoveCount;
+  private boolean shake;
+
   public Camera2D(Dimension cameraSize, Dimension worldSize, int tileSize) {
     this.camera = new Dimension(cameraSize);
     this.world = new Dimension(worldSize);
@@ -31,7 +34,31 @@ public class Camera2D {
   }
 
   public void update(int elapsedTime) {
+    if (shake) {
+      shakeCamera();
+    }
+  }
 
+  private void shakeCamera() {
+    if (shakeStartPoint == null) shakeStartPoint = new Point(cameraX, cameraY);
+
+    // Move 3x UP - 3x DOWN - 3x UP
+    boolean canMoveUp = shakeMoveCount < 3 || (shakeMoveCount >= 6 && shakeMoveCount < 9);
+    boolean canMoveDown = shakeMoveCount >= 3 && shakeMoveCount < 6;
+
+    if (canMoveUp) {
+      cameraY += 1;
+      shakeMoveCount++;
+    } else if (canMoveDown) {
+      cameraY -= 1;
+      shakeMoveCount++;
+    } else {
+      shake = false;
+      shakeMoveCount = 0;
+      cameraX = shakeStartPoint.x;
+      cameraY = shakeStartPoint.y;
+      shakeStartPoint = null;
+    }
   }
 
   public void centerOnTile(Location location) {
@@ -192,8 +219,12 @@ public class Camera2D {
     return (int) camera.getHeight();
   }
 
+  public void shake() {
+    shake = true;
+  }
+
   /**
-   * @return Can the rectange fit within this camera
+   * @return Can the rectangle(x,y,width,height) fit within this camera
    */
   public boolean canFitWithin(int x, int y, int width, int height) {
     int maxX = x + width;
