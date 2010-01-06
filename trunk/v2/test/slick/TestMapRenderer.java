@@ -163,6 +163,9 @@ public class TestMapRenderer extends CWState {
     if (key == Input.KEY_J) {
       mapRenderer.setRenderSprites(!mapRenderer.isRenderingSprites());
     }
+    if (key == Input.KEY_S) {
+      camera.shake();
+    }
   }
 
   public void mouseWheelMoved(int newValue) {
