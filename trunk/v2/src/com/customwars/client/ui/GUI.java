@@ -193,7 +193,11 @@ public class GUI {
     return guiContext.getHeight();
   }
 
-  public static void showExceptionDialog(String errMsg, Exception e, String title) {
+  public static void showExceptionDialog(String title, Throwable e) {
+    showExceptionDialog("", e, title);
+  }
+
+  public static void showExceptionDialog(String errMsg, Throwable e, String title) {
     String msg = String.format(errMsg + "\n%s", e.getMessage());
     showErrDialog(msg, title);
   }
@@ -205,6 +209,6 @@ public class GUI {
 
   public static void showdialog(String msg, String title) {
     JOptionPane.showMessageDialog(null,
-      msg, title, JOptionPane.PLAIN_MESSAGE);
+      msg, title, JOptionPane.INFORMATION_MESSAGE);
   }
 }

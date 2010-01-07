@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--Created with Theodore 3.0 (#7)  AP Edition
+Licensed Carlsbad Cubes - Wolf Paulus-->
+<!--Theodore, XUL Editor for Thinlet-->
+<!--(c) 2002-2009 Carlsbad Cubes, http://www.carlsbadcubes.com-->
+<panel name="container" property="encoding=ISO-8859-1;buildpath=;cls=" init="init(page)" columns="1" weightx="1"
+       weighty="1" left="10" bottom="10" top="10" right="10" border="true">
+    <panel name="centerPanel" weightx="1" weighty="1" halign="center" valign="center" columns="2" gap="20">
+
+        <panel enabled="false" gap="20">
+            <label tooltip="The name shown in the server list" text="Game Name"/>
+            <textfield name="server_game_name" weightx="1" halign="right"/>
+        </panel>
+        <panel>
+            <button name="fetch_user_names" action="fetchUserNames(server_game_name)" text="Fetch user names"/>
+        </panel>
+        <panel gap="20">
+            <label tooltip="your name, used to join to the game" text="User name"/>
+            <combobox name="user_name" weightx="1" halign="right"/>
+        </panel>
+        <panel gap="20">
+            <label tooltip="Your password" text="User password"/>
+            <textfield name="user_password" weightx="1" halign="right"/>
+        </panel>
+    </panel>
+    <panel name="btnPanel" valign="bottom" weighty="1">
+        <button text="Back" action="back()"/>
+        <button weightx="1" halign="right" text="Login" action="loginIntoServerGame"/>
+    </panel>
+</panel>
+

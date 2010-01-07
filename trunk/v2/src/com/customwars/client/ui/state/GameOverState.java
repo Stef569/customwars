@@ -4,6 +4,10 @@ import com.customwars.client.App;
 import com.customwars.client.io.loading.ThinglePageLoader;
 import com.customwars.client.model.Statistics;
 import com.customwars.client.model.game.Player;
+import com.customwars.client.network.NetworkException;
+import com.customwars.client.network.NetworkManager;
+import com.customwars.client.network.NetworkManagerSingleton;
+import com.customwars.client.ui.GUI;
 import org.apache.log4j.Logger;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -24,10 +28,12 @@ public class GameOverState extends CWState {
   private Page page;
   private List<Player> players;
   private Statistics statistics;
+  private NetworkManager networkManager;
 
   public void init(GameContainer gameContainer, StateBasedGame stateBasedGame) throws SlickException {
     ThinglePageLoader loader = new ThinglePageLoader(App.get("gui.path"));
     this.page = loader.loadPage("gameOver.xml", "greySkin.properties", this);
+    networkManager = NetworkManagerSingleton.getInstance();
   }
 
   @Override
@@ -37,6 +43,32 @@ public class GameOverState extends CWState {
     buildPlayers();
     buildTable();
     page.enable();
+    logger.info("Game Over");
+    if (App.isMultiplayerSnailGame()) endServerGame();
+  }
+
+  private void endServerGame() {
+    App.execute(new Runnable() {
+      public void run() {
+        endServerGame();
+      }
+    });
+  }
+
+  private void sendEndGameToServer() {
+    String serverGameName = stateSession.serverGameName;
+    String userName = stateSession.user.getName();
+    String userPassword = stateSession.user.getPassword();
+    sendEndGameToServer(serverGameName, userName, userPassword);
+  }
+
+  private void sendEndGameToServer(String serverGameName, String userName, String userPassword) {
+    try {
+      networkManager.endGame(serverGameName, userName, userPassword);
+    } catch (NetworkException ex) {
+      logger.warn("Could not end game", ex);
+      GUI.showExceptionDialog("Could not end game", ex);
+    }
   }
 
   private void buildPlayers() {

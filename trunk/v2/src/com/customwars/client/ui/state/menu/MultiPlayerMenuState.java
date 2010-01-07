@@ -40,12 +40,12 @@ public class MultiPlayerMenuState extends CWState implements ComponentListener {
     mainMenu.setAcceptingInput(false);
     mainMenu.init();
     Point center = GUI.getCenteredRenderPoint(mainMenu.getSize(), container);
-    mainMenu.setLocation(center.x + 30, center.y - 60);
+    mainMenu.setLocation(center.x + 45, center.y - 60);
   }
 
   @Override
   public void render(GameContainer container, Graphics g) throws SlickException {
-    g.drawImage(resources.getSlickImg("light_menu_background"), 0, 0);
+    g.drawImage(resources.getSlickImg("dark_menu_background"), 0, 0);
     mainMenu.render(container, g);
 
     g.setColor(Color.lightGray);

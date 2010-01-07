@@ -2,10 +2,13 @@ package com.customwars.client;
 
 import com.customwars.client.tools.Args;
 import com.customwars.client.tools.ColorUtil;
+import org.apache.log4j.Logger;
 
 import java.awt.Color;
 import java.util.Properties;
 import java.util.ResourceBundle;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Handles Application wide settings by Wrapping System properties functions like
@@ -24,6 +27,8 @@ import java.util.ResourceBundle;
  * @author stefan
  */
 public class App {
+  private static final Logger logger = Logger.getLogger(App.class);
+  private static final ExecutorService exec = Executors.newFixedThreadPool(2);
   private static final Properties properties = new Properties();
   private static ResourceBundle localeResourceBundle;
   private static GAME_MODE gameMode = GAME_MODE.SINGLE_PLAYER;
@@ -127,6 +132,10 @@ public class App {
     return localeResourceBundle.getString(msg);
   }
 
+  public static void execute(Runnable runnable) {
+    exec.execute(runnable);
+  }
+
   /**
    * Put all the key-value pairs from the given properties into this properties
    * including default values. Duplicate keys are overwritten.
@@ -165,6 +174,7 @@ public class App {
 
   public static void changeGameMode(GAME_MODE newGameMode) {
     gameMode = newGameMode;
+    logger.debug("Entering " + newGameMode + " mode");
   }
 
   public static GAME_MODE getGameMode() {

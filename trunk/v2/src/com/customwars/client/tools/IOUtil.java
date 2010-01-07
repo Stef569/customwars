@@ -6,10 +6,12 @@ import javax.imageio.stream.ImageInputStream;
 import java.io.BufferedReader;
 import java.io.Closeable;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -147,6 +149,27 @@ public final class IOUtil {
     FileOutputStream out = new FileOutputStream(location);
     properties.store(out, comments);
     closeStream(out);
+  }
+
+  public static void copy(File input, File output) throws IOException {
+    copy(new FileInputStream(input), output);
+  }
+
+  public static void copy(InputStream i, File output) throws IOException {
+    copy(i, new FileOutputStream(output));
+  }
+
+  public static void copy(InputStream i, OutputStream o) throws IOException {
+    byte[] buf = new byte[4096];
+
+    int len;
+
+    while ((len = i.read(buf)) >= 0) {
+      o.write(buf, 0, len);
+    }
+
+    i.close();
+    o.close();
   }
 
   /**

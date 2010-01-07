@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--Created with Theodore 3.0 (#7)  AP Edition
+Licensed Carlsbad Cubes - Wolf Paulus-->
+<!--Theodore, XUL Editor for Thinlet-->
+<!--(c) 2002-2009 Carlsbad Cubes, http://www.carlsbadcubes.com-->
+<panel name="container" init="init(page)" columns="1" top="10" left="10" bottom="10" right="10" border="true">
+    <panel name="centerPanel" weightx="1" weighty="1" halign="center" valign="center" columns="2" top="10" left="10"
+           bottom="10" right="10" gap="20">
+        <panel gap="20">
+            <label tooltip="The name shown in the server list" text="Game Name"/>
+            <textfield name="server_game_name" weightx="1" halign="right"
+                       focuslost="gameNameFocusLost(server_game_name)"/>
+        </panel>
+        <panel gap="20">
+            <label tooltip="your name, used to login to the game" text="User name"/>
+            <textfield name="user_name" weightx="1" halign="right"/>
+        </panel>
+        <panel gap="20">
+            <label tooltip="The game password " text="Game password"/>
+            <textfield name="server_game_password"/>
+        </panel>
+        <panel gap="20">
+            <label tooltip="Your password" text="User password"/>
+            <textfield name="user_password" weightx="1" halign="right"/>
+        </panel>
+        <panel top="20" gap="20">
+            <label text="Map"/>
+            <button tooltip="goto the map select screen" weightx="1" halign="right" text="Select a map"
+                    action="gotoMapSelectState"/>
+        </panel>
+        <panel top="20">
+            <label name="selected_map" weightx="1" halign="center" text="        no map selected        "/>
+        </panel>
+        <panel gap="20">
+            <label tooltip="Select a side" text="Side"/>
+            <combobox name="side" weightx="1" halign="right" text="1" editable="false"/>
+        </panel>
+        <panel gap="20">
+            <label tooltip="Info to be shown in the server list" valign="top" text="Game info"/>
+            <textarea name="server_game_info" weightx="1" halign="right" columns="15"/>
+        </panel>
+    </panel>
+    <panel name="btnPanel" valign="bottom" weighty="1">
+        <button text="Back" action="back()"/>
+        <button weightx="1" halign="right" text="Create Server Game" action="createServerGame"/>
+    </panel>
+</panel>
+
