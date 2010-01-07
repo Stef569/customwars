@@ -61,11 +61,11 @@ public class GameTest {
     buildHardCodedMap(2);
     Player p1 = new Player(0, Color.RED, "Stef", P1_START_BUDGET, 0, false);
     Player p2 = new Player(1, Color.BLACK, "JSR", P2_START_BUDGET, 5, false);
-    GameConfig gc = new GameConfig();
-    gc.setCityFunds(CITY_FUNDS);
+    GameRules gameRules = new GameRules();
+    gameRules.setCityFunds(CITY_FUNDS);
 
     // p1 is starting the game
-    startGame(p1, gc, p1, p2);
+    startGame(p1, gameRules, p1, p2);
 
     // Game is now started
     Assert.assertTrue(game.isStarted());
@@ -96,7 +96,7 @@ public class GameTest {
     buildHardCodedMap(2);
     Player p1 = new Player(0, Color.RED, "Stef", 0, 0, false);
     Player p2 = new Player(1, Color.BLACK, "JSR", 0, 1, false);
-    startGame(new GameConfig(), p1, p2);
+    startGame(new GameRules(), p1, p2);
 
     game.endTurn(p2);
   }
@@ -111,9 +111,9 @@ public class GameTest {
     Player p2 = new Player(1, Color.RED, "JSR", 0, 0, false);
     Player p3 = new Player(2, Color.RED, "Ben", 0, 0, false);
     Player p4 = new Player(3, Color.BLACK, "Joop", 0, 5, false);
-    GameConfig gc = new GameConfig();
-    gc.setDayLimit(2);
-    startGame(gc, p1, p1, p2, p3, p4);
+    GameRules gameRules = new GameRules();
+    gameRules.setDayLimit(2);
+    startGame(gameRules, p1, p1, p2, p3, p4);
 
     game.endTurn();  // p1
     game.endTurn();  // p2
@@ -140,7 +140,7 @@ public class GameTest {
     Player p2 = new Player(1, Color.GREEN, "Jan", 0, 0, false);
     Player p3 = new Player(2, Color.BLUE, "JSR", 0, 0, false);
     Player p4 = new Player(3, Color.BLACK, "Joop", 0, 1, false);
-    startGame(new GameConfig(), p1, p2, p3, p4);
+    startGame(new GameRules(), p1, p2, p3, p4);
 
     for (int counter = 0; counter < END_TURN_ITERATIONS; counter++) {
       game.endTurn();
@@ -158,7 +158,7 @@ public class GameTest {
     Player p3 = new Player(2, Color.RED, "Jsr", 0, 0, false);
     Player p4 = new Player(3, Color.BLACK, "Joop", 0, 5, false);
     Player p5 = new Player(4, Color.YELLOW, "Kembo", 0, 4, false);
-    startGame(new GameConfig(), p3, p3, p1, p2, p4, p5);
+    startGame(new GameRules(), p3, p3, p1, p2, p4, p5);
   }
 
   @Test
@@ -168,7 +168,7 @@ public class GameTest {
     Player p2 = new Player(1, Color.BLUE, "Jan", 0, 0, false);
     Player p3 = new Player(2, Color.YELLOW, "JSR", 0, 0, false);
     Player p4 = new Player(3, Color.BLACK, "Kembo", 0, 0, false);
-    startGame(new GameConfig(), p1, p2, p3, p4);
+    startGame(new GameRules(), p1, p2, p3, p4);
 
     // Give p2 a unit
     Unit inf2 = UnitFactory.getUnit(TestData.INF);
@@ -202,7 +202,7 @@ public class GameTest {
     Player p2 = new Player(1, Color.BLUE, "JSR", 8500, 1, false);
     Player p3 = new Player(2, Color.GREEN, "Ben", 500, 2, false);
     Player p4 = new Player(3, Color.BLACK, "Joop", 1000, 2, false);
-    startGame(new GameConfig(), p1, p2, p3, p4);
+    startGame(new GameRules(), p1, p2, p3, p4);
 
     // p1 builds up his army
     Unit inf1 = UnitFactory.getUnit(TestData.INF);
@@ -235,7 +235,7 @@ public class GameTest {
 
     Player p1 = new Player(0, Color.RED, "p1", 50, 1, false);
     Player p2 = new Player(1, Color.BLUE, "p2", 50, 2, false);
-    startGame(new GameConfig(), p1, p2);
+    startGame(new GameRules(), p1, p2);
 
     // p1 builds up his army
     Unit inf1 = UnitFactory.getUnit(TestData.INF);
@@ -292,7 +292,7 @@ public class GameTest {
     Player p3 = new Player(2, Color.WHITE, "Jsr", 0, 0, false);
     Player p4 = new Player(3, Color.BLACK, "Joop", 0, 5, false);
     Player p5 = new Player(4, Color.YELLOW, "Kembo", 0, 3, false);
-    startGame(new GameConfig(), p1, p2, p3, p4, p5);
+    startGame(new GameRules(), p1, p2, p3, p4, p5);
 
     // Only player1 has active units
     checkUnitState(p1.getArmy(), GameObjectState.ACTIVE);
@@ -327,12 +327,12 @@ public class GameTest {
   /**
    * Start a game with the first player as game starter
    */
-  private void startGame(GameConfig gc, Player... players) {
-    startGame(players[0], gc, players);
+  private void startGame(GameRules gameRules, Player... players) {
+    startGame(players[0], gameRules, players);
   }
 
-  private void startGame(Player gameStarter, GameConfig gc, Player... players) {
-    game = new Game(map, Arrays.asList(players), gc);
+  private void startGame(Player gameStarter, GameRules gameRules, Player... players) {
+    game = new Game(map, Arrays.asList(players), gameRules);
     game.startGame(gameStarter);
   }
 
