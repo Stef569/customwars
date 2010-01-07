@@ -3,7 +3,7 @@ package slick;
 import com.customwars.client.App;
 import com.customwars.client.model.TestData;
 import com.customwars.client.model.game.Game;
-import com.customwars.client.model.game.GameConfig;
+import com.customwars.client.model.game.GameRules;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.game.Turn;
 import com.customwars.client.model.gameobject.City;
@@ -33,11 +33,11 @@ public class HardCodedGame {
     Player p_BLUE = new Player(1, Color.BLUE, "JSR", 35500, 1, false);
     Player p_GREEN = new Player(2, Color.GREEN, "Kiwi", 25000, 2, false);
     List<Player> players = Arrays.asList(p_RED, p_BLUE, p_GREEN);
-    GameConfig gc = new GameConfig();
-    gc.setDayLimit(Turn.UNLIMITED);
-    gc.setCityFunds(1000);
+    GameRules gameRules = new GameRules();
+    gameRules.setDayLimit(Turn.UNLIMITED);
+    gameRules.setCityFunds(1000);
 
-    return new Game(getMap(), players, gc);
+    return new Game(getMap(), players, gameRules);
   }
 
   public static Map<Tile> getMap() {

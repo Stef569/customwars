@@ -1,7 +1,7 @@
 package com.customwars.client.network;
 
 import com.customwars.client.model.game.Game;
-import com.customwars.client.model.game.GameConfig;
+import com.customwars.client.model.game.GameRules;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
@@ -100,7 +100,7 @@ public class Cw1NetworkManager implements NetworkManager {
     }
 
     // todo default game config?
-    return new Game(map, gamePlayers, new GameConfig());
+    return new Game(map, gamePlayers, new GameRules());
   }
 
   public void endTurn(Game game, String serverGameName, String userName, String userPassword) throws NetworkException {
