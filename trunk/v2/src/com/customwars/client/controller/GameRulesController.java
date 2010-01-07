@@ -1,7 +1,7 @@
 package com.customwars.client.controller;
 
 import com.customwars.client.model.game.Game;
-import com.customwars.client.model.game.GameConfig;
+import com.customwars.client.model.game.GameRules;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
@@ -21,13 +21,13 @@ import java.util.List;
 public class GameRulesController {
   private final StateSession stateSession;
   private final StateChanger stateChanger;
-  private final GameConfig gameConfig;
+  private final GameRules gameRules;
   private Page page;
 
   public GameRulesController(StateChanger stateChanger, StateSession stateSession) {
     this.stateChanger = stateChanger;
     this.stateSession = stateSession;
-    this.gameConfig = new GameConfig();
+    this.gameRules = new GameRules();
   }
 
   public void init(Page page) {
@@ -39,31 +39,31 @@ public class GameRulesController {
    * and show them as the selected value of the cbo
    */
   public void initValues() {
-    page.getWidget("fog").setText(gameConfig.isFogOfWarOn() ? "True" : "False");
-    page.getWidget("day_limit").setText(gameConfig.getDayLimit() + "");
-    page.getWidget("funds").setText(gameConfig.getCityFunds() + "");
-    page.getWidget("income").setText(gameConfig.getPlayerBudgetStart() + "");
+    page.getWidget("fog").setText(gameRules.isFogOfWarOn() ? "True" : "False");
+    page.getWidget("day_limit").setText(gameRules.getDayLimit() + "");
+    page.getWidget("funds").setText(gameRules.getCityFunds() + "");
+    page.getWidget("income").setText(gameRules.getPlayerBudgetStart() + "");
   }
 
   public void fundsChange(String newValue) {
     int newFunds = Integer.parseInt(newValue);
-    gameConfig.setCityFunds(newFunds);
+    gameRules.setCityFunds(newFunds);
   }
 
   public void incomeChange(String newValue) {
     int startBudget = Integer.parseInt(newValue);
-    gameConfig.setPlayerBudgetStart(startBudget);
+    gameRules.setPlayerBudgetStart(startBudget);
   }
 
   public void fogChange(Widget fogCbo) {
     String selectedText = fogCbo.getChild(fogCbo.getSelectedIndex()).getText();
     boolean fogON = Boolean.valueOf(selectedText);
-    gameConfig.setFogOfWar(fogON);
+    gameRules.setFogOfWar(fogON);
   }
 
   public void dayLimitChange(String newValue) {
     int dayLimit = Integer.parseInt(newValue);
-    gameConfig.setDayLimit(dayLimit);
+    gameRules.setDayLimit(dayLimit);
   }
 
   public void back() {
@@ -73,7 +73,7 @@ public class GameRulesController {
   public void continueToNextState() {
     Map<Tile> map = stateSession.map;
     List<Player> players = buildGamePlayers(map);
-    stateSession.game = new Game(map, players, gameConfig);
+    stateSession.game = new Game(map, players, gameRules);
     stateChanger.changeTo("IN_GAME");
   }
 
@@ -87,7 +87,7 @@ public class GameRulesController {
       int id = mapPlayer.getId();
       Color color = mapPlayer.getColor();
       String colorName = ColorUtil.toString(color);
-      int startBudget = gameConfig.getPlayerBudgetStart();
+      int startBudget = gameRules.getPlayerBudgetStart();
       Player gamePlayer = new Player(id, color, colorName, startBudget, team++, false);
 
       if (mapPlayer.getHq() != null) {
