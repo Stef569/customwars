@@ -1,5 +1,6 @@
 package com.customwars.client.controller;
 
+import com.customwars.client.App;
 import com.customwars.client.io.ResourceManager;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
@@ -74,7 +75,14 @@ public class MapSelectController {
 
   public void continueToNextState() {
     stateSession.map = getCurrentSelectedMap();
-    stateChanger.changeTo("GAME_RULES");
+
+    // In SP Mode continue to the rules State
+    // In MP mode we just selected a map, return to the previous state
+    if (App.isSinglePlayerGame()) {
+      stateChanger.changeTo("GAME_RULES");
+    } else {
+      stateChanger.changeToPrevious();
+    }
   }
 
   public void back() {

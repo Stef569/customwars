@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--Created with Theodore 3.0 (#7)  AP Edition
+Licensed Carlsbad Cubes - Wolf Paulus-->
+<!--Theodore, XUL Editor for Thinlet-->
+<!--(c) 2002-2009 Carlsbad Cubes, http://www.carlsbadcubes.com-->
+<panel name="container" init="init(page)" columns="1" top="10" left="10" right="10" bottom="10" border="true">
+    <panel colspan="2" weightx="1" gap="10">
+        <label text="Game"/>
+        <label name="game" weightx="1" text=" - "/>
+    </panel>
+    <panel weightx="1" columns="2" gap="10">
+        <label text="Days"/>
+        <label name="days" weightx="1" text=" - "/>
+    </panel>
+    <tabbedpane name="tab" width="400" height="300" weightx="1">
+        <tab name="chat_log" text="Chat">
+            <list weightx="1" weighty="1"/>
+        </tab>
+        <tab name="game_log" text="Game Log">
+            <list width="400" weightx="1" weighty="1"/>
+        </tab>
+    </tabbedpane>
+    <panel weightx="1" columns="2" top="1" gap="3">
+        <textfield name="txt_chat" weightx="1"/>
+        <button name="btn_add_chat_text" text="Add" action="addChatMessage(txt_chat.text)"/>
+    </panel>
+    <panel colspan="2" weightx="1" gap="10">
+        <label text="Login"/>
+        <label name="login" weightx="1" text=" - "/>
+    </panel>
+    <panel weightx="1" columns="2" bottom="10" gap="10">
+        <label text="Players"/>
+        <label name="players" weightx="1" text=" - "/>
+    </panel>
+    <panel name="btnPanel" weighty="1" valign="bottom" gap="10">
+        <button text="Refresh" action="refreshInfo"/>
+        <button weightx="1" halign="right" text="Play" action="play"/>
+    </panel>
+</panel>
+

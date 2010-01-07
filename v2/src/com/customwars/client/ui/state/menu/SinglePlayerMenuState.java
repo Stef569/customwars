@@ -89,6 +89,8 @@ public class SinglePlayerMenuState extends CWState implements ComponentListener 
         changeToState("MAP_SELECT");
         break;
       case 1:
+        // Clear stored user data(map, co, ...) from session when going to previous state
+        stateSession.clear();
         changeToPreviousState();
         break;
     }

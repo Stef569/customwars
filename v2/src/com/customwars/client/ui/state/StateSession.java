@@ -4,6 +4,7 @@ import com.customwars.client.model.Statistics;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
+import com.customwars.client.network.User;
 
 /**
  * Allows to pass data between states
@@ -15,9 +16,14 @@ public class StateSession {
   public Map<Tile> map;
   public Statistics stats;
 
+  // Network
+  public String serverGameName;
+  public User user;
+
   public void clear() {
     game = null;
     map = null;
     stats = null;
+    serverGameName = "";
   }
 }

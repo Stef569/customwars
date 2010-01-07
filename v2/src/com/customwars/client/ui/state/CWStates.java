@@ -12,6 +12,10 @@ import com.customwars.client.ui.state.menu.GameOptionsMenuState;
 import com.customwars.client.ui.state.menu.MainMenuState;
 import com.customwars.client.ui.state.menu.MultiPlayerMenuState;
 import com.customwars.client.ui.state.menu.SinglePlayerMenuState;
+import com.customwars.client.ui.state.multiplayer.ServerGameCreateState;
+import com.customwars.client.ui.state.multiplayer.ServerGameJoinState;
+import com.customwars.client.ui.state.multiplayer.ServerGameLoginState;
+import com.customwars.client.ui.state.multiplayer.ServerGameRoomState;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
@@ -47,6 +51,10 @@ public class CWStates extends CWStateBasedGame {
     addState("IN_GAME", new InGameState());
     addState("END_TURN", new EndTurnState());
     addState("GAME_OVER", new GameOverState());
+    addState("CREATE_SERVER_GAME", new ServerGameCreateState());
+    addState("JOIN_SERVER_GAME", new ServerGameJoinState());
+    addState("LOGIN_SERVER_GAME", new ServerGameLoginState());
+    addState("SERVER_GAME_ROOM", new ServerGameRoomState());
   }
 
   protected void handleGlobalInput(CWCommand command) {
