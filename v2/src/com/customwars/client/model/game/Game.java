@@ -31,16 +31,16 @@ public class Game extends TurnBasedGame implements PropertyChangeListener {
 
   private Unit activeUnit;        // There can only be one active unit in a game at any time
 
-  public Game(Map<Tile> map, List<Player> players, GameConfig gameConfig) {
-    super(map, players, gameConfig.getDayLimit());
-    applyGameConfig(gameConfig);
+  public Game(Map<Tile> map, List<Player> players, GameRules gameRules) {
+    super(map, players, gameRules.getDayLimit());
+    applyGameConfig(gameRules);
     init();
   }
 
-  private void applyGameConfig(GameConfig gameConfig) {
-    this.weather = gameConfig.getStartWeather();
-    this.cityFunds = gameConfig.getCityFunds();
-    this.map.setFogOfWarOn(gameConfig.isFogOfWarOn());
+  private void applyGameConfig(GameRules gameRules) {
+    this.weather = gameRules.getStartWeather();
+    this.cityFunds = gameRules.getCityFunds();
+    this.map.setFogOfWarOn(gameRules.isFogOfWarOn());
   }
 
   /**
