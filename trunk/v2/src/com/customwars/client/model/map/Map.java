@@ -4,6 +4,7 @@ import com.customwars.client.App;
 import com.customwars.client.model.ArmyBranch;
 import com.customwars.client.model.TurnHandler;
 import com.customwars.client.model.fight.Attacker;
+import com.customwars.client.model.game.GameRules;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.GameObjectState;
@@ -35,8 +36,8 @@ import java.util.Set;
  *
  * At each start of a turn the map is reset see {@link #resetMap(Player)}
  *
- * Players in a map are called 'map player'
- * name and funds are unknown they are used to link units and cities to a player.
+ * Players in a map are called 'map players'
+ * name and funds unknown they are used to link units and cities to a player.
  * They hold the units, cities, hq location, the default color and the player ID.
  *
  * @author stefan
@@ -47,6 +48,7 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
   private boolean fogOfWarOn;       // Is fog of war in effect
   private transient PathFinder pathFinder;        // To builds paths within the map
   private Player neutralPlayer;     // Idle neutral player owner of the neutral cities
+  private GameRules defaultRules;   // The default game rules as chosen by the map creator
 
   /**
    * Create an anonymous map
@@ -73,6 +75,7 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
     this.description = description;
     this.pathFinder = new PathFinder(this);
     this.neutralPlayer = Player.createNeutralPlayer(App.getColor("plugin.neutral_color"));
+    this.defaultRules = new GameRules();
     fillMap(cols, rows, startTerrain);
   }
 
@@ -596,6 +599,10 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
     this.mapName = mapName;
   }
 
+  public void setDefaultRules(GameRules rules) {
+    this.defaultRules = rules;
+  }
+
   /**
    * @param location the location to retrieve a unit from
    * @return The last added unit from location
@@ -808,6 +815,13 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
     } else {
       return null;
     }
+  }
+
+  /**
+   * @return A copy of the default rules for this map
+   */
+  public GameRules getDefaultGameRules() {
+    return new GameRules(defaultRules);
   }
 
   private void readObject(ObjectInputStream in) throws ClassNotFoundException, IOException {

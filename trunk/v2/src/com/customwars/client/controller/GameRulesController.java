@@ -1,5 +1,6 @@
 package com.customwars.client.controller;
 
+import com.customwars.client.App;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.game.GameRules;
 import com.customwars.client.model.game.Player;
@@ -17,6 +18,8 @@ import java.util.List;
 
 /**
  * Handle input in the game rules state
+ *
+ * Pre: A map is set in the statesession
  */
 public class GameRulesController {
   private final StateSession stateSession;
@@ -35,7 +38,7 @@ public class GameRulesController {
   }
 
   /**
-   * This method will gather default values initialised in gameObject
+   * This method will gather the default game rule values initialised in the map
    * and show them as the selected value of the cbo
    */
   public void initValues() {
@@ -71,6 +74,14 @@ public class GameRulesController {
   }
 
   public void continueToNextState() {
+    if (App.isSinglePlayerGame()) {
+      startSinglePlayerGame();
+    } else {
+      returnToMultiPlayerState();
+    }
+  }
+
+  private void startSinglePlayerGame() {
     Map<Tile> map = stateSession.map;
     List<Player> players = buildGamePlayers(map);
     stateSession.game = new Game(map, players, gameRules);
@@ -96,5 +107,15 @@ public class GameRulesController {
       gamePlayers.add(gamePlayer);
     }
     return gamePlayers;
+  }
+
+  private void returnToMultiPlayerState() {
+    // Overwrite default game rules with user chosen rules
+    stateSession.map.setDefaultRules(gameRules);
+
+    // Return to the multiplayer state by
+    // going back 2 states (map select, game rules)
+    stateChanger.changeToPrevious();
+    stateChanger.changeToPrevious();
   }
 }
