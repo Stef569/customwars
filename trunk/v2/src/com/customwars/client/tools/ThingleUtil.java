@@ -8,6 +8,31 @@ import org.newdawn.slick.thingle.Widget;
  */
 public class ThingleUtil {
 
+  /**
+   * Select the child of a combobox with the given text. The cboChildName is entered in the cbo.
+   *
+   * If the cboChildName is a choice in the cbo then the selected index is updated
+   * to the index of the cboChildName.
+   *
+   * If the cboChildName is not a choice in the cbo then the
+   * selected index is put to -1(custom value)
+   *
+   * @param cbo          The combobox where we want to select a child from
+   * @param cboChildName The name of the child that we want to select in the cbo
+   */
+  public static void selectChild(Widget cbo, String cboChildName) {
+    int selected = -1;
+    for (int childIndex = 0; childIndex < cbo.getChildrenCount(); childIndex++) {
+      Widget child = cbo.getChild(childIndex);
+      if (child.getText().equals(cboChildName)) {
+        selected = childIndex;
+      }
+    }
+
+    cbo.setText(cboChildName);
+    cbo.setInteger("selected", selected);
+  }
+
   public static void fillCboWithNumbers(Page page, String cboWidgetName, int start, int end, int increment) {
     Widget cboWidget = page.getWidget(cboWidgetName);
 
