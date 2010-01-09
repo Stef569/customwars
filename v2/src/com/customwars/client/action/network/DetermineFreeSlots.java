@@ -3,6 +3,7 @@ package com.customwars.client.action.network;
 import com.customwars.client.network.NetworkException;
 import com.customwars.client.network.NetworkManager;
 import com.customwars.client.network.ServerGameInfo;
+import com.customwars.client.tools.ThingleUtil;
 import com.customwars.client.ui.GUI;
 import org.newdawn.slick.thingle.Page;
 import org.newdawn.slick.thingle.Widget;
@@ -47,10 +48,12 @@ public class DetermineFreeSlots implements Runnable {
 
       if (hasSideComboBox) {
         fillSideCBO(info);
+        selectFirstAvailableSide(info);
         cboSide.setBoolean("enabled", true);
       }
       if (hasUserNameComboBox) {
         fillUserNameCBO(info);
+        selectFirstNonEmptyUserName(info);
         cboUserName.setBoolean("enabled", true);
       }
     } catch (NetworkException e) {
@@ -71,6 +74,23 @@ public class DetermineFreeSlots implements Runnable {
     }
   }
 
+  private void selectFirstNonEmptyUserName(ServerGameInfo info) {
+    for (String userName : info.getUserNames()) {
+      // If the current username is present in the list select it
+      if (cboUserName.getText().equals(userName)) {
+        ThingleUtil.selectChild(cboSide, userName);
+        return;
+      }
+    }
+
+    for (String userName : info.getUserNames()) {
+      if (!userName.equalsIgnoreCase("empty")) {
+        ThingleUtil.selectChild(cboUserName, userName);
+        break;
+      }
+    }
+  }
+
   private void fillSideCBO(ServerGameInfo info) {
     cboSide.removeChildren();
 
@@ -82,9 +102,33 @@ public class DetermineFreeSlots implements Runnable {
       cboSide.add(choice);
 
       if (userName.equalsIgnoreCase("empty")) {
-        choice.setBoolean("enabled", true);
-      } else {
         choice.setBoolean("enabled", false);
+      } else {
+        choice.setBoolean("enabled", true);
+      }
+    }
+  }
+
+  private void selectFirstAvailableSide(ServerGameInfo info) {
+    String[] userNames = info.getUserNames();
+    for (int userNameIndex = 0; userNameIndex < userNames.length; userNameIndex++) {
+      int slot = userNameIndex + 1;
+
+      // If the current slot number is present in the list select it
+      if (cboSide.getText().equals(slot + "")) {
+        ThingleUtil.selectChild(cboSide, slot + "");
+        return;
+      }
+    }
+
+    for (int userNameIndex = 0; userNameIndex < userNames.length; userNameIndex++) {
+      String userName = userNames[userNameIndex];
+      int slot = userNameIndex + 1;
+
+      // Select the first non empty slot
+      if (!userName.equalsIgnoreCase("empty")) {
+        ThingleUtil.selectChild(cboSide, slot + "");
+        break;
       }
     }
   }

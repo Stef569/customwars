@@ -7,6 +7,7 @@ import com.customwars.client.model.game.Player;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.tools.ColorUtil;
+import com.customwars.client.tools.ThingleUtil;
 import com.customwars.client.ui.state.StateChanger;
 import com.customwars.client.ui.state.StateSession;
 import org.newdawn.slick.thingle.Page;
@@ -42,10 +43,10 @@ public class GameRulesController {
    * and show them as the selected value of the cbo
    */
   public void initValues() {
-    page.getWidget("fog").setText(gameRules.isFogOfWarOn() ? "True" : "False");
-    page.getWidget("day_limit").setText(gameRules.getDayLimit() + "");
-    page.getWidget("funds").setText(gameRules.getCityFunds() + "");
-    page.getWidget("income").setText(gameRules.getPlayerBudgetStart() + "");
+    ThingleUtil.selectChild(page.getWidget("fog"), gameRules.isFogOfWarOn() ? "True" : "False");
+    ThingleUtil.selectChild(page.getWidget("day_limit"), gameRules.getDayLimit() + "");
+    ThingleUtil.selectChild(page.getWidget("funds"), gameRules.getCityFunds() + "");
+    ThingleUtil.selectChild(page.getWidget("income"), gameRules.getPlayerBudgetStart() + "");
   }
 
   public void fundsChange(String newValue) {
