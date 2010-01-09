@@ -1,6 +1,7 @@
 package com.customwars.client.io.loading.map;
 
 import com.customwars.client.App;
+import com.customwars.client.model.game.GameRules;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.CityFactory;
@@ -64,6 +65,13 @@ import java.util.HashMap;
  * <PLAYER_RGB> int
  * <PLAYER_HQ_COL> int
  * <PLAYER_HQ_ROW> int
+ *
+ * RULES:
+ * <startWeather> int
+ * <cityFunds> int
+ * <dayLimit> int
+ * <playerBudgetStart> int
+ * <fogOfWar> boolean
  *
  * MAP DATA:
  * <TILE COL> int
@@ -137,6 +145,7 @@ public class BinaryCW2MapParser implements MapParser {
 
     private Map<Tile> readMap() throws IOException {
       Map<Tile> map = readHeader();
+      map.setDefaultRules(readGameRules());
       return readMapData(map);
     }
 
@@ -188,6 +197,15 @@ public class BinaryCW2MapParser implements MapParser {
       } else {
         players.put(player.getId(), player);
       }
+    }
+
+    private GameRules readGameRules() throws IOException {
+      int weatherStart = in.readInt();
+      int cityFunds = in.readInt();
+      int dayLimit = in.readInt();
+      int playerBudgetStart = in.readInt();
+      boolean fogOfWar = in.readBoolean();
+      return new GameRules(weatherStart, fogOfWar, dayLimit, cityFunds, playerBudgetStart);
     }
 
     private Map<Tile> readMapData(Map<Tile> map) throws IOException {
@@ -352,6 +370,7 @@ public class BinaryCW2MapParser implements MapParser {
 
     private void writeMap() throws IOException {
       writeHeader();
+      writeGameRules();
       writeMapData();
     }
 
@@ -367,6 +386,15 @@ public class BinaryCW2MapParser implements MapParser {
       writeTxt(out, map.getMapName());
       writeTxt(out, map.getAuthor());
       writeTxt(out, map.getDescription());
+    }
+
+    private void writeGameRules() throws IOException {
+      GameRules rules = map.getDefaultGameRules();
+      out.writeInt(rules.getStartWeather());
+      out.writeInt(rules.getCityFunds());
+      out.writeInt(rules.getDayLimit());
+      out.writeInt(rules.getPlayerBudgetStart());
+      out.writeBoolean(rules.isFogOfWarOn());
     }
 
     /**
