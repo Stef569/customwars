@@ -1,6 +1,7 @@
 package com.customwars.client.io;
 
 import com.customwars.client.io.img.AnimLib;
+import com.customwars.client.io.img.CWAnimLib;
 import com.customwars.client.io.img.ImageLib;
 import com.customwars.client.io.img.slick.CWImageLib;
 import com.customwars.client.io.img.slick.ImageStrip;
@@ -47,6 +48,7 @@ public class ResourceManager {
   private final ImageLib imageLib;
   private final CWImageLib cwImageLib;
   private final AnimLib animLib;
+  private final CWAnimLib cwAnimLib;
   private int darkPercentage;
 
   private final java.util.Map<String, Sound> sounds = new UCaseMap<Sound>();
@@ -60,6 +62,7 @@ public class ResourceManager {
     this.imageLib = new ImageLib();
     this.cwImageLib = new CWImageLib(imageLib);
     this.animLib = new AnimLib();
+    this.cwAnimLib = new CWAnimLib(animLib);
     MapParser mapParser = new BinaryCW2MapParser();
     this.mapManager = new MapManager(mapParser);
     this.resourceLoader = new ResourcesLoader(imageLib, animLib, this, mapParser);
@@ -192,16 +195,20 @@ public class ResourceManager {
     return animLib.getAnim(animName);
   }
 
-  public Animation getCityAnim(int cityID, Color color) {
-    return getCityAnim(cityID, color, "");
+  public Animation getCityAnim(City city, Color color) {
+    return cwAnimLib.getCityAnim(city, color);
   }
 
-  public Animation getCityAnim(int cityID, Color color, String suffix) {
-    return animLib.getCityAnim(cityID, color, suffix);
+  public Animation getFoggedCityAnim(City city, Color color) {
+    return cwAnimLib.getFoggedCityAnim(city, color);
   }
 
-  public Animation getUnitAnim(Unit unit, Color color, String suffix) {
-    return animLib.getUnitAnim(unit.getStats().getImgRowID(), color, suffix);
+  public Animation getUnitAnim(Unit unit, Color color, Direction direction) {
+    return cwAnimLib.getUnitAnim(unit, color, direction);
+  }
+
+  public Animation getInactiveUnitAnim(Unit unit, Color color) {
+    return cwAnimLib.getInactiveUnitAnim(unit, color);
   }
 
   public Collection<Animation> getAllAnims() {

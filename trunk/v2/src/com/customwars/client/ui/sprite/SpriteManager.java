@@ -2,13 +2,13 @@ package com.customwars.client.ui.sprite;
 
 import com.customwars.client.App;
 import com.customwars.client.io.ResourceManager;
-import com.customwars.client.io.img.AnimLib;
 import com.customwars.client.io.img.slick.ImageStrip;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Locatable;
 import com.customwars.client.model.gameobject.Terrain;
 import com.customwars.client.model.gameobject.Unit;
+import com.customwars.client.model.map.Direction;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.model.map.TileMap;
@@ -227,11 +227,11 @@ public class SpriteManager implements PropertyChangeListener {
   }
 
   private void recolorUnitSprite(UnitSprite sprite, Color color, Unit unit) {
-    Animation animLeft = resources.getUnitAnim(unit, color, AnimLib.ANIM_LEFT);
-    Animation animRight = resources.getUnitAnim(unit, color, AnimLib.ANIM_RIGHT);
-    Animation animUp = resources.getUnitAnim(unit, color, AnimLib.ANIM_UP);
-    Animation animDown = resources.getUnitAnim(unit, color, AnimLib.ANIM_DOWN);
-    Animation animInactive = resources.getUnitAnim(unit, color, AnimLib.ANIM_INACTIVE);
+    Animation animLeft = resources.getUnitAnim(unit, color, Direction.WEST);
+    Animation animRight = resources.getUnitAnim(unit, color, Direction.EAST);
+    Animation animUp = resources.getUnitAnim(unit, color, Direction.NORTH);
+    Animation animDown = resources.getUnitAnim(unit, color, Direction.SOUTH);
+    Animation animInactive = resources.getInactiveUnitAnim(unit, color);
     sprite.setAnimLeft(animLeft);
     sprite.setAnimRight(animRight);
     sprite.setAnimUp(animUp);
@@ -305,7 +305,7 @@ public class SpriteManager implements PropertyChangeListener {
       Image[] images = new Image[]{lastImg};
       return new Animation(images, 1);
     }
-    return resources.getCityAnim(city.getID(), color);
+    return resources.getCityAnim(city, color);
   }
 
   /**
@@ -317,7 +317,7 @@ public class SpriteManager implements PropertyChangeListener {
       color = NEUTRAL_COLOR;
     }
 
-    return resources.getCityAnim(city.getID(), color, AnimLib.ANIM_FOGGED);
+    return resources.getFoggedCityAnim(city, color);
   }
 
   private void addCitySprite(City city, CitySprite citySprite) {
