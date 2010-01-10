@@ -62,9 +62,10 @@ public class AnimLib {
   //----------------------------------------------------------------------------
   // City Animation
   //----------------------------------------------------------------------------
+
   public void createCityAnimations(Color baseColor, Color color, ResourceManager resources) {
-    SpriteSheet citySpriteSheet = resources.getSlickSpriteSheet("city", color);
-    SpriteSheet darkerCitySpriteSheet = resources.getSlickSpriteSheet("city", color, "darker");
+    SpriteSheet citySpriteSheet = resources.getCitySpriteSheet(color);
+    SpriteSheet darkerCitySpriteSheet = resources.getShadedCitySpriteSheet(color);
     boolean cityAnimationsOn = App.getBoolean("display.city.animate");
 
     // Read frame count and durations from the base animations
@@ -98,7 +99,7 @@ public class AnimLib {
     return getAnim(cityAnimName);
   }
 
-  private String createCityAnimName(int cityID, Color color, String suffix) {
+  private static String createCityAnimName(int cityID, Color color, String suffix) {
     String colorName = ColorUtil.toString(color);
     return StringUtil.hasContent(suffix) ?
       "city_" + cityID + "_" + colorName + "_" + suffix :
@@ -108,6 +109,7 @@ public class AnimLib {
   //----------------------------------------------------------------------------
   // Unit Animation
   //----------------------------------------------------------------------------
+
   /**
    * Retrieve images from each row of the unitSpriteSheet and create animations out of them.
    *
@@ -116,8 +118,8 @@ public class AnimLib {
    * @param resources The resources Manager containing the unit SpriteSheets
    */
   public void createUnitAnimations(Color baseColor, Color color, ResourceManager resources) {
-    SpriteSheet unitSpriteSheet = resources.getSlickSpriteSheet("unit", color);
-    SpriteSheet inactiveUnitSpriteSheet = resources.getSlickSpriteSheet("unit", color, "darker");
+    SpriteSheet unitSpriteSheet = resources.getUnitSpriteSheet(color);
+    SpriteSheet inactiveUnitSpriteSheet = resources.getShadedUnitSpriteSheet(color);
 
     // Read frame count and durations from the base animations
     Animation baseAnimLeft = getUnitBaseAnimation(baseColor, ANIM_LEFT);

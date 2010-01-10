@@ -17,7 +17,6 @@ import org.newdawn.slick.Animation;
 import org.newdawn.slick.Font;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
-import org.newdawn.slick.SpriteSheet;
 
 import java.awt.Color;
 import java.beans.PropertyChangeEvent;
@@ -44,6 +43,7 @@ import java.util.Set;
  */
 public class SpriteManager implements PropertyChangeListener {
   private static final Logger logger = Logger.getLogger(SpriteManager.class);
+  private static final Color NEUTRAL_COLOR = App.getColor("plugin.neutral_color");
   private final TileMap<Tile> map;
   private ResourceManager resources;
 
@@ -54,7 +54,6 @@ public class SpriteManager implements PropertyChangeListener {
   private ImageStrip unitDecorationStrip;
 
   private TileSprite activeCursor;
-  private Color neutralColor = App.getColor("plugin.neutral_color");
   private Font numbersFont;
   private boolean renderSprites = true;
 
@@ -259,7 +258,7 @@ public class SpriteManager implements PropertyChangeListener {
   private void loadCitySprite(City city) {
     Color cityColor = city.getOwner().getColor();
     CitySprite sprite = createCitySprite(city);
-    recolorCitySprite(city, sprite, cityColor, city.getID());
+    recolorCitySprite(city, sprite, cityColor);
     sprite.setUpdateAnim(false);
     addCitySprite(city, sprite);
     sprite.addPropertyChangeListener(this);
@@ -280,21 +279,19 @@ public class SpriteManager implements PropertyChangeListener {
   /**
    * Launch platforms are always neutral and don't animate
    */
-  private void recolorCitySprite(City city, CitySprite sprite, Color color, int cityID) {
-    Animation animActive = getActiveCityAnim(city, color, cityID);
-    Animation animInActive = getInActiveCityAnim(city, cityID);
-    Animation animFogged = getFoggedCityAnim(city, city.isHQ(), color, cityID);
+  private void recolorCitySprite(City city, CitySprite sprite, Color color) {
+    Animation animActive = getActiveCityAnim(city, color);
+    Animation animInActive = getInActiveCityAnim(city);
+    Animation animFogged = getFoggedCityAnim(city, city.isHQ(), color);
     sprite.setAnimActive(animActive);
     sprite.setAnimInActive(animInActive);
     sprite.setAnimFogged(animFogged);
     sprite.updateAnim();
   }
 
-  private Animation getInActiveCityAnim(City city, int cityID) {
+  private Animation getInActiveCityAnim(City city) {
     if (city.canLaunchRocket()) {
-      // Grab the last Image of the missle silo image row in the city spritesheet.
-      SpriteSheet citySpriteSheet = resources.getCitySpriteSheet(neutralColor);
-      Image lastImg = citySpriteSheet.getSubImage(citySpriteSheet.getHorizontalCount() - 1, cityID);
+      Image lastImg = resources.getCityImage(city, 1, NEUTRAL_COLOR);
       Image[] images = new Image[]{lastImg};
       return new Animation(images, 1);
     } else {
@@ -302,33 +299,25 @@ public class SpriteManager implements PropertyChangeListener {
     }
   }
 
-  private Animation getActiveCityAnim(City city, Color color, int cityID) {
+  private Animation getActiveCityAnim(City city, Color color) {
     if (city.canLaunchRocket()) {
-      // Grab the first Image of the city silo image row in the city spritesheet.
-      SpriteSheet citySpriteSheet = resources.getCitySpriteSheet(neutralColor);
-      Image firstImg = citySpriteSheet.getSubImage(0, cityID);
-      Image[] images = new Image[]{firstImg};
+      Image lastImg = resources.getCityImage(city, 0, NEUTRAL_COLOR);
+      Image[] images = new Image[]{lastImg};
       return new Animation(images, 1);
     }
-    return resources.getCityAnim(cityID, color);
+    return resources.getCityAnim(city.getID(), color);
   }
 
   /**
    * The HQ owner color is always visible, even in fow
    * all other cities are neutral.
    */
-  private Animation getFoggedCityAnim(City city, boolean hq, Color color, int cityID) {
-    if (city.canLaunchRocket()) {
-      color = neutralColor;
+  private Animation getFoggedCityAnim(City city, boolean hq, Color color) {
+    if (hq || city.canLaunchRocket()) {
+      color = NEUTRAL_COLOR;
     }
 
-    Animation animFogged;
-    if (hq) {
-      animFogged = resources.getCityAnim(cityID, color, AnimLib.ANIM_FOGGED);
-    } else {
-      animFogged = resources.getCityAnim(cityID, neutralColor, AnimLib.ANIM_FOGGED);
-    }
-    return animFogged;
+    return resources.getCityAnim(city.getID(), color, AnimLib.ANIM_FOGGED);
   }
 
   private void addCitySprite(City city, CitySprite citySprite) {
@@ -453,7 +442,7 @@ public class SpriteManager implements PropertyChangeListener {
     if (!oldColor.equals(newColor)) {
       City city = (City) evt.getSource();
       CitySprite sprite = citySprites.get(city);
-      recolorCitySprite(city, sprite, newColor, city.getID());
+      recolorCitySprite(city, sprite, newColor);
     }
   }
 

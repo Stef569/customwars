@@ -10,7 +10,6 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.Font;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
-import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.thingle.Widget;
 import org.newdawn.slick.thingle.WidgetRenderer;
 import org.newdawn.slick.thingle.internal.Rectangle;
@@ -23,9 +22,11 @@ import java.awt.Dimension;
  * Render the amount of cities that a map contains
  */
 public class CityCountWidgetRenderer implements WidgetRenderer {
+  private static final java.awt.Color NEUTRAL_COLOR = App.getColor("plugin.neutral_color");
   private static final Color BACKGROUND_COLOR = new Color(7, 66, 97);
   private static final int HORIZONTAL_MARGIN = 10;
   private static final int BACKGROUND_MARGIN = 8;
+  private final ResourceManager resources;
 
   private Map<Tile> map;
   private int tileSize;
@@ -33,11 +34,10 @@ public class CityCountWidgetRenderer implements WidgetRenderer {
 
   private final Font numbers;
   private Dimension preferredSize;
-  private final SpriteSheet neutralCities;
 
-  public CityCountWidgetRenderer(ResourceManager resources) {
+  public CityCountWidgetRenderer(ResourceManager resourceManager) {
+    this.resources = resourceManager;
     numbers = resources.getFont("numbers");
-    neutralCities = resources.getCitySpriteSheet(App.getColor("plugin.neutral_color"));
   }
 
   public void setMap(Map<Tile> map) {
@@ -49,7 +49,7 @@ public class CityCountWidgetRenderer implements WidgetRenderer {
 
   private void calcPreferredSize() {
     int preferredWidth = (mapCitiesCount.length * tileSize + mapCitiesCount.length * HORIZONTAL_MARGIN) - HORIZONTAL_MARGIN;
-    int preferredHeight = neutralCities.getSubImage(0, 0).getHeight();
+    int preferredHeight = resources.getSingleCityImageHeight(NEUTRAL_COLOR);
     preferredSize = new Dimension(preferredWidth, preferredHeight);
   }
 
@@ -85,14 +85,14 @@ public class CityCountWidgetRenderer implements WidgetRenderer {
 
   private void renderContent(Graphics g) {
     int x = 0;
-    for (int cityID = 0; cityID < mapCitiesCount.length; cityID++) {
-      paintCityCount(cityID, mapCitiesCount[cityID], x, g);
+    for (City city : CityFactory.getAllCities()) {
+      paintCityCount(city, mapCitiesCount[city.getID()], x, g);
       x += tileSize + HORIZONTAL_MARGIN;
     }
   }
 
-  private void paintCityCount(int cityID, int cityCount, int x, Graphics g) {
-    Image cityImage = neutralCities.getSubImage(0, cityID);
+  private void paintCityCount(City city, int cityCount, int x, Graphics g) {
+    Image cityImage = resources.getCityImage(city, 0, NEUTRAL_COLOR);
     g.drawImage(cityImage, x, 0);
 
     if (cityCount > 0) {
