@@ -9,6 +9,7 @@ import com.customwars.client.io.loading.ResourcesLoader;
 import com.customwars.client.io.loading.map.BinaryCW2MapParser;
 import com.customwars.client.io.loading.map.MapManager;
 import com.customwars.client.io.loading.map.MapParser;
+import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Direction;
 import com.customwars.client.model.map.Map;
@@ -139,20 +140,20 @@ public class ResourceManager {
     return (SpriteSheet) imageLib.getSlickImg(imgRef);
   }
 
-  public SpriteSheet getSlickSpriteSheet(String imgRef, Color color, String suffix) {
-    return cwImageLib.getSlickSpriteSheet(imgRef, color, suffix);
-  }
-
-  public SpriteSheet getSlickSpriteSheet(String imgRef, Color color) {
-    return cwImageLib.getSlickSpriteSheet(imgRef, color);
+  public Image getCityImage(City city, int colIndex, Color color) {
+    return cwImageLib.getCityImage(city, colIndex, color);
   }
 
   public SpriteSheet getCitySpriteSheet(Color color) {
     return cwImageLib.getCitySpriteSheet(color);
   }
 
-  public SpriteSheet getUnitSpriteSheet(Color color) {
-    return cwImageLib.getUnitSpriteSheet(color);
+  public SpriteSheet getShadedCitySpriteSheet(Color color) {
+    return cwImageLib.getShadedCitySpriteSheet(color);
+  }
+
+  public int getSingleCityImageHeight(Color color) {
+    return cwImageLib.getSingleCityImageHeight(color);
   }
 
   public Image getUnitImg(Unit unit, Direction direction) {
@@ -165,6 +166,10 @@ public class ResourceManager {
 
   public SpriteSheet getShadedUnitSpriteSheet(Color color) {
     return cwImageLib.getShadedUnitSpriteSheet(color);
+  }
+
+  public SpriteSheet getUnitSpriteSheet(Color color) {
+    return cwImageLib.getUnitSpriteSheet(color);
   }
 
   public Image getShadedUnitImg(Unit unit, Direction direction) {

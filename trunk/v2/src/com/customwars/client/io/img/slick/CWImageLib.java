@@ -1,6 +1,7 @@
 package com.customwars.client.io.img.slick;
 
 import com.customwars.client.io.img.ImageLib;
+import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Direction;
 import com.customwars.client.tools.ColorUtil;
@@ -10,7 +11,8 @@ import org.newdawn.slick.SpriteSheet;
 import java.awt.Color;
 
 /**
- * CW specific Image functions
+ * CW specific Image getter functions
+ * This class hides how single unit/city images are retrieved from a unit/city spritesheet.
  */
 public class CWImageLib {
   private final ImageLib lib;
@@ -19,9 +21,22 @@ public class CWImageLib {
     this.lib = lib;
   }
 
+  public int getSingleCityImageHeight(Color color) {
+    SpriteSheet sheet = getCitySpriteSheet(color);
+    return sheet.getSubImage(0, 0).getHeight();
+  }
+
+  public Image getCityImage(City city, int colIndex, Color color) {
+    SpriteSheet citySheet = getCitySpriteSheet(color);
+    return citySheet.getSubImage(colIndex, city.getID());
+  }
+
   public SpriteSheet getCitySpriteSheet(Color color) {
-    String colorName = ColorUtil.toString(color);
-    return getSlickSpriteSheet("CITY_" + colorName);
+    return getSlickSpriteSheet("CITY", color);
+  }
+
+  public SpriteSheet getShadedCitySpriteSheet(Color color) {
+    return getSlickSpriteSheet("CITY", color, "darker");
   }
 
   public SpriteSheet getUnitSpriteSheet(Color color) {
@@ -41,8 +56,7 @@ public class CWImageLib {
   }
 
   public SpriteSheet getShadedUnitSpriteSheet(Color color) {
-    String colorName = ColorUtil.toString(color);
-    return getSlickSpriteSheet("UNIT_" + colorName + "_darker");
+    return getSlickSpriteSheet("UNIT", color, "darker");
   }
 
   public Image getShadedUnitImg(Unit unit, Direction direction) {
@@ -57,8 +71,7 @@ public class CWImageLib {
   }
 
   /**
-   * Crop a unit from a spritesheet
-   * that is looking in the given direction
+   * Crop a single unit image from a spritesheet that is looking in the given direction.
    * Supported directions(N,E,S,W) all other directions will throw an IllegalArgumentException
    */
   private Image cropUnitImg(SpriteSheet unitSpriteSheet, Direction direction, int row) {
@@ -78,22 +91,22 @@ public class CWImageLib {
         unitImg = unitSpriteSheet.getSubImage(1, row);
         break;
       default:
-        throw new IllegalArgumentException("Direction " + direction + " is not supported for a unit");
+        throw new IllegalArgumentException("Direction " + direction + " is not supported for a unit image spritesheet");
     }
     return unitImg;
   }
 
-  public SpriteSheet getSlickSpriteSheet(String imgName, Color color, String suffix) {
+  private SpriteSheet getSlickSpriteSheet(String imgName, Color color, String suffix) {
     String colorName = ColorUtil.toString(color);
     return getSlickSpriteSheet(imgName + "_" + colorName + "_" + suffix);
   }
 
-  public SpriteSheet getSlickSpriteSheet(String imgName, Color color) {
+  private SpriteSheet getSlickSpriteSheet(String imgName, Color color) {
     String colorName = ColorUtil.toString(color);
     return getSlickSpriteSheet(imgName + "_" + colorName);
   }
 
-  public SpriteSheet getSlickSpriteSheet(String imgName) {
+  private SpriteSheet getSlickSpriteSheet(String imgName) {
     return (SpriteSheet) lib.getSlickImg(imgName);
   }
 }
