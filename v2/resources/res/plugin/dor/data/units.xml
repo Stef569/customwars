@@ -4,7 +4,7 @@
         <!ELEMENT unit (price, movement, vision,
                 canHide?, canDive?, canCapture?, canJoin?, canFlare?, canSupply?, canTransport?,
                 transports?, transformTerrains?, buildCities?, buildUnits?,
-                maxExperience, maxHp, supplyRange?, maxSupplies, suppliesPerTurn?, maxTransportCount?, healRate?, armyBranch,
+                maxExperience, maxHp, supplyRange?, maxSupplies, suppliesPerTurn?, suppliesPerTurnWhenHidden?, maxTransportCount?, healRate?, armyBranch,
                 movementType, primaryWeaponName?, secondaryWeaponName?, description)>
         <!ATTLIST unit name CDATA #REQUIRED>
         <!ATTLIST unit unitID CDATA #REQUIRED>
@@ -37,6 +37,7 @@
 
         <!ELEMENT maxSupplies (#PCDATA)>
         <!ELEMENT suppliesPerTurn (#PCDATA)>
+        <!ELEMENT suppliesPerTurnWhenHidden (#PCDATA)>
 
         <!ELEMENT maxTransportCount (#PCDATA)>
         <!ELEMENT healRate (#PCDATA)>
@@ -462,6 +463,7 @@
         <maxHp>100</maxHp>
         <maxSupplies>70</maxSupplies>
         <suppliesPerTurn>1</suppliesPerTurn>
+        <suppliesPerTurnWhenHidden>5</suppliesPerTurnWhenHidden>
 
         <armyBranch>NAVAL</armyBranch>
         <movementType>&NAVAL;</movementType>

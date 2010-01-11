@@ -169,7 +169,11 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   }
 
   public void endTurn(Player currentPlayer) {
-    addSupplies(-stats.suppliesPerTurn);
+    if (unitState == UnitState.SUBMERGED || hidden) {
+      addSupplies(-stats.getSuppliesPerTurnWhenHidden());
+    } else {
+      addSupplies(-stats.suppliesPerTurn);
+    }
   }
 
   // ----------------------------------------------------------------------------
