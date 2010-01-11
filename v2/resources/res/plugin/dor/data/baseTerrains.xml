@@ -68,7 +68,7 @@ moveCosts have the following order
         <vision>3</vision>
         <height>2</height>
         <moveCosts>
-            <int>3</int>
+            <int>2</int>
             <int>1</int>
             <int>127</int>
             <int>127</int>
@@ -132,8 +132,8 @@ moveCosts have the following order
         <vision>0</vision>
         <height>1</height>
         <moveCosts>
-            <int>3</int>
-            <int>2</int>
+            <int>127</int>
+            <int>127</int>
             <int>127</int>
             <int>127</int>
             <int>1</int>
@@ -145,8 +145,8 @@ moveCosts have the following order
         <vision>0</vision>
         <height>1</height>
         <moveCosts>
-            <int>3</int>
-            <int>2</int>
+            <int>127</int>
+            <int>127</int>
             <int>127</int>
             <int>127</int>
             <int>1</int>
