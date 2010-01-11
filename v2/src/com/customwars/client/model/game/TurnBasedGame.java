@@ -373,8 +373,14 @@ public class TurnBasedGame implements Observable, Serializable {
     changeSupport.addPropertyChangeListener(propertyName, listener);
   }
 
+  public void addPropertyChangeListenerToEachPlayer(PropertyChangeListener listener) {
+    for (Player player : getAllPlayers()) {
+      player.addPropertyChangeListener(listener);
+    }
+  }
+
   public void removePropertyChangeListener(PropertyChangeListener listener) {
-    changeSupport.addPropertyChangeListener(listener);
+    changeSupport.removePropertyChangeListener(listener);
   }
 
   public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
