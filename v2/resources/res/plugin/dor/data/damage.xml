@@ -61,6 +61,7 @@
             <enemy id="rockets" basedamage="35"/>
             <enemy id="missiles" basedamage="35"/>
             <enemy id="apc" basedamage="20"/>
+
             <enemy id="bcopter" basedamage="12"/>
             <enemy id="tcopter" basedamage="35"/>
         </enemies>
@@ -90,7 +91,23 @@
 
     <unit id="flare">
         <enemies>
+            <enemy id="infantry" basedamage="80"/>
+            <enemy id="mech" basedamage="70"/>
+            <enemy id="bikes" basedamage="70"/>
+            <enemy id="recon" basedamage="60"/>
+            <enemy id="flare" basedamage="50"/>
+            <enemy id="anti_air" basedamage="45"/>
+            <enemy id="light_tank" basedamage="10"/>
+            <enemy id="medium_tank" basedamage="5"/>
+            <enemy id="heavy_tank" basedamage="1"/>
+            <enemy id="artillery" basedamage="45"/>
+            <enemy id="anti_tank" basedamage="25"/>
+            <enemy id="rockets" basedamage="55"/>
+            <enemy id="missiles" basedamage="55"/>
+            <enemy id="apc" basedamage="45"/>
 
+            <enemy id="bcopter" altdamage="18"/>
+            <enemy id="tcopter" altdamage="35"/>
         </enemies>
     </unit>
 
