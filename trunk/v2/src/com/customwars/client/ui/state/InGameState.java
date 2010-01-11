@@ -170,10 +170,6 @@ public class InGameState extends CWState implements PropertyChangeListener {
       this.game.removePropertyChangeListener(this);
     }
     game.addPropertyChangeListener(this);
-
-    for (Player player : game.getAllPlayers()) {
-      player.addPropertyChangeListener(this);
-    }
   }
 
   private void initCamera(TileMap<Tile> map) {
@@ -334,8 +330,6 @@ public class InGameState extends CWState implements PropertyChangeListener {
       gameStateChanged(evt);
     } else if (evt.getSource() instanceof TileSprite && propertyName.equals("position")) {
       cursorPositionChanged(evt);
-    } else if (evt.getSource() instanceof Player && propertyName.equals("unit")) {
-      unitInPlayerChanged(evt);
     }
   }
 
@@ -348,14 +342,6 @@ public class InGameState extends CWState implements PropertyChangeListener {
     Tile newCursorLocation = (Tile) cursor.getLocation();
     hud.moveOverTile(newCursorLocation);
     SFX.playSound("maptick");
-  }
-
-  private void unitInPlayerChanged(PropertyChangeEvent evt) {
-    boolean unitRemoved = evt.getOldValue() != null && evt.getNewValue() == null;
-
-    if (unitRemoved) {
-      camera.shake();
-    }
   }
 
   @Override

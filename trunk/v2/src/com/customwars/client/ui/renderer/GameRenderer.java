@@ -60,7 +60,7 @@ public class GameRenderer implements Renderable, PropertyChangeListener {
 
     this.scroller = new Scroller(camera);
     this.spriteManager = new SpriteManager(map);
-    this.eventsRenderer = new ModelEventsRenderer(moveTraverse, game);
+    this.eventsRenderer = new ModelEventsRenderer(moveTraverse, game, camera);
     this.mapRenderer = new MapRenderer(map, spriteManager);
     this.gameControl = new GameController(game, this, spriteManager);
 
