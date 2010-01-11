@@ -13,8 +13,8 @@ import java.beans.PropertyChangeSupport;
 
 /**
  * A Sprite represents an animation of Images, located at x,y
- * When Animation is null or contains no images
- * A yellow circle is rendered and an error message logged once
+ * When the animation is null or contains no images
+ * A yellow circle is rendered and an error message is logged once.
  *
  * @author Stefan
  */
@@ -32,6 +32,8 @@ public class Sprite implements Renderable {
   private float dx;
   private float dy;
 
+  // The color filter to apply to the rendering
+  private Color filter = Color.white;
   Animation anim;
 
   /**
@@ -86,7 +88,7 @@ public class Sprite implements Renderable {
    */
   public void render(Graphics g) {
     if (canRenderAnim(g) && visible) {
-      anim.getCurrentFrame().draw(position.x, position.y);
+      anim.getCurrentFrame().draw(position.x, position.y, filter);
     }
   }
 
@@ -120,6 +122,7 @@ public class Sprite implements Renderable {
   }
 
   // Log Illegal rendering once
+
   private void logIllegalRendering(String errMessage) {
     if (illegalRenderingLogged) return;
 
@@ -163,6 +166,14 @@ public class Sprite implements Renderable {
     this.updateAnim = updateAnim;
   }
 
+  public void enableFilter(Color filter) {
+    this.filter = filter;
+  }
+
+  public void disableFilter() {
+    this.filter = Color.white;
+  }
+
   public int getX() {
     return position.x;
   }
@@ -200,27 +211,23 @@ public class Sprite implements Renderable {
     return anim == animation;
   }
 
-  public boolean isRenderingSameAnim(Sprite otherSprite) {
-    return otherSprite.isRenderingAnim(anim);
-  }
-
   public boolean isVisible() {
     return visible;
   }
 
-  public synchronized void addPropertyChangeListener(PropertyChangeListener listener) {
+  public void addPropertyChangeListener(PropertyChangeListener listener) {
     changeSupport.addPropertyChangeListener(listener);
   }
 
-  public synchronized void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+  public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
     changeSupport.addPropertyChangeListener(propertyName, listener);
   }
 
-  public synchronized void removePropertyChangeListener(PropertyChangeListener listener) {
+  public void removePropertyChangeListener(PropertyChangeListener listener) {
     changeSupport.removePropertyChangeListener(listener);
   }
 
-  public synchronized void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+  public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
     changeSupport.removePropertyChangeListener(propertyName, listener);
   }
 }

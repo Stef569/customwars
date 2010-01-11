@@ -22,10 +22,6 @@ public class CWAnimLib {
     return animLib.getCityAnim(city.getID(), color, "");
   }
 
-  public Animation getFoggedCityAnim(City city, Color color) {
-    return animLib.getCityAnim(city.getID(), color, AnimLib.ANIM_FOGGED);
-  }
-
   /**
    * Get a single unit animation that is looking in the given direction.
    * Supported directions(N,E,S,W) all other directions will throw an IllegalArgumentException

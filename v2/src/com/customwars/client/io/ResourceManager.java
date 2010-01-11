@@ -102,7 +102,6 @@ public class ResourceManager {
     recolorManager.recolor("unit", colors, 0);
     recolorManager.recolor("city", colors, 0);
     recolorManager.recolor("unit", "darker", colors, darkPercentage);
-    recolorManager.recolor("city", "darker", colors, darkPercentage);
   }
 
   private void createRecoloredAnimations(Collection<Color> colors) {
@@ -151,10 +150,6 @@ public class ResourceManager {
     return cwImageLib.getCitySpriteSheet(color);
   }
 
-  public SpriteSheet getShadedCitySpriteSheet(Color color) {
-    return cwImageLib.getShadedCitySpriteSheet(color);
-  }
-
   public int getSingleCityImageHeight(Color color) {
     return cwImageLib.getSingleCityImageHeight(color);
   }
@@ -197,10 +192,6 @@ public class ResourceManager {
 
   public Animation getCityAnim(City city, Color color) {
     return cwAnimLib.getCityAnim(city, color);
-  }
-
-  public Animation getFoggedCityAnim(City city, Color color) {
-    return cwAnimLib.getFoggedCityAnim(city, color);
   }
 
   public Animation getUnitAnim(Unit unit, Color color, Direction direction) {

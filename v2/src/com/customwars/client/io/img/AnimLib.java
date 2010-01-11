@@ -65,7 +65,6 @@ public class AnimLib {
 
   public void createCityAnimations(Color baseColor, Color color, ResourceManager resources) {
     SpriteSheet citySpriteSheet = resources.getCitySpriteSheet(color);
-    SpriteSheet darkerCitySpriteSheet = resources.getShadedCitySpriteSheet(color);
     boolean cityAnimationsOn = App.getBoolean("display.city.animate");
 
     // Read frame count and durations from the base animations
@@ -77,10 +76,6 @@ public class AnimLib {
       Animation animActive = createAnim(citySpriteSheet, 0, totalFrames, row, duration);
       animActive.setLooping(cityAnimationsOn);
       addCityAnim(row, color, "", animActive);
-
-      Animation animFogged = new Animation(false);
-      animFogged.addFrame(darkerCitySpriteSheet.getSubImage(0, row), NO_DURATION);
-      addCityAnim(row, color, ANIM_FOGGED, animFogged);
     }
   }
 
