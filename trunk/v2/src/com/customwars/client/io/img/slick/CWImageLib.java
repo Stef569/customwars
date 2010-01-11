@@ -35,13 +35,8 @@ public class CWImageLib {
     return getSlickSpriteSheet("CITY", color);
   }
 
-  public SpriteSheet getShadedCitySpriteSheet(Color color) {
-    return getSlickSpriteSheet("CITY", color, "darker");
-  }
-
   public SpriteSheet getUnitSpriteSheet(Color color) {
-    String colorName = ColorUtil.toString(color);
-    return getSlickSpriteSheet("UNIT_" + colorName);
+    return getSlickSpriteSheet("UNIT", color);
   }
 
   public Image getUnitImg(Unit unit, Direction direction) {

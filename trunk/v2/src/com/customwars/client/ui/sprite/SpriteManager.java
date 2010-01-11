@@ -282,11 +282,21 @@ public class SpriteManager implements PropertyChangeListener {
   private void recolorCitySprite(City city, CitySprite sprite, Color color) {
     Animation animActive = getActiveCityAnim(city, color);
     Animation animInActive = getInActiveCityAnim(city);
-    Animation animFogged = getFoggedCityAnim(city, city.isHQ(), color);
+    Animation animFogged = getFoggedCityAnim(city, color);
     sprite.setAnimActive(animActive);
     sprite.setAnimInActive(animInActive);
     sprite.setAnimFogged(animFogged);
     sprite.updateAnim();
+  }
+
+  private Animation getActiveCityAnim(City city, Color color) {
+    if (city.canLaunchRocket()) {
+      Image lastImg = resources.getCityImage(city, 0, color);
+      Image[] images = new Image[]{lastImg};
+      return new Animation(images, 1);
+    } else {
+      return resources.getCityAnim(city, color);
+    }
   }
 
   private Animation getInActiveCityAnim(City city) {
@@ -299,25 +309,23 @@ public class SpriteManager implements PropertyChangeListener {
     }
   }
 
-  private Animation getActiveCityAnim(City city, Color color) {
-    if (city.canLaunchRocket()) {
-      Image lastImg = resources.getCityImage(city, 0, NEUTRAL_COLOR);
-      Image[] images = new Image[]{lastImg};
-      return new Animation(images, 1);
-    }
-    return resources.getCityAnim(city, color);
-  }
-
   /**
-   * The HQ owner color is always visible, even in fow
-   * all other cities are neutral.
+   * In Fow The HQ is always visible. All other cities are neutral.
    */
-  private Animation getFoggedCityAnim(City city, boolean hq, Color color) {
-    if (hq || city.canLaunchRocket()) {
-      color = NEUTRAL_COLOR;
+  private Animation getFoggedCityAnim(City city, Color color) {
+    Animation cachedAnim;
+    if (city.isHQ()) {
+      cachedAnim = resources.getCityAnim(city, color);
+    } else {
+      cachedAnim = resources.getCityAnim(city, NEUTRAL_COLOR);
     }
 
-    return resources.getFoggedCityAnim(city, color);
+    Animation foggedCityAnim = new Animation();
+    for (int i = 0; i < cachedAnim.getFrameCount(); i++) {
+      foggedCityAnim.addFrame(cachedAnim.getImage(i), 1);
+    }
+    foggedCityAnim.setLooping(false);
+    return foggedCityAnim;
   }
 
   private void addCitySprite(City city, CitySprite citySprite) {

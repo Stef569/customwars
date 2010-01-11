@@ -5,6 +5,7 @@ import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.model.map.TileMap;
 import org.newdawn.slick.Animation;
+import org.newdawn.slick.Color;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -15,6 +16,7 @@ public class CitySprite extends TileSprite implements PropertyChangeListener {
   private Animation animInActive;
   private Animation animFogged;
   private boolean renderFogged, renderActive = true;
+  private final Color fogFilter = Color.lightGray;
 
   public CitySprite(TileMap<Tile> map, City city) {
     super(city.getLocation(), map);
@@ -36,11 +38,6 @@ public class CitySprite extends TileSprite implements PropertyChangeListener {
     this.animFogged = animFogged;
   }
 
-  public void setRenderFoggedImg(boolean renderFogged) {
-    this.renderFogged = renderFogged;
-    updateAnim();
-  }
-
   public void setLocation(Location newLocation) {
     Tile oldTile = (Tile) getLocation();
     super.setLocation(newLocation);
@@ -51,10 +48,13 @@ public class CitySprite extends TileSprite implements PropertyChangeListener {
 
   public void updateAnim() {
     if (renderFogged) {
+      super.enableFilter(fogFilter);
       setAnim(animFogged);
     } else if (renderActive) {
+      super.disableFilter();
       setAnim(animActive);
     } else {
+      super.disableFilter();
       setAnim(animInActive);
     }
   }
