@@ -183,22 +183,21 @@ public class InGameState extends CWState implements PropertyChangeListener {
 
   private void initCursors(Map<Tile> map) {
     TileSprite selectCursor = resources.createCursor(map, App.get("user.selectcursor"));
-    selectCursor.addPropertyChangeListener(this);
     TileSprite attackCursor = resources.createCursor(map, App.get("user.attackcursor"));
-    attackCursor.addPropertyChangeListener(this);
     TileSprite siloCursor = resources.createCursor(map, App.get("user.silocursor"));
-    siloCursor.addPropertyChangeListener(this);
 
     cursorControl.addCursor("SELECT", selectCursor);
     cursorControl.addCursor("ATTACK", attackCursor);
     cursorControl.addCursor("SILO", siloCursor);
     cursorControl.activateCursor("SELECT");
+    cursorControl.addListener(this);
   }
 
   @Override
   public void leave(GameContainer container, StateBasedGame stateBasedGame) throws SlickException {
     super.leave(container, stateBasedGame);
     cwInput.resetInputTransform();
+    cursorControl.removeListener(this);
   }
 
   @Override

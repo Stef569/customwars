@@ -585,4 +585,16 @@ public class SpriteManager implements PropertyChangeListener {
 
     return true;
   }
+
+  public void removeCursorListener(PropertyChangeListener listener) {
+    for (TileSprite cursor : cursorSprites.values()) {
+      cursor.removePropertyChangeListener(listener);
+    }
+  }
+
+  public void addCursorListener(PropertyChangeListener listener) {
+    for (TileSprite cursor : cursorSprites.values()) {
+      cursor.addPropertyChangeListener(listener);
+    }
+  }
 }

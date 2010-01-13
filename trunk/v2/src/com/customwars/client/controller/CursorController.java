@@ -7,6 +7,7 @@ import com.customwars.client.model.map.TileMap;
 import com.customwars.client.ui.sprite.SpriteManager;
 import com.customwars.client.ui.sprite.TileSprite;
 
+import java.beans.PropertyChangeListener;
 import java.util.List;
 
 /**
@@ -37,6 +38,9 @@ public class CursorController {
 
   /**
    * Add a cursor keyed by cursorName, to start rendering a cursor call #activateCursor(cursorName)
+   *
+   * @param cursorName   The name to store the cursor by
+   * @param cursorSprite The cursor sprite to add
    */
   public void addCursor(String cursorName, TileSprite cursorSprite) {
     spriteManager.addCursor(cursorName, cursorSprite);
@@ -45,6 +49,8 @@ public class CursorController {
   /**
    * Active a cursor, this cursor will be rendered
    * At any time there can only be 1 active cursor
+   *
+   * @param cursorName The name of the cursor to activate
    */
   public void activateCursor(String cursorName) {
     spriteManager.setActiveCursor(cursorName);
@@ -183,7 +189,21 @@ public class CursorController {
     return cursorLocked;
   }
 
-  public boolean isCursorMoved(Location originalCursorLocation) {
-    return spriteManager.getCursorLocation() != originalCursorLocation;
+  /**
+   * Stop sending cursor events to the listener
+   *
+   * @param listener the object that wants to stop receiving cursor events
+   */
+  public void removeListener(PropertyChangeListener listener) {
+    spriteManager.removeCursorListener(listener);
+  }
+
+  /**
+   * Start sending cursor events to the listener
+   *
+   * @param listener the object that wants to receiving cursor events
+   */
+  public void addListener(PropertyChangeListener listener) {
+    spriteManager.addCursorListener(listener);
   }
 }
