@@ -140,17 +140,4 @@ moveCosts have the following order
             <int>127</int>
         </moveCosts>
     </terrain>
-    <terrain name="pipe_seam" id="82">
-        <defenseBonus>4</defenseBonus>
-        <vision>0</vision>
-        <height>1</height>
-        <moveCosts>
-            <int>127</int>
-            <int>127</int>
-            <int>127</int>
-            <int>127</int>
-            <int>1</int>
-            <int>127</int>
-        </moveCosts>
-    </terrain>
 </list>

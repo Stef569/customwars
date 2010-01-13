@@ -103,6 +103,7 @@ public class ModelLoader implements CWResourceLoader {
     xStream.useAttributeFor(Terrain.class, "name");
     xStream.useAttributeFor(Terrain.class, "type");
     xStream.alias("armyBranch", ArmyBranch.class);
+    xStream.aliasField("connect", Terrain.class, "connectedDirections");
     InputStream cityStream = ResourceLoader.getResourceAsStream(modelResPath + XML_DATA_CITY_FILE);
     Collection<City> cities = (Collection<City>) XStreamUtil.readObject(xStream, cityStream);
     CityFactory.addCities(cities);

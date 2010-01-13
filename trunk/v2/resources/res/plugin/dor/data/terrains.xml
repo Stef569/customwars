@@ -243,64 +243,51 @@
     <terrain name="shoal" id="81" type="ocean">
         <connect>West</connect>
     </terrain>
-
-    <terrain name="pipe_seam" id="82" type="pipe">
+    <terrain name="pipe" id="82" type="pipe">
         <connect>East, West</connect>
     </terrain>
-    <terrain name="pipe_seam" id="83" type="pipe">
+    <terrain name="pipe" id="83" type="pipe">
         <connect>North, South</connect>
     </terrain>
-    <terrain name="destroyed_pipe" id="84" type="pipe">
-        <connect>East, West</connect>
+    <terrain name="pipe" id="84" type="pipe">
+        <connect>North, East</connect>
     </terrain>
 
     <!-- Row 5 -->
-    <terrain name="destroyed_pipe" id="85" type="pipe">
-        <connect>North, South</connect>
-    </terrain>
-    <terrain name="pipe" id="86" type="pipe">
-        <connect>East, West</connect>
-    </terrain>
-    <terrain name="pipe" id="87" type="pipe">
-        <connect>North, South</connect>
-    </terrain>
-    <terrain name="pipe" id="88" type="pipe">
-        <connect>North, East</connect>
-    </terrain>
-    <terrain name="pipe" id="89" type="pipe">
+    <terrain name="pipe" id="85" type="pipe">
         <connect>East, South</connect>
     </terrain>
-    <terrain name="pipe" id="90" type="pipe">
+    <terrain name="pipe" id="86" type="pipe">
         <connect>South, West</connect>
     </terrain>
-    <terrain name="pipe" id="91" type="pipe">
+    <terrain name="pipe" id="87" type="pipe">
         <connect>North, West</connect>
     </terrain>
-    <terrain name="pipe" id="92" type="pipe">
+    <terrain name="pipe" id="88" type="pipe">
         <connect>North, East, West</connect>
     </terrain>
-    <terrain name="pipe" id="93" type="pipe">
+    <terrain name="pipe" id="89" type="pipe">
         <connect>North, East, South</connect>
     </terrain>
-    <terrain name="pipe" id="94" type="pipe">
+    <terrain name="pipe" id="90" type="pipe">
         <connect>East, South, West</connect>
     </terrain>
-    <terrain name="pipe" id="95" type="pipe">
+    <terrain name="pipe" id="91" type="pipe">
         <connect>North, South, West</connect>
     </terrain>
-    <terrain name="pipe" id="96" type="pipe">
+    <terrain name="pipe" id="92" type="pipe">
         <connect>North, East, South, West</connect>
     </terrain>
-    <terrain name="pipe" id="97" type="pipe">
+    <terrain name="pipe" id="93" type="pipe">
         <connect>South</connect>
     </terrain>
-    <terrain name="pipe" id="98" type="pipe">
+    <terrain name="pipe" id="94" type="pipe">
         <connect>West</connect>
     </terrain>
-    <terrain name="pipe" id="99" type="pipe">
+    <terrain name="pipe" id="95" type="pipe">
         <connect>North</connect>
     </terrain>
-    <terrain name="pipe" id="100" type="pipe">
+    <terrain name="pipe" id="96" type="pipe">
         <connect>East</connect>
     </terrain>
 </list>
