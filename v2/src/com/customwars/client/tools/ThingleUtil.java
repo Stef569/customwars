@@ -6,7 +6,13 @@ import org.newdawn.slick.thingle.Widget;
 /**
  * Utilities for thingle gui components
  */
-public class ThingleUtil {
+public final class ThingleUtil {
+
+  /**
+   * This is a static utility class. It cannot be constructed.
+   */
+  private ThingleUtil() {
+  }
 
   /**
    * Select the child of a combobox with the given text. The cboChildName is entered in the cbo.
@@ -40,6 +46,24 @@ public class ThingleUtil {
       Widget choice = page.createWidget("choice");
       choice.setText(i + "");
       cboWidget.add(choice);
+    }
+  }
+
+  /**
+   * Fill a list widget with string values
+   * If scrollToEnd scroll to the end of the list
+   */
+  public static void fillList(Page page, Widget listWidget, boolean scrollToEnd, String... values) {
+    listWidget.removeChildren();
+    for (String line : values) {
+      Widget listItem = page.createWidget("item");
+      listItem.setText(line);
+      listWidget.add(listItem);
+    }
+
+    if (scrollToEnd) {
+      page.layout();
+      listWidget.setScroll(0, 100);
     }
   }
 }

@@ -22,7 +22,7 @@ Licensed Carlsbad Cubes - Wolf Paulus-->
     </tabbedpane>
     <panel weightx="1" columns="2" top="1" gap="3">
         <textfield name="txt_chat" weightx="1"/>
-        <button name="btn_add_chat_text" text="Add" action="addChatMessage(txt_chat.text)"/>
+        <button name="btn_add_chat_text" text="Add" action="sendChatMessage()"/>
     </panel>
     <panel colspan="2" weightx="1" gap="10">
         <label text="Login"/>
@@ -33,7 +33,7 @@ Licensed Carlsbad Cubes - Wolf Paulus-->
         <label name="players" weightx="1" text=" - "/>
     </panel>
     <panel name="btnPanel" weighty="1" valign="bottom" gap="10">
-        <button text="Refresh" action="refreshInfo"/>
+        <button text="Back" action="back"/>
         <button weightx="1" halign="right" text="Play" action="play"/>
     </panel>
 </panel>
