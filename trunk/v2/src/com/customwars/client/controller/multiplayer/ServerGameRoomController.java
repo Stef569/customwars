@@ -6,6 +6,8 @@ import com.customwars.client.network.NetworkException;
 import com.customwars.client.network.NetworkManager;
 import com.customwars.client.network.NetworkManagerSingleton;
 import com.customwars.client.network.ServerGameInfo;
+import com.customwars.client.tools.StringUtil;
+import com.customwars.client.tools.ThingleUtil;
 import com.customwars.client.ui.GUI;
 import com.customwars.client.ui.state.StateChanger;
 import com.customwars.client.ui.state.StateSession;
@@ -69,17 +71,21 @@ public class ServerGameRoomController {
     stateChanger.changeTo("IN_GAME");
   }
 
-  public void addChatMessage(final String chatMessage) {
-    page.getWidget("txt_chat").setText("");
+  public void sendChatMessage() {
+    final Widget txtChat = page.getWidget("txt_chat");
+    final String chatMessage = txtChat.getText();
 
     App.execute(new Runnable() {
       public void run() {
-        addChatMsg(chatMessage);
+        if (StringUtil.hasContent(chatMessage)) {
+          txtChat.setText("");
+          sendChatMsg(chatMessage);
+        }
       }
     });
   }
 
-  private void addChatMsg(String chatMessage) {
+  private void sendChatMsg(String chatMessage) {
     Widget addToChatButton = page.getWidget("btn_add_chat_text");
     addToChatButton.setBoolean("enabled", false);
 
@@ -121,19 +127,8 @@ public class ServerGameRoomController {
     Widget sysLogList = page.getWidget("tab").getChild("game_log").getChild(0);
     Widget chatLogList = page.getWidget("tab").getChild("chat_log").getChild(0);
 
-    sysLogList.removeChildren();
-    for (String line : sysLog) {
-      Widget listItem = page.createWidget("item");
-      listItem.setText(line);
-      sysLogList.add(listItem);
-    }
-
-    chatLogList.removeChildren();
-    for (String line : chatLog) {
-      Widget listItem = page.createWidget("item");
-      listItem.setText(line);
-      chatLogList.add(listItem);
-    }
+    ThingleUtil.fillList(page, sysLogList, true, sysLog);
+    ThingleUtil.fillList(page, chatLogList, true, chatLog);
   }
 
   public void back() {

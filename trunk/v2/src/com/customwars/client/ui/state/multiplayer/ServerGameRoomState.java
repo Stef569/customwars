@@ -9,6 +9,7 @@ import com.customwars.client.ui.state.input.CWInput;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
+import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.thingle.Page;
@@ -19,9 +20,11 @@ import org.newdawn.slick.thingle.Page;
  * A user can only login into server games he is participating in.
  */
 public class ServerGameRoomState extends CWState {
+  private static final int SERVER_GAME_ROOM_REFRESH_RATE = 10 * 1000; // 10 sec 
   private Page page;
   private Image backGroundImage;
   private ServerGameRoomController controller;
+  private int timeTaken;
 
   public void init(GameContainer gameContainer, StateBasedGame stateBasedGame) throws SlickException {
     controller = new ServerGameRoomController(stateChanger, stateSession);
@@ -55,12 +58,25 @@ public class ServerGameRoomState extends CWState {
 
   @Override
   public void update(GameContainer container, int delta) throws SlickException {
+    timeTaken += delta;
+
+    if (timeTaken > SERVER_GAME_ROOM_REFRESH_RATE) {
+      controller.refreshInfo();
+      timeTaken = 0;
+    }
   }
 
   @Override
   public void controlPressed(CWCommand command, CWInput cwInput) {
     if (command == CWInput.CANCEL) {
       controller.back();
+    }
+  }
+
+  @Override
+  public void keyPressed(int key, char c) {
+    if (key == Input.KEY_ENTER) {
+      controller.sendChatMessage();
     }
   }
 
