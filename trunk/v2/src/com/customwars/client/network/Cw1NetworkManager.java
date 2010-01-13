@@ -22,16 +22,16 @@ public class Cw1NetworkManager implements NetworkManager {
   }
 
   /**
-   * Create a new ServerGame
+   * Create a new ServerGame and join the game as user 1
    */
-  public void createNewServerGame(String gameName, String gamePass, Map<Tile> map, String userName, String userPassword, int side, String comment) throws NetworkException {
+  public void createNewServerGame(String gameName, String gamePass, Map<Tile> map, String userName, String userPassword, String comment) throws NetworkException {
     ServerGame serverGame = new ServerGame(gameName, gamePass, map.getMapName(), map.getNumPlayers(), comment);
     User user = new User(userName, userPassword);
 
     try {
       CW1NetworkIO.createGame(serverGame, user);
       CW1NetworkIO.uploadMap(serverGame, map);
-      CW1NetworkIO.joinGame(serverGame, user, side);
+      CW1NetworkIO.joinGame(serverGame, user, 1);
     } catch (IOException ex) {
       throw new NetworkException(ex);
     }
