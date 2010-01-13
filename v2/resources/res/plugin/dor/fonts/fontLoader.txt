@@ -1,7 +1,8 @@
 // Usage
 // To Load a StripImageFont s fontName <image reference> <starting char>
 // To load an AngelCodeFont a fontName <fnt> <tga>
-// To load a ttf font		t fontName <ttf>
+// To load a ttf font	    t fontName <ttf>
+// To reuse a font	        r fontName <=> <fontName to reuse>
 
 s numbers numbers 1
 a default default.fnt default_00.tga

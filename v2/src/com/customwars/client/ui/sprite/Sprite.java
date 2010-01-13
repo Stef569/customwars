@@ -88,7 +88,7 @@ public class Sprite implements Renderable {
    */
   public void render(Graphics g) {
     if (canRenderAnim(g) && visible) {
-      anim.getCurrentFrame().draw(position.x, position.y, filter);
+      g.drawImage(anim.getCurrentFrame(), position.x, position.y, filter);
     }
   }
 

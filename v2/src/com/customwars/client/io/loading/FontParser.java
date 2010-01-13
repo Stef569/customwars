@@ -115,8 +115,7 @@ public class FontParser extends LineParser {
   @SuppressWarnings("unchecked")
   private Font parseTTFFont(Scanner cmdScanner) {
     String ttfFile = cmdScanner.next();
-    String sizeAsTxt = cmdScanner.next();
-    int fontSize = Integer.valueOf(sizeAsTxt);
+    int fontSize = Integer.valueOf(cmdScanner.next());
 
     try {
       UnicodeFont unicodeFont = new UnicodeFont(fontPath + ttfFile, fontSize, false, false);
