@@ -8,7 +8,6 @@ import com.customwars.client.network.NetworkException;
 import com.customwars.client.network.NetworkManager;
 import com.customwars.client.network.NetworkManagerSingleton;
 import com.customwars.client.tools.StringUtil;
-import com.customwars.client.tools.ThingleUtil;
 import com.customwars.client.ui.GUI;
 import com.customwars.client.ui.state.StateChanger;
 import com.customwars.client.ui.state.StateSession;
@@ -62,14 +61,7 @@ public class ServerGameCreateController {
   public void mapSelected() {
     this.map = stateSession.map;
     int numPlayers = map.getNumPlayers();
-    fillSideCbo(numPlayers);
     page.getWidget("selected_map").setText(map.getMapName() + "( " + numPlayers + "P)");
-  }
-
-  private void fillSideCbo(int numPlayers) {
-    Widget cboSide = page.getWidget("side");
-    cboSide.removeChildren();
-    ThingleUtil.fillCboWithNumbers(page, "side", 1, numPlayers + 1, 1);
   }
 
   public void createServerGame() {
@@ -85,7 +77,6 @@ public class ServerGameCreateController {
     String userName = page.getWidget("user_name").getText();
     String userPassword = page.getWidget("user_password").getText();
     String comment = page.getWidget("server_game_info").getText();
-    int side = Integer.parseInt(page.getWidget("side").getText());
 
     if (playerCount <= 1) {
       GUI.showErrDialog("Invalid player count " + playerCount + "  for map " + map.getMapName() + " please choose another map", "Invalid player count");
@@ -104,12 +95,8 @@ public class ServerGameCreateController {
       return;
     }
 
-    if (side <= 0) {
-      side = 1;
-    }
-
     try {
-      networkManager.createNewServerGame(gameName, gamePass, map, userName, userPassword, side, comment);
+      networkManager.createNewServerGame(gameName, gamePass, map, userName, userPassword, comment);
       GUI.showdialog("Game " + gameName + " created", "Success");
       back();
     } catch (NetworkException e) {

@@ -31,9 +31,7 @@ Licensed Carlsbad Cubes - Wolf Paulus-->
         <panel top="20">
             <label name="selected_map" weightx="1" halign="center" text="        no map selected        "/>
         </panel>
-        <panel gap="20">
-            <label tooltip="Select a side" text="Side"/>
-            <combobox name="side" weightx="1" halign="right" text="1" editable="false"/>
+        <panel>
         </panel>
         <panel gap="20">
             <label tooltip="Info to be shown in the server list" valign="top" text="Game info"/>
