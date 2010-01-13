@@ -2,6 +2,7 @@ package com.customwars.client.controller;
 
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.City;
+import com.customwars.client.model.gameobject.CityFactory;
 import com.customwars.client.model.gameobject.Terrain;
 import com.customwars.client.model.gameobject.TerrainFactory;
 import com.customwars.client.model.map.Map;
@@ -24,10 +25,15 @@ public class CityMapEditorControl implements MapEditorControl {
   }
 
   public void addToTile(Tile t, int cityID, Color color) {
-    Player mapPlayer = map.getPlayer(color);
     removePreviousCity(t);
+    City city = CityFactory.getCity(cityID);
 
-    City city = MapUtil.addCityToMap(map, t, cityID, mapPlayer);
+    if (city.isSpecialNeutralCity()) {
+      color = Color.GRAY;
+    }
+
+    Player mapPlayer = map.getPlayer(color);
+    MapUtil.addCityToMap(map, t, city, mapPlayer);
     terrainConnector.turnSurroundingTerrains(t, city);
   }
 

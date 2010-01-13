@@ -27,8 +27,20 @@ public class CWImageLib {
   }
 
   public Image getCityImage(City city, int colIndex, Color color) {
-    SpriteSheet citySheet = getCitySpriteSheet(color);
-    return citySheet.getSubImage(colIndex, city.getID());
+    SpriteSheet coloredCitySheet = getCitySpriteSheet(color);
+    int coloredCityCount = coloredCitySheet.getVerticalCount();
+
+    if (city.getID() < coloredCityCount) {
+      return coloredCitySheet.getSubImage(colIndex, city.getID());
+    } else {
+      SpriteSheet neutralCitySheet = getNeutralCitySpriteSheet();
+      int neutralCityRow = city.getID() - coloredCityCount;
+      return neutralCitySheet.getSubImage(colIndex, neutralCityRow);
+    }
+  }
+
+  public SpriteSheet getNeutralCitySpriteSheet() {
+    return getSlickSpriteSheet("neutral_cities");
   }
 
   public SpriteSheet getCitySpriteSheet(Color color) {
@@ -68,8 +80,13 @@ public class CWImageLib {
   /**
    * Crop a single unit image from a spritesheet that is looking in the given direction.
    * Supported directions(N,E,S,W) all other directions will throw an IllegalArgumentException
+   *
+   * @param unitSpriteSheet The spritesheet source to crop a Unit image out
+   * @param direction       The facing direction of the cropped unit
+   * @param row             The row in the spritesheet to re retrieve the unit image from
+   * @return 1 cropped unit image facing to direction on the given row
    */
-  private Image cropUnitImg(SpriteSheet unitSpriteSheet, Direction direction, int row) {
+  private static Image cropUnitImg(SpriteSheet unitSpriteSheet, Direction direction, int row) {
     Image unitImg;
 
     switch (direction) {

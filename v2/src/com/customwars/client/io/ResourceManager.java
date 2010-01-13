@@ -150,6 +150,10 @@ public class ResourceManager {
     return cwImageLib.getCitySpriteSheet(color);
   }
 
+  public SpriteSheet getNeutralCitySpriteSheet() {
+    return cwImageLib.getNeutralCitySpriteSheet();
+  }
+
   public int getSingleCityImageHeight(Color color) {
     return cwImageLib.getSingleCityImageHeight(color);
   }
@@ -192,6 +196,10 @@ public class ResourceManager {
 
   public Animation getCityAnim(City city, Color color) {
     return cwAnimLib.getCityAnim(city, color);
+  }
+
+  public Animation getInActiveCityAnim(City city, Color color) {
+    return cwAnimLib.getInActiveCityAnim(city, color);
   }
 
   public Animation getUnitAnim(Unit unit, Color color, Direction direction) {

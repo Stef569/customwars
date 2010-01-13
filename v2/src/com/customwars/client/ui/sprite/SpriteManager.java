@@ -16,7 +16,6 @@ import org.apache.log4j.Logger;
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Font;
 import org.newdawn.slick.Graphics;
-import org.newdawn.slick.Image;
 
 import java.awt.Color;
 import java.beans.PropertyChangeEvent;
@@ -276,37 +275,14 @@ public class SpriteManager implements PropertyChangeListener {
     return citySprite;
   }
 
-  /**
-   * Launch platforms are always neutral and don't animate
-   */
   private void recolorCitySprite(City city, CitySprite sprite, Color color) {
-    Animation animActive = getActiveCityAnim(city, color);
-    Animation animInActive = getInActiveCityAnim(city);
+    Animation animActive = resources.getCityAnim(city, color);
+    Animation animInActive = resources.getInActiveCityAnim(city, NEUTRAL_COLOR);
     Animation animFogged = getFoggedCityAnim(city, color);
     sprite.setAnimActive(animActive);
     sprite.setAnimInActive(animInActive);
     sprite.setAnimFogged(animFogged);
     sprite.updateAnim();
-  }
-
-  private Animation getActiveCityAnim(City city, Color color) {
-    if (city.canLaunchRocket()) {
-      Image lastImg = resources.getCityImage(city, 0, color);
-      Image[] images = new Image[]{lastImg};
-      return new Animation(images, 1);
-    } else {
-      return resources.getCityAnim(city, color);
-    }
-  }
-
-  private Animation getInActiveCityAnim(City city) {
-    if (city.canLaunchRocket()) {
-      Image lastImg = resources.getCityImage(city, 1, NEUTRAL_COLOR);
-      Image[] images = new Image[]{lastImg};
-      return new Animation(images, 1);
-    } else {
-      return null;
-    }
   }
 
   /**

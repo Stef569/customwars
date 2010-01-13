@@ -23,6 +23,13 @@ public class CWAnimLib {
   }
 
   /**
+   * Get the inactive city animation for a special neutral city or null.
+   */
+  public Animation getInActiveCityAnim(City city, Color color) {
+    return city.isSpecialNeutralCity() ? animLib.getCityAnim(city.getID(), color, AnimLib.ANIM_INACTIVE) : null;
+  }
+
+  /**
    * Get a single unit animation that is looking in the given direction.
    * Supported directions(N,E,S,W) all other directions will throw an IllegalArgumentException
    */

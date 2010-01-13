@@ -16,7 +16,6 @@ import java.util.Map;
 
 /**
  * Contains all the Animations, keyed by upper case name
- * Unit Animations are stored by row id
  *
  * @author stefan
  */
@@ -26,8 +25,7 @@ public class AnimLib {
   public static final String ANIM_UP = "UP";
   public static final String ANIM_DOWN = "DOWN";
   public static final String ANIM_INACTIVE = "INACTIVE";
-  public static final String ANIM_FOGGED = "FOGGED";
-  private static final int NO_DURATION = 999;
+  private static final int NO_DURATION = 1;
   private final Map<String, Animation> animations;
 
   public AnimLib() {
@@ -43,16 +41,15 @@ public class AnimLib {
   }
 
   public Animation getAnim(String animName) {
-    String key = animName.toUpperCase();
-    if (!isAnimLoaded(key)) {
+    if (!isAnimLoaded(animName)) {
       throw new IllegalArgumentException(
-        "Animation cache does not contain " + key + " " + animations.keySet());
+        "Animation cache does not contain " + animName + " " + animations.keySet());
     }
-    return animations.get(key);
+    return animations.get(animName);
   }
 
   boolean isAnimLoaded(String animName) {
-    return animations.containsKey(animName.toUpperCase());
+    return animations.containsKey(animName);
   }
 
   public Collection<Animation> getAllAnimations() {
@@ -64,6 +61,11 @@ public class AnimLib {
   //----------------------------------------------------------------------------
 
   public void createCityAnimations(Color baseColor, Color color, ResourceManager resources) {
+    createArmyCityAnimations(baseColor, color, resources);
+    createNeutralCityAnimations(resources);
+  }
+
+  private void createArmyCityAnimations(Color baseColor, Color color, ResourceManager resources) {
     SpriteSheet citySpriteSheet = resources.getCitySpriteSheet(color);
     boolean cityAnimationsOn = App.getBoolean("display.city.animate");
 
@@ -76,6 +78,31 @@ public class AnimLib {
       Animation animActive = createAnim(citySpriteSheet, 0, totalFrames, row, duration);
       animActive.setLooping(cityAnimationsOn);
       addCityAnim(row, color, "", animActive);
+    }
+  }
+
+  /**
+   * Create neutral city animations
+   * The neutral city spritesheet image has 2 cols.
+   * the first column contains the active city img and
+   * the second column contains the inactive city img.
+   *
+   * For example a Missile silo would have a platform+rocket as active anim and
+   * just a platform w/o rocket as inactive anim.
+   */
+  private void createNeutralCityAnimations(ResourceManager resources) {
+    Color neutralColor = App.getColor("plugin.neutral_color");
+    int coloredCityCount = resources.getCitySpriteSheet(neutralColor).getVerticalCount();
+    SpriteSheet neutralCitySpriteSheet = resources.getNeutralCitySpriteSheet();
+
+    for (int row = 0; row < neutralCitySpriteSheet.getVerticalCount(); row++) {
+      Animation animActive = createAnim(neutralCitySpriteSheet, 0, 1, row, NO_DURATION);
+      animActive.setLooping(false);
+      addCityAnim(row + coloredCityCount, neutralColor, "", animActive);
+
+      Animation animInActive = createAnim(neutralCitySpriteSheet, 1, 2, row, NO_DURATION);
+      animInActive.setLooping(false);
+      addCityAnim(row + coloredCityCount, neutralColor, ANIM_INACTIVE, animInActive);
     }
   }
 
@@ -129,7 +156,7 @@ public class AnimLib {
     int animLeftFrameDurations = baseAnimLeft.getDurations()[0];
     int animRightFrameDurations = baseAnimRight.getDurations()[0];
     int animUpFrameDurations = baseAnimUp.getDurations()[0];
-    int animDownFrameDuractions = baseAnimDown.getDurations()[0];
+    int animDownFrameDurations = baseAnimDown.getDurations()[0];
 
     // For each row get LEFT, RIGHT, DOWN and UP Images and create Animations out of them.
     // THE ORDER IN WHICH IMAGES ARE READ IS IMPORTANT!
@@ -146,7 +173,7 @@ public class AnimLib {
       frame += animRightFrameCount;
       totalFrames += animRightFrameCount;
 
-      Animation animDown = createAnim(unitSpriteSheet, frame, totalFrames, row, animDownFrameDuractions);
+      Animation animDown = createAnim(unitSpriteSheet, frame, totalFrames, row, animDownFrameDurations);
       addUnitAnim(row, color, ANIM_DOWN, animDown);
       frame += animDownFrameCount;
       totalFrames += animDownFrameCount;
@@ -163,7 +190,7 @@ public class AnimLib {
     }
   }
 
-  private Animation createAnim(SpriteSheet sheet, int col, int cols, int row, int duration) {
+  private static Animation createAnim(SpriteSheet sheet, int col, int cols, int row, int duration) {
     return new Animation(sheet, col, row, cols - 1, row, true, duration, false);
   }
 
@@ -182,7 +209,7 @@ public class AnimLib {
     return getAnim(unitAnimName);
   }
 
-  private String createUnitAnimName(int rowID, Color color, String suffix) {
+  private static String createUnitAnimName(int rowID, Color color, String suffix) {
     String colorName = ColorUtil.toString(color);
     return "unit_" + rowID + "_" + colorName + "_" + suffix;
   }

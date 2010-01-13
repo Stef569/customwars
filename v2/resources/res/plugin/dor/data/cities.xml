@@ -1,5 +1,6 @@
 <!--
     id is a reference to the city image sheet
+    It's important that the colored city ID's are lower then the neutral cities
     moveCosts have the following order
     Infantry
     Mech
@@ -182,5 +183,31 @@
         </canBeLaunchedBy>
 
         <maxCapCount>20</maxCapCount>
+    </city>
+    <city name="horizontal_pipe_seam" id="6" type='pipe'>
+        <connect>North, South</connect>
+        <defenseBonus>2</defenseBonus>
+        <height>1</height>
+        <moveCosts>
+            <int>127</int>
+            <int>127</int>
+            <int>127</int>
+            <int>127</int>
+            <int>1</int>
+            <int>127</int>
+        </moveCosts>
+    </city>
+    <city name="vertical_pipe_seam" id="7" type='pipe'>
+        <connect>East, West</connect>
+        <defenseBonus>2</defenseBonus>
+        <height>1</height>
+        <moveCosts>
+            <int>127</int>
+            <int>127</int>
+            <int>127</int>
+            <int>127</int>
+            <int>1</int>
+            <int>127</int>
+        </moveCosts>
     </city>
 </list>

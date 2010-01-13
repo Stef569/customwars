@@ -22,6 +22,7 @@ m unit units.png 16 24 true
 s unitDecoration unitDecorations.png 8 8
 s panel_info panel_info.png 16 16
 
+m neutral_cities neutralCities.png 16 30
 m city cities.png 16 30 true
 s cityDecorations cityDecorations.png 8 8
 

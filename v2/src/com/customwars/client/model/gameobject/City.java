@@ -36,7 +36,7 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
   private List<Integer> canBeLaunchedBy;// The ids that can launch a rocket (Empty list means it cannot launch rockets)
   private final int maxCapCount;
   private final int healRate;       // Healing/repairs this city can give to a Unit
-  private int funds;          // Money that this city produces every turn
+  private int funds;                // Money that this city produces every turn
 
   private Location location;  // The location this City is on
   private Player owner;       // Player owning this City
@@ -342,6 +342,14 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
 
   public boolean isHQ() {
     return getName().equalsIgnoreCase("HQ");
+  }
+
+  public boolean isNeutral() {
+    return owner != null && owner.isNeutral();
+  }
+
+  public boolean isSpecialNeutralCity() {
+    return canBeCaptureBy.isEmpty();
   }
 
   @Override
