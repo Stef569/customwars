@@ -40,6 +40,11 @@ public class ServerGameJoinController {
     if (!StringUtil.hasContent(txtUserPassword.getText())) {
       txtUserPassword.setText(App.get("user.password"));
     }
+
+    // Remove previously entered data
+    Widget cboSide = page.getWidget("side");
+    cboSide.setText("");
+    cboSide.removeChildren();
   }
 
   public void fetchSides(Widget gameTxtField) {

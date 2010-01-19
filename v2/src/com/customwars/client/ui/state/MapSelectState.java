@@ -3,6 +3,7 @@ package com.customwars.client.ui.state;
 import com.customwars.client.App;
 import com.customwars.client.controller.MapSelectController;
 import com.customwars.client.io.loading.ThinglePageLoader;
+import com.customwars.client.tools.ThingleUtil;
 import com.customwars.client.ui.renderer.widget.CityCountWidgetRenderer;
 import com.customwars.client.ui.renderer.widget.MiniMapWidgetRenderer;
 import com.customwars.client.ui.state.input.CWCommand;
@@ -53,9 +54,7 @@ public class MapSelectState extends CWState {
     if (!mapCategories.isEmpty()) {
       Widget mapCategoryCbo = page.getWidget("map_categories");
       for (String mapCategory : mapCategories) {
-        Widget cboItem = page.createWidget("choice");
-        cboItem.setText(mapCategory);
-        mapCategoryCbo.add(cboItem);
+        ThingleUtil.addToList(page, mapCategoryCbo, mapCategory);
       }
       mapCategoryCbo.setText(mapCategories.get(0));
     }

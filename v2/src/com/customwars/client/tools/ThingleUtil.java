@@ -66,4 +66,15 @@ public final class ThingleUtil {
       listWidget.setScroll(0, 100);
     }
   }
+
+  /**
+   * Create a choice widget with text, add it to the listWidget
+   * and return the create choice widget.
+   */
+  public static Widget addToList(Page page, Widget listWidget, String text) {
+    Widget choice = page.createWidget("choice");
+    choice.setText(text);
+    listWidget.add(choice);
+    return choice;
+  }
 }
