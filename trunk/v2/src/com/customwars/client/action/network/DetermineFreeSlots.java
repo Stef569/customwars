@@ -44,16 +44,16 @@ public class DetermineFreeSlots implements Runnable {
     boolean hasUserNameComboBox = cboUserName != null && cboUserName.getWidgetClass().equals("combobox");
 
     try {
-      ServerGameInfo info = networkManager.getGameInfo(gameName);
+      ServerGameInfo serverGameInfo = networkManager.getGameInfo(gameName);
 
       if (hasSideComboBox) {
-        fillSideCBO(info);
-        selectFirstAvailableSide(info);
+        fillSideCBO(serverGameInfo);
+        selectFirstAvailableSide(serverGameInfo);
         cboSide.setBoolean("enabled", true);
       }
       if (hasUserNameComboBox) {
-        fillUserNameCBO(info);
-        selectFirstNonEmptyUserName(info);
+        fillUserNameCBO(serverGameInfo);
+        selectFirstNonEmptyUserName(serverGameInfo);
         cboUserName.setBoolean("enabled", true);
       }
     } catch (NetworkException e) {
@@ -63,79 +63,77 @@ public class DetermineFreeSlots implements Runnable {
     }
   }
 
-  private void fillUserNameCBO(ServerGameInfo info) {
+  /**
+   * Add each user that has joined the game to the username combo box widget
+   */
+  private void fillUserNameCBO(ServerGameInfo serverGameInfo) {
     cboUserName.removeChildren();
 
-    for (String userName : info.getUserNames()) {
-      if (!userName.equalsIgnoreCase("empty")) {
-        Widget choice = createCboItem(userName);
-        cboUserName.add(choice);
+    for (String userName : serverGameInfo.getUserNames()) {
+      int slotNr = serverGameInfo.getSlotNrForUser(userName);
+
+      if (!serverGameInfo.isFreeSlot(slotNr)) {
+        ThingleUtil.addToList(page, cboUserName, userName);
       }
     }
   }
 
-  private void selectFirstNonEmptyUserName(ServerGameInfo info) {
-    for (String userName : info.getUserNames()) {
+  private void selectFirstNonEmptyUserName(ServerGameInfo serverGameInfo) {
+    for (String userName : serverGameInfo.getUserNames()) {
       // If the current username is present in the list select it
       if (cboUserName.getText().equals(userName)) {
-        ThingleUtil.selectChild(cboSide, userName);
+        ThingleUtil.selectChild(cboUserName, userName);
         return;
       }
     }
 
-    for (String userName : info.getUserNames()) {
-      if (!userName.equalsIgnoreCase("empty")) {
+    for (String userName : serverGameInfo.getUserNames()) {
+      int slotNr = serverGameInfo.getSlotNrForUser(userName);
+
+      if (!serverGameInfo.isFreeSlot(slotNr)) {
         ThingleUtil.selectChild(cboUserName, userName);
-        break;
+        return;
       }
     }
   }
 
-  private void fillSideCBO(ServerGameInfo info) {
+  /**
+   * Fill the side combobox with slot numbers. When the slot is free enable the choice.
+   * If the slot is already taken by a user the choice is disabled
+   */
+  private void fillSideCBO(ServerGameInfo serverGameInfo) {
     cboSide.removeChildren();
 
-    String[] userNames = info.getUserNames();
-    for (int userNameIndex = 0; userNameIndex < userNames.length; userNameIndex++) {
-      String userName = userNames[userNameIndex];
-      int slot = userNameIndex + 1;
-      Widget choice = createCboItem(slot + "");
-      cboSide.add(choice);
+    for (int freeSlotNr : serverGameInfo.getFreeSlots()) {
+      Widget choice = ThingleUtil.addToList(page, cboSide, freeSlotNr + "");
 
-      if (userName.equalsIgnoreCase("empty")) {
-        choice.setBoolean("enabled", false);
-      } else {
+      if (serverGameInfo.isFreeSlot(freeSlotNr)) {
         choice.setBoolean("enabled", true);
+      } else {
+        choice.setBoolean("enabled", false);
       }
     }
   }
 
-  private void selectFirstAvailableSide(ServerGameInfo info) {
-    String[] userNames = info.getUserNames();
-    for (int userNameIndex = 0; userNameIndex < userNames.length; userNameIndex++) {
-      int slot = userNameIndex + 1;
+  private void selectFirstAvailableSide(ServerGameInfo serverGameInfo) {
+    for (String userName : serverGameInfo.getUserNames()) {
+      String slotNr = serverGameInfo.getSlotNrForUser(userName) + "";
 
       // If the current slot number is present in the list select it
-      if (cboSide.getText().equals(slot + "")) {
-        ThingleUtil.selectChild(cboSide, slot + "");
+      if (cboSide.getText().equals(slotNr)) {
+        ThingleUtil.selectChild(cboSide, slotNr);
         return;
       }
     }
 
-    for (int userNameIndex = 0; userNameIndex < userNames.length; userNameIndex++) {
-      String userName = userNames[userNameIndex];
-      int slot = userNameIndex + 1;
+    for (String userName : serverGameInfo.getUserNames()) {
+      int slotNr = serverGameInfo.getSlotNrForUser(userName);
 
-      // Select the first non empty slot
-      if (!userName.equalsIgnoreCase("empty")) {
-        ThingleUtil.selectChild(cboSide, slot + "");
-        break;
+      // Select the first empty slot
+      if (serverGameInfo.isFreeSlot(slotNr)) {
+        ThingleUtil.selectChild(cboSide, slotNr + "");
+        return;
       }
     }
-  }
-
-  private Widget createCboItem(String userName) {
-    Widget cboChoice = page.createWidget("choice");
-    cboChoice.setText(userName);
-    return cboChoice;
   }
 }

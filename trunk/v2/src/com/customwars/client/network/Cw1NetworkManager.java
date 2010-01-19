@@ -68,7 +68,7 @@ public class Cw1NetworkManager implements NetworkManager {
   /**
    * Start a servergame
    * #1 Download the chosen map for this game
-   * #2
+   * #2 Create a Game and return it
    * The returned Game is not started yet
    */
   public Game startServerGame(String serverGameName, String userName, String userPassword) throws NetworkException {
@@ -85,20 +85,34 @@ public class Cw1NetworkManager implements NetworkManager {
     }
   }
 
-  private static Game createGame(Map<Tile> map, ServerGameInfo serverInfo) {
-    List<Player> players = new ArrayList<Player>(map.getUniquePlayers());
-    String[] userNames = serverInfo.getUserNames();
+  /**
+   * Use the information stored on the server(server game info and the map)
+   * to create a Game
+   */
+  private static Game createGame(Map<Tile> map, ServerGameInfo serverGameInfo) {
+    List<Player> mapPlayers = new ArrayList<Player>(map.getUniquePlayers());
+    String[] userNames = serverGameInfo.getUserNames();
     List<Player> gamePlayers = new ArrayList<Player>();
 
-    for (int i = 0; i < players.size(); i++) {
-      Player mapPlayer = players.get(i);
-      int mapPlayerID = mapPlayer.getId();
-      Color mapPlayerColor = mapPlayer.getColor();
-      Player gamePlayer = new Player(mapPlayerID, mapPlayerColor, userNames[i], 0, i, false);
-      gamePlayers.add(gamePlayer);
+    // The user names have the same order as the turns
+    // The first game player should be named as the first user name etc...
+    // The player in the map is linked to the turn position
+    // todo later to be replaced by linking map players to a color
+    // All players are enemies of each other
+    // todo how can 2 players team up?
+    for (int i = 0; i < userNames.length; i++) {
+      Player mapPlayer = mapPlayers.get(i);
+      Player player = createPlayer(mapPlayer, userNames[i], i, false);
+      gamePlayers.add(player);
     }
 
     return new Game(map, gamePlayers, map.getDefaultGameRules());
+  }
+
+  private static Player createPlayer(Player mapPlayer, String playerName, int team, boolean ai) {
+    int mapPlayerID = mapPlayer.getId();
+    Color mapPlayerColor = mapPlayer.getColor();
+    return new Player(mapPlayerID, mapPlayerColor, playerName, 0, team, ai);
   }
 
   public void endTurn(Game game, String serverGameName, String userName, String userPassword) throws NetworkException {
@@ -136,9 +150,9 @@ public class Cw1NetworkManager implements NetworkManager {
       ServerGameInfo gameInfo = CW1NetworkIO.getServerGameInfo(serverGameName);
 
       int userIDToRemove = -1;
-      String[] userNames = gameInfo.getUserNames();
-      for (int userID = 0; userID < userNames.length; userID++) {
-        String serverUserName = userNames[userID];
+      for (String serverUserName : gameInfo.getUserNames()) {
+        int userID = gameInfo.getUserIdFor(serverUserName);
+
         if (serverUserName.equals(player.getName())) {
           userIDToRemove = userID;
           break;
@@ -147,7 +161,7 @@ public class Cw1NetworkManager implements NetworkManager {
 
       if (userIDToRemove == -1) {
         throw new IllegalArgumentException(
-          "can't destroy player, no user for " + player.getName() + " users " + Arrays.toString(userNames)
+          "can't destroy player, no user for " + player.getName() + " users " + Arrays.toString(gameInfo.getUserNames())
         );
       } else {
         CW1NetworkIO.removePlayer(serverGame, user, userIDToRemove);
