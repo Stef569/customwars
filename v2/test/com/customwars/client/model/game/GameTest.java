@@ -229,7 +229,7 @@ public class GameTest {
   @Test
   public void testGameOverByHQCapture() {
     buildHardCodedMap(2);
-    Player mapPlayer2 = new Player(1);
+    Player mapPlayer2 = new Player(1, Color.YELLOW);
     City HQ = MapUtil.addCityToMap(map, 1, 0, TestData.HQ, mapPlayer2);
     mapPlayer2.setHq(HQ);
 
@@ -268,11 +268,11 @@ public class GameTest {
   @Test
   public void testActiveUnitsAfterGameStart() {
     buildHardCodedMap(5);
-    Player mapPlayer1 = new Player(0);
-    Player mapPlayer2 = new Player(1);
-    Player mapPlayer3 = new Player(2);
-    Player mapPlayer4 = new Player(3);
-    Player mapPlayer5 = new Player(4);
+    Player mapPlayer1 = new Player(0, Color.BLUE);
+    Player mapPlayer2 = new Player(1, Color.YELLOW);
+    Player mapPlayer3 = new Player(2, Color.GREEN);
+    Player mapPlayer4 = new Player(3, Color.BLACK);
+    Player mapPlayer5 = new Player(4, Color.CYAN);
 
     // Add some units to each player
     MapUtil.addUnitToMap(map, 0, 0, TestData.INF, mapPlayer1);

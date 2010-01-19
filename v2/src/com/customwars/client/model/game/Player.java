@@ -6,6 +6,7 @@ import com.customwars.client.model.gameobject.GameObjectState;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.tools.Args;
 import com.customwars.client.tools.ColorUtil;
+import org.apache.log4j.Logger;
 
 import java.awt.Color;
 import java.util.Iterator;
@@ -22,47 +23,45 @@ import java.util.List;
  * @author stefan
  */
 public class Player extends GameObject {
-  public static final int NEUTRAL_PLAYER_ID = -1;
-  private final int id;     // Unique Number
-  private String name;      // Name for this player,not unique
-  private Color color;      // Unique Color
-  private int team;         // The team this player is in
-  private boolean ai;       // Is this a human or an AI player
-  private boolean neutral;  // Is this player passive of active
-  private City hq;          // Headquarters
+  private static final Logger logger = Logger.getLogger(Player.class);
+  private static final int NEUTRAL_PLAYER_ID = -1;
+  private static final int NEUTRAL_TEAM = -1;
+  private final int id;           // Unique Number
+  private final Color color;      // Unique Color
+  private final int team;         // The team this player is in
+  private final boolean ai;       // Is this a human or an AI player
+  private String name;            // Name for this player
+  private City hq;                // Headquarters
 
-  private int budget;         // Amount of money that can be spend
+  private int budget;               // Amount of money that can be spend
   private final List<Unit> army;    // All the units of this player
   private final List<City> cities;  // All the cities of this player, including the HQ
   private boolean createdFirstUnit; // Has this player created his first unit
 
-  public Player(int id) {
-    this.id = id;
-    this.name = "Unnamed";
-    this.army = new LinkedList<Unit>();
-    this.cities = new LinkedList<City>();
+  /**
+   * Create an unnamed human player
+   */
+  public Player(int id, Color color) {
+    this(id, color, "Unnamed", 0, 0, false);
   }
 
-  public Player(int id, Color color) {
-    this(id);
-    this.color = color;
+  /**
+   * Create a neutral player
+   * Post: isNeutral returns true
+   */
+  public static Player createNeutralPlayer(Color color) {
+    return new Player(NEUTRAL_PLAYER_ID, color, "Neutral", 0, NEUTRAL_TEAM, false);
   }
 
   public Player(int id, Color color, String name, int startBudget, int team, boolean ai) {
-    this(id, color, false, name, startBudget, team, ai);
-  }
-
-  private Player(int id, Color color, boolean neutral, String name, int startBudget, int team, boolean ai) {
-    this(id, color);
-    this.neutral = neutral;
+    this.id = id;
+    this.color = color;
     this.name = name;
     this.budget = startBudget;
     this.team = team;
     this.ai = ai;
-  }
-
-  public static Player createNeutralPlayer(Color color) {
-    return new Player(NEUTRAL_PLAYER_ID, color, true, "Neutral", 0, -1, false);
+    this.army = new LinkedList<Unit>();
+    this.cities = new LinkedList<City>();
   }
 
   public void startTurn() {
@@ -87,14 +86,15 @@ public class Player extends GameObject {
 
   /**
    * Destroy all units of this owner
-   * Change the owner of the cities owned by this player to the conquerer player.
+   * Change the owner of the cities owned by this player to the conqueror player.
    *
-   * @param conquerer the player that has conquered this player
+   * @param conqueror the player that has conquered this player
    */
-  public void destroy(Player conquerer) {
+  public void destroy(Player conqueror) {
     setState(GameObjectState.DESTROYED);
     destroyAllUnits();
-    changeCityOwnersTo(conquerer);
+    changeCityOwnersTo(conqueror);
+    logger.info(name + " is destroyed. All cities now belong to " + conqueror.name);
   }
 
   /**
@@ -114,7 +114,7 @@ public class Player extends GameObject {
    * @param newOwner The new owner of the cities owned by this player
    */
   private void changeCityOwnersTo(Player newOwner) {
-    for (City city : getAllCities()) {
+    for (City city : cities) {
       newOwner.addCity(city);
     }
     cities.clear();
@@ -238,7 +238,7 @@ public class Player extends GameObject {
   }
 
   public boolean isNeutral() {
-    return neutral;
+    return team == NEUTRAL_TEAM;
   }
 
   public boolean areAllUnitsDestroyed() {
