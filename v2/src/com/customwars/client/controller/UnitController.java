@@ -194,8 +194,11 @@ public abstract class UnitController {
   }
 
   boolean canFireFlare(Tile from) {
-    return unit.getStats().canFlare() && map.isFogOfWarOn() &&
-      !isInDirectUnitMoved(from) && unit.getAvailableWeapon().hasAmmoLeft();
+    boolean moved = from != unit.getLocation();
+    boolean hasFlareAbility = unit.getStats().canFlare();
+    boolean ammoLeft = unit.hasPrimaryWeapon() && unit.getPrimaryWeapon().hasAmmoLeft();
+    boolean fogON = map.isFogOfWarOn();
+    return hasFlareAbility && fogON && !moved && ammoLeft;
   }
 
   boolean canBuildCity(Tile selected) {
