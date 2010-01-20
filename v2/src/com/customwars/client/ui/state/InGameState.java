@@ -84,6 +84,7 @@ public class InGameState extends CWState implements PropertyChangeListener {
     hud.moveOverTile(gameRenderer.getCursorLocation());
     stateChanger.clearPreviousStatesHistory();
     stateChanger.stopRecordingStateHistory();
+    cursorControl.addListener(this);
   }
 
   /**
@@ -190,7 +191,6 @@ public class InGameState extends CWState implements PropertyChangeListener {
     cursorControl.addCursor("ATTACK", attackCursor);
     cursorControl.addCursor("SILO", siloCursor);
     cursorControl.activateCursor("SELECT");
-    cursorControl.addListener(this);
   }
 
   @Override
