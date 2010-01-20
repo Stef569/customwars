@@ -11,13 +11,15 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 /**
  * This class hides the details of sending and receiving information to/from the cw1 server.
  */
 public class CW1NetworkIO {
   private static final String SERVER_URL = "http://battle.customwars.com/";
-  private static final String GAME_VERSION = App.get("game.name") + '_' + App.get("game.version");
+  private static final String GAME_VERSION = App.get("game.name") + ' ' + App.get("game.version");
 
   // Perl Scripts
   private static final String MAIN_SCRIPT = "main.pl";
@@ -37,7 +39,6 @@ public class CW1NetworkIO {
   private static final String GAME_NAME_AVAILABLE = "qname";
   private static final String CAN_PLAY = "canplay";
   private static final String VALIDUP = "validup";
-  private static final String LOGIN = "login";
   private static final String GET_SYS_LOG = "getsys";
   private static final String GET_CHAT_LOG = "getchat";
   private static final String SEND_CHAT = "sendchat";
@@ -53,6 +54,11 @@ public class CW1NetworkIO {
   private static final String VERSION_MISMATCH = "version mismatch";
   private static final String AUTHENTICATION_FAILED = "username or password incorrect";
   private static final String UPDATE_OK = "update successful";
+  private static final String WRONG_PASSWORD = "wrong password";
+  private static final String JOIN_SUCCESSFUL = "join successful";
+  private static final String OUT_OF_RANGE = "out of range";
+  private static final String SLOT_TAKEN = "slot taken";
+  private static final String MESSAGE_RECIEVED = "message recieved";
 
   private static final String TEMP_SAVE_FILE_NAME = "CW2net";
   private static final String TEMP_SAVE_FILE_EXT = ".save";
@@ -77,10 +83,10 @@ public class CW1NetworkIO {
     String[] replies = sendCommand(CREATE_NEW_GAME, gameName, masterPass, numOfArmiesOnMap, GAME_VERSION, comment, mapName, user.getName());
     String reply = replies[0];
 
-    if (reply.equalsIgnoreCase(GAME_CREATED)) return;
-
-    if (reply.equalsIgnoreCase(DENIED)) {
-      throw new NetworkException("Game name taken", replies);
+    if (!reply.equalsIgnoreCase(GAME_CREATED)) {
+      if (reply.equalsIgnoreCase(DENIED)) {
+        throw new NetworkException("Game name taken", replies);
+      }
     }
   }
 
@@ -88,36 +94,36 @@ public class CW1NetworkIO {
     String[] replies = sendCommand(JOIN_GAME, game.getGameName(), game.getMasterPass(), user.getName(), user.getPassword(), slot + "", GAME_VERSION);
     String reply = replies[0];
 
-    if (reply.equalsIgnoreCase("join successful")) return;
-
-    String reason = "";
-    if (reply.equalsIgnoreCase("wrong password")) {
-      reason = "Wrong password";
-    } else if (reply.equalsIgnoreCase("out of range")) {
-      reason = "Army choice out of range or invalid";
-    } else if (reply.equalsIgnoreCase("slot taken")) {
-      reason = "Army choice already taken";
-    } else {
-      reason = "unknown";
+    if (!reply.equalsIgnoreCase(JOIN_SUCCESSFUL)) {
+      String reason = "";
+      if (reply.equalsIgnoreCase(WRONG_PASSWORD)) {
+        reason = "Wrong password";
+      } else if (reply.equalsIgnoreCase(OUT_OF_RANGE)) {
+        reason = "Army choice out of range or invalid";
+      } else if (reply.equalsIgnoreCase(SLOT_TAKEN)) {
+        reason = "Army choice already taken";
+      } else {
+        reason = "unknown";
+      }
+      throw new NetworkException("Could not join game " + game.getGameName() + " " + reason, replies);
     }
-    throw new NetworkException("Could not join game " + game.getGameName() + " " + reason, replies);
   }
 
   public void validateLogin(ServerGame serverGame, User user) throws IOException, NetworkException {
     String[] replies = sendCommand(VALIDUP, serverGame.getGameName(), user.getName(), user.getPassword(), GAME_VERSION);
     String reply = replies[0];
 
-    if (reply.equalsIgnoreCase(LOGIN_OK)) return;
-
-    String err = "Problem logging in ";
-    if (reply.equalsIgnoreCase(VERSION_MISMATCH)) {
-      throw new NetworkException(err + " The server reported a version mismatch", replies);
-    } else if (reply.equalsIgnoreCase(AUTHENTICATION_FAILED)) {
-      throw new NetworkException(err + "'Wrong user name or password'", replies);
-    } else {
-      throw new NetworkException(err +
-        "either the username/password is incorrect or the game " + serverGame.getGameName() + " has ended.", replies
-      );
+    if (!reply.equalsIgnoreCase(LOGIN_OK)) {
+      String err = "Problem logging in ";
+      if (reply.equalsIgnoreCase(VERSION_MISMATCH)) {
+        throw new NetworkException(err + " The server reported a version mismatch", replies);
+      } else if (reply.equalsIgnoreCase(AUTHENTICATION_FAILED)) {
+        throw new NetworkException(err + "'Wrong user name or password'", replies);
+      } else {
+        throw new NetworkException(err +
+          "either the username/password is incorrect or the game " + serverGame.getGameName() + " has ended.", replies
+        );
+      }
     }
   }
 
@@ -195,7 +201,7 @@ public class CW1NetworkIO {
     HttpClient client = new HttpClient(SERVER_URL + UPLOAD_MAP_SCRIPT);
     File tempSaveFile = File.createTempFile(TEMP_SAVE_FILE_NAME, TEMP_SAVE_FILE_EXT);
     BinaryCW2MapParser mapParser = new BinaryCW2MapParser();
-    mapParser.writeMap(map, new FileOutputStream(tempSaveFile));
+    mapParser.writeMap(map, new GZIPOutputStream(new FileOutputStream(tempSaveFile)));
 
     client.upload(serverGame.getGameName(), tempSaveFile);
     tempSaveFile.delete();
@@ -213,7 +219,7 @@ public class CW1NetworkIO {
     client.download(serverGame.getGameName(), tempSaveFile);
 
     BinaryCW2MapParser mapParser = new BinaryCW2MapParser();
-    Map<Tile> map = mapParser.readMap(new FileInputStream(tempSaveFile));
+    Map<Tile> map = mapParser.readMap(new GZIPInputStream(new FileInputStream(tempSaveFile)));
     tempSaveFile.delete();
     return map;
   }
@@ -222,7 +228,7 @@ public class CW1NetworkIO {
     HttpClient client = new HttpClient(SERVER_URL + UPLOAD_GAME_SCRIPT);
     File tempSaveFile = File.createTempFile(TEMP_SAVE_FILE_NAME, TEMP_SAVE_FILE_EXT);
     BinaryCW2GameParser gameParser = new BinaryCW2GameParser();
-    gameParser.writeGame(game, new FileOutputStream(tempSaveFile));
+    gameParser.writeGame(game, new GZIPOutputStream(new FileOutputStream(tempSaveFile)));
 
     client.upload(serverGame.getGameName(), tempSaveFile);
     tempSaveFile.delete();
@@ -238,7 +244,7 @@ public class CW1NetworkIO {
     client.download(serverGame.getGameName(), tempSaveFile);
 
     BinaryCW2GameParser gameParser = new BinaryCW2GameParser();
-    Game game = gameParser.readGame(new FileInputStream(tempSaveFile));
+    Game game = gameParser.readGame(new GZIPInputStream(new FileInputStream(tempSaveFile)));
     tempSaveFile.delete();
     return game;
   }
@@ -251,18 +257,18 @@ public class CW1NetworkIO {
     return sendCommand(GET_SYS_LOG, serverGameName);
   }
 
-  protected static String[] sendCommand(String command, String... parameters) throws IOException {
-    HttpClient client = new HttpClient(SERVER_URL + MAIN_SCRIPT);
-    client.send(command, parameters);
-    return client.readReplies();
-  }
-
   public void sendChatMessage(ServerGame serverGame, User user, String chatMessage) throws IOException, NetworkException {
     String[] replies = sendCommand(SEND_CHAT, serverGame.getGameName(), user.getName(), chatMessage);
     String reply = replies[0];
 
-    if (!reply.equals("message recieved")) {
+    if (!reply.equals(MESSAGE_RECIEVED)) {
       throw new NetworkException("Could not send chat message");
     }
+  }
+
+  protected String[] sendCommand(String command, String... parameters) throws IOException {
+    HttpClient client = new HttpClient(SERVER_URL + MAIN_SCRIPT);
+    client.send(command, parameters);
+    return client.readReplies();
   }
 }
