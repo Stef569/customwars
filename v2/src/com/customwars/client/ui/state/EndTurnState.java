@@ -25,8 +25,7 @@ public class EndTurnState extends CWState {
     super.enter(container, stateBasedGame);
     game = stateSession.game;
     nextPlayer = game.getNextActivePlayer(game.getActivePlayer());
-    int turnCount = game.getTurn() + 1;
-    nextDay = game.getDay(turnCount);
+    nextDay = game.getDay() + 1;
     endTurnPressed = false;
   }
 
