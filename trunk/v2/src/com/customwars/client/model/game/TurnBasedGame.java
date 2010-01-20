@@ -21,6 +21,9 @@ import java.util.List;
  * a Game state[Idle, Started, Gameover], a map, players and the current turn.
  *
  * The players list contains the players that are in the game, excluding the neutral player.
+ * The order of the players equals the flow of the turns. eg. Given the following players [u1, u2, u3]
+ * starting the game with u1 and ending the turn makes u2 the active player
+ *
  * Neutral players are always in the IDLE state
  * Human and AI players are ACTIVE or DESTROYED.
  *
@@ -45,13 +48,13 @@ public class TurnBasedGame implements Observable, Serializable {
     Args.checkForNull(players);
 
     this.map = map;
-    this.players = players;
+    this.players = new ArrayList<Player>(players);
     this.turn = new Turn(dayLimit);
     this.state = GameState.IDLE;
   }
 
   /**
-   * @param gameStarter The player that starts this game
+   * @param gameStarter The player that is active in the first turn.
    * @throws IllegalStateException if the game is not in the IDLE state
    *                               When the turn limit is reached
    */
@@ -68,6 +71,11 @@ public class TurnBasedGame implements Observable, Serializable {
     logger.debug("Game with map '" + map.getMapName() + "' has started");
   }
 
+  /**
+   * End the turn for the active player
+   *
+   * @see #endTurn(Player)
+   */
   public void endTurn() throws NotYourTurnException {
     endTurn(activePlayer);
   }
@@ -89,7 +97,7 @@ public class TurnBasedGame implements Observable, Serializable {
 
   /**
    * Increase turn and day
-   * When the turnLimit or dayLimit is reached end the game
+   * When the turn Limit is reached end the game
    */
   private void increaseTurn() {
     int oldVal = getTurn();
@@ -107,6 +115,7 @@ public class TurnBasedGame implements Observable, Serializable {
   }
 
   void startTurn(Player player) {
+    logger.info("Day " + turn.getDay() + " Starting turn for player '" + player.getName() + "'");
     player.startTurn();
     map.startTurn(player);
     setActivePlayer(player);
@@ -141,17 +150,6 @@ public class TurnBasedGame implements Observable, Serializable {
     return turn.getDay();
   }
 
-  public int getDay(int turnCount) {
-    int day, playerCount = getActivePlayerCount();
-
-    if (playerCount > 0) {
-      day = (turnCount / playerCount) + 1;
-    } else {
-      day = -1;
-    }
-    return day;
-  }
-
   public boolean isGameOver() {
     return state == GameState.GAME_OVER;
   }
@@ -179,10 +177,9 @@ public class TurnBasedGame implements Observable, Serializable {
   }
 
   /**
-   * Get All players playing in this game
-   * excluding the neutral player
+   * Get All players in this game
    *
-   * @return all players in this game
+   * @return all players in this game, excluding the neutral player
    */
   public Iterable<Player> getAllPlayers() {
     return new Iterable<Player>() {
@@ -192,6 +189,11 @@ public class TurnBasedGame implements Observable, Serializable {
     };
   }
 
+  /**
+   * Get All active players in this game
+   *
+   * @return all active players in this game, excluding the neutral player
+   */
   public List<Player> getActivePlayers() {
     List<Player> activePlayers = new ArrayList<Player>();
     for (Player player : getAllPlayers()) {
@@ -203,7 +205,9 @@ public class TurnBasedGame implements Observable, Serializable {
   }
 
   /**
-   * @param player the player index to start searching at in the players list
+   * Get the next active player after the given player
+   *
+   * @param player the player to start searching after for the next player
    * @return the next active player after player
    */
   public Player getNextActivePlayer(Player player) {
@@ -232,12 +236,19 @@ public class TurnBasedGame implements Observable, Serializable {
     return index >= 0 && index < players.size();
   }
 
+  /**
+   * Retrieve the active player in the game
+   * before the game has started there is no active player and null is returned
+   * after the game is started this method guarantees to always return a player object.
+   *
+   * @return The active player in the game
+   */
   public Player getActivePlayer() {
     return activePlayer;
   }
 
   /**
-   * Get a game player by his playerName
+   * Get a player by name
    *
    * @param playerName The Name of the player to retrieve(case sensitive)
    * @return A Player within this game
@@ -260,9 +271,9 @@ public class TurnBasedGame implements Observable, Serializable {
   }
 
   /**
-   * Get a player by his ID
+   * Get a player by ID
    *
-   * @param playerID The ID of a game player
+   * @param playerID The ID of a player
    * @return A Player within this game
    * @throws IllegalArgumentException if no player matches the given player ID
    */
