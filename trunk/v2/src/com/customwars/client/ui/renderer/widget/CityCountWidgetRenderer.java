@@ -30,7 +30,7 @@ public class CityCountWidgetRenderer implements WidgetRenderer {
 
   private Map<Tile> map;
   private int tileSize;
-  private int[] mapCitiesCount;
+  private int[] mapCitiesCount;  // index=base city ID, value=city count in the map
 
   private final Font numbers;
   private Dimension preferredSize;
@@ -47,14 +47,8 @@ public class CityCountWidgetRenderer implements WidgetRenderer {
     calcPreferredSize();
   }
 
-  private void calcPreferredSize() {
-    int preferredWidth = (mapCitiesCount.length * tileSize + mapCitiesCount.length * HORIZONTAL_MARGIN) - HORIZONTAL_MARGIN;
-    int preferredHeight = resources.getSingleCityImageHeight(NEUTRAL_COLOR);
-    preferredSize = new Dimension(preferredWidth, preferredHeight);
-  }
-
   private void calcCityCount() {
-    mapCitiesCount = new int[CityFactory.countCities()];
+    mapCitiesCount = new int[CityFactory.countBaseCities()];
     for (Tile t : map.getAllTiles()) {
       City city = map.getCityOn(t);
 
@@ -62,6 +56,13 @@ public class CityCountWidgetRenderer implements WidgetRenderer {
         mapCitiesCount[city.getID()]++;
       }
     }
+  }
+
+  private void calcPreferredSize() {
+    int citiesCount = mapCitiesCount.length;
+    int preferredWidth = (citiesCount * tileSize + citiesCount * HORIZONTAL_MARGIN) - HORIZONTAL_MARGIN;
+    int preferredHeight = resources.getSingleCityImageHeight(NEUTRAL_COLOR);
+    preferredSize = new Dimension(preferredWidth, preferredHeight);
   }
 
   public void paint(ThingleGraphics tg, Widget widget, Rectangle bounds) {
@@ -85,7 +86,7 @@ public class CityCountWidgetRenderer implements WidgetRenderer {
 
   private void renderContent(Graphics g) {
     int x = 0;
-    for (City city : CityFactory.getAllCities()) {
+    for (City city : CityFactory.getBaseCities()) {
       paintCityCount(city, mapCitiesCount[city.getID()], x, g);
       x += tileSize + HORIZONTAL_MARGIN;
     }
