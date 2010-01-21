@@ -1,11 +1,14 @@
 package com.customwars.client.model.gameobject;
 
+import com.customwars.client.tools.UCaseMap;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A database(cache) of cities that can be used in the game. each city is mapped to an unique city ID.
@@ -19,7 +22,9 @@ import java.util.List;
  * @author stefan
  */
 public class CityFactory {
-  private static HashMap<Integer, City> cities = new HashMap<Integer, City>();
+  private static final HashMap<Integer, City> citiesById = new HashMap<Integer, City>();
+  private static final Map<String, City> citiesByName = new UCaseMap<City>();
+  private static final List<City> baseCities = new ArrayList<City>();
   private static final Comparator<City> SORT_CITY_ON_ID = new Comparator<City>() {
     public int compare(City cityA, City cityB) {
       return cityA.getID() - cityB.getID();
@@ -34,25 +39,58 @@ public class CityFactory {
 
   public static void addCity(City city) {
     int cityID = city.getID();
-    if (cities.containsKey(cityID)) {
-      throw new IllegalArgumentException("City ID " + cityID + " is already used by " + getCity(cityID));
+    String cityName = city.getName();
+    searchForDuplicates(cityName, cityID);
+    addCity(cityName, cityID, city);
+  }
+
+  private static void searchForDuplicates(String cityName, int cityID) {
+    if (citiesById.containsKey(cityID)) {
+      City duplicateCity = getCity(cityID);
+      throw new IllegalArgumentException("City ID " + cityID + " is already used by " + duplicateCity);
     }
+
+    if (citiesByName.containsKey(cityName)) {
+      City duplicateCity = getCity(cityName);
+      throw new IllegalArgumentException("City name " + cityName + " is already used by " + duplicateCity);
+    }
+  }
+
+  private static void addCity(String cityName, int cityID, City city) {
     city.init();
-    cities.put(cityID, city);
+    citiesById.put(cityID, city);
+    citiesByName.put(cityName, city);
+  }
+
+  public static void addBaseCities(Collection<City> baseCityCollection) {
+    for (City city : baseCityCollection) {
+      int cityID = city.getID();
+      City baseCity = citiesById.get(cityID);
+      baseCities.add(baseCity);
+    }
   }
 
   public static City getCity(int id) {
-    if (!cities.containsKey(id)) {
-      throw new IllegalArgumentException("City ID " + id + " is not cached " + cities.keySet());
+    if (!citiesById.containsKey(id)) {
+      throw new IllegalArgumentException("City ID " + id + " is not cached " + citiesById.keySet());
     }
-    City city = new City(cities.get(id));
+    City city = new City(citiesById.get(id));
+    city.reset();
+    return city;
+  }
+
+  public static City getCity(String cityName) {
+    if (!citiesByName.containsKey(cityName)) {
+      throw new IllegalArgumentException("City name " + cityName + " is not cached " + citiesByName.keySet());
+    }
+    City city = new City(citiesByName.get(cityName));
     city.reset();
     return city;
   }
 
   public static Collection<City> getAllCities() {
-    List<City> allCities = new ArrayList<City>(cities.size());
-    for (City city : cities.values()) {
+    List<City> allCities = new ArrayList<City>(citiesById.size());
+    for (City city : citiesById.values()) {
       int cityID = city.getID();
       allCities.add(getCity(cityID));
     }
@@ -61,19 +99,35 @@ public class CityFactory {
   }
 
   public static City getRandomCity() {
-    int rand = (int) (Math.random() * cities.size());
+    int rand = (int) (Math.random() * citiesById.size());
     return getCity(rand);
   }
 
+  /**
+   * @return A Collection of all the base cities in this Factory sorted on cityID
+   */
+  public static List<City> getBaseCities() {
+    Collections.sort(baseCities, SORT_CITY_ON_ID);
+    return Collections.unmodifiableList(baseCities);
+  }
+
   public static boolean hasCityForID(int cityID) {
-    return cities.containsKey(cityID);
+    return citiesById.containsKey(cityID);
+  }
+
+  public static boolean hasCityForName(String cityName) {
+    return citiesByName.containsKey(cityName);
   }
 
   public static int countCities() {
-    return cities.size();
+    return citiesById.size();
+  }
+
+  public static int countBaseCities() {
+    return baseCities.size();
   }
 
   public static void clear() {
-    cities.clear();
+    citiesById.clear();
   }
 }

@@ -1,6 +1,7 @@
 package com.customwars.client.io.loading;
 
-import com.customwars.client.io.converter.TerrainConverter;
+import com.customwars.client.io.converter.CityXmlConverter;
+import com.customwars.client.io.converter.TerrainXmlConverter;
 import com.customwars.client.model.ArmyBranch;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.CityFactory;
@@ -36,7 +37,8 @@ public class ModelLoader implements CWResourceLoader {
   private static final String XML_DATA_ALL_TERRAIN_FILE = "terrains.xml";
   private static final String XML_DATA_WEAPONS_FILE = "weapons.xml";
   private static final String XML_DATA_UNITS_FILE = "units.xml";
-  private static final String XML_DATA_CITY_FILE = "cities.xml";
+  private static final String XML_DATA_CITY_FILE = "baseCities.xml";
+  private static final String XML_DATA_ALL_CITY_FILE = "cities.xml";
   private static final String DMG_XML_FILE = "damage.xml";
   private static final XStream xStream = new XStream(new DomDriver());
   private final String modelResPath;
@@ -60,14 +62,17 @@ public class ModelLoader implements CWResourceLoader {
     xStream.useAttributeFor(Terrain.class, "id");
     xStream.useAttributeFor(Terrain.class, "name");
     xStream.useAttributeFor(Terrain.class, "type");
-    InputStream basicTerrainStream = ResourceLoader.getResourceAsStream(modelResPath + XML_DATA_TERRAIN_FILE);
-    Collection<Terrain> basicTerrains = (Collection<Terrain>) XStreamUtil.readObject(xStream, basicTerrainStream);
 
+    // Load Base Terrains, they contain the terrain stats
+    InputStream baseTerrainsStream = ResourceLoader.getResourceAsStream(modelResPath + XML_DATA_TERRAIN_FILE);
+    Collection<Terrain> baseTerrains = (Collection<Terrain>) XStreamUtil.readObject(xStream, baseTerrainsStream);
+
+    // Load all terrains, use the type parameter to look up the base terrain, and copy the stats
     InputStream allTerrainStream = ResourceLoader.getResourceAsStream(modelResPath + XML_DATA_ALL_TERRAIN_FILE);
-    xStream.registerConverter(new TerrainConverter(basicTerrains));
+    xStream.registerConverter(new TerrainXmlConverter(baseTerrains));
     Collection<Terrain> terrains = (Collection<Terrain>) XStreamUtil.readObject(xStream, allTerrainStream);
     TerrainFactory.addTerrains(terrains);
-    TerrainFactory.addBaseTerrains(basicTerrains);
+    TerrainFactory.addBaseTerrains(baseTerrains);
   }
 
   @SuppressWarnings("unchecked")
@@ -104,9 +109,17 @@ public class ModelLoader implements CWResourceLoader {
     xStream.useAttributeFor(Terrain.class, "type");
     xStream.alias("armyBranch", ArmyBranch.class);
     xStream.aliasField("connect", Terrain.class, "connectedDirections");
-    InputStream cityStream = ResourceLoader.getResourceAsStream(modelResPath + XML_DATA_CITY_FILE);
-    Collection<City> cities = (Collection<City>) XStreamUtil.readObject(xStream, cityStream);
+
+    // Load Base Cities, they contain the city stats
+    InputStream baseCitiesStream = ResourceLoader.getResourceAsStream(modelResPath + XML_DATA_CITY_FILE);
+    Collection<City> baseCities = (Collection<City>) XStreamUtil.readObject(xStream, baseCitiesStream);
+
+    // Load all cities, use the type parameter to look up the base city, and copy the stats
+    InputStream allCitiesStream = ResourceLoader.getResourceAsStream(modelResPath + XML_DATA_ALL_CITY_FILE);
+    xStream.registerConverter(new CityXmlConverter(baseCities));
+    Collection<City> cities = (Collection<City>) XStreamUtil.readObject(xStream, allCitiesStream);
     CityFactory.addCities(cities);
+    CityFactory.addBaseCities(baseCities);
   }
 
   private void loadDamageTables() throws IOException {
