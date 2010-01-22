@@ -10,8 +10,9 @@ public class NetworkException extends Exception {
   private String reply = "";
   private String message = "";
 
-  public NetworkException(Exception ex) {
+  public NetworkException(Throwable ex) {
     super(ex);
+    this.message = ex.toString();
   }
 
   public NetworkException(String message) {
