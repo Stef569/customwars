@@ -33,7 +33,8 @@ public class MultiPlayerMenuState extends CWState implements ComponentListener {
     mainMenu.addItems(
       new MenuItem(App.translate("create_server_game"), font, container),
       new MenuItem(App.translate("join_server_game"), font, container),
-      new MenuItem(App.translate("log_into_server_game"), font, container)
+      new MenuItem(App.translate("log_into_server_game"), font, container),
+      new MenuItem(App.translate("back"), font, container)
     );
 
     mainMenu.addListener(this);
@@ -51,13 +52,16 @@ public class MultiPlayerMenuState extends CWState implements ComponentListener {
     g.setColor(Color.lightGray);
     switch (mainMenu.getCurrentItem()) {
       case 0:
-        g.drawString("Create server game", 210, 440);
+        g.drawString("Create new server game", 210, 440);
         break;
       case 1:
-        g.drawString("Join server game", 210, 440);
+        g.drawString("Join existing server game", 210, 440);
         break;
       case 2:
-        g.drawString("Log into server game", 210, 440);
+        g.drawString("Log into existing server game", 210, 440);
+        break;
+      case 3:
+        g.drawString("Back to previous menu", 210, 440);
         break;
     }
   }
@@ -99,6 +103,9 @@ public class MultiPlayerMenuState extends CWState implements ComponentListener {
         break;
       case 2:
         changeToState("LOGIN_SERVER_GAME");
+        break;
+      case 3:
+        changeToPreviousState();
         break;
     }
   }

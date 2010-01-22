@@ -123,12 +123,15 @@ public class GameController {
   /**
    * Start unit cycle mode
    * If already in unit cycle mode, move the cursor to the next unit location
+   * If there are no active units nothing happens
    */
   public void startUnitCycle() {
-    if (!inGameContext.isUnitCycleMode()) {
-      inGameContext.doAction(new StartUnitCycleAction());
-    } else {
-      cursorControl.moveCursorToNextLocation();
+    if (!map.getActiveUnits().isEmpty()) {
+      if (!inGameContext.isUnitCycleMode()) {
+        inGameContext.doAction(new StartUnitCycleAction());
+      } else {
+        cursorControl.moveCursorToNextLocation();
+      }
     }
   }
 
