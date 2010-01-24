@@ -4,6 +4,7 @@ import com.customwars.client.ui.slick.BasicComponent;
 import com.customwars.client.ui.state.input.CWCommand;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Input;
 import org.newdawn.slick.Sound;
 import org.newdawn.slick.gui.AbstractComponent;
 import org.newdawn.slick.gui.GUIContext;
@@ -130,19 +131,28 @@ public class PopupMenu extends BasicComponent {
   }
 
   public void controlPressed(CWCommand command) {
-    switch (command.getEnum()) {
-      case DOWN:
-        moveDown();
-        break;
-      case UP:
-        moveUp();
-        break;
-      case SELECT:
-        selectMenuItem(currItem);
-        componentActivated(getSelectedMenuItem());
-        break;
+    if (isVisible()) {
+      switch (command.getEnum()) {
+        case DOWN:
+          moveDown();
+          break;
+        case UP:
+          moveUp();
+          break;
+        case SELECT:
+          select();
+          break;
+      }
+      consumeEvent();
     }
-    consumeEvent();
+  }
+
+  @Override
+  public void mousePressed(int button, int x, int y) {
+    if (isVisible() && isWithinComponent(x, y) && button == Input.MOUSE_LEFT_BUTTON) {
+      select();
+      consumeEvent();
+    }
   }
 
   public void moveUp() {
@@ -170,6 +180,11 @@ public class PopupMenu extends BasicComponent {
 
   private boolean isWithinBounds(int item) {
     return item >= 0 && item < menuItems.size();
+  }
+
+  private void select() {
+    selectMenuItem(currItem);
+    componentActivated(getSelectedMenuItem());
   }
 
   private void selectMenuItem(int item) {
