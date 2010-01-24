@@ -15,6 +15,7 @@ import org.apache.log4j.Logger;
 import org.newdawn.slick.Font;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.SlickException;
 import org.newdawn.slick.command.Command;
 import org.newdawn.slick.command.InputProviderListener;
 import org.newdawn.slick.state.StateBasedGame;
@@ -143,7 +144,8 @@ public abstract class CWStateBasedGame extends StateBasedGame implements InputPr
 
   public abstract void shutDownHook();
 
-  public CWInput getInput() {
-    return cwInput;
+  @Override
+  protected void postRenderState(GameContainer container, Graphics g) throws SlickException {
+    GUI.renderDialog();
   }
 }
