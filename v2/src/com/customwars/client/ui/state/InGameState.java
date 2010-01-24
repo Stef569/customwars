@@ -272,6 +272,31 @@ public class InGameState extends CWState implements PropertyChangeListener {
   }
 
   @Override
+  public void mousePressed(int button, int x, int y) {
+    if (button == Input.MOUSE_LEFT_BUTTON) {
+      Tile cursorLocation = gameRenderer.getCursorLocation();
+
+      if (hud.isPopupVisible()) {
+        if (!hud.isWithinPopupMenu(x, y)) {
+          gameControl.undo();
+          input.consumeEvent();
+        }
+      } else {
+        int mouseX = cwInput.getMouseX();
+        int mouseY = cwInput.getMouseY();
+        Tile mouseTile = map.pixelsToTile(mouseX, mouseY);
+
+        if (cursorLocation.equals(mouseTile)) {
+          gameControl.handleA(cursorLocation);
+        } else {
+          gameControl.undo();
+        }
+        input.consumeEvent();
+      }
+    }
+  }
+
+  @Override
   public void controlReleased(CWCommand command, CWInput cwInput) {
     if (command.isMoveCommand()) {
       cursorControl.moveControlReleased();

@@ -227,6 +227,7 @@ public class HUD {
     popupMenu.setLocation(popupLocation.x, popupLocation.y);
     popupMenu.init();
     popupMenu.addListener(componentListener);
+    popupMenu.setAcceptingInput(true);
   }
 
   /**
@@ -272,7 +273,12 @@ public class HUD {
   public void hidePopup() {
     renderInfoPanels = true;
     renderPopupInMap = false;
-    popupMenu = null;
+
+    if (popupMenu != null) {
+      popupMenu.setVisible(false);
+      popupMenu.setAcceptingInput(false);
+      popupMenu = null;
+    }
   }
 
   public void setGame(Game game) {
@@ -305,5 +311,9 @@ public class HUD {
 
   public boolean isRenderingAbsolutePopup() {
     return isPopupVisible() && !renderPopupInMap;
+  }
+
+  public boolean isWithinPopupMenu(int x, int y) {
+    return isPopupVisible() && popupMenu.isWithinComponent(x, y);
   }
 }

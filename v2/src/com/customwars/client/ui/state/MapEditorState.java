@@ -12,6 +12,7 @@ import com.customwars.client.ui.state.input.CWInput;
 import org.apache.log4j.Logger;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
 
@@ -91,6 +92,13 @@ public class MapEditorState extends CWState {
         if (command.isMoveCommand()) {
           moveCursor(command);
         }
+    }
+  }
+
+  @Override
+  public void mousePressed(int button, int x, int y) {
+    if (button == Input.MOUSE_LEFT_BUTTON) {
+      select();
     }
   }
 
