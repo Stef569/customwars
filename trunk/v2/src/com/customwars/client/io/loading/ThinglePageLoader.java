@@ -30,7 +30,7 @@ public class ThinglePageLoader {
     }
   }
 
-  private Theme loadTheme(String themeName) {
+  public Theme loadTheme(String themeName) {
     ThemeLoader themeLoader = new ThemeLoader();
     return themeLoader.load(thingleResourcesDir + themeName);
   }
