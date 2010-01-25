@@ -302,6 +302,49 @@ public class GameTest {
     checkUnitState(p5.getArmy(), GameObjectState.IDLE);
   }
 
+  @Test
+  public void testPlayerBudgetProgress() {
+    Player mapPlayer1 = new Player(0, colors[0]);
+    Player mapPlayer2 = new Player(1, colors[1]);
+
+    // Give p1 3 cities
+    MapUtil.addCityToMap(map, 0, 1, TestData.BASE, mapPlayer1);
+    MapUtil.addCityToMap(map, 0, 2, TestData.BASE, mapPlayer1);
+    MapUtil.addCityToMap(map, 0, 3, TestData.BASE, mapPlayer1);
+
+    // Give p2 3 cities
+    MapUtil.addCityToMap(map, 0, 4, TestData.BASE, mapPlayer2);
+    MapUtil.addCityToMap(map, 0, 5, TestData.BASE, mapPlayer2);
+    MapUtil.addCityToMap(map, 0, 6, TestData.BASE, mapPlayer2);
+
+    final int P1_START_BUDGET = 500;
+    final int CITY_FUNDS = 1000;
+    Player p1 = new Player(0, Color.RED, "Stef", P1_START_BUDGET, 0, false);
+    Player p2 = new Player(1, Color.BLUE, "Jan", 0, 1, false);
+
+    GameRules rules = new GameRules();
+    rules.setCityFunds(CITY_FUNDS);
+    startGame(rules, p1, p2);
+
+    Assert.assertEquals(P1_START_BUDGET + CITY_FUNDS * 3, p1.getBudget());
+    Assert.assertEquals(0, p2.getBudget());
+
+    // p1 captures the city @ (0,4) owned by p2
+    Unit unit = UnitFactory.getUnit(TestData.INF);
+    unit.setOwner(p1);
+
+    City city = map.getCityOn(map.getTile(0, 4));
+    city.capture(unit);
+    city.capture(unit);
+
+    // p1 now owns 4 cities. p2 only 2
+    game.endTurn();
+    Assert.assertEquals(CITY_FUNDS * 2, p2.getBudget());
+
+    game.endTurn();
+    Assert.assertEquals(P1_START_BUDGET + CITY_FUNDS * 3 + CITY_FUNDS * 4, p1.getBudget());
+  }
+
   // Util Functions
 
   private void checkUnitState(Iterable<Unit> units, GameObjectState state) {
@@ -314,7 +357,7 @@ public class GameTest {
    * Build a map that supports the playerCount
    * Supports means that for each player in the map there should be a game player.
    * When starting a game the game players count is compared to the player count in the map
-   * so add a base for each player to the map.
+   * so add a base for each player to the first row of the map.
    */
   private void buildHardCodedMap(int playerCount) {
     int col = 0;
