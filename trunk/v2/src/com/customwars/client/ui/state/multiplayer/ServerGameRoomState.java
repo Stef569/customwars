@@ -20,7 +20,7 @@ import org.newdawn.slick.thingle.Page;
  * A user can only login into server games he is participating in.
  */
 public class ServerGameRoomState extends CWState {
-  private static final int SERVER_GAME_ROOM_REFRESH_RATE = 10 * 1000; // 10 sec 
+  private static final int SERVER_GAME_ROOM_REFRESH_RATE = 10 * 1000; // 10 sec
   private Page page;
   private Image backGroundImage;
   private ServerGameRoomController controller;
@@ -53,7 +53,9 @@ public class ServerGameRoomState extends CWState {
   @Override
   public void render(GameContainer container, Graphics g) throws SlickException {
     g.drawImage(backGroundImage, 0, 0);
-    page.render();
+    synchronized (page) {
+      page.render();
+    }
   }
 
   @Override
