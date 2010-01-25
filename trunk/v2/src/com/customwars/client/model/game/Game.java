@@ -57,8 +57,10 @@ public class Game extends TurnBasedGame implements PropertyChangeListener {
   }
 
   private void initCityFunds() {
-    for (Player player : getAllPlayers()) {
-      for (City city : player.getAllCities()) {
+    for (Tile t : map.getAllTiles()) {
+      City city = map.getCityOn(t);
+
+      if (city != null) {
         city.setFunds(cityFunds);
       }
     }
