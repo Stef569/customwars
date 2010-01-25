@@ -13,9 +13,9 @@ import com.customwars.client.ui.state.StateChanger;
 import com.customwars.client.ui.state.StateSession;
 import org.apache.log4j.Logger;
 import org.newdawn.slick.thingle.Page;
+import org.newdawn.slick.thingle.Thingle;
 import org.newdawn.slick.thingle.Widget;
-
-import java.util.Arrays;
+import org.newdawn.slick.thingle.spi.ThingleColor;
 
 /**
  * Handle input when in the server game room
@@ -61,6 +61,7 @@ public class ServerGameRoomController {
 
     Game snailGame;
     if (gameInfo.isFirstTurn()) {
+      checkForEmptySlots(gameInfo);
       snailGame = networkManager.startServerGame(serverGameName, userName, userPassword);
       snailGame.startGame();
     } else {
@@ -69,6 +70,13 @@ public class ServerGameRoomController {
 
     stateSession.game = snailGame;
     stateChanger.changeTo("IN_GAME");
+  }
+
+  private void checkForEmptySlots(ServerGameInfo gameInfo) throws NetworkException {
+    // todo Really the server should check for empty slots before starting, not the client
+    if (gameInfo.getFreeSlots().length > 0) {
+      throw new NetworkException("There are empty slots, wait for other players to join your game");
+    }
   }
 
   public void sendChatMessage() {
@@ -120,15 +128,56 @@ public class ServerGameRoomController {
       return;
     }
 
-    page.getWidget("game").setText(serverGameName);
-    page.getWidget("login").setText(userName);
-    page.getWidget("days").setText("Day " + gameInfo.getDay() + "");
-    page.getWidget("players").setText(Arrays.toString(gameInfo.getUserNames()));
-    Widget sysLogList = page.getWidget("tab").getChild("game_log").getChild(0);
-    Widget chatLogList = page.getWidget("tab").getChild("chat_log").getChild(0);
+    // Prevents NPE by acquire the page lock, This prevents other threads
+    // from rendering the page while we are editing it.
+    synchronized (page) {
+      page.getWidget("game").setText(serverGameName);
+      page.getWidget("days").setText(gameInfo.getDay() + "");
 
-    ThingleUtil.fillList(page, sysLogList, true, sysLog);
-    ThingleUtil.fillList(page, chatLogList, true, chatLog);
+      Widget playersList = page.getWidget("lst_players");
+      Widget sysLogList = page.getWidget("tab").getChild("game_log").getChild(0);
+      Widget chatLogList = page.getWidget("tab").getChild("chat_log").getChild(0);
+
+      ThingleUtil.fillList(page, sysLogList, true, sysLog);
+      ThingleUtil.fillList(page, chatLogList, true, chatLog);
+      ThingleUtil.fillList(page, playersList, false, gameInfo.getUserNames());
+
+      highLightActiveUser(gameInfo, playersList);
+      highLightCurrentUser(gameInfo, playersList);
+      enablePlayButton(gameInfo);
+    }
+  }
+
+  private void highLightActiveUser(ServerGameInfo gameInfo, Widget playersList) {
+    int currentUserIndex = gameInfo.getUserIdFor(userName);
+    playersList.getChild(currentUserIndex).setBoolean("selected", true);
+  }
+
+  private void highLightCurrentUser(ServerGameInfo gameInfo, Widget playersList) {
+    String activeUser = gameInfo.getActiveUser();
+    ThingleColor darkerColor = Thingle.createColor(107, 107, 107);
+
+    for (String userName : gameInfo.getUserNames()) {
+      if (!userName.equals(activeUser)) {
+        int userIndex = gameInfo.getUserIdFor(userName);
+        playersList.getChild(userIndex).setColor("foreground", darkerColor);
+      }
+    }
+  }
+
+  /**
+   * The play button is only enabled when the current user is
+   * active(can perform his turn)
+   */
+  private void enablePlayButton(ServerGameInfo gameInfo) {
+    String activeUser = gameInfo.getActiveUser();
+    Widget playButton = page.getWidget("btn_play");
+
+    if (userName.equals(activeUser)) {
+      playButton.setBoolean("enabled", true);
+    } else {
+      playButton.setBoolean("enabled", false);
+    }
   }
 
   public void back() {

@@ -99,6 +99,19 @@ public class ServerGameInfo {
     return userNames.indexOf(userName);
   }
 
+  /**
+   * The active user is the user that can perform his turn
+   * in this server game.
+   */
+  public String getActiveUser() {
+    int userIndex = turn % userNames.size();
+
+    if (userIndex == 0)
+      return userNames.get(userNames.size() - 1);
+    else
+      return userNames.get(userIndex - 1);
+  }
+
   @Override
   public String toString() {
     return "ServerGameInfo{" +
