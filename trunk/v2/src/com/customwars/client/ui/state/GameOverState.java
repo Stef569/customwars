@@ -22,9 +22,15 @@ import java.util.Map;
 
 /**
  * Show the statistics as a table
+ * In SP and MP mode:
+ * The continue button takes the user back to the MAIN_MENU and the session is cleared.
+ *
+ * In MP Snail mode:
+ * Send a game over message to the server
  */
 public class GameOverState extends CWState {
   private static final Logger logger = Logger.getLogger(GameOverState.class);
+  private static final int COLUMN_WIDTH = 100;
   private Page page;
   private List<Player> players;
   private Statistics statistics;
@@ -44,13 +50,16 @@ public class GameOverState extends CWState {
     buildTable();
     page.enable();
     logger.info("Game Over");
-    if (App.isMultiplayerSnailGame()) endServerGame();
+
+    if (App.isMultiplayerSnailGame() && stateSession.game.isGameOver()) {
+      endServerGame();
+    }
   }
 
   private void endServerGame() {
     App.execute(new Runnable() {
       public void run() {
-        endServerGame();
+        sendEndGameToServer();
       }
     });
   }
@@ -59,10 +68,7 @@ public class GameOverState extends CWState {
     String serverGameName = stateSession.serverGameName;
     String userName = stateSession.user.getName();
     String userPassword = stateSession.user.getPassword();
-    sendEndGameToServer(serverGameName, userName, userPassword);
-  }
 
-  private void sendEndGameToServer(String serverGameName, String userName, String userPassword) {
     try {
       networkManager.endGame(serverGameName, userName, userPassword);
     } catch (NetworkException ex) {
@@ -94,16 +100,22 @@ public class GameOverState extends CWState {
 
   private Widget buildHeader() {
     Widget header = page.createWidget("header");
-    Widget emptyColumn = page.createWidget("column");
-    emptyColumn.setText("Statistics");
-    header.add(emptyColumn);
+    Widget firstColumn = createColumn("Statistics");
+    header.add(firstColumn);
 
     for (Player p : players) {
-      Widget column = page.createWidget("column");
-      column.setText(p.getName());
+      Widget column = createColumn(p.getName());
       header.add(column);
     }
     return header;
+  }
+
+  private Widget createColumn(String value) {
+    Widget column = page.createWidget("column");
+    column.setText(value);
+    column.setInteger("width", COLUMN_WIDTH);
+    column.setChoice("alignment", "center");
+    return column;
   }
 
   private Widget[] createRows() {
@@ -122,8 +134,7 @@ public class GameOverState extends CWState {
     int rowIndex = 0;
 
     for (String statKey : playerStats.keySet()) {
-      Widget cell = page.createWidget("cell");
-      cell.setText(statKey);
+      Widget cell = createCell(statKey);
       rows[rowIndex++].add(cell);
     }
   }
@@ -134,12 +145,18 @@ public class GameOverState extends CWState {
       Map<String, String> stats = statistics.getPlayerStats(player);
 
       for (Map.Entry<String, String> entry : stats.entrySet()) {
-        Widget cell = page.createWidget("cell");
-        cell.setText(entry.getValue());
+        Widget cell = createCell(entry.getValue());
         rows[rowIndex].add(cell);
         rowIndex++;
       }
     }
+  }
+
+  private Widget createCell(String value) {
+    Widget cell = page.createWidget("cell");
+    cell.setText(value);
+    cell.setChoice("alignment", "center");
+    return cell;
   }
 
   @Override

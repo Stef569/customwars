@@ -39,6 +39,7 @@ import java.beans.PropertyChangeListener;
  * Input is handled by GameController
  *
  * The Game to display is read from the session when entering this state.
+ * This class listens for game events and when the game is over changes to the GAME_OVER State
  */
 public class InGameState extends CWState implements PropertyChangeListener {
   // Model
@@ -59,7 +60,7 @@ public class InGameState extends CWState implements PropertyChangeListener {
   private InGameCursorController cursorControl;
   private Input input;
 
-  public void init(GameContainer container, StateBasedGame game) throws SlickException {
+  public void init(GameContainer container, StateBasedGame stateBasedGame) throws SlickException {
     this.guiContext = container;
     this.input = guiContext.getInput();
   }
@@ -85,6 +86,7 @@ public class InGameState extends CWState implements PropertyChangeListener {
     stateChanger.clearPreviousStatesHistory();
     stateChanger.stopRecordingStateHistory();
     cursorControl.addListener(this);
+    gameOver = false;
   }
 
   /**
@@ -99,7 +101,7 @@ public class InGameState extends CWState implements PropertyChangeListener {
   }
 
   /**
-   * In MP mode the game is never started and
+   * In MP mode the game is not started and
    * game sub systems(gui, ingamecontext) are inited each time when the user enters this state
    */
   private void enterMultiPlayerMode(Game game) {
