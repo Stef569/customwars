@@ -120,10 +120,10 @@ public class Statistics implements PropertyChangeListener {
     }
 
     public void update() {
-      stats.put("units Created", unitsCreated + "");
-      stats.put("units Killed", unitsKilled + "");
-      stats.put("units Lost", unitsLost + "");
-      stats.put("cities Captured", citiesCaptured + "");
+      stats.put("Units Created", unitsCreated + "");
+      stats.put("Units Killed", unitsKilled + "");
+      stats.put("Units Lost", unitsLost + "");
+      stats.put("Cities Captured", citiesCaptured + "");
       stats.put("Favorite unit", getFavoriteUnit());
     }
 
