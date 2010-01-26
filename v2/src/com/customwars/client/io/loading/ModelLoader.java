@@ -107,6 +107,7 @@ public class ModelLoader implements CWResourceLoader {
     xStream.useAttributeFor(Terrain.class, "id");
     xStream.useAttributeFor(Terrain.class, "name");
     xStream.useAttributeFor(Terrain.class, "type");
+    xStream.useAttributeFor(City.class, "imgRowID");
     xStream.alias("armyBranch", ArmyBranch.class);
     xStream.aliasField("connect", Terrain.class, "connectedDirections");
 

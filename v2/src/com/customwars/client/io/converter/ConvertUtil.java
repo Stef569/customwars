@@ -1,6 +1,5 @@
 package com.customwars.client.io.converter;
 
-import com.customwars.client.model.gameobject.Terrain;
 import com.customwars.client.model.map.Direction;
 import com.thoughtworks.xstream.core.util.Fields;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
@@ -47,8 +46,17 @@ public class ConvertUtil {
     return connects;
   }
 
-  public static void writeField(String fieldName, Object obj, Object val) {
-    Field field = Fields.find(Terrain.class, fieldName);
+  /**
+   * Use Reflection to write a value to a field within Object obj of the given class aClass
+   * The field can be private final
+   *
+   * @param fieldName The name of the field to write val to
+   * @param obj       The object where we want to write to
+   * @param aClass    The type of obj where the field is stored in
+   * @param val       The value to write to the field
+   */
+  public static void writeField(String fieldName, Object obj, Class aClass, Object val) {
+    Field field = Fields.find(aClass, fieldName);
     Fields.write(field, obj, val);
   }
 }

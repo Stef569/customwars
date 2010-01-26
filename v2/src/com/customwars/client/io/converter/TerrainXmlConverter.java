@@ -67,15 +67,15 @@ public class TerrainXmlConverter implements Converter {
     return baseTerrains.get(type);
   }
 
-  private void writeFields(Terrain terrainCopy) {
-    // Use reflection to set the new values to the terrain copy
+  private void writeFields(Terrain terrain) {
+    // Use reflection to set the new values to the terrain
     // If no name is provided default to the name of the base terrain
     Terrain baseTerrain = getBaseTerrain(terrainType);
-    ConvertUtil.writeField("id", terrainCopy, terrainID);
-    ConvertUtil.writeField("name", terrainCopy, terrainName == null ? baseTerrain.getName() : terrainName);
-    ConvertUtil.writeField("type", terrainCopy, terrainType);
-    ConvertUtil.writeField("spansOverType", terrainCopy, spansOverType);
-    ConvertUtil.writeField("connectedDirections", terrainCopy, connections);
+    ConvertUtil.writeField("id", terrain, Terrain.class, terrainID);
+    ConvertUtil.writeField("name", terrain, Terrain.class, terrainName == null ? baseTerrain.getName() : terrainName);
+    ConvertUtil.writeField("type", terrain, Terrain.class, terrainType);
+    ConvertUtil.writeField("spansOverType", terrain, Terrain.class, spansOverType);
+    ConvertUtil.writeField("connectedDirections", terrain, Terrain.class, connections);
   }
 
   public boolean canConvert(Class aClass) {

@@ -432,7 +432,7 @@ public class CW1MapConverter {
   }
 
   private City createCity(int id) {
-    return new City(id, "", "dummy city", "", 0, 0, Arrays.asList(1), 0, false, null, null, null, null, 0, 0);
+    return new City(id);
   }
 
   private void writeCW2Map(File cw1File, Map<Tile> map) {
