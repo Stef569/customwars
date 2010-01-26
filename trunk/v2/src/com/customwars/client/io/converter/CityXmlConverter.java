@@ -1,6 +1,7 @@
 package com.customwars.client.io.converter;
 
 import com.customwars.client.model.gameobject.City;
+import com.customwars.client.model.gameobject.Terrain;
 import com.customwars.client.model.map.Direction;
 import com.customwars.client.tools.UCaseMap;
 import com.thoughtworks.xstream.converters.Converter;
@@ -24,6 +25,7 @@ public class CityXmlConverter implements Converter {
   private int cityID;
   private String cityName;
   private String cityType;
+  private int cityImgRowID;
   private List<Direction> connections;
 
   public CityXmlConverter(Iterable<City> baseCities) {
@@ -49,6 +51,7 @@ public class CityXmlConverter implements Converter {
     cityID = Integer.parseInt(reader.getAttribute("id"));
     cityName = reader.getAttribute("name");
     cityType = reader.getAttribute("type");
+    cityImgRowID = Integer.parseInt(reader.getAttribute("imgRowID"));
     connections = ConvertUtil.readConnectionNode(reader);
   }
 
@@ -66,14 +69,14 @@ public class CityXmlConverter implements Converter {
     return baseCities.get(type);
   }
 
-  private void writeFields(City cityCopy) {
-    // Use Reflection to overwrite the following values in the city copy
+  private void writeFields(City city) {
+    // Use Reflection to overwrite the following values in the city
     // If no name is provided default to the name of the base city
     City baseCity = getBaseCity(cityType);
-    ConvertUtil.writeField("id", cityCopy, cityID);
-    ConvertUtil.writeField("name", cityCopy, cityName);
-    ConvertUtil.writeField("name", cityCopy, cityName == null ? baseCity.getName() : cityName);
-    ConvertUtil.writeField("connectedDirections", cityCopy, connections);
+    ConvertUtil.writeField("id", city, Terrain.class, cityID);
+    ConvertUtil.writeField("name", city, Terrain.class, cityName == null ? baseCity.getName() : cityName);
+    ConvertUtil.writeField("connectedDirections", city, Terrain.class, connections);
+    ConvertUtil.writeField("imgRowID", city, City.class, cityImgRowID);
   }
 
   @Override

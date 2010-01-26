@@ -30,11 +30,11 @@ public class CWImageLib {
     SpriteSheet coloredCitySheet = getCitySpriteSheet(color);
     int coloredCityCount = coloredCitySheet.getVerticalCount();
 
-    if (city.getID() < coloredCityCount) {
-      return coloredCitySheet.getSubImage(colIndex, city.getID());
+    if (city.getImgRowID() < coloredCityCount) {
+      return coloredCitySheet.getSubImage(colIndex, city.getImgRowID());
     } else {
       SpriteSheet neutralCitySheet = getNeutralCitySpriteSheet();
-      int neutralCityRow = city.getID() - coloredCityCount;
+      int neutralCityRow = city.getImgRowID() - coloredCityCount;
       return neutralCitySheet.getSubImage(colIndex, neutralCityRow);
     }
   }

@@ -19,14 +19,14 @@ public class CWAnimLib {
   }
 
   public Animation getCityAnim(City city, Color color) {
-    return animLib.getCityAnim(city.getID(), color, "");
+    return animLib.getCityAnim(city.getImgRowID(), color, "");
   }
 
   /**
    * Get the inactive city animation for a special neutral city or null.
    */
   public Animation getInActiveCityAnim(City city, Color color) {
-    return city.isSpecialNeutralCity() ? animLib.getCityAnim(city.getID(), color, AnimLib.ANIM_INACTIVE) : null;
+    return city.isSpecialNeutralCity() ? animLib.getCityAnim(city.getImgRowID(), color, AnimLib.ANIM_INACTIVE) : null;
   }
 
   /**
@@ -34,7 +34,7 @@ public class CWAnimLib {
    * Supported directions(N,E,S,W) all other directions will throw an IllegalArgumentException
    */
   public Animation getUnitAnim(Unit unit, Color color, Direction direction) {
-    int unitID = unit.getStats().getID();
+    int unitID = unit.getStats().getImgRowID();
 
     switch (direction) {
       case NORTH:

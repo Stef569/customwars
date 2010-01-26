@@ -12,6 +12,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -37,6 +38,7 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
   private final int maxCapCount;
   private final int healRate;       // Healing/repairs this city can give to a Unit
   private int funds;                // Money that this city produces every turn
+  private int imgRowID;             // The row that contains an image for this city
 
   private Location location;  // The location this City is on
   private Player owner;       // Player owning this City
@@ -44,16 +46,24 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
   private Unit capturer;      // Unit that is capturing this city
   private int capCount;       // The current capture count(if capCount==maxCapCount then this city is considered to be captured)
 
-  public City(int id, String type, String name, String description, int defenseBonus, int height, List<Integer> moveCosts,
+  public City(int id, int imgRowID, String type, String name, String description, int defenseBonus, int height, List<Integer> moveCosts,
               int vision, boolean hidden, List<Direction> connectedDirections,
               List<ArmyBranch> heals, List<Integer> canBeCaptureBy, List<Integer> builds, int maxCapCount, int healRate) {
     super(id, type, name, description, defenseBonus, height, hidden, vision, moveCosts, connectedDirections);
+    this.imgRowID = imgRowID;
     this.heals = heals;
     this.canBeCaptureBy = canBeCaptureBy;
     this.builds = builds;
     this.maxCapCount = maxCapCount;
     this.healRate = healRate;
     init();
+  }
+
+  /**
+   * Create a city with the given ID all the other values are set to default values
+   */
+  public City(int id) {
+    this(id, id, "", "dummy city", "", 0, 0, Arrays.asList(1), 0, false, null, null, null, null, 0, 0);
   }
 
   @Override
@@ -68,6 +78,7 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
 
   public City(City otherCity) {
     super(otherCity);
+    this.imgRowID = otherCity.imgRowID;
     this.location = otherCity.location;
     this.owner = otherCity.owner;
     this.heals = otherCity.heals;
@@ -350,6 +361,10 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
 
   public boolean isSpecialNeutralCity() {
     return canBeCaptureBy.isEmpty();
+  }
+
+  public int getImgRowID() {
+    return imgRowID;
   }
 
   @Override
