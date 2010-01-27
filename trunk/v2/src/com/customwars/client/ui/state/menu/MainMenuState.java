@@ -102,7 +102,7 @@ public class MainMenuState extends CWState implements ComponentListener {
         changeToState("MAP_EDITOR");
         break;
       case 3:
-        changeToState("GAME_OPTIONS");
+        changeToState("OPTIONS_MENU");
         break;
       case 4:
         gameContainer.exit();

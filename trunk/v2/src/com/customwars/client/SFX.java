@@ -33,9 +33,9 @@ public class SFX {
    * @param soundName The sound to play as defined in the ResourceManager
    */
   public static void playSound(String soundName) {
-    Sound s = resources.getSound(soundName);
-    if (s != null) {
-      s.play();
+    Sound sound = resources.getSound(soundName);
+    if (sound != null) {
+      sound.play();
     } else {
       logger.warn("No sound for " + soundName);
     }
@@ -47,7 +47,7 @@ public class SFX {
    *
    * @param musicName The music to play as defined in the ResourceManager
    */
-  public void playMusic(String musicName) {
+  public static void playMusic(String musicName) {
     Music music = resources.getMusic(musicName);
     if (music != null) {
       music.play();
@@ -60,12 +60,18 @@ public class SFX {
     container.setMusicOn(!container.isMusicOn());
   }
 
-  public void mute() {
-    container.setSoundOn(false);
+  /**
+   * @param volume 0=Min 1=Max
+   */
+  public static void setMusicVolume(float volume) {
+    container.setMusicVolume(volume);
   }
 
-  public void resume() {
-    container.setSoundOn(true);
+  /**
+   * @param volume 0=Min 1=Max
+   */
+  public static void setSoundEffectsVolume(float volume) {
+    container.setSoundVolume(volume);
   }
 
   public static void setResources(ResourceManager resources) {

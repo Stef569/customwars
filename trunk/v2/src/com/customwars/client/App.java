@@ -62,7 +62,7 @@ public class App {
   }
 
   public static double getDouble(String key) {
-    return getInt(key, 0);
+    return getDouble(key, 0);
   }
 
   public static double getDouble(String key, double def) {

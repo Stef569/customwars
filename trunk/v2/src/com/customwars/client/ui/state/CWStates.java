@@ -44,8 +44,9 @@ public class CWStates extends CWStateBasedGame {
     addState("SINGLE_PLAYER", new SinglePlayerMenuState());
     addState("MULTI_PLAYER", new MultiPlayerMenuState());
     addState("MAP_EDITOR", new MapEditorState());
-    addState("GAME_OPTIONS", new GameOptionsMenuState());
+    addState("OPTIONS_MENU", new GameOptionsMenuState());
     addState("REMAP_CONTROLS", new ControlBindingState());
+    addState("OPTIONS", new AppOptionsState());
     addState("MAP_SELECT", new MapSelectState());
     addState("GAME_RULES", new GameRulesState());
     addState("IN_GAME", new InGameState());
@@ -85,7 +86,7 @@ public class CWStates extends CWStateBasedGame {
       String userPropertiesPath = App.get("userproperties.path");
       IOUtil.storePropertyFile(userProperties, userPropertiesPath);
     } catch (IOException e) {
-      logger.warn("Could not save user properties");
+      logger.warn("Could not save user properties", e);
     }
   }
 }

@@ -31,6 +31,7 @@ public class GameOptionsMenuState extends CWState implements ComponentListener {
     Font font = resources.getFont("menu");
     mainMenu.addItems(
       new MenuItem(App.translate("key_configure"), font, container),
+      new MenuItem(App.translate("app_options"), font, container),
       new MenuItem(App.translate("back"), font, container)
     );
 
@@ -53,6 +54,9 @@ public class GameOptionsMenuState extends CWState implements ComponentListener {
         g.drawString("Configure the keyboard", 210, 440);
         break;
       case 1:
+        g.drawString("Change other options", 210, 440);
+        break;
+      case 2:
         g.drawString("Go back to menu", 210, 440);
         break;
     }
@@ -60,7 +64,6 @@ public class GameOptionsMenuState extends CWState implements ComponentListener {
 
   @Override
   public void update(GameContainer container, int delta) throws SlickException {
-
   }
 
   @Override
@@ -92,6 +95,9 @@ public class GameOptionsMenuState extends CWState implements ComponentListener {
         changeToState("REMAP_CONTROLS");
         break;
       case 1:
+        changeToState("OPTIONS");
+        break;
+      case 2:
         changeToPreviousState();
         break;
     }
