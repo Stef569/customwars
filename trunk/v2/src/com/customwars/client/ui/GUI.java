@@ -254,6 +254,13 @@ public class GUI {
     }
   }
 
+  public static boolean isRenderingDialog() {
+    return renderDialog;
+  }
+
+  /**
+   * Called from the dialog when ok is pressed
+   */
   public void dialogOkPressed() {
     page.disable();
     renderDialog = false;
