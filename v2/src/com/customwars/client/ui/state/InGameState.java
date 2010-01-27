@@ -59,6 +59,7 @@ public class InGameState extends CWState implements PropertyChangeListener {
   private GameController gameControl;
   private InGameCursorController cursorControl;
   private Input input;
+  private boolean inputAllowed;
 
   public void init(GameContainer container, StateBasedGame stateBasedGame) throws SlickException {
     this.guiContext = container;
@@ -215,7 +216,11 @@ public class InGameState extends CWState implements PropertyChangeListener {
         gameOver = false;
       }
 
-      if (hud.isRenderingAbsolutePopup()) {
+      inputAllowed = true;
+      if (GUI.isRenderingDialog()) {
+        inputAllowed = false;
+        input.setOffset(0, 0);
+      } else if (hud.isRenderingAbsolutePopup()) {
         input.setOffset(0, 0);
       } else {
         input.setOffset(camera.getX() - center.x, camera.getY() - center.y);
@@ -235,7 +240,7 @@ public class InGameState extends CWState implements PropertyChangeListener {
 
   @Override
   public void controlPressed(CWCommand command, CWInput cwInput) {
-    if (entered && isInputAllowed()) {
+    if (isInputAllowed()) {
       if (inGameContext.canUndo() && command == CWInput.CANCEL) {
         gameControl.undo();
         return;
@@ -275,33 +280,37 @@ public class InGameState extends CWState implements PropertyChangeListener {
 
   @Override
   public void mousePressed(int button, int x, int y) {
-    if (button == Input.MOUSE_LEFT_BUTTON) {
-      Tile cursorLocation = gameRenderer.getCursorLocation();
+    if (isInputAllowed()) {
+      if (button == Input.MOUSE_LEFT_BUTTON) {
+        Tile cursorLocation = gameRenderer.getCursorLocation();
 
-      if (hud.isPopupVisible()) {
-        if (!hud.isWithinPopupMenu(x, y)) {
-          gameControl.undo();
+        if (hud.isPopupVisible()) {
+          if (!hud.isWithinPopupMenu(x, y)) {
+            gameControl.undo();
+            input.consumeEvent();
+          }
+        } else {
+          int mouseX = cwInput.getMouseX();
+          int mouseY = cwInput.getMouseY();
+          Tile mouseTile = map.pixelsToTile(mouseX, mouseY);
+
+          if (cursorLocation.equals(mouseTile)) {
+            gameControl.handleA(cursorLocation);
+          } else {
+            gameControl.undo();
+          }
           input.consumeEvent();
         }
-      } else {
-        int mouseX = cwInput.getMouseX();
-        int mouseY = cwInput.getMouseY();
-        Tile mouseTile = map.pixelsToTile(mouseX, mouseY);
-
-        if (cursorLocation.equals(mouseTile)) {
-          gameControl.handleA(cursorLocation);
-        } else {
-          gameControl.undo();
-        }
-        input.consumeEvent();
       }
     }
   }
 
   @Override
   public void controlReleased(CWCommand command, CWInput cwInput) {
-    if (command.isMoveCommand()) {
-      cursorControl.moveControlReleased();
+    if (isInputAllowed()) {
+      if (command.isMoveCommand()) {
+        cursorControl.moveControlReleased();
+      }
     }
   }
 
@@ -328,12 +337,12 @@ public class InGameState extends CWState implements PropertyChangeListener {
    * @return If the gui is ready to process input
    */
   private boolean isInputAllowed() {
-    return gameRenderer != null && gameRenderer.isDyingUnitAnimationCompleted() &&
-      inGameContext != null && inGameContext.isActionCompleted();
+    return entered && gameRenderer != null && gameRenderer.isDyingUnitAnimationCompleted() &&
+      inGameContext != null && inGameContext.isActionCompleted() && inputAllowed;
   }
 
   public void mouseWheelMoved(int newValue) {
-    if (entered) {
+    if (isInputAllowed()) {
       if (newValue > 0) {
         camera.zoomIn();
       } else {
@@ -344,7 +353,7 @@ public class InGameState extends CWState implements PropertyChangeListener {
 
   @Override
   public void mouseMoved(int oldx, int oldy, int newx, int newy) {
-    if (entered) {
+    if (isInputAllowed()) {
       cursorControl.moveCursor(newx, newy);
     }
   }
