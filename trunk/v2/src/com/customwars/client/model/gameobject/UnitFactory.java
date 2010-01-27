@@ -134,6 +134,10 @@ public class UnitFactory {
     return unitsByID.containsKey(unitID);
   }
 
+  public static boolean hasUnitForName(String unitName) {
+    return unitsByName.containsKey(unitName);
+  }
+
   public static int countUnits() {
     return unitsByID.size();
   }

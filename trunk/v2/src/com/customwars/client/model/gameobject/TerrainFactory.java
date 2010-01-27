@@ -97,6 +97,15 @@ public class TerrainFactory {
     return terrains.containsKey(terrainID);
   }
 
+  public static boolean hasTerrainForName(String terrainName) {
+    for (Terrain terrain : terrains.values()) {
+      if (terrain.getName().equalsIgnoreCase(terrainName)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   /**
    * @return A Collection of all the terrains in this Factory sorted on terrainID
    */

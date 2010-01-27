@@ -39,8 +39,12 @@ public class HumanUnitController extends UnitController {
 
     if (inGameContext.isUnitDropMode()) {
       dropUnit(selected);
-    } else if (inGameContext.isUnitAttackMode() && canAttack(selected)) {
-      attackUnit(selected, to);
+    } else if (inGameContext.isUnitAttackMode()) {
+      if (canAttackUnit(selected)) {
+        attackUnit(selected, to);
+      } else if (canAttackCity(selected)) {
+        attackCity(selected, to);
+      }
     } else if (inGameContext.isRocketLaunchMode()) {
       launchRocket(selected, to);
     } else if (inGameContext.isUnitFlareMode() && unit.getAttackZone().contains(selected)) {
@@ -66,9 +70,15 @@ public class HumanUnitController extends UnitController {
     }
   }
 
-  private void attackUnit(Tile selected, Tile to) {
-    Unit defender = (Unit) selected.getLastLocatable();
-    CWAction attackAction = ActionFactory.buildAttackAction(unit, defender, to);
+  private void attackUnit(Location selected, Location to) {
+    Unit defender = map.getUnitOn(selected);
+    CWAction attackAction = ActionFactory.buildUnitAttackAction(unit, defender, to);
+    inGameContext.doAction(attackAction);
+  }
+
+  private void attackCity(Location selected, Location to) {
+    City city = map.getCityOn(selected);
+    CWAction attackAction = ActionFactory.buildUnitVsCityAttackAction(unit, city, to);
     inGameContext.doAction(attackAction);
   }
 

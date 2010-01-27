@@ -2,6 +2,9 @@ package com.customwars.client.model.gameobject;
 
 import com.customwars.client.model.ArmyBranch;
 import com.customwars.client.model.TurnHandler;
+import com.customwars.client.model.fight.Attacker;
+import com.customwars.client.model.fight.Defender;
+import com.customwars.client.model.fight.Fight;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.map.Direction;
 import com.customwars.client.model.map.Location;
@@ -27,16 +30,18 @@ import java.util.List;
  * another unit tries to capture this city, or by invoking resetCapturing()
  *
  * A City can fire a rocket once
+ * A City can be destroyed
  *
  * @author stefan
  */
-public class City extends Terrain implements PropertyChangeListener, TurnHandler {
+public class City extends Terrain implements PropertyChangeListener, TurnHandler, Locatable, Defender {
   private List<ArmyBranch> heals;       // The army branches this City can heal(Empty list means it cannot heal)
   private List<Integer> canBeCaptureBy; // The ids this City can be captured by(Empty list means it cannot be captured)
   private List<Integer> builds;         // The ids this City can build (Empty list means it cannot build)
   private List<Integer> canBeLaunchedBy;// The ids that can launch a rocket (Empty list means it cannot launch rockets)
   private final int maxCapCount;
   private final int healRate;       // Healing/repairs this city can give to a Unit
+  private final int maxHp;          // Maximum health points
   private int funds;                // Money that this city produces every turn
   private int imgRowID;             // The row that contains an image for this city
 
@@ -45,17 +50,20 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
   private boolean launched;   // If this city already launched a rocket
   private Unit capturer;      // Unit that is capturing this city
   private int capCount;       // The current capture count(if capCount==maxCapCount then this city is considered to be captured)
+  private int hp;             // Health points, if 0 this city is considered to be destroyed
 
   public City(int id, int imgRowID, String type, String name, String description, int defenseBonus, int height, List<Integer> moveCosts,
               int vision, boolean hidden, List<Direction> connectedDirections,
-              List<ArmyBranch> heals, List<Integer> canBeCaptureBy, List<Integer> builds, int maxCapCount, int healRate) {
-    super(id, type, name, description, defenseBonus, height, hidden, vision, moveCosts, connectedDirections);
+              List<ArmyBranch> heals, List<Integer> canBeCaptureBy, List<Integer> builds, int maxCapCount, int healRate,
+              int maxHp) {
+    super(id, type, name, description, defenseBonus, height, hidden, vision, moveCosts, connectedDirections, "");
     this.imgRowID = imgRowID;
     this.heals = heals;
     this.canBeCaptureBy = canBeCaptureBy;
     this.builds = builds;
     this.maxCapCount = maxCapCount;
     this.healRate = healRate;
+    this.maxHp = maxHp;
     init();
   }
 
@@ -63,7 +71,7 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
    * Create a city with the given ID all the other values are set to default values
    */
   public City(int id) {
-    this(id, id, "", "dummy city", "", 0, 0, Arrays.asList(1), 0, false, null, null, null, null, 0, 0);
+    this(id, id, "", "dummy city", "", 0, 0, Arrays.asList(1), 0, false, null, null, null, null, 0, 0, 0);
   }
 
   @Override
@@ -74,6 +82,7 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
     this.builds = Args.createEmptyListIfNull(builds);
     this.canBeLaunchedBy = Args.createEmptyListIfNull(canBeLaunchedBy);
     Args.validate(maxCapCount < 0, "maxCapcount should be positive");
+    Args.validate(maxHp < 0, "maxHP should be positive");
   }
 
   public City(City otherCity) {
@@ -88,10 +97,12 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
 
     this.maxCapCount = otherCity.maxCapCount;
     this.healRate = otherCity.healRate;
+    this.maxHp = otherCity.maxHp;
 
     this.capturer = otherCity.capturer;
     this.capCount = otherCity.capCount;
     this.funds = otherCity.funds;
+    this.hp = otherCity.hp;
   }
 
   /**
@@ -99,6 +110,7 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
    */
   void reset() {
     resetCapturing();
+    hp = maxHp;
   }
 
   /**
@@ -177,7 +189,7 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
   }
 
   /**
-   * Supply the unit to 100%
+   * Supply the unit on this city  to 100%
    *
    * @param unit unit to supply
    */
@@ -195,6 +207,39 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
       launched = true;
       firePropertyChange("launched", false, true);
     }
+  }
+
+  @Override
+  public void defend(Attacker attacker, Fight fight) {
+    int attackPercentage = fight.getAttackDamagePercentage();
+    int attackValue = (int) Math.ceil((attackPercentage / 100.0) * maxHp);
+    setHp(hp - attackValue);
+  }
+
+  @Override
+  public boolean canCounterAttack(Attacker attacker) {
+    return false;
+  }
+
+  @Override
+  public ArmyBranch getArmyBranch() {
+    int height = getHeight();
+
+    if (height < 0) {
+      return ArmyBranch.NAVAL;
+    } else if (isLand()) {
+      return ArmyBranch.LAND;
+    } else {
+      return ArmyBranch.AIR;
+    }
+  }
+
+  public boolean canBeDestroyed() {
+    return maxHp > 0 && hp != 0;
+  }
+
+  public boolean isDestroyed() {
+    return hp == 0;
   }
 
   // ---------------------------------------------------------------------------
@@ -243,6 +288,24 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
 
   private void addCapturingUnitListener() {
     if (capturer != null) capturer.addPropertyChangeListener(this);
+  }
+
+  private void setHp(int hp) {
+    if (hp <= 0) {
+      destroy();
+    }
+
+    int oldVal = this.hp;
+    this.hp = Args.getBetweenZeroMax(hp, maxHp);
+    firePropertyChange("hp", oldVal, this.hp);
+  }
+
+  private void destroy() {
+    owner.removeCity(this);
+    owner = null;
+    location.remove(this);
+    location = null;
+    setState(GameObjectState.DESTROYED);
   }
 
   // ---------------------------------------------------------------------------
@@ -318,7 +381,7 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
   }
 
   /**
-   * @return Does this city has the ability to launch rockets
+   * @return Does this city has the ability to launch a rocket
    */
   public boolean canLaunchRocket() {
     return !canBeLaunchedBy.isEmpty() && !launched;
@@ -363,16 +426,19 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
     return canBeCaptureBy.isEmpty();
   }
 
+  public int getHp() {
+    return hp;
+  }
+
   public int getImgRowID() {
     return imgRowID;
   }
 
   @Override
   public String toString() {
-    StringBuilder strBuilder = new StringBuilder(
-      "[" + super.toString() + " capCount=" + capCount + "/" + maxCapCount);
-    if (owner != null) strBuilder.append(" owner=").append(owner);
-    return strBuilder.append("]").toString();
+    return String.format(
+      "[%s capCount=%s/%s hp=%s/%s owner=%s]",
+      super.toString(), capCount, maxCapCount, hp, maxHp, owner);
   }
 
   /**

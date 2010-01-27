@@ -3,55 +3,52 @@ package com.customwars.client.action.unit;
 import com.customwars.client.SFX;
 import com.customwars.client.action.DirectAction;
 import com.customwars.client.controller.ControllerManager;
+import com.customwars.client.model.fight.Fight;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.gameobject.UnitFight;
 import com.customwars.client.ui.state.InGameContext;
 import org.apache.log4j.Logger;
 
 /**
- * Attack defender with attacker
+ * The unit attacks another Unit
  *
  * @author stefan
  */
-public class AttackAction extends DirectAction {
-  private static final Logger logger = Logger.getLogger(AttackAction.class);
+public class AttackUnitAction extends DirectAction {
+  private static final Logger logger = Logger.getLogger(AttackUnitAction.class);
   private InGameContext context;
   private ControllerManager controllerManager;
-  private UnitFight unitFight;
+  private final Fight unitFight;
   private final Unit attacker, defender;
-
-  public AttackAction(Unit attacker, Unit defender) {
-    super("Attack", false);
-    this.attacker = attacker;
-    this.defender = defender;
-  }
-
-  protected void init(InGameContext context) {
-    this.context = context;
-    unitFight = new UnitFight();
-    controllerManager = context.getControllerManager();
-  }
-
-  protected void invokeAction() {
-    if (!context.isTrapped()) {
-      attackUnit(attacker, defender);
-    }
-  }
+  private int damagePercentage, attackerHPPreFight, defenderHPPreFight;
 
   /**
    * @param attacker The unit that is attacking
    * @param defender The Unit that is under attack
    */
-  public void attackUnit(Unit attacker, Unit defender) {
+  public AttackUnitAction(Unit attacker, Unit defender) {
+    super("Attack", false);
+    this.attacker = attacker;
+    this.defender = defender;
+    this.unitFight = new UnitFight();
+  }
+
+  protected void init(InGameContext context) {
+    this.context = context;
+    controllerManager = context.getControllerManager();
+  }
+
+  protected void invokeAction() {
+    if (!context.isTrapped()) {
+      attackUnit();
+    }
+  }
+
+  public void attackUnit() {
     unitFight.initFight(attacker, defender);
-
-    // Gather debugging data before the fight starts
-    int damagePercentage = unitFight.getAttackDamagePercentage();
-    int attackerHPPreFight = attacker.getInternalHp();
-    int defenderHPPreFight = defender.getInternalHp();
-
+    gatherPreFightStats();
     unitFight.startFight();
-    logFightStatistics(attackerHPPreFight, defenderHPPreFight, damagePercentage);
+    logFightStatistics();
 
     if (attacker.isDestroyed()) {
       controllerManager.removeUnitController(attacker);
@@ -63,7 +60,13 @@ public class AttackAction extends DirectAction {
     }
   }
 
-  private void logFightStatistics(int attackerHPPreFight, int defenderHPPreFight, int damagePercentage) {
+  private void gatherPreFightStats() {
+    damagePercentage = unitFight.getAttackDamagePercentage();
+    attackerHPPreFight = attacker.getInternalHp();
+    defenderHPPreFight = defender.getInternalHp();
+  }
+
+  private void logFightStatistics() {
     String attackerHP = attackerHPPreFight + "/" + attacker.getInternalMaxHp();
     String defenderHP = defenderHPPreFight + "/" + defender.getInternalMaxHp();
 
