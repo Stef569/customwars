@@ -105,22 +105,22 @@ public class TestData {
 
   // City
   private static City base = new City(0, 0, "road", "base", "", 0, 0, plainMoveCosts, 1, true,
-    cityRoadConnection, ARMY_BRANCH_LAND_ONLY, Arrays.asList(INF, MECH), null, 20, CITY_HEAL_RATE);
+    cityRoadConnection, ARMY_BRANCH_LAND_ONLY, Arrays.asList(INF, MECH), null, 20, CITY_HEAL_RATE, 0);
 
   private static City factory = new City(1, 1, "road", "factory", "", 0, 0, plainMoveCosts, 1, true,
-    cityRoadConnection, ARMY_BRANCH_LAND_ONLY, Arrays.asList(INF, MECH), allLandUnits, 20, CITY_HEAL_RATE);
+    cityRoadConnection, ARMY_BRANCH_LAND_ONLY, Arrays.asList(INF, MECH), allLandUnits, 20, CITY_HEAL_RATE, 0);
 
   private static City hq = new City(4, 4, "road", "hq", "", 0, 0, plainMoveCosts, 1, true,
-    cityRoadConnection, ARMY_BRANCH_LAND_ONLY, Arrays.asList(INF, MECH), null, 20, CITY_HEAL_RATE);
+    cityRoadConnection, ARMY_BRANCH_LAND_ONLY, Arrays.asList(INF, MECH), null, 20, CITY_HEAL_RATE, 0);
 
   private static City airport = new City(AIRPORT, AIRPORT, "road", "airport", "", 0, 0, plainMoveCosts, 1, true,
-    cityRoadConnection, ARMY_BRANCH_AIR_ONLY, Arrays.asList(INF, MECH), allAirUnits, 20, CITY_HEAL_RATE);
+    cityRoadConnection, ARMY_BRANCH_AIR_ONLY, Arrays.asList(INF, MECH), allAirUnits, 20, CITY_HEAL_RATE, 0);
 
   private static City port = new City(PORT, PORT, "road", "port", "", 0, 0, plainMoveCosts, 1, true,
-    cityRoadConnection, ARMY_BRANCH_NAVAL_ONLY, Arrays.asList(INF, MECH), allNavalUnits, 20, CITY_HEAL_RATE);
+    cityRoadConnection, ARMY_BRANCH_NAVAL_ONLY, Arrays.asList(INF, MECH), allNavalUnits, 20, CITY_HEAL_RATE, 0);
 
   private static City silo = new City(5, 5, "road", "missle_silo", "", 0, 0, plainMoveCosts, 1, true,
-    cityRoadConnection, null, null, null, 20, CITY_HEAL_RATE);
+    cityRoadConnection, null, null, null, 20, CITY_HEAL_RATE, 0);
 
   public static void storeTestData() {
     clearTestData();
