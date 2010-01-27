@@ -22,9 +22,9 @@ import java.util.Map;
  * @author stefan
  */
 public class CityFactory {
-  private static final HashMap<Integer, City> citiesById = new HashMap<Integer, City>();
+  private static final Map<Integer, City> citiesById = new HashMap<Integer, City>();
   private static final Map<String, City> citiesByName = new UCaseMap<City>();
-  private static final List<City> baseCities = new ArrayList<City>();
+  private static final Map<String, City> baseCitiesByName = new UCaseMap<City>();
   private static final Comparator<City> SORT_CITY_ON_ID = new Comparator<City>() {
     public int compare(City cityA, City cityB) {
       return cityA.getID() - cityB.getID();
@@ -63,10 +63,10 @@ public class CityFactory {
   }
 
   public static void addBaseCities(Collection<City> baseCityCollection) {
-    for (City city : baseCityCollection) {
-      int cityID = city.getID();
-      City baseCity = citiesById.get(cityID);
-      baseCities.add(baseCity);
+    for (City baseCity : baseCityCollection) {
+      String cityName = baseCity.getName();
+      City baseCityCopy = new City(baseCity);
+      baseCitiesByName.put(cityName, baseCityCopy);
     }
   }
 
@@ -84,6 +84,15 @@ public class CityFactory {
       throw new IllegalArgumentException("City name " + cityName + " is not cached " + citiesByName.keySet());
     }
     City city = new City(citiesByName.get(cityName));
+    city.reset();
+    return city;
+  }
+
+  public static City getBaseCity(String cityName) {
+    if (!baseCitiesByName.containsKey(cityName)) {
+      throw new IllegalArgumentException("Base city name " + cityName + " is not cached " + baseCitiesByName.keySet());
+    }
+    City city = new City(baseCitiesByName.get(cityName));
     city.reset();
     return city;
   }
@@ -107,8 +116,13 @@ public class CityFactory {
    * @return A Collection of all the base cities in this Factory sorted on cityID
    */
   public static List<City> getBaseCities() {
-    Collections.sort(baseCities, SORT_CITY_ON_ID);
-    return Collections.unmodifiableList(baseCities);
+    List<City> allBaseCities = new ArrayList<City>(baseCitiesByName.size());
+    for (City city : baseCitiesByName.values()) {
+      String cityName = city.getName();
+      allBaseCities.add(getBaseCity(cityName));
+    }
+    Collections.sort(allBaseCities, SORT_CITY_ON_ID);
+    return Collections.unmodifiableList(allBaseCities);
   }
 
   public static boolean hasCityForID(int cityID) {
@@ -119,15 +133,21 @@ public class CityFactory {
     return citiesByName.containsKey(cityName);
   }
 
+  public static boolean hasBaseCityForName(String cityName) {
+    return baseCitiesByName.containsKey(cityName);
+  }
+
   public static int countCities() {
     return citiesById.size();
   }
 
   public static int countBaseCities() {
-    return baseCities.size();
+    return baseCitiesByName.size();
   }
 
   public static void clear() {
     citiesById.clear();
+    citiesByName.clear();
+    baseCitiesByName.clear();
   }
 }

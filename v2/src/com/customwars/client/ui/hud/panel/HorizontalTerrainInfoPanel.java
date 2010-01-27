@@ -24,13 +24,12 @@ public class HorizontalTerrainInfoPanel extends HorizontalInfoPanel {
 
   private final Component[] starBoxes = new Box[4];
   private ImageBox captureImgBox;
-  private TextBox captureTxtBox;
+  private TextBox textBox;    // Displays the capture points or the hp of a city
   private String terrainName;
   private Terrain terrain;
   private final SpriteManager spriteManager;
 
   public HorizontalTerrainInfoPanel(GUIContext container, SpriteManager spriteManager) {
-    super();
     this.spriteManager = spriteManager;
   }
 
@@ -46,7 +45,7 @@ public class HorizontalTerrainInfoPanel extends HorizontalInfoPanel {
   private void createBoxes() {
     setStarBoxes(starBoxes.length - 1);
     captureImgBox = new ImageBox(statusImageStrip.getSubImage(2));
-    captureTxtBox = new TextBox("00", font);
+    textBox = new TextBox("00", font);
   }
 
   private void setStarBoxes(int activeStarsCount) {
@@ -60,7 +59,7 @@ public class HorizontalTerrainInfoPanel extends HorizontalInfoPanel {
     Layout.locateLeftToRight(starBoxes, 0, 0);
     Component lastStar = starBoxes[starBoxes.length - 1];
     captureImgBox.setLocation(lastStar.getMaxX(), 0);
-    captureTxtBox.setLocation(captureImgBox.getMaxX(), 0);
+    textBox.setLocation(captureImgBox.getMaxX(), 0);
   }
 
   @Override
@@ -74,7 +73,7 @@ public class HorizontalTerrainInfoPanel extends HorizontalInfoPanel {
       box.render(g);
     }
     captureImgBox.render(g);
-    captureTxtBox.render(g);
+    textBox.render(g);
   }
 
   @Override
@@ -96,12 +95,17 @@ public class HorizontalTerrainInfoPanel extends HorizontalInfoPanel {
 
     if (terrain instanceof City) {
       City city = (City) terrain;
-      captureImgBox.setVisible(true);
-      captureTxtBox.setVisible(true);
-      captureTxtBox.setText(city.getCapCount() + "");
+      textBox.setVisible(true);
+
+      if (city.canBeDestroyed()) {
+        textBox.setText(city.getHp() + "");
+      } else {
+        captureImgBox.setVisible(true);
+        textBox.setText(city.getCapCount() + "");
+      }
     } else {
       captureImgBox.setVisible(false);
-      captureTxtBox.setVisible(false);
+      textBox.setVisible(false);
     }
   }
 
@@ -123,8 +127,8 @@ public class HorizontalTerrainInfoPanel extends HorizontalInfoPanel {
 
   @Override
   protected Dimension getInfoSize() {
-    int width = captureTxtBox.getMaxX();
-    int height = captureTxtBox.getMaxY();
+    int width = textBox.getMaxX();
+    int height = textBox.getMaxY();
     return new Dimension(width, height);
   }
 }

@@ -4,6 +4,7 @@ import com.customwars.client.App;
 import com.customwars.client.model.ArmyBranch;
 import com.customwars.client.model.TurnHandler;
 import com.customwars.client.model.fight.Attacker;
+import com.customwars.client.model.fight.Defender;
 import com.customwars.client.model.game.GameRules;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.City;
@@ -290,32 +291,38 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
   }
 
   /**
-   * Retrieve a list of visible units in attack range of the attacker
+   * Retrieve a list of visible enemies in attack range of the attacker
    *
    * @param attacker The Attacker of which we want to retrieve the enemies in range for
-   * @return units in attackRange of attacker that can be attacked and are not fogged
+   * @return enemies in attackRange of attacker that can be attacked and are not fogged
    */
-  public List<Unit> getEnemiesInRangeOf(Attacker attacker) {
+  public List<Defender> getEnemiesInRangeOf(Attacker attacker) {
     return getEnemiesInRangeOf(attacker, attacker.getLocation());
   }
 
   /**
    * @param attacker The Attacker of which we want to retrieve the enemies in range for
    * @param center   The center to iterate around
-   * @return units in attackRange of attacker that can be attacked and are not fogged
+   * @return enemies in attackRange of attacker that can be attacked and are not fogged
    */
-  public List<Unit> getEnemiesInRangeOf(Attacker attacker, Location center) {
-    List<Unit> units = new ArrayList<Unit>();
+  public List<Defender> getEnemiesInRangeOf(Attacker attacker, Location center) {
+    List<Defender> enemies = new ArrayList<Defender>();
 
     for (Tile t : getSurroundingTiles(center, attacker.getAttackRange())) {
       Unit unit = getUnitOn(t);
+      City city = getCityOn(t);
 
       if (!t.isFogged() && isUnitVisible(unit) && attacker.canAttack(unit)) {
-        units.add(unit);
+        enemies.add(unit);
+      }
+
+      if (city != null && attacker.canAttack(city)) {
+        enemies.add(city);
       }
     }
-    return units;
+    return enemies;
   }
+
 
   private boolean isUnitVisible(Unit unit) {
     return unit != null && !unit.isHidden();
@@ -470,7 +477,7 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
 
     if (unit.getArmyBranch() == ArmyBranch.LAND) {
       Terrain terrain = t.getTerrain();
-      if (terrain.getHeight() >= 2) {
+      if (terrain.isMountain()) {
         visionBonus = terrain.getVision();
       }
     }

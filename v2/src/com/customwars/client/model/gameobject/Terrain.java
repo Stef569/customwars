@@ -9,35 +9,35 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * An immutable terrain datastore(no setters)
+ * An immutable terrain
  * Traversing a terrain costs 'move points', this ranges from MIN_MOVE_COST to IMPASSIBLE
  * A moveType ID which is just the index in the movecost array has a cost to move over this terrain.
  * See {@link #canBeTraverseBy(int)} and {@link #getMoveCost(int)}
- *
+ * <p/>
  * Some terrains remain hidden even within the los of other objects(ie forests).
  * Some terrain have extra vision(ie mountains, cities)
- *
+ * <p/>
  * type is the terrain type that this terrain is inherited from(ie a horizontal road inherits from road)
- * spansOverType is used for bridges (ie a bridge is a road that spans over a river)
+ * spansOverType is used for bridges (ie a bridge is a road terrain that spans over a river)
  *
  * @author stefan
  */
 public class Terrain extends GameObject {
   public static final int IMPASSIBLE = Byte.MAX_VALUE;
   public static final int MIN_MOVE_COST = 1;
-  private int id;
-  private String type, spansOverType;
-  private String name;
-  private String description;
-  private int defenseBonus;
-  private int height;
-  private boolean hidden;
-  private int vision;
-  private List<Integer> moveCosts;
+  private final int id;
+  private final String type, spansOverType;
+  private final String name;
+  private final String description;
+  private final int defenseBonus;
+  private final int height;
+  private final boolean hidden;
+  private final int vision;
+  private final List<Integer> moveCosts;
   private List<Direction> connectedDirections;
 
   public Terrain(int id, String type, String name, String description, int defenseBonus, int height, boolean hidden, int vision, List<Integer> moveCosts) {
-    this(id, type, name, description, defenseBonus, height, hidden, vision, moveCosts, null);
+    this(id, type, name, description, defenseBonus, height, hidden, vision, moveCosts, null, "");
   }
 
   /**
@@ -53,7 +53,7 @@ public class Terrain extends GameObject {
    * @param connectedDirections The Directions another terrain of the same type can be connected to
    */
   public Terrain(int id, String type, String name, String description, int defenseBonus, int height, boolean hidden, int vision,
-                 List<Integer> moveCosts, List<Direction> connectedDirections) {
+                 List<Integer> moveCosts, List<Direction> connectedDirections, String spansOverType) {
     super(GameObjectState.IDLE);
     this.id = id;
     this.type = type;
@@ -65,6 +65,7 @@ public class Terrain extends GameObject {
     this.vision = vision;
     this.moveCosts = moveCosts;
     this.connectedDirections = connectedDirections;
+    this.spansOverType = spansOverType;
     init();
   }
 
@@ -77,7 +78,7 @@ public class Terrain extends GameObject {
       validateMoveCost(moveCost);
     }
 
-    if (description == null) description = "";
+    Args.checkForNull(description, "Description is required for " + name);
     connectedDirections = Args.createEmptyListIfNull(connectedDirections);
   }
 
@@ -130,7 +131,7 @@ public class Terrain extends GameObject {
     return defenseBonus;
   }
 
-  public int getHeight() {
+  int getHeight() {
     return height;
   }
 
@@ -140,6 +141,14 @@ public class Terrain extends GameObject {
 
   public int getVision() {
     return vision;
+  }
+
+  public boolean isMountain() {
+    return height >= 2;
+  }
+
+  public boolean isLand() {
+    return height >= 0;
   }
 
   public boolean isRiver() {

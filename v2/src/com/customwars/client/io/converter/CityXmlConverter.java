@@ -75,6 +75,7 @@ public class CityXmlConverter implements Converter {
     City baseCity = getBaseCity(cityType);
     ConvertUtil.writeField("id", city, Terrain.class, cityID);
     ConvertUtil.writeField("name", city, Terrain.class, cityName == null ? baseCity.getName() : cityName);
+    ConvertUtil.writeField("type", city, Terrain.class, cityType);
     ConvertUtil.writeField("connectedDirections", city, Terrain.class, connections);
     ConvertUtil.writeField("imgRowID", city, City.class, cityImgRowID);
   }

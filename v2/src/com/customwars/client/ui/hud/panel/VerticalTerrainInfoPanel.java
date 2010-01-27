@@ -65,7 +65,12 @@ public class VerticalTerrainInfoPanel extends Box implements InfoPanel {
     if (terrain instanceof City) {
       City city = (City) terrain;
       captureRow.setVisible(true);
-      captureRow.setText(city.getCapCountPercentage() + "%");
+
+      if (city.canBeDestroyed()) {
+        captureRow.setText(city.getHp() + "");
+      } else {
+        captureRow.setText(city.getCapCountPercentage() + "%");
+      }
     } else {
       captureRow.setVisible(false);
     }

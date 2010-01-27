@@ -290,4 +290,10 @@
     <terrain name="pipe" id="96" type="pipe">
         <connect>East</connect>
     </terrain>
+    <terrain name="horizontal_destroyed_pipe_seam" id="97" type="plain">
+        <connect>East, West</connect>
+    </terrain>
+    <terrain name="vertical_destroyed_pipe_seam" id="98" type="plain">
+        <connect>North, South</connect>
+    </terrain>
 </list>

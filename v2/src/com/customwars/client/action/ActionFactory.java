@@ -4,7 +4,8 @@ import com.customwars.client.action.city.LaunchRocketAction;
 import com.customwars.client.action.game.EndGameAction;
 import com.customwars.client.action.game.EndTurnAction;
 import com.customwars.client.action.unit.AddUnitToTileAction;
-import com.customwars.client.action.unit.AttackAction;
+import com.customwars.client.action.unit.AttackCityAction;
+import com.customwars.client.action.unit.AttackUnitAction;
 import com.customwars.client.action.unit.CaptureAction;
 import com.customwars.client.action.unit.ConstructCityAction;
 import com.customwars.client.action.unit.DiveAction;
@@ -95,11 +96,21 @@ public class ActionFactory {
     return joinActions;
   }
 
-  public static CWAction buildAttackAction(Unit attacker, Unit defender, Location moveTo) {
-    ActionBag attackActions = new ActionBag("Attack");
+  public static CWAction buildUnitAttackAction(Unit attacker, Unit defender, Location moveTo) {
+    ActionBag attackActions = new ActionBag("Attack Unit");
     attackActions.add(new InitAction());
     attackActions.add((new MoveAnimatedAction(attacker.getLocation(), moveTo)));
-    attackActions.add(new AttackAction(attacker, defender));
+    attackActions.add(new AttackUnitAction(attacker, defender));
+    attackActions.add(new WaitAction(attacker));
+    attackActions.add(new ClearInGameStateAction());
+    return attackActions;
+  }
+
+  public static CWAction buildUnitVsCityAttackAction(Unit attacker, City city, Location moveTo) {
+    ActionBag attackActions = new ActionBag("Attack City");
+    attackActions.add(new InitAction());
+    attackActions.add((new MoveAnimatedAction(attacker.getLocation(), moveTo)));
+    attackActions.add(new AttackCityAction(attacker, city));
     attackActions.add(new WaitAction(attacker));
     attackActions.add(new ClearInGameStateAction());
     return attackActions;

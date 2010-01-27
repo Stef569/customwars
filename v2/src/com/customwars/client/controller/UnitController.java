@@ -1,5 +1,6 @@
 package com.customwars.client.controller;
 
+import com.customwars.client.model.fight.Defender;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.City;
@@ -139,13 +140,18 @@ public abstract class UnitController {
     if (isInDirectUnitMoved(origUnitLocation)) return false;
 
     Unit activeUnit = game.getActiveUnit();
-    List<Unit> enemiesInRange = game.getMap().getEnemiesInRangeOf(activeUnit);
+    List<Defender> enemiesInRange = game.getMap().getEnemiesInRangeOf(activeUnit);
 
     return !enemiesInRange.isEmpty();
   }
 
-  boolean canAttack(Tile selected) {
+  boolean canAttackUnit(Tile selected) {
     return map.getUnitOn(selected) != null;
+  }
+
+  boolean canAttackCity(Tile selected) {
+    City city = map.getCityOn(selected);
+    return city != null && city.canBeDestroyed();
   }
 
   /**

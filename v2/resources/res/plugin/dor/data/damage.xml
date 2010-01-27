@@ -1,6 +1,5 @@
 <?xml version="1.0"?>
 <damages>
-
     <unit id="infantry">
         <enemies>
             <enemy id="infantry" altdamage="55"/>
@@ -20,6 +19,8 @@
 
             <enemy id="bcopter" altdamage="8"/>
             <enemy id="tcopter" altdamage="30"/>
+
+            <enemy id="pipe_seam" altdamage="1"/>
         </enemies>
     </unit>
 
@@ -42,6 +43,8 @@
 
             <enemy id="bcopter" basedamage="12"/>
             <enemy id="tcopter" basedamage="35"/>
+
+            <enemy id="pipe_seam" basedamage="15" altdamage="1"/>
         </enemies>
     </unit>
 
@@ -64,6 +67,8 @@
 
             <enemy id="bcopter" basedamage="12"/>
             <enemy id="tcopter" basedamage="35"/>
+
+            <enemy id="pipe_seam" basedamage="1"/>
         </enemies>
     </unit>
 
@@ -86,6 +91,8 @@
 
             <enemy id="bcopter" altdamage="18"/>
             <enemy id="tcopter" altdamage="35"/>
+
+            <enemy id="pipe_seam" altdamage="1"/>
         </enemies>
     </unit>
 
@@ -106,8 +113,10 @@
             <enemy id="missiles" basedamage="55"/>
             <enemy id="apc" basedamage="45"/>
 
-            <enemy id="bcopter" altdamage="18"/>
-            <enemy id="tcopter" altdamage="35"/>
+            <enemy id="bcopter" basedamage="18"/>
+            <enemy id="tcopter" basedamage="35"/>
+
+            <enemy id="pipe_seam" basedamage="1"/>
         </enemies>
     </unit>
 
@@ -133,6 +142,8 @@
             <enemy id="sea_plane" basedamage="75"/>
             <enemy id="bcopter" basedamage="105"/>
             <enemy id="tcopter" basedamage="120"/>
+
+            <enemy id="pipe_seam" basedamage="10"/>
         </enemies>
     </unit>
 
@@ -162,6 +173,8 @@
             <enemy id="carrier" basedamage="8"/>
             <enemy id="battleship" basedamage="8"/>
             <enemy id="lander" basedamage="18"/>
+
+            <enemy id="pipe_seam" basedamage="15" altdamage="1"/>
         </enemies>
     </unit>
 
@@ -191,6 +204,8 @@
             <enemy id="carrier" basedamage="10"/>
             <enemy id="battleship" basedamage="10"/>
             <enemy id="lander" basedamage="22"/>
+
+            <enemy id="pipe_seam" basedamage="55" altdamage="1"/>
         </enemies>
     </unit>
 
@@ -220,6 +235,8 @@
             <enemy id="carrier" basedamage="12"/>
             <enemy id="battleship" basedamage="12"/>
             <enemy id="lander" basedamage="28"/>
+
+            <enemy id="pipe_seam" basedamage="125" altdamage="1"/>
         </enemies>
     </unit>
 
@@ -246,6 +263,8 @@
             <enemy id="carrier" basedamage="45"/>
             <enemy id="battleship" basedamage="45"/>
             <enemy id="lander" basedamage="65"/>
+
+            <enemy id="pipe_seam" basedamage="45"/>
         </enemies>
     </unit>
 
@@ -268,6 +287,8 @@
 
             <enemy id="bcopter" basedamage="45"/>
             <enemy id="tcopter" basedamage="55"/>
+
+            <enemy id="pipe_seam" basedamage="40"/>
         </enemies>
     </unit>
 
@@ -305,6 +326,8 @@
             <enemy id="carrier" basedamage="55"/>
             <enemy id="battleship" basedamage="55"/>
             <enemy id="lander" basedamage="75"/>
+
+            <enemy id="pipe_seam" basedamage="55"/>
         </enemies>
     </unit>
 
@@ -356,6 +379,8 @@
             <enemy id="rockets" basedamage="105"/>
             <enemy id="lander" basedamage="95"/>
             <enemy id="battleship" basedamage="75"/>
+
+            <enemy id="pipe_seam" basedamage="100"/>
         </enemies>
     </unit>
 
@@ -389,6 +414,8 @@
             <enemy id="carrier" basedamage="65"/>
             <enemy id="battleship" basedamage="45"/>
             <enemy id="lander" basedamage="85"/>
+
+            <enemy id="pipe_seam" basedamage="55"/>
         </enemies>
     </unit>
 
@@ -424,6 +451,8 @@
             <enemy id="carrier" basedamage="25"/>
             <enemy id="battleship" basedamage="25"/>
             <enemy id="lander" basedamage="25"/>
+
+            <enemy id="pipe_seam" basedamage="25" altdamage="1"/>
         </enemies>
     </unit>
 
@@ -442,7 +471,7 @@
             <enemy id="sea_plane" altdamage="95"/>
             <enemy id="bcopter" altdamage="120"/>
             <enemy id="tcopter" altdamage="120"/>
-            <enemy id="jet" basedamage="120"/>
+            <enemy id="jet" altdamage="120"/>
 
             <enemy id="gun_boat" basedamage="85"/>
             <enemy id="cruiser" basedamage="28"/>
@@ -498,6 +527,8 @@
             <enemy id="carrier" basedamage="50"/>
             <enemy id="battleship" basedamage="45"/>
             <enemy id="lander" basedamage="75"/>
+
+            <enemy id="pipe_seam" basedamage="55"/>
         </enemies>
     </unit>
 

@@ -2,6 +2,7 @@ package com.customwars.client.action.unit;
 
 import com.customwars.client.action.DirectAction;
 import com.customwars.client.controller.CursorController;
+import com.customwars.client.model.fight.Defender;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Location;
@@ -12,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This action searches for units in attack range that can be attacked(enemies)
+ * This action searches for units and cities in attack range that can be attacked(enemies)
  * The cursor is limited to the enemy locations
  * The enemies are rendered behind an attack animation
  *
@@ -40,7 +41,7 @@ public class StartAttackAction extends DirectAction {
   }
 
   protected void invokeAction() {
-    List<Unit> enemiesInRange = game.getMap().getEnemiesInRangeOf(unit, to);
+    List<Defender> enemiesInRange = game.getMap().getEnemiesInRangeOf(unit, to);
     List<Location> enemyLocationsInRange = getEnemyLocations(enemiesInRange);
 
     mapRenderer.removeMoveZone();
@@ -50,9 +51,9 @@ public class StartAttackAction extends DirectAction {
     context.setInputMode(InGameContext.INPUT_MODE.UNIT_ATTACK);
   }
 
-  private List<Location> getEnemyLocations(List<Unit> enemies) {
+  private List<Location> getEnemyLocations(List<Defender> enemies) {
     List<Location> enemyLocations = new ArrayList<Location>();
-    for (Unit enemy : enemies) {
+    for (Defender enemy : enemies) {
       enemyLocations.add(enemy.getLocation());
     }
     return enemyLocations;

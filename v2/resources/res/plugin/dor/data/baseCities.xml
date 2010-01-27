@@ -9,7 +9,7 @@
     Naval
 -->
 <list>
-    <city name="base" id="0" type='road'>
+    <city name="base" id="0" imgRowID="0" type='road'>
         <hidden>true</hidden>
         <defenseBonus>3</defenseBonus>
         <moveCosts>
@@ -34,7 +34,7 @@
         <maxCapCount>20</maxCapCount>
         <description>They give you money and heal units inside them.</description>
     </city>
-    <city name="factory" id="1" type='road'>
+    <city name="factory" id="1" imgRowID="1" type='road'>
         <hidden>true</hidden>
         <defenseBonus>3</defenseBonus>
         <moveCosts>
@@ -75,7 +75,7 @@
         <maxCapCount>20</maxCapCount>
         <description>Factories heal, provide supplies and can create new ground units.</description>
     </city>
-    <city name="airport" id="2" type='road'>
+    <city name="airport" id="2" imgRowID="2" type='road'>
         <hidden>true</hidden>
         <defenseBonus>3</defenseBonus>
         <moveCosts>
@@ -107,7 +107,7 @@
         <maxCapCount>20</maxCapCount>
         <description>empty</description>
     </city>
-    <city name="port" id="3" type='road'>
+    <city name="port" id="3" imgRowID="3" type='road'>
         <hidden>true</hidden>
         <defenseBonus>3</defenseBonus>
         <moveCosts>
@@ -138,8 +138,9 @@
             <int>25</int>
         </builds>
         <maxCapCount>20</maxCapCount>
+        <description></description>
     </city>
-    <city name="hq" id="4" type='road'>
+    <city name="hq" id="4" imgRowID="4" type='road'>
         <hidden>true</hidden>
         <defenseBonus>3</defenseBonus>
         <moveCosts>
@@ -162,8 +163,9 @@
             <int>2</int>
         </canBeCaptureBy>
         <maxCapCount>20</maxCapCount>
+        <description></description>
     </city>
-    <city name="missle_silo" id="5" type='road'>
+    <city name="missle_silo" id="5" imgRowID="5" type='road'>
         <hidden>true</hidden>
         <defenseBonus>3</defenseBonus>
         <moveCosts>
@@ -182,8 +184,9 @@
         </canBeLaunchedBy>
 
         <maxCapCount>20</maxCapCount>
+        <description></description>
     </city>
-    <city name="pipe_seam" id="6" type='pipe'>
+    <city name="pipe_seam" id="6" imgRowID="6" type='pipe'>
         <defenseBonus>0</defenseBonus>
         <height>1</height>
         <moveCosts>
@@ -194,5 +197,7 @@
             <int>1</int>
             <int>127</int>
         </moveCosts>
+        <maxHp>20</maxHp>
+        <description></description>
     </city>
 </list>
