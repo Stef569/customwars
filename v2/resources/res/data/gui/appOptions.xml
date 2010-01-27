@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--Created with Theodore 3.0 (#7)  AP Edition
+Licensed Carlsbad Cubes - Wolf Paulus-->
+<!--Theodore, XUL Editor for Thinlet-->
+<!--(c) 2002-2009 Carlsbad Cubes, http://www.carlsbadcubes.com-->
+<panel name="container" weighty="1" columns="1" top="10" left="10"
+       bottom="10" right="10">
+    <panel name="centerPanel" weightx="1" weighty="1" halign="center" valign="center" columns="2" top="10" left="10"
+           bottom="10" right="10" gap="20" border="true">
+        <panel gap="20">
+            <label tooltip="The server to connect to" text="Snail Server"/>
+            <textfield name="txt_server_url" weightx="1" columns="26" action="snailServerURLChanged(this.text)"/>
+        </panel>
+        <panel gap="20">
+            <label text="Active Plugin"/>
+            <combobox name="cbo_plugin" editable="false" action="pluginChanged(this)"/>
+        </panel>
+        <panel gap="20">
+            <label tooltip="User name used in online games" text="User name"/>
+            <textfield name="txt_user_name" weightx="1" action="userNameChanged(this.text)"/>
+        </panel>
+        <panel gap="20">
+            <label tooltip="Password to be used in online games" text="User Password"/>
+            <textfield name="txt_user_password" weightx="1" action="userPasswordChanged(this.text)"/>
+        </panel>
+        <panel gap="20">
+            <label tooltip="Toggle Sound effects" text="Sound Effects"/>
+            <slider name="sli_sound_effects" action="soundEffectsChanged(this)"/>
+        </panel>
+        <panel gap="20">
+            <label tooltip="Toggle Music" text="Music"/>
+            <slider name="sli_music" action="musicChanged(this)"/>
+        </panel>
+    </panel>
+    <panel name="btnPanel" weighty="1" valign="bottom">
+        <button text="Back" action="back()"/>
+        <button weightx="1" halign="right" text="Continue" action="continueToNextState()"/>
+    </panel>
+</panel>
+

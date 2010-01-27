@@ -56,6 +56,8 @@ public class MainGame {
   private void init(GameContainer gameContainer, ResourceManager resources) {
     SFX.setResources(resources);
     SFX.setGameContainer(gameContainer);
+    SFX.setSoundEffectsVolume((float) App.getDouble("user.sfx.sound_volume"));
+    SFX.setMusicVolume((float) App.getDouble("user.sfx.music_volume"));
   }
 
   private void run(AppGameContainer container) throws SlickException {
