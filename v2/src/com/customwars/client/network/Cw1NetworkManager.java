@@ -13,16 +13,17 @@ import java.util.List;
 
 /**
  * Translate use cases into network messages
+ * By using the CW1 battle server, All the real work is delegated to CW1NetworkIO
  */
 public class Cw1NetworkManager implements NetworkManager {
   private final CW1NetworkIO CW1NetworkIO;
 
-  public Cw1NetworkManager() {
-    CW1NetworkIO = new CW1NetworkIO();
+  public Cw1NetworkManager(String serverURL) {
+    CW1NetworkIO = new CW1NetworkIO(serverURL);
   }
 
   /**
-   * Create a new ServerGame and join the game as user 1
+   * Create a new Server game and join the game as user 1
    */
   public void createNewServerGame(String gameName, String gamePass, Map<Tile> map, String userName, String userPassword, String comment) throws NetworkException {
     ServerGame serverGame = new ServerGame(gameName, gamePass, map.getMapName(), map.getNumPlayers(), comment);
@@ -38,7 +39,7 @@ public class Cw1NetworkManager implements NetworkManager {
   }
 
   /**
-   * Join an existing ServerGame
+   * Join an existing Server game
    */
   public void joinServerGame(String gameName, String gamePass, String userName, String userPassword, int side) throws NetworkException {
     ServerGame serverGame = new ServerGame(gameName, gamePass);
@@ -165,7 +166,6 @@ public class Cw1NetworkManager implements NetworkManager {
         );
       } else {
         CW1NetworkIO.removePlayer(serverGame, user, userIDToRemove);
-        CW1NetworkIO.uploadGame(serverGame, game);
       }
     } catch (IOException ex) {
       throw new NetworkException(ex);

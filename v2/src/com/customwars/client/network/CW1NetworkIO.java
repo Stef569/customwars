@@ -18,7 +18,7 @@ import java.util.zip.GZIPOutputStream;
  * This class hides the details of sending and receiving information to/from the cw1 server.
  */
 public class CW1NetworkIO {
-  private static final String SERVER_URL = "http://battle.customwars.com/";
+  private final String serverURL;
   private static final String GAME_VERSION = App.get("game.name") + ' ' + App.get("game.version");
 
   // Perl Scripts
@@ -63,14 +63,18 @@ public class CW1NetworkIO {
   private static final String TEMP_SAVE_FILE_NAME = "CW2net";
   private static final String TEMP_SAVE_FILE_EXT = ".save";
 
+  public CW1NetworkIO(String serverURL) {
+    this.serverURL = serverURL;
+  }
+
   public void connect() throws IOException, NetworkException {
-    HttpClient httpClient = new HttpClient(SERVER_URL + MAIN_SCRIPT);
+    HttpClient httpClient = new HttpClient(serverURL + MAIN_SCRIPT);
     httpClient.send(TEST_CONNECTION);
     String[] replies = httpClient.readReplies();
     String reply = replies[0];
 
     if (!reply.equals(SUCCESS)) {
-      throw new NetworkException("Could not connect to " + SERVER_URL + MAIN_SCRIPT, replies);
+      throw new NetworkException("Could not connect to " + serverURL + MAIN_SCRIPT, replies);
     }
   }
 
@@ -175,7 +179,7 @@ public class CW1NetworkIO {
     String reply = replies[0];
 
     if (!reply.equals(UPDATE_OK)) {
-      throw new NetworkException("Could not end the turn", replies);
+      throw new NetworkException("Could not end the game", replies);
     }
   }
 
@@ -198,7 +202,7 @@ public class CW1NetworkIO {
   }
 
   public void uploadMap(ServerGame serverGame, Map<Tile> map) throws IOException, NetworkException {
-    HttpClient client = new HttpClient(SERVER_URL + UPLOAD_MAP_SCRIPT);
+    HttpClient client = new HttpClient(serverURL + UPLOAD_MAP_SCRIPT);
     File tempSaveFile = File.createTempFile(TEMP_SAVE_FILE_NAME, TEMP_SAVE_FILE_EXT);
     BinaryCW2MapParser mapParser = new BinaryCW2MapParser();
     mapParser.writeMap(map, new GZIPOutputStream(new FileOutputStream(tempSaveFile)));
@@ -214,7 +218,7 @@ public class CW1NetworkIO {
   }
 
   public Map<Tile> downloadMap(ServerGame serverGame) throws IOException {
-    HttpClient client = new HttpClient(SERVER_URL + DOWNLOAD_MAP_SCRIPT);
+    HttpClient client = new HttpClient(serverURL + DOWNLOAD_MAP_SCRIPT);
     File tempSaveFile = File.createTempFile(TEMP_SAVE_FILE_NAME, TEMP_SAVE_FILE_EXT);
     client.download(serverGame.getGameName(), tempSaveFile);
 
@@ -225,7 +229,7 @@ public class CW1NetworkIO {
   }
 
   public String uploadGame(ServerGame serverGame, Game game) throws IOException {
-    HttpClient client = new HttpClient(SERVER_URL + UPLOAD_GAME_SCRIPT);
+    HttpClient client = new HttpClient(serverURL + UPLOAD_GAME_SCRIPT);
     File tempSaveFile = File.createTempFile(TEMP_SAVE_FILE_NAME, TEMP_SAVE_FILE_EXT);
     BinaryCW2GameParser gameParser = new BinaryCW2GameParser();
     gameParser.writeGame(game, new GZIPOutputStream(new FileOutputStream(tempSaveFile)));
@@ -239,7 +243,7 @@ public class CW1NetworkIO {
   }
 
   public Game downloadGame(ServerGame serverGame) throws IOException {
-    HttpClient client = new HttpClient(SERVER_URL + DOWNLOAD_GAME_SCRIPT);
+    HttpClient client = new HttpClient(serverURL + DOWNLOAD_GAME_SCRIPT);
     File tempSaveFile = File.createTempFile(TEMP_SAVE_FILE_NAME, TEMP_SAVE_FILE_EXT);
     client.download(serverGame.getGameName(), tempSaveFile);
 
@@ -267,7 +271,7 @@ public class CW1NetworkIO {
   }
 
   protected String[] sendCommand(String command, String... parameters) throws IOException {
-    HttpClient client = new HttpClient(SERVER_URL + MAIN_SCRIPT);
+    HttpClient client = new HttpClient(serverURL + MAIN_SCRIPT);
     client.send(command, parameters);
     return client.readReplies();
   }
