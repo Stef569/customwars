@@ -1,7 +1,7 @@
 package com.customwars.client.ui.state.input;
 
 public enum CommandEnum {
-  SELECT, CANCEL, EXIT,
+  SELECT, CANCEL, GET_ME_OUT_OF_HERE,
   DOWN, UP, LEFT, RIGHT,
   TOGGLE_MUSIC, ZOOM_IN, ZOOM_OUT, FILL_MAP,
   NEXT_PAGE, PREV_PAGE, RECOLOR, DELETE, END_TURN,

@@ -20,7 +20,7 @@ import java.util.List;
 public class CWInput extends InputProvider {
   public static final Command SELECT = new CWCommand(CommandEnum.SELECT);
   public static final Command CANCEL = new CWCommand(CommandEnum.CANCEL);
-  public static final Command EXIT = new CWCommand(CommandEnum.EXIT);
+  public static final Command GET_ME_OUT_OF_HERE = new CWCommand(CommandEnum.GET_ME_OUT_OF_HERE);
   public static final Command DOWN = new CWCommand(CommandEnum.DOWN);
   public static final Command UP = new CWCommand(CommandEnum.UP);
   public static final Command LEFT = new CWCommand(CommandEnum.LEFT);
