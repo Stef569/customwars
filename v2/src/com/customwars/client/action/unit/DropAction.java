@@ -1,5 +1,6 @@
 package com.customwars.client.action.unit;
 
+import com.customwars.client.SFX;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.ui.state.InGameContext;
@@ -51,6 +52,8 @@ public class DropAction extends MoveAnimatedAction {
     if (transportLocation.contains(unit)) {
       transportLocation.remove(unit);
       transport.add(unit);
+    } else {
+      SFX.playSound("unload");
     }
 
     assert transportLocation.getLocatableCount() == 1 : "Only the transport is on the transportLocation";
