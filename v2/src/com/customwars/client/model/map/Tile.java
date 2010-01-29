@@ -33,6 +33,11 @@ public class Tile extends AbstractLocation implements Observable {
     locatables = new ArrayList<Locatable>();
   }
 
+  public Tile(int col, int row) {
+    super(col, row);
+    locatables = new ArrayList<Locatable>();
+  }
+
   public boolean canAdd(Locatable locatable) {
     return locatable != null && !contains(locatable);
   }
