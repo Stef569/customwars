@@ -97,15 +97,32 @@ public class Game extends TurnBasedGame implements PropertyChangeListener {
    * The map is temporarily reset for each player since fog and hidden units affects zones.
    */
   public void initZones() {
+    Collection<Tile> tileCopies = new ArrayList<Tile>(map.countTiles());
+
+    // Save the col, row and fogged information
+    for (Tile t : map.getAllTiles()) {
+      Tile tileCopy = new Tile(t.getCol(), t.getRow());
+      tileCopy.setFogged(t.isFogged());
+      tileCopies.add(tileCopy);
+    }
+
     for (Player player : getAllPlayers()) {
       map.resetFogMap(player);
       map.resetAllHiddenUnits(player);
       map.initUnitZonesForPlayer(player);
     }
 
-    // put the map back in the state it was before invoking this method
-    map.resetFogMap(getActivePlayer());
-    map.resetAllHiddenUnits(getActivePlayer());
+    // Put the map back in the state it was before invoking this method
+    Player activePlayer = getActivePlayer();
+    map.resetFogMap(activePlayer);
+    map.resetAllHiddenUnits(activePlayer);
+
+    // Tiles we could see before remain visible
+    for (Tile t : tileCopies) {
+      if (!t.isFogged()) {
+        map.getTile(t).setFogged(false);
+      }
+    }
   }
 
   void startTurn(Player player) {
