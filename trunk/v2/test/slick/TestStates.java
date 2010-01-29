@@ -59,10 +59,6 @@ public class TestStates extends CWStateBasedGame {
   @Override
   protected void handleGlobalInput(CWCommand command) {
     switch (command.getEnum()) {
-      case EXIT:
-        logger.info("Exit pressed");
-        gameContainer.exit();
-        break;
       case TOGGLE_MUSIC:
         SFX.toggleMusic();
         break;
