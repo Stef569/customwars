@@ -8,3 +8,5 @@ S explode explode.wav
 S trapped trap.wav
 S captured capture.wav
 S maptick maptick.wav
+S load load.wav
+S unload unload.wav

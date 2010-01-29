@@ -1,5 +1,6 @@
 package com.customwars.client.action.unit;
 
+import com.customwars.client.SFX;
 import com.customwars.client.action.DirectAction;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.ui.renderer.MapRenderer;
@@ -16,8 +17,7 @@ public class LoadAction extends DirectAction {
   private Logger logger = Logger.getLogger(LoadAction.class);
   private InGameContext context;
   private MapRenderer mapRenderer;
-  private Unit unit;
-  private Unit transport;
+  private final Unit unit, transport;
 
   public LoadAction(Unit unit, Unit transport) {
     super("Load", false);
@@ -41,5 +41,6 @@ public class LoadAction extends DirectAction {
     unit.getLocation().remove(unit);
     mapRenderer.removeUnit(unit);
     transport.add(unit);
+    SFX.playSound("load");
   }
 }
