@@ -12,15 +12,26 @@
 
 #5 now the code should compile
 
-#6 Make sure the src, resources and test packages are included in the classpath.(Blue color in intelliJ)
+#6 Make sure the *src* and *resources* packages are included in the classpath.(Blue color in intelliJ)
 
-#7 attempt to run the main method will throw 
+#7 An attempt to run the MainGame main method will result in following error message:
+{{{
 Exception in thread "main" java.lang.UnsatisfiedLinkError: no lwjgl in java.library.path
 	at java.lang.ClassLoader.loadLibrary(ClassLoader.java:1682)
+}}}
 That's a good thing, everything compiles, only 1 more step.
 
 #8 We are using native libraries and the virtual machine needs to know where to find them.
-Add the relative path 
--Djava.library.path=lib/native/natives-(your os) to the vm parameters. Replace your os with the directory of you os.
+<br/>Add the relative path 
+-Djava.library.path=lib/native/natives-(your os) to the *vm parameters*. Replace your os with the directory of you os.
 
-You should now be greeted with a screen
+Examples:
+  * -Djava.library.path=lib/native/natives-*linux*
+  * -Djava.library.path=lib/native/natives-*win32*
+  * -Djava.library.path=lib/native/natives-*mac*
+
+You should now be greeted with a screen.
+----
+<p>If a resource could not be found Make sure that the compiler copies all resources to the output dir:<p/>
+For IntelliJ select File > Settings > Compiler. Add the following Resource patterns:<br/>
+{{{?*.properties;?*.xml;?*.gif;?*.png;?*.jpeg;?*.jpg;?*.html;?*.dtd;?*.tld;?*.ftl;?*.txt;?*.wav;?*.tga;?*.fnt;?*.ttf}}}
