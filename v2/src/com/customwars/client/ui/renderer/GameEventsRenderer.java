@@ -19,12 +19,12 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Render events to the screen ie
+ * Render game events to the screen ie
  * unit is supplied, unit is trapped, etc.
  *
  * @author stefan
  */
-public class ModelEventsRenderer implements PropertyChangeListener, Renderable {
+public class GameEventsRenderer implements PropertyChangeListener, Renderable {
   private static final int TRAPPED_DELAY = 350, SUPPLY_DELAY = 350, MOVING_DELAY = 30;
 
   // Model
@@ -39,7 +39,7 @@ public class ModelEventsRenderer implements PropertyChangeListener, Renderable {
   private boolean renderTrapped, renderSupply;
   private int time, moveTime, moveX;
 
-  public ModelEventsRenderer(MoveTraverse moveTraverse, Game game, Camera2D camera) {
+  public GameEventsRenderer(MoveTraverse moveTraverse, Game game, Camera2D camera) {
     this.camera = camera;
     renderLocations = new LinkedList<Location>();
     setMoveTraverse(moveTraverse);
@@ -53,26 +53,22 @@ public class ModelEventsRenderer implements PropertyChangeListener, Renderable {
 
   private void setGame(Game game) {
     if (this.game != null) {
-      removeModelEventListeners(this.game);
+      removeGameEventListeners(this.game);
     }
     this.game = game;
     this.map = game.getMap();
-    addModelEventListeners(game);
+    addGameEventListeners(game);
   }
 
-  private void addModelEventListeners(Game game) {
+  private void addGameEventListeners(Game game) {
     game.addPropertyChangeListener(this);
     game.addPropertyChangeListenerToEachPlayer(this);
     game.getMap().addListenerToAllTilesUnitsAndCities(this);
   }
 
-  public void removeAllListeners() {
-    moveTraverse.removePropertyChangeListener(this);
-    removeModelEventListeners(game);
-  }
-
-  private void removeModelEventListeners(Game game) {
+  private void removeGameEventListeners(Game game) {
     game.removePropertyChangeListener(this);
+    game.removePropertyChangeListenerForEachPlayer(this);
     game.getMap().removeListenerFromAllTilesUnitsAndCities(this);
   }
 
