@@ -199,8 +199,8 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
    * and attacking the defender
    */
   public void attack(Defender defender, Fight fight) {
-    tryToFireWeapon(fight);
     defender.defend(this, fight);
+    tryToFireWeapon(fight);
 
     if (defender.isDestroyed()) {
       if (++experience > stats.maxExperience) {

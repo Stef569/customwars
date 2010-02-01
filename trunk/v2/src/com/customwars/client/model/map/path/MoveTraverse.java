@@ -32,9 +32,9 @@ import java.util.List;
  */
 public class MoveTraverse {
   private static final Logger logger = Logger.getLogger(MoveTraverse.class);
-  private PropertyChangeSupport changeSupport;
-  private TileMap<Tile> map;          // The map the mover can move in
-  private PathFinder pathFinder;      // Path generator
+  private final PropertyChangeSupport changeSupport;
+  private final TileMap<Tile> map;          // The map the mover can move in
+  private final PathFinder pathFinder;      // Path generator
   private List<Location> movePath;    // The path we are going to move over
   private Mover mover;                // Mover that is moving or is ready to move through the movePath
 
@@ -136,6 +136,7 @@ public class MoveTraverse {
       setTrapped();
     }
     setPathMoveComplete();
+    revealAdjacentTilesAlongMovepath();
   }
 
   /**
@@ -153,6 +154,14 @@ public class MoveTraverse {
   private void setPathMoveComplete() {
     pathMoveComplete = true;
     changeSupport.firePropertyChange("pathMoveComplete", false, true);
+  }
+
+  private void revealAdjacentTilesAlongMovepath() {
+    for (Location location : movePath) {
+      for (Tile adjacentTile : map.getSurroundingTiles(location, 1, 1)) {
+        adjacentTile.setFogged(false);
+      }
+    }
   }
 
   public boolean isPathMoveComplete() {
@@ -180,11 +189,11 @@ public class MoveTraverse {
     }
   }
 
-  public synchronized void removePropertyChangeListener(PropertyChangeListener listener) {
+  public void removePropertyChangeListener(PropertyChangeListener listener) {
     changeSupport.removePropertyChangeListener(listener);
   }
 
-  public synchronized void addPropertyChangeListener(PropertyChangeListener listener) {
+  public void addPropertyChangeListener(PropertyChangeListener listener) {
     changeSupport.addPropertyChangeListener(listener);
   }
 }

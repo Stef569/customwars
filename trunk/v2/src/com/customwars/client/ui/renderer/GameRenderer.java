@@ -39,7 +39,7 @@ public class GameRenderer implements Renderable, PropertyChangeListener {
 
   // GUI
   private final MapRenderer mapRenderer;
-  private final ModelEventsRenderer eventsRenderer;
+  private final GameEventsRenderer eventsRenderer;
   private final SpriteManager spriteManager;
   private final Camera2D camera;
   private final HUD hud;
@@ -60,7 +60,7 @@ public class GameRenderer implements Renderable, PropertyChangeListener {
 
     this.scroller = new Scroller(camera);
     this.spriteManager = new SpriteManager(map);
-    this.eventsRenderer = new ModelEventsRenderer(moveTraverse, game, camera);
+    this.eventsRenderer = new GameEventsRenderer(moveTraverse, game, camera);
     this.mapRenderer = new MapRenderer(map, spriteManager);
     this.gameControl = new GameController(game, this, spriteManager);
 

@@ -20,7 +20,7 @@ import org.apache.log4j.Logger;
  * @author stefan
  */
 public class MoveAnimatedAction extends DelayedAction {
-  private Logger logger = Logger.getLogger(MoveAnimatedAction.class);
+  private static final Logger logger = Logger.getLogger(MoveAnimatedAction.class);
   InGameContext context;
   MoveTraverse moveTraverse;
   Game game;
@@ -49,7 +49,7 @@ public class MoveAnimatedAction extends DelayedAction {
     logger.debug(String.format("Moving Animated from %s to %s",
       from.getLocationString(), to.getLocationString()));
 
-    // Reset capturing state, if this unit was capturing a city
+    // Reset unit state, if this unit was capturing a city
     if (unit.getUnitState() == UnitState.CAPTURING) {
       unit.setUnitState(UnitState.IDLE);
     }
@@ -59,7 +59,6 @@ public class MoveAnimatedAction extends DelayedAction {
     moveTraverse = context.getMoveTraverse();
     cursorControl = context.getCursorController();
     cursorControl.setCursorLocked(true);
-    context.setMoving(true);
 
     MapRenderer mapRenderer = context.getMapRenderer();
     mapRenderer.removeZones();

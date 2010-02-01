@@ -34,7 +34,6 @@ public class ClearInGameStateAction extends DirectAction {
     context.setInputMode(InGameContext.INPUT_MODE.DEFAULT);
     context.clearUndoHistory();
     context.clearClickHistory();
-    context.setMoving(false);
     context.setTrapped(false);
     context.clearDropHistory();
     context.getContainer().getInput().resume();
@@ -48,8 +47,9 @@ public class ClearInGameStateAction extends DirectAction {
 
     hud.hidePopup();
 
-    // Avoid unnecesarry events to be fired
-    if (game.getActiveUnit() != null)
+    // Avoid unnecessary events to be fired
+    if (game.getActiveUnit() != null) {
       game.setActiveUnit(null);
+    }
   }
 }

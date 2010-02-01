@@ -23,20 +23,19 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Allows to share information while in the Game
- * Stores
- * A history of clicks in a tileMap and
- * A collection of CWActions that are executed on each update call and can be undone
- * The droplocations and units to be dropped on those locations.
+ * This object uses the Service locator pattern.
+ * To lookup objects that are shared while playing a Game
+ * Execution and undo of CWActions are delegated to the ActionManager.
+ *
+ * Objects that are stored:
+ * A history of clicks in a tileMap
+ * The drop locations and units to be dropped on those locations.
  * The current input mode, this changes the way a click on the map is interpreted
- * References to any object that is available in the game: ControllerManager, Game, MoveTraverse, MapRenderer, Hud
- * this allows to pass 1 context object instead of all the above as a parameter.
+ * ControllerManager, Game, MoveTraverse, MapRenderer, Hud
  *
  * @author stefan
  */
 public class InGameContext {
-  private static final ClickHistory clickHistory = new ClickHistory(3);
-
   public enum INPUT_MODE {
     DEFAULT,        // Clicking shows a Menu or selects a unit
     GUI,            // Input is handled by the GUI
@@ -50,10 +49,10 @@ public class InGameContext {
 
   private INPUT_MODE inputMode;
   private boolean trapped;
-  private boolean moving;
   private final List<Unit> unitsInTransport;
   private final DropLocationsQueue dropQueue;
   private final ActionManager actionManager;
+  private final ClickHistory clickHistory = new ClickHistory(3);
 
   private Game game;
   private MoveTraverse moveTraverse;
@@ -102,8 +101,10 @@ public class InGameContext {
   }
 
   /**
-   * Convenient method to executes an action
+   * Executes an action
    * If the action can be undone then a call to undo will undo the action
+   *
+   * @param action The action to perform immediately
    */
   public void doAction(CWAction action) {
     actionManager.doAction(action);
@@ -133,10 +134,6 @@ public class InGameContext {
 
   public void setTrapped(boolean trapped) {
     this.trapped = trapped;
-  }
-
-  public void setMoving(boolean moving) {
-    this.moving = moving;
   }
 
   public void setGame(Game game) {
@@ -227,10 +224,6 @@ public class InGameContext {
     return trapped;
   }
 
-  public boolean isMoving() {
-    return moving;
-  }
-
   public boolean isActionCompleted() {
     return actionManager.isActionCompleted();
   }
@@ -239,8 +232,9 @@ public class InGameContext {
    * Get a click from the click history eg:
    * getClick(1) returns the first click
    *
-   * @param index The click index, base 1
+   * @param index The click index,  1
    *              null if there is no click registered for the given index
+   * @return
    */
   public Tile getClick(int index) {
     return clickHistory.getClick(index);

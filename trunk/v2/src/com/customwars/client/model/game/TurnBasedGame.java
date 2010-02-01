@@ -267,7 +267,7 @@ public class TurnBasedGame implements Observable, Serializable {
     }
 
     if (result == null) {
-      throw new IllegalArgumentException("Unknown Playername: " + playerName + " available players:" + players);
+      throw new IllegalArgumentException("Unknown Player name: " + playerName + " available players:" + players);
     } else {
       return result;
     }
@@ -290,16 +290,18 @@ public class TurnBasedGame implements Observable, Serializable {
     }
 
     if (result == null) {
-      throw new IllegalArgumentException("Unknown PlayerID " + playerID + " available players:" + players);
+      throw new IllegalArgumentException("Unknown Player ID " + playerID + " available players:" + players);
     } else {
       return result;
     }
   }
 
+  /**
+   * @see GameStatistics#getPlayerStats(Player)
+   */
   public java.util.Map<String, String> getPlayerStats(Player player) {
     return gameStatistics.getPlayerStats(player);
   }
-
 
   private void validateStartGame(Player gameStarter) {
     if (!isIdle()) {
@@ -395,6 +397,12 @@ public class TurnBasedGame implements Observable, Serializable {
   public void addPropertyChangeListenerToEachPlayer(PropertyChangeListener listener) {
     for (Player player : getAllPlayers()) {
       player.addPropertyChangeListener(listener);
+    }
+  }
+
+  public void removePropertyChangeListenerForEachPlayer(PropertyChangeListener listener) {
+    for (Player player : getAllPlayers()) {
+      player.removePropertyChangeListener(listener);
     }
   }
 
