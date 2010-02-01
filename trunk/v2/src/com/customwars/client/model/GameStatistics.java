@@ -9,21 +9,24 @@ import com.customwars.client.model.gameobject.UnitFactory;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Gather statistics about the given game.
- * Statistics can be retrieved by calling {@link #getPlayerStats(Player)}
+ * Gather statistics for each player about the given game.
+ * Player statistics can be retrieved by calling {@link #getPlayerStats(Player)}
  *
  * @author stefan
  */
-public class Statistics implements PropertyChangeListener {
+public class GameStatistics implements PropertyChangeListener, Serializable {
   private final TurnBasedGame game;
   private final Map<Player, PlayerStats> playerStatistics;
 
-  public Statistics(TurnBasedGame game) {
+  public GameStatistics(TurnBasedGame game) {
     this.game = game;
     this.playerStatistics = new HashMap<Player, PlayerStats>();
 
@@ -59,9 +62,13 @@ public class Statistics implements PropertyChangeListener {
    * @return A Map of statistics example: key="units killed" value="4"
    */
   public Map<String, String> getPlayerStats(Player player) {
-    PlayerStats playerStats = playerStatistics.get(player);
-    playerStats.update();
-    return playerStats.getStats();
+    if (playerStatistics.containsKey(player)) {
+      PlayerStats playerStats = playerStatistics.get(player);
+      playerStats.update();
+      return playerStats.getStats();
+    } else {
+      throw new IllegalArgumentException("No statistics for " + player);
+    }
   }
 
   public void propertyChange(PropertyChangeEvent evt) {
@@ -110,10 +117,10 @@ public class Statistics implements PropertyChangeListener {
     return playerStatistics.get(game.getActivePlayer());
   }
 
-  private static class PlayerStats {
+  private static class PlayerStats implements Serializable {
     public int unitsCreated, unitsKilled, unitsLost, citiesCaptured;
     public final int[] createdUnitIDs = new int[UnitFactory.countUnits()];
-    private final Map<String, String> stats;
+    private transient Map<String, String> stats;
 
     public PlayerStats() {
       stats = new HashMap<String, String>();
@@ -149,6 +156,11 @@ public class Statistics implements PropertyChangeListener {
 
     public Map<String, String> getStats() {
       return Collections.unmodifiableMap(stats);
+    }
+
+    private void readObject(ObjectInputStream in) throws ClassNotFoundException, IOException {
+      in.defaultReadObject();
+      stats = new HashMap<String, String>();
     }
   }
 }

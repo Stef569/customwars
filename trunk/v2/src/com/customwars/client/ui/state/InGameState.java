@@ -5,7 +5,6 @@ import com.customwars.client.SFX;
 import com.customwars.client.controller.ControllerManager;
 import com.customwars.client.controller.GameController;
 import com.customwars.client.controller.InGameCursorController;
-import com.customwars.client.model.Statistics;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.map.Direction;
@@ -112,7 +111,6 @@ public class InGameState extends CWState implements PropertyChangeListener {
   private void initSubSystems(Game game) {
     initGame(game);
     initGameContext(game, guiContext);
-    stateSession.stats = new Statistics(game);
   }
 
   private void initGame(Game game) {
