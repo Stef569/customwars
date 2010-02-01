@@ -272,9 +272,7 @@ public class Player extends GameObject {
 
   @Override
   public int hashCode() {
-    int result = id;
-    result = 31 * result + (color != null ? color.hashCode() : 0);
-    return result;
+    return id;
   }
 
   @Override

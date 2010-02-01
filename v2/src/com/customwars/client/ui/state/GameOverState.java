@@ -2,7 +2,7 @@ package com.customwars.client.ui.state;
 
 import com.customwars.client.App;
 import com.customwars.client.io.loading.ThinglePageLoader;
-import com.customwars.client.model.Statistics;
+import com.customwars.client.model.game.Game;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.network.NetworkException;
 import com.customwars.client.network.NetworkManager;
@@ -33,7 +33,7 @@ public class GameOverState extends CWState {
   private static final int COLUMN_WIDTH = 100;
   private Page page;
   private List<Player> players;
-  private Statistics statistics;
+  private Game game;
   private NetworkManager networkManager;
 
   public void init(GameContainer gameContainer, StateBasedGame stateBasedGame) throws SlickException {
@@ -43,15 +43,15 @@ public class GameOverState extends CWState {
   }
 
   @Override
-  public void enter(GameContainer container, StateBasedGame game) throws SlickException {
-    super.enter(container, game);
-    statistics = stateSession.stats;
+  public void enter(GameContainer container, StateBasedGame stateBasedGame) throws SlickException {
+    super.enter(container, stateBasedGame);
+    game = stateSession.game;
     buildPlayers();
     buildTable();
     page.enable();
     logger.info("Game Over");
 
-    if (App.isMultiplayerSnailGame() && stateSession.game.isGameOver()) {
+    if (App.isMultiplayerSnailGame() && game.isGameOver()) {
       endServerGame();
     }
   }
@@ -79,7 +79,7 @@ public class GameOverState extends CWState {
 
   private void buildPlayers() {
     this.players = new ArrayList<Player>();
-    for (Player player : stateSession.game.getAllPlayers()) {
+    for (Player player : game.getAllPlayers()) {
       players.add(player);
     }
   }
@@ -119,7 +119,7 @@ public class GameOverState extends CWState {
   }
 
   private Widget[] createRows() {
-    int rowCount = statistics.getPlayerStats(players.get(0)).size();
+    int rowCount = game.getPlayerStats(players.get(0)).size();
     Widget[] rows = new Widget[rowCount];
 
     for (int i = 0; i < rows.length; i++) {
@@ -130,7 +130,7 @@ public class GameOverState extends CWState {
   }
 
   private void addFirstColumn(Widget[] rows) {
-    Map<String, String> playerStats = statistics.getPlayerStats(players.get(0));
+    Map<String, String> playerStats = game.getPlayerStats(players.get(0));
     int rowIndex = 0;
 
     for (String statKey : playerStats.keySet()) {
@@ -142,7 +142,7 @@ public class GameOverState extends CWState {
   private void addColumn(Widget[] rows) {
     for (Player player : players) {
       int rowIndex = 0;
-      Map<String, String> stats = statistics.getPlayerStats(player);
+      Map<String, String> stats = game.getPlayerStats(player);
 
       for (Map.Entry<String, String> entry : stats.entrySet()) {
         Widget cell = createCell(entry.getValue());

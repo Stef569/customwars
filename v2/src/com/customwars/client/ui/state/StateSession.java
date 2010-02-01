@@ -1,6 +1,5 @@
 package com.customwars.client.ui.state;
 
-import com.customwars.client.model.Statistics;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
@@ -14,7 +13,6 @@ import com.customwars.client.network.User;
 public class StateSession {
   public Game game;
   public Map<Tile> map;
-  public Statistics stats;
 
   // Network
   public String serverGameName;
@@ -23,7 +21,6 @@ public class StateSession {
   public void clear() {
     game = null;
     map = null;
-    stats = null;
     serverGameName = "";
   }
 }

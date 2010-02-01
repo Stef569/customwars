@@ -1,5 +1,6 @@
 package com.customwars.client.model.game;
 
+import com.customwars.client.model.GameStatistics;
 import com.customwars.client.model.Observable;
 import com.customwars.client.model.gameobject.GameObjectState;
 import com.customwars.client.model.map.Map;
@@ -32,6 +33,7 @@ import java.util.List;
 public class TurnBasedGame implements Observable, Serializable {
   private static final Logger logger = Logger.getLogger(TurnBasedGame.class);
   private final PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
+  private final GameStatistics gameStatistics;   // Holds statistics for each player(number of units killed, cities captures,...)
 
   static enum GameState {
     IDLE, STARTED, GAME_OVER
@@ -51,6 +53,7 @@ public class TurnBasedGame implements Observable, Serializable {
     this.players = new ArrayList<Player>(players);
     this.turn = new Turn(dayLimit);
     this.state = GameState.IDLE;
+    this.gameStatistics = new GameStatistics(this);
   }
 
   /**
@@ -292,6 +295,11 @@ public class TurnBasedGame implements Observable, Serializable {
       return result;
     }
   }
+
+  public java.util.Map<String, String> getPlayerStats(Player player) {
+    return gameStatistics.getPlayerStats(player);
+  }
+
 
   private void validateStartGame(Player gameStarter) {
     if (!isIdle()) {
