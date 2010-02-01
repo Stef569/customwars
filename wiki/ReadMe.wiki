@@ -1,5 +1,5 @@
 #summary cw2 readme
-#labels Featured,Phase-Deploy
+#labels Phase-Deploy
 
 = Introduction =
 This page explains how to install customwars
