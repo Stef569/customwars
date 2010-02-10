@@ -9,8 +9,8 @@ Licensed Carlsbad Cubes - Wolf Paulus-->
         <panel gap="20">
             <label text="Fog" tooltip="Limit visibility in the game"/>
             <combobox name="fog" weightx="1" halign="right" width="60" editable="false" action="fogChange(this)">
-                <choice text="True"/>
-                <choice text="False"/>
+                <choice text="On"/>
+                <choice text="Off"/>
             </combobox>
         </panel>
         <panel gap="20">
