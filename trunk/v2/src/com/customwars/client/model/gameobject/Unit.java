@@ -34,8 +34,8 @@ import java.util.List;
  */
 public class Unit extends GameObject implements Mover, Location, TurnHandler, Attacker, Defender {
   public static final Direction DEFAULT_ORIENTATION = Direction.EAST;
-  private static final int LOW_AMMO_PERCENTAGE = 33;
-  private static final int LOW_SUPPLIES = 20;
+  private static final int LOW_AMMO_PERCENTAGE = 50;
+  private static final int LOW_SUPPLIES = 50;
 
   private final UnitStats stats;
   private City constructingCity; // A City that is being build by this unit
@@ -86,7 +86,6 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
 
     primaryWeapon = otherUnit.primaryWeapon != null ? new Weapon(otherUnit.primaryWeapon) : null;
     secondaryWeapon = otherUnit.secondaryWeapon != null ? new Weapon(otherUnit.secondaryWeapon) : null;
-    experience = otherUnit.experience;
 
     location = otherUnit.location;
     owner = otherUnit.owner;
@@ -111,7 +110,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   void reset() {
     resupply();
     hp = stats.maxHp;
-    experience = 0;
+    setExperience(0);
     setOrientation(DEFAULT_ORIENTATION);
     setState(GameObjectState.ACTIVE);
   }
@@ -181,12 +180,12 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   // ----------------------------------------------------------------------------
 
   public void dive() {
-    unitState = UnitState.SUBMERGED;
+    setUnitState(UnitState.SUBMERGED);
     hideAbilityEnabled = true;
   }
 
   public void surface() {
-    unitState = UnitState.IDLE;
+    setUnitState(UnitState.IDLE);
     hideAbilityEnabled = false;
   }
 
@@ -203,9 +202,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
     tryToFireWeapon(fight);
 
     if (defender.isDestroyed()) {
-      if (++experience > stats.maxExperience) {
-        experience = stats.maxExperience;
-      }
+      setExperience(experience + 1);
     }
   }
 
@@ -457,6 +454,12 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   // Setters
   // ---------------------------------------------------------------------------
 
+  public void setExperience(int newExperience) {
+    int oldVal = this.experience;
+    this.experience = Args.getBetweenZeroMax(newExperience, stats.maxExperience);
+    firePropertyChange("experience", oldVal, experience);
+  }
+
   public void setPrimaryWeapon(Weapon priWeapon) {
     Weapon oldVal = this.primaryWeapon;
     primaryWeapon = priWeapon;
@@ -615,16 +618,16 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   }
 
   /**
-   * @return True when one of the weapons has less then 33% ammo.
+   * @return True when one of the weapons has less then 50% ammo.
    */
   public boolean hasLowAmmo() {
     boolean lowAmmo = false;
     if (hasPrimaryWeapon()) {
-      if (primaryWeapon.getAmmoPercentage() < LOW_AMMO_PERCENTAGE) {
+      if (primaryWeapon.getAmmoPercentage() <= LOW_AMMO_PERCENTAGE) {
         lowAmmo = true;
       }
     } else if (hasSecondaryWeapon()) {
-      if (secondaryWeapon.getAmmoPercentage() < LOW_AMMO_PERCENTAGE) {
+      if (secondaryWeapon.getAmmoPercentage() <= LOW_AMMO_PERCENTAGE) {
         lowAmmo = true;
       }
     }
@@ -760,6 +763,10 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
 
   public boolean isAlliedWith(Player player) {
     return owner.isAlliedWith(player);
+  }
+
+  public int getExperience() {
+    return experience;
   }
 
   public UnitState getUnitState() {

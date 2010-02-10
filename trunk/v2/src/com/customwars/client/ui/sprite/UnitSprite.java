@@ -8,10 +8,10 @@ import com.customwars.client.model.map.Direction;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.model.map.TileMap;
+import com.customwars.client.ui.slick.ImageRotator;
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Font;
 import org.newdawn.slick.Graphics;
-import org.newdawn.slick.Image;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -22,15 +22,22 @@ import java.beans.PropertyChangeListener;
  * @author stefan
  */
 public class UnitSprite extends TileSprite implements PropertyChangeListener {
-  // Image Position in the decorations ImageStrip
+  private static final int UNIT_STATUS_FRAME_DURATION = 2000;
+
+  // Image Position in the status ImageStrip
   private static final int CAPTURED = 0;
   private static final int SUBMERGED = 1;
   private static final int LOAD = 2;
   private static final int LOW_AMMO = 3;
   private static final int LOW_SUPPLIES = 4;
+  private static final int NONE = 5;
+  private static final int RANK_I = 6;
+  private static final int RANK_II = 7;
+  private static final int RANK_V = 8;
+  private static final int CO = 9;
 
-  private final ImageStrip decorations;
-  private Font font;
+  private final ImageRotator statusRotator;
+  private Font hpFont;
 
   private Animation animLeft;
   private Animation animRight;
@@ -40,16 +47,19 @@ public class UnitSprite extends TileSprite implements PropertyChangeListener {
   private Animation animDying;
 
   private final Unit unit;
-  private boolean lowHp, lowAmmo, lowSupplies;
+  private boolean lowHp;
   private boolean remove;
 
-  public UnitSprite(TileMap<Tile> map, Unit unit, ImageStrip decorations) {
+  public UnitSprite(TileMap<Tile> map, Unit unit, ImageStrip statusImgStrip) {
     super(unit.getLocation(), map);
     this.unit = unit;
-    this.decorations = decorations;
+    statusRotator = new ImageRotator(statusImgStrip.toArray(), UNIT_STATUS_FRAME_DURATION);
+    statusRotator.hideAllFrames();
     lowHp = unit.hasLowHp();
-    lowAmmo = unit.hasLowAmmo();
-    lowSupplies = unit.hasLowSupplies();
+    statusRotator.setShowFrame(LOW_AMMO, unit.hasLowAmmo());
+    statusRotator.setShowFrame(LOW_SUPPLIES, unit.hasLowSupplies());
+    statusRotator.setShowFrame(LOAD, unit.getLocatableCount() > 0);
+    experienceChange(unit.getExperience());
 
     // Hide the unit when it is on a fogged location
     Tile unitLocation = (Tile) unit.getLocation();
@@ -122,8 +132,8 @@ public class UnitSprite extends TileSprite implements PropertyChangeListener {
     }
   }
 
-  public void setFont(Font font) {
-    this.font = font;
+  public void setHpFont(Font hpFont) {
+    this.hpFont = hpFont;
   }
 
   private void changeState(GameObjectState gameObjectState) {
@@ -146,6 +156,7 @@ public class UnitSprite extends TileSprite implements PropertyChangeListener {
   @Override
   public void update(long elapsedTime) {
     super.update(elapsedTime);
+    statusRotator.update(elapsedTime);
 
     if (anim.isStopped() && unit.isDestroyed()) {
       setVisible(false);
@@ -158,59 +169,24 @@ public class UnitSprite extends TileSprite implements PropertyChangeListener {
     super.render(g);
     if (isVisible() && !unit.isDestroyed()) {
       translateOffset(g, false);
-
-      if (lowHp) {
-        renderLowerRight(unit.getHp() + "");
-      } else if (lowAmmo) {
-        renderLowerRight(decorations.getSubImage(LOW_AMMO), g);
-      }
-
-      if (lowSupplies) {
-        renderLowerLeft(decorations.getSubImage(LOW_SUPPLIES), g);
-      }
-
-      renderUnitState(unit.getUnitState(), g);
+      renderUnitStatus();
       undoTranslateOffset(g);
     }
   }
 
-  private void renderUnitState(UnitState unitState, Graphics g) {
-    if (unit.getLocatableCount() > 0) {
-      renderLowerLeft(decorations.getSubImage(LOAD), g);
+  private void renderUnitStatus() {
+    if (lowHp) {
+      renderLowerRight(unit.getHp() + "");
     }
 
-    switch (unitState) {
-      case CAPTURING:
-        renderLowerLeft(decorations.getSubImage(CAPTURED), g);
-        break;
-      case SUBMERGED:
-        renderLowerLeft(decorations.getSubImage(SUBMERGED), g);
-        break;
-    }
-  }
-
-  private void renderLowerLeft(String txt) {
-    int x = 2;
-    int y = getHeight() - font.getLineHeight();
-    font.drawString(getX() + x, getY() + y, txt);
-  }
-
-  private void renderLowerLeft(Image img, Graphics g) {
-    int x = 2;
-    int y = getHeight() - img.getHeight();
-    g.drawImage(img, getX() + x, getY() + y);
+    int yOffset = getHeight() - statusRotator.getHeight();
+    statusRotator.draw(getX(), getY() + yOffset);
   }
 
   private void renderLowerRight(String txt) {
-    int x = getWidth() - font.getWidth(txt);
-    int y = getHeight() - font.getLineHeight();
-    font.drawString(getX() + x, getY() + y, txt);
-  }
-
-  private void renderLowerRight(Image img, Graphics g) {
-    int x = getWidth() - img.getWidth();
-    int y = getHeight() - img.getHeight();
-    g.drawImage(img, getX() + x, getY() + y);
+    int xOffset = getWidth() - hpFont.getWidth(txt);
+    int yOffset = getHeight() - hpFont.getLineHeight();
+    hpFont.drawString(getX() + xOffset, getY() + yOffset, txt);
   }
 
   public boolean canBeRemoved() {
@@ -233,18 +209,68 @@ public class UnitSprite extends TileSprite implements PropertyChangeListener {
       if (propertyName.equals("hp")) {
         lowHp = unit.hasLowHp();
       } else if (propertyName.equals("supplies")) {
-        lowSupplies = unit.hasLowSupplies();
+        statusRotator.setShowFrame(LOW_SUPPLIES, unit.hasLowSupplies());
       } else if (propertyName.equals("state")) {
         changeState((GameObjectState) evt.getNewValue());
       } else if (propertyName.equals("orientation")) {
         setOrientation((Direction) evt.getNewValue());
       } else if (propertyName.equals("location")) {
         setLocation((Location) evt.getNewValue());
+      } else if (propertyName.equals("transport")) {
+        statusRotator.setShowFrame(LOAD, unit.getLocatableCount() > 0);
+      } else if (propertyName.equals("unitState")) {
+        unitStateChange((UnitState) evt.getNewValue());
+      } else if (propertyName.equals("experience")) {
+        experienceChange((Integer) evt.getNewValue());
       }
     } else if (evt.getSource() == unit.getPrimaryWeapon()) {
       if (propertyName.equals("ammo")) {
-        lowAmmo = unit.hasLowAmmo();
+        statusRotator.setShowFrame(LOW_AMMO, unit.hasLowAmmo());
       }
+    }
+  }
+
+  private void experienceChange(int newExperience) {
+    switch (newExperience) {
+      case 0:
+        break;
+      case 1:
+        showRank(RANK_I);
+        break;
+      case 2:
+        showRank(RANK_II);
+        break;
+      case 3:
+        showRank(RANK_V);
+        break;
+    }
+  }
+
+  private void showRank(int rank) {
+    statusRotator.showFrame(rank);
+    hideOtherRanks(rank);
+  }
+
+  private void hideOtherRanks(int rank) {
+    if (rank != RANK_I) statusRotator.hideFrame(RANK_I);
+    if (rank != RANK_II) statusRotator.hideFrame(RANK_II);
+    if (rank != RANK_V) statusRotator.hideFrame(RANK_V);
+  }
+
+  private void unitStateChange(UnitState newUnitState) {
+    switch (newUnitState) {
+      case CAPTURING:
+        statusRotator.showFrame(CAPTURED);
+        break;
+      case SUBMERGED:
+        statusRotator.showFrame(SUBMERGED);
+        break;
+      case IDLE:
+        statusRotator.hideFrame(CAPTURED);
+        statusRotator.hideFrame(SUBMERGED);
+        break;
+      default:
+        throw new AssertionError(newUnitState + " not handled in switch case");
     }
   }
 }

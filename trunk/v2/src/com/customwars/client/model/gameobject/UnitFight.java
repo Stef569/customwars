@@ -1,5 +1,7 @@
 package com.customwars.client.model.gameobject;
 
+import com.customwars.client.App;
+import com.customwars.client.model.ArmyBranch;
 import com.customwars.client.model.fight.BasicFight;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.tools.NumberUtil;
@@ -21,12 +23,28 @@ public class UnitFight extends BasicFight {
 
     int terrainDef = getTerrainDefense(defendingUnit);
     int baseDmg = getAttackDamagePercentage(attackingUnit, defendingUnit);
-    return (int) Math.floor(attackerHP / (float) attackMaxHP * baseDmg - terrainDef);
+    int expBonus = getExperienceBonus(attackingUnit, defendingUnit);
+
+    return (int) (Math.floor(attackerHP / (float) attackMaxHP * baseDmg - terrainDef) + expBonus);
+  }
+
+  private int getExperienceBonus(Unit attackingUnit, Unit defendingUnit) {
+    int attackBonus = getExperienceBonus(attackingUnit);
+    int defenderBonus = getExperienceBonus(defendingUnit);
+    return attackBonus - defenderBonus;
+  }
+
+  private int getExperienceBonus(Unit unit) {
+    return App.getInt("plugin.unit_rank" + unit.getExperience() + "_fight_bonus");
   }
 
   private int getTerrainDefense(Unit unit) {
-    Tile t = (Tile) unit.getLocation();
-    return t.getTerrain().getDefenseBonus();
+    if (unit.getArmyBranch() == ArmyBranch.AIR) {
+      return 0;
+    } else {
+      Tile t = (Tile) unit.getLocation();
+      return t.getTerrain().getDefenseBonus();
+    }
   }
 
   /**
