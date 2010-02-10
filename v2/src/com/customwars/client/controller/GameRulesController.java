@@ -43,7 +43,7 @@ public class GameRulesController {
    * and show them as the selected value of the cbo
    */
   public void initValues() {
-    ThingleUtil.selectChild(page.getWidget("fog"), gameRules.isFogOfWarOn() ? "True" : "False");
+    ThingleUtil.selectChild(page.getWidget("fog"), gameRules.isFogOfWarOn() ? "On" : "Off");
     ThingleUtil.selectChild(page.getWidget("day_limit"), gameRules.getDayLimit() + "");
     ThingleUtil.selectChild(page.getWidget("funds"), gameRules.getCityFunds() + "");
     ThingleUtil.selectChild(page.getWidget("income"), gameRules.getPlayerBudgetStart() + "");
@@ -61,7 +61,7 @@ public class GameRulesController {
 
   public void fogChange(Widget fogCbo) {
     String selectedText = fogCbo.getChild(fogCbo.getSelectedIndex()).getText();
-    boolean fogON = Boolean.valueOf(selectedText);
+    boolean fogON = selectedText.equals("On");
     gameRules.setFogOfWar(fogON);
   }
 
