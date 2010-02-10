@@ -4,7 +4,7 @@
         <!ELEMENT unit (price, movement, vision,
                 canHide?, canDive?, canCapture?, canJoin?, canFlare?, canSupply?, canTransport?,
                 transports?, transformTerrains?, buildCities?, buildUnits?,
-                maxExperience, maxHp, supplyRange?, maxSupplies, suppliesPerTurn?, suppliesPerTurnWhenHidden?, maxTransportCount?, healRate?, armyBranch,
+                maxExperience?, maxHp, supplyRange?, maxSupplies, suppliesPerTurn?, suppliesPerTurnWhenHidden?, maxTransportCount?, healRate?, armyBranch,
                 movementType, primaryWeaponName?, secondaryWeaponName?, description)>
         <!ATTLIST unit name CDATA #REQUIRED>
         <!ATTLIST unit unitID CDATA #REQUIRED>
@@ -84,7 +84,7 @@
         <canCapture>true</canCapture>
         <canJoin>true</canJoin>
 
-        <maxExperience>10</maxExperience>
+        <maxExperience>3</maxExperience>
         <maxHp>100</maxHp>
         <maxSupplies>99</maxSupplies>
 
@@ -105,7 +105,7 @@
         <canCapture>true</canCapture>
         <canJoin>true</canJoin>
 
-        <maxExperience>10</maxExperience>
+        <maxExperience>3</maxExperience>
         <maxHp>100</maxHp>
         <maxSupplies>70</maxSupplies>
 
@@ -121,7 +121,7 @@
 
         <canJoin>true</canJoin>
 
-        <maxExperience>10</maxExperience>
+        <maxExperience>3</maxExperience>
         <maxHp>100</maxHp>
         <maxSupplies>80</maxSupplies>
 
@@ -140,7 +140,7 @@
         <canJoin>true</canJoin>
         <canFlare>true</canFlare>
 
-        <maxExperience>10</maxExperience>
+        <maxExperience>3</maxExperience>
         <maxHp>100</maxHp>
         <maxSupplies>60</maxSupplies>
 
@@ -156,7 +156,7 @@
 
         <canJoin>true</canJoin>
 
-        <maxExperience>10</maxExperience>
+        <maxExperience>3</maxExperience>
         <maxHp>100</maxHp>
         <maxSupplies>60</maxSupplies>
 
@@ -173,7 +173,7 @@
 
         <canJoin>true</canJoin>
 
-        <maxExperience>10</maxExperience>
+        <maxExperience>3</maxExperience>
         <maxHp>100</maxHp>
         <maxSupplies>70</maxSupplies>
 
@@ -191,7 +191,7 @@
 
         <canJoin>true</canJoin>
 
-        <maxExperience>10</maxExperience>
+        <maxExperience>3</maxExperience>
         <maxHp>100</maxHp>
         <maxSupplies>50</maxSupplies>
 
@@ -209,7 +209,7 @@
 
         <canJoin>true</canJoin>
 
-        <maxExperience>10</maxExperience>
+        <maxExperience>3</maxExperience>
         <maxHp>100</maxHp>
         <maxSupplies>70</maxSupplies>
 
@@ -227,7 +227,7 @@
 
         <canJoin>true</canJoin>
 
-        <maxExperience>10</maxExperience>
+        <maxExperience>3</maxExperience>
         <maxHp>100</maxHp>
         <maxSupplies>50</maxSupplies>
 
@@ -244,7 +244,7 @@
 
         <canJoin>true</canJoin>
 
-        <maxExperience>10</maxExperience>
+        <maxExperience>3</maxExperience>
         <maxHp>100</maxHp>
         <maxSupplies>50</maxSupplies>
 
@@ -260,7 +260,7 @@
 
         <canJoin>true</canJoin>
 
-        <maxExperience>10</maxExperience>
+        <maxExperience>3</maxExperience>
         <maxHp>100</maxHp>
         <maxSupplies>50</maxSupplies>
 
@@ -279,7 +279,7 @@
 
         <canJoin>true</canJoin>
 
-        <maxExperience>10</maxExperience>
+        <maxExperience>3</maxExperience>
         <maxHp>100</maxHp>
         <maxSupplies>50</maxSupplies>
 
@@ -302,7 +302,7 @@
             <int>1</int>
         </transports>
 
-        <maxExperience>10</maxExperience>
+        <maxExperience>3</maxExperience>
         <maxHp>100</maxHp>
         <supplyRange>
             <minRange>1</minRange>
@@ -321,7 +321,7 @@
         <movement>9</movement>
         <vision>5</vision>
 
-        <maxExperience>10</maxExperience>
+        <maxExperience>3</maxExperience>
         <maxHp>100</maxHp>
         <maxSupplies>99</maxSupplies>
         <suppliesPerTurn>5</suppliesPerTurn>
@@ -337,7 +337,7 @@
         <movement>7</movement>
         <vision>3</vision>
 
-        <maxExperience>10</maxExperience>
+        <maxExperience>3</maxExperience>
         <maxHp>100</maxHp>
         <maxSupplies>99</maxSupplies>
         <suppliesPerTurn>5</suppliesPerTurn>
@@ -353,7 +353,7 @@
         <movement>7</movement>
         <vision>4</vision>
 
-        <maxExperience>10</maxExperience>
+        <maxExperience>3</maxExperience>
         <maxHp>100</maxHp>
         <maxSupplies>40</maxSupplies>
         <suppliesPerTurn>5</suppliesPerTurn>
@@ -369,7 +369,7 @@
         <movement>8</movement>
         <vision>4</vision>
 
-        <maxExperience>10</maxExperience>
+        <maxExperience>3</maxExperience>
         <maxHp>100</maxHp>
         <maxSupplies>99</maxSupplies>
         <suppliesPerTurn>5</suppliesPerTurn>
@@ -385,7 +385,7 @@
         <movement>6</movement>
         <vision>2</vision>
 
-        <maxExperience>10</maxExperience>
+        <maxExperience>3</maxExperience>
         <maxHp>100</maxHp>
         <maxSupplies>99</maxSupplies>
         <suppliesPerTurn>2</suppliesPerTurn>
@@ -407,7 +407,6 @@
             <int>1</int>
         </transports>
 
-        <maxExperience>10</maxExperience>
         <maxHp>100</maxHp>
         <maxSupplies>99</maxSupplies>
         <suppliesPerTurn>2</suppliesPerTurn>
@@ -425,7 +424,7 @@
 
         <canJoin>true</canJoin>
 
-        <maxExperience>10</maxExperience>
+        <maxExperience>3</maxExperience>
         <maxHp>100</maxHp>
         <maxSupplies>99</maxSupplies>
         <suppliesPerTurn>1</suppliesPerTurn>
@@ -439,7 +438,7 @@
         <movement>6</movement>
         <vision>5</vision>
 
-        <maxExperience>10</maxExperience>
+        <maxExperience>3</maxExperience>
         <maxHp>100</maxHp>
         <maxSupplies>99</maxSupplies>
         <suppliesPerTurn>1</suppliesPerTurn>
@@ -459,7 +458,7 @@
         <canHide>true</canHide>
         <canDive>true</canDive>
 
-        <maxExperience>10</maxExperience>
+        <maxExperience>3</maxExperience>
         <maxHp>100</maxHp>
         <maxSupplies>70</maxSupplies>
         <suppliesPerTurn>1</suppliesPerTurn>
@@ -485,7 +484,7 @@
             <int>16</int>
         </buildUnits>
 
-        <maxExperience>10</maxExperience>
+        <maxExperience>3</maxExperience>
         <maxHp>100</maxHp>
         <maxSupplies>99</maxSupplies>
         <suppliesPerTurn>1</suppliesPerTurn>
@@ -503,7 +502,7 @@
         <movement>5</movement>
         <vision>3</vision>
 
-        <maxExperience>10</maxExperience>
+        <maxExperience>3</maxExperience>
         <maxHp>100</maxHp>
         <maxSupplies>99</maxSupplies>
         <suppliesPerTurn>1</suppliesPerTurn>
@@ -537,7 +536,6 @@
             <int>24</int>
         </transports>
 
-        <maxExperience>10</maxExperience>
         <maxHp>100</maxHp>
         <maxSupplies>99</maxSupplies>
         <suppliesPerTurn>1</suppliesPerTurn>

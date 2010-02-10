@@ -218,7 +218,7 @@ public class SpriteManager implements PropertyChangeListener {
       animDying.stopAt(animDying.getFrameCount() - 1);
       unitSprite = new UnitSprite(map, unit, unitDecorationStrip);
       unitSprite.setAnimDying(animDying);
-      unitSprite.setFont(numbersFont);
+      unitSprite.setHpFont(numbersFont);
     } else {
       throw new IllegalArgumentException("Unit " + unit + " is already cached.");
     }
