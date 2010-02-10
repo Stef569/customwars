@@ -64,11 +64,18 @@ public class MiniMapRenderer implements Renderable {
   public void render(Graphics g) {
     if (map != null) {
       for (Tile t : map.getAllTiles()) {
-        int x = location.x + t.getCol() * tileSize;
-        int y = location.y + t.getRow() * tileSize;
-        renderTile(x, y, g, t);
+        int x = t.getCol() * tileSize;
+        int y = t.getRow() * tileSize;
+
+        if (isWithinMiniMapPanel(x, y)) {
+          renderTile(location.x + x, location.y + y, g, t);
+        }
       }
     }
+  }
+
+  private boolean isWithinMiniMapPanel(int x, int y) {
+    return x >= 0 && x <= getWidth() && y >= 0 && y <= getHeight();
   }
 
   private void renderTile(int x, int y, Graphics g, Tile tile) {

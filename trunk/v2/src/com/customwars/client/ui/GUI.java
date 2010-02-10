@@ -165,6 +165,15 @@ public class GUI {
   }
 
   /**
+   * Can the given point fit to the screen, the 'screen' can be either the guiContext or the camera
+   * Check if the rectangle can fit to the guiContext this is useful if the camera is smaller then the screen
+   * If that is the case the rectangle still fits even outside of the camera bounds.
+   */
+  public static boolean canFitToScreen(int x, int y) {
+    return canFitToScreen(x, y, 0, 0);
+  }
+
+  /**
    * Can the given rectangle fit to the screen, the 'screen' can be either the guiContext or the camera
    * Check if the rectangle can fit to the guiContext this is useful if the camera is smaller then the screen
    * If that is the case the rectangle still fits even outside of the camera bounds.
@@ -172,7 +181,7 @@ public class GUI {
   public static boolean canFitToScreen(int x, int y, int width, int height) {
     int maxX = x + width;
     int maxY = y + height;
-    boolean canFitToGuiContext = x > 0 && maxX < guiContext.getWidth() && y > 0 && maxY < guiContext.getHeight();
+    boolean canFitToGuiContext = x >= 0 && maxX <= guiContext.getWidth() && y >= 0 && maxY <= guiContext.getHeight();
     return canFitToGuiContext || camera.canFitWithin(x, y, width, height);
   }
 

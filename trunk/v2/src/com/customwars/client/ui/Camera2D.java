@@ -16,8 +16,8 @@ public class Camera2D {
   private static final double MIN_ZOOM_LVL = 0.3;
   private static final double MAX_ZOOM_LVL = 1.6;
   private static final float ZOOM_STEP = 0.05f;
-  private final Dimension world;
-  private final Dimension camera;
+  private final Dimension worldSize;
+  private final Dimension cameraSize;
   private final int tileSize;
   private float zoomLvl = 1;
   private int cameraX, cameraY;
@@ -28,8 +28,8 @@ public class Camera2D {
   private boolean shake;
 
   public Camera2D(Dimension cameraSize, Dimension worldSize, int tileSize) {
-    this.camera = new Dimension(cameraSize);
-    this.world = new Dimension(worldSize);
+    this.cameraSize = new Dimension(cameraSize);
+    this.worldSize = new Dimension(worldSize);
     this.tileSize = tileSize;
   }
 
@@ -67,9 +67,9 @@ public class Camera2D {
 
   public void centerOnTile(int col, int row) {
     if (canMoveHorizontal()) {
-      setX((int) (col * tileSize - camera.getWidth() / 2));
+      setX((int) (col * tileSize - cameraSize.getWidth() / 2));
     } else if (canMoveVertical()) {
-      setY((int) (row * tileSize - camera.getHeight() / 2));
+      setY((int) (row * tileSize - cameraSize.getHeight() / 2));
     }
   }
 
@@ -139,8 +139,8 @@ public class Camera2D {
    */
   private void setX(int cameraX) {
     if (cameraX < 0) cameraX = 0;
-    if (cameraX + camera.width >= world.getWidth()) {
-      cameraX = (int) (world.getWidth() - getWidth());
+    if (cameraX + cameraSize.width >= worldSize.getWidth()) {
+      cameraX = (int) (worldSize.getWidth() - getWidth());
     }
     this.cameraX = cameraX;
   }
@@ -153,18 +153,18 @@ public class Camera2D {
    */
   private void setY(int cameraY) {
     if (cameraY < 0) cameraY = 0;
-    if (cameraY + camera.height >= world.getHeight()) {
-      cameraY = (int) (world.getHeight() - getHeight());
+    if (cameraY + cameraSize.height >= worldSize.getHeight()) {
+      cameraY = (int) (worldSize.getHeight() - getHeight());
     }
     this.cameraY = cameraY;
   }
 
   public int getMaxX() {
-    return cameraX + camera.width;
+    return cameraX + cameraSize.width;
   }
 
   public int getMaxY() {
-    return cameraY + camera.height;
+    return cameraY + cameraSize.height;
   }
 
   /**
@@ -204,19 +204,19 @@ public class Camera2D {
   }
 
   private boolean canMoveHorizontal() {
-    return getMaxX() <= world.getWidth();
+    return getMaxX() <= worldSize.getWidth();
   }
 
   private boolean canMoveVertical() {
-    return getMaxY() <= world.getHeight();
+    return getMaxY() <= worldSize.getHeight();
   }
 
   public int getWidth() {
-    return (int) camera.getWidth();
+    return (int) cameraSize.getWidth();
   }
 
   public int getHeight() {
-    return (int) camera.getHeight();
+    return (int) cameraSize.getHeight();
   }
 
   public void shake() {
@@ -229,6 +229,6 @@ public class Camera2D {
   public boolean canFitWithin(int x, int y, int width, int height) {
     int maxX = x + width;
     int maxY = y + height;
-    return x > cameraX && maxX < getMaxX() && y > cameraY && maxY < getMaxY();
+    return x >= cameraX && maxX <= getMaxX() && y >= cameraY && maxY <= getMaxY();
   }
 }

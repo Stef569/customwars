@@ -94,9 +94,8 @@ public class MapRenderer implements Renderable {
       int y = t.getRow() * tileSize;
 
       // Don't render outside of the GUI as it is an expensive operation
-      if (x <= GUI.getWidth() && y <= GUI.getHeight()) {
+      if (GUI.canFitToScreen(x, y))
         renderTile(g, t);
-      }
     }
   }
 
