@@ -1,6 +1,5 @@
 package com.customwars.client.ui.renderer;
 
-import com.customwars.client.controller.GameController;
 import com.customwars.client.io.ResourceManager;
 import com.customwars.client.model.fight.Fight;
 import com.customwars.client.model.game.Game;
@@ -27,7 +26,7 @@ import java.beans.PropertyChangeListener;
  * the map     ->  MapRenderer
  * game events ->  EventsRenderer
  * pop up      ->  HUD
- *
+ * <p/>
  * The map is scrolled when the cursor is near the edge of the map {@link Scroller}
  */
 public class GameRenderer implements Renderable, PropertyChangeListener {
@@ -35,7 +34,6 @@ public class GameRenderer implements Renderable, PropertyChangeListener {
 
   // Control
   private boolean renderEvents = true, renderAttackDamage;
-  private final GameController gameControl;
 
   // GUI
   private final MapRenderer mapRenderer;
@@ -62,7 +60,6 @@ public class GameRenderer implements Renderable, PropertyChangeListener {
     this.spriteManager = new SpriteManager(map);
     this.eventsRenderer = new GameEventsRenderer(moveTraverse, game, camera);
     this.mapRenderer = new MapRenderer(map, spriteManager);
-    this.gameControl = new GameController(game, this, spriteManager);
 
     this.hud = hud;
     hud.setSpriteManager(spriteManager);
@@ -166,10 +163,6 @@ public class GameRenderer implements Renderable, PropertyChangeListener {
 
   public Tile getCursorLocation() {
     return mapRenderer.getCursorLocation();
-  }
-
-  public GameController getGameControl() {
-    return gameControl;
   }
 
   public MapRenderer getMapRenderer() {

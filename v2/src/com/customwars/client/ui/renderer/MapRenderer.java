@@ -24,7 +24,7 @@ import java.util.List;
  * <li>The sprites on the terrain(units)</li>
  * </ol>
  * Both can be enabled/disabled by {@link #setRenderSprites(boolean)} and {@link #setRenderTerrain(boolean)}</p>
- *
+ * <p/>
  * <p>The Rendering order is from <tt>left to right, top to bottom</tt>:
  * <ol>
  * <li>Terrains and Cities</li>
@@ -32,7 +32,7 @@ import java.util.List;
  * <li>The active unit</li>
  * <li>The active cursor</li>
  * </ol></p>
- *
+ * <p/>
  * <p>Cities and units can have a image that is larger then the tile size, these images need to be translated upwards.
  * So that the bottom of the image is positioned on the tile bottom. A side effect is that units can be partly hidden
  * when they are 1 tile above a city. Because the city image overlaps the unit image</p>
@@ -305,5 +305,9 @@ public class MapRenderer implements Renderable {
    */
   public boolean canCenterMap(int width, int height) {
     return map.getWidth() < width && map.getHeight() < height;
+  }
+
+  public SpriteManager getSpriteManager() {
+    return spriteManager;
   }
 }
