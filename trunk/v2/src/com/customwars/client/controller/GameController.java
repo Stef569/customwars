@@ -15,7 +15,6 @@ import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.ui.MenuItem;
 import com.customwars.client.ui.renderer.GameRenderer;
-import com.customwars.client.ui.sprite.SpriteManager;
 import com.customwars.client.ui.state.InGameContext;
 import org.apache.log4j.Logger;
 import org.newdawn.slick.gui.GUIContext;
@@ -25,18 +24,18 @@ import org.newdawn.slick.gui.GUIContext;
  */
 public class GameController {
   private static final Logger logger = Logger.getLogger(GameController.class);
-  private final GameRenderer gameRenderer;
-  private final CursorController cursorControl;
+  private final InGameCursorController cursorControl;
   private InGameContext inGameContext;
   private GUIContext guiContext;
   private final Game game;
   private final Map<Tile> map;
 
-  public GameController(Game game, GameRenderer gameRenderer, SpriteManager spriteManager) {
+  public GameController(Game game, GameRenderer gameRenderer, InGameContext inGameContext) {
     this.game = game;
     this.map = game.getMap();
-    this.gameRenderer = gameRenderer;
-    this.cursorControl = new InGameCursorController(game, game.getMap(), spriteManager);
+    this.inGameContext = inGameContext;
+    this.guiContext = inGameContext.getContainer();
+    this.cursorControl = new InGameCursorController(game, gameRenderer.getMapRenderer().getSpriteManager());
   }
 
   public void handleA(Tile cursorLocation) {
@@ -45,11 +44,10 @@ public class GameController {
 
     if (canUnitAct(unit)) {
       inGameContext.handleUnitAPress(unit);
-    } else if (isCityPressed(city)) {
+    } else if (canCityBuild(city)) {
       inGameContext.handleCityAPress(city);
     } else if (inGameContext.isDefaultMode()) {
-      ShowPopupMenuAction showContextMenuAction = buildContextMenu(cursorLocation);
-      inGameContext.doAction(showContextMenuAction);
+      showContextMenu(cursorLocation);
     } else {
       logger.warn("could not handle A press");
     }
@@ -69,15 +67,20 @@ public class GameController {
    * when the city is visible, can build a unit
    * and is owned by the active player
    */
-  private boolean isCityPressed(City city) {
-    if (city == null) return false;
-    Tile cityLocation = (Tile) city.getLocation();
+  private boolean canCityBuild(City city) {
+    if (city != null) {
+      Tile cityLocation = (Tile) city.getLocation();
+      boolean fogged = cityLocation.isFogged();
+      boolean noUnitOnCity = cityLocation.getLocatableCount() == 0;
+      boolean cityOwnedByActivePlayer = city.isOwnedBy(game.getActivePlayer());
 
-    return !cityLocation.isFogged() && cityLocation.getLocatableCount() == 0 &&
-      city.isOwnedBy(game.getActivePlayer()) && city.canBuild();
+      return !fogged && noUnitOnCity && cityOwnedByActivePlayer && city.canBuild();
+    } else {
+      return false;
+    }
   }
 
-  private ShowPopupMenuAction buildContextMenu(Tile menuLocation) {
+  private void showContextMenu(Tile menuLocation) {
     ShowPopupMenuAction showContextMenuAction = ShowPopupMenuAction.createPopupInMap("Game menu", menuLocation);
 
     MenuItem endTurnMenuItem = new MenuItem(App.translate("end_turn"), guiContext);
@@ -94,7 +97,7 @@ public class GameController {
     MenuItem endGameMenuItem = new MenuItem(App.translate("end_game"), guiContext);
     showContextMenuAction.addAction(ActionFactory.buildEndGameAction(), endGameMenuItem);
 
-    return showContextMenuAction;
+    inGameContext.doAction(showContextMenuAction);
   }
 
   public void handleB(Tile cursorLocation) {
@@ -140,12 +143,7 @@ public class GameController {
     inGameContext.doAction(endTurn);
   }
 
-  public void setInGameContext(InGameContext inGameContext) {
-    this.inGameContext = inGameContext;
-    this.guiContext = inGameContext.getContainer();
-  }
-
-  public CursorController getCursorController() {
+  public InGameCursorController getCursorController() {
     return cursorControl;
   }
 }

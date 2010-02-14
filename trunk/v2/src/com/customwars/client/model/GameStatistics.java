@@ -24,11 +24,14 @@ import java.util.Map;
  */
 public class GameStatistics implements PropertyChangeListener, Serializable {
   private final TurnBasedGame game;
-  private final Map<Player, PlayerStats> playerStatistics;
+
+  // Using the Player object as key in the playerStatistics Map causes problems when serialising.
+  // Using the Integer playerID solves that.
+  private final Map<Integer, PlayerStats> playerStatistics;
 
   public GameStatistics(TurnBasedGame game) {
     this.game = game;
-    this.playerStatistics = new HashMap<Player, PlayerStats>();
+    this.playerStatistics = new HashMap<Integer, PlayerStats>();
 
     addListeners(game);
     initPlayerStatistics();
@@ -51,7 +54,7 @@ public class GameStatistics implements PropertyChangeListener, Serializable {
 
   private void initPlayerStatistics() {
     for (Player player : game.getAllPlayers()) {
-      playerStatistics.put(player, new PlayerStats());
+      playerStatistics.put(player.getId(), new PlayerStats());
     }
   }
 
@@ -62,12 +65,12 @@ public class GameStatistics implements PropertyChangeListener, Serializable {
    * @return A Map of statistics example: key="units killed" value="4"
    */
   public Map<String, String> getPlayerStats(Player player) {
-    if (playerStatistics.containsKey(player)) {
-      PlayerStats playerStats = playerStatistics.get(player);
+    if (playerStatistics.containsKey(player.getId())) {
+      PlayerStats playerStats = playerStatistics.get(player.getId());
       playerStats.update();
       return playerStats.getStats();
     } else {
-      throw new IllegalArgumentException("No statistics for " + player);
+      return Collections.emptyMap();
     }
   }
 
@@ -89,7 +92,7 @@ public class GameStatistics implements PropertyChangeListener, Serializable {
   private void unitInPlayerChange(PropertyChangeEvent evt) {
     Player player = (Player) evt.getSource();
     Player activePlayer = game.getActivePlayer();
-    PlayerStats playerStats = playerStatistics.get(player);
+    PlayerStats playerStats = playerStatistics.get(player.getId());
 
     if (evt.getOldValue() == null && evt.getNewValue() != null) {
       Unit unit = (Unit) evt.getNewValue();
@@ -114,7 +117,7 @@ public class GameStatistics implements PropertyChangeListener, Serializable {
   }
 
   private PlayerStats getActivePlayerStats() {
-    return playerStatistics.get(game.getActivePlayer());
+    return playerStatistics.get(game.getActivePlayer().getId());
   }
 
   private static class PlayerStats implements Serializable {

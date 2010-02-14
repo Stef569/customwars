@@ -40,11 +40,7 @@ public class HumanUnitController extends UnitController {
     if (inGameContext.isUnitDropMode()) {
       dropUnit(selected);
     } else if (inGameContext.isUnitAttackMode()) {
-      if (canAttackUnit(selected)) {
-        attackUnit(selected, to);
-      } else if (canAttackCity(selected)) {
-        attackCity(selected, to);
-      }
+      attack(selected, to);
     } else if (inGameContext.isRocketLaunchMode()) {
       launchRocket(selected, to);
     } else if (inGameContext.isUnitFlareMode() && unit.getAttackZone().contains(selected)) {
@@ -58,15 +54,23 @@ public class HumanUnitController extends UnitController {
 
   private void dropUnit(Tile selected) {
     // The menu option clicked on is the index of the unit in the transport List
-    int popupOptionIndex = menu.getCurrentOption();
+    int unitInTransportIndex = menu.getCurrentOption();
 
-    if (canDrop(selected, popupOptionIndex)) {
-      inGameContext.addDropLocation(selected, inGameContext.getUnitInTransport(popupOptionIndex));
-      UnitMenuBuilder menuBuilder = new UnitMenuBuilder(this, unit, inGameContext, selected);
-      this.menu = menuBuilder.getMenu();
+    if (canDrop(selected, unitInTransportIndex)) {
+      Unit unitInTransport = inGameContext.getUnitInTransport(unitInTransportIndex);
+      inGameContext.addDropLocation(selected, unitInTransport);
+      this.menu = new UnitMenuBuilder(this, unit, inGameContext, selected).getMenu();
       showMenu(menu);
     } else {
       logger.warn("Trying to drop unit on " + selected + " failed");
+    }
+  }
+
+  private void attack(Tile selected, Tile to) {
+    if (canAttackUnit(selected)) {
+      attackUnit(selected, to);
+    } else if (canAttackCity(selected)) {
+      attackCity(selected, to);
     }
   }
 
@@ -95,17 +99,13 @@ public class HumanUnitController extends UnitController {
 
   private void clickInMoveZone(Tile selected) {
     if (canShowMenu()) {
-      inGameContext.registerClick(2, selected);
-      UnitMenuBuilder menuBuilder = new UnitMenuBuilder(this, unit, inGameContext, selected);
-      this.menu = menuBuilder.getMenu();
-      showMenu(menu);
+      showMenu(selected);
     } else if (canSelect(selected)) {
-      inGameContext.clearClickHistory();
-      inGameContext.clearUndoHistory();
-      inGameContext.registerClick(1, selected);
-      inGameContext.doAction(new SelectAction(selected));
+      select(selected);
     } else {
-      assert false : "A click has been made in the move zone, Either a click has been made on a unit-> select or next to the unit -> show menu";
+      throw new AssertionError("A click has been made in the move zone. " +
+              "Either a click has been made on a unit -> select " +
+              "or next to the unit -> show menu");
     }
   }
 
@@ -115,12 +115,25 @@ public class HumanUnitController extends UnitController {
     return activeUnit != null && activeUnit.isWithinMoveZone(selected);
   }
 
-  private void showMenu(ShowPopupMenuAction menu) {
-    if (menu.atLeastHasOneItem()) {
-      inGameContext.doAction(menu);
+  private void showMenu(Tile selected) {
+    inGameContext.registerClick(2, selected);
+    this.menu = new UnitMenuBuilder(this, unit, inGameContext, selected).getMenu();
+    showMenu(menu);
+  }
+
+  private void showMenu(ShowPopupMenuAction showMenuAction) {
+    if (showMenuAction.atLeastHasOneItem()) {
+      inGameContext.doAction(showMenuAction);
     } else {
       logger.warn("No menu items to show");
     }
+  }
+
+  private void select(Tile selected) {
+    inGameContext.clearClickHistory();
+    inGameContext.clearUndoHistory();
+    inGameContext.registerClick(1, selected);
+    inGameContext.doAction(new SelectAction(selected));
   }
 
   private void cancelPressed() {

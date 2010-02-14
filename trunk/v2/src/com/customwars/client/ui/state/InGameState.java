@@ -36,7 +36,7 @@ import java.beans.PropertyChangeListener;
  * In this state the user can play and win a game against opponents
  * Rendering is handled by GameRenderer and hud
  * Input is handled by GameController
- *
+ * <p/>
  * The Game to display is read from the session when entering this state.
  * This class listens for game events and when the game is over changes to the GAME_OVER State
  */
@@ -119,6 +119,7 @@ public class InGameState extends CWState implements PropertyChangeListener {
     this.map = game.getMap();
     initCamera(map);
     initScriptObjects();
+    GUI.setGame(game);
     center = GUI.getCenteredRenderPoint(map.getSize(), guiContext);
   }
 
@@ -142,10 +143,8 @@ public class InGameState extends CWState implements PropertyChangeListener {
     ControllerManager controllerManager = new ControllerManager(inGameContext);
     inGameContext.setControllerManager(controllerManager);
 
-    gameControl = gameRenderer.getGameControl();
-    gameControl.setInGameContext(inGameContext);
-
-    cursorControl = (InGameCursorController) gameControl.getCursorController();
+    gameControl = new GameController(game, gameRenderer, inGameContext);
+    cursorControl = gameControl.getCursorController();
     inGameContext.setGameController(gameControl);
 
     controllerManager.initCityControllers();
@@ -336,7 +335,7 @@ public class InGameState extends CWState implements PropertyChangeListener {
    */
   private boolean isInputAllowed() {
     return entered && gameRenderer != null && gameRenderer.isDyingUnitAnimationCompleted() &&
-      inGameContext != null && inGameContext.isActionCompleted() && inputAllowed;
+            inGameContext != null && inGameContext.isActionCompleted() && inputAllowed;
   }
 
   public void mouseWheelMoved(int newValue) {

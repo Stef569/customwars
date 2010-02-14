@@ -4,8 +4,6 @@ import com.customwars.client.model.game.Game;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Direction;
 import com.customwars.client.model.map.Location;
-import com.customwars.client.model.map.Tile;
-import com.customwars.client.model.map.TileMap;
 import com.customwars.client.ui.sprite.SpriteManager;
 
 import java.util.List;
@@ -18,8 +16,8 @@ public class InGameCursorController extends CursorController {
   private final Game game;
   private boolean cursorAtZoneEdge, enableCursorZoneCheck;
 
-  public InGameCursorController(Game game, TileMap<Tile> map, SpriteManager spriteManager) {
-    super(map, spriteManager);
+  public InGameCursorController(Game game, SpriteManager spriteManager) {
+    super(game.getMap(), spriteManager);
     this.game = game;
     this.spriteManager = spriteManager;
   }
