@@ -12,7 +12,6 @@
     <property name="src.dir" value="src"/>
     <property name="test.dir" value="test"/>
     <property name="res.dir" value="resources/"/>
-    <property name="res.testdata.dir" value="testData"/>
     <property name="dist.dir" value="dist"/>
     <property name="dist.lib.dir" value="${dist.dir}/lib"/>
     <property name="dist.lib.native.dir" value="${dist.dir}/lib/native"/>
@@ -111,9 +110,10 @@
     <target name="release core" description="Create a zip containing the core jar + resources"
             depends="jar_core">
 
-        <!-- Don't include test data -->
+        <!-- Don't include test data and default plugin -->
         <delete includeEmptyDirs="true" quiet="true">
-            <fileset dir="${dist.dir}/${res.dir}/${res.testdata.dir}"/>
+            <fileset dir="${dist.dir}/${res.dir}/testData"/>
+            <fileset dir="${dist.dir}/${res.dir}/res/plugin/default"/>
         </delete>
 
         <!-- create win Launcher bat file for double click launching on windoos-->
