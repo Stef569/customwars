@@ -11,9 +11,12 @@ import org.newdawn.slick.Image;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
- * Load and add cursors to the resource Manager
+ * Load and add cursors to the resource Manager.
+ * This is done by loading each image in the cursorImgPath and creating a cursor out of them.
+ * The name of the image w/o extension is used to store the cursor in the resourceManager.
  */
 public class CursorLoader implements CWResourceLoader {
   private static final int CURSOR_ANIM_COUNT = 2;
@@ -35,11 +38,22 @@ public class CursorLoader implements CWResourceLoader {
   public void load() throws IOException {
     FileSystemManager fsm = new FileSystemManager(cursorImgPath);
     for (File cursorImgFile : fsm.getFiles()) {
-      String cursorName = FileUtil.getFileNameWithoutExtension(cursorImgFile);
-      Image cursorImg = SlickImageFactory.createImage(cursorImgFile.getPath());
-      TileSprite cursor = createCursor(cursorImg);
-      resources.addCursor(cursorName, cursor);
+      if (isImageFile(cursorImgFile)) {
+        loadCursor(cursorImgFile);
+      }
     }
+  }
+
+  private boolean isImageFile(File cursorImgFile) {
+    String extension = FileUtil.getExtension(cursorImgFile);
+    return Arrays.asList("png", "jpg").contains(extension);
+  }
+
+  private void loadCursor(File cursorImgFile) {
+    String cursorName = FileUtil.getFileNameWithoutExtension(cursorImgFile);
+    Image cursorImg = SlickImageFactory.createImage(cursorImgFile.getPath());
+    TileSprite cursor = createCursor(cursorImg);
+    resources.addCursor(cursorName, cursor);
   }
 
   private TileSprite createCursor(Image cursorImg) {
