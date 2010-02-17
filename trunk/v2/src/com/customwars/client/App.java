@@ -34,7 +34,7 @@ public class App {
   private static GAME_MODE gameMode = GAME_MODE.SINGLE_PLAYER;
 
   public enum GAME_MODE {
-    SINGLE_PLAYER, NETWORK_SNAIL_GAME, LOAD_SAVED_GAME
+    SINGLE_PLAYER, NETWORK_SNAIL_GAME, LOAD_SAVED_GAME, REPLAY
   }
 
   /**

@@ -36,6 +36,7 @@ import java.util.List;
  * @author stefan
  */
 public class InGameContext {
+
   public enum INPUT_MODE {
     DEFAULT,        // Clicking shows a Menu or selects a unit
     GUI,            // Input is handled by the GUI
@@ -113,7 +114,7 @@ public class InGameContext {
   /**
    * Register a click to be saved in the clickHistory
    *
-   * @param index         base 1 index of the click(was it the first, second, ...)
+   * @param index         index of the click starting at 1
    * @param tileClickedOn the tile that was clicked on
    */
   public void registerClick(int index, Tile tileClickedOn) {
@@ -160,8 +161,8 @@ public class InGameContext {
     this.container = container;
   }
 
-  public void setGameController(GameController gameControl) {
-    this.gameControl = gameControl;
+  public void setGameController(GameController gameController) {
+    this.gameControl = gameController;
   }
 
   public void setStateChanger(StateChanger stateChanger) {
@@ -220,6 +221,10 @@ public class InGameContext {
     return stateSession;
   }
 
+  public List<CWAction> getExecutedActions() {
+    return actionManager.getExecutedActions();
+  }
+
   public boolean isTrapped() {
     return trapped;
   }
@@ -232,7 +237,7 @@ public class InGameContext {
    * Get a click from the click history eg:
    * getClick(1) returns the first click
    *
-   * @param index The click index,  1
+   * @param index The click index, starting at 1
    *              null if there is no click registered for the given index
    * @return The tile at the given click index
    */
@@ -288,19 +293,22 @@ public class InGameContext {
     unitsInTransport.clear();
   }
 
+  /**
+   * @see DropLocationsQueue#addDropLocation(Location, Unit)
+   */
   public void addDropLocation(Location location, Unit unit) {
     dropQueue.addDropLocation(location, unit);
   }
 
   /**
-   * Has this unit already been assigned to a drop location by a previous drop
+   * @see DropLocationsQueue#isUnitDropped(Unit)
    */
   public boolean isUnitDropped(Unit unit) {
     return dropQueue.isUnitDropped(unit);
   }
 
   /**
-   * Is the dropLocation already taken by a previous drop
+   * @see DropLocationsQueue#isDropLocationTaken(Tile)
    */
   public boolean isDropLocationTaken(Tile dropLocation) {
     return dropQueue.isDropLocationTaken(dropLocation);

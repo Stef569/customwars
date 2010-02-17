@@ -197,8 +197,9 @@ public class UnitMenuBuilder {
     }
 
     if (canTransformTerrain) {
-      CWAction transformAction = ActionFactory.buildTransformTerrainAction(unit, to);
-      addToMenu(transformAction, App.translate("build") + ' ' + getTransformToTerrain(to).getName());
+      Terrain terrain = getTransformToTerrain(to);
+      CWAction transformAction = ActionFactory.buildTransformTerrainAction(unit, to, terrain);
+      addToMenu(transformAction, App.translate("build") + ' ' + App.translate(terrain.getName()));
     }
 
     if (canFireFlare) {
@@ -223,7 +224,7 @@ public class UnitMenuBuilder {
     }
 
     if (canWait) {
-      CWAction waitAction = ActionFactory.buildWaitAction(unit, to);
+      CWAction waitAction = ActionFactory.buildMoveAction(unit, to);
       addToMenu(waitAction, App.translate("wait"));
     }
     return menu;

@@ -331,6 +331,23 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   }
 
   /**
+   * Get the index of the unit in the transport. starting from 0
+   *
+   * @param unit The unit in this transport where we want to retrieve the index for
+   * @return the index or -1 when the unit is not in this transport
+   */
+  public int indexOf(Unit unit) {
+    for (int i = 0; i < transport.size(); i++) {
+      Unit unitInTransport = (Unit) getLocatable(i);
+
+      if (unitInTransport == unit) {
+        return i;
+      }
+    }
+    return -1;
+  }
+
+  /**
    * @return The range in tiles around this unit
    *         where units in this transport can be dropped on
    */

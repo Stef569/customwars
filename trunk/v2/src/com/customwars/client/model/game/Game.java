@@ -44,6 +44,22 @@ public class Game extends TurnBasedGame implements PropertyChangeListener {
   }
 
   /**
+   * Copy Constructor
+   *
+   * @param otherGame game to copy
+   */
+  public Game(Game otherGame) {
+    super(otherGame);
+    this.weather = otherGame.weather;
+    this.cityFunds = otherGame.cityFunds;
+
+    if (otherGame.activeUnit != null) {
+      this.activeUnit = map.getUnitOn(otherGame.activeUnit.getLocation());
+    }
+    init();
+  }
+
+  /**
    * Replace mapPlayers with GamePlayers
    * by comparing their ID
    */

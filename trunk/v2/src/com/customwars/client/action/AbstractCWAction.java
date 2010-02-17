@@ -38,6 +38,11 @@ public abstract class AbstractCWAction implements CWAction {
     return actionCompleted;
   }
 
+  @Override
+  public String getActionText() {
+    return null;
+  }
+
   public String toString() {
     return name + " canUndo=" + canUndo + " Completed=" + actionCompleted;
   }

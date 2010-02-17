@@ -1,6 +1,7 @@
 package com.customwars.client.ui.state;
 
 import com.customwars.client.App;
+import com.customwars.client.action.game.SaveReplayAction;
 import com.customwars.client.io.loading.ThinglePageLoader;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.game.Player;
@@ -16,6 +17,7 @@ import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.thingle.Page;
 import org.newdawn.slick.thingle.Widget;
 
+import javax.swing.JOptionPane;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -53,6 +55,12 @@ public class GameOverState extends CWState {
 
     if (App.isMultiplayerSnailGame() && game.isGameOver()) {
       endServerGame();
+    }
+
+    if (App.getBoolean("recordreplay")) {
+      if (GUI.showConfirmationDialog("Save replay", "save") == JOptionPane.YES_OPTION) {
+        new SaveReplayAction(stateSession.replay).invoke(null);
+      }
     }
   }
 

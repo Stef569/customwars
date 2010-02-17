@@ -1,6 +1,8 @@
 package com.customwars.client.ui.state.menu;
 
 import com.customwars.client.App;
+import com.customwars.client.action.CWAction;
+import com.customwars.client.action.game.LoadReplayAction;
 import com.customwars.client.ui.GUI;
 import com.customwars.client.ui.MenuItem;
 import com.customwars.client.ui.PopupMenu;
@@ -28,6 +30,7 @@ public class SinglePlayerMenuState extends CWState implements ComponentListener 
     Font font = resources.getFont("menu");
     mainMenu.addItems(
       new MenuItem(App.translate("start_single_player_battle"), font, container),
+      new MenuItem(App.translate("load_replay"), font, container),
       new MenuItem(App.translate("back"), font, container)
     );
 
@@ -49,7 +52,10 @@ public class SinglePlayerMenuState extends CWState implements ComponentListener 
         g.drawString("New Game", 210, 440);
         break;
       case 1:
-        g.drawString("Go back to menu", 210, 440);
+        g.drawString("Load replay", 210, 440);
+        break;
+      case 2:
+        g.drawString("Go back to main menu", 210, 440);
         break;
     }
   }
@@ -89,6 +95,10 @@ public class SinglePlayerMenuState extends CWState implements ComponentListener 
         changeToState("MAP_SELECT");
         break;
       case 1:
+        CWAction loadReplayAction = new LoadReplayAction(stateSession, stateChanger);
+        loadReplayAction.invoke(null);
+        break;
+      case 2:
         // Clear stored user data(map, co, ...) from session when going to previous state
         stateSession.clear();
         changeToPreviousState();

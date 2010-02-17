@@ -1,5 +1,6 @@
 package com.customwars.client.action;
 
+import com.customwars.client.model.map.Location;
 import com.customwars.client.ui.state.InGameContext;
 
 import java.util.ArrayList;
@@ -19,9 +20,10 @@ public class ActionBag implements CWAction {
   private int time;
   private int index;
   private boolean doAll, started;
-  private List<CWAction> actions;
-  private String actionName;
+  private final List<CWAction> actions;
+  private final String actionName;
   private InGameContext context;
+  private String actionText;
 
   public ActionBag(String actionName) {
     this.actionName = actionName;
@@ -70,8 +72,7 @@ public class ActionBag implements CWAction {
   }
 
   private void gotoNextAction() {
-    index++;
-    if (index >= actions.size()) {
+    if (++index >= actions.size()) {
       index = 0;
       doAll = false;
       started = false;
@@ -93,8 +94,38 @@ public class ActionBag implements CWAction {
     return true;
   }
 
-  public void setActionCompleted(boolean b) {
-    // Wait for update to finish
+  public void setActionText(String actionText) {
+    this.actionText = actionText;
+  }
+
+  /**
+   * Set the action text where the action happens on 1 tile
+   */
+  public void setActionText(Location tile, Integer... params) {
+    setActionText(tile, null, params);
+  }
+
+  /**
+   * Set the action text where the action starts at <from> and ends on <to>
+   */
+  public void setActionText(Location from, Location to, Integer... params) {
+    StringBuilder actionTextBuilder = new StringBuilder(actionName.toLowerCase());
+    actionTextBuilder
+      .append(' ').append(from.getCol())
+      .append(' ').append(from.getRow());
+
+    if (to != null) {
+      actionTextBuilder
+        .append(' ').append(to.getCol())
+        .append(' ').append(to.getRow());
+    }
+
+    for (Integer param : params) {
+      actionTextBuilder
+        .append(' ')
+        .append(param);
+    }
+    this.actionText = actionTextBuilder.toString();
   }
 
   public String getName() {
@@ -105,11 +136,15 @@ public class ActionBag implements CWAction {
     return !started;
   }
 
+  public String getActionText() {
+    return actionText;
+  }
+
   @Override
   public String toString() {
-    StringBuilder strBuilder = new StringBuilder(getName() + ":");
+    StringBuilder strBuilder = new StringBuilder(actionName + ":");
     for (CWAction action : actions) {
-      strBuilder.append(action.getName() + " - ");
+      strBuilder.append(action.getName()).append(" - ");
     }
     return strBuilder.toString();
   }
