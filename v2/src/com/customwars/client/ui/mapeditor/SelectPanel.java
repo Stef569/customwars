@@ -1,4 +1,4 @@
-package com.customwars.client.ui.mapMaker;
+package com.customwars.client.ui.mapeditor;
 
 import com.customwars.client.App;
 import com.customwars.client.ui.slick.BasicComponent;

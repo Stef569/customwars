@@ -1,4 +1,4 @@
-package com.customwars.client.controller;
+package com.customwars.client.controller.mapeditor;
 
 import com.customwars.client.model.gameobject.Terrain;
 import com.customwars.client.model.gameobject.TerrainFactory;

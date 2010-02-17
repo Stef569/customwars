@@ -1,7 +1,7 @@
 package com.customwars.client.ui.state;
 
 import com.customwars.client.App;
-import com.customwars.client.controller.MapEditorController;
+import com.customwars.client.controller.mapeditor.MapEditorController;
 import com.customwars.client.model.map.Direction;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.ui.GUI;

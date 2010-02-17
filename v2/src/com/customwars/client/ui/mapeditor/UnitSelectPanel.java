@@ -1,4 +1,4 @@
-package com.customwars.client.ui.mapMaker;
+package com.customwars.client.ui.mapeditor;
 
 import com.customwars.client.io.ResourceManager;
 import com.customwars.client.model.gameobject.Unit;

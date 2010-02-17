@@ -1,6 +1,7 @@
-package com.customwars.client.controller;
+package com.customwars.client.controller.mapeditor;
 
 import com.customwars.client.App;
+import com.customwars.client.controller.CursorController;
 import com.customwars.client.io.ResourceManager;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.City;

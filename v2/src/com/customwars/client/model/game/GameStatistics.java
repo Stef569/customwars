@@ -1,8 +1,6 @@
-package com.customwars.client.model;
+package com.customwars.client.model.game;
 
 import com.customwars.client.App;
-import com.customwars.client.model.game.Player;
-import com.customwars.client.model.game.TurnBasedGame;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.gameobject.UnitFactory;

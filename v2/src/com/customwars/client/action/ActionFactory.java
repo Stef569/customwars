@@ -19,13 +19,13 @@ import com.customwars.client.action.unit.SupplyAction;
 import com.customwars.client.action.unit.SurfaceAction;
 import com.customwars.client.action.unit.TransformTerrainAction;
 import com.customwars.client.action.unit.WaitAction;
+import com.customwars.client.model.drop.DropLocation;
+import com.customwars.client.model.drop.DropLocationsQueue;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Tile;
-
-import java.util.Collection;
 
 /**
  * Create in game actions
@@ -33,15 +33,16 @@ import java.util.Collection;
  * @author stefan
  */
 public class ActionFactory {
-  public static CWAction buildDropAction(Unit transport, Location from, Location moveTo, Collection<Unit> unitsToBeDropped) {
+  public static CWAction buildDropAction(Unit transport, Location from, Location moveTo, DropLocationsQueue dropQueue) {
     ActionBag dropActions = new ActionBag("Drop");
     dropActions.add(new InitAction());
     dropActions.add(new MoveAnimatedAction(transport, from, moveTo));
     dropActions.add(new WaitAction(transport));
 
-    for (Unit unit : unitsToBeDropped) {
-      dropActions.add(new DropAction(transport));
-      dropActions.add(new WaitAction(unit));
+    // Drop each unit in the drop queue to the user chosen drop location
+    for (DropLocation dropLocation : dropQueue.getDropLocations()) {
+      dropActions.add(new DropAction(transport, dropLocation));
+      dropActions.add(new WaitAction(dropLocation.getUnit()));
     }
     dropActions.add(new ClearInGameStateAction());
     return dropActions;
@@ -132,7 +133,7 @@ public class ActionFactory {
     return endTurnAction;
   }
 
-  public static CWAction buildLaunchRocketAction(Unit unit, City city, Tile to, Tile rocketDestination) {
+  public static CWAction buildLaunchRocketAction(Unit unit, City city, Location to, Location rocketDestination) {
     ActionBag launchRocketAction = new ActionBag("Launch Rocket");
     launchRocketAction.add(new InitAction());
     launchRocketAction.add(new MoveAnimatedAction(unit.getLocation(), to));
@@ -152,7 +153,7 @@ public class ActionFactory {
     return transformTerrainAction;
   }
 
-  public static CWAction buildFireFlareAction(Unit unit, Tile to, Tile flareCenter) {
+  public static CWAction buildFireFlareAction(Unit unit, Location to, Location flareCenter) {
     ActionBag transformTerrainAction = new ActionBag("Fire Flare");
     transformTerrainAction.add(new InitAction());
     transformTerrainAction.add(new MoveAnimatedAction(unit.getLocation(), to));
@@ -192,7 +193,7 @@ public class ActionFactory {
     return diveAction;
   }
 
-  public static CWAction buildProduceUnitAction(Unit producer, Unit unitToBuild, Tile to) {
+  public static CWAction buildProduceUnitAction(Unit producer, Unit unitToBuild, Location to) {
     ActionBag buildUnitAction = new ActionBag("Produce");
     buildUnitAction.add(new InitAction());
     buildUnitAction.add(new MoveAnimatedAction(producer.getLocation(), to));

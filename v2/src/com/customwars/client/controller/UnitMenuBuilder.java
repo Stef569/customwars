@@ -86,7 +86,7 @@ public class UnitMenuBuilder {
 
       // In drop mode the wait Button acts as the drop Action
       if (inGameContext.isUnitDropMode()) {
-        CWAction dropAction = ActionFactory.buildDropAction(unit, from, to, inGameContext.getUnitsToBeDropped());
+        CWAction dropAction = ActionFactory.buildDropAction(unit, from, to, inGameContext.getDropQueue());
         addToMenu(dropAction, App.translate("wait"));
       }
     }
