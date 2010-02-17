@@ -1,4 +1,4 @@
-package com.customwars.client.controller;
+package com.customwars.client.controller.mapeditor;
 
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;

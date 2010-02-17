@@ -1,6 +1,5 @@
 package com.customwars.client.model.game;
 
-import com.customwars.client.model.GameStatistics;
 import com.customwars.client.model.Observable;
 import com.customwars.client.model.gameobject.GameObjectState;
 import com.customwars.client.model.map.Map;

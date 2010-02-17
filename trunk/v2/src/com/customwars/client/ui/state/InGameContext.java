@@ -5,9 +5,9 @@ import com.customwars.client.action.CWAction;
 import com.customwars.client.controller.ClickHistory;
 import com.customwars.client.controller.ControllerManager;
 import com.customwars.client.controller.CursorController;
-import com.customwars.client.controller.DropLocationsQueue;
 import com.customwars.client.controller.GameController;
 import com.customwars.client.io.ResourceManager;
+import com.customwars.client.model.drop.DropLocationsQueue;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Unit;
@@ -234,7 +234,7 @@ public class InGameContext {
    *
    * @param index The click index,  1
    *              null if there is no click registered for the given index
-   * @return
+   * @return The tile at the given click index
    */
   public Tile getClick(int index) {
     return clickHistory.getClick(index);
@@ -288,7 +288,7 @@ public class InGameContext {
     unitsInTransport.clear();
   }
 
-  public void addDropLocation(Tile location, Unit unit) {
+  public void addDropLocation(Location location, Unit unit) {
     dropQueue.addDropLocation(location, unit);
   }
 
@@ -300,7 +300,7 @@ public class InGameContext {
   }
 
   /**
-   * Is this dropLocation already taken by a previous drop
+   * Is the dropLocation already taken by a previous drop
    */
   public boolean isDropLocationTaken(Tile dropLocation) {
     return dropQueue.isDropLocationTaken(dropLocation);
@@ -311,20 +311,8 @@ public class InGameContext {
     dropQueue.clearDropLocations();
   }
 
-  public Tile removeNextDropLocation() {
-    return (Tile) dropQueue.removeNextDropLocation();
-  }
-
-  public Unit removeNextUnitToBeDropped() {
-    return dropQueue.removeNextUnitToBeDropped();
-  }
-
-  public List<Unit> getUnitsToBeDropped() {
-    return dropQueue.getUnitsToBeDropped();
-  }
-
-  public List<Location> getDropLocations() {
-    return dropQueue.getDropLocations();
+  public DropLocationsQueue getDropQueue() {
+    return dropQueue;
   }
 
   public String toString() {

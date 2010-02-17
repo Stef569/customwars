@@ -66,7 +66,7 @@ public class HumanUnitController extends UnitController {
     }
   }
 
-  private void attack(Tile selected, Tile to) {
+  private void attack(Tile selected, Location to) {
     if (canAttackUnit(selected)) {
       attackUnit(selected, to);
     } else if (canAttackCity(selected)) {
@@ -86,13 +86,13 @@ public class HumanUnitController extends UnitController {
     inGameContext.doAction(attackAction);
   }
 
-  private void launchRocket(Tile selected, Tile to) {
+  private void launchRocket(Location selected, Location to) {
     City city = map.getCityOn(inGameContext.getClick(2));
     CWAction launchRocket = ActionFactory.buildLaunchRocketAction(unit, city, to, selected);
     inGameContext.doAction(launchRocket);
   }
 
-  private void fireFlare(Tile selected, Tile to) {
+  private void fireFlare(Location selected, Location to) {
     CWAction fireFlare = ActionFactory.buildFireFlareAction(unit, to, selected);
     inGameContext.doAction(fireFlare);
   }
@@ -104,8 +104,8 @@ public class HumanUnitController extends UnitController {
       select(selected);
     } else {
       throw new AssertionError("A click has been made in the move zone. " +
-              "Either a click has been made on a unit -> select " +
-              "or next to the unit -> show menu");
+        "Either a click has been made on a unit -> select " +
+        "or next to the unit -> show menu");
     }
   }
 

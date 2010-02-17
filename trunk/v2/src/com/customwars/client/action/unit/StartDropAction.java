@@ -51,7 +51,7 @@ public class StartDropAction extends DirectAction {
       mapRenderer.removeZones();
       mapRenderer.showArrowPath(false);
       mapRenderer.showArrowHead(true);
-      mapRenderer.setDropLocations(context.getDropLocations(), center);
+      mapRenderer.setDropLocations(context.getDropQueue().getDropTiles(), center);
 
       // Only allow the cursor to move within the empty adjacent tiles
       // show the tiles as a movezone

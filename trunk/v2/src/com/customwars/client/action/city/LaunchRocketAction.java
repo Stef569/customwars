@@ -19,11 +19,11 @@ public class LaunchRocketAction extends DirectAction {
   private MapRenderer mapRenderer;
   private final City rocketSilo;
   private final Unit rocketLauncher;
-  private final Tile rocketDestination;
+  private final Location rocketDestination;
   private InGameContext context;
   private Map<Tile> map;
 
-  public LaunchRocketAction(City rocketSilo, Unit rocketLauncher, Tile rocketDestination) {
+  public LaunchRocketAction(City rocketSilo, Unit rocketLauncher, Location rocketDestination) {
     super("Launch Rocket", false);
     this.rocketSilo = rocketSilo;
     this.rocketLauncher = rocketLauncher;
@@ -65,6 +65,7 @@ public class LaunchRocketAction extends DirectAction {
     List<Location> explosionArea = new ArrayList<Location>();
     explosionArea.add(rocketDestination);
 
+    explosionArea.add(rocketDestination);
     for (Location tile : map.getSurroundingTiles(rocketDestination, 1, effectRange)) {
       explosionArea.add(tile);
     }
