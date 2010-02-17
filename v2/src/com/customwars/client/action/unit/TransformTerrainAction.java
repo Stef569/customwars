@@ -2,37 +2,36 @@ package com.customwars.client.action.unit;
 
 import com.customwars.client.action.DirectAction;
 import com.customwars.client.model.gameobject.Terrain;
-import com.customwars.client.model.gameobject.TerrainFactory;
-import com.customwars.client.model.gameobject.Unit;
+import com.customwars.client.model.map.Location;
+import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.ui.state.InGameContext;
 
+/**
+ * Overwrite the terrain on transformLocation to transformToTerrain
+ */
 public class TransformTerrainAction extends DirectAction {
-  private final Unit unit;
-  private final Tile tile;
+  private final Location transformLocation;
+  private final Terrain transformToTerrain;
   private InGameContext context;
+  private Map<Tile> map;
 
-  public TransformTerrainAction(Unit unit, Tile tile) {
+  public TransformTerrainAction(Location transformLocation, Terrain transformToTerrain) {
     super("Transform terrain", false);
-    this.unit = unit;
-    this.tile = tile;
+    this.transformLocation = transformLocation;
+    this.transformToTerrain = transformToTerrain;
   }
 
   @Override
   protected void init(InGameContext context) {
     this.context = context;
+    this.map = context.getGame().getMap();
   }
 
   @Override
   protected void invokeAction() {
     if (!context.isTrapped()) {
-      Terrain tranformTo = getTransformToTerrain();
-      tile.setTerrain(tranformTo);
+      map.getTile(transformLocation).setTerrain(transformToTerrain);
     }
-  }
-
-  private Terrain getTransformToTerrain() {
-    int tranformID = unit.getStats().getTransformTerrainFor(tile.getTerrain());
-    return TerrainFactory.getTerrain(tranformID);
   }
 }

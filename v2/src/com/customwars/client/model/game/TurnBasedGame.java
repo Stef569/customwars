@@ -44,6 +44,31 @@ public class TurnBasedGame implements Observable, Serializable {
   private Player activePlayer;  // There can only be one active player in a game at any time
   private GameState state;
 
+  /**
+   * Copy Constructor
+   *
+   * @param otherGame game to copy
+   */
+  public TurnBasedGame(TurnBasedGame otherGame) {
+    gameStatistics = new GameStatistics(this, otherGame.gameStatistics);
+    map = new Map<Tile>(otherGame.map);
+    turn = new Turn(otherGame.turn);
+    players = copyPlayers(otherGame.players);
+    if (otherGame.activePlayer != null) {
+      activePlayer = getPlayerByID(otherGame.activePlayer.getId());
+    }
+    state = otherGame.state;
+  }
+
+  private List<Player> copyPlayers(Collection<Player> players) {
+    List<Player> playerCopies = new ArrayList<Player>(players.size());
+    for (Player player : players) {
+      Player playerCopy = new Player(player);
+      playerCopies.add(playerCopy);
+    }
+    return playerCopies;
+  }
+
   public TurnBasedGame(Map<Tile> map, List<Player> players, int dayLimit) {
     Args.checkForNull(map);
     Args.checkForNull(players);
@@ -381,7 +406,7 @@ public class TurnBasedGame implements Observable, Serializable {
     }
   }
 
-  void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
+  void firePropertyChange(String propertyName, Serializable oldValue, Serializable newValue) {
     changeSupport.firePropertyChange(propertyName, oldValue, newValue);
   }
 

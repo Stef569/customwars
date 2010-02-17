@@ -13,6 +13,10 @@ public class Turn implements Serializable {
   private int turn;
   private int day;
 
+  public Turn(Turn otherTurn) {
+    this(otherTurn.turn, otherTurn.day, otherTurn.dayLimit);
+  }
+
   public Turn(int dayLimit) {
     this(0, 1, dayLimit);
   }

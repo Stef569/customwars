@@ -24,6 +24,12 @@ public class DropLocationsQueue {
     dropLocations = new ArrayList<DropLocation>(4);
   }
 
+  /**
+   * Queue the unit - droplocation pair
+   *
+   * @param location The location where the unit is to be dropped on
+   * @param unit     The unit that is to be dropped on the location
+   */
   public void addDropLocation(Location location, Unit unit) {
     dropLocations.add(new DropLocation(unit, location));
   }
@@ -41,7 +47,7 @@ public class DropLocationsQueue {
   }
 
   /**
-   * Is the given drop location already assigned to a unit
+   * Is the dropLocation already taken by a previous drop
    */
   public boolean isDropLocationTaken(Tile location) {
     for (DropLocation dropLocation : dropLocations) {

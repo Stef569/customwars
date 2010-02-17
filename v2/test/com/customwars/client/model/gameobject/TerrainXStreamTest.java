@@ -44,6 +44,7 @@ public class TerrainXStreamTest {
     // HardCoded valid xml string
     String terrainXML = "<list>" +
       "  <terrain id='0' name='plain'>" +
+      "    <description/>" +
       "    <defenseBonus>0</defenseBonus>" +
       "    <height>0</height>" +
       "    <moveCosts>" +

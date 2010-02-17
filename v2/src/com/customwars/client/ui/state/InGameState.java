@@ -3,7 +3,9 @@ package com.customwars.client.ui.state;
 import com.customwars.client.App;
 import com.customwars.client.SFX;
 import com.customwars.client.controller.ControllerManager;
+import com.customwars.client.controller.DefaultGameController;
 import com.customwars.client.controller.GameController;
+import com.customwars.client.controller.GameReplayController;
 import com.customwars.client.controller.InGameCursorController;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.game.Player;
@@ -80,6 +82,9 @@ public class InGameState extends CWState implements PropertyChangeListener {
         initSubSystems(stateSession.game);
         App.changeGameMode(App.GAME_MODE.SINGLE_PLAYER);
         break;
+      case REPLAY:
+        enterReplayMode(stateSession.game);
+        break;
     }
 
     hud.moveOverTile(gameRenderer.getCursorLocation());
@@ -97,6 +102,7 @@ public class InGameState extends CWState implements PropertyChangeListener {
     if (!game.isStarted() && !game.isGameOver()) {
       game.startGame();
       initSubSystems(game);
+      stateSession.initialGame = new Game(game);
     }
   }
 
@@ -106,6 +112,17 @@ public class InGameState extends CWState implements PropertyChangeListener {
    */
   private void enterMultiPlayerMode(Game game) {
     initSubSystems(game);
+  }
+
+  private void enterReplayMode(Game game) {
+    initSubSystems(game);
+    createReplayController();
+  }
+
+  private void createReplayController() {
+    gameControl = new GameReplayController(stateSession.replay, gameRenderer, inGameContext);
+    cursorControl = gameControl.getCursorController();
+    inGameContext.setGameController(gameControl);
   }
 
   private void initSubSystems(Game game) {
@@ -143,7 +160,7 @@ public class InGameState extends CWState implements PropertyChangeListener {
     ControllerManager controllerManager = new ControllerManager(inGameContext);
     inGameContext.setControllerManager(controllerManager);
 
-    gameControl = new GameController(game, gameRenderer, inGameContext);
+    gameControl = new DefaultGameController(game, gameRenderer, inGameContext);
     cursorControl = gameControl.getCursorController();
     inGameContext.setGameController(gameControl);
 
@@ -208,9 +225,7 @@ public class InGameState extends CWState implements PropertyChangeListener {
 
       inGameContext.update(delta);
       if (gameOver && isInputAllowed()) {
-        changeToState("GAME_OVER");
-        inGameContext = null;
-        gameOver = false;
+        gameOver();
       }
 
       inputAllowed = true;
@@ -223,6 +238,13 @@ public class InGameState extends CWState implements PropertyChangeListener {
         input.setOffset(camera.getX() - center.x, camera.getY() - center.y);
       }
     }
+  }
+
+  private void gameOver() {
+    stateSession.replay.addActions(inGameContext.getExecutedActions());
+    changeToState("GAME_OVER");
+    inGameContext = null;
+    gameOver = false;
   }
 
   @Override
@@ -335,7 +357,7 @@ public class InGameState extends CWState implements PropertyChangeListener {
    */
   private boolean isInputAllowed() {
     return entered && gameRenderer != null && gameRenderer.isDyingUnitAnimationCompleted() &&
-            inGameContext != null && inGameContext.isActionCompleted() && inputAllowed;
+      inGameContext != null && inGameContext.isActionCompleted() && inputAllowed;
   }
 
   public void mouseWheelMoved(int newValue) {

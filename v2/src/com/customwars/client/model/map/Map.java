@@ -120,6 +120,8 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
     this.mapName = otherMap.mapName;
     this.author = otherMap.author;
     this.description = otherMap.description;
+    this.fogOfWarOn = otherMap.fogOfWarOn;
+    this.defaultRules = new GameRules(otherMap.defaultRules);
     copyMapData(otherMap);
     copyPlayers();
   }
@@ -611,6 +613,14 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
   }
 
   /**
+   * @see #getUnitOn(Location)
+   */
+  public Unit getUnitOn(int col, int row) {
+    Location location = getTile(col, row);
+    return getUnitOn(location);
+  }
+
+  /**
    * @param location the location to retrieve a unit from
    * @return The last added unit from location
    *         if location doesn't contain a unit <b>NULL</b> is returned
@@ -621,6 +631,14 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
       return (Unit) locatable;
     }
     return null;
+  }
+
+  /**
+   * @see #getCityOn(Location)
+   */
+  public City getCityOn(int col, int row) {
+    Location location = getTile(col, row);
+    return getCityOn(location);
   }
 
   /**

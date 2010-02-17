@@ -5,6 +5,7 @@ import com.customwars.client.controller.ControllerManager;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Unit;
+import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.tools.MapUtil;
@@ -13,15 +14,15 @@ import org.apache.log4j.Logger;
 
 public class ConstructCityAction extends DirectAction {
   private static final Logger logger = Logger.getLogger(ConstructCityAction.class);
-  private Unit unit;
+  private final Unit unit;
+  private final Location tile;
+  private final City city;
+  private final Player cityOwner;
   private Map<Tile> map;
-  private Tile tile;
-  private City city;
-  private Player cityOwner;
   private InGameContext context;
   private ControllerManager controllerManager;
 
-  public ConstructCityAction(Unit unit, City city, Tile tile, Player cityOwner) {
+  public ConstructCityAction(Unit unit, City city, Location tile, Player cityOwner) {
     super("Construct City", false);
     this.unit = unit;
     this.tile = tile;

@@ -41,10 +41,16 @@ public class EndTurnAction extends DirectAction {
   }
 
   protected void invokeAction() {
-    if (App.isSinglePlayerGame()) {
-      stateChanger.changeTo("END_TURN");
-    } else if (App.isMultiplayerSnailGame()) {
-      endTurnInSnailGameMode();
+    switch (App.getGameMode()) {
+      case SINGLE_PLAYER:
+        stateChanger.changeTo("END_TURN");
+        break;
+      case NETWORK_SNAIL_GAME:
+        endTurnInSnailGameMode();
+        break;
+      case REPLAY:
+        session.game.endTurn();
+        break;
     }
   }
 

@@ -15,9 +15,13 @@ import org.newdawn.slick.thingle.Theme;
 import org.newdawn.slick.thingle.Widget;
 import org.newdawn.slick.thingle.spi.ThingleException;
 
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileFilter;
 import java.awt.Dimension;
 import java.awt.Point;
+import java.io.File;
 
 /**
  * Application wide gui's Contains a console and a game event viewer window.
@@ -257,6 +261,10 @@ public class GUI {
     renderDialog = true;
   }
 
+  public static int showConfirmationDialog(String msg, String title) {
+    return JOptionPane.showConfirmDialog(null, msg, title, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+  }
+
   public static void renderDialog() {
     if (renderDialog) {
       page.render();
@@ -274,4 +282,26 @@ public class GUI {
     page.disable();
     renderDialog = false;
   }
+
+  public static File browseForFile(String title, String approveButtonText) {
+    return browseForFile(title, null, approveButtonText);
+  }
+
+  public static File browseForFile(String title, FileFilter filter, String approveButtonText) {
+    JFileChooser fileChooser = new JFileChooser();
+    fileChooser.setDialogTitle(title);
+    fileChooser.setApproveButtonText(approveButtonText);
+
+    if (filter != null) {
+      fileChooser.setFileFilter(filter);
+    }
+
+    if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+      return fileChooser.getSelectedFile();
+    } else {
+      return null;
+    }
+  }
+
+
 }

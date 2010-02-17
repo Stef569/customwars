@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Gather statistics for each player about the given game.
+ * Gather statistics for each player in the given game.
  * Player statistics can be retrieved by calling {@link #getPlayerStats(Player)}
  *
  * @author stefan
@@ -26,6 +26,11 @@ public class GameStatistics implements PropertyChangeListener, Serializable {
   // Using the Player object as key in the playerStatistics Map causes problems when serialising.
   // Using the Integer playerID solves that.
   private final Map<Integer, PlayerStats> playerStatistics;
+
+  public GameStatistics(TurnBasedGame otherGame, GameStatistics otherStatistics) {
+    this.game = otherGame;
+    playerStatistics = new HashMap<Integer, PlayerStats>(otherStatistics.playerStatistics);
+  }
 
   public GameStatistics(TurnBasedGame game) {
     this.game = game;

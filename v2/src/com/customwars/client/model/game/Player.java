@@ -53,6 +53,17 @@ public class Player extends GameObject {
     return new Player(NEUTRAL_PLAYER_ID, color, "Neutral", 0, NEUTRAL_TEAM, false);
   }
 
+  /**
+   * Copy Constructor
+   *
+   * @param otherPlayer player to copy
+   */
+  public Player(Player otherPlayer) {
+    this(otherPlayer.id, new Color(otherPlayer.color.getRGB()),
+      otherPlayer.name, otherPlayer.budget, otherPlayer.team, otherPlayer.ai);
+    super.setState(otherPlayer.getState());
+  }
+
   public Player(int id, Color color, String name, int startBudget, int team, boolean ai) {
     this.id = id;
     this.color = color;

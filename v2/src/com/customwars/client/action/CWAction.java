@@ -22,4 +22,16 @@ public interface CWAction {
   String getName();
 
   boolean isCompleted();
+
+  /**
+   * The action text that can be used to recreated this action. Each parameter is separated with a space.
+   * Following pattern is used:
+   * capture 0 0
+   * build_unit 0 0
+   * move 0 0 1 1
+   * <action_name> <param1> <param2>
+   *
+   * @return The action text, null if this action can not be recreated
+   */
+  String getActionText();
 }

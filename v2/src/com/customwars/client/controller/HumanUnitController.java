@@ -76,7 +76,7 @@ public class HumanUnitController extends UnitController {
 
   private void attackUnit(Location selected, Location to) {
     Unit defender = map.getUnitOn(selected);
-    CWAction attackAction = ActionFactory.buildUnitAttackAction(unit, defender, to);
+    CWAction attackAction = ActionFactory.buildUnitVsUnitAttackAction(unit, defender, to);
     inGameContext.doAction(attackAction);
   }
 
@@ -88,7 +88,7 @@ public class HumanUnitController extends UnitController {
 
   private void launchRocket(Location selected, Location to) {
     City city = map.getCityOn(inGameContext.getClick(2));
-    CWAction launchRocket = ActionFactory.buildLaunchRocketAction(unit, city, to, selected);
+    CWAction launchRocket = ActionFactory.buildLaunchRocketAction(unit, city, selected);
     inGameContext.doAction(launchRocket);
   }
 
