@@ -2,7 +2,7 @@ package com.customwars.client.io.converter;
 
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Terrain;
-import com.customwars.client.model.map.Direction;
+import com.customwars.client.model.gameobject.TerrainConnection;
 import com.customwars.client.tools.UCaseMap;
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
@@ -10,7 +10,6 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -26,7 +25,7 @@ public class CityXmlConverter implements Converter {
   private String cityName;
   private String cityType;
   private int cityImgRowID;
-  private List<Direction> connections;
+  private TerrainConnection connections;
 
   public CityXmlConverter(Iterable<City> baseCities) {
     for (City city : baseCities) {
@@ -52,7 +51,7 @@ public class CityXmlConverter implements Converter {
     cityName = reader.getAttribute("name");
     cityType = reader.getAttribute("type");
     cityImgRowID = Integer.parseInt(reader.getAttribute("imgRowID"));
-    connections = ConvertUtil.readConnectionNode(reader);
+    connections = ConvertUtil.readConnectionNode(reader, getBaseCity(cityType));
   }
 
   private City createCopy(String cityType) {
@@ -76,7 +75,7 @@ public class CityXmlConverter implements Converter {
     ConvertUtil.writeField("id", city, Terrain.class, cityID);
     ConvertUtil.writeField("name", city, Terrain.class, cityName == null ? baseCity.getName() : cityName);
     ConvertUtil.writeField("type", city, Terrain.class, cityType);
-    ConvertUtil.writeField("connectedDirections", city, Terrain.class, connections);
+    ConvertUtil.writeField("connection", city, Terrain.class, connections);
     ConvertUtil.writeField("imgRowID", city, City.class, cityImgRowID);
   }
 

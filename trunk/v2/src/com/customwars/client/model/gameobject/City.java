@@ -28,7 +28,7 @@ import java.util.List;
  * <p/>
  * The capture process is reset when
  * another unit tries to capture this city, or by invoking resetCapturing()
- *
+ * <p/>
  * A City can fire a rocket once
  * A City can be destroyed
  *
@@ -52,11 +52,11 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
   private int capCount;       // The current capture count(if capCount==maxCapCount then this city is considered to be captured)
   private int hp;             // Health points, if 0 this city is considered to be destroyed
 
-  public City(int id, int imgRowID, String type, String name, String description, int defenseBonus, int height, List<Integer> moveCosts,
+  public City(int id, int imgRowID, String type, String connectType, String name, String description, int defenseBonus, int height, List<Integer> moveCosts,
               int vision, boolean hidden, List<Direction> connectedDirections,
               List<ArmyBranch> heals, List<Integer> canBeCaptureBy, List<Integer> builds, int maxCapCount, int healRate,
               int maxHp) {
-    super(id, type, name, description, defenseBonus, height, hidden, vision, moveCosts, connectedDirections, "");
+    super(id, type, connectType, name, description, defenseBonus, height, hidden, vision, moveCosts, connectedDirections, "");
     this.imgRowID = imgRowID;
     this.heals = heals;
     this.canBeCaptureBy = canBeCaptureBy;
@@ -71,7 +71,14 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
    * Create a city with the given ID all the other values are set to default values
    */
   public City(int id) {
-    this(id, id, "", "dummy city", "", 0, 0, Arrays.asList(1), 0, false, null, null, null, null, 0, 0, 0);
+    this(id, id, "", "", "dummy city", "", 0, 0, Arrays.asList(1), 0, false, null, null, null, null, 0, 0, 0);
+  }
+
+  public City(int id, int imgRowID, String type, String name, String description, int defenseBonus, int height, List<Integer> moveCosts,
+              int vision, boolean hidden, List<Direction> connectedDirections,
+              List<ArmyBranch> heals, List<Integer> canBeCaptureBy, List<Integer> builds, int maxCapCount, int healRate,
+              int maxHp) {
+    this(id, imgRowID, type, type, name, description, defenseBonus, height, moveCosts, vision, hidden, connectedDirections, heals, canBeCaptureBy, builds, maxCapCount, healRate, maxHp);
   }
 
   @Override

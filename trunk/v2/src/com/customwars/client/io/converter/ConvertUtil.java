@@ -1,5 +1,7 @@
 package com.customwars.client.io.converter;
 
+import com.customwars.client.model.gameobject.Terrain;
+import com.customwars.client.model.gameobject.TerrainConnection;
 import com.customwars.client.model.map.Direction;
 import com.thoughtworks.xstream.core.util.Fields;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
@@ -15,16 +17,18 @@ import java.util.StringTokenizer;
 public class ConvertUtil {
 
   /**
-   * Convert the xml '<connect>North, East</connect>' to a List of direction enums [North, East]
+   * Convert the xml '<connect type='baseTerrain'>North, East</connect>' to a TerrainConnection
    */
-  public static List<Direction> readConnectionNode(HierarchicalStreamReader reader) {
+  public static TerrainConnection readConnectionNode(HierarchicalStreamReader reader, Terrain baseTerrain) {
     List<Direction> connections = null;
+    String connectsTo = null;
 
     while (reader.hasMoreChildren()) {
       reader.moveDown();
       final String nodeName = reader.getNodeName();
 
       if (nodeName.equals("connect")) {
+        connectsTo = reader.getAttribute("type");
         connections = readDirections(reader.getValue());
         reader.moveUp();
       } else {
@@ -33,7 +37,11 @@ public class ConvertUtil {
         );
       }
     }
-    return connections;
+
+    if (connectsTo == null) {
+      connectsTo = baseTerrain.getType();
+    }
+    return new TerrainConnection(connectsTo, connections);
   }
 
   private static List<Direction> readDirections(String directions) {

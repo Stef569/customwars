@@ -34,15 +34,20 @@ public class Terrain extends GameObject {
   private final boolean hidden;
   private final int vision;
   private final List<Integer> moveCosts;
-  private List<Direction> connectedDirections;
+  private TerrainConnection connection;
 
   public Terrain(int id, String type, String name, String description, int defenseBonus, int height, boolean hidden, int vision, List<Integer> moveCosts) {
-    this(id, type, name, description, defenseBonus, height, hidden, vision, moveCosts, null, "");
+    this(id, type, type, name, description, defenseBonus, height, hidden, vision, moveCosts, null, "");
+  }
+
+  public Terrain(int id, String type, String connectType, String name, String description, int defenseBonus, int height, boolean hidden, int vision, List<Integer> moveCosts) {
+    this(id, type, connectType, name, description, defenseBonus, height, hidden, vision, moveCosts, null, "");
   }
 
   /**
    * @param id                  Unique identifier
    * @param type                The base Terrain this terrain is inherited from eg (Road, River, Ocean,...)
+   * @param connectType         The base Terrain this terrain connects to
    * @param name                Short name eg 'plain', 'grass', 'woods'
    * @param description         Long description eg 'provides good cover for ground units'
    * @param defenseBonus        The defense bonus used in attack calculations, forest offer better protection then plain.
@@ -52,7 +57,7 @@ public class Terrain extends GameObject {
    * @param moveCosts           The cost to move over this terrain for each movementType, starts at 1(no cost) to 127(Impassible)
    * @param connectedDirections The Directions another terrain of the same type can be connected to
    */
-  public Terrain(int id, String type, String name, String description, int defenseBonus, int height, boolean hidden, int vision,
+  public Terrain(int id, String type, String connectType, String name, String description, int defenseBonus, int height, boolean hidden, int vision,
                  List<Integer> moveCosts, List<Direction> connectedDirections, String spansOverType) {
     super(GameObjectState.IDLE);
     this.id = id;
@@ -64,7 +69,7 @@ public class Terrain extends GameObject {
     this.hidden = hidden;
     this.vision = vision;
     this.moveCosts = moveCosts;
-    this.connectedDirections = connectedDirections;
+    this.connection = new TerrainConnection(connectType, connectedDirections);
     this.spansOverType = spansOverType;
     init();
   }
@@ -79,7 +84,6 @@ public class Terrain extends GameObject {
     }
 
     Args.checkForNull(description, "Description is required for " + name);
-    connectedDirections = Args.createEmptyListIfNull(connectedDirections);
   }
 
   private void validateMoveCost(int moveCosts) {
@@ -108,7 +112,7 @@ public class Terrain extends GameObject {
     this.hidden = otherTerrain.hidden;
     this.vision = otherTerrain.vision;
     this.moveCosts = new ArrayList<Integer>(otherTerrain.moveCosts);
-    this.connectedDirections = new ArrayList<Direction>(otherTerrain.connectedDirections);
+    this.connection = new TerrainConnection(otherTerrain.connection);
   }
 
   public int getID() {
@@ -179,12 +183,16 @@ public class Terrain extends GameObject {
     return moveCosts.get(movementType);
   }
 
+  public boolean inheritsFrom(String otherTerrainType) {
+    return type.equalsIgnoreCase(otherTerrainType);
+  }
+
   public boolean isSameType(Terrain otherTerrain) {
-    return isSameType(otherTerrain.type);
+    return connection.canConnectTo(otherTerrain.connection);
   }
 
   public boolean isSameType(String otherTerrainType) {
-    return type.equalsIgnoreCase(otherTerrainType);
+    return connection.canConnectTo(otherTerrainType);
   }
 
   public boolean spansOver(Terrain terrain) {
@@ -196,21 +204,8 @@ public class Terrain extends GameObject {
       spansOverType.equalsIgnoreCase(spansOver);
   }
 
-  public boolean canConnectTo(Terrain otherTerrain) {
-    return otherTerrain != null && connectedDirections != null && connectedDirections.size() > 0;
-  }
-
   public boolean canConnectToOneOf(List<Direction> directions) {
-    for (Direction direction : directions) {
-      if (connectedDirections.contains(direction)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  public boolean canConnectsToAll(Terrain otherTerrain) {
-    return canConnectToAll(otherTerrain.connectedDirections);
+    return connection.canConnectToOneOf(directions);
   }
 
   /**
@@ -218,18 +213,10 @@ public class Terrain extends GameObject {
    * is within this terrain connectedDirections
    */
   public boolean canConnectToAll(List<Direction> directions) {
-    int numFound = 0;
-    for (Direction direction : connectedDirections) {
-      if (!directions.contains(direction)) {
-        return false;
-      } else {
-        numFound++;
-      }
-    }
-    return numFound == directions.size();
+    return connection.canConnectToAll(directions);
   }
 
   public String toString() {
-    return String.format("[id=%s name='%s' type=%s height=%s defense=%s vision=%s connects=%s]", id, name, type, height, defenseBonus, vision, connectedDirections);
+    return String.format("[id=%s name='%s' type=%s height=%s defense=%s vision=%s connects=%s]", id, name, type, height, defenseBonus, vision, connection);
   }
 }

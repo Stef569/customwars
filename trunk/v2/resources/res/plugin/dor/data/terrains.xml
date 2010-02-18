@@ -291,9 +291,9 @@
         <connect>East</connect>
     </terrain>
     <terrain name="horizontal_destroyed_pipe_seam" id="97" type="plain">
-        <connect>East, West</connect>
+        <connect type="pipe">East, West</connect>
     </terrain>
     <terrain name="vertical_destroyed_pipe_seam" id="98" type="plain">
-        <connect>North, South</connect>
+        <connect type="pipe">North, South</connect>
     </terrain>
 </list>
