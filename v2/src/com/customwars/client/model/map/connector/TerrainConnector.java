@@ -165,7 +165,7 @@ public class TerrainConnector {
   private List<Terrain> getTerrainsThatConnectsToAllDirections(List<Direction> directions) {
     List<Terrain> result = new LinkedList<Terrain>();
     for (Terrain terrain : terrains) {
-      if (terrain.isSameType(terrainToAdd) && terrain.canConnectToAll(directions)) {
+      if (terrain.spansOver(terrainToAdd) || terrain.isSameType(terrainToAdd) && terrain.canConnectToAll(directions)) {
         result.add(terrain);
       }
     }
@@ -179,7 +179,7 @@ public class TerrainConnector {
   private List<Terrain> getTerrainsThatConnectsToOneofDirections() {
     List<Terrain> result = new LinkedList<Terrain>();
     for (Terrain terrain : terrains) {
-      if (terrain.isSameType(terrainToAdd) && terrain.canConnectToOneOf(tileData.getAllDirections())) {
+      if (terrain.spansOver(terrainToAdd) || terrain.isSameType(terrainToAdd) && terrain.canConnectToOneOf(tileData.getAllDirections())) {
         result.add(terrain);
       }
     }

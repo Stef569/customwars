@@ -1,7 +1,7 @@
 package com.customwars.client.io.converter;
 
 import com.customwars.client.model.gameobject.Terrain;
-import com.customwars.client.model.map.Direction;
+import com.customwars.client.model.gameobject.TerrainConnection;
 import com.customwars.client.tools.UCaseMap;
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
@@ -10,7 +10,6 @@ import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -26,7 +25,7 @@ public class TerrainXmlConverter implements Converter {
   private String terrainName;
   private String terrainType;
   private String spansOverType;
-  private List<Direction> connections;
+  private TerrainConnection connections;
 
   public TerrainXmlConverter(Collection<Terrain> baseTerrains) {
     for (Terrain terrain : baseTerrains) {
@@ -50,7 +49,7 @@ public class TerrainXmlConverter implements Converter {
     terrainName = reader.getAttribute("name");
     terrainType = reader.getAttribute("type").toUpperCase();
     spansOverType = reader.getAttribute("spansOver") != null ? reader.getAttribute("spansOver").toUpperCase() : "";
-    connections = ConvertUtil.readConnectionNode(reader);
+    connections = ConvertUtil.readConnectionNode(reader, getBaseTerrain(terrainType));
   }
 
   private Terrain createTerrainCopy(String terrainType) {
@@ -75,7 +74,7 @@ public class TerrainXmlConverter implements Converter {
     ConvertUtil.writeField("name", terrain, Terrain.class, terrainName == null ? baseTerrain.getName() : terrainName);
     ConvertUtil.writeField("type", terrain, Terrain.class, terrainType);
     ConvertUtil.writeField("spansOverType", terrain, Terrain.class, spansOverType);
-    ConvertUtil.writeField("connectedDirections", terrain, Terrain.class, connections);
+    ConvertUtil.writeField("connection", terrain, Terrain.class, connections);
   }
 
   public boolean canConvert(Class aClass) {

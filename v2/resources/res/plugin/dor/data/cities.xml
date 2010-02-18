@@ -6,9 +6,9 @@
     <city id="4" imgRowID="4" type='hq'/>
     <city id="5" imgRowID="5" type='missle_silo'/>
     <city name="horizontal_pipe_seam" id="6" imgRowID="6" type='pipe_seam'>
-        <connect>East, West</connect>
+        <connect type="pipe">East, West</connect>
     </city>
     <city name="vertical_pipe_seam" id="7" imgRowID="7" type='pipe_seam'>
-        <connect>North, South</connect>
+        <connect type="pipe">North, South</connect>
     </city>
 </list>

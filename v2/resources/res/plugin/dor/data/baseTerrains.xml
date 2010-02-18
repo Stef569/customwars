@@ -9,7 +9,7 @@ moveCosts have the following order
   Naval
 -->
 <list>
-    <terrain name="grass" id="0">
+    <terrain name="grass" id="0" type="grass">
         <defenseBonus>0</defenseBonus>
         <height>0</height>
         <moveCosts>
@@ -22,7 +22,7 @@ moveCosts have the following order
         </moveCosts>
         <description>Grass is easily traversed but offers little defense.</description>
     </terrain>
-    <terrain name="plain" id="18">
+    <terrain name="plain" id="18" type="plain">
         <defenseBonus>1</defenseBonus>
         <height>0</height>
         <moveCosts>
@@ -35,7 +35,7 @@ moveCosts have the following order
         </moveCosts>
         <description></description>
     </terrain>
-    <terrain name="forest" id="1">
+    <terrain name="forest" id="1" type="forest">
         <hidden>True</hidden>
         <defenseBonus>2</defenseBonus>
         <height>0</height>
@@ -51,7 +51,7 @@ moveCosts have the following order
             unit unless directly adjacent to it.
         </description>
     </terrain>
-    <terrain name="road" id="2">
+    <terrain name="road" id="2" type="road">
         <defenseBonus>0</defenseBonus>
         <height>0</height>
         <moveCosts>
@@ -64,7 +64,7 @@ moveCosts have the following order
         </moveCosts>
         <description>Well-surface roads provide optimum mobility, but little cover.</description>
     </terrain>
-    <terrain name="mountain" id="17">
+    <terrain name="mountain" id="17" type="mountain">
         <defenseBonus>4</defenseBonus>
         <vision>3</vision>
         <height>2</height>
@@ -78,7 +78,7 @@ moveCosts have the following order
         </moveCosts>
         <description>In Fog of War, these add 3 to the vision of inf and mech units.</description>
     </terrain>
-    <terrain name="river" id="19">
+    <terrain name="river" id="19" type="river">
         <defenseBonus>0</defenseBonus>
         <height>-1</height>
         <moveCosts>
@@ -91,7 +91,7 @@ moveCosts have the following order
         </moveCosts>
         <description>Fast flowing river, only inf and mech can pass</description>
     </terrain>
-    <terrain name="ocean" id="30">
+    <terrain name="ocean" id="30" type="ocean">
         <defenseBonus>0</defenseBonus>
         <height>-2</height>
         <moveCosts>
@@ -104,7 +104,7 @@ moveCosts have the following order
         </moveCosts>
         <description></description>
     </terrain>
-    <terrain name="shoal" id="65">
+    <terrain name="shoal" id="65" type="shoal">
         <defenseBonus>0</defenseBonus>
         <height>-2</height>
         <moveCosts>
@@ -116,7 +116,7 @@ moveCosts have the following order
             <int>1</int>
         </moveCosts>
     </terrain>
-    <terrain name="reef" id="75">
+    <terrain name="reef" id="75" type="reef">
         <hidden>True</hidden>
         <defenseBonus>2</defenseBonus>
         <height>-2</height>
@@ -130,7 +130,7 @@ moveCosts have the following order
         </moveCosts>
         <description></description>
     </terrain>
-    <terrain name="pipe" id="86">
+    <terrain name="pipe" id="86" type="pipe">
         <defenseBonus>4</defenseBonus>
         <vision>0</vision>
         <height>1</height>

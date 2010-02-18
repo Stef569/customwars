@@ -6,6 +6,7 @@ import com.customwars.client.model.ArmyBranch;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.CityFactory;
 import com.customwars.client.model.gameobject.Terrain;
+import com.customwars.client.model.gameobject.TerrainConnection;
 import com.customwars.client.model.gameobject.TerrainFactory;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.gameobject.UnitFactory;
@@ -59,6 +60,7 @@ public class ModelLoader implements CWResourceLoader {
   private void loadTerrains() {
     xStream.alias("terrain", Terrain.class);
     XStreamUtil.useReflectionFor(xStream, Terrain.class);
+    XStreamUtil.useReflectionFor(xStream, TerrainConnection.class);
     xStream.useAttributeFor(Terrain.class, "id");
     xStream.useAttributeFor(Terrain.class, "name");
     xStream.useAttributeFor(Terrain.class, "type");
@@ -109,7 +111,7 @@ public class ModelLoader implements CWResourceLoader {
     xStream.useAttributeFor(Terrain.class, "type");
     xStream.useAttributeFor(City.class, "imgRowID");
     xStream.alias("armyBranch", ArmyBranch.class);
-    xStream.aliasField("connect", Terrain.class, "connectedDirections");
+    xStream.aliasField("connect", Terrain.class, "connection");
 
     // Load Base Cities, they contain the city stats
     InputStream baseCitiesStream = ResourceLoader.getResourceAsStream(modelResPath + XML_DATA_CITY_FILE);
