@@ -20,7 +20,8 @@ public class UnitVsCityFight extends BasicFight {
     int attackMaxHP = attackingUnit.getInternalMaxHp();
 
     int baseDmg = getAttackDamagePercentage(attackingUnit, city);
-    return (int) Math.floor(attackerHP / (float) attackMaxHP * baseDmg);
+    double dmg = Math.floor(attackerHP / (float) attackMaxHP * baseDmg);
+    return dmg < 0 ? 0 : (int) dmg;
   }
 
   /**

@@ -25,7 +25,8 @@ public class UnitFight extends BasicFight {
     int baseDmg = getAttackDamagePercentage(attackingUnit, defendingUnit);
     int expBonus = getExperienceBonus(attackingUnit, defendingUnit);
 
-    return (int) (Math.floor(attackerHP / (float) attackMaxHP * baseDmg - terrainDef) + expBonus);
+    double dmg = Math.floor(attackerHP / (float) attackMaxHP * baseDmg - terrainDef) + expBonus;
+    return dmg < 0 ? 0 : (int) dmg;
   }
 
   private int getExperienceBonus(Unit attackingUnit, Unit defendingUnit) {

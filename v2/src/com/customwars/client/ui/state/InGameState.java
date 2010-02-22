@@ -8,6 +8,7 @@ import com.customwars.client.controller.GameController;
 import com.customwars.client.controller.GameReplayController;
 import com.customwars.client.controller.InGameCursorController;
 import com.customwars.client.model.game.Game;
+import com.customwars.client.model.game.GameReplay;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.map.Direction;
 import com.customwars.client.model.map.Map;
@@ -241,10 +242,17 @@ public class InGameState extends CWState implements PropertyChangeListener {
   }
 
   private void gameOver() {
-    stateSession.replay.addActions(inGameContext.getExecutedActions());
+    storeReplayActions();
     changeToState("GAME_OVER");
     inGameContext = null;
     gameOver = false;
+  }
+
+  private void storeReplayActions() {
+    GameReplay gameReplay = stateSession.replay;
+    if (gameReplay != null) {
+      gameReplay.addActions(inGameContext.getExecutedActions());
+    }
   }
 
   @Override

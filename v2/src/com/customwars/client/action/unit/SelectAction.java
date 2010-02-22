@@ -51,6 +51,7 @@ public class SelectAction extends DirectAction {
   private void selectUnit(Unit unit) {
     logger.debug("Selecting " + unit);
     game.setActiveUnit(unit);
+    game.getMap().buildMovementZone(unit);
     mapRenderer.setActiveUnit(unit);
     mapRenderer.removeZones();
     mapRenderer.showMoveZone();

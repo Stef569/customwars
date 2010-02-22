@@ -427,14 +427,14 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
 
   /**
    * First set all tiles to fogged
-   * then set the tiles that are visible for this player and his allies to clear(not fogged).
+   * then reveal all the tiles that are visible to this player and his allies.
    *
-   * @param player The player and all his allies who's units line of sight aka vision should be visible.
+   * @param player The player and all his allies who's units and cities line of sight should be revealed.
    */
   public void resetFogMap(Player player) {
     if (fogOfWarOn) {
       fillFog(true);
-      showLosOn(player);
+      showLosFor(player);
     }
   }
 
@@ -450,12 +450,12 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
   }
 
   /**
-   * Resets the map fog of war.
-   * This is done by setting all the tiles within a Unit and City Line of sight(the vision range) to fogged=false.
+   * Show the line of sight for the given player.
+   * This is done by revealing all the tiles within an allied Unit and City vision range.
    *
    * @param player The player and his allies to apply the los for
    */
-  private void showLosOn(Player player) {
+  public void showLosFor(Player player) {
     for (Tile t : getAllTiles()) {
       Unit unit = getUnitOn(t);
       City city = getCityOn(t);
@@ -463,12 +463,12 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
       if (unit != null && unit.isAlliedWith(player)) {
         int visionBonus = getUnitVisionBonus(unit);
         int vision = unit.getStats().getVision();
-        clearSight(t, vision + visionBonus);
+        showLos(t, vision + visionBonus);
       }
 
       if (city != null && city.isAlliedWith(player)) {
         int vision = city.getVision();
-        clearSight(t, vision);
+        showLos(t, vision);
       }
     }
   }
@@ -487,12 +487,12 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
   }
 
   /**
-   * Clears all visible tiles within a vision range
+   * Reveals all visible tiles within a vision range
    *
-   * @param baseTile The location tile to clear the los around
-   * @param vision   The amount of tiles that have to be cleared in all directions
+   * @param baseTile The location tile to show the los around
+   * @param vision   The amount of tiles that have to be shown around the baseTile in all directions
    */
-  public void clearSight(Tile baseTile, int vision) {
+  private void showLos(Tile baseTile, int vision) {
     int col = baseTile.getCol();
     int row = baseTile.getRow();
 
@@ -527,7 +527,7 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
    * @param baseTile The center of the vision range that is being cleared
    * @return If the tile should be cleared of fog.
    */
-  public boolean canClearFog(Location baseTile, Tile tile) {
+  private boolean canClearFog(Location baseTile, Tile tile) {
     Terrain terrain = tile.getTerrain();
     boolean adjacent = isAdjacent(tile, baseTile);
 

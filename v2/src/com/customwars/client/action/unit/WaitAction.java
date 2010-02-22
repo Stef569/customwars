@@ -2,6 +2,7 @@ package com.customwars.client.action.unit;
 
 import com.customwars.client.action.DirectAction;
 import com.customwars.client.model.game.Game;
+import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.GameObjectState;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Map;
@@ -16,7 +17,7 @@ import com.customwars.client.ui.state.InGameContext;
 public class WaitAction extends DirectAction {
   private Game game;
   private Map<Tile> map;
-  private Unit unit;
+  private final Unit unit;
 
   public WaitAction(Unit unit) {
     super("Wait");
@@ -29,7 +30,6 @@ public class WaitAction extends DirectAction {
   }
 
   protected void invokeAction() {
-    game.initZones();
 
     if (!unit.isDestroyed()) {
       unit.setOrientation(Unit.DEFAULT_ORIENTATION);
@@ -38,7 +38,9 @@ public class WaitAction extends DirectAction {
       unit.setState(GameObjectState.ACTIVE);
       unit.setState(GameObjectState.IDLE);
 
-      map.resetAllHiddenUnits(game.getActivePlayer());
+      Player activePlayer = game.getActivePlayer();
+      map.showLosFor(activePlayer);
+      map.resetAllHiddenUnits(activePlayer);
     }
   }
 }
