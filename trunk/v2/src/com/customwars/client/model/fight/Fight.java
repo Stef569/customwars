@@ -23,12 +23,13 @@ public interface Fight {
   void initFight(Attacker attacker, Defender defender);
 
   /**
-   * Start the attack - counter attack sequense
+   * Start the attack - counter attack sequence
    */
   void startFight();
 
   /**
-   * @return The damage the attacker will do against the defender
+   * @return The damage the attacker will do against the defender as a percentage.
+   *         The returned value is always positive.
    */
   int getAttackDamagePercentage();
 

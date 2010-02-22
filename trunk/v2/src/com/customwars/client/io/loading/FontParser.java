@@ -106,7 +106,7 @@ public class FontParser extends LineParser {
     String imgName = cmdScanner.next();
 
     try {
-      return new AngelCodeFont(fontPath + fntFile, fontPath + imgName);
+      return new AngelCodeFont(fontPath + fntFile, fontPath + imgName, false);
     } catch (SlickException ex) {
       throw new RuntimeException(ex);
     }
@@ -122,6 +122,7 @@ public class FontParser extends LineParser {
       unicodeFont.getEffects().add(new ColorEffect());
       unicodeFont.addAsciiGlyphs();
       unicodeFont.loadGlyphs();
+      unicodeFont.setDisplayListCaching(false);
       return unicodeFont;
     } catch (SlickException e) {
       throw new RuntimeException(e);

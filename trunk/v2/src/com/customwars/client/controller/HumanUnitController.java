@@ -45,8 +45,10 @@ public class HumanUnitController extends UnitController {
       launchRocket(selected, to);
     } else if (inGameContext.isUnitFlareMode() && unit.getAttackZone().contains(selected)) {
       fireFlare(selected, to);
-    } else if (unit.getMoveZone().contains(selected)) {
-      clickInMoveZone(selected);
+    } else if (canSelect(selected)) {
+      select(selected);
+    } else if (canShowMenu(selected)) {
+      showMenu(selected);
     } else {
       cancelPressed();
     }
@@ -97,21 +99,15 @@ public class HumanUnitController extends UnitController {
     inGameContext.doAction(fireFlare);
   }
 
-  private void clickInMoveZone(Tile selected) {
-    if (canShowMenu()) {
-      showMenu(selected);
-    } else if (canSelect(selected)) {
-      select(selected);
-    } else {
-      throw new AssertionError("A click has been made in the move zone. " +
-        "Either a click has been made on a unit -> select " +
-        "or next to the unit -> show menu");
-    }
+  private void select(Tile selected) {
+    inGameContext.clearClickHistory();
+    inGameContext.clearUndoHistory();
+    inGameContext.registerClick(1, selected);
+    inGameContext.doAction(new SelectAction(selected));
   }
 
-  private boolean canShowMenu() {
+  private boolean canShowMenu(Tile selected) {
     Unit activeUnit = game.getActiveUnit();
-    Location selected = mapRenderer.getCursorLocation();
     return activeUnit != null && activeUnit.isWithinMoveZone(selected);
   }
 
@@ -127,13 +123,6 @@ public class HumanUnitController extends UnitController {
     } else {
       logger.warn("No menu items to show");
     }
-  }
-
-  private void select(Tile selected) {
-    inGameContext.clearClickHistory();
-    inGameContext.clearUndoHistory();
-    inGameContext.registerClick(1, selected);
-    inGameContext.doAction(new SelectAction(selected));
   }
 
   private void cancelPressed() {
