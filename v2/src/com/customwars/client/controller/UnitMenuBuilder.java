@@ -3,7 +3,6 @@ package com.customwars.client.controller;
 import com.customwars.client.App;
 import com.customwars.client.action.ActionFactory;
 import com.customwars.client.action.CWAction;
-import com.customwars.client.action.ShowPopupMenuAction;
 import com.customwars.client.action.city.StartLaunchRocketAction;
 import com.customwars.client.action.unit.StartAttackAction;
 import com.customwars.client.action.unit.StartDropAction;
@@ -18,7 +17,10 @@ import com.customwars.client.model.gameobject.UnitFactory;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.ui.MenuItem;
+import com.customwars.client.ui.PopupMenu;
 import com.customwars.client.ui.state.InGameContext;
+import org.newdawn.slick.gui.AbstractComponent;
+import org.newdawn.slick.gui.ComponentListener;
 
 /**
  * Build a menu for a given unit once and allow to retrieve that menu see getMenu()
@@ -35,7 +37,7 @@ public class UnitMenuBuilder {
   private final Unit unit;
   private final HumanUnitController controller;
   private final Map<Tile> map;
-  private ShowPopupMenuAction menu;
+  private PopupMenu menu;
 
   public UnitMenuBuilder(HumanUnitController controller, Unit unit, InGameContext inGamecontext, Tile selected) {
     this.controller = controller;
@@ -49,24 +51,24 @@ public class UnitMenuBuilder {
   private void buildUnitActionMenu(Tile from, Tile selected) {
     if (controller.isActiveUnit() && controller.canMove(from, selected)) {
       if (inGameContext.isUnitDropMode()) {
-        buildDropMenu(from, selected);
+        buildDropMenu(from);
       } else {
         buildUnitContextMenu(from, selected);
       }
     }
   }
 
-  private void buildDropMenu(Tile from, Tile selected) {
+  private void buildDropMenu(Tile from) {
     // Temporarily teleport the active unit(transport) to the 2ND tile
     // to determine what actions are available
     Tile to = inGameContext.getClick(2);
     map.teleport(from, to, unit);
-    menu = buildDropMenu(from, to, selected);
+    menu = buildDropMenu(from, to);
     map.teleport(to, from, unit);
   }
 
-  private ShowPopupMenuAction buildDropMenu(Tile from, Tile to, Tile selected) {
-    menu = ShowPopupMenuAction.createPopupInMap("Unit drop menu", selected);
+  private PopupMenu buildDropMenu(Tile from, Tile to) {
+    menu = new PopupMenu(inGameContext.getContainer(), "Unit drop menu");
     inGameContext.clearUnitsInTransport();
 
     if (controller.canWait(to)) {
@@ -110,7 +112,7 @@ public class UnitMenuBuilder {
     map.teleport(from, selected, unit);
     initUnitActions(selected);
     map.teleport(selected, from, unit);
-    menu = buildUnitContextMenu(selected);
+    menu = buildUnitContextMenu();
   }
 
   /**
@@ -144,14 +146,14 @@ public class UnitMenuBuilder {
    * Create the actions the unit can perform on the selected tile
    * The unit is on the from Tile
    */
-  private ShowPopupMenuAction buildUnitContextMenu(Tile selected) {
-    menu = ShowPopupMenuAction.createPopupInMap("Unit context menu", selected);
+  private PopupMenu buildUnitContextMenu() {
+    menu = new PopupMenu(inGameContext.getContainer(), "Unit context menu");
     Tile from = inGameContext.getClick(1);
     Tile to = inGameContext.getClick(2);
 
     if (canDropUnit) {
       map.teleport(from, to, unit);
-      buildDropMenu(from, to, selected);
+      buildDropMenu(from, to);
       map.teleport(to, from, unit);
     }
 
@@ -231,8 +233,8 @@ public class UnitMenuBuilder {
   }
 
   private Terrain getTransformToTerrain(Tile tile) {
-    int tranformID = unit.getStats().getTransformTerrainFor(tile.getTerrain());
-    return TerrainFactory.getTerrain(tranformID);
+    int transformID = unit.getStats().getTransformTerrainFor(tile.getTerrain());
+    return TerrainFactory.getTerrain(transformID);
   }
 
   private City getCityThatCanBeBuildOn(Tile tile) {
@@ -246,12 +248,17 @@ public class UnitMenuBuilder {
    * @param action       The action to perform when clicked on the menu item
    * @param menuItemName The name of the menu item, as shown in the gui
    */
-  private void addToMenu(CWAction action, String menuItemName) {
+  private void addToMenu(final CWAction action, String menuItemName) {
     MenuItem menuItem = new MenuItem(menuItemName, inGameContext.getContainer());
-    menu.addAction(action, menuItem);
+    menuItem.addListener(new ComponentListener() {
+      public void componentActivated(AbstractComponent source) {
+        inGameContext.doAction(action);
+      }
+    });
+    menu.addItem(menuItem);
   }
 
-  public ShowPopupMenuAction getMenu() {
+  public PopupMenu getMenu() {
     return menu;
   }
 }

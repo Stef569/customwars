@@ -26,19 +26,25 @@ import java.util.List;
 public class PopupMenu extends BasicComponent {
   private static final int MENU_BACKGROUND_MARGIN = 8;
   // Default White hover on black background
-  private Color backGroundColor = new Color(0, 0, 0, 0.4f);
-  private Color hoverColor = new Color(255, 255, 255, 0.20f);
+  private Color backGroundColor = new Color(0, 0, 0, 0.8f);
+  private Color hoverColor = new Color(255, 255, 255, 0.1f);
 
+  private final String title;
   private final List<MenuItem> menuItems;
-  private int currItem;
+  private final boolean renderBackground;
 
+  private int selectedItem;
   private boolean inited;
-  private boolean renderBackground;
   private int spacingY;             // The space between menu Items
   private Sound menuTickSound;      // Sound to be played when the current menu item changes
 
   public PopupMenu(GUIContext container) {
+    this(container, "Unnamed popup");
+  }
+
+  public PopupMenu(GUIContext container, String title) {
     super(container);
+    this.title = title;
     menuItems = new ArrayList<MenuItem>();
     renderBackground = true;
     setVisible(true);
@@ -156,7 +162,7 @@ public class PopupMenu extends BasicComponent {
   }
 
   public void moveUp() {
-    int previousItem = currItem - 1;
+    int previousItem = selectedItem - 1;
     if (isWithinBounds(previousItem))
       setCurrentMenuItem(previousItem);
     else
@@ -164,17 +170,17 @@ public class PopupMenu extends BasicComponent {
   }
 
   public void moveDown() {
-    int nextItem = currItem + 1;
+    int nextItem = selectedItem + 1;
     if (isWithinBounds(nextItem))
-      setCurrentMenuItem(currItem + 1);
+      setCurrentMenuItem(selectedItem + 1);
     else
       setCurrentMenuItem(0);
   }
 
   private void setCurrentMenuItem(int item) {
-    if (item != currItem && isWithinBounds(item)) {
-      currItem = item;
-      selectMenuItem(currItem);
+    if (item != selectedItem && isWithinBounds(item)) {
+      selectedItem = item;
+      selectMenuItem(selectedItem);
     }
   }
 
@@ -183,12 +189,12 @@ public class PopupMenu extends BasicComponent {
   }
 
   private void select() {
-    selectMenuItem(currItem);
+    selectMenuItem(selectedItem);
     componentActivated(getSelectedMenuItem());
   }
 
   private void selectMenuItem(int item) {
-    currItem = item;
+    selectedItem = item;
     playMenuTick();
     updateMenuItems(item);
   }
@@ -226,7 +232,7 @@ public class PopupMenu extends BasicComponent {
   }
 
   public int getCurrentItem() {
-    return currItem;
+    return selectedItem;
   }
 
   private MenuItem getSelectedMenuItem() {
@@ -255,8 +261,12 @@ public class PopupMenu extends BasicComponent {
     return totalHeight;
   }
 
+  public String getTitle() {
+    return title;
+  }
+
   /**
-   * This method is invoked when a click has been made within a menu item
+   * This method is invoked when a click  has been made within a menu item
    *
    * @param source the menu item clicked on
    */
@@ -265,6 +275,7 @@ public class PopupMenu extends BasicComponent {
     setCurrentMenuItem(menuItems.indexOf(menuItem));
     menuItem.setFocus(false);
     notifyListeners();
+    menuItem.activate();
   }
 
   public void clear() {
@@ -286,5 +297,9 @@ public class PopupMenu extends BasicComponent {
     for (MenuItem menuItem : menuItems) {
       menuItem.setAcceptingInput(acceptingInput);
     }
+  }
+
+  public boolean atLeastHasOneItem() {
+    return !menuItems.isEmpty();
   }
 }

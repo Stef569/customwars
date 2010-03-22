@@ -15,23 +15,26 @@ import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.ui.MenuItem;
+import com.customwars.client.ui.PopupMenu;
 import com.customwars.client.ui.renderer.GameRenderer;
 import com.customwars.client.ui.state.InGameContext;
 import org.apache.log4j.Logger;
+import org.newdawn.slick.gui.AbstractComponent;
+import org.newdawn.slick.gui.ComponentListener;
 import org.newdawn.slick.gui.GUIContext;
 
 /**
  * Handles user input in the in game state
  */
-public class DefaultGameController implements GameController {
-  private static final Logger logger = Logger.getLogger(DefaultGameController.class);
+public class UserInGameInputHandler implements InGameInputHandler {
+  private static final Logger logger = Logger.getLogger(UserInGameInputHandler.class);
   private final InGameCursorController cursorControl;
   private final InGameContext inGameContext;
   private final GUIContext guiContext;
   private final Game game;
   private final Map<Tile> map;
 
-  public DefaultGameController(Game game, GameRenderer gameRenderer, InGameContext inGameContext) {
+  public UserInGameInputHandler(Game game, GameRenderer gameRenderer, InGameContext inGameContext) {
     this.game = game;
     this.map = game.getMap();
     this.inGameContext = inGameContext;
@@ -82,26 +85,42 @@ public class DefaultGameController implements GameController {
   }
 
   private void showContextMenu(Tile menuLocation) {
-    ShowPopupMenuAction showContextMenuAction = ShowPopupMenuAction.createPopupInMap("Game menu", menuLocation);
+    PopupMenu popupMenu = new PopupMenu(guiContext, "Game menu");
 
-    MenuItem endTurnMenuItem = new MenuItem(App.translate("end_turn"), guiContext);
-    showContextMenuAction.addAction(ActionFactory.buildEndTurnAction(), endTurnMenuItem);
+    MenuItem endTurnMenuItem = buildMenuItem(App.translate("end_turn"), ActionFactory.buildEndTurnAction());
+    popupMenu.addItem(endTurnMenuItem);
 
     if (App.isSinglePlayerGame()) {
-      MenuItem saveGameMenuItem = new MenuItem(App.translate("save_game"), guiContext);
-      showContextMenuAction.addAction(new SaveGameAction(), saveGameMenuItem);
+      MenuItem saveGameMenuItem = buildMenuItem(App.translate("save_game"), new SaveGameAction());
+      popupMenu.addItem(saveGameMenuItem);
 
-      MenuItem loadGameMenuItem = new MenuItem(App.translate("load_game"), guiContext);
-      showContextMenuAction.addAction(new LoadGameAction(), loadGameMenuItem);
+      MenuItem loadGameMenuItem = buildMenuItem(App.translate("load_game"), new LoadGameAction());
+      popupMenu.addItem(loadGameMenuItem);
     }
 
-    MenuItem saveReplayMenuItem = new MenuItem(App.translate("save_replay"), guiContext);
-    showContextMenuAction.addAction(new SaveReplayAction(), saveReplayMenuItem);
+    MenuItem saveReplayMenuItem = buildMenuItem(App.translate("save_replay"), new SaveReplayAction());
+    popupMenu.addItem(saveReplayMenuItem);
 
-    MenuItem endGameMenuItem = new MenuItem(App.translate("end_game"), guiContext);
-    showContextMenuAction.addAction(ActionFactory.buildEndGameAction(), endGameMenuItem);
+    MenuItem endGameMenuItem = buildMenuItem(App.translate("end_game"), ActionFactory.buildEndGameAction());
+    popupMenu.addItem(endGameMenuItem);
 
-    inGameContext.doAction(showContextMenuAction);
+    inGameContext.doAction(new ShowPopupMenuAction(popupMenu, menuLocation));
+  }
+
+  /**
+   * Build a menu item backed by a CWAction
+   *
+   * @param menuItemName The name of the menu item, as shown in the gui
+   * @param action       The action to perform when clicked on the menu item
+   */
+  public MenuItem buildMenuItem(final String menuItemName, final CWAction action) {
+    MenuItem menuItem = new MenuItem(menuItemName, inGameContext.getContainer());
+    menuItem.addListener(new ComponentListener() {
+      public void componentActivated(AbstractComponent source) {
+        inGameContext.doAction(action);
+      }
+    });
+    return menuItem;
   }
 
   public void handleB(Tile cursorLocation) {

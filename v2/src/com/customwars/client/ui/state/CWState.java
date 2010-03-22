@@ -42,22 +42,22 @@ public abstract class CWState extends BasicGameState {
   public void controlReleased(CWCommand command, CWInput cwInput) {
   }
 
-  public void enter(GameContainer container, StateBasedGame game) throws SlickException {
+  public void enter(GameContainer container, StateBasedGame stateBasedGame) throws SlickException {
     entered = true;
   }
 
-  public void leave(GameContainer container, StateBasedGame game) throws SlickException {
+  public void leave(GameContainer container, StateBasedGame stateBasedGame) throws SlickException {
     entered = false;
   }
 
-  public final void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
+  public final void render(GameContainer container, StateBasedGame stateBasedGame, Graphics g) throws SlickException {
     g.setColor(Color.white);
     render(container, g);
   }
 
   public abstract void render(GameContainer container, Graphics g) throws SlickException;
 
-  public final void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
+  public final void update(GameContainer container, StateBasedGame stateBasedGame, int delta) throws SlickException {
     update(container, delta);
   }
 
