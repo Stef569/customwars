@@ -11,6 +11,7 @@ import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Tile;
+import com.customwars.client.ui.PopupMenu;
 import com.customwars.client.ui.renderer.MapRenderer;
 import com.customwars.client.ui.state.InGameContext;
 import org.apache.log4j.Logger;
@@ -25,7 +26,7 @@ public class HumanUnitController extends UnitController {
   private static final Logger logger = Logger.getLogger(HumanUnitController.class);
   private final InGameContext inGameContext;
   private final MapRenderer mapRenderer;
-  private ShowPopupMenuAction menu;
+  private PopupMenu menu;
 
   public HumanUnitController(Unit unit, InGameContext gameContext) {
     super(unit, gameContext);
@@ -56,13 +57,13 @@ public class HumanUnitController extends UnitController {
 
   private void dropUnit(Tile selected) {
     // The menu option clicked on is the index of the unit in the transport List
-    int unitInTransportIndex = menu.getCurrentOption();
+    int unitInTransportIndex = menu.getCurrentItem();
 
     if (canDrop(selected, unitInTransportIndex)) {
       Unit unitInTransport = inGameContext.getUnitInTransport(unitInTransportIndex);
       inGameContext.addDropLocation(selected, unitInTransport);
       this.menu = new UnitMenuBuilder(this, unit, inGameContext, selected).getMenu();
-      showMenu(menu);
+      showMenu(selected);
     } else {
       logger.warn("Trying to drop unit on " + selected + " failed");
     }
@@ -114,12 +115,9 @@ public class HumanUnitController extends UnitController {
   private void showMenu(Tile selected) {
     inGameContext.registerClick(2, selected);
     this.menu = new UnitMenuBuilder(this, unit, inGameContext, selected).getMenu();
-    showMenu(menu);
-  }
 
-  private void showMenu(ShowPopupMenuAction showMenuAction) {
-    if (showMenuAction.atLeastHasOneItem()) {
-      inGameContext.doAction(showMenuAction);
+    if (menu.atLeastHasOneItem()) {
+      inGameContext.doAction(new ShowPopupMenuAction(menu, selected));
     } else {
       logger.warn("No menu items to show");
     }

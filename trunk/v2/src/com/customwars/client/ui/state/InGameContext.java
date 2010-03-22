@@ -5,7 +5,7 @@ import com.customwars.client.action.CWAction;
 import com.customwars.client.controller.ClickHistory;
 import com.customwars.client.controller.ControllerManager;
 import com.customwars.client.controller.CursorController;
-import com.customwars.client.controller.GameController;
+import com.customwars.client.controller.InGameInputHandler;
 import com.customwars.client.io.ResourceManager;
 import com.customwars.client.model.drop.DropLocationsQueue;
 import com.customwars.client.model.game.Game;
@@ -58,7 +58,7 @@ public class InGameContext {
   private Game game;
   private MoveTraverse moveTraverse;
   private GameRenderer gameRenderer;
-  private GameController gameControl;
+  private InGameInputHandler inGameInputHandler;
   private HUD hud;
   private ControllerManager controllerManager;
   private ResourceManager resources;
@@ -161,8 +161,8 @@ public class InGameContext {
     this.container = container;
   }
 
-  public void setGameController(GameController gameController) {
-    this.gameControl = gameController;
+  public void setInGameInputHandler(InGameInputHandler inGameInputHandler) {
+    this.inGameInputHandler = inGameInputHandler;
   }
 
   public void setStateChanger(StateChanger stateChanger) {
@@ -205,8 +205,8 @@ public class InGameContext {
     return container;
   }
 
-  public GameController getGameController() {
-    return gameControl;
+  public InGameInputHandler getInGameInputHandler() {
+    return inGameInputHandler;
   }
 
   public StateChanger getStateChanger() {
@@ -214,7 +214,7 @@ public class InGameContext {
   }
 
   public CursorController getCursorController() {
-    return gameControl.getCursorController();
+    return inGameInputHandler.getCursorController();
   }
 
   public StateSession getSession() {

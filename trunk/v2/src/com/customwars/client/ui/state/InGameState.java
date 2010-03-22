@@ -3,10 +3,10 @@ package com.customwars.client.ui.state;
 import com.customwars.client.App;
 import com.customwars.client.SFX;
 import com.customwars.client.controller.ControllerManager;
-import com.customwars.client.controller.DefaultGameController;
-import com.customwars.client.controller.GameController;
-import com.customwars.client.controller.GameReplayController;
 import com.customwars.client.controller.InGameCursorController;
+import com.customwars.client.controller.InGameInputHandler;
+import com.customwars.client.controller.ReplayInputHandler;
+import com.customwars.client.controller.UserInGameInputHandler;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.game.GameReplay;
 import com.customwars.client.model.game.Player;
@@ -38,7 +38,7 @@ import java.beans.PropertyChangeListener;
 /**
  * In this state the user can play and win a game against opponents
  * Rendering is handled by GameRenderer and hud
- * Input is handled by GameController
+ * Input is handled by InGameInputHandler
  * <p/>
  * The Game to display is read from the session when entering this state.
  * This class listens for game events and when the game is over changes to the GAME_OVER State
@@ -58,7 +58,7 @@ public class InGameState extends CWState implements PropertyChangeListener {
   private Point center;
 
   // Control
-  private GameController gameControl;
+  private InGameInputHandler inputHandler;
   private InGameCursorController cursorControl;
   private Input input;
   private boolean inputAllowed;
@@ -121,9 +121,9 @@ public class InGameState extends CWState implements PropertyChangeListener {
   }
 
   private void createReplayController() {
-    gameControl = new GameReplayController(stateSession.replay, gameRenderer, inGameContext);
-    cursorControl = gameControl.getCursorController();
-    inGameContext.setGameController(gameControl);
+    inputHandler = new ReplayInputHandler(stateSession.replay, gameRenderer, inGameContext);
+    cursorControl = inputHandler.getCursorController();
+    inGameContext.setInGameInputHandler(inputHandler);
   }
 
   private void initSubSystems(Game game) {
@@ -161,9 +161,9 @@ public class InGameState extends CWState implements PropertyChangeListener {
     ControllerManager controllerManager = new ControllerManager(inGameContext);
     inGameContext.setControllerManager(controllerManager);
 
-    gameControl = new DefaultGameController(game, gameRenderer, inGameContext);
-    cursorControl = gameControl.getCursorController();
-    inGameContext.setGameController(gameControl);
+    inputHandler = new UserInGameInputHandler(game, gameRenderer, inGameContext);
+    cursorControl = inputHandler.getCursorController();
+    inGameContext.setInGameInputHandler(inputHandler);
 
     controllerManager.initCityControllers();
     controllerManager.initUnitControllers();
@@ -269,7 +269,7 @@ public class InGameState extends CWState implements PropertyChangeListener {
   public void controlPressed(CWCommand command, CWInput cwInput) {
     if (isInputAllowed()) {
       if (inGameContext.canUndo() && command == CWInput.CANCEL) {
-        gameControl.undo();
+        inputHandler.undo();
         return;
       }
 
@@ -283,13 +283,13 @@ public class InGameState extends CWState implements PropertyChangeListener {
         Tile cursorLocation = gameRenderer.getCursorLocation();
         switch (command.getEnum()) {
           case SELECT:
-            gameControl.handleA(cursorLocation);
+            inputHandler.handleA(cursorLocation);
             break;
           case CANCEL:
-            gameControl.handleB(cursorLocation);
+            inputHandler.handleB(cursorLocation);
             break;
           case END_TURN:
-            gameControl.endTurn();
+            inputHandler.endTurn();
             break;
           case ZOOM_IN:
             camera.zoomIn();
@@ -298,7 +298,7 @@ public class InGameState extends CWState implements PropertyChangeListener {
             camera.zoomOut();
             break;
           case UNIT_CYCLE:
-            gameControl.startUnitCycle();
+            inputHandler.startUnitCycle();
             break;
         }
       }
@@ -313,7 +313,7 @@ public class InGameState extends CWState implements PropertyChangeListener {
 
         if (hud.isPopupVisible()) {
           if (!hud.isWithinPopupMenu(x, y)) {
-            gameControl.undo();
+            inputHandler.undo();
             input.consumeEvent();
           }
         } else {
@@ -322,9 +322,9 @@ public class InGameState extends CWState implements PropertyChangeListener {
           Tile mouseTile = map.pixelsToTile(mouseX, mouseY);
 
           if (cursorLocation.equals(mouseTile)) {
-            gameControl.handleA(cursorLocation);
+            inputHandler.handleA(cursorLocation);
           } else {
-            gameControl.undo();
+            inputHandler.undo();
           }
           input.consumeEvent();
         }

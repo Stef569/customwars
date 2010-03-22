@@ -9,12 +9,12 @@ import com.customwars.client.ui.state.InGameContext;
  * The Game Replay controller executes the next replay action
  * when any input is received.
  */
-public class GameReplayController implements GameController {
+public class ReplayInputHandler implements InGameInputHandler {
   private final GameReplay replay;
   private final InGameContext inGameContext;
   private final InGameCursorController cursorControl;
 
-  public GameReplayController(GameReplay replay, GameRenderer gameRenderer, InGameContext inGameContext) {
+  public ReplayInputHandler(GameReplay replay, GameRenderer gameRenderer, InGameContext inGameContext) {
     this.replay = replay;
     this.inGameContext = inGameContext;
     this.cursorControl = new InGameCursorController(replay.getInitialGame(), gameRenderer.getMapRenderer().getSpriteManager());

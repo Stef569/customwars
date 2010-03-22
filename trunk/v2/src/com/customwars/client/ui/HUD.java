@@ -22,7 +22,6 @@ import com.customwars.client.ui.sprite.SpriteManager;
 import com.customwars.client.ui.state.input.CWCommand;
 import org.apache.log4j.Logger;
 import org.newdawn.slick.Graphics;
-import org.newdawn.slick.gui.ComponentListener;
 import org.newdawn.slick.gui.GUIContext;
 
 import java.awt.Point;
@@ -190,7 +189,8 @@ public class HUD {
     }
   }
 
-  public void showPopUpInMap(Location popupLocation, String popupName, PopupMenu popup, ComponentListener componentListener) {
+  public void showPopUpInMap(Location popupLocation, PopupMenu popup) {
+    popup.init();
     int x = popupLocation.getCol() * tileSize + tileSize / 2;
     int y = popupLocation.getRow() * tileSize + tileSize / 2;
 
@@ -199,11 +199,11 @@ public class HUD {
       y = camera.getY() + tileSize / 2;
 
       if (!GUI.canFitToScreen(x, y, popup.getWidth(), popup.getHeight())) {
-        logger.warn("popup " + popupName + " cannot fit within the map");
+        logger.warn("popup " + popup.getTitle() + " cannot fit within the map");
       }
     }
     this.renderPopupInMap = true;
-    showPopup(new Point(x, y), popupName, popup, componentListener);
+    showPopup(new Point(x, y), popup);
   }
 
   /**
@@ -211,22 +211,23 @@ public class HUD {
    * if the popup can fit the container show it in the center
    * if the popup cannot fit split the popup up into 2 popups
    */
-  public void showPopup(String popupName, PopupMenu popup, ComponentListener componentListener) {
+  public void showPopup(PopupMenu popup) {
+    popup.init();
     Point center = GUI.getCenteredRenderPoint(popup.getSize(), guiContext);
 
     if (!GUI.canFitToScreen(center.x, center.y, popup.getWidth(), popup.getHeight())) {
-      logger.warn("popup " + popupName + " cannot fit within the screen");
+      logger.warn("popup " + popup.getTitle() + " cannot fit within the screen");
     }
     this.renderPopupInMap = false;
-    showPopup(center, popupName, popup, componentListener);
+    showPopup(center, popup);
   }
 
-  public void showPopup(Point popupLocation, String popupName, PopupMenu popup, ComponentListener componentListener) {
+  public void showPopup(Point popupLocation, PopupMenu popup) {
     this.popupMenu = popup;
     renderInfoPanels = false;
     popupMenu.setLocation(popupLocation.x, popupLocation.y);
     popupMenu.init();
-    popupMenu.addListener(componentListener);
+    popupMenu.setVisible(true);
     popupMenu.setAcceptingInput(true);
   }
 

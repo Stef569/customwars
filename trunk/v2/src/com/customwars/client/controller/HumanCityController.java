@@ -11,9 +11,13 @@ import com.customwars.client.model.gameobject.UnitFactory;
 import com.customwars.client.model.map.Direction;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.ui.MenuItem;
+import com.customwars.client.ui.PopupMenu;
 import com.customwars.client.ui.renderer.MapRenderer;
 import com.customwars.client.ui.state.InGameContext;
 import org.newdawn.slick.Image;
+import org.newdawn.slick.gui.AbstractComponent;
+import org.newdawn.slick.gui.ComponentListener;
+import org.newdawn.slick.gui.GUIContext;
 
 import java.awt.Color;
 
@@ -24,24 +28,26 @@ import java.awt.Color;
  * @author stefan
  */
 public class HumanCityController extends CityController {
-  private final InGameContext context;
+  private static final org.newdawn.slick.Color DARKER_TEXT_COLOR = new org.newdawn.slick.Color(255, 255, 255, 100);
+  private final InGameContext inGameContext;
   private final MapRenderer mapRenderer;
   private final ResourceManager resources;
+  private final GUIContext guiContext;
 
   public HumanCityController(City city, InGameContext inGameContext) {
     super(city, inGameContext.getGame());
-    this.context = inGameContext;
+    this.inGameContext = inGameContext;
     this.mapRenderer = inGameContext.getMapRenderer();
-    this.resources = context.getResourceManager();
-
+    this.resources = inGameContext.getResourceManager();
+    this.guiContext = inGameContext.getContainer();
   }
 
   public void handleAPress() {
     Tile selected = mapRenderer.getCursorLocation();
 
-    if (context.isDefaultMode() && canShowMenu()) {
-      CWAction showMenu = buildMenu(selected);
-      context.doAction(showMenu);
+    if (inGameContext.isDefaultMode() && canShowMenu()) {
+      PopupMenu popupMenu = buildMenu(selected);
+      inGameContext.doAction(new ShowPopupMenuAction(popupMenu));
     }
   }
 
@@ -54,34 +60,37 @@ public class HumanCityController extends CityController {
    * Get Unit copies, display units that this city can build
    * Units that cannot be bought show a darker unit image and have a null action when clicked on.
    */
-  private ShowPopupMenuAction buildMenu(Tile selected) {
-    ShowPopupMenuAction showCityPopupMenuAction = ShowPopupMenuAction.createCenteredPopup("Buy city menu");
+  private PopupMenu buildMenu(Tile selected) {
+    PopupMenu popupMenu = new PopupMenu(guiContext, "Buy city menu");
 
     for (Unit unit : UnitFactory.getAllUnits()) {
       if (city.canBuild(unit)) {
-        boolean canAffordUnit = city.getOwner().isWithinBudget(unit.getStats().getPrice());
-        MenuItem menuItem = buildMenuItem(unit, canAffordUnit);
+        int unitPrice = unit.getStats().getPrice();
+        boolean canAffordUnit = city.getOwner().isWithinBudget(unitPrice);
+        CWAction addUnitToTileAction;
 
         if (canAffordUnit) {
           unit.setOwner(city.getOwner());
-          CWAction action = ActionFactory.buildAddUnitToTileAction(unit, selected, false);
-          showCityPopupMenuAction.addAction(action, menuItem);
+          addUnitToTileAction = ActionFactory.buildAddUnitToTileAction(unit, selected, false);
         } else {
-          showCityPopupMenuAction.addAction(null, menuItem);
+          addUnitToTileAction = null;
         }
+
+        MenuItem menuItem = buildMenuItem(unit, addUnitToTileAction);
+        popupMenu.addItem(menuItem);
       }
     }
-    return showCityPopupMenuAction;
+    return popupMenu;
   }
 
-  private MenuItem buildMenuItem(Unit unit, boolean active) {
+  private MenuItem buildMenuItem(Unit unit, CWAction action) {
     String unitInfo = App.translate(unit.getStats().getName()) + ' ' + unit.getStats().getPrice();
     Color cityColor = city.getOwner().getColor();
-    Image unitImage = getUnitImg(unit, cityColor, active);
-    MenuItem item = new MenuItem(unitImage, unitInfo, context.getContainer());
+    Image unitImage = getUnitImg(unit, cityColor, action != null);
+    MenuItem item = buildMenuItem(action, unitImage, unitInfo);
 
-    if (!active) {
-      item.setTextColor(new org.newdawn.slick.Color(255, 255, 255, 100));
+    if (action == null) {
+      item.setTextColor(DARKER_TEXT_COLOR);
     }
     return item;
   }
@@ -95,6 +104,22 @@ public class HumanCityController extends CityController {
       unitImg = resources.getShadedUnitImg(unit, color, Direction.EAST);
     }
     return unitImg;
+  }
+
+  /**
+   * Build a menu item backed by a CWAction
+   *
+   * @param action       The action to perform when clicked on the menu item
+   * @param menuItemName The name of the menu item, as shown in the gui
+   */
+  public MenuItem buildMenuItem(final CWAction action, Image img, String menuItemName) {
+    MenuItem menuItem = new MenuItem(img, menuItemName, guiContext);
+    menuItem.addListener(new ComponentListener() {
+      public void componentActivated(AbstractComponent source) {
+        inGameContext.doAction(action);
+      }
+    });
+    return menuItem;
   }
 }
 

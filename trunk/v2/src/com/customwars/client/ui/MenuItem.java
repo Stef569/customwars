@@ -23,7 +23,6 @@ import java.util.Collection;
  * @author stefan
  */
 public class MenuItem extends MouseOverArea {
-  private static final int CURSOR_LEFT_MARGIN = 1, CURSOR_RIGHT_MARGIN = 5;
   private static final int ICON_LEFT_MARGIN = 2, ICON_RIGHT_MARGIN = 1;
   private static final int FONT_HORIZONTAL_MARGIN = 15;
   private static final int MENU_ITEM_MARGIN = 1;
@@ -159,5 +158,12 @@ public class MenuItem extends MouseOverArea {
   private void renderBorder(Graphics g) {
     g.setColor(Color.black);
     g.drawRect(getX(), getY(), getWidth(), getHeight());
+  }
+
+  /**
+   * Invoked when the menu item is activated by a key press.
+   */
+  protected void activate() {
+    super.notifyListeners();
   }
 }

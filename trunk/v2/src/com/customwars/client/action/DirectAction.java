@@ -23,7 +23,7 @@ public abstract class DirectAction extends AbstractCWAction {
     setActionCompleted(true);
   }
 
-  protected abstract void init(InGameContext context);
+  protected abstract void init(InGameContext inGameContext);
 
   protected abstract void invokeAction();
 
