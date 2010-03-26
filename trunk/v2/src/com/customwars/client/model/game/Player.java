@@ -55,13 +55,20 @@ public class Player extends GameObject {
 
   /**
    * Copy Constructor
+   * Note that the units and cities owned by this player are not copied
    *
    * @param otherPlayer player to copy
    */
   public Player(Player otherPlayer) {
-    this(otherPlayer.id, new Color(otherPlayer.color.getRGB()),
-      otherPlayer.name, otherPlayer.budget, otherPlayer.team, otherPlayer.ai);
-    super.setState(otherPlayer.getState());
+    super(otherPlayer);
+    this.id = otherPlayer.id;
+    this.color = otherPlayer.color;
+    this.name = otherPlayer.name;
+    this.budget = otherPlayer.budget;
+    this.team = otherPlayer.team;
+    this.ai = otherPlayer.ai;
+    this.army = new LinkedList<Unit>();
+    this.cities = new LinkedList<City>();
   }
 
   public Player(int id, Color color, String name, int startBudget, int team, boolean ai) {
