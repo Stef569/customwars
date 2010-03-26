@@ -65,6 +65,7 @@ public class InGameContext {
   private GameContainer container;
   private StateChanger stateChanger;
   private StateSession stateSession;
+  private CursorController cursorController;
 
   public InGameContext() {
     dropQueue = new DropLocationsQueue();
@@ -165,6 +166,10 @@ public class InGameContext {
     this.inGameInputHandler = inGameInputHandler;
   }
 
+  public void setCursorController(CursorController cursorController) {
+    this.cursorController = cursorController;
+  }
+
   public void setStateChanger(StateChanger stateChanger) {
     this.stateChanger = stateChanger;
   }
@@ -214,7 +219,7 @@ public class InGameContext {
   }
 
   public CursorController getCursorController() {
-    return inGameInputHandler.getCursorController();
+    return cursorController;
   }
 
   public StateSession getSession() {

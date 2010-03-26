@@ -15,6 +15,4 @@ public interface InGameInputHandler {
   void startUnitCycle();
 
   void endTurn();
-
-  InGameCursorController getCursorController();
 }

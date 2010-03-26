@@ -16,7 +16,6 @@ import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.ui.MenuItem;
 import com.customwars.client.ui.PopupMenu;
-import com.customwars.client.ui.renderer.GameRenderer;
 import com.customwars.client.ui.state.InGameContext;
 import org.apache.log4j.Logger;
 import org.newdawn.slick.gui.AbstractComponent;
@@ -34,12 +33,12 @@ public class UserInGameInputHandler implements InGameInputHandler {
   private final Game game;
   private final Map<Tile> map;
 
-  public UserInGameInputHandler(Game game, GameRenderer gameRenderer, InGameContext inGameContext) {
-    this.game = game;
+  public UserInGameInputHandler(InGameContext inGameContext) {
+    this.game = inGameContext.getGame();
     this.map = game.getMap();
     this.inGameContext = inGameContext;
     this.guiContext = inGameContext.getContainer();
-    this.cursorControl = new InGameCursorController(game, gameRenderer.getMapRenderer().getSpriteManager());
+    this.cursorControl = (InGameCursorController) inGameContext.getCursorController();
   }
 
   public void handleA(Tile cursorLocation) {
@@ -53,7 +52,7 @@ public class UserInGameInputHandler implements InGameInputHandler {
     } else if (inGameContext.isDefaultMode()) {
       showContextMenu(cursorLocation);
     } else {
-      logger.warn("could not handle A press");
+      throw new AssertionError("could not handle A press");
     }
   }
 
@@ -164,9 +163,5 @@ public class UserInGameInputHandler implements InGameInputHandler {
   public void endTurn() {
     CWAction endTurn = ActionFactory.buildEndTurnAction();
     inGameContext.doAction(endTurn);
-  }
-
-  public InGameCursorController getCursorController() {
-    return cursorControl;
   }
 }
