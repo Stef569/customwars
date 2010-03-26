@@ -2,7 +2,6 @@ package com.customwars.client.controller;
 
 import com.customwars.client.model.game.GameReplay;
 import com.customwars.client.model.map.Tile;
-import com.customwars.client.ui.renderer.GameRenderer;
 import com.customwars.client.ui.state.InGameContext;
 
 /**
@@ -12,12 +11,10 @@ import com.customwars.client.ui.state.InGameContext;
 public class ReplayInputHandler implements InGameInputHandler {
   private final GameReplay replay;
   private final InGameContext inGameContext;
-  private final InGameCursorController cursorControl;
 
-  public ReplayInputHandler(GameReplay replay, GameRenderer gameRenderer, InGameContext inGameContext) {
+  public ReplayInputHandler(GameReplay replay, InGameContext inGameContext) {
     this.replay = replay;
     this.inGameContext = inGameContext;
-    this.cursorControl = new InGameCursorController(replay.getInitialGame(), gameRenderer.getMapRenderer().getSpriteManager());
   }
 
   @Override
@@ -51,10 +48,5 @@ public class ReplayInputHandler implements InGameInputHandler {
     } else {
       inGameContext.getStateChanger().changeTo("GAME_OVER");
     }
-  }
-
-  @Override
-  public InGameCursorController getCursorController() {
-    return cursorControl;
   }
 }

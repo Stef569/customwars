@@ -121,8 +121,7 @@ public class InGameState extends CWState implements PropertyChangeListener {
   }
 
   private void createReplayController() {
-    inputHandler = new ReplayInputHandler(stateSession.replay, gameRenderer, inGameContext);
-    cursorControl = inputHandler.getCursorController();
+    inputHandler = new ReplayInputHandler(stateSession.replay, inGameContext);
     inGameContext.setInGameInputHandler(inputHandler);
   }
 
@@ -161,8 +160,10 @@ public class InGameState extends CWState implements PropertyChangeListener {
     ControllerManager controllerManager = new ControllerManager(inGameContext);
     inGameContext.setControllerManager(controllerManager);
 
-    inputHandler = new UserInGameInputHandler(game, gameRenderer, inGameContext);
-    cursorControl = inputHandler.getCursorController();
+    cursorControl = new InGameCursorController(game, gameRenderer.getMapRenderer().getSpriteManager());
+    inGameContext.setCursorController(cursorControl);
+
+    inputHandler = new UserInGameInputHandler(inGameContext);
     inGameContext.setInGameInputHandler(inputHandler);
 
     controllerManager.initCityControllers();
