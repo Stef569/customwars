@@ -57,7 +57,7 @@ public class GameOverState extends CWState {
       endServerGame();
     }
 
-    if (App.getBoolean("recordreplay")) {
+    if (App.getBoolean("game.recordreplay.prompt")) {
       if (GUI.showConfirmationDialog("Save replay", "save") == JOptionPane.YES_OPTION) {
         new SaveReplayAction(stateSession.replay).invoke(null);
       }

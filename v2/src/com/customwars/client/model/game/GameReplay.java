@@ -4,12 +4,14 @@ import com.customwars.client.action.ActionParser;
 import com.customwars.client.action.CWAction;
 import com.customwars.client.tools.Args;
 import com.customwars.client.ui.state.InGameContext;
+import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -20,6 +22,7 @@ import java.util.List;
  * When at the last action hasMoreActions returns false.
  */
 public class GameReplay implements Serializable {
+  private static final Logger logger = Logger.getLogger(GameReplay.class);
   private Game initialGame;
   private List<String> replayQueue;
   private transient int currentReplayIndex;
@@ -32,7 +35,7 @@ public class GameReplay implements Serializable {
     this.currentReplayIndex = 0;
   }
 
-  public void addActions(List<CWAction> actions) {
+  public void addActions(Collection<CWAction> actions) {
     for (CWAction action : actions) {
       replayQueue.add(action.getActionText());
     }
@@ -48,6 +51,7 @@ public class GameReplay implements Serializable {
   public void execNextReplayAction(InGameContext inGameContext) {
     if (hasMoreActions()) {
       String replayActionText = replayQueue.get(currentReplayIndex);
+      logger.debug(replayActionText);
       CWAction replayAction = actionParser.parse(replayActionText);
       inGameContext.doAction(replayAction);
 

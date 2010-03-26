@@ -30,6 +30,15 @@ public class GameObject implements Observable, Serializable {
 
   public GameObject(GameObject otherGameObject) {
     this.state = otherGameObject.state;
+    copyListeners(otherGameObject);
+  }
+
+  private void copyListeners(GameObject otherGameObject) {
+    if (otherGameObject.changeSupport != null) {
+      for (PropertyChangeListener listener : otherGameObject.changeSupport.getPropertyChangeListeners()) {
+        changeSupport.addPropertyChangeListener(listener);
+      }
+    }
   }
 
   public void setState(GameObjectState state) {
