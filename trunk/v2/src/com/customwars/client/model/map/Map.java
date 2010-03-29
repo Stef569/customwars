@@ -34,9 +34,9 @@ import java.util.Set;
  * Handles Fog, paths and units
  * Zones: move zone, attack zone
  * Surrounding information: suppliables, enemies in a Range
- *
+ * <p/>
  * At each start of a turn the map is reset see {@link #resetMap(Player)}
- *
+ * <p/>
  * Players in a map are called 'map players'
  * name and funds unknown they are used to link units and cities to a player.
  * They hold the units, cities, hq location, the default color and the player ID.
@@ -46,20 +46,20 @@ import java.util.Set;
 public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
   private static final Logger logger = Logger.getLogger(Map.class);
   private String mapName, author, description;    // The properties of the map
-  private boolean fogOfWarOn;       // Is fog of war in effect
+  private boolean fogOfWarOn;                     // Is fog of war in effect
   private transient PathFinder pathFinder;        // To builds paths within the map
   private Player neutralPlayer;     // Idle neutral player owner of the neutral cities
   private GameRules defaultRules;   // The default game rules as chosen by the map creator
 
   /**
-   * Create an anonymous map
+   * Convenient constructor to create an anonymous map. The map name and author are set to anonymous.
    */
   public Map(int cols, int rows, int tileSize, Terrain startTerrain) {
-    this("empty", "anonymous", "empty", cols, rows, tileSize, startTerrain);
+    this("anonymous", "anonymous", "", cols, rows, tileSize, startTerrain);
   }
 
   /**
-   * Create a new named Map
+   * Create a new named Map. Fog is off.
    *
    * @param mapName      The name of the map
    * @param author       The creator of this map
@@ -90,7 +90,17 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
     }
   }
 
-  public void validate() {
+  /**
+   * Validate units and cities within this map.
+   * A valid unit, city is:
+   * <ul>
+   * <li>Located in the map</li>
+   * <li>Owned by a player</li>
+   * </ul>
+   * <p/>
+   * When an invalid unit or city is found an IllegalArgumentException is thrown.
+   */
+  public void validate() throws IllegalArgumentException {
     for (Tile t : getAllTiles()) {
       City city = getCityOn(t);
       Unit unit = getUnitOn(t);
@@ -174,8 +184,8 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
   }
 
   /**
-   * Activate the units of the given player
-   * if fog is enabled the vision range for each owned and allied unit/city is set.
+   * Activate the units of the given player so they can be controlled.
+   * If fog is enabled the los for each owned and allied unit/city is revealed.
    *
    * @param player The player to reset the map for
    */
@@ -186,13 +196,6 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
     }
   }
 
-  /**
-   * Reset all units so the given player can see
-   * #1 his units, enemy units in los and
-   * #2 hidden units adjacent to one of his units
-   *
-   * @param player The player who's units should be reset
-   */
   private void resetUnits(Player player) {
     resetAllUnitStates(player);
     resetAllHiddenUnits(player);
@@ -233,11 +236,14 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
   }
 
   /**
-   * Determine if the given unit should be hidden
-   *
-   * #1 Allied hidden units are visible
-   * #2 Hidden enemy units adjacent to an allied unit or city are visible
-   * all others are hidden
+   * Determine if the given unit should be revealed.
+   * A unit is revealed when:
+   * <ul>
+   * <li>The unit is allied to the active player</li>
+   * <li>The enemy unit is adjacent to an allied unit or city</li>
+   * </ul>
+   * Note that only units that have the reveal/hide ability can reset their hidden status.
+   * All other units are ignored.
    *
    * @param unit   The unit to reset the hidden flag for
    * @param player The active player
@@ -276,7 +282,7 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
    * @return units in supply range of supplier that can be supplied and are not fogged
    */
   public List<Unit> getSuppliablesInRange(Unit supplier) {
-    List<Unit> units = new ArrayList<Unit>();
+    List<Unit> units = new ArrayList<Unit>(4);
     Location supplierLocation = supplier.getLocation();
     Range supplyRange = supplier.getStats().getSupplyRange();
 
@@ -284,7 +290,7 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
       Unit unitInRange = getUnitOn(t);
 
       if (unitInRange != null) {
-        if (!t.isFogged() && isUnitVisible(unitInRange) && supplier.canSupply(unitInRange)) {
+        if (isUnitVisible(unitInRange) && supplier.canSupply(unitInRange)) {
           units.add(unitInRange);
         }
       }
@@ -314,7 +320,7 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
       Unit unit = getUnitOn(t);
       City city = getCityOn(t);
 
-      if (!t.isFogged() && isUnitVisible(unit) && attacker.canAttack(unit)) {
+      if (isUnitVisible(unit) && attacker.canAttack(unit)) {
         enemies.add(unit);
       }
 
@@ -326,8 +332,19 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
   }
 
 
+  /**
+   * A unit is visible when the tile it is on is not fogged and the unit is not hidden.
+   *
+   * @param unit the unit to be checked for visibility
+   * @return if the unit is visible to the active player
+   */
   private boolean isUnitVisible(Unit unit) {
-    return unit != null && !unit.isHidden();
+    if (unit != null) {
+      Tile t = (Tile) unit.getLocation();
+      return !t.isFogged() && !unit.isHidden();
+    } else {
+      return false;
+    }
   }
 
   /**
@@ -370,7 +387,7 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
    * @param attacker The attacker to build the attack zone for
    */
   public void buildAttackZone(Attacker attacker) {
-    List<Location> attackZone = new ArrayList<Location>();
+    List<Location> attackZone = new ArrayList<Location>(30);
     Range attackRange = attacker.getAttackRange();
 
     if (attacker.getLocation() instanceof Unit) {
@@ -487,9 +504,9 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
   }
 
   /**
-   * Reveals all visible tiles within a vision range
+   * Reveals all visible tiles within a vision range including the baseTile
    *
-   * @param baseTile The location tile to show the los around
+   * @param baseTile The tile to show the line of sight around
    * @param vision   The amount of tiles that have to be shown around the baseTile in all directions
    */
   private void showLos(Tile baseTile, int vision) {
@@ -662,8 +679,9 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
    * @return a list of locations where units can be dropped on
    */
   public List<T> getFreeDropLocations(Unit transport) {
-    List<T> surroundingTiles = new ArrayList<T>();
-    for (T tile : getSurroundingTiles(transport.getLocation(), 1, transport.getMaxDropRange())) {
+    int maxDropRange = transport.getMaxDropRange();
+    List<T> surroundingTiles = new ArrayList<T>(maxDropRange);
+    for (T tile : getSurroundingTiles(transport.getLocation(), 1, maxDropRange)) {
       if (isFreeDropLocation(tile, transport)) {
         surroundingTiles.add(tile);
       }
@@ -672,19 +690,24 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
   }
 
   /**
-   * Determines if the transporting unit can drop a given unit(by index)
-   * from the transport to the given drop location.
-   * while taking into account the visibility of the active player
+   * Determines if a unit can be dropped on the drop location.
+   * A drop location is considered free when one of the following conditions is true:
+   * <ul>
+   * <li>The drop location is fogged</li>
+   * <li>The drop location is not occupied by a unit</li>
+   * <li>The drop location is occupied by a hidden unit</li>
+   * <li>The unit on the drop location is equal to the transporter</li>
+   * </ul>
    *
-   * @param dropLocation The tile to be checked if it is a valid drop location
-   * @param transporter  The unit that attempts to drop a unit to tile
-   * @return Can the transporter drop a unit to the given tile
+   * @param dropLocation The tile that a unit wants to be dropped on
+   * @param transporter  The transport unit that attempts to drop a unit to the dropLocation
+   * @return Can a unit be dropped to the given drop location
    */
   public boolean isFreeDropLocation(Tile dropLocation, Unit transporter) {
     Unit unitOnDropLocation = getUnitOn(dropLocation);
 
     return dropLocation.isFogged() || dropLocation.getLocatableCount() == 0 ||
-      unitOnDropLocation.isHidden() || unitOnDropLocation == transporter;
+            unitOnDropLocation.isHidden() || unitOnDropLocation == transporter;
   }
 
   /**
@@ -818,9 +841,9 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
   }
 
   /**
-   * Retrieve a map player with the given color from this map
-   * If the color equals the neutral color the neutral player is returned
-   *
+   * Retrieve a map player with the given color from this map.
+   * If the color equals the neutral color the neutral player is returned.
+   * <p/>
    * If the color is not used by a player in the map and it's not the neutral player
    * <tt>null</tt> is returned.
    *

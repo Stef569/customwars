@@ -30,12 +30,12 @@ public class Tile extends AbstractLocation implements Observable {
   public Tile(int col, int row, Terrain terrain) {
     super(col, row);
     setTerrain(terrain);
-    locatables = new ArrayList<Locatable>();
+    locatables = new ArrayList<Locatable>(3);
   }
 
   public Tile(int col, int row) {
     super(col, row);
-    locatables = new ArrayList<Locatable>();
+    locatables = new ArrayList<Locatable>(3);
   }
 
   public boolean canAdd(Locatable locatable) {

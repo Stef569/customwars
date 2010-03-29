@@ -32,8 +32,6 @@ public class MapLoader implements CWResourceLoader {
 
   /**
    * Load all the maps from the 'map paths locations'
-   * using the CW2 binary map parser
-   *
    * Maps are searched for in the current map path and all subdirs
    */
   public void load() throws IOException {
@@ -58,6 +56,7 @@ public class MapLoader implements CWResourceLoader {
     for (File mapFile : fsm.getFiles(dir)) {
       if (mapFile.getName().endsWith(mapExtension)) {
         InputStream in = ResourceLoader.getResourceAsStream(mapFile.getPath());
+        logger.info("Loading map " + mapFile);
         loadMap(parentDir, in);
       } else {
         logger.warn("Skipping " + mapFile + " wrong extension expected " + mapExtension);

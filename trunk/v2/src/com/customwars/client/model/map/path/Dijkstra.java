@@ -11,18 +11,16 @@ import java.util.List;
  * Dijkstra class - Pathfinder algorithm
  * last updated on January 29, 2008, 2:08 AM
  * status: completed
- * dependancies:
  * created by Benjamin Islip
- * Revision:
- * Stef 31-03-08: Replaced integer directions by Direction enum
  */
+
 public class Dijkstra {
   private int mapWidth, mapHeight;
   private int maxMovement;            // the maximum amount of nodes to be traversed
   private int startX, startY;
   private int distanceMap[][];        // the distance every tile is from the target
   private Direction pathMap[][];      // tells each tile the best step toward the target
-  private boolean checkMap[][];       // a tile is checked (true) when it has been procesed
+  private boolean checkMap[][];       // a tile is checked (true) when it has been processed
   private MovementCost movementCosts; // a class that calculates movement costs
 
   /**
@@ -116,7 +114,7 @@ public class Dijkstra {
   /**
    * @param x x coordinate of the destination.
    * @param y y coordinate of the destination.
-   * @return a vector containing the directions to the destination (x, y).
+   * @return The directions to the destination (x, y).
    *         returns null if no path can be found.
    */
   public List<Direction> getPath(int x, int y) {
@@ -152,7 +150,7 @@ public class Dijkstra {
   /**
    * @param x destination.
    * @param y destination.
-   * @return a vector containing all the positions to the destination (x, y).
+   * @return All the positions to the destination (x, y).
    *         returns null if no route can be found.
    */
   public List<Point> getRoute(int x, int y) {
@@ -183,10 +181,10 @@ public class Dijkstra {
   /**
    * todo: make this method more effecient by making the calculate method add the values.
    *
-   * @return a vector containing all the avaliable movement options.
+   * @return All the available movement options.
    */
   public List<Point> getMoveZone() {
-    List<Point> zone = new ArrayList<Point>();
+    List<Point> zone = new ArrayList<Point>(20);
 
     for (int row = 0; row < mapHeight; row++) {
       for (int col = 0; col < mapWidth; col++) {
@@ -200,7 +198,7 @@ public class Dijkstra {
 
   /**
    * returns true if tile(x, y) is a possible movement option.
-   * Tip: use getMoveZone() for all the avaliable movement options.
+   * Tip: use getMoveZone() for all the available movement options.
    *
    * @return whether the unit can move to the location.
    */
@@ -210,8 +208,6 @@ public class Dijkstra {
 
   /**
    * The move costs to use in Dijkstra
-   *
-   * @param movementCosts
    */
   public void setMovementCosts(MovementCost movementCosts) {
     this.movementCosts = movementCosts;
