@@ -1,172 +1,72 @@
 package com.customwars.client.model.game;
 
-import com.customwars.client.App;
-import com.customwars.client.model.gameobject.City;
-import com.customwars.client.model.gameobject.Unit;
-import com.customwars.client.model.gameobject.UnitFactory;
-
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.Serializable;
-import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
- * Gather statistics for each player in the given game.
- * Player statistics can be retrieved by calling {@link #getPlayerStats(Player)}
- *
- * @author stefan
+ * Contains game statistics for each player. Keyed by a String. The value can be in the form of:
+ * <ul>
+ * <li>text</li>
+ * <li>number</li>
+ * <li>array</li>
  */
-public class GameStatistics implements PropertyChangeListener, Serializable {
-  private final TurnBasedGame game;
+public class GameStatistics {
+  private final Map<Integer, Map<String, Object>> playerStatistics;
 
-  // Using the Player object as key in the playerStatistics Map causes problems when serialising.
-  // Using the Integer playerID solves that.
-  private final Map<Integer, PlayerStats> playerStatistics;
-
-  public GameStatistics(TurnBasedGame otherGame, GameStatistics otherStatistics) {
-    this.game = otherGame;
-    playerStatistics = new HashMap<Integer, PlayerStats>(otherStatistics.playerStatistics);
+  public GameStatistics() {
+    playerStatistics = new HashMap<Integer, Map<String, Object>>();
   }
 
-  public GameStatistics(TurnBasedGame game) {
-    this.game = game;
-    this.playerStatistics = new HashMap<Integer, PlayerStats>();
+  public GameStatistics(List<Player> players) {
+    this();
 
-    addListeners(game);
-    initPlayerStatistics();
-  }
-
-  private void addListeners(TurnBasedGame game) {
-    for (Player p : game.getAllPlayers()) {
-      p.addPropertyChangeListener(this);
-
-      for (City city : p.getAllCities()) {
-        city.addPropertyChangeListener(this);
-      }
-    }
-
-    Player neutralPlayer = game.getMap().getNeutralPlayer();
-    for (City neutralCity : neutralPlayer.getAllCities()) {
-      neutralCity.addPropertyChangeListener(this);
+    for (Player player : players) {
+      addPlayer(player);
     }
   }
 
-  private void initPlayerStatistics() {
-    for (Player player : game.getAllPlayers()) {
-      playerStatistics.put(player.getId(), new PlayerStats());
-    }
+  public void addPlayer(Player player) {
+    playerStatistics.put(player.getId(), new HashMap<String, Object>());
   }
 
-  /**
-   * Retrieve all statistics for a player
-   *
-   * @param player The player to retrieve statistics for
-   * @return A Map of statistics example: key="units killed" value="4"
-   */
-  public Map<String, String> getPlayerStats(Player player) {
-    if (playerStatistics.containsKey(player.getId())) {
-      PlayerStats playerStats = playerStatistics.get(player.getId());
-      playerStats.update();
-      return playerStats.getStats();
+  public GameStatistics(GameStatistics otherGameStatistics) {
+    playerStatistics = new HashMap<Integer, Map<String, Object>>(otherGameStatistics.playerStatistics);
+  }
+
+  void setPlayerStat(int playerID, String key, Object value) {
+    playerStatistics.get(playerID).put(key, value);
+  }
+
+  void addOne(int playerID, String key) {
+    int val = getNumericStat(playerID, key) + 1;
+    setPlayerStat(playerID, key, val + "");
+  }
+
+  public Set<String> getStatKeys(int playerID) {
+    return playerStatistics.get(playerID).keySet();
+  }
+
+  public String getTextStat(int player, String key) {
+    return getStat(player, key) + "";
+  }
+
+  public int getNumericStat(int playerID, String key) {
+    Object value = getStat(playerID, key);
+
+    if (value == null || value.equals("")) {
+      return 0;
     } else {
-      return Collections.emptyMap();
+      return Integer.parseInt(value + "");
     }
   }
 
-  public void propertyChange(PropertyChangeEvent evt) {
-    if (!game.isStarted()) return;
-
-    String propertyName = evt.getPropertyName();
-    if (evt.getSource() instanceof Player) {
-      if (propertyName.equals("unit")) {
-        unitInPlayerChange(evt);
-      }
-    } else if (evt.getSource() instanceof City) {
-      if (propertyName.equals("captured")) {
-        cityCaptureChange(evt);
-      }
-    }
+  public int[] getArrayStat(int playerID, String key) {
+    return (int[]) getStat(playerID, key);
   }
 
-  private void unitInPlayerChange(PropertyChangeEvent evt) {
-    Player player = (Player) evt.getSource();
-    Player activePlayer = game.getActivePlayer();
-    PlayerStats playerStats = playerStatistics.get(player.getId());
-
-    if (evt.getOldValue() == null && evt.getNewValue() != null) {
-      Unit unit = (Unit) evt.getNewValue();
-      playerStats.unitsCreated++;
-      playerStats.createdUnitIDs[unit.getStats().getID()]++;
-    } else if (evt.getOldValue() != null && evt.getNewValue() == null) {
-      playerStats.unitsLost++;
-
-      // Don't record units killing themselves..
-      if (activePlayer != player) {
-        PlayerStats activePlayerStats = getActivePlayerStats();
-        activePlayerStats.unitsKilled++;
-      }
-    }
-  }
-
-  private void cityCaptureChange(PropertyChangeEvent evt) {
-    if ((Boolean) evt.getNewValue()) {
-      PlayerStats activePlayerStats = getActivePlayerStats();
-      activePlayerStats.citiesCaptured++;
-    }
-  }
-
-  private PlayerStats getActivePlayerStats() {
-    return playerStatistics.get(game.getActivePlayer().getId());
-  }
-
-  private static class PlayerStats implements Serializable {
-    public int unitsCreated, unitsKilled, unitsLost, citiesCaptured;
-    public final int[] createdUnitIDs = new int[UnitFactory.countUnits()];
-    private transient Map<String, String> stats;
-
-    public PlayerStats() {
-      stats = new HashMap<String, String>();
-    }
-
-    public void update() {
-      stats.put("Units Created", unitsCreated + "");
-      stats.put("Units Killed", unitsKilled + "");
-      stats.put("Units Lost", unitsLost + "");
-      stats.put("Cities Captured", citiesCaptured + "");
-      stats.put("Favorite unit", getFavoriteUnit());
-    }
-
-    private String getFavoriteUnit() {
-      int favoriteUnitID = -1;
-      int highestUnitCount = 0;
-
-      for (int unitID = 0; unitID < createdUnitIDs.length; unitID++) {
-        int unitCount = createdUnitIDs[unitID];
-        if (unitCount > highestUnitCount) {
-          highestUnitCount = unitCount;
-          favoriteUnitID = unitID;
-        }
-      }
-
-      if (favoriteUnitID == -1) {
-        return "";
-      } else {
-        Unit favoriteUnit = UnitFactory.getUnit(favoriteUnitID);
-        return App.translate(favoriteUnit.getStats().getName());
-      }
-    }
-
-    public Map<String, String> getStats() {
-      return Collections.unmodifiableMap(stats);
-    }
-
-    private void readObject(ObjectInputStream in) throws ClassNotFoundException, IOException {
-      in.defaultReadObject();
-      stats = new HashMap<String, String>();
-    }
+  private Object getStat(int player, String key) {
+    return playerStatistics.get(player).get(key);
   }
 }

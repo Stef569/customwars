@@ -14,26 +14,28 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * CW Impl of a Turnbased game
+ * CW Impl of a Turnbased game.
+ * <p/>
  * The Players in the map(map players) will be replaced by players from the players list(game players).
- * map players have an ID, Color and a HQ(if any), all other player values are default or null values.
- *
+ * Map players have an ID, Color and a HQ(if any), all other player values are default or null values.
+ * <p/>
  * Usage:
  * Game game = new Game(map,players,gameConfig)
  * game.startGame();
  * game.endTurn();
  * game.endTurn();
- * ...
  */
 public class Game extends TurnBasedGame implements PropertyChangeListener {
   private int weather;            // The current weather in effect
   private int cityFunds;          // The amount of money each City produces each turn
+  private final GameStatistics gameStatistics;  // Holds statistics for each player(number of units killed, cities captures,...)
 
   private Unit activeUnit;        // There can only be one active unit in a game at any time
 
   public Game(Map<Tile> map, List<Player> players, GameRules gameRules) {
     super(map, players, gameRules.getDayLimit());
     applyGameConfig(gameRules);
+    gameStatistics = new GameStatistics(players);
     init();
   }
 
@@ -52,6 +54,7 @@ public class Game extends TurnBasedGame implements PropertyChangeListener {
     super(otherGame);
     this.weather = otherGame.weather;
     this.cityFunds = otherGame.cityFunds;
+    this.gameStatistics = new GameStatistics(otherGame.gameStatistics);
 
     if (otherGame.activeUnit != null) {
       this.activeUnit = map.getUnitOn(otherGame.activeUnit.getLocation());
@@ -59,17 +62,22 @@ public class Game extends TurnBasedGame implements PropertyChangeListener {
     init();
   }
 
+  private void init() {
+    replaceMapPlayers();
+    initCityFunds();
+    new GameStatisticsListener(this, gameStatistics);
+  }
+
   /**
    * Replace mapPlayers with GamePlayers
    * by comparing their ID
    */
-  private void init() {
+  private void replaceMapPlayers() {
     Collection<Player> mapPlayers = map.getUniquePlayers();
     for (Player player : mapPlayers) {
       Player gamePlayer = getPlayerByID(player.getId());
       map.replacePlayer(player, gamePlayer);
     }
-    initCityFunds();
   }
 
   private void initCityFunds() {
@@ -96,7 +104,6 @@ public class Game extends TurnBasedGame implements PropertyChangeListener {
    */
   public void startGame(Player gameStarter) {
     super.startGame(gameStarter);
-    initZones();
 
     for (Player player : getAllPlayers()) {
       player.addPropertyChangeListener(this);
@@ -110,35 +117,18 @@ public class Game extends TurnBasedGame implements PropertyChangeListener {
 
   /**
    * Create move/Attack zones for each unit of each player.
-   * The map is temporarily reset for each player since fog and hidden units affects zones.
    */
   public void initZones() {
-    Collection<Tile> tileCopies = new ArrayList<Tile>(map.countTiles());
-
-    // Save the col, row and fogged information
-    for (Tile t : map.getAllTiles()) {
-      Tile tileCopy = new Tile(t.getCol(), t.getRow());
-      tileCopy.setFogged(t.isFogged());
-      tileCopies.add(tileCopy);
-    }
-
+    // The map is temporarily reset for each player since fog and hidden units affects zones.
     for (Player player : getAllPlayers()) {
       map.resetFogMap(player);
       map.resetAllHiddenUnits(player);
       map.initUnitZonesForPlayer(player);
     }
 
-    // Put the map back in the state it was before invoking this method
-    Player activePlayer = getActivePlayer();
-    map.resetFogMap(activePlayer);
-    map.resetAllHiddenUnits(activePlayer);
-
-    // Tiles we could see before remain visible
-    for (Tile t : tileCopies) {
-      if (!t.isFogged()) {
-        map.getTile(t).setFogged(false);
-      }
-    }
+    // put the map back in the state it was before invoking this method
+    map.resetFogMap(getActivePlayer());
+    map.resetAllHiddenUnits(getActivePlayer());
   }
 
   void startTurn(Player player) {
@@ -293,5 +283,9 @@ public class Game extends TurnBasedGame implements PropertyChangeListener {
 
   public int getWeather() {
     return weather;
+  }
+
+  public GameStatistics getStats() {
+    return gameStatistics;
   }
 }

@@ -3,23 +3,28 @@ package com.customwars.client.ui.renderer;
 import com.customwars.client.App;
 import com.customwars.client.io.loading.ThinglePageLoader;
 import com.customwars.client.model.game.Game;
+import com.customwars.client.model.game.GameStatistics;
 import com.customwars.client.model.game.Player;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.thingle.Page;
 import org.newdawn.slick.thingle.Widget;
 
-import java.util.Map;
-
 /**
  * This Renderer renders a game over screen in the form of a table.
- * Each column contains statistics for a player in the given game.
+ * The first column contains the translated player statistic keys
+ * All other columns contain statistics for a player.
+ * <p/>
+ * Example:
+ * Player1 Player2
+ * Units lost    5       8
+ * Units killed  0       2
  */
 public class GameOverRenderer implements Renderable {
   private static final int COLUMN_WIDTH = 100;
   private Page page;
-  private Game game;
   private Iterable<Player> players;
   private Player firstPlayer;
+  private GameStatistics gameStats;
 
   public void load(Object controller) {
     ThinglePageLoader loader = new ThinglePageLoader(App.get("gui.path"));
@@ -27,7 +32,7 @@ public class GameOverRenderer implements Renderable {
   }
 
   public void buildGUI(Game game) {
-    this.game = game;
+    this.gameStats = game.getStats();
     this.players = game.getAllPlayers();
     this.firstPlayer = players.iterator().next();
     buildTable();
@@ -69,7 +74,7 @@ public class GameOverRenderer implements Renderable {
   }
 
   private Widget[] createRows() {
-    int rowCount = game.getPlayerStats(firstPlayer).size();
+    int rowCount = gameStats.getStatKeys(firstPlayer.getId()).size();
     Widget[] rows = new Widget[rowCount];
 
     for (int i = 0; i < rows.length; i++) {
@@ -80,26 +85,42 @@ public class GameOverRenderer implements Renderable {
   }
 
   private void addFirstColumn(Widget[] rows) {
-    Map<String, String> playerStats = game.getPlayerStats(firstPlayer);
     int rowIndex = 0;
-
-    for (String statKey : playerStats.keySet()) {
-      Widget cell = createCell(statKey);
-      rows[rowIndex++].add(cell);
+    for (String statKey : gameStats.getStatKeys(firstPlayer.getId())) {
+      if (!statKey.startsWith("array_")) {
+        String translatedKey = App.translate(statKey);
+        Widget cell = createCell(translatedKey);
+        rows[rowIndex++].add(cell);
+      }
     }
   }
 
   private void addColumn(Widget[] rows) {
     for (Player player : players) {
       int rowIndex = 0;
-      Map<String, String> stats = game.getPlayerStats(player);
-
-      for (Map.Entry<String, String> entry : stats.entrySet()) {
-        Widget cell = createCell(entry.getValue());
-        rows[rowIndex].add(cell);
-        rowIndex++;
+      for (String statKey : gameStats.getStatKeys(player.getId())) {
+        if (!statKey.startsWith("array_")) {
+          String value = gameStats.getTextStat(player.getId(), statKey);
+          Widget cell = createCell(statKey, value);
+          rows[rowIndex++].add(cell);
+        }
       }
     }
+  }
+
+  private Widget createCell(String key, String value) {
+    Widget cell;
+
+    if (canTranslateStatValueOf(key) && !value.equals("")) {
+      cell = createCell(App.translate(value));
+    } else {
+      cell = createCell(value);
+    }
+    return cell;
+  }
+
+  private boolean canTranslateStatValueOf(String key) {
+    return "favorite_unit".equals(key);
   }
 
   private Widget createCell(String value) {

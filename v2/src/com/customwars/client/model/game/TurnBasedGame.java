@@ -19,11 +19,11 @@ import java.util.List;
 /**
  * A basic game that has
  * a Game state[Idle, Started, Gameover], a map, players and the current turn.
- *
+ * <p/>
  * The players list contains the players that are in the game, excluding the neutral player.
  * The order of the players equals the flow of the turns. eg. Given the following players [u1, u2, u3]
  * starting the game with u1 and ending the turn makes u2 the active player
- *
+ * <p/>
  * Neutral players are always in the IDLE state
  * Human and AI players are ACTIVE or DESTROYED.
  *
@@ -32,7 +32,6 @@ import java.util.List;
 public class TurnBasedGame implements Observable, Serializable {
   private static final Logger logger = Logger.getLogger(TurnBasedGame.class);
   private final PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
-  private final GameStatistics gameStatistics;   // Holds statistics for each player(number of units killed, cities captures,...)
 
   static enum GameState {
     IDLE, STARTED, GAME_OVER
@@ -50,7 +49,6 @@ public class TurnBasedGame implements Observable, Serializable {
    * @param otherGame game to copy
    */
   public TurnBasedGame(TurnBasedGame otherGame) {
-    gameStatistics = new GameStatistics(this, otherGame.gameStatistics);
     map = new Map<Tile>(otherGame.map);
     turn = new Turn(otherGame.turn);
     players = copyPlayers(otherGame.players);
@@ -77,7 +75,6 @@ public class TurnBasedGame implements Observable, Serializable {
     this.players = new ArrayList<Player>(players);
     this.turn = new Turn(dayLimit);
     this.state = GameState.IDLE;
-    this.gameStatistics = new GameStatistics(this);
   }
 
   /**
@@ -320,13 +317,6 @@ public class TurnBasedGame implements Observable, Serializable {
     }
   }
 
-  /**
-   * @see GameStatistics#getPlayerStats(Player)
-   */
-  public java.util.Map<String, String> getPlayerStats(Player player) {
-    return gameStatistics.getPlayerStats(player);
-  }
-
   private void validateStartGame(Player gameStarter) {
     if (!isIdle()) {
       throw new IllegalStateException("Game is in a Illegal state " + state + " to start, a game cannot be started 2X.");
@@ -348,7 +338,7 @@ public class TurnBasedGame implements Observable, Serializable {
     // game players must be equal to num players in map
     if (map.getNumPlayers() != players.size()) {
       throw new IllegalStateException("The amount of players in the map (" + map.getNumPlayers() + ") " +
-        "does not equal the amount of players given (" + (players.size()) + ")");
+              "does not equal the amount of players given (" + (players.size()) + ")");
     }
 
     // Each player must be unique
@@ -402,7 +392,7 @@ public class TurnBasedGame implements Observable, Serializable {
 
     if (invoker != activePlayer) {
       throw new NotYourTurnException("Player " + invoker + " cannot end his turn , because it is not the Active player in the Game\n" +
-        "Expected=" + activePlayer.getName());
+              "Expected=" + activePlayer.getName());
     }
   }
 
