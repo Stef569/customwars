@@ -211,7 +211,7 @@ public class UnitMenuBuilder {
 
     if (canBuildCity) {
       City city = getCityThatCanBeBuildOn(to);
-      CWAction buildCityAction = ActionFactory.buildCityAction(unit, city, to, unit.getOwner());
+      CWAction buildCityAction = ActionFactory.buildConstructCityAction(unit, city, to, unit.getOwner());
       addToMenu(buildCityAction, App.translate("build") + ' ' + city.getName());
     }
 
