@@ -1,5 +1,6 @@
 package com.customwars.client.model.game;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,8 +12,14 @@ import java.util.Set;
  * <li>text</li>
  * <li>number</li>
  * <li>array</li>
+ * </ul>
+ *
+ * Example key -> value pairs
+ * units_killed -> 6
+ * array_units_killed -> {1,0,0,0,0,0,0,0,5} (The array index is the unit ID)
+ * cities_captured -> 1
  */
-public class GameStatistics {
+public class GameStatistics implements Serializable {
   private final Map<Integer, Map<String, Object>> playerStatistics;
 
   public GameStatistics() {
@@ -31,6 +38,11 @@ public class GameStatistics {
     playerStatistics.put(player.getId(), new HashMap<String, Object>());
   }
 
+  /**
+   * Copy constructor
+   *
+   * @param otherGameStatistics gameStatistics to copy
+   */
   public GameStatistics(GameStatistics otherGameStatistics) {
     playerStatistics = new HashMap<Integer, Map<String, Object>>(otherGameStatistics.playerStatistics);
   }
