@@ -181,7 +181,7 @@ public class ActionFactory {
   }
 
   public static CWAction buildFireFlareAction(Unit unit, Location to, Location flareCenter) {
-    ActionBag transformTerrainAction = new ActionBag("Fire Flare");
+    ActionBag transformTerrainAction = new ActionBag("Flare");
     transformTerrainAction.add(new InitAction());
     transformTerrainAction.add(new MoveAnimatedAction(unit.getLocation(), to));
     transformTerrainAction.add(new WaitAction(unit));
@@ -191,7 +191,7 @@ public class ActionFactory {
     return transformTerrainAction;
   }
 
-  public static CWAction buildCityAction(Unit unit, City city, Location to, Player cityOwner) {
+  public static CWAction buildConstructCityAction(Unit unit, City city, Location to, Player cityOwner) {
     ActionBag buildCityAction = new ActionBag("Build_City");
     buildCityAction.add(new InitAction());
     buildCityAction.add(new MoveAnimatedAction(unit.getLocation(), to));

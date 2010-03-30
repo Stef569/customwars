@@ -71,7 +71,7 @@ public class ActionParser {
     } else if (actionName.equals("launch_rocket")) {
       return parseLaunchRocketAction(scanner);
     } else if (actionName.equals("build_city")) {
-      return parseBuildCity(scanner);
+      return parseConstructCity(scanner);
     } else if (actionName.equals("dive")) {
       return parseDive(scanner);
     } else if (actionName.equals("surface")) {
@@ -235,7 +235,7 @@ public class ActionParser {
     return ActionFactory.buildFireFlareAction(unit, to, flareCenter);
   }
 
-  private CWAction parseBuildCity(Scanner scanner) {
+  private CWAction parseConstructCity(Scanner scanner) {
     int fromCol = scanner.nextInt();
     int fromRow = scanner.nextInt();
     int toCol = scanner.nextInt();
@@ -247,7 +247,7 @@ public class ActionParser {
     Unit unit = map.getUnitOn(from);
     City city = CityFactory.getCity(cityID);
     Player cityOwner = game.getPlayerByID(cityOwnerID);
-    return ActionFactory.buildCityAction(unit, city, to, cityOwner);
+    return ActionFactory.buildConstructCityAction(unit, city, to, cityOwner);
   }
 
   private CWAction parseDive(Scanner scanner) {
