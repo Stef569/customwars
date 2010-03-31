@@ -2,9 +2,9 @@ package com.customwars.client.controller.multiplayer;
 
 import com.customwars.client.App;
 import com.customwars.client.action.network.DetermineFreeSlots;
+import com.customwars.client.network.MessageSender;
+import com.customwars.client.network.MessageSenderFactory;
 import com.customwars.client.network.NetworkException;
-import com.customwars.client.network.NetworkManager;
-import com.customwars.client.network.NetworkManagerSingleton;
 import com.customwars.client.network.User;
 import com.customwars.client.tools.StringUtil;
 import com.customwars.client.ui.GUI;
@@ -20,14 +20,13 @@ import org.newdawn.slick.thingle.Widget;
 public class ServerGameLoginController {
   private static final Logger logger = Logger.getLogger(ServerGameLoginController.class);
   private final StateChanger stateChanger;
-  private final NetworkManager networkManager;
+  private MessageSender messageSender;
   private final StateSession stateSession;
   private Page page;
 
   public ServerGameLoginController(StateChanger stateChanger, StateSession stateSession) {
     this.stateChanger = stateChanger;
     this.stateSession = stateSession;
-    networkManager = NetworkManagerSingleton.getInstance();
   }
 
   public void init(Page page) {
@@ -35,6 +34,9 @@ public class ServerGameLoginController {
   }
 
   public void enter() {
+    messageSender = MessageSenderFactory.getInstance().createMessageSender();
+    checkServerConnection();
+
     // Only set the default user name + password to the user fields
     // When they are empty, to prevent overwriting previous input
     Widget txtUserName = page.getWidget("user_name");
@@ -48,9 +50,17 @@ public class ServerGameLoginController {
     }
   }
 
+  private void checkServerConnection() {
+    try {
+      messageSender.connect();
+    } catch (NetworkException e) {
+      GUI.showExceptionDialog("Cannot connect to server", e);
+    }
+  }
+
   public void fetchUserNames(Widget gameTxtField) {
     if (StringUtil.hasContent(gameTxtField.getText())) {
-      new DetermineFreeSlots(networkManager, gameTxtField, page).run();
+      new DetermineFreeSlots(messageSender, gameTxtField, page).run();
     }
   }
 
@@ -71,13 +81,15 @@ public class ServerGameLoginController {
     }
 
     try {
-      networkManager.loginToServerGame(gameName, userName, userPassword);
+      messageSender.loginToServerGame(gameName, userName, userPassword);
       stateSession.serverGameName = gameName;
       stateSession.user = new User(userName, userPassword);
       stateChanger.changeTo("SERVER_GAME_ROOM");
     } catch (NetworkException e) {
-      logger.warn("Could not login", e);
-      GUI.showExceptionDialog("Could not login", e);
+      logger.warn("Could not send login", e);
+      if (GUI.askToResend(e) == GUI.YES_OPTION) {
+        loginIntoServerGame();
+      }
     }
   }
 

@@ -15,6 +15,7 @@ import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.model.map.TileMap;
 import com.customwars.client.model.map.path.MoveTraverse;
+import com.customwars.client.network.MessageSenderFactory;
 import com.customwars.client.tools.ColorUtil;
 import com.customwars.client.ui.Camera2D;
 import com.customwars.client.ui.GUI;
@@ -156,6 +157,7 @@ public class InGameState extends CWState implements PropertyChangeListener {
     inGameContext.setGameRenderer(gameRenderer);
     inGameContext.setStateChanger(stateChanger);
     inGameContext.setStateSession(stateSession);
+    inGameContext.setMessageSender(MessageSenderFactory.getInstance().createMessageSender());
 
     ControllerManager controllerManager = new ControllerManager(inGameContext);
     inGameContext.setControllerManager(controllerManager);

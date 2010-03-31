@@ -4,13 +4,11 @@ import com.customwars.client.App;
 import com.customwars.client.action.DirectAction;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.game.Player;
+import com.customwars.client.network.MessageSender;
 import com.customwars.client.network.NetworkException;
-import com.customwars.client.network.NetworkManager;
-import com.customwars.client.network.NetworkManagerSingleton;
 import com.customwars.client.ui.GUI;
 import com.customwars.client.ui.state.InGameContext;
 import com.customwars.client.ui.state.StateChanger;
-import com.customwars.client.ui.state.StateSession;
 import org.apache.log4j.Logger;
 
 /**
@@ -26,63 +24,52 @@ import org.apache.log4j.Logger;
 public class EndGameAction extends DirectAction {
   private static final Logger logger = Logger.getLogger(EndGameAction.class);
   private StateChanger stateChanger;
-  private NetworkManager networkManager;
-  private StateSession session;
+  private Game game;
+  private MessageSender messageSender;
 
   public EndGameAction() {
     super("End game", false);
   }
 
   @Override
-  protected void init(InGameContext context) {
-    stateChanger = context.getStateChanger();
-    session = context.getSession();
-    networkManager = NetworkManagerSingleton.getInstance();
+  protected void init(InGameContext inGameContext) {
+    stateChanger = inGameContext.getStateChanger();
+    game = inGameContext.getSession().game;
+    messageSender = inGameContext.getMessageSender();
   }
 
   @Override
   protected void invokeAction() {
-    if (App.isSinglePlayerGame()) {
-      stateChanger.changeTo("GAME_OVER");
-    } else if (App.isMultiplayerSnailGame()) {
-      yieldInSnailGameMode();
+    stateChanger.changeTo("GAME_OVER");
+    destroyPlayer();
+    endTurn();
+
+    if (App.isMultiplayer()) {
+      sendYield();
     }
   }
 
-  private void yieldInSnailGameMode() {
-    final String serverGameName = session.serverGameName;
-    final String userName = session.user.getName();
-    final String userPassword = session.user.getPassword();
-    final Game game = session.game;
-
-    destroyPlayer(serverGameName, userName, userPassword, game);
-    endTurn(serverGameName, userName, userPassword, game);
-    stateChanger.changeTo("GAME_OVER");
-  }
-
-  private void destroyPlayer(String serverGameName, String userName, String userPassword, Game game) {
+  private void destroyPlayer() {
     Player activePlayer = game.getActivePlayer();
     Player neutralPlayer = game.getMap().getNeutralPlayer();
     activePlayer.destroy(neutralPlayer);
-
-    try {
-      networkManager.destroyPlayer(game, activePlayer, serverGameName, userName, userPassword);
-    } catch (NetworkException ex) {
-      logger.warn("Could not yield", ex);
-      GUI.showExceptionDialog("Could not yield", ex);
-    }
   }
 
-  private void endTurn(String serverGameName, String userName, String userPassword, Game game) {
+  private void endTurn() {
     if (!game.isGameOver()) {
       game.endTurn();
     }
+  }
 
+  private void sendYield() {
     try {
-      networkManager.endTurn(game, serverGameName, userName, userPassword);
+      messageSender.destroyPlayer(game.getActivePlayer());
+      messageSender.endTurn(game);
     } catch (NetworkException ex) {
-      logger.warn("Could not end turn for " + userName, ex);
-      GUI.showExceptionDialog("Could not end your turn", ex);
+      logger.warn("Could not send yield", ex);
+      if (GUI.askToResend(ex) == GUI.YES_OPTION) {
+        sendYield();
+      }
     }
   }
 }

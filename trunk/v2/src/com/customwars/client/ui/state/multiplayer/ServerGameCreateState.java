@@ -32,10 +32,10 @@ public class ServerGameCreateState extends CWState {
     page = thingleLoader.loadPage("ServerGameCreate.xml", "greySkin.properties", controller);
   }
 
-
   @Override
-  public void enter(GameContainer container, StateBasedGame game) throws SlickException {
-    super.enter(container, game);
+  public void enter(GameContainer container, StateBasedGame stateBasedGame) throws SlickException {
+    super.enter(container, stateBasedGame);
+    page.enable();
     controller.enter();
 
     // if a previous state has set a map in the statesession
@@ -43,12 +43,11 @@ public class ServerGameCreateState extends CWState {
     if (stateSession.map != null) {
       controller.mapSelected();
     }
-    page.enable();
   }
 
   @Override
-  public void leave(GameContainer container, StateBasedGame game) throws SlickException {
-    super.leave(container, game);
+  public void leave(GameContainer container, StateBasedGame stateBasedGame) throws SlickException {
+    super.leave(container, stateBasedGame);
     page.disable();
   }
 

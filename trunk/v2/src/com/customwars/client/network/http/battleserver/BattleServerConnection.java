@@ -1,4 +1,4 @@
-package com.customwars.client.network;
+package com.customwars.client.network.http.battleserver;
 
 import com.customwars.client.App;
 import com.customwars.client.io.loading.BinaryCW2GameParser;
@@ -6,6 +6,11 @@ import com.customwars.client.io.loading.map.BinaryCW2MapParser;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
+import com.customwars.client.network.NetworkException;
+import com.customwars.client.network.ServerGame;
+import com.customwars.client.network.ServerGameInfo;
+import com.customwars.client.network.User;
+import com.customwars.client.network.http.HttpClient;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -15,9 +20,9 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 /**
- * This class hides the details of sending and receiving information to/from the cw1 server.
+ * This class hides the details of sending and receiving information to/from the cw1 battle server.
  */
-public class CW1NetworkIO {
+public class BattleServerConnection {
   private final String serverURL;
   private static final String GAME_VERSION = App.get("game.name") + ' ' + App.get("game.version");
 
@@ -63,7 +68,7 @@ public class CW1NetworkIO {
   private static final String TEMP_SAVE_FILE_NAME = "CW2net";
   private static final String TEMP_SAVE_FILE_EXT = ".save";
 
-  public CW1NetworkIO(String serverURL) {
+  public BattleServerConnection(String serverURL) {
     this.serverURL = serverURL;
   }
 

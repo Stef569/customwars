@@ -3,9 +3,9 @@ package com.customwars.client.ui.state;
 import com.customwars.client.App;
 import com.customwars.client.action.game.SaveReplayAction;
 import com.customwars.client.model.game.Game;
+import com.customwars.client.network.MessageSender;
+import com.customwars.client.network.MessageSenderFactory;
 import com.customwars.client.network.NetworkException;
-import com.customwars.client.network.NetworkManager;
-import com.customwars.client.network.NetworkManagerSingleton;
 import com.customwars.client.ui.GUI;
 import com.customwars.client.ui.renderer.GameOverRenderer;
 import org.apache.log4j.Logger;
@@ -13,8 +13,6 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
-
-import javax.swing.JOptionPane;
 
 /**
  * Show the statistics as a table
@@ -26,13 +24,12 @@ import javax.swing.JOptionPane;
  */
 public class GameOverState extends CWState {
   private static final Logger logger = Logger.getLogger(GameOverState.class);
-  private NetworkManager networkManager;
+  private MessageSender messageSender;
   private GameOverRenderer gameOverRenderer;
 
   public void init(GameContainer gameContainer, StateBasedGame stateBasedGame) throws SlickException {
     gameOverRenderer = new GameOverRenderer();
     gameOverRenderer.load(this);
-    networkManager = NetworkManagerSingleton.getInstance();
   }
 
   @Override
@@ -40,37 +37,28 @@ public class GameOverState extends CWState {
     super.enter(container, stateBasedGame);
     Game game = stateSession.game;
     gameOverRenderer.buildGUI(game);
+    messageSender = MessageSenderFactory.getInstance().createMessageSender();
     logger.info("Game Over");
 
-    if (App.isMultiplayerSnailGame() && game.isGameOver()) {
-      endServerGame();
+    if (App.isMultiplayer() && game.isGameOver()) {
+      sendEndGameToServer();
     }
 
     if (App.getBoolean("game.recordreplay.prompt")) {
-      if (GUI.showConfirmationDialog("Save replay", "save") == JOptionPane.YES_OPTION) {
+      if (GUI.showConfirmationDialog("Save replay", "save") == GUI.YES_OPTION) {
         new SaveReplayAction(stateSession.replay).invoke(null);
       }
     }
   }
 
-  private void endServerGame() {
-    App.execute(new Runnable() {
-      public void run() {
+  private void sendEndGameToServer() {
+    try {
+      messageSender.endGame();
+    } catch (NetworkException ex) {
+      logger.warn("Could not send end game", ex);
+      if (GUI.askToResend(ex) == GUI.YES_OPTION) {
         sendEndGameToServer();
       }
-    });
-  }
-
-  private void sendEndGameToServer() {
-    String serverGameName = stateSession.serverGameName;
-    String userName = stateSession.user.getName();
-    String userPassword = stateSession.user.getPassword();
-
-    try {
-      networkManager.endGame(serverGameName, userName, userPassword);
-    } catch (NetworkException ex) {
-      logger.warn("Could not end game", ex);
-      GUI.showExceptionDialog("Could not end game", ex);
     }
   }
 

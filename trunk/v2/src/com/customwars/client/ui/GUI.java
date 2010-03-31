@@ -6,6 +6,7 @@ import bsh.util.JConsole;
 import com.customwars.client.App;
 import com.customwars.client.io.loading.ThinglePageLoader;
 import com.customwars.client.model.game.Game;
+import com.customwars.client.network.NetworkException;
 import com.customwars.client.tools.StringUtil;
 import com.customwars.client.ui.hud.ModelEventScreen;
 import org.apache.log4j.Logger;
@@ -28,6 +29,9 @@ import java.io.File;
  * Live objects can be added to the console
  */
 public class GUI {
+  public static int YES_OPTION = 0;
+  public static int NO_OPTION = 1;
+
   private static final Logger logger = Logger.getLogger(GUI.class);
   private static final GUI gui = new GUI();
   private static Interpreter bsh;
@@ -303,5 +307,9 @@ public class GUI {
     }
   }
 
-
+  public static int askToResend(NetworkException ex) {
+    return showConfirmationDialog(
+      App.translate("gui_err_networkIO_msg") + " " + ex.getMessage(), App.translate("gui_err_networkIO_title")
+    );
+  }
 }
