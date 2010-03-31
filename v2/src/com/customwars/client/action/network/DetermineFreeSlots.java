@@ -1,7 +1,7 @@
 package com.customwars.client.action.network;
 
+import com.customwars.client.network.MessageSender;
 import com.customwars.client.network.NetworkException;
-import com.customwars.client.network.NetworkManager;
 import com.customwars.client.network.ServerGameInfo;
 import com.customwars.client.tools.ThingleUtil;
 import com.customwars.client.ui.GUI;
@@ -24,14 +24,14 @@ import org.newdawn.slick.thingle.Widget;
  * the game locks up until the reply from the server is received. Using a thread prevents that.
  */
 public class DetermineFreeSlots implements Runnable {
-  private final NetworkManager networkManager;
+  private final MessageSender messageSender;
   private final Page page;
   private final Widget gameTxtField;
   private final Widget cboSide;
   private final Widget cboUserName;
 
-  public DetermineFreeSlots(NetworkManager networkManager, Widget gameTxtField, Page page) {
-    this.networkManager = networkManager;
+  public DetermineFreeSlots(MessageSender messageSender, Widget gameTxtField, Page page) {
+    this.messageSender = messageSender;
     this.gameTxtField = gameTxtField;
     this.page = page;
     this.cboSide = page.getWidget("side");
@@ -44,7 +44,7 @@ public class DetermineFreeSlots implements Runnable {
     boolean hasUserNameComboBox = cboUserName != null && cboUserName.getWidgetClass().equals("combobox");
 
     try {
-      ServerGameInfo serverGameInfo = networkManager.getGameInfo(gameName);
+      ServerGameInfo serverGameInfo = messageSender.getGameInfo(gameName);
 
       if (hasSideComboBox) {
         fillSideCBO(serverGameInfo);

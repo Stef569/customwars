@@ -1,4 +1,4 @@
-package com.customwars.client.network;
+package com.customwars.client.network.http;
 
 import com.customwars.client.tools.IOUtil;
 import org.apache.log4j.Logger;

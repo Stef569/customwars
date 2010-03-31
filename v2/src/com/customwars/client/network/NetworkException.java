@@ -3,7 +3,7 @@ package com.customwars.client.network;
 import java.util.Arrays;
 
 /**
- * Thrown when a network action could not be executed
+ * Thrown when a network message could not be send
  */
 public class NetworkException extends Exception {
   private static final String[] NO_REPLY = new String[]{};

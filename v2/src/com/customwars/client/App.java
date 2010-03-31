@@ -168,7 +168,7 @@ public class App {
     return gameMode == GAME_MODE.SINGLE_PLAYER;
   }
 
-  public static boolean isMultiplayerSnailGame() {
+  public static boolean isMultiplayer() {
     return gameMode == GAME_MODE.NETWORK_SNAIL_GAME;
   }
 

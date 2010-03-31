@@ -4,9 +4,9 @@ import com.customwars.client.App;
 import com.customwars.client.action.network.CheckGameNameAlreadyUsed;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
+import com.customwars.client.network.MessageSender;
+import com.customwars.client.network.MessageSenderFactory;
 import com.customwars.client.network.NetworkException;
-import com.customwars.client.network.NetworkManager;
-import com.customwars.client.network.NetworkManagerSingleton;
 import com.customwars.client.tools.StringUtil;
 import com.customwars.client.ui.GUI;
 import com.customwars.client.ui.state.StateChanger;
@@ -20,14 +20,13 @@ import org.newdawn.slick.thingle.Widget;
 public class ServerGameCreateController {
   private final StateChanger stateChanger;
   private final StateSession stateSession;
-  private final NetworkManager networkManager;
+  private MessageSender messageSender;
   private Page page;
   private Map<Tile> map;
 
   public ServerGameCreateController(StateChanger stateChanger, StateSession stateSession) {
     this.stateChanger = stateChanger;
     this.stateSession = stateSession;
-    networkManager = NetworkManagerSingleton.getInstance();
   }
 
   public void init(Page page) {
@@ -35,6 +34,9 @@ public class ServerGameCreateController {
   }
 
   public void enter() {
+    this.messageSender = MessageSenderFactory.getInstance().createMessageSender();
+    checkServerConnection();
+
     // Only set the default user name + password to the user fields
     // When they are empty, to prevent overwriting previous input
     Widget txtUserName = page.getWidget("user_name");
@@ -48,9 +50,17 @@ public class ServerGameCreateController {
     }
   }
 
+  private void checkServerConnection() {
+    try {
+      messageSender.connect();
+    } catch (NetworkException e) {
+      GUI.showExceptionDialog("Cannot connect to server", e);
+    }
+  }
+
   public void gameNameFocusLost(Widget gameTxtField) {
     if (StringUtil.hasContent(gameTxtField.getText())) {
-      App.execute(new CheckGameNameAlreadyUsed(networkManager, gameTxtField));
+      App.execute(new CheckGameNameAlreadyUsed(messageSender, gameTxtField));
     }
   }
 
@@ -96,7 +106,7 @@ public class ServerGameCreateController {
     }
 
     try {
-      networkManager.createNewServerGame(gameName, gamePass, map, userName, userPassword, comment);
+      messageSender.createNewServerGame(gameName, gamePass, map, userName, userPassword, comment);
       GUI.showdialog("Game " + gameName + " created", "Success");
       back();
     } catch (NetworkException e) {

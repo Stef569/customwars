@@ -2,9 +2,9 @@ package com.customwars.client.controller.multiplayer;
 
 import com.customwars.client.App;
 import com.customwars.client.model.game.Game;
+import com.customwars.client.network.MessageSender;
+import com.customwars.client.network.MessageSenderFactory;
 import com.customwars.client.network.NetworkException;
-import com.customwars.client.network.NetworkManager;
-import com.customwars.client.network.NetworkManagerSingleton;
 import com.customwars.client.network.ServerGameInfo;
 import com.customwars.client.tools.StringUtil;
 import com.customwars.client.tools.ThingleUtil;
@@ -24,16 +24,14 @@ public class ServerGameRoomController {
   private static final Logger logger = Logger.getLogger(ServerGameRoomController.class);
   private final StateChanger stateChanger;
   private final StateSession stateSession;
-  private final NetworkManager networkManager;
   private Page page;
   private String serverGameName;
   private String userName;
-  private String userPassword;
+  private MessageSender messageSender;
 
   public ServerGameRoomController(StateChanger stateChanger, StateSession stateSession) {
     this.stateChanger = stateChanger;
     this.stateSession = stateSession;
-    networkManager = NetworkManagerSingleton.getInstance();
   }
 
   public void init(Page page) {
@@ -41,9 +39,10 @@ public class ServerGameRoomController {
   }
 
   public void enter() {
+    messageSender = MessageSenderFactory.getInstance().createMessageSender();
+    checkServerConnection();
     serverGameName = stateSession.serverGameName;
     userName = stateSession.user.getName();
-    userPassword = stateSession.user.getPassword();
     refreshInfo();
   }
 
@@ -51,21 +50,23 @@ public class ServerGameRoomController {
     try {
       startOrContinueGame();
     } catch (NetworkException e) {
-      logger.warn("Could not start game " + serverGameName, e);
-      GUI.showExceptionDialog("Could not start game " + serverGameName, e);
+      logger.warn("Could not send start game " + serverGameName, e);
+      if (GUI.askToResend(e) == GUI.YES_OPTION) {
+        play();
+      }
     }
   }
 
   private void startOrContinueGame() throws NetworkException {
-    ServerGameInfo gameInfo = networkManager.getGameInfo(serverGameName);
+    ServerGameInfo serverGameInfo = messageSender.getGameInfo(serverGameName);
 
     Game snailGame;
-    if (gameInfo.isFirstTurn()) {
-      checkForEmptySlots(gameInfo);
-      snailGame = networkManager.startServerGame(serverGameName, userName, userPassword);
+    if (serverGameInfo.isFirstTurn()) {
+      checkForEmptySlots(serverGameInfo);
+      snailGame = messageSender.startServerGame();
       snailGame.startGame();
     } else {
-      snailGame = networkManager.startTurn(serverGameName, userName, userPassword);
+      snailGame = messageSender.startTurn();
     }
 
     stateSession.game = snailGame;
@@ -98,7 +99,7 @@ public class ServerGameRoomController {
     addToChatButton.setBoolean("enabled", false);
 
     try {
-      networkManager.sendChatMessage(serverGameName, userName, chatMessage);
+      messageSender.sendChatMessage(chatMessage);
       refreshInfo();
       addToChatButton.setBoolean("enabled", true);
     } catch (NetworkException ex) {
@@ -115,14 +116,22 @@ public class ServerGameRoomController {
     });
   }
 
+  private void checkServerConnection() {
+    try {
+      messageSender.connect();
+    } catch (NetworkException e) {
+      GUI.showExceptionDialog("Cannot connect to server", e);
+    }
+  }
+
   private void refresh() {
     ServerGameInfo gameInfo;
     String[] chatLog, sysLog;
 
     try {
-      gameInfo = networkManager.getGameInfo(serverGameName);
-      chatLog = networkManager.getChatLog(serverGameName);
-      sysLog = networkManager.getSysLog(serverGameName);
+      gameInfo = messageSender.getGameInfo(serverGameName);
+      chatLog = messageSender.getChatLog();
+      sysLog = messageSender.getSysLog();
     } catch (NetworkException ex) {
       GUI.showExceptionDialog("Could not retrieve information for game " + serverGameName, ex);
       return;

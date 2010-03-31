@@ -14,6 +14,7 @@ import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.model.map.path.MoveTraverse;
+import com.customwars.client.network.MessageSender;
 import com.customwars.client.ui.HUD;
 import com.customwars.client.ui.renderer.GameRenderer;
 import com.customwars.client.ui.renderer.MapRenderer;
@@ -36,7 +37,6 @@ import java.util.List;
  * @author stefan
  */
 public class InGameContext {
-
   public enum INPUT_MODE {
     DEFAULT,        // Clicking shows a Menu or selects a unit
     GUI,            // Input is handled by the GUI
@@ -66,6 +66,7 @@ public class InGameContext {
   private StateChanger stateChanger;
   private StateSession stateSession;
   private CursorController cursorController;
+  private MessageSender messageSender;
 
   public InGameContext() {
     dropQueue = new DropLocationsQueue();
@@ -178,6 +179,10 @@ public class InGameContext {
     this.stateSession = stateSession;
   }
 
+  public void setMessageSender(MessageSender messageSender) {
+    this.messageSender = messageSender;
+  }
+
   public Game getGame() {
     return game;
   }
@@ -224,6 +229,10 @@ public class InGameContext {
 
   public StateSession getSession() {
     return stateSession;
+  }
+
+  public MessageSender getMessageSender() {
+    return messageSender;
   }
 
   public List<CWAction> getExecutedActions() {

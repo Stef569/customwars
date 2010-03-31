@@ -1,9 +1,14 @@
-package com.customwars.client.network;
+package com.customwars.client.network.http.battleserver;
 
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
+import com.customwars.client.network.MessageSenderAdapter;
+import com.customwars.client.network.NetworkException;
+import com.customwars.client.network.ServerGame;
+import com.customwars.client.network.ServerGameInfo;
+import com.customwars.client.network.User;
 
 import java.awt.Color;
 import java.io.IOException;
@@ -12,27 +17,42 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Translate use cases into network messages
- * By using the CW1 battle server, All the real work is delegated to CW1NetworkIO
+ * Send game messages to a server using the HTTP protocol.
+ * All the real work is delegated to CW1NetworkIO.
+ *
+ * The user and server game information is set when invoking one of the entry methods:
+ * createNewServerGame, joinServerGame and loginToServerGame.
+ * Other method calls will reuse the user and server game info passed to these methods.
  */
-public class Cw1NetworkManager implements NetworkManager {
-  private final CW1NetworkIO CW1NetworkIO;
+public class BattleServerMessageSender extends MessageSenderAdapter {
+  private final BattleServerConnection battleServerConnection;
+  private User user;
+  private ServerGame serverGame;
 
-  public Cw1NetworkManager(String serverURL) {
-    CW1NetworkIO = new CW1NetworkIO(serverURL);
+  public BattleServerMessageSender(String serverURL) {
+    battleServerConnection = new BattleServerConnection(serverURL);
+  }
+
+  @Override
+  public void connect() throws NetworkException {
+    try {
+      battleServerConnection.connect();
+    } catch (IOException e) {
+      throw new NetworkException(e);
+    }
   }
 
   /**
    * Create a new Server game and join the game as user 1
    */
   public void createNewServerGame(String gameName, String gamePass, Map<Tile> map, String userName, String userPassword, String comment) throws NetworkException {
-    ServerGame serverGame = new ServerGame(gameName, gamePass, map.getMapName(), map.getNumPlayers(), comment);
-    User user = new User(userName, userPassword);
+    serverGame = new ServerGame(gameName, gamePass, map.getMapName(), map.getNumPlayers(), comment);
+    user = new User(userName, userPassword);
 
     try {
-      CW1NetworkIO.createGame(serverGame, user);
-      CW1NetworkIO.uploadMap(serverGame, map);
-      CW1NetworkIO.joinGame(serverGame, user, 1);
+      battleServerConnection.createGame(serverGame, user);
+      battleServerConnection.uploadMap(serverGame, map);
+      battleServerConnection.joinGame(serverGame, user, 1);
     } catch (IOException ex) {
       throw new NetworkException(ex);
     }
@@ -42,11 +62,11 @@ public class Cw1NetworkManager implements NetworkManager {
    * Join an existing Server game
    */
   public void joinServerGame(String gameName, String gamePass, String userName, String userPassword, int side) throws NetworkException {
-    ServerGame serverGame = new ServerGame(gameName, gamePass);
-    User user = new User(userName, userPassword);
+    serverGame = new ServerGame(gameName, gamePass);
+    user = new User(userName, userPassword);
 
     try {
-      CW1NetworkIO.joinGame(serverGame, user, side);
+      battleServerConnection.joinGame(serverGame, user, side);
     } catch (IOException ex) {
       throw new NetworkException(ex);
     }
@@ -56,11 +76,11 @@ public class Cw1NetworkManager implements NetworkManager {
    * Login into an existing Server game
    */
   public void loginToServerGame(String gameName, String userName, String userPassword) throws NetworkException {
-    ServerGame serverGame = new ServerGame(gameName, "");
-    User user = new User(userName, userPassword);
+    serverGame = new ServerGame(gameName);
+    user = new User(userName, userPassword);
 
     try {
-      CW1NetworkIO.validateLogin(serverGame, user);
+      battleServerConnection.validateLogin(serverGame, user);
     } catch (IOException ex) {
       throw new NetworkException(ex);
     }
@@ -72,14 +92,11 @@ public class Cw1NetworkManager implements NetworkManager {
    * #2 Create a Game and return it
    * The returned Game is not started yet
    */
-  public Game startServerGame(String serverGameName, String userName, String userPassword) throws NetworkException {
-    ServerGame serverGame = new ServerGame(serverGameName);
-    User user = new User(userName, userPassword);
-
+  public Game startServerGame() throws NetworkException {
     try {
-      CW1NetworkIO.canPlay(serverGame, user);
-      Map<Tile> map = CW1NetworkIO.downloadMap(serverGame);
-      ServerGameInfo serverInfo = CW1NetworkIO.getServerGameInfo(serverGameName);
+      battleServerConnection.canPlay(serverGame, user);
+      Map<Tile> map = battleServerConnection.downloadMap(serverGame);
+      ServerGameInfo serverInfo = battleServerConnection.getServerGameInfo(serverGame.getGameName());
       return createGame(map, serverInfo);
     } catch (IOException ex) {
       throw new NetworkException(ex);
@@ -116,25 +133,19 @@ public class Cw1NetworkManager implements NetworkManager {
     return new Player(mapPlayerID, mapPlayerColor, playerName, 0, team, ai);
   }
 
-  public void endTurn(Game game, String serverGameName, String userName, String userPassword) throws NetworkException {
-    ServerGame serverGame = new ServerGame(serverGameName);
-    User user = new User(userName, userPassword);
-
+  public void endTurn(Game game) throws NetworkException {
     try {
-      CW1NetworkIO.uploadGame(serverGame, game);
-      CW1NetworkIO.nextTurn(serverGame, user);
+      battleServerConnection.uploadGame(serverGame, game);
+      battleServerConnection.nextTurn(serverGame, user);
     } catch (IOException ex) {
       throw new NetworkException(ex);
     }
   }
 
-  public Game startTurn(String serverGameName, String userName, String userPassword) throws NetworkException {
-    ServerGame serverGame = new ServerGame(serverGameName);
-    User user = new User(userName, userPassword);
-
+  public Game startTurn() throws NetworkException {
     try {
-      CW1NetworkIO.canPlay(serverGame, user);
-      return CW1NetworkIO.downloadGame(serverGame);
+      battleServerConnection.canPlay(serverGame, user);
+      return battleServerConnection.downloadGame(serverGame);
     } catch (IOException ex) {
       throw new NetworkException(ex);
     }
@@ -143,12 +154,9 @@ public class Cw1NetworkManager implements NetworkManager {
   /**
    * Remove the player from the server game
    */
-  public void destroyPlayer(Game game, Player player, String serverGameName, String userName, String userPassword) throws NetworkException {
-    ServerGame serverGame = new ServerGame(serverGameName);
-    User user = new User(userName, userPassword);
-
+  public void destroyPlayer(Player player) throws NetworkException {
     try {
-      ServerGameInfo gameInfo = CW1NetworkIO.getServerGameInfo(serverGameName);
+      ServerGameInfo gameInfo = battleServerConnection.getServerGameInfo(serverGame.getGameName());
 
       int userIDToRemove = -1;
       for (String serverUserName : gameInfo.getUserNames()) {
@@ -165,30 +173,24 @@ public class Cw1NetworkManager implements NetworkManager {
           "can't destroy player, no user for " + player.getName() + " users " + Arrays.toString(gameInfo.getUserNames())
         );
       } else {
-        CW1NetworkIO.removePlayer(serverGame, user, userIDToRemove);
+        battleServerConnection.removePlayer(serverGame, user, userIDToRemove);
       }
     } catch (IOException ex) {
       throw new NetworkException(ex);
     }
   }
 
-  public void endGame(String serverGameName, String userName, String userPassword) throws NetworkException {
-    ServerGame serverGame = new ServerGame(serverGameName);
-    User user = new User(userName, userPassword);
-
+  public void endGame() throws NetworkException {
     try {
-      CW1NetworkIO.endGame(serverGame, user);
+      battleServerConnection.endGame(serverGame, user);
     } catch (IOException ex) {
       throw new NetworkException(ex);
     }
   }
 
-  public void sendChatMessage(String serverGameName, String userName, String chatMessage) throws NetworkException {
-    ServerGame serverGame = new ServerGame(serverGameName);
-    User user = new User(userName, "");
-
+  public void sendChatMessage(String chatMessage) throws NetworkException {
     try {
-      CW1NetworkIO.sendChatMessage(serverGame, user, chatMessage);
+      battleServerConnection.sendChatMessage(serverGame, user, chatMessage);
     } catch (IOException ex) {
       throw new NetworkException(ex);
     }
@@ -196,7 +198,7 @@ public class Cw1NetworkManager implements NetworkManager {
 
   public boolean isGameNameAvailable(String gameName) {
     try {
-      CW1NetworkIO.isGameNameAvailable(gameName);
+      battleServerConnection.isGameNameAvailable(gameName);
       return true;
     } catch (NetworkException ex) {
       return false;
@@ -207,23 +209,23 @@ public class Cw1NetworkManager implements NetworkManager {
 
   public ServerGameInfo getGameInfo(String gameName) throws NetworkException {
     try {
-      return CW1NetworkIO.getServerGameInfo(gameName);
+      return battleServerConnection.getServerGameInfo(gameName);
     } catch (IOException ex) {
       throw new NetworkException(ex);
     }
   }
 
-  public String[] getChatLog(String serverGameName) throws NetworkException {
+  public String[] getChatLog() throws NetworkException {
     try {
-      return CW1NetworkIO.getChatLog(serverGameName);
+      return battleServerConnection.getChatLog(serverGame.getGameName());
     } catch (IOException ex) {
       throw new NetworkException(ex);
     }
   }
 
-  public String[] getSysLog(String serverGameName) throws NetworkException {
+  public String[] getSysLog() throws NetworkException {
     try {
-      return CW1NetworkIO.getSysLog(serverGameName);
+      return battleServerConnection.getSysLog(serverGame.getGameName());
     } catch (IOException ex) {
       throw new NetworkException(ex);
     }
