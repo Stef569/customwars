@@ -4,11 +4,15 @@ import com.customwars.client.App;
 import com.customwars.client.SFX;
 import com.customwars.client.action.DelayedAction;
 import com.customwars.client.controller.CursorController;
+import com.customwars.client.model.GameController;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.gameobject.UnitState;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.path.MoveTraverse;
+import com.customwars.client.network.MessageSender;
+import com.customwars.client.network.NetworkException;
+import com.customwars.client.ui.GUI;
 import com.customwars.client.ui.renderer.MapRenderer;
 import com.customwars.client.ui.state.InGameContext;
 import org.apache.log4j.Logger;
@@ -21,10 +25,12 @@ import org.apache.log4j.Logger;
  */
 public class MoveAnimatedAction extends DelayedAction {
   private static final Logger logger = Logger.getLogger(MoveAnimatedAction.class);
+  private CursorController cursorControl;
+  private GameController gameController;
+  private MessageSender messageSender;
   InGameContext context;
   MoveTraverse moveTraverse;
   Game game;
-  private CursorController cursorControl;
   Location from;
   Location to;
   Unit unit;
@@ -40,8 +46,8 @@ public class MoveAnimatedAction extends DelayedAction {
     this((Unit) from.getLastLocatable(), from, to);
   }
 
-  protected void init(InGameContext context) {
-    if (context.isTrapped()) {
+  protected void init(InGameContext inGameContext) {
+    if (inGameContext.isTrapped()) {
       setActionCompleted(true);
       return;
     }
@@ -54,13 +60,14 @@ public class MoveAnimatedAction extends DelayedAction {
       unit.setUnitState(UnitState.IDLE);
     }
 
-    this.context = context;
-    game = context.getGame();
-    moveTraverse = context.getMoveTraverse();
-    cursorControl = context.getCursorController();
+    this.context = inGameContext;
+    game = inGameContext.getObj(Game.class);
+    moveTraverse = inGameContext.getObj(MoveTraverse.class);
+    gameController = inGameContext.getObj(GameController.class);
+    cursorControl = inGameContext.getObj(CursorController.class);
     cursorControl.setCursorLocked(true);
 
-    MapRenderer mapRenderer = context.getMapRenderer();
+    MapRenderer mapRenderer = inGameContext.getObj(MapRenderer.class);
     mapRenderer.removeZones();
     mapRenderer.showArrows(false);
     moveTraverse.prepareMove(unit, to);
@@ -83,11 +90,23 @@ public class MoveAnimatedAction extends DelayedAction {
       context.setTrapped(false);
     }
     cursorControl.setCursorLocked(false);
+    if (App.isMultiplayer()) sendMove();
   }
 
   public void undo() {
     unit.setOrientation(Unit.DEFAULT_ORIENTATION);
-    game.getMap().teleport(from, to, unit);
+    gameController.teleport(from, to);
     game.setActiveUnit(null);
+  }
+
+  private void sendMove() {
+    try {
+      messageSender.teleport(from, unit.getLocation());
+    } catch (NetworkException ex) {
+      logger.warn("Could not send move unit", ex);
+      if (GUI.askToResend(ex) == GUI.YES_OPTION) {
+        sendMove();
+      }
+    }
   }
 }

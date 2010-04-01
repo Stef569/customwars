@@ -45,8 +45,8 @@ public class ShowPopupMenuAction extends DirectAction implements ComponentListen
 
   protected void init(InGameContext inGameContext) {
     this.inGameContext = inGameContext;
-    this.hud = inGameContext.getHud();
-    this.cursorControl = inGameContext.getCursorController();
+    this.hud = inGameContext.getObj(HUD.class);
+    this.cursorControl = inGameContext.getObj(CursorController.class);
   }
 
   protected void invokeAction() {

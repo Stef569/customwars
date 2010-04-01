@@ -1,6 +1,7 @@
 package com.customwars.client.action.unit;
 
 import com.customwars.client.action.DirectAction;
+import com.customwars.client.model.game.Game;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
@@ -14,7 +15,7 @@ import com.customwars.client.ui.state.InGameContext;
  * @author stefan
  */
 public class ShowAttackZoneAction extends DirectAction {
-  private InGameContext context;
+  private InGameContext inGameContext;
   private MapRenderer mapRenderer;
   private final Unit unit;
   private Map<Tile> map;
@@ -24,14 +25,14 @@ public class ShowAttackZoneAction extends DirectAction {
     this.unit = unit;
   }
 
-  protected void init(InGameContext context) {
-    this.context = context;
-    this.map = context.getGame().getMap();
-    this.mapRenderer = context.getMapRenderer();
+  protected void init(InGameContext inGameContext) {
+    this.inGameContext = inGameContext;
+    this.map = inGameContext.getObj(Game.class).getMap();
+    this.mapRenderer = inGameContext.getObj(MapRenderer.class);
   }
 
   protected void invokeAction() {
-    context.clearUndoHistory();
+    inGameContext.clearUndoHistory();
 
     mapRenderer.removeZones();
     map.buildMovementZone(unit);

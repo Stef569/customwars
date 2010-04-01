@@ -3,6 +3,7 @@ package com.customwars.client.action.unit;
 import com.customwars.client.action.ClearInGameStateAction;
 import com.customwars.client.action.DirectAction;
 import com.customwars.client.controller.CursorController;
+import com.customwars.client.model.game.Game;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Map;
@@ -21,7 +22,7 @@ import java.util.List;
  */
 public class StartDropAction extends DirectAction {
   private static final Logger logger = Logger.getLogger(StartDropAction.class);
-  private InGameContext context;
+  private InGameContext inGameContext;
   private CursorController cursorControl;
   private MapRenderer mapRenderer;
   private Map<Tile> map;
@@ -36,11 +37,11 @@ public class StartDropAction extends DirectAction {
     this.unitToBeDropped = unitToBeDropped;
   }
 
-  protected void init(InGameContext context) {
-    this.context = context;
-    this.map = context.getGame().getMap();
-    this.cursorControl = context.getCursorController();
-    this.mapRenderer = context.getMapRenderer();
+  protected void init(InGameContext inGameContext) {
+    this.inGameContext = inGameContext;
+    this.map = inGameContext.getObj(Game.class).getMap();
+    this.cursorControl = inGameContext.getObj(CursorController.class);
+    this.mapRenderer = inGameContext.getObj(MapRenderer.class);
   }
 
   protected void invokeAction() {
@@ -51,13 +52,13 @@ public class StartDropAction extends DirectAction {
       mapRenderer.removeZones();
       mapRenderer.showArrowPath(false);
       mapRenderer.showArrowHead(true);
-      mapRenderer.setDropLocations(context.getDropQueue().getDropTiles(), center);
+      mapRenderer.setDropLocations(inGameContext.getDropQueue().getDropTiles(), center);
 
       // Only allow the cursor to move within the empty adjacent tiles
       // show the tiles as a movezone
       cursorControl.startCursorTraversal(emptyDropTiles);
       mapRenderer.setMoveZone(emptyDropTiles);
-      context.setInputMode(InGameContext.INPUT_MODE.UNIT_DROP);
+      inGameContext.setInputMode(InGameContext.INPUT_MODE.UNIT_DROP);
     }
   }
 
@@ -68,7 +69,7 @@ public class StartDropAction extends DirectAction {
   private List<Location> getEmptyDropTiles(Location transportLocation) {
     List<Location> surroundingTiles = new ArrayList<Location>();
     for (Tile dropTile : map.getSurroundingTiles(transportLocation, 1, transport.getMaxDropRange())) {
-      if (!context.isDropLocationTaken(dropTile)) {
+      if (!inGameContext.isDropLocationTaken(dropTile)) {
         if (map.isFreeDropLocation(dropTile, transport)) {
           if (canUnitMoveOverTerrain(dropTile)) {
             surroundingTiles.add(dropTile);
@@ -88,6 +89,8 @@ public class StartDropAction extends DirectAction {
    * undoing start drop is too hard
    */
   public void undo() {
-    new ClearInGameStateAction().invoke(context);
+    cursorControl.stopCursorTraversal();
+    cursorControl.moveCursor(transport.getLocation());
+    new ClearInGameStateAction().invoke(inGameContext);
   }
 }

@@ -29,7 +29,7 @@ public class ControllerManager {
   public ControllerManager(InGameContext inGameContext) {
     this();
     this.inGameContext = inGameContext;
-    this.game = inGameContext.getGame();
+    this.game = inGameContext.getObj(Game.class);
   }
 
   public void initCityControllers() {

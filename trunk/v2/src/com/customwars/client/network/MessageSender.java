@@ -1,6 +1,5 @@
 package com.customwars.client.network;
 
-import com.customwars.client.model.drop.DropLocation;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.City;
@@ -46,7 +45,7 @@ public interface MessageSender {
 
   void sendChatMessage(String chatMessage) throws NetworkException;
 
-  void drop(Unit transport, DropLocation dropLocation) throws NetworkException;
+  void drop(Unit transport, Unit unit, Location dropLocation) throws NetworkException;
 
   void teleport(Location from, Location to) throws NetworkException;
 
@@ -68,17 +67,15 @@ public interface MessageSender {
 
   void flare(Location flareCenter, int flareRange) throws NetworkException;
 
-  void constructCity(Unit unit, City city, Location constructOn, Player newCityOwner) throws NetworkException;
+  void constructCity(Unit unit, City city, Location constructOn) throws NetworkException;
 
   void dive(Unit unit) throws NetworkException;
 
   void surface(Unit unit) throws NetworkException;
 
-  void produce(Unit producer, Unit unitToBuild) throws NetworkException;
-
   void sendWait(Unit unit) throws NetworkException;
 
-  void buildUnit(Unit unit, Tile tile, Player unitOwner) throws NetworkException;
+  void buildUnit(Unit unit, Location location, Player unitOwner) throws NetworkException;
 
   void destroyPlayer(Player player) throws NetworkException;
 }

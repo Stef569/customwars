@@ -5,6 +5,7 @@ import com.customwars.client.model.game.Game;
 import com.customwars.client.ui.HUD;
 import com.customwars.client.ui.renderer.MapRenderer;
 import com.customwars.client.ui.state.InGameContext;
+import org.newdawn.slick.gui.GUIContext;
 
 /**
  * Reset everything in the in game state to default.
@@ -12,7 +13,7 @@ import com.customwars.client.ui.state.InGameContext;
  * @author stefan
  */
 public class ClearInGameStateAction extends DirectAction {
-  private InGameContext context;
+  private InGameContext inGameContext;
   private MapRenderer mapRenderer;
   private Game game;
   private HUD hud;
@@ -22,21 +23,21 @@ public class ClearInGameStateAction extends DirectAction {
     super("Clear in game state", false);
   }
 
-  protected void init(InGameContext context) {
-    this.context = context;
-    this.game = context.getGame();
-    this.mapRenderer = context.getMapRenderer();
-    this.hud = context.getHud();
-    this.cursorControl = context.getCursorController();
+  protected void init(InGameContext inGameContext) {
+    this.inGameContext = inGameContext;
+    this.game = inGameContext.getObj(Game.class);
+    this.mapRenderer = inGameContext.getObj(MapRenderer.class);
+    this.hud = inGameContext.getObj(HUD.class);
+    this.cursorControl = inGameContext.getObj(CursorController.class);
   }
 
   protected void invokeAction() {
-    context.setInputMode(InGameContext.INPUT_MODE.DEFAULT);
-    context.clearUndoHistory();
-    context.clearClickHistory();
-    context.setTrapped(false);
-    context.clearDropHistory();
-    context.getContainer().getInput().resume();
+    inGameContext.setInputMode(InGameContext.INPUT_MODE.DEFAULT);
+    inGameContext.clearUndoHistory();
+    inGameContext.clearClickHistory();
+    inGameContext.setTrapped(false);
+    inGameContext.clearDropHistory();
+    inGameContext.getObj(GUIContext.class).getInput().resume();
 
     cursorControl.activateCursor("Select");
     cursorControl.stopCursorTraversal();

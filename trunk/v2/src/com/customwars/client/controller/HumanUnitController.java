@@ -31,7 +31,7 @@ public class HumanUnitController extends UnitController {
   public HumanUnitController(Unit unit, InGameContext gameContext) {
     super(unit, gameContext);
     this.inGameContext = gameContext;
-    this.mapRenderer = gameContext.getMapRenderer();
+    this.mapRenderer = gameContext.getObj(MapRenderer.class);
   }
 
   public void handleAPress() {
@@ -49,7 +49,7 @@ public class HumanUnitController extends UnitController {
     } else if (canSelect(selected)) {
       select(selected);
     } else if (canShowMenu(selected)) {
-      showMenu(selected);
+      showContextMenu(selected);
     } else {
       cancelPressed();
     }
@@ -112,10 +112,13 @@ public class HumanUnitController extends UnitController {
     return activeUnit != null && activeUnit.isWithinMoveZone(selected);
   }
 
-  private void showMenu(Tile selected) {
+  private void showContextMenu(Tile selected) {
     inGameContext.registerClick(2, selected);
     this.menu = new UnitMenuBuilder(this, unit, inGameContext, selected).getMenu();
+    showMenu(selected);
+  }
 
+  private void showMenu(Tile selected) {
     if (menu.atLeastHasOneItem()) {
       inGameContext.doAction(new ShowPopupMenuAction(menu, selected));
     } else {

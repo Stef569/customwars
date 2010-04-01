@@ -8,6 +8,7 @@ import com.customwars.client.action.unit.StartAttackAction;
 import com.customwars.client.action.unit.StartDropAction;
 import com.customwars.client.action.unit.StartFlareAction;
 import com.customwars.client.model.ArmyBranch;
+import com.customwars.client.model.game.Game;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.CityFactory;
 import com.customwars.client.model.gameobject.Terrain;
@@ -21,6 +22,7 @@ import com.customwars.client.ui.PopupMenu;
 import com.customwars.client.ui.state.InGameContext;
 import org.newdawn.slick.gui.AbstractComponent;
 import org.newdawn.slick.gui.ComponentListener;
+import org.newdawn.slick.gui.GUIContext;
 
 /**
  * Build a menu for a given unit once and allow to retrieve that menu see getMenu()
@@ -43,7 +45,7 @@ public class UnitMenuBuilder {
     this.controller = controller;
     this.unit = unit;
     this.inGameContext = inGamecontext;
-    this.map = inGamecontext.getGame().getMap();
+    this.map = inGamecontext.getObj(Game.class).getMap();
     Tile from = (Tile) unit.getLocation();
     buildUnitActionMenu(from, selected);
   }
@@ -68,7 +70,7 @@ public class UnitMenuBuilder {
   }
 
   private PopupMenu buildDropMenu(Tile from, Tile to) {
-    menu = new PopupMenu(inGameContext.getContainer(), "Unit drop menu");
+    menu = new PopupMenu(inGameContext.getObj(GUIContext.class), "Unit drop menu");
     inGameContext.clearUnitsInTransport();
 
     if (controller.canWait(to)) {
@@ -147,7 +149,7 @@ public class UnitMenuBuilder {
    * The unit is on the from Tile
    */
   private PopupMenu buildUnitContextMenu() {
-    menu = new PopupMenu(inGameContext.getContainer(), "Unit context menu");
+    menu = new PopupMenu(inGameContext.getObj(GUIContext.class), "Unit context menu");
     Tile from = inGameContext.getClick(1);
     Tile to = inGameContext.getClick(2);
 
@@ -211,7 +213,7 @@ public class UnitMenuBuilder {
 
     if (canBuildCity) {
       City city = getCityThatCanBeBuildOn(to);
-      CWAction buildCityAction = ActionFactory.buildConstructCityAction(unit, city, to, unit.getOwner());
+      CWAction buildCityAction = ActionFactory.buildConstructCityAction(unit, city, to);
       addToMenu(buildCityAction, App.translate("build") + ' ' + city.getName());
     }
 
@@ -249,7 +251,7 @@ public class UnitMenuBuilder {
    * @param menuItemName The name of the menu item, as shown in the gui
    */
   private void addToMenu(final CWAction action, String menuItemName) {
-    MenuItem menuItem = new MenuItem(menuItemName, inGameContext.getContainer());
+    MenuItem menuItem = new MenuItem(menuItemName, inGameContext.getObj(GUIContext.class));
     menuItem.addListener(new ComponentListener() {
       public void componentActivated(AbstractComponent source) {
         inGameContext.doAction(action);

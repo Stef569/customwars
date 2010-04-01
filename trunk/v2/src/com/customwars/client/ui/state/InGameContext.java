@@ -4,24 +4,16 @@ import com.customwars.client.action.ActionManager;
 import com.customwars.client.action.CWAction;
 import com.customwars.client.controller.ClickHistory;
 import com.customwars.client.controller.ControllerManager;
-import com.customwars.client.controller.CursorController;
-import com.customwars.client.controller.InGameInputHandler;
-import com.customwars.client.io.ResourceManager;
 import com.customwars.client.model.drop.DropLocationsQueue;
-import com.customwars.client.model.game.Game;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Tile;
-import com.customwars.client.model.map.path.MoveTraverse;
-import com.customwars.client.network.MessageSender;
-import com.customwars.client.ui.HUD;
-import com.customwars.client.ui.renderer.GameRenderer;
-import com.customwars.client.ui.renderer.MapRenderer;
-import org.newdawn.slick.GameContainer;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This object uses the Service locator pattern.
@@ -55,35 +47,38 @@ public class InGameContext {
   private final ActionManager actionManager;
   private final ClickHistory clickHistory = new ClickHistory(3);
 
-  private Game game;
-  private MoveTraverse moveTraverse;
-  private GameRenderer gameRenderer;
-  private InGameInputHandler inGameInputHandler;
-  private HUD hud;
-  private ControllerManager controllerManager;
-  private ResourceManager resources;
-  private GameContainer container;
-  private StateChanger stateChanger;
-  private StateSession stateSession;
-  private CursorController cursorController;
-  private MessageSender messageSender;
+  private final Map<Class, Object> objectLookup;
 
   public InGameContext() {
     dropQueue = new DropLocationsQueue();
     actionManager = new ActionManager(this);
     inputMode = INPUT_MODE.DEFAULT;
     unitsInTransport = new LinkedList<Unit>();
+    objectLookup = new HashMap<Class, Object>();
+  }
+
+  public <T> void registerObj(Class<T> objType, T obj) {
+    objectLookup.put(objType, obj);
+  }
+
+  @SuppressWarnings("unchecked")
+  public <T> T getObj(Class<T> objType) {
+    Object obj = objectLookup.get(objType);
+    return (T) obj;
   }
 
   public void handleUnitAPress(Unit unit) {
+    ControllerManager controllerManager = getObj(ControllerManager.class);
     controllerManager.handleUnitAPress(unit);
   }
 
   public void handleCityAPress(City city) {
+    ControllerManager controllerManager = getObj(ControllerManager.class);
     controllerManager.handleCityAPress(city);
   }
 
   public void handleUnitBPress(Unit unit) {
+    ControllerManager controllerManager = getObj(ControllerManager.class);
     controllerManager.handleUnitBPress(unit);
   }
 
@@ -131,108 +126,8 @@ public class InGameContext {
     this.inputMode = inputMode;
   }
 
-  public void setControllerManager(ControllerManager controllerManager) {
-    this.controllerManager = controllerManager;
-  }
-
   public void setTrapped(boolean trapped) {
     this.trapped = trapped;
-  }
-
-  public void setGame(Game game) {
-    this.game = game;
-  }
-
-  public void setHud(HUD hud) {
-    this.hud = hud;
-  }
-
-  public void setMoveTraverse(MoveTraverse moveTraverse) {
-    this.moveTraverse = moveTraverse;
-  }
-
-  public void setGameRenderer(GameRenderer gameRenderer) {
-    this.gameRenderer = gameRenderer;
-  }
-
-  public void setResources(ResourceManager resources) {
-    this.resources = resources;
-  }
-
-  public void setContainer(GameContainer container) {
-    this.container = container;
-  }
-
-  public void setInGameInputHandler(InGameInputHandler inGameInputHandler) {
-    this.inGameInputHandler = inGameInputHandler;
-  }
-
-  public void setCursorController(CursorController cursorController) {
-    this.cursorController = cursorController;
-  }
-
-  public void setStateChanger(StateChanger stateChanger) {
-    this.stateChanger = stateChanger;
-  }
-
-  public void setStateSession(StateSession stateSession) {
-    this.stateSession = stateSession;
-  }
-
-  public void setMessageSender(MessageSender messageSender) {
-    this.messageSender = messageSender;
-  }
-
-  public Game getGame() {
-    return game;
-  }
-
-  public HUD getHud() {
-    return hud;
-  }
-
-  public MoveTraverse getMoveTraverse() {
-    return moveTraverse;
-  }
-
-  public MapRenderer getMapRenderer() {
-    return gameRenderer.getMapRenderer();
-  }
-
-  public GameRenderer getGameRenderer() {
-    return gameRenderer;
-  }
-
-  public ControllerManager getControllerManager() {
-    return controllerManager;
-  }
-
-  public ResourceManager getResourceManager() {
-    return resources;
-  }
-
-  public GameContainer getContainer() {
-    return container;
-  }
-
-  public InGameInputHandler getInGameInputHandler() {
-    return inGameInputHandler;
-  }
-
-  public StateChanger getStateChanger() {
-    return stateChanger;
-  }
-
-  public CursorController getCursorController() {
-    return cursorController;
-  }
-
-  public StateSession getSession() {
-    return stateSession;
-  }
-
-  public MessageSender getMessageSender() {
-    return messageSender;
   }
 
   public List<CWAction> getExecutedActions() {

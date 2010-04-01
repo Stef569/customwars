@@ -1,13 +1,14 @@
 package com.customwars.client.action.unit;
 
+import com.customwars.client.App;
 import com.customwars.client.action.DirectAction;
-import com.customwars.client.model.game.Game;
-import com.customwars.client.model.game.Player;
-import com.customwars.client.model.gameobject.GameObjectState;
+import com.customwars.client.model.GameController;
 import com.customwars.client.model.gameobject.Unit;
-import com.customwars.client.model.map.Map;
-import com.customwars.client.model.map.Tile;
+import com.customwars.client.network.MessageSender;
+import com.customwars.client.network.NetworkException;
+import com.customwars.client.ui.GUI;
 import com.customwars.client.ui.state.InGameContext;
+import org.apache.log4j.Logger;
 
 /**
  * The unit is made Inactive(can no longer be controlled)
@@ -15,32 +16,34 @@ import com.customwars.client.ui.state.InGameContext;
  * @author stefan
  */
 public class WaitAction extends DirectAction {
-  private Game game;
-  private Map<Tile> map;
+  private static final Logger logger = Logger.getLogger(WaitAction.class);
   private final Unit unit;
+  private GameController gameController;
+  private MessageSender messageSender;
 
   public WaitAction(Unit unit) {
     super("Wait");
     this.unit = unit;
   }
 
-  protected void init(InGameContext context) {
-    game = context.getGame();
-    map = game.getMap();
+  protected void init(InGameContext inGameContext) {
+    gameController = inGameContext.getObj(GameController.class);
+    messageSender = inGameContext.getObj(MessageSender.class);
   }
 
   protected void invokeAction() {
+    gameController.makeUnitWait(unit);
+    if (App.isMultiplayer()) sendWait();
+  }
 
-    if (!unit.isDestroyed()) {
-      unit.setOrientation(Unit.DEFAULT_ORIENTATION);
-
-      // Make sure that the change to idle is picked up by the event listeners
-      unit.setState(GameObjectState.ACTIVE);
-      unit.setState(GameObjectState.IDLE);
-
-      Player activePlayer = game.getActivePlayer();
-      map.showLosFor(activePlayer);
-      map.resetAllHiddenUnits(activePlayer);
+  private void sendWait() {
+    try {
+      messageSender.sendWait(unit);
+    } catch (NetworkException ex) {
+      logger.warn("Could not send wait", ex);
+      if (GUI.askToResend(ex) == GUI.YES_OPTION) {
+        sendWait();
+      }
     }
   }
 }

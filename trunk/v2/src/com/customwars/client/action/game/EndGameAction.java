@@ -9,6 +9,7 @@ import com.customwars.client.network.NetworkException;
 import com.customwars.client.ui.GUI;
 import com.customwars.client.ui.state.InGameContext;
 import com.customwars.client.ui.state.StateChanger;
+import com.customwars.client.ui.state.StateSession;
 import org.apache.log4j.Logger;
 
 /**
@@ -17,7 +18,7 @@ import org.apache.log4j.Logger;
  * In SP mode:
  * goto the GAME_OVER state
  *
- * In MP Snail game mode:
+ * In MP mode:
  * Destroy the active player, End the turn
  * goto the GAME_OVER state
  */
@@ -33,9 +34,9 @@ public class EndGameAction extends DirectAction {
 
   @Override
   protected void init(InGameContext inGameContext) {
-    stateChanger = inGameContext.getStateChanger();
-    game = inGameContext.getSession().game;
-    messageSender = inGameContext.getMessageSender();
+    stateChanger = inGameContext.getObj(StateChanger.class);
+    game = inGameContext.getObj(StateSession.class).game;
+    messageSender = inGameContext.getObj(MessageSender.class);
   }
 
   @Override
@@ -43,10 +44,7 @@ public class EndGameAction extends DirectAction {
     stateChanger.changeTo("GAME_OVER");
     destroyPlayer();
     endTurn();
-
-    if (App.isMultiplayer()) {
-      sendYield();
-    }
+    if (App.isMultiplayer()) sendYield();
   }
 
   private void destroyPlayer() {

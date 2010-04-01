@@ -1,61 +1,55 @@
 package com.customwars.client.action.unit;
 
+import com.customwars.client.App;
 import com.customwars.client.action.DirectAction;
-import com.customwars.client.controller.ControllerManager;
-import com.customwars.client.model.game.Player;
+import com.customwars.client.model.GameController;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Location;
-import com.customwars.client.model.map.Map;
-import com.customwars.client.model.map.Tile;
-import com.customwars.client.tools.MapUtil;
+import com.customwars.client.network.MessageSender;
+import com.customwars.client.network.NetworkException;
+import com.customwars.client.ui.GUI;
 import com.customwars.client.ui.state.InGameContext;
 import org.apache.log4j.Logger;
 
 public class ConstructCityAction extends DirectAction {
   private static final Logger logger = Logger.getLogger(ConstructCityAction.class);
+  private InGameContext inGameContext;
+  private GameController gameController;
+  private MessageSender messageSender;
   private final Unit unit;
-  private final Location tile;
+  private final Location to;
   private final City city;
-  private final Player cityOwner;
-  private Map<Tile> map;
-  private InGameContext context;
-  private ControllerManager controllerManager;
 
-  public ConstructCityAction(Unit unit, City city, Location tile, Player cityOwner) {
+  public ConstructCityAction(Unit unit, City city, Location moveTo) {
     super("Construct City", false);
     this.unit = unit;
-    this.tile = tile;
+    this.to = moveTo;
     this.city = city;
-    this.cityOwner = cityOwner;
   }
 
   @Override
-  protected void init(InGameContext context) {
-    this.context = context;
-    controllerManager = context.getControllerManager();
-    map = context.getGame().getMap();
+  protected void init(InGameContext inGameContext) {
+    this.inGameContext = inGameContext;
+    gameController = inGameContext.getObj(GameController.class);
+    messageSender = inGameContext.getObj(MessageSender.class);
   }
 
   @Override
   protected void invokeAction() {
-    if (!context.isTrapped()) {
+    if (!inGameContext.isTrapped()) {
       constructCity();
     }
   }
 
   private void constructCity() {
-    unit.construct(city);
-    logConstructingProgress();
-
-    if (unit.isConstructionComplete()) {
-      unit.stopConstructing();
-      addCityToTile();
-    }
+    boolean constructionComplete = gameController.constructCity(unit, city, to);
+    logConstructingProgress(constructionComplete);
+    if (App.isMultiplayer()) sendConstructCity();
   }
 
-  private void logConstructingProgress() {
-    if (unit.isConstructionComplete()) {
+  private void logConstructingProgress(boolean constructionComplete) {
+    if (constructionComplete) {
       logger.debug(
         String.format("%s constructed a %s",
           unit.getStats().getName(), city.getName())
@@ -68,13 +62,14 @@ public class ConstructCityAction extends DirectAction {
     }
   }
 
-  private void addCityToTile() {
-    MapUtil.addCityToMap(map, tile, city, cityOwner);
-
-    if (cityOwner.isAi()) {
-      controllerManager.addAICityController(city);
-    } else {
-      controllerManager.addHumanCityController(city);
+  private void sendConstructCity() {
+    try {
+      messageSender.constructCity(unit, city, to);
+    } catch (NetworkException ex) {
+      logger.warn("Could not send construct city", ex);
+      if (GUI.askToResend(ex) == GUI.YES_OPTION) {
+        sendConstructCity();
+      }
     }
   }
 }

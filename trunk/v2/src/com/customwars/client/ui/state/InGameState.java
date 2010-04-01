@@ -3,10 +3,14 @@ package com.customwars.client.ui.state;
 import com.customwars.client.App;
 import com.customwars.client.SFX;
 import com.customwars.client.controller.ControllerManager;
+import com.customwars.client.controller.CursorController;
 import com.customwars.client.controller.InGameCursorController;
 import com.customwars.client.controller.InGameInputHandler;
 import com.customwars.client.controller.ReplayInputHandler;
 import com.customwars.client.controller.UserInGameInputHandler;
+import com.customwars.client.io.ResourceManager;
+import com.customwars.client.model.CWGameController;
+import com.customwars.client.model.GameController;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.game.GameReplay;
 import com.customwars.client.model.game.Player;
@@ -15,12 +19,14 @@ import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.model.map.TileMap;
 import com.customwars.client.model.map.path.MoveTraverse;
+import com.customwars.client.network.MessageSender;
 import com.customwars.client.network.MessageSenderFactory;
 import com.customwars.client.tools.ColorUtil;
 import com.customwars.client.ui.Camera2D;
 import com.customwars.client.ui.GUI;
 import com.customwars.client.ui.HUD;
 import com.customwars.client.ui.renderer.GameRenderer;
+import com.customwars.client.ui.renderer.MapRenderer;
 import com.customwars.client.ui.sprite.TileSprite;
 import com.customwars.client.ui.state.input.CWCommand;
 import com.customwars.client.ui.state.input.CWInput;
@@ -123,7 +129,7 @@ public class InGameState extends CWState implements PropertyChangeListener {
 
   private void createReplayController() {
     inputHandler = new ReplayInputHandler(stateSession.replay, inGameContext);
-    inGameContext.setInGameInputHandler(inputHandler);
+    inGameContext.registerObj(InGameInputHandler.class, inputHandler);
   }
 
   private void initSubSystems(Game game) {
@@ -149,24 +155,26 @@ public class InGameState extends CWState implements PropertyChangeListener {
     gameRenderer.loadResources(resources);
 
     inGameContext = new InGameContext();
-    inGameContext.setMoveTraverse(moveTraverse);
-    inGameContext.setGame(game);
-    inGameContext.setResources(resources);
-    inGameContext.setContainer((GameContainer) container);
-    inGameContext.setHud(hud);
-    inGameContext.setGameRenderer(gameRenderer);
-    inGameContext.setStateChanger(stateChanger);
-    inGameContext.setStateSession(stateSession);
-    inGameContext.setMessageSender(MessageSenderFactory.getInstance().createMessageSender());
+    inGameContext.registerObj(MoveTraverse.class, moveTraverse);
+    inGameContext.registerObj(Game.class, game);
+    inGameContext.registerObj(ResourceManager.class, resources);
+    inGameContext.registerObj(GUIContext.class, container);
+    inGameContext.registerObj(HUD.class, hud);
+    inGameContext.registerObj(GameRenderer.class, gameRenderer);
+    inGameContext.registerObj(MapRenderer.class, gameRenderer.getMapRenderer());
+    inGameContext.registerObj(StateChanger.class, stateChanger);
+    inGameContext.registerObj(StateSession.class, stateSession);
+    inGameContext.registerObj(MessageSender.class, MessageSenderFactory.getInstance().createMessageSender());
 
     ControllerManager controllerManager = new ControllerManager(inGameContext);
-    inGameContext.setControllerManager(controllerManager);
+    inGameContext.registerObj(ControllerManager.class, controllerManager);
+    inGameContext.registerObj(GameController.class, new CWGameController(game, controllerManager));
 
     cursorControl = new InGameCursorController(game, gameRenderer.getMapRenderer().getSpriteManager());
-    inGameContext.setCursorController(cursorControl);
+    inGameContext.registerObj(CursorController.class, cursorControl);
 
     inputHandler = new UserInGameInputHandler(inGameContext);
-    inGameContext.setInGameInputHandler(inputHandler);
+    inGameContext.registerObj(InGameInputHandler.class, inputHandler);
 
     controllerManager.initCityControllers();
     controllerManager.initUnitControllers();

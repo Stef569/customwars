@@ -2,26 +2,28 @@ package com.customwars.client.action.city;
 
 import com.customwars.client.App;
 import com.customwars.client.action.DirectAction;
+import com.customwars.client.model.GameController;
 import com.customwars.client.model.gameobject.City;
-import com.customwars.client.model.gameobject.Locatable;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Location;
-import com.customwars.client.model.map.Map;
-import com.customwars.client.model.map.Tile;
+import com.customwars.client.network.MessageSender;
+import com.customwars.client.network.NetworkException;
+import com.customwars.client.ui.GUI;
 import com.customwars.client.ui.renderer.MapRenderer;
 import com.customwars.client.ui.state.InGameContext;
+import org.apache.log4j.Logger;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 public class LaunchRocketAction extends DirectAction {
+  private static final Logger logger = Logger.getLogger(LaunchRocketAction.class);
   private MapRenderer mapRenderer;
   private final City rocketSilo;
   private final Unit rocketLauncher;
   private final Location rocketDestination;
   private InGameContext context;
-  private Map<Tile> map;
+  private GameController gameController;
+  private MessageSender messageSender;
 
   public LaunchRocketAction(City rocketSilo, Unit rocketLauncher, Location rocketDestination) {
     super("Launch Rocket", false);
@@ -31,44 +33,37 @@ public class LaunchRocketAction extends DirectAction {
   }
 
   @Override
-  protected void init(InGameContext context) {
-    this.context = context;
-    mapRenderer = context.getMapRenderer();
-    map = context.getGame().getMap();
+  protected void init(InGameContext inGameContext) {
+    this.context = inGameContext;
+    mapRenderer = inGameContext.getObj(MapRenderer.class);
+    gameController = inGameContext.getObj(GameController.class);
+    messageSender = inGameContext.getObj(MessageSender.class);
   }
 
   @Override
   public void invokeAction() {
-    if (context.isTrapped()) return;
-
-    rocketSilo.launchRocket(rocketLauncher);
-    int effectRange = mapRenderer.getCursorEffectRange();
-    Collection<Location> explosionArea = getExplosionArea(effectRange);
-    mapRenderer.setExplosionArea(explosionArea);
-
-    inflictDamage(explosionArea);
+    if (!context.isTrapped()) {
+      launchRocket();
+    }
   }
 
-  private void inflictDamage(Collection<Location> explosionArea) {
-    for (Location location : explosionArea) {
-      Locatable locatable = location.getLastLocatable();
+  private void launchRocket() {
+    int effectRange = mapRenderer.getCursorEffectRange();
+    Collection<Location> explosionArea =
+      gameController.launchRocket(rocketLauncher, rocketSilo, rocketDestination, effectRange);
+    mapRenderer.setExplosionArea(explosionArea);
+    if (App.isMultiplayer()) sendLaunchRocket();
+  }
 
-      if (locatable instanceof Unit) {
-        Unit unit = (Unit) locatable;
-        int siloRocketDamage = App.getInt("plugin.silo_rocket_damage");
-        unit.addHp(-siloRocketDamage);
+  private void sendLaunchRocket() {
+    try {
+      int effectRange = mapRenderer.getCursorEffectRange();
+      messageSender.launchRocket(rocketLauncher, rocketSilo, rocketDestination, effectRange);
+    } catch (NetworkException ex) {
+      logger.warn("Could not send launch rocket", ex);
+      if (GUI.askToResend(ex) == GUI.YES_OPTION) {
+        sendLaunchRocket();
       }
     }
-  }
-
-  private Collection<Location> getExplosionArea(int effectRange) {
-    List<Location> explosionArea = new ArrayList<Location>();
-    explosionArea.add(rocketDestination);
-
-    explosionArea.add(rocketDestination);
-    for (Location tile : map.getSurroundingTiles(rocketDestination, 1, effectRange)) {
-      explosionArea.add(tile);
-    }
-    return explosionArea;
   }
 }

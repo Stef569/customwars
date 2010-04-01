@@ -1,6 +1,5 @@
 package com.customwars.client.network;
 
-import com.customwars.client.model.drop.DropLocation;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.City;
@@ -16,6 +15,7 @@ import com.customwars.client.model.map.Tile;
  * convenience for creating objects that don't need to implement all methods.
  */
 public class MessageSenderAdapter implements MessageSender {
+  private static final String[] EMPTY = new String[0];
 
   @Override
   public void connect() throws NetworkException {
@@ -59,12 +59,12 @@ public class MessageSenderAdapter implements MessageSender {
 
   @Override
   public String[] getChatLog() throws NetworkException {
-    return new String[0];
+    return EMPTY;
   }
 
   @Override
   public String[] getSysLog() throws NetworkException {
-    return new String[0];
+    return EMPTY;
   }
 
   @Override
@@ -76,7 +76,7 @@ public class MessageSenderAdapter implements MessageSender {
   }
 
   @Override
-  public void drop(Unit transport, DropLocation dropLocation) throws NetworkException {
+  public void drop(Unit transport, Unit unit, Location dropLocation) throws NetworkException {
   }
 
   @Override
@@ -120,7 +120,7 @@ public class MessageSenderAdapter implements MessageSender {
   }
 
   @Override
-  public void constructCity(Unit unit, City city, Location constructOn, Player newCityOwner) throws NetworkException {
+  public void constructCity(Unit unit, City city, Location constructOn) throws NetworkException {
   }
 
   @Override
@@ -132,15 +132,11 @@ public class MessageSenderAdapter implements MessageSender {
   }
 
   @Override
-  public void produce(Unit producer, Unit unitToBuild) throws NetworkException {
-  }
-
-  @Override
   public void sendWait(Unit unit) throws NetworkException {
   }
 
   @Override
-  public void buildUnit(Unit unit, Tile tile, Player unitOwner) throws NetworkException {
+  public void buildUnit(Unit unit, Location location, Player unitOwner) throws NetworkException {
   }
 
   @Override

@@ -2,11 +2,13 @@ package com.customwars.client.action.game;
 
 import com.customwars.client.action.DirectAction;
 import com.customwars.client.io.loading.BinaryCW2GameParser;
+import com.customwars.client.model.game.Game;
 import com.customwars.client.model.game.GameReplay;
 import com.customwars.client.tools.IOUtil;
 import com.customwars.client.tools.StringUtil;
 import com.customwars.client.ui.GUI;
 import com.customwars.client.ui.state.InGameContext;
+import com.customwars.client.ui.state.StateSession;
 import org.apache.log4j.Logger;
 
 import java.io.File;
@@ -36,7 +38,8 @@ public class SaveReplayAction extends DirectAction {
   @Override
   protected void init(InGameContext inGameContext) {
     if (inGameContext != null) {
-      replay = new GameReplay(inGameContext.getSession().initialGame);
+      Game initialGame = inGameContext.getObj(StateSession.class).initialGame;
+      replay = new GameReplay(initialGame);
       replay.addActions(inGameContext.getExecutedActions());
     }
   }

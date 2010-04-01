@@ -20,11 +20,11 @@ import java.util.List;
  * @author stefan
  */
 public class StartAttackAction extends DirectAction {
-  private InGameContext context;
+  private InGameContext inGameContext;
   private MapRenderer mapRenderer;
   private Game game;
-  private Unit unit;
-  private Location to;
+  private final Unit unit;
+  private final Location to;
   private CursorController cursorControl;
 
   public StartAttackAction(Unit unit, Location to) {
@@ -33,11 +33,11 @@ public class StartAttackAction extends DirectAction {
     this.to = to;
   }
 
-  protected void init(InGameContext context) {
-    this.context = context;
-    this.game = context.getGame();
-    this.mapRenderer = context.getMapRenderer();
-    this.cursorControl = context.getCursorController();
+  protected void init(InGameContext inGameContext) {
+    this.inGameContext = inGameContext;
+    this.game = inGameContext.getObj(Game.class);
+    this.mapRenderer = inGameContext.getObj(MapRenderer.class);
+    this.cursorControl = inGameContext.getObj(CursorController.class);
   }
 
   protected void invokeAction() {
@@ -48,7 +48,7 @@ public class StartAttackAction extends DirectAction {
     cursorControl.activateCursor("ATTACK");
     cursorControl.startCursorTraversal(enemyLocationsInRange);
     mapRenderer.setAttackZone(enemyLocationsInRange);
-    context.setInputMode(InGameContext.INPUT_MODE.UNIT_ATTACK);
+    inGameContext.setInputMode(InGameContext.INPUT_MODE.UNIT_ATTACK);
   }
 
   private List<Location> getEnemyLocations(List<Defender> enemies) {

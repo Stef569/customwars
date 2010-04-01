@@ -1,7 +1,7 @@
 package com.customwars.client.action;
 
 import com.customwars.client.ui.state.InGameContext;
-import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.gui.GUIContext;
 
 /**
  * This action is invoked first before the main action
@@ -10,22 +10,22 @@ import org.newdawn.slick.GameContainer;
  * @author stefan
  */
 public class InitAction extends DirectAction {
-  private GameContainer gameContainer;
+  private GUIContext guiContext;
 
   public InitAction() {
     super("Init Action");
   }
 
-  protected void init(InGameContext context) {
-    gameContainer = context.getContainer();
+  protected void init(InGameContext inGameContext) {
+    guiContext = inGameContext.getObj(GUIContext.class);
   }
 
   protected void invokeAction() {
-    gameContainer.getInput().pause();
+    guiContext.getInput().pause();
   }
 
   @Override
   public void undo() {
-    gameContainer.getInput().resume();
+    guiContext.getInput().resume();
   }
 }

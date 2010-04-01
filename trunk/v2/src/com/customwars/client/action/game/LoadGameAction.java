@@ -32,9 +32,9 @@ public class LoadGameAction extends DirectAction {
   }
 
   @Override
-  protected void init(InGameContext context) {
-    stateChanger = context.getStateChanger();
-    session = context.getSession();
+  protected void init(InGameContext inGameContext) {
+    stateChanger = inGameContext.getObj(StateChanger.class);
+    session = inGameContext.getObj(StateSession.class);
     quickSaveGameFile = new File(SAVE_PATH);
     gameParser = new BinaryCW2GameParser();
   }

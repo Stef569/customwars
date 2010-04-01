@@ -10,7 +10,7 @@ import com.customwars.client.ui.state.InGameContext;
  * @author stefan
  */
 public class StartLaunchRocketAction extends DirectAction {
-  private InGameContext context;
+  private InGameContext inGameContext;
   private CursorController cursorControl;
 
   public StartLaunchRocketAction() {
@@ -18,20 +18,20 @@ public class StartLaunchRocketAction extends DirectAction {
   }
 
   @Override
-  protected void init(InGameContext context) {
-    this.context = context;
-    cursorControl = context.getCursorController();
+  protected void init(InGameContext inGameContext) {
+    this.inGameContext = inGameContext;
+    cursorControl = inGameContext.getObj(CursorController.class);
   }
 
   @Override
   protected void invokeAction() {
-    context.setInputMode(InGameContext.INPUT_MODE.LAUNCH_ROCKET);
+    inGameContext.setInputMode(InGameContext.INPUT_MODE.LAUNCH_ROCKET);
     cursorControl.activateCursor("SILO");
   }
 
   @Override
   public void undo() {
-    context.setInputMode(InGameContext.INPUT_MODE.DEFAULT);
+    inGameContext.setInputMode(InGameContext.INPUT_MODE.DEFAULT);
     cursorControl.activateCursor("SELECT");
   }
 }

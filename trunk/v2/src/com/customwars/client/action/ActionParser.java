@@ -241,13 +241,11 @@ public class ActionParser {
     int toCol = scanner.nextInt();
     int toRow = scanner.nextInt();
     int cityID = scanner.nextInt();
-    int cityOwnerID = scanner.nextInt();
     Location from = map.getTile(fromCol, fromRow);
     Location to = map.getTile(toCol, toRow);
     Unit unit = map.getUnitOn(from);
     City city = CityFactory.getCity(cityID);
-    Player cityOwner = game.getPlayerByID(cityOwnerID);
-    return ActionFactory.buildConstructCityAction(unit, city, to, cityOwner);
+    return ActionFactory.buildConstructCityAction(unit, city, to);
   }
 
   private CWAction parseDive(Scanner scanner) {

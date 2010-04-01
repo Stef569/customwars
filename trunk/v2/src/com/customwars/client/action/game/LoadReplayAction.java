@@ -43,8 +43,8 @@ public class LoadReplayAction extends DirectAction {
   @Override
   protected void init(InGameContext inGameContext) {
     if (inGameContext != null) {
-      stateChanger = inGameContext.getStateChanger();
-      session = inGameContext.getSession();
+      stateChanger = inGameContext.getObj(StateChanger.class);
+      session = inGameContext.getObj(StateSession.class);
     }
   }
 

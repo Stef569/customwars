@@ -1,9 +1,13 @@
 package com.customwars.client.action.unit;
 
+import com.customwars.client.App;
 import com.customwars.client.SFX;
 import com.customwars.client.model.drop.DropLocation;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Location;
+import com.customwars.client.network.MessageSender;
+import com.customwars.client.network.NetworkException;
+import com.customwars.client.ui.GUI;
 import com.customwars.client.ui.state.InGameContext;
 import org.apache.log4j.Logger;
 
@@ -14,6 +18,7 @@ import org.apache.log4j.Logger;
  */
 public class DropAction extends MoveAnimatedAction {
   private static final Logger logger = Logger.getLogger(DropAction.class);
+  private MessageSender messageSender;
   private final Unit transport;
 
   public DropAction(Unit transport, DropLocation dropLocation) {
@@ -21,20 +26,21 @@ public class DropAction extends MoveAnimatedAction {
     this.transport = transport;
   }
 
-  protected void init(InGameContext context) {
-    if (context.isTrapped()) {
+  protected void init(InGameContext inGameContext) {
+    if (inGameContext.isTrapped()) {
       setActionCompleted(true);
       return;
     }
 
-    logger.debug(String.format("Dropping %s to %s from transport %s",
-      unit.getStats().getName(), to.getLocationString(), transport.getStats().getName()));
+    messageSender = inGameContext.getObj(MessageSender.class);
+    logger.debug(String.format("Dropping %s to %s from transport %s(%s)",
+      unit.getStats().getName(), to.getLocationString(), transport.getStats().getName(), transport.getLocationString()));
 
     // MoveTraverse doesn't allow to move outside a transport location.
     // Put the unit on the transport location in the map.
     transport.remove(unit);
     transport.getLocation().add(unit);
-    super.init(context);
+    super.init(inGameContext);
   }
 
   void pathMoveComplete() {
@@ -54,5 +60,17 @@ public class DropAction extends MoveAnimatedAction {
     }
 
     assert transportLocation.getLocatableCount() == 1 : "Only the transport is on the transportLocation";
+    if (App.isMultiplayer()) sendDrop();
+  }
+
+  private void sendDrop() {
+    try {
+      messageSender.drop(transport, unit, to);
+    } catch (NetworkException ex) {
+      logger.warn("Could not send drop unit", ex);
+      if (GUI.askToResend(ex) == GUI.YES_OPTION) {
+        sendDrop();
+      }
+    }
   }
 }
