@@ -5,6 +5,7 @@ import com.customwars.client.action.ActionFactory;
 import com.customwars.client.action.CWAction;
 import com.customwars.client.action.ShowPopupMenuAction;
 import com.customwars.client.io.ResourceManager;
+import com.customwars.client.model.game.Game;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.gameobject.UnitFactory;
@@ -35,11 +36,11 @@ public class HumanCityController extends CityController {
   private final GUIContext guiContext;
 
   public HumanCityController(City city, InGameContext inGameContext) {
-    super(city, inGameContext.getGame());
+    super(city, inGameContext.getObj(Game.class));
     this.inGameContext = inGameContext;
-    this.mapRenderer = inGameContext.getMapRenderer();
-    this.resources = inGameContext.getResourceManager();
-    this.guiContext = inGameContext.getContainer();
+    this.mapRenderer = inGameContext.getObj(MapRenderer.class);
+    this.resources = inGameContext.getObj(ResourceManager.class);
+    this.guiContext = inGameContext.getObj(GUIContext.class);
   }
 
   public void handleAPress() {

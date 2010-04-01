@@ -1,6 +1,9 @@
 package com.customwars.client.model.gameobject;
 
+import com.customwars.client.model.map.Direction;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -121,5 +124,38 @@ public class TerrainFactory {
   public static List<Terrain> getBaseTerrains() {
     Collections.sort(baseTerrains, SORT_TERRAIN_ON_ID);
     return Collections.unmodifiableList(baseTerrains);
+  }
+
+  /**
+   * Get the destroyed terrain that replaces the city when it is destroyed
+   *
+   * By using the base type and prepending destroyed_ to it.
+   *
+   * The search is performed in the following order:
+   * 1. Search for the destroyed_type terrain
+   * 2. Get the directions this city connects to
+   * If it connects horizontal. Search for the horizontal_destroyed_type terrain
+   * If it connects vertical. Search for the vertical_destroyed_type terrain
+   *
+   * If at this point no terrain can be found just return a plain.
+   */
+  public static Terrain getDestroyedTerrain(City city) {
+    List<Direction> VERTICAL_DIRECTIONS = Arrays.asList(Direction.NORTH, Direction.SOUTH);
+    String type = city.getType();
+
+    if (hasTerrainForName("destroyed_" + type)) {
+      return getTerrain("destroyed_" + type);
+    }
+
+    if (city.canConnectToAll(VERTICAL_DIRECTIONS)) {
+      if (hasTerrainForName("vertical_destroyed_" + type)) {
+        return getTerrain("vertical_destroyed_" + type);
+      }
+    } else {
+      if (hasTerrainForName("horizontal_destroyed_" + type)) {
+        return getTerrain("horizontal_destroyed_" + type);
+      }
+    }
+    return getTerrain("plain");
   }
 }

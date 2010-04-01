@@ -1,8 +1,12 @@
 package com.customwars.client.action.unit;
 
+import com.customwars.client.App;
 import com.customwars.client.action.DirectAction;
-import com.customwars.client.controller.ControllerManager;
+import com.customwars.client.model.GameController;
 import com.customwars.client.model.gameobject.Unit;
+import com.customwars.client.network.MessageSender;
+import com.customwars.client.network.NetworkException;
+import com.customwars.client.ui.GUI;
 import com.customwars.client.ui.state.InGameContext;
 import org.apache.log4j.Logger;
 
@@ -13,9 +17,10 @@ import org.apache.log4j.Logger;
  */
 public class JoinAction extends DirectAction {
   private static final Logger logger = Logger.getLogger(JoinAction.class);
-  private ControllerManager controllerManager;
   private final Unit target, unit;
-  private InGameContext context;
+  private InGameContext inGameContext;
+  private GameController gameController;
+  private MessageSender messageSender;
 
   public JoinAction(Unit unit, Unit target) {
     super("Join", false);
@@ -23,37 +28,32 @@ public class JoinAction extends DirectAction {
     this.target = target;
   }
 
-  protected void init(InGameContext context) {
-    this.context = context;
-    controllerManager = context.getControllerManager();
+  protected void init(InGameContext inGameContext) {
+    this.inGameContext = inGameContext;
+    gameController = inGameContext.getObj(GameController.class);
+    messageSender = inGameContext.getObj(MessageSender.class);
   }
 
   protected void invokeAction() {
-    if (!context.isTrapped()) {
+    if (!inGameContext.isTrapped()) {
       join();
     }
   }
 
   private void join() {
     logger.debug("Join unit " + unit + " with " + target);
+    gameController.join(unit, target);
+    if (App.isMultiplayer()) sendJoin();
+  }
 
-    //Add Money if joining cause the target to go over max HP
-    int excessHP = unit.getHp() + target.getHp() - target.getMaxHp();
-
-    if (excessHP > 0) {
-      target.getOwner().addToBudget((excessHP * unit.getStats().getPrice()) / unit.getMaxHp());
+  private void sendJoin() {
+    try {
+      messageSender.join(unit, target);
+    } catch (NetworkException ex) {
+      logger.warn("Could not send join unit", ex);
+      if (GUI.askToResend(ex) == GUI.YES_OPTION) {
+        sendJoin();
+      }
     }
-
-    // add HP, supplies, ammo to target
-    target.addHp(unit.getHp());
-    target.addSupplies(unit.getSupplies());
-
-    if (unit.getAvailableWeapon() != null) {
-      target.addAmmo(unit.getAvailableWeapon().getAmmo());
-    }
-
-    target.setUnitState(unit.getUnitState());
-    unit.destroy(false);
-    controllerManager.removeUnitController(unit);
   }
 }

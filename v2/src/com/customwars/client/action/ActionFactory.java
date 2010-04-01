@@ -21,7 +21,6 @@ import com.customwars.client.action.unit.TransformTerrainAction;
 import com.customwars.client.action.unit.WaitAction;
 import com.customwars.client.model.drop.DropLocation;
 import com.customwars.client.model.drop.DropLocationsQueue;
-import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Terrain;
 import com.customwars.client.model.gameobject.Unit;
@@ -174,7 +173,7 @@ public class ActionFactory {
     transformTerrainActions.add(new InitAction());
     transformTerrainActions.add(new MoveAnimatedAction(unit.getLocation(), to));
     transformTerrainActions.add(new WaitAction(unit));
-    transformTerrainActions.add(new TransformTerrainAction(to, transformTo));
+    transformTerrainActions.add(new TransformTerrainAction(unit, to, transformTo));
     transformTerrainActions.add(new ClearInGameStateAction());
     transformTerrainActions.setActionText(unit, to, transformTo.getID());
     return transformTerrainActions;
@@ -185,20 +184,20 @@ public class ActionFactory {
     transformTerrainAction.add(new InitAction());
     transformTerrainAction.add(new MoveAnimatedAction(unit.getLocation(), to));
     transformTerrainAction.add(new WaitAction(unit));
-    transformTerrainAction.add(new FireFlareAction(flareCenter));
+    transformTerrainAction.add(new FireFlareAction(unit, flareCenter));
     transformTerrainAction.add(new ClearInGameStateAction());
     transformTerrainAction.setActionText(unit.getLocation(), to, flareCenter.getCol(), flareCenter.getRow());
     return transformTerrainAction;
   }
 
-  public static CWAction buildConstructCityAction(Unit unit, City city, Location to, Player cityOwner) {
+  public static CWAction buildConstructCityAction(Unit unit, City city, Location to) {
     ActionBag buildCityAction = new ActionBag("Build_City");
     buildCityAction.add(new InitAction());
     buildCityAction.add(new MoveAnimatedAction(unit.getLocation(), to));
     buildCityAction.add(new WaitAction(unit));
-    buildCityAction.add(new ConstructCityAction(unit, city, to, cityOwner));
+    buildCityAction.add(new ConstructCityAction(unit, city, to));
     buildCityAction.add(new ClearInGameStateAction());
-    buildCityAction.setActionText(unit, to, city.getID(), cityOwner.getId());
+    buildCityAction.setActionText(unit, to, city.getID());
     return buildCityAction;
   }
 

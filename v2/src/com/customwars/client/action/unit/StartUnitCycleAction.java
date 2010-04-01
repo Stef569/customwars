@@ -2,6 +2,7 @@ package com.customwars.client.action.unit;
 
 import com.customwars.client.action.DirectAction;
 import com.customwars.client.controller.CursorController;
+import com.customwars.client.model.game.Game;
 import com.customwars.client.model.gameobject.Locatable;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Location;
@@ -23,10 +24,10 @@ public class StartUnitCycleAction extends DirectAction {
     super("Start unit Cycle");
   }
 
-  protected void init(InGameContext context) {
-    this.inGameContext = context;
-    this.cursorControl = context.getCursorController();
-    this.map = context.getGame().getMap();
+  protected void init(InGameContext inGameContext) {
+    this.inGameContext = inGameContext;
+    this.cursorControl = inGameContext.getObj(CursorController.class);
+    this.map = inGameContext.getObj(Game.class).getMap();
   }
 
   protected void invokeAction() {

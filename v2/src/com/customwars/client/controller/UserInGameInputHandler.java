@@ -27,18 +27,18 @@ import org.newdawn.slick.gui.GUIContext;
  */
 public class UserInGameInputHandler implements InGameInputHandler {
   private static final Logger logger = Logger.getLogger(UserInGameInputHandler.class);
-  private final InGameCursorController cursorControl;
   private final InGameContext inGameContext;
   private final GUIContext guiContext;
   private final Game game;
+  private final CursorController cursorController;
   private final Map<Tile> map;
 
   public UserInGameInputHandler(InGameContext inGameContext) {
-    this.game = inGameContext.getGame();
+    this.game = inGameContext.getObj(Game.class);
+    this.cursorController = inGameContext.getObj(CursorController.class);
     this.map = game.getMap();
     this.inGameContext = inGameContext;
-    this.guiContext = inGameContext.getContainer();
-    this.cursorControl = (InGameCursorController) inGameContext.getCursorController();
+    this.guiContext = inGameContext.getObj(GUIContext.class);
   }
 
   public void handleA(Tile cursorLocation) {
@@ -113,7 +113,7 @@ public class UserInGameInputHandler implements InGameInputHandler {
    * @param action       The action to perform when clicked on the menu item
    */
   public MenuItem buildMenuItem(final String menuItemName, final CWAction action) {
-    MenuItem menuItem = new MenuItem(menuItemName, inGameContext.getContainer());
+    MenuItem menuItem = new MenuItem(menuItemName, guiContext);
     menuItem.addListener(new ComponentListener() {
       public void componentActivated(AbstractComponent source) {
         inGameContext.doAction(action);
@@ -155,7 +155,7 @@ public class UserInGameInputHandler implements InGameInputHandler {
       if (!inGameContext.isUnitCycleMode()) {
         inGameContext.doAction(new StartUnitCycleAction());
       } else {
-        cursorControl.moveCursorToNextLocation();
+        cursorController.moveCursorToNextLocation();
       }
     }
   }

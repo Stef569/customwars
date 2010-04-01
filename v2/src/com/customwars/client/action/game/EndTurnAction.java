@@ -34,9 +34,9 @@ public class EndTurnAction extends DirectAction {
   }
 
   protected void init(InGameContext inGameContext) {
-    this.stateChanger = inGameContext.getStateChanger();
-    this.session = inGameContext.getSession();
-    this.messageSender = inGameContext.getMessageSender();
+    this.stateChanger = inGameContext.getObj(StateChanger.class);
+    this.session = inGameContext.getObj(StateSession.class);
+    this.messageSender = inGameContext.getObj(MessageSender.class);
   }
 
   protected void invokeAction() {
@@ -46,14 +46,22 @@ public class EndTurnAction extends DirectAction {
         break;
       case NETWORK_SNAIL_GAME:
         session.game.endTurn();
-        sendDestroyedPlayers(session.game);
-        sendEndTurn();
         gotoMainMenu();
         break;
       case REPLAY:
         session.game.endTurn();
         break;
     }
+
+    if (App.isMultiplayer()) {
+      sendDestroyedPlayers(session.game);
+      sendEndTurn();
+    }
+  }
+
+  private void gotoMainMenu() {
+    stateChanger.resumeRecordingStateHistory();
+    stateChanger.changeTo("MAIN_MENU");
   }
 
   private void sendDestroyedPlayers(TurnBasedGame game) {
@@ -80,10 +88,5 @@ public class EndTurnAction extends DirectAction {
         sendEndTurn();
       }
     }
-  }
-
-  private void gotoMainMenu() {
-    stateChanger.resumeRecordingStateHistory();
-    stateChanger.changeTo("MAIN_MENU");
   }
 }

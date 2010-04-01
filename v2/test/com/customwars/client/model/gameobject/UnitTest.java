@@ -35,8 +35,8 @@ public class UnitTest {
     Game game = HardCodedGame.getGame();
     map = game.getMap();
     inGameContext = new InGameContext();
-    inGameContext.setGame(game);
-    inGameContext.setControllerManager(new ControllerManager(inGameContext));
+    inGameContext.registerObj(Game.class, game);
+    inGameContext.registerObj(ControllerManager.class, new ControllerManager(inGameContext));
   }
 
   @AfterClass

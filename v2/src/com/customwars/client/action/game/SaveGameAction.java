@@ -28,9 +28,9 @@ public class SaveGameAction extends DirectAction {
   }
 
   @Override
-  protected void init(InGameContext context) {
+  protected void init(InGameContext inGameContext) {
     gameParser = new BinaryCW2GameParser();
-    game = context.getGame();
+    game = inGameContext.getObj(Game.class);
   }
 
   @Override
@@ -41,9 +41,9 @@ public class SaveGameAction extends DirectAction {
       out = saveGame(out);
       logger.info("Game saved to " + SAVE_PATH);
       GUI.showdialog("The Game has been saved", "Success!");
-    } catch (IOException e) {
-      logger.warn("Could not save game", e);
-      GUI.showExceptionDialog("Could not save the game", e, "Save error");
+    } catch (IOException ex) {
+      logger.warn("Could not save game", ex);
+      GUI.showExceptionDialog("Could not save the game", ex, "Save error");
     } finally {
       IOUtil.closeStream(out);
     }

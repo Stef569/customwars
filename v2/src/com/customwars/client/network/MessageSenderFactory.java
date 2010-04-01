@@ -19,7 +19,7 @@ public class MessageSenderFactory {
       case NETWORK_SNAIL_GAME:
         return BattleServerMessageSender;
       default:
-        throw new AssertionError("No Message sender for this game mode");
+        return null;
     }
   }
 }

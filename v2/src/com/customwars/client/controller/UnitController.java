@@ -32,10 +32,10 @@ public abstract class UnitController {
   MoveTraverse moveTraverse;
 
   protected UnitController(Unit unit, InGameContext gameContext) {
-    this.game = gameContext.getGame();
+    this.game = gameContext.getObj(Game.class);
     this.map = game.getMap();
     this.unit = unit;
-    this.moveTraverse = gameContext.getMoveTraverse();
+    this.moveTraverse = gameContext.getObj(MoveTraverse.class);
   }
 
   boolean canSelect(Location selected) {

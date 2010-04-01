@@ -19,7 +19,7 @@ import org.apache.log4j.Logger;
  */
 public class SelectAction extends DirectAction {
   private static final Logger logger = Logger.getLogger(SelectAction.class);
-  private InGameContext context;
+  private InGameContext inGameContext;
   private MapRenderer mapRenderer;
   private CursorController cursorControl;
   private Game game;
@@ -30,11 +30,11 @@ public class SelectAction extends DirectAction {
     this.selectTile = selectTile;
   }
 
-  public void init(InGameContext context) {
-    this.context = context;
-    this.game = context.getGame();
-    this.mapRenderer = context.getMapRenderer();
-    this.cursorControl = context.getCursorController();
+  public void init(InGameContext inGameContext) {
+    this.inGameContext = inGameContext;
+    this.game = inGameContext.getObj(Game.class);
+    this.mapRenderer = inGameContext.getObj(MapRenderer.class);
+    this.cursorControl = inGameContext.getObj(CursorController.class);
   }
 
   protected void invokeAction() {
@@ -45,7 +45,7 @@ public class SelectAction extends DirectAction {
     if (cursorControl.isTraversing()) {
       cursorControl.stopCursorTraversal();
     }
-    context.setInputMode(InGameContext.INPUT_MODE.UNIT_SELECT);
+    inGameContext.setInputMode(InGameContext.INPUT_MODE.UNIT_SELECT);
   }
 
   private void selectUnit(Unit unit) {
@@ -60,7 +60,7 @@ public class SelectAction extends DirectAction {
 
   public void undo() {
     deselectActiveUnit();
-    context.setInputMode(InGameContext.INPUT_MODE.DEFAULT);
+    inGameContext.setInputMode(InGameContext.INPUT_MODE.DEFAULT);
   }
 
   private void deselectActiveUnit() {

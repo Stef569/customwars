@@ -3,6 +3,7 @@ package com.customwars.client.controller;
 import com.customwars.client.model.game.GameReplay;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.ui.state.InGameContext;
+import com.customwars.client.ui.state.StateChanger;
 
 /**
  * The Game Replay controller executes the next replay action
@@ -11,10 +12,12 @@ import com.customwars.client.ui.state.InGameContext;
 public class ReplayInputHandler implements InGameInputHandler {
   private final GameReplay replay;
   private final InGameContext inGameContext;
+  private StateChanger stateChanger;
 
   public ReplayInputHandler(GameReplay replay, InGameContext inGameContext) {
     this.replay = replay;
     this.inGameContext = inGameContext;
+    stateChanger = inGameContext.getObj(StateChanger.class);
   }
 
   @Override
@@ -46,7 +49,7 @@ public class ReplayInputHandler implements InGameInputHandler {
     if (replay.hasMoreActions()) {
       replay.execNextReplayAction(inGameContext);
     } else {
-      inGameContext.getStateChanger().changeTo("GAME_OVER");
+      stateChanger.changeTo("GAME_OVER");
     }
   }
 }
