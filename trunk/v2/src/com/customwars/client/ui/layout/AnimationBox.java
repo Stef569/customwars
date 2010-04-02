@@ -47,7 +47,22 @@ public class AnimationBox extends Box {
 
   public void renderImpl(Graphics g) {
     if (animation != null) {
-      g.drawAnimation(animation, getX() + getCenterX(), getY() + getCenterY());
+      renderAnim(g);
+    }
+  }
+
+  private void renderAnim(Graphics g) {
+    int y = getY() + getCenterY();
+    switch (getAlignement()) {
+      case LEFT:
+        g.drawAnimation(animation, getX(), y);
+        break;
+      case CENTER:
+        g.drawAnimation(animation, getX() + getCenterX(), y);
+        break;
+      case RIGHT:
+        g.drawAnimation(animation, getBoxWidth() - getAnimWidth(), y);
+        break;
     }
   }
 

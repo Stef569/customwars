@@ -9,7 +9,9 @@ import java.awt.Insets;
 import java.awt.Point;
 
 /**
- * Render text centered within a box
+ * Render text within a box.
+ * Based on the horizontal align the text is rendered to the left, right or center.
+ * The total dimension of a box is the dimension of the text + the insets.
  */
 public class TextBox extends Box {
   private String txt;
@@ -51,8 +53,23 @@ public class TextBox extends Box {
     if (txt != null) {
       Font origFont = g.getFont();
       g.setFont(font);
-      g.drawString(txt, getX() + getCenterX(), getY() + getCenterY());
+      renderText(g);
       g.setFont(origFont);
+    }
+  }
+
+  private void renderText(Graphics g) {
+    int y = getY() + getCenterY();
+    switch (super.getAlignement()) {
+      case LEFT:
+        g.drawString(txt, getX(), y);
+        break;
+      case CENTER:
+        g.drawString(txt, getX() + getCenterX(), y);
+        break;
+      case RIGHT:
+        g.drawString(txt, getWidth() - getBoxWidth(), y);
+        break;
     }
   }
 

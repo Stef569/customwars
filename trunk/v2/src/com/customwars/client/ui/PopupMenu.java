@@ -112,7 +112,7 @@ public class PopupMenu extends BasicComponent {
     for (MenuItem menuItem : menuItems) {
       menuItem.setLocation(getX(), getVerticalLocation(menuItem));
       menuItem.setWidth(widestMenuItem);
-      menuItem.initBoxes();
+      menuItem.layout();
       menuItem.setMouseOverColor(hoverColor);
     }
   }
