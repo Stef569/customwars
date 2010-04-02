@@ -8,11 +8,16 @@ import org.newdawn.slick.Graphics;
 import java.awt.Point;
 
 /**
- * A box is a rectangle that renders it's content in the center
+ * A box is a rectangle that can be rendered.
+ * It can have a border and a background.
  *
  * @author stefan
  */
 public abstract class Box implements Component {
+  public enum ALIGNMENT {
+    LEFT, CENTER, RIGHT
+  }
+
   private int x;
   private int y;
   private int width;
@@ -22,6 +27,7 @@ public abstract class Box implements Component {
   private boolean inited;
   private Color borderColor;
   private Color backgroundColor;
+  private ALIGNMENT alignment = ALIGNMENT.CENTER;
 
   public void loadResources(ResourceManager resources) {
   }
@@ -97,6 +103,10 @@ public abstract class Box implements Component {
     this.backgroundColor = backgroundColor;
   }
 
+  public void setAlignment(ALIGNMENT alignment) {
+    this.alignment = alignment;
+  }
+
   public int getX() {
     return x;
   }
@@ -127,6 +137,10 @@ public abstract class Box implements Component {
 
   int getCenterY() {
     return center.y;
+  }
+
+  public ALIGNMENT getAlignement() {
+    return alignment;
   }
 
   public boolean isVisible() {

@@ -9,7 +9,8 @@ import java.awt.Point;
 
 /**
  * An Image box is an image within a box
- * The box can be larger then the image by having insets
+ * Based on the horizontal align the image is rendered to the left, right or center.
+ * The total dimension of a box is the dimension of the image + the insets
  */
 public class ImageBox extends Box {
   private Image img;
@@ -52,7 +53,22 @@ public class ImageBox extends Box {
   @Override
   public void renderImpl(Graphics g) {
     if (img != null) {
-      g.drawImage(img, getX() + getCenterX(), getY() + getCenterY());
+      renderImage(g);
+    }
+  }
+
+  private void renderImage(Graphics g) {
+    int y = getY() + getCenterY();
+    switch (getAlignement()) {
+      case LEFT:
+        g.drawImage(img, getX(), y);
+        break;
+      case CENTER:
+        g.drawImage(img, getX() + getCenterX(), y);
+        break;
+      case RIGHT:
+        g.drawImage(img, getBoxWidth() - getImgWidth(), y);
+        break;
     }
   }
 
