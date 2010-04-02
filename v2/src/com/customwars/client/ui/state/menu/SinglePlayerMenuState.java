@@ -4,8 +4,8 @@ import com.customwars.client.App;
 import com.customwars.client.action.CWAction;
 import com.customwars.client.action.game.LoadReplayAction;
 import com.customwars.client.ui.GUI;
-import com.customwars.client.ui.MenuItem;
 import com.customwars.client.ui.PopupMenu;
+import com.customwars.client.ui.StandardMenuItem;
 import com.customwars.client.ui.state.CWState;
 import com.customwars.client.ui.state.input.CWCommand;
 import com.customwars.client.ui.state.input.CWInput;
@@ -29,9 +29,9 @@ public class SinglePlayerMenuState extends CWState implements ComponentListener 
     mainMenu.setHoverColor(new Color(255, 255, 255, 0.08f));
     Font font = resources.getFont("menu");
     mainMenu.addItems(
-      new MenuItem(App.translate("start_single_player_battle"), font, container),
-      new MenuItem(App.translate("load_replay"), font, container),
-      new MenuItem(App.translate("back"), font, container)
+      new StandardMenuItem(App.translate("start_single_player_battle"), font, container),
+      new StandardMenuItem(App.translate("load_replay"), font, container),
+      new StandardMenuItem(App.translate("back"), font, container)
     );
 
     mainMenu.addListener(this);

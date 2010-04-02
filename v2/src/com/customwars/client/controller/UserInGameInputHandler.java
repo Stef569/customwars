@@ -14,8 +14,8 @@ import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
-import com.customwars.client.ui.MenuItem;
 import com.customwars.client.ui.PopupMenu;
+import com.customwars.client.ui.StandardMenuItem;
 import com.customwars.client.ui.state.InGameContext;
 import org.apache.log4j.Logger;
 import org.newdawn.slick.gui.AbstractComponent;
@@ -86,21 +86,21 @@ public class UserInGameInputHandler implements InGameInputHandler {
   private void showContextMenu(Tile menuLocation) {
     PopupMenu popupMenu = new PopupMenu(guiContext, "Game menu");
 
-    MenuItem endTurnMenuItem = buildMenuItem(App.translate("end_turn"), ActionFactory.buildEndTurnAction());
+    StandardMenuItem endTurnMenuItem = buildMenuItem(App.translate("end_turn"), ActionFactory.buildEndTurnAction());
     popupMenu.addItem(endTurnMenuItem);
 
     if (App.isSinglePlayerGame()) {
-      MenuItem saveGameMenuItem = buildMenuItem(App.translate("save_game"), new SaveGameAction());
+      StandardMenuItem saveGameMenuItem = buildMenuItem(App.translate("save_game"), new SaveGameAction());
       popupMenu.addItem(saveGameMenuItem);
 
-      MenuItem loadGameMenuItem = buildMenuItem(App.translate("load_game"), new LoadGameAction());
+      StandardMenuItem loadGameMenuItem = buildMenuItem(App.translate("load_game"), new LoadGameAction());
       popupMenu.addItem(loadGameMenuItem);
     }
 
-    MenuItem saveReplayMenuItem = buildMenuItem(App.translate("save_replay"), new SaveReplayAction());
+    StandardMenuItem saveReplayMenuItem = buildMenuItem(App.translate("save_replay"), new SaveReplayAction());
     popupMenu.addItem(saveReplayMenuItem);
 
-    MenuItem endGameMenuItem = buildMenuItem(App.translate("end_game"), ActionFactory.buildEndGameAction());
+    StandardMenuItem endGameMenuItem = buildMenuItem(App.translate("end_game"), ActionFactory.buildEndGameAction());
     popupMenu.addItem(endGameMenuItem);
 
     inGameContext.doAction(new ShowPopupMenuAction(popupMenu, menuLocation));
@@ -112,8 +112,8 @@ public class UserInGameInputHandler implements InGameInputHandler {
    * @param menuItemName The name of the menu item, as shown in the gui
    * @param action       The action to perform when clicked on the menu item
    */
-  public MenuItem buildMenuItem(final String menuItemName, final CWAction action) {
-    MenuItem menuItem = new MenuItem(menuItemName, guiContext);
+  public StandardMenuItem buildMenuItem(final String menuItemName, final CWAction action) {
+    StandardMenuItem menuItem = new StandardMenuItem(menuItemName, guiContext);
     menuItem.addListener(new ComponentListener() {
       public void componentActivated(AbstractComponent source) {
         inGameContext.doAction(action);

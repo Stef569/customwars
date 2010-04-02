@@ -2,8 +2,8 @@ package com.customwars.client.ui.state.menu;
 
 import com.customwars.client.App;
 import com.customwars.client.ui.GUI;
-import com.customwars.client.ui.MenuItem;
 import com.customwars.client.ui.PopupMenu;
+import com.customwars.client.ui.StandardMenuItem;
 import com.customwars.client.ui.state.CWState;
 import com.customwars.client.ui.state.input.CWCommand;
 import com.customwars.client.ui.state.input.CWInput;
@@ -31,10 +31,10 @@ public class MultiPlayerMenuState extends CWState implements ComponentListener {
     Font font = resources.getFont("menu");
 
     mainMenu.addItems(
-      new MenuItem(App.translate("create_server_game"), font, container),
-      new MenuItem(App.translate("join_server_game"), font, container),
-      new MenuItem(App.translate("log_into_server_game"), font, container),
-      new MenuItem(App.translate("back"), font, container)
+      new StandardMenuItem(App.translate("create_server_game"), font, container),
+      new StandardMenuItem(App.translate("join_server_game"), font, container),
+      new StandardMenuItem(App.translate("log_into_server_game"), font, container),
+      new StandardMenuItem(App.translate("back"), font, container)
     );
 
     mainMenu.addListener(this);

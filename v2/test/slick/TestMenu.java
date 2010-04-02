@@ -1,8 +1,8 @@
 package slick;
 
 import com.customwars.client.model.game.Game;
-import com.customwars.client.ui.MenuItem;
 import com.customwars.client.ui.PopupMenu;
+import com.customwars.client.ui.StandardMenuItem;
 import com.customwars.client.ui.state.CWState;
 import com.customwars.client.ui.state.input.CWCommand;
 import com.customwars.client.ui.state.input.CWInput;
@@ -38,10 +38,10 @@ public class TestMenu extends CWState implements ComponentListener {
 
     testmenu = new PopupMenu(container);
     testmenu.addItems(
-      new MenuItem(mapOption, container),
-      new MenuItem(keyInputOption, container),
-      new MenuItem(gameOption, "", container),
-      new MenuItem(endTurn, container));
+      new StandardMenuItem(mapOption, container),
+      new StandardMenuItem(keyInputOption, container),
+      new StandardMenuItem(gameOption, "", container),
+      new StandardMenuItem(endTurn, container));
 
     testmenu.setLocation(220, 50);
     testmenu.setMenuTickSound(new Sound("testData/menutick.wav"));
