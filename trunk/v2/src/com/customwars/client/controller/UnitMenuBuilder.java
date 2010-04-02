@@ -17,8 +17,8 @@ import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.gameobject.UnitFactory;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
-import com.customwars.client.ui.MenuItem;
 import com.customwars.client.ui.PopupMenu;
+import com.customwars.client.ui.StandardMenuItem;
 import com.customwars.client.ui.state.InGameContext;
 import org.newdawn.slick.gui.AbstractComponent;
 import org.newdawn.slick.gui.ComponentListener;
@@ -251,7 +251,7 @@ public class UnitMenuBuilder {
    * @param menuItemName The name of the menu item, as shown in the gui
    */
   private void addToMenu(final CWAction action, String menuItemName) {
-    MenuItem menuItem = new MenuItem(menuItemName, inGameContext.getObj(GUIContext.class));
+    StandardMenuItem menuItem = new StandardMenuItem(menuItemName, inGameContext.getObj(GUIContext.class));
     menuItem.addListener(new ComponentListener() {
       public void componentActivated(AbstractComponent source) {
         inGameContext.doAction(action);

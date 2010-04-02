@@ -11,6 +11,7 @@ import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.gameobject.UnitFactory;
 import com.customwars.client.model.map.Direction;
 import com.customwars.client.model.map.Tile;
+import com.customwars.client.ui.BuyUnitMenuItem;
 import com.customwars.client.ui.MenuItem;
 import com.customwars.client.ui.PopupMenu;
 import com.customwars.client.ui.renderer.MapRenderer;
@@ -85,10 +86,11 @@ public class HumanCityController extends CityController {
   }
 
   private MenuItem buildMenuItem(Unit unit, CWAction action) {
-    String unitInfo = App.translate(unit.getStats().getName()) + ' ' + unit.getStats().getPrice();
+    String unitName = App.translate(unit.getStats().getName());
+    String unitPrice = "$" + unit.getStats().getPrice();
     Color cityColor = city.getOwner().getColor();
     Image unitImage = getUnitImg(unit, cityColor, action != null);
-    MenuItem item = buildMenuItem(action, unitImage, unitInfo);
+    MenuItem item = buildMenuItem(action, unitImage, unitName, unitPrice);
 
     if (action == null) {
       item.setTextColor(DARKER_TEXT_COLOR);
@@ -110,11 +112,10 @@ public class HumanCityController extends CityController {
   /**
    * Build a menu item backed by a CWAction
    *
-   * @param action       The action to perform when clicked on the menu item
-   * @param menuItemName The name of the menu item, as shown in the gui
+   * @param action The action to perform when clicked on the menu item
    */
-  public MenuItem buildMenuItem(final CWAction action, Image img, String menuItemName) {
-    MenuItem menuItem = new MenuItem(img, menuItemName, guiContext);
+  public MenuItem buildMenuItem(final CWAction action, Image img, String unitName, String unitPrice) {
+    MenuItem menuItem = new BuyUnitMenuItem(img, unitName, unitPrice, guiContext.getDefaultFont(), guiContext);
     menuItem.addListener(new ComponentListener() {
       public void componentActivated(AbstractComponent source) {
         inGameContext.doAction(action);
