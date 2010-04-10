@@ -18,15 +18,22 @@ public class CWAnimLib {
     this.animLib = animLib;
   }
 
+  /**
+   * Get a colored city animation
+   */
   public Animation getCityAnim(City city, Color color) {
-    return animLib.getCityAnim(city.getImgRowID(), color, "");
+    return animLib.getCityAnim(city.getID(), color, "");
   }
 
   /**
-   * Get the inactive city animation for a special neutral city or null.
+   * Get the inactive city animation for a city that cannot be captured. Inactive can have different meanings
+   * depending on the city:
+   * In case of a missile silo an empty launch platform is returned.
+   * In case of a pipe seam a destroyed pipe seam is returned.
+   * if the city can be captured null is returned.
    */
   public Animation getInActiveCityAnim(City city, Color color) {
-    return city.isSpecialNeutralCity() ? animLib.getCityAnim(city.getImgRowID(), color, AnimLib.ANIM_INACTIVE) : null;
+    return city.canBeCaptured() ? null : animLib.getCityAnim(city.getID(), color, AnimLib.ANIM_INACTIVE);
   }
 
   /**
@@ -34,7 +41,7 @@ public class CWAnimLib {
    * Supported directions(N,E,S,W) all other directions will throw an IllegalArgumentException
    */
   public Animation getUnitAnim(Unit unit, Color color, Direction direction) {
-    int unitID = unit.getStats().getImgRowID();
+    int unitID = unit.getStats().getID();
 
     switch (direction) {
       case NORTH:
@@ -50,7 +57,10 @@ public class CWAnimLib {
     }
   }
 
+  /**
+   * Get a darker version of a unit animation
+   */
   public Animation getInactiveUnitAnim(Unit unit, Color color) {
-    return animLib.getUnitAnim(unit.getStats().getImgRowID(), color, AnimLib.ANIM_INACTIVE);
+    return animLib.getUnitAnim(unit.getStats().getID(), color, AnimLib.ANIM_INACTIVE);
   }
 }
