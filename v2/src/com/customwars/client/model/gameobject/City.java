@@ -22,7 +22,7 @@ import java.util.List;
  * Cities can be owned by 1 Player
  * are located on a Location
  * They have funds, The player that owns this city receives the funds on each turn start.
- * can heal and supply units of a specific ArmyBranch ID when they are located on the city
+ * can heal and supply units of a specific ArmyBranch when they are located on the city
  * can be captured by a Unit of a specific unit ID
  * can build units of a specific Unit ID
  * <p/>
@@ -36,9 +36,9 @@ import java.util.List;
  */
 public class City extends Terrain implements PropertyChangeListener, TurnHandler, Locatable, Defender {
   private List<ArmyBranch> heals;       // The army branches this City can heal(Empty list means it cannot heal)
-  private List<Integer> canBeCaptureBy; // The ids this City can be captured by(Empty list means it cannot be captured)
-  private List<Integer> builds;         // The ids this City can build (Empty list means it cannot build)
-  private List<Integer> canBeLaunchedBy;// The ids that can launch a rocket (Empty list means it cannot launch rockets)
+  private List<Integer> canBeCaptureBy; // The unit ids this City can be captured by(Empty list means it cannot be captured)
+  private List<Integer> builds;         // The unit ids this City can build (Empty list means it cannot build)
+  private List<Integer> canBeLaunchedBy;// The unit ids that can launch a rocket from this city (Empty list means it cannot launch rockets)
   private final int maxCapCount;
   private final int healRate;       // Healing/repairs this city can give to a Unit
   private final int maxHp;          // Maximum health points
@@ -341,6 +341,10 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
     return unit != null && canBeCaptureBy.contains(unit.getStats().getID()) && unit.getLocation() == location;
   }
 
+  public boolean canBeCaptured() {
+    return !canBeCaptureBy.isEmpty();
+  }
+
   /**
    * @return does this city has the ability to build the given unit
    */
@@ -427,10 +431,6 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
 
   public boolean isNeutral() {
     return owner != null && owner.isNeutral();
-  }
-
-  public boolean isSpecialNeutralCity() {
-    return canBeCaptureBy.isEmpty();
   }
 
   public int getHp() {

@@ -1,5 +1,6 @@
 package com.customwars.client.controller.mapeditor;
 
+import com.customwars.client.App;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.CityFactory;
@@ -28,8 +29,8 @@ public class CityMapEditorControl implements MapEditorControl {
     removePreviousCity(t);
     City city = CityFactory.getCity(cityID);
 
-    if (city.isSpecialNeutralCity()) {
-      color = Color.GRAY;
+    if (!city.canBeCaptured()) {
+      color = App.getColor("plugin.neutral_color");
     }
 
     Player mapPlayer = map.getPlayer(color);
