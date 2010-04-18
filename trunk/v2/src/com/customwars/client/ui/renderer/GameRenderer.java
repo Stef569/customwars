@@ -1,21 +1,15 @@
 package com.customwars.client.ui.renderer;
 
 import com.customwars.client.io.ResourceManager;
-import com.customwars.client.model.fight.Fight;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.gameobject.Unit;
-import com.customwars.client.model.gameobject.UnitFight;
-import com.customwars.client.model.map.Direction;
-import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.model.map.path.MoveTraverse;
 import com.customwars.client.ui.Camera2D;
-import com.customwars.client.ui.GUI;
 import com.customwars.client.ui.HUD;
 import com.customwars.client.ui.Scroller;
 import com.customwars.client.ui.sprite.SpriteManager;
-import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 
 import java.beans.PropertyChangeEvent;
@@ -26,18 +20,18 @@ import java.beans.PropertyChangeListener;
  * the map     ->  MapRenderer
  * game events ->  EventsRenderer
  * pop up      ->  HUD
+ * damage      -> DamageRenderer
  * <p/>
  * The map is scrolled when the cursor is near the edge of the map {@link Scroller}
  */
 public class GameRenderer implements Renderable, PropertyChangeListener {
-  private static final Color DAMAGE_PERCENTAGE_BACKGROUND_COLOR = new Color(0, 0, 0, 0.4f);
-
   // Control
-  private boolean renderEvents = true, renderAttackDamage;
+  private boolean renderEvents = true;
 
   // GUI
   private final MapRenderer mapRenderer;
   private final GameEventsRenderer eventsRenderer;
+  private DamageRenderer damageRenderer;
   private final SpriteManager spriteManager;
   private final Camera2D camera;
   private final HUD hud;
@@ -46,13 +40,11 @@ public class GameRenderer implements Renderable, PropertyChangeListener {
   // Data
   private final Game game;
   private final Map<Tile> map;
-  private final Fight fight;
 
   public GameRenderer(Game game, Camera2D camera, HUD hud, MoveTraverse moveTraverse) {
     this.game = game;
     this.camera = camera;
 
-    this.fight = new UnitFight();
     this.game.addPropertyChangeListener(this);
     this.map = game.getMap();
 
@@ -71,12 +63,13 @@ public class GameRenderer implements Renderable, PropertyChangeListener {
     mapRenderer.loadResources(resources);
     eventsRenderer.loadResources(resources);
     hud.loadResources(resources);
+    DamageRenderer.setTextFont(resources.getFont("in_game"));
   }
 
   public void update(int elapsedTime) {
     mapRenderer.update(elapsedTime);
     camera.update(elapsedTime);
-    scroller.setCursorLocation(mapRenderer.getCursorLocation());
+    scroller.setCursorLocation(getCursorLocation());
     scroller.update(elapsedTime);
     eventsRenderer.update(elapsedTime);
   }
@@ -86,75 +79,27 @@ public class GameRenderer implements Renderable, PropertyChangeListener {
     g.translate(-camera.getX(), -camera.getY());
     mapRenderer.render(g);
     if (renderEvents) eventsRenderer.render(g);
-    if (renderAttackDamage) renderAttackDamagePercentage(g);
+    if (damageRenderer != null) damageRenderer.render(g);
     hud.renderTranslated(g);
     g.resetTransform();
   }
 
-  /**
-   * Draw The damage percentage near the cursorlocation
-   *
-   * @param g Graphics to render the dmg percentage to
-   */
-  private void renderAttackDamagePercentage(Graphics g) {
-    Location cursorLocation = getCursorLocation();
-    Unit attacker = game.getActiveUnit();
-    Unit defender = map.getUnitOn(cursorLocation);
+  public void setRenderAttackDamage(boolean renderAttackDamage) {
+    if (renderAttackDamage) {
+      Unit activeUnit = game.getActiveUnit();
 
-    if (attacker != null && defender != null) {
-      fight.initFight(attacker, defender);
-      int tileSize = map.getTileSize();
-      int cursorX = cursorLocation.getCol() * tileSize + tileSize / 2;
-      int cursorY = cursorLocation.getRow() * tileSize + 5;
-      int dmgPercentage = fight.getAttackDamagePercentage();
-
-      String dmgTxt = "Damage:" + dmgPercentage + "%";
-      int fontWidth = g.getFont().getWidth(dmgTxt);
-      int fontHeight = g.getFont().getHeight(dmgTxt);
-
-      final int BOX_MARGIN = 2;
-      final int CURSOR_OFFSET = 64;
-
-      int boxX = cursorX + CURSOR_OFFSET - BOX_MARGIN;
-      int boxY = cursorY - CURSOR_OFFSET - BOX_MARGIN;
-      int totalWidth = fontWidth + BOX_MARGIN * 2;
-      int totalHeight = fontHeight + BOX_MARGIN * 2;
-
-      // If the damage percentage does not fit to the gui make sure that it does
-      // by positioning the dmg percentage to the opposite quadrant as where the cursor is located.
-      // If the cursor is located NORTH EAST in the map show the dmg percentage at SOUTH WEST
-      if (!GUI.canFitToScreen(boxX, boxY, totalWidth, totalHeight)) {
-        Direction quadrant = map.getQuadrantFor(cursorLocation);
-        switch (quadrant) {
-          case NORTHEAST:
-            boxX = cursorX - CURSOR_OFFSET - BOX_MARGIN;
-            boxY = cursorY + CURSOR_OFFSET - BOX_MARGIN;
-            break;
-          case NORTHWEST:
-            boxX = cursorX + CURSOR_OFFSET - BOX_MARGIN;
-            boxY = cursorY + CURSOR_OFFSET - BOX_MARGIN;
-            break;
-          case SOUTHEAST:
-            boxX = cursorX - CURSOR_OFFSET - BOX_MARGIN;
-            boxY = cursorY - CURSOR_OFFSET - BOX_MARGIN;
-            break;
-          case SOUTHWEST:
-            boxX = cursorX + CURSOR_OFFSET - BOX_MARGIN;
-            boxY = cursorY - CURSOR_OFFSET - BOX_MARGIN;
-            break;
+      if (damageRenderer == null) {
+        this.damageRenderer = new DamageRenderer(map, activeUnit, getCursorLocation());
+      } else {
+        // Only create a new Damage renderer when the location has changed.
+        // If the location has not changed keep using the old damage renderer
+        if (!damageRenderer.isShowingDamageFor(getCursorLocation())) {
+          this.damageRenderer = new DamageRenderer(map, activeUnit, getCursorLocation());
         }
       }
-
-      Color prevColor = g.getColor();
-      g.setColor(DAMAGE_PERCENTAGE_BACKGROUND_COLOR);
-      g.fillRoundRect(boxX, boxY, totalWidth, totalHeight, 2);
-      g.setColor(prevColor);
-      g.drawString(dmgTxt, boxX + BOX_MARGIN, boxY + BOX_MARGIN);
+    } else {
+      this.damageRenderer = null;
     }
-  }
-
-  public void setRenderAttackDamage(boolean renderAttackDamage) {
-    this.renderAttackDamage = renderAttackDamage;
   }
 
   public void setRenderEvents(boolean renderEvents) {
