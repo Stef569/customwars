@@ -19,7 +19,7 @@ import org.newdawn.slick.thingle.spi.ThingleGraphics;
 import java.awt.Dimension;
 
 /**
- * Render the amount of cities that a map contains
+ * Render the amount of cities that a map contains horizontally
  */
 public class CityCountWidgetRenderer implements WidgetRenderer {
   private static final java.awt.Color NEUTRAL_COLOR = App.getColor("plugin.neutral_color");
@@ -35,8 +35,8 @@ public class CityCountWidgetRenderer implements WidgetRenderer {
   private final Font numbers;
   private Dimension preferredSize;
 
-  public CityCountWidgetRenderer(ResourceManager resourceManager) {
-    this.resources = resourceManager;
+  public CityCountWidgetRenderer(ResourceManager resources) {
+    this.resources = resources;
     numbers = resources.getFont("numbers");
   }
 
@@ -53,7 +53,8 @@ public class CityCountWidgetRenderer implements WidgetRenderer {
       City city = map.getCityOn(t);
 
       if (city != null) {
-        mapCitiesCount[city.getID()]++;
+        City baseCity = CityFactory.getBaseCity(city.getType());
+        mapCitiesCount[baseCity.getID()]++;
       }
     }
   }
@@ -87,7 +88,8 @@ public class CityCountWidgetRenderer implements WidgetRenderer {
   private void renderContent(Graphics g) {
     int x = 0;
     for (City city : CityFactory.getBaseCities()) {
-      paintCityCount(city, mapCitiesCount[city.getID()], x, g);
+      int cityCount = mapCitiesCount[city.getID()];
+      paintCityCount(city, cityCount, x, g);
       x += tileSize + HORIZONTAL_MARGIN;
     }
   }

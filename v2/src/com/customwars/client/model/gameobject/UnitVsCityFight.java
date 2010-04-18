@@ -16,10 +16,11 @@ public class UnitVsCityFight extends BasicFight {
   public int getAttackDamagePercentage() {
     Unit attackingUnit = (Unit) attacker;
     City city = (City) defender;
+    City baseCity = CityFactory.getBaseCity(city.getType());
     int attackerHP = attackingUnit.getInternalHp();
     int attackMaxHP = attackingUnit.getInternalMaxHp();
 
-    int baseDmg = getAttackDamagePercentage(attackingUnit, city);
+    int baseDmg = getAttackDamagePercentage(attackingUnit, baseCity);
     double dmg = Math.floor(attackerHP / (float) attackMaxHP * baseDmg);
     return dmg < 0 ? 0 : (int) dmg;
   }
