@@ -8,6 +8,7 @@ import com.customwars.client.ui.state.CWStates;
 import org.apache.log4j.Logger;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
 
@@ -58,6 +59,7 @@ public class MainGame {
     SFX.setGameContainer(gameContainer);
     SFX.setSoundEffectsVolume((float) App.getDouble("user.sfx.sound_volume"));
     SFX.setMusicVolume((float) App.getDouble("user.sfx.music_volume"));
+    Input.disableControllers();
   }
 
   private void run(AppGameContainer container) throws SlickException {
