@@ -296,4 +296,57 @@
     <terrain name="vertical_destroyed_pipe_seam" id="98" type="plain">
         <connect type="pipe">North, South</connect>
     </terrain>
+    <terrain name="wall" id="99" type="wall">
+        <connect>East, West</connect>
+    </terrain>
+    <terrain name="wall" id="100" type="wall">
+        <connect>North, South</connect>
+    </terrain>
+    <terrain name="wall" id="101" type="wall">
+        <connect>North, East</connect>
+    </terrain>
+
+    <!-- Row 6 -->
+    <terrain name="wall" id="102" type="wall">
+        <connect>East, South</connect>
+    </terrain>
+    <terrain name="wall" id="103" type="wall">
+        <connect>South, West</connect>
+    </terrain>
+    <terrain name="wall" id="104" type="wall">
+        <connect>North, West</connect>
+    </terrain>
+    <terrain name="wall" id="105" type="wall">
+        <connect>North, East, West</connect>
+    </terrain>
+    <terrain name="wall" id="106" type="wall">
+        <connect>North, East, South</connect>
+    </terrain>
+    <terrain name="wall" id="107" type="wall">
+        <connect>East, South, West</connect>
+    </terrain>
+    <terrain name="wall" id="108" type="wall">
+        <connect>North, South, West</connect>
+    </terrain>
+    <terrain name="wall" id="109" type="wall">
+        <connect>North, East, South, West</connect>
+    </terrain>
+    <terrain name="wall" id="110" type="wall">
+        <connect>South</connect>
+    </terrain>
+    <terrain name="wall" id="111" type="wall">
+        <connect>West</connect>
+    </terrain>
+    <terrain name="wall" id="112" type="wall">
+        <connect>North</connect>
+    </terrain>
+    <terrain name="wall" id="113" type="wall">
+        <connect>East</connect>
+    </terrain>
+    <terrain name="vertical_destroyed_wall_seam" id="114" type="plain">
+        <connect type="wall">North, South</connect>
+    </terrain>
+    <terrain name="horizontal_destroyed_wall_seam" id="115" type="plain">
+        <connect type="wall">East, West</connect>
+    </terrain>
 </list>

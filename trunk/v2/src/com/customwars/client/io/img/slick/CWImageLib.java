@@ -13,6 +13,7 @@ import java.awt.Color;
 /**
  * CW specific Image getter functions
  * This class hides how single unit/city images are retrieved from a unit/city spritesheet.
+ * The imageRowID is used to retrieve an image from a spritesheet.
  */
 public class CWImageLib {
   private final ImageLib lib;
@@ -27,15 +28,15 @@ public class CWImageLib {
   }
 
   public Image getCityImage(City city, int colIndex, Color color) {
-    SpriteSheet coloredCitySheet = getCitySpriteSheet(color);
-    int coloredCityCount = coloredCitySheet.getVerticalCount();
-
-    if (city.getImgRowID() < coloredCityCount) {
+    // There are 2 types of cities.
+    // Cities that can be captured/owned and hence recolored.
+    // Cities that are neutral and are always displayed in the neutral color.
+    if (city.canBeCaptured()) {
+      SpriteSheet coloredCitySheet = getCitySpriteSheet(color);
       return coloredCitySheet.getSubImage(colIndex, city.getImgRowID());
     } else {
       SpriteSheet neutralCitySheet = getNeutralCitySpriteSheet();
-      int neutralCityRow = city.getImgRowID() - coloredCityCount;
-      return neutralCitySheet.getSubImage(colIndex, neutralCityRow);
+      return neutralCitySheet.getSubImage(colIndex, city.getImgRowID());
     }
   }
 
