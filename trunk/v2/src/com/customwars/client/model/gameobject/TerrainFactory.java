@@ -127,27 +127,27 @@ public class TerrainFactory {
   }
 
   /**
-   * Get the destroyed terrain that replaces the city when it is destroyed
-   *
+   * Get the destroyed terrain that replaces the given terrain when it is destroyed
+   * <p/>
    * By using the base type and prepending destroyed_ to it.
-   *
+   * <p/>
    * The search is performed in the following order:
    * 1. Search for the destroyed_type terrain
-   * 2. Get the directions this city connects to
+   * 2. Get the directions this terrain connects to
    * If it connects horizontal. Search for the horizontal_destroyed_type terrain
    * If it connects vertical. Search for the vertical_destroyed_type terrain
-   *
+   * <p/>
    * If at this point no terrain can be found just return a plain.
    */
-  public static Terrain getDestroyedTerrain(City city) {
+  public static Terrain getDestroyedTerrain(Terrain terrain) {
     List<Direction> VERTICAL_DIRECTIONS = Arrays.asList(Direction.NORTH, Direction.SOUTH);
-    String type = city.getType();
+    String type = terrain.getType();
 
     if (hasTerrainForName("destroyed_" + type)) {
       return getTerrain("destroyed_" + type);
     }
 
-    if (city.canConnectToAll(VERTICAL_DIRECTIONS)) {
+    if (terrain.canConnectToAll(VERTICAL_DIRECTIONS)) {
       if (hasTerrainForName("vertical_destroyed_" + type)) {
         return getTerrain("vertical_destroyed_" + type);
       }
@@ -157,5 +157,21 @@ public class TerrainFactory {
       }
     }
     return getTerrain("plain");
+  }
+
+  /**
+   * Retrieves the base terrain ID for a terrain.
+   */
+  public static int getBaseTerrainID(Terrain terrain) {
+    return baseTerrains.indexOf(getBaseTerrain(terrain));
+  }
+
+  public static Terrain getBaseTerrain(Terrain terrain) {
+    for (Terrain baseTerrain : baseTerrains) {
+      if (terrain.inheritsFrom(baseTerrain.getType())) {
+        return baseTerrain;
+      }
+    }
+    throw new IllegalArgumentException(terrain.getName() + " has no base terrain");
   }
 }

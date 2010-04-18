@@ -3,6 +3,7 @@ package com.customwars.client.ui.renderer;
 import com.customwars.client.io.img.slick.ImageStrip;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Terrain;
+import com.customwars.client.model.gameobject.TerrainFactory;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
@@ -21,7 +22,7 @@ import java.awt.Point;
  * Scaled terrain Images are retrieved from the minimap Image
  * The minimap image should contain sub images of equal width and height
  * The tilesize is based on the minimap image.
- *
+ * <p/>
  * Units are rendered as circles
  * Cities are rendered as squares
  */
@@ -94,7 +95,8 @@ public class MiniMapRenderer implements Renderable {
   }
 
   private void renderTerrain(int x, int y, Graphics g, Terrain terrain) {
-    Image terrainImg = terrainMiniMap.getSubImage(terrain.getID());
+    int baseTerrainID = TerrainFactory.getBaseTerrainID(terrain);
+    Image terrainImg = terrainMiniMap.getSubImage(baseTerrainID);
     g.drawImage(terrainImg, x, y);
   }
 
