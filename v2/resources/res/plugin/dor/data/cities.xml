@@ -4,11 +4,19 @@
     <city id="2" imgRowID="2" type='airport'/>
     <city id="3" imgRowID="3" type='port'/>
     <city id="4" imgRowID="4" type='hq'/>
-    <city id="5" imgRowID="5" type='missle_silo'/>
-    <city name="horizontal_pipe_seam" id="6" imgRowID="6" type='pipe_seam'>
+
+    <!-- Neutral cities -->
+    <city name="missle_silo" id="5" imgRowID="0" type='missle_silo'/>
+    <city name="horizontal_pipe_seam" id="6" imgRowID="1" type='pipe_seam'>
         <connect type="pipe">East, West</connect>
     </city>
-    <city name="vertical_pipe_seam" id="7" imgRowID="7" type='pipe_seam'>
+    <city name="vertical_pipe_seam" id="7" imgRowID="2" type='pipe_seam'>
         <connect type="pipe">North, South</connect>
+    </city>
+    <city name="horizontal_wall_seam" id="8" imgRowID="3" type='wall_seam'>
+        <connect type="wall">East, West</connect>
+    </city>
+    <city name="vertical_wall_seam" id="9" imgRowID="4" type='wall_seam'>
+        <connect type="wall">North, South</connect>
     </city>
 </list>
