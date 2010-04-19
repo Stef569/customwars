@@ -3,6 +3,8 @@ package com.customwars.client.model.gameobject;
 import com.customwars.client.action.CWAction;
 import com.customwars.client.action.unit.JoinAction;
 import com.customwars.client.controller.ControllerManager;
+import com.customwars.client.model.CWGameController;
+import com.customwars.client.model.GameController;
 import com.customwars.client.model.TestData;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.game.Player;
@@ -35,8 +37,10 @@ public class UnitTest {
     Game game = HardCodedGame.getGame();
     map = game.getMap();
     inGameContext = new InGameContext();
+    ControllerManager controllerManager = new ControllerManager(inGameContext);
     inGameContext.registerObj(Game.class, game);
-    inGameContext.registerObj(ControllerManager.class, new ControllerManager(inGameContext));
+    inGameContext.registerObj(ControllerManager.class, controllerManager);
+    inGameContext.registerObj(GameController.class, new CWGameController(game, controllerManager));
   }
 
   @AfterClass
