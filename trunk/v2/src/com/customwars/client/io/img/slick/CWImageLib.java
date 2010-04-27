@@ -1,14 +1,19 @@
 package com.customwars.client.io.img.slick;
 
 import com.customwars.client.io.img.ImageLib;
+import com.customwars.client.model.co.CO;
+import com.customwars.client.model.co.COFactory;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Direction;
 import com.customwars.client.tools.ColorUtil;
+import com.customwars.client.tools.UCaseMap;
+import com.customwars.client.ui.COSheet;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SpriteSheet;
 
 import java.awt.Color;
+import java.util.Map;
 
 /**
  * CW specific Image getter functions
@@ -17,6 +22,7 @@ import java.awt.Color;
  */
 public class CWImageLib {
   private final ImageLib lib;
+  private Map<String, COSheet> coSheets;
 
   public CWImageLib(ImageLib lib) {
     this.lib = lib;
@@ -121,5 +127,23 @@ public class CWImageLib {
 
   private SpriteSheet getSlickSpriteSheet(String imgName) {
     return (SpriteSheet) lib.getSlickImg(imgName);
+  }
+
+  public COSheet getCoSheet(String coName) {
+    // The co images are not loaded yet when creating this object
+    // Load them from the image lib when they are needed for the first time.
+    if (coSheets == null) {
+      loadCOSheets();
+    }
+    return coSheets.get(coName);
+  }
+
+  private void loadCOSheets() {
+    this.coSheets = new UCaseMap<COSheet>();
+
+    for (CO co : COFactory.getAllCOS()) {
+      Image coImage = lib.getSlickImg("co_" + co.getName());
+      coSheets.put(co.getName(), new COSheet(coImage));
+    }
   }
 }

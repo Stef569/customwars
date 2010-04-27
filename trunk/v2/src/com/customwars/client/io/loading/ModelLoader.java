@@ -3,6 +3,11 @@ package com.customwars.client.io.loading;
 import com.customwars.client.io.converter.CityXmlConverter;
 import com.customwars.client.io.converter.TerrainXmlConverter;
 import com.customwars.client.model.ArmyBranch;
+import com.customwars.client.model.co.AbstractCO;
+import com.customwars.client.model.co.BasicCO;
+import com.customwars.client.model.co.CO;
+import com.customwars.client.model.co.COFactory;
+import com.customwars.client.model.co.Power;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.CityFactory;
 import com.customwars.client.model.gameobject.Terrain;
@@ -30,9 +35,11 @@ import java.util.Collection;
  * Unit -> UnitFactory
  * City -> CityFactory
  * Dmg table -> UnitFight
+ * CO text -> COFactory
  *
  * @author stefan
  */
+@SuppressWarnings("unchecked")
 public class ModelLoader implements CWResourceLoader {
   private static final String XML_DATA_TERRAIN_FILE = "baseTerrains.xml";
   private static final String XML_DATA_ALL_TERRAIN_FILE = "terrains.xml";
@@ -41,6 +48,7 @@ public class ModelLoader implements CWResourceLoader {
   private static final String XML_DATA_CITY_FILE = "baseCities.xml";
   private static final String XML_DATA_ALL_CITY_FILE = "cities.xml";
   private static final String DMG_XML_FILE = "damage.xml";
+  private static final String XML_CO_TEXT_FILE = "coText.xml";
   private static final XStream xStream = new XStream(new DomDriver());
   private final String modelResPath;
 
@@ -54,9 +62,9 @@ public class ModelLoader implements CWResourceLoader {
     loadUnits();
     loadCities();
     loadDamageTables();
+    loadCOTexts();
   }
 
-  @SuppressWarnings("unchecked")
   private void loadTerrains() {
     xStream.alias("terrain", Terrain.class);
     XStreamUtil.useReflectionFor(xStream, Terrain.class);
@@ -77,7 +85,6 @@ public class ModelLoader implements CWResourceLoader {
     TerrainFactory.addBaseTerrains(baseTerrains);
   }
 
-  @SuppressWarnings("unchecked")
   private void loadWeapons() {
     xStream.alias("weapon", Weapon.class);
     XStreamUtil.useReflectionFor(xStream, Weapon.class);
@@ -89,7 +96,6 @@ public class ModelLoader implements CWResourceLoader {
     WeaponFactory.addWeapons(weapons);
   }
 
-  @SuppressWarnings("unchecked")
   private void loadUnits() {
     xStream.alias("unit", UnitStats.class);
     XStreamUtil.useReflectionFor(xStream, Unit.class);
@@ -102,7 +108,6 @@ public class ModelLoader implements CWResourceLoader {
     UnitFactory.addUnits(unitStats);
   }
 
-  @SuppressWarnings("unchecked")
   private void loadCities() {
     xStream.alias("city", City.class);
     XStreamUtil.useReflectionFor(xStream, City.class);
@@ -129,5 +134,17 @@ public class ModelLoader implements CWResourceLoader {
     InputStream xmlDamageParserStream = ResourceLoader.getResourceAsStream(modelResPath + DMG_XML_FILE);
     XMLDamageParser xmlDamageParser = new XMLDamageParser(xmlDamageParserStream);
     xmlDamageParser.load();
+  }
+
+  public void loadCOTexts() {
+    xStream.alias("co", BasicCO.class);
+    xStream.useAttributeFor(AbstractCO.class, "id");
+    xStream.useAttributeFor(AbstractCO.class, "name");
+    xStream.useAttributeFor(AbstractCO.class, "style");
+    xStream.useAttributeFor(Power.class, "name");
+
+    InputStream coXmlStream = ResourceLoader.getResourceAsStream(modelResPath + "co/" + XML_CO_TEXT_FILE);
+    Collection<CO> cos = (Collection<CO>) XStreamUtil.readObject(xStream, coXmlStream);
+    COFactory.addAll(cos);
   }
 }

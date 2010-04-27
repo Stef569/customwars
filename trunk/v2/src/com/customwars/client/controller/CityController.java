@@ -23,7 +23,7 @@ public abstract class CityController {
   boolean canBuyUnit(Unit unit) {
     Player activePlayer = game.getActivePlayer();
 
-    return (activePlayer.isWithinBudget(unit.getStats().getPrice())) &&
+    return (activePlayer.isWithinBudget(unit.getPrice())) &&
       activePlayer == city.getOwner() &&
       city.canBuild(unit);
   }

@@ -128,7 +128,8 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
    * @param player the Player that is active in this turn
    */
   public void startTurn(Player player) {
-    player.addToBudget(funds);
+    int coFunds = player.getCO().cityFundsHook(funds);
+    player.addToBudget(coFunds);
     healFriendlyUnitOnCity();
   }
 
@@ -152,7 +153,7 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
    * If another Unit attempts to capture then the capcount will be reset to 0 again.
    * when the capcount >= the maxCapcount the city is considered captured and
    * the player that is owning the capturing unit will be the new owner of this city
-   *
+   * <p/>
    * Pre: canBeCapturedBy(unit) == true
    * Post: isCaptured() == true isCapturedBy(unit) == true
    *
@@ -191,7 +192,8 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
    */
   public void heal(Unit unit) {
     if (canHeal(unit)) {
-      unit.heal(healRate);
+      int coHealRate = owner.getCO().healRateHook(healRate);
+      unit.heal(coHealRate);
     }
   }
 
