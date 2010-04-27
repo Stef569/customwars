@@ -16,6 +16,7 @@ import com.customwars.client.model.map.Direction;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.tools.UCaseMap;
+import com.customwars.client.ui.COSheet;
 import com.customwars.client.ui.sprite.TileSprite;
 import org.apache.log4j.Logger;
 import org.newdawn.slick.Animation;
@@ -38,7 +39,7 @@ import java.util.Set;
  * Each of these resources is mapped to a string ie "SELECT_SOUND" -> Sound object
  * Other classes can now ask this class to get the sound
  * ie resourceManager.getSound("SELECT_SOUND")
- *
+ * <p/>
  * Before loading, the paths where the resources are located should be set
  *
  * @author stefan
@@ -180,6 +181,10 @@ public class ResourceManager {
 
   public Image getShadedUnitImg(Unit unit, Color color, Direction direction) {
     return cwImageLib.getShadedUnitImg(unit, color, direction);
+  }
+
+  public COSheet getCOSheet(String coName) {
+    return cwImageLib.getCoSheet(coName);
   }
 
   public int countSlickImages() {

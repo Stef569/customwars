@@ -67,7 +67,7 @@ public class HumanCityController extends CityController {
 
     for (Unit unit : UnitFactory.getAllUnits()) {
       if (city.canBuild(unit)) {
-        int unitPrice = unit.getStats().getPrice();
+        int unitPrice = unit.getPrice();
         boolean canAffordUnit = city.getOwner().isWithinBudget(unitPrice);
         CWAction addUnitToTileAction;
 
@@ -87,7 +87,7 @@ public class HumanCityController extends CityController {
 
   private MenuItem buildMenuItem(Unit unit, CWAction action) {
     String unitName = App.translate(unit.getStats().getName());
-    String unitPrice = "$" + unit.getStats().getPrice();
+    String unitPrice = "$" + unit.getPrice();
     Color cityColor = city.getOwner().getColor();
     Image unitImage = getUnitImg(unit, cityColor, action != null);
     MenuItem item = buildMenuItem(action, unitImage, unitName, unitPrice);

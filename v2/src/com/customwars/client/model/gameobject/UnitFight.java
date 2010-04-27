@@ -24,8 +24,9 @@ public class UnitFight extends BasicFight {
     int terrainDef = getTerrainDefense(defendingUnit);
     int baseDmg = getAttackDamagePercentage(attackingUnit, defendingUnit);
     int expBonus = getExperienceBonus(attackingUnit, defendingUnit);
+    int coBonus = getCOBonus(attackingUnit, defendingUnit);
 
-    double dmg = Math.floor(attackerHP / (float) attackMaxHP * baseDmg - terrainDef) + expBonus;
+    double dmg = Math.floor(attackerHP / (float) attackMaxHP * baseDmg - terrainDef) + expBonus + coBonus;
     return dmg < 0 ? 0 : (int) dmg;
   }
 
@@ -39,12 +40,19 @@ public class UnitFight extends BasicFight {
     return App.getInt("plugin.unit_rank" + unit.getExperience() + "_fight_bonus");
   }
 
+  private int getCOBonus(Unit attackingUnit, Unit defendingUnit) {
+    int attackBonus = attackingUnit.getOwner().getCO().getAttackBonusPercentage(attackingUnit, defendingUnit);
+    int defenseBonus = defendingUnit.getOwner().getCO().getDefenseBonusPercentage(attackingUnit, defendingUnit);
+    return attackBonus - defenseBonus;
+  }
+
   private int getTerrainDefense(Unit unit) {
     if (unit.getArmyBranch() == ArmyBranch.AIR) {
       return 0;
     } else {
       Tile t = (Tile) unit.getLocation();
-      return t.getTerrain().getDefenseBonus();
+      int terrainDefenseBonus = t.getTerrain().getDefenseBonus();
+      return unit.getOwner().getCO().terrainDefenseHook(terrainDefenseBonus);
     }
   }
 

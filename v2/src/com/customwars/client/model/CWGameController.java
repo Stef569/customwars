@@ -229,7 +229,7 @@ public class CWGameController implements GameController {
 
   @Override
   public void buildUnit(Unit unit, Location location, Player player) {
-    player.addToBudget(-unit.getStats().getPrice());
+    player.addToBudget(-unit.getPrice());
     player.addUnit(unit);
     location.add(unit);
 

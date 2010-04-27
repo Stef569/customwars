@@ -1,5 +1,8 @@
 package com.customwars.client.model.game;
 
+import com.customwars.client.model.co.BasicCO;
+import com.customwars.client.model.co.CO;
+import com.customwars.client.model.co.COFactory;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.GameObject;
 import com.customwars.client.model.gameobject.GameObjectState;
@@ -17,7 +20,7 @@ import java.util.List;
  * Represent a player that can participate in a game, can be either a human, AI or neutral player.
  * Can be allied with another Player by being in the same team
  * Each non neutral player has an unique ID, neutral players always have the same NEUTRAL_PLAYER_ID
- *
+ * <p/>
  * A Player is equal to another Player by having the same ID and color
  *
  * @author stefan
@@ -28,10 +31,11 @@ public class Player extends GameObject {
   private static final int NEUTRAL_TEAM = -1;
   private final int id;           // Unique Number
   private final Color color;      // Unique Color
-  private final int team;         // The team this player is in
+  private int team;               // The team this player is in
   private final boolean ai;       // Is this a human or an AI player
   private String name;            // Name for this player
   private City hq;                // Headquarters
+  private CO co;                  // Commanding officer
 
   private int budget;               // Amount of money that can be spend
   private final List<Unit> army;    // All the units of this player
@@ -42,7 +46,7 @@ public class Player extends GameObject {
    * Create an unnamed human player
    */
   public Player(int id, Color color) {
-    this(id, color, "Unnamed", 0, 0, false);
+    this(id, color, "Unnamed", 0, 0, false, new BasicCO());
   }
 
   /**
@@ -50,7 +54,7 @@ public class Player extends GameObject {
    * Post: isNeutral returns true
    */
   public static Player createNeutralPlayer(Color color) {
-    return new Player(NEUTRAL_PLAYER_ID, color, "Neutral", 0, NEUTRAL_TEAM, false);
+    return new Player(NEUTRAL_PLAYER_ID, color, "Neutral", 0, NEUTRAL_TEAM, false, new BasicCO());
   }
 
   /**
@@ -69,15 +73,21 @@ public class Player extends GameObject {
     this.ai = otherPlayer.ai;
     this.army = new LinkedList<Unit>();
     this.cities = new LinkedList<City>();
+    this.co = COFactory.getCO(otherPlayer.co.getName());
   }
 
   public Player(int id, Color color, String name, int startBudget, int team, boolean ai) {
+    this(id, color, name, startBudget, team, ai, new BasicCO());
+  }
+
+  public Player(int id, Color color, String name, int startBudget, int team, boolean ai, CO co) {
     this.id = id;
     this.color = color;
     this.name = name;
     this.budget = startBudget;
     this.team = team;
     this.ai = ai;
+    this.co = co;
     this.army = new LinkedList<Unit>();
     this.cities = new LinkedList<City>();
   }
@@ -273,6 +283,10 @@ public class Player extends GameObject {
 
   public boolean isWithinBudget(int price) {
     return budget - price >= 0;
+  }
+
+  public CO getCO() {
+    return co;
   }
 
   @Override

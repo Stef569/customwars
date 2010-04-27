@@ -23,7 +23,7 @@ import java.util.List;
  * Is a Location, meaning it can transport Locatables
  * It has a Facing direction, this is one of the compass Direction(N,S,E,W)
  * Units have 2 weapons(both are optional): 1 Primary and 1 Secondary
- *
+ * <p/>
  * The internal hp of a unit has a range of 0-maxHp instead of 0-10. This approach allows to take a small damage.
  * and is easier then using a double. getHP and getMaxHP convert the internal hp back to the 0-10 range ie:
  * hp=100, maxhp=100 getHP() = 10 -5% damage
@@ -436,7 +436,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
     if (healAmount > healRate) {
       healAmount = healRate;
     }
-    return healAmount * (stats.price / stats.maxHp);
+    return healAmount * (getPrice() / stats.maxHp);
   }
 
   // ----------------------------------------------------------------------------
@@ -734,7 +734,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   }
 
   public int getMovePoints() {
-    return stats.movement;
+    return owner.getCO().unitMovementHook(this, stats.movement);
   }
 
   public void addPathMoveCost(int moveCost) {
@@ -825,11 +825,15 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   }
 
   public int getCaptureRate() {
-    return getHp();
+    return owner.getCO().captureRateHook(getHp());
   }
 
   public boolean isInTransport() {
     return location instanceof Unit;
+  }
+
+  public int getPrice() {
+    return owner.getCO().unitPriceHook(stats.price);
   }
 
   @Override

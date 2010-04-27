@@ -1,0 +1,314 @@
+<list>
+    <co name="andy" style="ORANGE_STAR">
+        <title>Mr. Fix-It</title>
+        <hit>Mechanics</hit>
+        <miss>Getting up early</miss>
+        <bio>A whiz with a wrench, this mechanical boy wonder earned fame as the hero who defeated Sturm in the first
+            two great wars.
+        </bio>
+        <skill>No real weakness. Equally proficient with all types of units. Ready to fight wherever and whenever.
+        </skill>
+
+        <power name="Hyper Repair">
+            <description>Restores two HP to all units. Firepower increases.</description>
+        </power>
+        <superpower name="Hyper Upgrade">
+            <description>Restores five HP to all units. Firepower rises, and unit movement increases by
+                one space.
+            </description>
+        </superpower>
+
+        <intel>
+            <string>Andy's units have no main strengths</string>
+            <string>or weaknesses meaning he's able to</string>
+            <string>adapt to any situation. Both of his</string>
+            <string>powers focus on repairing damaged</string>
+            <string>units.</string>
+        </intel>
+
+        <quotes>
+            <string>I haven't even cranked the engine yet!</string>
+            <string>Pass me my wrench!!</string>
+            <string>I'm not giving up!</string>
+            <string>It's time for a tune-up!</string>
+            <string>Never give up, and never lose! I'm on my way!</string>
+            <string>I'm not worried! I can fix anything!</string>
+        </quotes>
+
+        <victory>
+            <string>We won! Wooooooohooo!</string>
+            <string>I can fix anything!</string>
+            <string>I did it! Did you see that!?</string>
+        </victory>
+
+        <defeat>
+            <string>Oh, come on!</string>
+            <string>Next time I see you, you're in trouble!</string>
+        </defeat>
+    </co>
+    <co name="adder" style="BLACK_HOLE">
+        <title>Snake Eyes</title>
+        <hit>His own face</hit>
+        <miss>Dirty things</miss>
+        <bio>A self-absorbed commander who believes his skills are matchless. Second to Hawke in rank.</bio>
+        <skill>Adept at making quick command decisions, his CO power gauge is shorter than it should be.</skill>
+
+        <power name="Sideslip">
+            <description>Movement range for all units is increased by one space.</description>
+        </power>
+        <superpower name="Sidewinder">
+            <description>Movement range for all units is increased by two spaces. Firepower rises.</description>
+        </superpower>
+
+        <intel>
+            <string>Adder can get his power gauge filled</string>
+            <string>quicker than other COs. Both of his</string>
+            <string>powers enhance movement abilities.</string>
+        </intel>
+
+        <quotes>
+            <string>Heh heh heh... kneel before Adder!</string>
+            <string>Heh heh heh... it only hurts for a moment.</string>
+            <string>The look of terror on your face... It's absolutely delicious.</string>
+            <string>Heh heh heh... I'm going to enjoy breaking you!</string>
+            <string>Heh heh heh... Can't a guy have a little fun!?</string>
+            <string>Wriggle, worm...wriggle!</string>
+        </quotes>
+
+        <victory>
+            <string>Heh heh heh... What did you expect?</string>
+            <string>My apologies. Should I have gone easier on you?</string>
+            <string>Don't forget me now. That would be a shame.</string>
+        </victory>
+
+        <defeat>
+            <string>Hssss! Today was... unlucky. A bad day. Nothing more.</string>
+            <string>It's the blasted weather! That was the problem! Hssss!</string>
+        </defeat>
+    </co>
+    <co name="nell" style="ORANGE_STAR">
+        <title>Lady Luck</title>
+        <hit>Willful students</hit>
+        <miss>Downtime</miss>
+        <bio>Rachel's older sister and supreme commander of the Orange Star army, Nell is an able commanding officer
+            with a superb sense of fashion.
+        </bio>
+        <skill>Sometimes strikes with slightly more force than expected. She's the first to tell you she was born lucky.
+        </skill>
+
+        <power name="Lucky Star">
+            <description>Has a chance to strike with more damage than expected. Lucky!</description>
+        </power>
+        <superpower name="Lady Luck">
+            <description>Improves her chance to strike with massive damage. Very lucky!</description>
+        </superpower>
+
+        <intel>
+            <string>Nells units are lucky, which means</string>
+            <string>they may randomly deal more damage</string>
+            <string>than expected. Her powers increase</string>
+            <string>the luck range higher beyond the day</string>
+            <string>to day, she may become incredibly</string>
+            <string>lucky</string>
+        </intel>
+
+        <quotes>
+            <string>Luck IS a skill!</string>
+            <string>Hmm... Time to get serious!</string>
+            <string>I'm just getting started!</string>
+            <string>Don't hate me just because I'm lucky!</string>
+            <string>Everything will work out!</string>
+            <string>I'm feelin' lucky!</string>
+        </quotes>
+
+        <victory>
+            <string>Did I go too far?</string>
+            <string>Lady luck was with me!</string>
+            <string>...And that's how it's done.</string>
+        </victory>
+
+        <defeat>
+            <string>Seems like I just wasn't lucky enough...</string>
+            <string>Congratulations! You've beaten me!</string>
+        </defeat>
+    </co>
+    <co name="olaf" style="BLUE_MOON">
+        <title>Old Man Winter</title>
+        <hit>Warm boots</hit>
+        <miss>Rain clouds</miss>
+        <bio>He may be a pompous braggart, but his tactical prowess has earned him the respect of his peers and the
+            admiration of his people.
+        </bio>
+        <skill>Winter poses no problem for Olaf or his troops. Snow causes his firepower to rise, and his troops can
+            move through it without any fuel penalties.
+        </skill>
+
+        <power name="Blizzard">
+            <description>Causes snow to fall for two days, causing his firepower to rise.</description>
+        </power>
+        <superpower name="Winter Fury">
+            <description>A mighty blizzard causes two HP of damage to all enemy troops. The snow will also cause his
+                firepower to rise for two days.
+            </description>
+        </superpower>
+
+        <intel>
+            <string>Being used to the harsh weathers of</string>
+            <string>Blue Moon, Olaf's troops are boosted</string>
+            <string>during snow storms. His powers both</string>
+            <string>cause snow to fall for 2 days while</string>
+            <string>his super also strikes all enemies</string>
+            <string>for instant mass damage.</string>
+        </intel>
+
+        <quotes>
+            <string>Oho ho ho. Do you think your pitiful troops can stand the cold?</string>
+            <string>Neither man nor machine can withstand the fury of nature!</string>
+            <string>You're going to regret challenging me!</string>
+            <string>Let the winds of war bring snow!</string>
+            <string>I'll bury you!</string>
+            <string>Your weapons are powerless before the might of nature!</string>
+        </quotes>
+
+        <victory>
+            <string>Olaf's troops know no match!</string>
+            <string>I won! ...That is...we won!</string>
+            <string>In the end, Olaf stands victorious!</string>
+        </victory>
+
+        <defeat>
+            <string>Unbelievable! We've been forced to withdraw? What's going on?</string>
+            <string>Next time, I will give them a display of true might! Mark my words!</string>
+        </defeat>
+    </co>
+    <co name="sami" style="ORANGE_STAR">
+        <title>Darling of the Soldiers</title>
+        <hit>Chocolate</hit>
+        <miss>Cowards</miss>
+        <bio>A strong-willed Orange Star special forces captain who loves long hair. Despite having short hair.
+            Whatever, IS.
+        </bio>
+        <skill>As an infantry specialist, her foot soldiers do more damage and capture faster. Non-infantry
+            direct-combat units have weaker firepower
+        </skill>
+
+        <power name="Double Time">
+            <description>Infantry units receive a movement bonus of one space. Their attack also increases.
+            </description>
+        </power>
+        <superpower name="Victory March">
+            <description>All foot soldiers's capturing rate is doubled. Their movement is increased by two spaces and
+                their attack increases greatly.
+            </description>
+        </superpower>
+
+        <intel>
+            <string>Sami's infantry is able to capture</string>
+            <string>and attack more effectively at the</string>
+            <string>expense of her direct units. Sami's</string>
+            <string>powers increase the movement and</string>
+            <string>effectiveness of her infantry troops.</string>
+        </intel>
+
+        <quotes>
+            <string>You're not bad! Now it's my turn!</string>
+            <string>All right! Time to end this!</string>
+            <string>Infantry... Assault!</string>
+            <string>Ready or not, here I come!</string>
+            <string>All right, it's make-or-break time!</string>
+            <string>Move out, grunts!</string>
+        </quotes>
+
+        <victory>
+            <string>Mission accomplished! Awaiting orders!</string>
+            <string>Commandos always complete their mission.</string>
+            <string>Score one for the grunts!</string>
+        </victory>
+
+        <defeat>
+            <string>Things would be easier if we had more infantry units...</string>
+            <string>Next time's for real. I won't lose focus.</string>
+        </defeat>
+    </co>
+    <co name="sturm" style="BLACK_HOLE">
+        <title>Enigma</title>
+        <hit>Plotting invasions</hit>
+        <miss>Peace</miss>
+        <bio>The original commander of the Black Hole army. A mysterious invader from another world. Mastermind of the
+            Cosmo and Macro wars.
+        </bio>
+        <skill>Invasions</skill>
+
+        <superpower name="Meteor Strike">
+            <description>Pulls a giant meteor from space, which deals 4 HP of damage to all affected units. Firepower
+                and defense is increased.
+            </description>
+        </superpower>
+
+        <intel></intel>
+
+        <quotes>
+            <string>Prepare to embrace darkness!</string>
+            <string>You will tremble before my power!</string>
+            <string>Fear is all you have left...</string>
+            <string>You shall not survive!</string>
+            <string>Burning earth!!!</string>
+            <string>Such power... I regret crushing it.</string>
+        </quotes>
+
+        <victory>
+            <string>Who would have thought you could oppose me?</string>
+            <string>My name is Sturm. Hear it and tremble.</string>
+            <string>This is but a taste of my power!</string>
+        </victory>
+
+        <defeat>
+            <string>Gwaaaaaaaaaahhhh! I underestimated the strength of these worms!</string>
+            <string>NOOOOOOOOOOOOOOOOOOO!!!</string>
+        </defeat>
+    </co>
+    <co name="von_bolt" style="BLACK_HOLE">
+        <title>Immortal Evil</title>
+        <hit>Long life</hit>
+        <miss>Young 'uns!</miss>
+        <bio>Former commander-in-chief of the Black Hole forces. A mysterious old man who has been alive a very, very
+            long time. Masterminded the Omega war.
+        </bio>
+        <skill>No real weakness. Equally proficient with all types of units. Ready to fight wherever and whenever.
+        </skill>
+
+        <superpower name="Ex Machina">
+            <description>Fires shock waves that disables electrical systems and all forces in range become paralyzed.
+                Affected units suffer three HP of damage. Firepower and defense rises.
+            </description>
+        </superpower>
+
+        <intel>
+            <string>Von Bolt's non-infantry units enjoy</string>
+            <string>increased attack and defense. He has</string>
+            <string>no power to use, but his super truly</string>
+            <string>devastates a select area of troops</string>
+            <string>with damage and paralysis.</string>
+        </intel>
+
+        <quotes>
+            <string>No matter how powerful...hhh...you are, you're...hhh...still a worm on a hook...</string>
+            <string>Well...hhh...let me have a taste...hhh...of your soul.</string>
+            <string>Hheh heh heh... Stop panicking... it's...hhh...almost over...</string>
+            <string>Hheh heh heh. The darkness rises...</string>
+            <string>The sweet scent of destruction...hhh...it makes me...hhh...feel young!</string>
+            <string>Hold still...hhh...I'm going to...hhhhh...suck the marrow from your bones.</string>
+        </quotes>
+
+        <victory>
+            <string>Predator...prey...hhh... I hunt them all...</string>
+            <string>Hehh hhh hhh... Pathetic.</string>
+            <string>Even death...hhh...fears me...</string>
+        </victory>
+
+        <defeat>
+            <string>Bah! Enough...hhh... Leave me...hhh... I grow...hhh...tired. I must...hhh...rest.</string>
+            <string>No...hhhh... No...! Hhhhhh... Must...hhhh...live...hhhh...</string>
+        </defeat>
+    </co>
+</list>

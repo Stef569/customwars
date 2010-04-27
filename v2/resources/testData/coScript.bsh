@@ -1,0 +1,25 @@
+// USED FOR SCRIPT TESTING
+
+  public void andy_power() {
+    game.activeUnit.addHp(-2);
+  }
+
+  public void andy_superPower() {
+    game.activeUnit.addHp(-4);
+  }
+
+  public int andy_getAttackBonusPercentage() {
+    if(superPower) {
+        return 400;
+    } else {
+        return 350;
+    }
+  }
+
+  public int andy_getDefenseBonusPercentage() {
+    return 200;
+  }
+
+  public int andy_unitMovementHook() {
+    return movement + 2;
+  }

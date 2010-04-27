@@ -1,6 +1,8 @@
 package com.customwars.client;
 
 import com.customwars.client.io.ResourceManager;
+import com.customwars.client.model.co.COFactory;
+import com.customwars.client.script.ScriptManager;
 import com.customwars.client.tools.IOUtil;
 import com.customwars.client.tools.StringUtil;
 import org.apache.log4j.Logger;
@@ -31,11 +33,16 @@ public class Config {
   private static final String USER_DEFAULTS_PROPERTIES_FILE = "userDefaults.properties";
   private static final String PLUGIN_PROPERTIES_FILE = "plugin.properties";
 
+  private static final String CO_SCRIPT_FILE = "co.bsh";
+  private static final String MAIN_SCRIPT_FILE = "main.bsh";
+
   private final ResourceManager resources;
   private static String resourcesPath;
+  private final ScriptManager scriptManager;
 
   public Config(ResourceManager resources) {
     this.resources = resources;
+    this.scriptManager = new ScriptManager();
   }
 
   /**
@@ -115,6 +122,7 @@ public class Config {
       loadLang(language);
       loadPluginProperties(pluginPath);
       initResourceManager(pluginPath);
+      initScripts(pluginPath);
     } catch (IOException ex) {
       throw new RuntimeException("Error reading config file", ex);
     }
@@ -174,6 +182,12 @@ public class Config {
     resources.putLoadPath("map.path2", resourcesPath + "/maps/");
     resources.putLoadPath("font.path", pluginPath + "/fonts/");
     resources.setDarkPercentage(App.getInt("display.darkpercentage"));
+  }
+
+  private void initScripts(String pluginPath) {
+    String coDir = pluginPath + "/data/co/";
+    scriptManager.init(coDir + MAIN_SCRIPT_FILE, coDir + CO_SCRIPT_FILE);
+    COFactory.setScriptManager(scriptManager);
   }
 
   private static Properties loadProperties(String location) throws IOException {
