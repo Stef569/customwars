@@ -138,7 +138,6 @@ public class ModelLoader implements CWResourceLoader {
 
   public void loadCOTexts() {
     xStream.alias("co", BasicCO.class);
-    xStream.useAttributeFor(AbstractCO.class, "id");
     xStream.useAttributeFor(AbstractCO.class, "name");
     xStream.useAttributeFor(AbstractCO.class, "style");
     xStream.useAttributeFor(Power.class, "name");

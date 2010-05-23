@@ -80,4 +80,24 @@ public class UnitTest {
     int expectedHP = UNIT_HP + TARGET_HP;
     Assert.assertEquals(expectedHP, target.getHp());
   }
+
+  @Test
+  public void testDirect() {
+    Unit inf = UnitFactory.getUnit("infantry");
+    Unit tank = UnitFactory.getUnit("light_tank");
+    Unit artillery = UnitFactory.getUnit("artillery");
+    Unit apc = UnitFactory.getUnit("apc");
+    Unit rockets = UnitFactory.getUnit("rockets");
+
+    Assert.assertTrue(inf.isDirect());
+    Assert.assertFalse(inf.isInDirect());
+    Assert.assertTrue(tank.isDirect());
+    Assert.assertFalse(tank.isInDirect());
+    Assert.assertFalse(artillery.isDirect());
+    Assert.assertTrue(artillery.isInDirect());
+    Assert.assertFalse(apc.isDirect());
+    Assert.assertFalse(apc.isInDirect());
+    Assert.assertFalse(rockets.isDirect());
+    Assert.assertTrue(rockets.isInDirect());
+  }
 }

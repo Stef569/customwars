@@ -122,6 +122,20 @@ public class Weapon extends GameObject {
     return balistic;
   }
 
+  /**
+   * @return Can this weapon fire on adjacent enemies
+   */
+  public boolean isDirect() {
+    return fireRange.isInRange(1);
+  }
+
+  /**
+   * @return Can this weapon fire on enemies that are 1 or more tiles away
+   */
+  public boolean isInDirect() {
+    return fireRange.getMinRange() >= 1 && fireRange.getMaxRange() > 1;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;

@@ -7,7 +7,6 @@ import com.customwars.client.action.city.StartLaunchRocketAction;
 import com.customwars.client.action.unit.StartAttackAction;
 import com.customwars.client.action.unit.StartDropAction;
 import com.customwars.client.action.unit.StartFlareAction;
-import com.customwars.client.model.ArmyBranch;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.CityFactory;
@@ -100,7 +99,7 @@ public class UnitMenuBuilder {
   private String getDropMenuItemText(Unit unitInTransport) {
     String menuText;
     String unitName = App.translate(unitInTransport.getStats().getName());
-    if (unitInTransport.getArmyBranch() == ArmyBranch.LAND) {
+    if (unitInTransport.isLand()) {
       menuText = App.translate("drop") + " - " + unitName;
     } else {
       menuText = App.translate("launch") + " - " + unitName;

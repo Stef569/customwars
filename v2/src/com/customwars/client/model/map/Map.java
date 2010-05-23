@@ -1,7 +1,6 @@
 package com.customwars.client.model.map;
 
 import com.customwars.client.App;
-import com.customwars.client.model.ArmyBranch;
 import com.customwars.client.model.TurnHandler;
 import com.customwars.client.model.fight.Attacker;
 import com.customwars.client.model.fight.Defender;
@@ -494,7 +493,7 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
     int visionBonus = 0;
     Tile t = (Tile) unit.getLocation();
 
-    if (unit.getArmyBranch() == ArmyBranch.LAND) {
+    if (unit.isLand()) {
       Terrain terrain = t.getTerrain();
       if (terrain.isMountain()) {
         visionBonus = terrain.getVision();
@@ -707,7 +706,7 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
     Unit unitOnDropLocation = getUnitOn(dropLocation);
 
     return dropLocation.isFogged() || dropLocation.getLocatableCount() == 0 ||
-            unitOnDropLocation.isHidden() || unitOnDropLocation == transporter;
+      unitOnDropLocation.isHidden() || unitOnDropLocation == transporter;
   }
 
   /**
