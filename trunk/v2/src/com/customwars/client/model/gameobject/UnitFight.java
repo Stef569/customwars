@@ -1,7 +1,6 @@
 package com.customwars.client.model.gameobject;
 
 import com.customwars.client.App;
-import com.customwars.client.model.ArmyBranch;
 import com.customwars.client.model.fight.BasicFight;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.tools.NumberUtil;
@@ -47,7 +46,7 @@ public class UnitFight extends BasicFight {
   }
 
   private int getTerrainDefense(Unit unit) {
-    if (unit.getArmyBranch() == ArmyBranch.AIR) {
+    if (unit.isAir()) {
       return 0;
     } else {
       Tile t = (Tile) unit.getLocation();

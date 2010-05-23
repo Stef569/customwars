@@ -244,15 +244,14 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   /**
    * This unit can counter Attack when:
    * #1 it is not destroyed
-   * #2 it has a min attack range of 1
+   * #2 it is direct
    * #3 the Attacker is also a defender
    * #4 it has a weapon that can return fire to the attacker
    */
   public boolean canCounterAttack(Attacker attacker) {
-    boolean adjacent = getAttackRange().getMinRange() == 1;
     boolean attackerIsDefender = attacker instanceof Defender;
     boolean canReturnFire = attackerIsDefender && !isDestroyed() && canFireOn((Defender) attacker);
-    return adjacent && canReturnFire;
+    return canReturnFire && isDirect();
   }
 
   public List<Location> getAttackZone() {
@@ -830,6 +829,34 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
 
   public boolean isInTransport() {
     return location instanceof Unit;
+  }
+
+  /**
+   * @return Can this unit fire only on adjacent enemies
+   */
+  public boolean isDirect() {
+    Weapon weapon = getAvailableWeapon();
+    return weapon != null && weapon.isDirect();
+  }
+
+  /**
+   * @return Can this unit fire on enemies that are 1 or more tiles away
+   */
+  public boolean isInDirect() {
+    Weapon weapon = getAvailableWeapon();
+    return weapon != null && weapon.isInDirect();
+  }
+
+  public boolean isNaval() {
+    return stats.armyBranch == ArmyBranch.NAVAL;
+  }
+
+  public boolean isLand() {
+    return stats.armyBranch == ArmyBranch.LAND;
+  }
+
+  public boolean isAir() {
+    return stats.armyBranch == ArmyBranch.AIR;
   }
 
   public int getPrice() {

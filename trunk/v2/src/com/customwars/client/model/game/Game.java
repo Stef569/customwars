@@ -1,6 +1,5 @@
 package com.customwars.client.model.game;
 
-import com.customwars.client.model.ArmyBranch;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Direction;
@@ -147,7 +146,7 @@ public class Game extends TurnBasedGame implements PropertyChangeListener {
 
     for (Unit unit : player.getArmy()) {
       if (!unit.isInTransport()) {
-        if (unit.getSupplies() == 0 && isDestroyedWhenOutOfSupplies(unit.getArmyBranch())) {
+        if (unit.getSupplies() == 0 && isDestroyedWhenOutOfSupplies(unit)) {
           // Don't call unit.destroy() here as it will remove the unit from
           // the player army collection throwing a ConcurrentModificationException
           unitsToDestroy.add(unit);
@@ -160,8 +159,8 @@ public class Game extends TurnBasedGame implements PropertyChangeListener {
     }
   }
 
-  private static boolean isDestroyedWhenOutOfSupplies(ArmyBranch armyBranch) {
-    return armyBranch == ArmyBranch.AIR || armyBranch == ArmyBranch.NAVAL;
+  private static boolean isDestroyedWhenOutOfSupplies(Unit unit) {
+    return unit.isAir() || unit.isNaval();
   }
 
   /**
@@ -171,7 +170,7 @@ public class Game extends TurnBasedGame implements PropertyChangeListener {
   private void supplyUnitsAdjacentOfTransport(Player player) {
     for (Unit unit : player.getArmy()) {
       if (!unit.isInTransport()) {
-        if (unit.getStats().canTransport() && unit.getArmyBranch() == ArmyBranch.LAND) {
+        if (unit.getStats().canTransport() && unit.isLand()) {
           supplyUnitOnAdjacentTile(unit, Direction.NORTH);
           supplyUnitOnAdjacentTile(unit, Direction.EAST);
           supplyUnitOnAdjacentTile(unit, Direction.SOUTH);

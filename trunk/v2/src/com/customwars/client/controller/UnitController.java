@@ -11,7 +11,6 @@ import com.customwars.client.model.gameobject.UnitState;
 import com.customwars.client.model.gameobject.UnitStats;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Map;
-import com.customwars.client.model.map.Range;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.model.map.path.MoveTraverse;
 import com.customwars.client.ui.state.InGameContext;
@@ -240,14 +239,12 @@ public abstract class UnitController {
    */
   boolean isInDirectUnitMoved(Location originalLocation) {
     boolean moved = originalLocation != unit.getLocation();
-    Range attackRange = unit.getAttackRange();
-    boolean indirect = attackRange.getMinRange() >= 1 && attackRange.getMaxRange() > 1;
-    return moved && indirect;
+    return moved && unit.isInDirect();
   }
 
   /**
    * Is the tile and the unit on it visible for the given player
-   *
+   * <p/>
    * #1 Fogged tiles are not visible
    * #2 Hidden enemy units are not visible
    */
