@@ -154,5 +154,6 @@ public class CWInput extends InputProvider {
     input.clearControlPressedRecord();
     input.clearKeyPressedRecord();
     input.clearMousePressedRecord();
+    input.consumeEvent();
   }
 }

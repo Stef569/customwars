@@ -4,6 +4,7 @@ import com.customwars.client.io.ResourceManager;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.gameobject.UnitFactory;
 import com.customwars.client.model.map.Direction;
+import com.customwars.client.model.map.Tile;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.gui.GUIContext;
 
@@ -29,6 +30,18 @@ public class UnitSelectPanel extends SelectPanel {
   public void recolor(Color color) {
     this.color = color;
     buildComponent();
+  }
+
+  @Override
+  public void select(Tile location) {
+    Unit unit = (Unit) location.getLastLocatable();
+    int unitIndex = unit.getStats().getID();
+    setSelectedIndex(unitIndex);
+  }
+
+  @Override
+  public boolean canSelect(Tile cursorLocation) {
+    return cursorLocation.getLastLocatable() instanceof Unit;
   }
 
   private void buildComponent() {

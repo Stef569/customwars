@@ -19,7 +19,6 @@ import org.newdawn.slick.state.StateBasedGame;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import java.io.File;
-import java.io.IOException;
 
 /**
  * In this state the user can create open and save maps
@@ -65,7 +64,10 @@ public class MapEditorState extends CWState {
 
     switch (command.getEnum()) {
       case SELECT:
-        select();
+        mapEditorController.addToMap();
+        break;
+      case CANCEL:
+        mapEditorController.toggleCursorLock();
         break;
       case FILL_MAP:
         mapEditorController.fill(selectedIndex);
@@ -88,6 +90,9 @@ public class MapEditorState extends CWState {
       case NEW:
         createNewMap();
         break;
+      case EXIT:
+        changeToPreviousState();
+        break;
       default:
         if (command.isMoveCommand()) {
           moveCursor(command);
@@ -98,17 +103,9 @@ public class MapEditorState extends CWState {
   @Override
   public void mousePressed(int button, int x, int y) {
     if (button == Input.MOUSE_LEFT_BUTTON) {
-      select();
-    }
-  }
-
-  private void select() {
-    boolean clickedOnMap = mapEditorRenderer.isMouseInMap();
-
-    if (clickedOnMap) {
-      Tile cursorLocation = mapEditorRenderer.getCursorLocation();
-      int selectedIndex = mapEditorRenderer.getSelectedIndex();
-      mapEditorController.add(cursorLocation, selectedIndex);
+      mapEditorController.addToMap();
+    } else if (button == Input.MOUSE_RIGHT_BUTTON) {
+      mapEditorController.storeGameObject();
     }
   }
 
@@ -136,14 +133,12 @@ public class MapEditorState extends CWState {
           String.format("%s your map '%s'\nhas been saved to %s", author, mapName, App.get("home.maps.dir")),
           "Saved"
         );
-      } catch (IOException e) {
+      } catch (Exception e) {
         logger.error(e);
         GUI.showExceptionDialog(
           String.format("Could not save the map '%s'", mapName), e,
           "Error while saving"
         );
-      } catch (Exception e) {
-        logger.error(e);
       }
     }
   }
@@ -162,14 +157,12 @@ public class MapEditorState extends CWState {
     if (file != null) {
       try {
         mapEditorController.loadMap(file);
-      } catch (IOException e) {
+      } catch (Exception e) {
         logger.error(e);
         GUI.showExceptionDialog(
           String.format("Could not open the map '%s'", file.getPath()), e,
           "Error while Opening map"
         );
-      } catch (Exception e) {
-        logger.error(e);
       }
     }
   }
@@ -177,8 +170,8 @@ public class MapEditorState extends CWState {
   private void createNewMap() {
     cwInput.setActive(false);
     Dialog dialog = new Dialog("New Map");
-    dialog.addTextField("Cols");
-    dialog.addTextField("Rows");
+    dialog.addTextField("Cols", "25");
+    dialog.addTextField("Rows", "25");
 
     int eventType = dialog.show();
     handleNewMapDialogInput(eventType, dialog);

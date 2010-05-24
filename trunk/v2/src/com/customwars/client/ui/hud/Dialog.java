@@ -13,16 +13,15 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Displays a Swing dialog
- * Each component takes 1 row
- *
+ * Displays a Swing dialog containing rows of <tt>label: textfield</tt> Components
+ * <p/>
  * Usage:
  * Dialog dialog = new Dialog("My dialog");
  * dialog.addTextField("Name");
  * dialog.addTextField("Age");
  * dialog.addSelectBox("City", "London, New York");
  * int res = dialog.show();
- *
+ * <p/>
  * // User hit OK
  * if (res == JOptionPane.OK_OPTION) {
  * System.out.println("OK_OPTION");
@@ -48,10 +47,24 @@ public class Dialog {
     this.fieldValues = new HashMap<String, JComponent>();
   }
 
+  /**
+   * @see #addTextField(String, String)
+   */
   public void addTextField(String labelText) {
+    addTextField(labelText, "");
+  }
+
+  /**
+   * Add a label and textfield row to this dialog.
+   * The order in wich rows are added matters. When adding 2 rows the first is displayed before the latter.
+   *
+   * @param labelText     The label to show on the left of the textfield, also used to retrieve the entered textfield value
+   * @param textFieldText the default text of the textbox
+   */
+  public void addTextField(String labelText, String textFieldText) {
     checkIfLabelAlreadyTaken(labelText);
     JLabel label = new JLabel(labelText);
-    JTextField textField = new JTextField();
+    JTextField textField = new JTextField(textFieldText);
     label.setLabelFor(textField);
 
     components.add(label);
@@ -59,6 +72,14 @@ public class Dialog {
     fieldValues.put(labelText.toLowerCase(), textField);
   }
 
+
+  /**
+   * Add a label and selectbox row to this dialog.
+   * The order in wich rows are added matters. When adding 2 rows the first is displayed before the latter.
+   *
+   * @param labelText The label to show on the left of the selectbox, also used to retrieve the chosen selectbox entry
+   * @param values    the entries of the selectbox
+   */
   public void addSelectBox(String labelText, String... values) {
     addSelectBox(labelText, Arrays.asList(values));
   }

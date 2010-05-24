@@ -31,7 +31,7 @@ import java.util.List;
  * one for adding cities
  * one for adding units
  * At all times there is only 1 active panel
- *
+ * <p/>
  * To add a gameobject to the map
  * Select a gameobject by clicking on it within the panel
  * click on the map to add it
@@ -69,6 +69,7 @@ public class MapEditorRenderer implements Renderable {
     lineRenderer.addText("Add:" + cwInput.getControlsAsText(CWInput.SELECT));
     lineRenderer.addText("Delete:" + cwInput.getControlsAsText(CWInput.DELETE));
     lineRenderer.addText("Change panel:" + cwInput.getControlsAsText(CWInput.NEXT_PAGE));
+    lineRenderer.addText("Lock cursor:" + cwInput.getControlsAsText(CWInput.CANCEL));
     lineRenderer.addText("Recolor:" + cwInput.getControlsAsText(CWInput.RECOLOR));
     lineRenderer.addText("Save map:" + cwInput.getControlsAsText(CWInput.SAVE));
     lineRenderer.addText("Open map:" + cwInput.getControlsAsText(CWInput.OPEN));
@@ -100,23 +101,14 @@ public class MapEditorRenderer implements Renderable {
   public void update(int elapsedTime) {
     mapRenderer.update(elapsedTime);
     camera.update(elapsedTime);
-    scroller.setCursorLocation(mapRenderer.getCursorLocation());
-    scroller.update(elapsedTime);
-    getActivePanel().update(elapsedTime);
-    toggleSelectPanel();
-  }
 
-  private void toggleSelectPanel() {
-    // Show the panel when the mouse is near the edge
-    // Hide the panel when the mouse moved out of the panel
-    int mouseX = cwInput.getAbsoluteMouseX();
-    int mouseY = cwInput.getAbsoluteMouseY();
-
-    if (showSelectPanel) {
-      showSelectPanel = getActivePanel().isWithinComponent(mouseX, mouseY);
-    } else {
-      showSelectPanel = mouseY > camera.getHeight() - 10 && mouseY <= camera.getHeight();
+    // Don't scroll when showing the select panel
+    if (!showSelectPanel) {
+      scroller.setCursorLocation(mapRenderer.getCursorLocation());
+      scroller.update(elapsedTime);
     }
+
+    getActivePanel().update(elapsedTime);
   }
 
   public void recolor(Color color) {
@@ -150,7 +142,6 @@ public class MapEditorRenderer implements Renderable {
   private void renderStaticContent(Graphics g) {
     if (showSelectPanel) {
       getActivePanel().render(guiContext, g);
-      inputOffset.setLocation(camera.getX(), camera.getY());
     }
 
     if (isHoveringOverHelpImage()) {
@@ -190,10 +181,36 @@ public class MapEditorRenderer implements Renderable {
     this.camera = new Camera2D(screenSize, worldSize, map.getTileSize());
     boolean zoomEnabled = App.getBoolean("display.zoom");
     camera.setZoomingEnabled(zoomEnabled);
+    GUI.setCamera(camera);
+  }
+
+  public int select(Tile cursorLocation) {
+    for (SelectPanel panel : panels) {
+      if (panel.canSelect(cursorLocation)) {
+        panel.select(cursorLocation);
+        return panels.indexOf(panel);
+      }
+    }
+    throw new AssertionError("Cannot happen, Terrain panel can always select from a Tile");
   }
 
   public void setActivePanelID(int activePanelID) {
     this.activePanelID = activePanelID;
+  }
+
+  /**
+   * Show the panel when the mouse is near the edge of the container
+   * Hide the panel when the mouse moved out of the panel
+   */
+  public void toggleShowSelectPanel() {
+    int mouseX = cwInput.getAbsoluteMouseX();
+    int mouseY = cwInput.getAbsoluteMouseY();
+
+    if (showSelectPanel) {
+      showSelectPanel = getActivePanel().isWithinComponent(mouseX, mouseY);
+    } else {
+      showSelectPanel = mouseY > camera.getHeight() - 10 && mouseY <= camera.getHeight();
+    }
   }
 
   public Tile getCursorLocation() {
@@ -218,5 +235,9 @@ public class MapEditorRenderer implements Renderable {
 
   private SelectPanel getActivePanel() {
     return panels.get(activePanelID);
+  }
+
+  public boolean isShowingSelectPanel() {
+    return showSelectPanel;
   }
 }

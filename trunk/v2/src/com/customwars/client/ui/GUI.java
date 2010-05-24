@@ -4,17 +4,12 @@ import bsh.EvalError;
 import bsh.Interpreter;
 import bsh.util.JConsole;
 import com.customwars.client.App;
-import com.customwars.client.io.loading.ThinglePageLoader;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.network.NetworkException;
 import com.customwars.client.tools.StringUtil;
 import com.customwars.client.ui.hud.ModelEventScreen;
 import org.apache.log4j.Logger;
 import org.newdawn.slick.gui.GUIContext;
-import org.newdawn.slick.thingle.Page;
-import org.newdawn.slick.thingle.Theme;
-import org.newdawn.slick.thingle.Widget;
-import org.newdawn.slick.thingle.spi.ThingleException;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -33,15 +28,13 @@ public class GUI {
   public static int NO_OPTION = 1;
 
   private static final Logger logger = Logger.getLogger(GUI.class);
-  private static final GUI gui = new GUI();
   private static Interpreter bsh;
   private static JFrame eventFrame, consoleFrame;
   private static ModelEventScreen modelEventScreen;
   private static GUIContext guiContext;
   private static Camera2D camera;
   private static boolean inited;
-  private static Page page;
-  private static boolean renderDialog;
+  private static ThingleDialog thingleDialog;
 
   public static void init(GUIContext guiContext) {
     GUI.guiContext = guiContext;
@@ -49,7 +42,6 @@ public class GUI {
     if (!inited) {
       initConsole();
       initEventScreen();
-      initThingle();
       inited = true;
     }
   }
@@ -68,27 +60,6 @@ public class GUI {
     modelEventScreen = new ModelEventScreen(eventFrame);
     eventFrame.add(modelEventScreen.getGui());
     eventFrame.setBounds(0, 0, 350, 750);
-  }
-
-  private static void initThingle() {
-    Theme theme = new ThinglePageLoader(App.get("gui.path")).loadTheme("greySkin.properties");
-    page = new Page();
-    page.setDrawDesktop(false);
-    page.setTheme(theme);
-
-    try {
-      String msgXML = "<textarea name='msg' wrap='true' columns='40' rows='2' border='false' editable='false'/>";
-      String btnXML = "<button name='okBtn' text=' " + App.translate("ok") + " ' action='dialogOkPressed'/>";
-
-      page.add(page.parse(
-        "<dialog name='dialog' modal='true' columns='1'>" +
-          "<panel columns='1'>" + msgXML + "</panel>" +
-          "<panel halign='center' top='5' bottom='5'>" + btnXML + "</panel>" +
-          "</dialog>", gui)
-      );
-    } catch (ThingleException ex) {
-      throw new RuntimeException("Check the xml it's invalid", ex);
-    }
   }
 
   public static void setCamera(Camera2D camera) {
@@ -233,14 +204,6 @@ public class GUI {
     return leftTop;
   }
 
-  public static int getWidth() {
-    return guiContext.getWidth();
-  }
-
-  public static int getHeight() {
-    return guiContext.getHeight();
-  }
-
   public static void showExceptionDialog(String title, Throwable e) {
     showExceptionDialog("", e, title);
   }
@@ -254,15 +217,14 @@ public class GUI {
     showdialog(errMsg, title);
   }
 
-  public static void showdialog(String msg, String title) {
-    Widget dialog = page.getWidget("dialog");
-    dialog.setText(title);
-    dialog.getChild("msg").setText(msg);
-    dialog.getChild("okBtn").focus();
+  public synchronized static void showdialog(String msg, String title) {
+    // Gracefully hide a previous shown dialog.
+    if (thingleDialog != null) {
+      thingleDialog.hide();
+    }
 
-    page.layout();
-    page.enable();
-    renderDialog = true;
+    thingleDialog = new ThingleDialog(guiContext, msg, title);
+    thingleDialog.show();
   }
 
   public static int showConfirmationDialog(String msg, String title) {
@@ -270,21 +232,17 @@ public class GUI {
   }
 
   public static void renderDialog() {
-    if (renderDialog) {
-      page.render();
+    if (thingleDialog != null) {
+      if (thingleDialog.isVisible()) {
+        thingleDialog.render();
+      } else {
+        thingleDialog = null;
+      }
     }
   }
 
   public static boolean isRenderingDialog() {
-    return renderDialog;
-  }
-
-  /**
-   * Called from the dialog when ok is pressed
-   */
-  public void dialogOkPressed() {
-    page.disable();
-    renderDialog = false;
+    return thingleDialog != null && thingleDialog.isVisible();
   }
 
   public static File browseForFile(String title, String approveButtonText) {
