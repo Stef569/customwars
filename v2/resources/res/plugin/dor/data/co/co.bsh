@@ -1,166 +1,273 @@
-// CO scripted methods.
+// CO scripts
 // All method consists of 2 parts the <co name>_<method name>
-// Java based syntax more info @ http://www.beanshell.org/manual/syntax.html
+// The syntax is based on Java, more info @ http://www.beanshell.org/manual/syntax.html
 
-  public void andy_power() {
+  public void brenner_power() {
     for (Unit unit : game.getActivePlayer().getArmy()) {
-      unit.addHp(2);
+      unit.addHp(3);
     }
   }
 
-  public void andy_superPower() {
-    for (Unit unit : game.getActivePlayer().getArmy()) {
-      unit.addHp(5);
-    }
-  }
-
-  public int andy_getAttackBonusPercentage() {
-    if (power)
+  public int brenner_getAttackBonusPercentage() {
+    if (power || attacker.isInCOZone())
       return 110;
-    if (superPower)
+    else
+      return 100;
+  }
+
+  public int brenner_getDefenseBonusPercentage() {
+    if (power || attacker.isInCOZone())
       return 130;
     else
       return 100;
   }
 
-  public int andy_getDefenseBonusPercentage() {
-    if (power || superPower)
-      return 110;
-    return 100;
-  }
-
-  public int andy_unitMovementHook() {
-    if (superPower) {
-      return movement + 1;
-    } else {
-      return movement;
-    }
-  }
-
-  public int adder_unitMovementHook() {
-    if (power)
-      return movement + 2;
-    else if (superPower)
-      return movement + 2;
+  public int caulder_getAttackBonusPercentage() {
+    if (power || attacker.isInCOZone())
+      return 160;
     else
-      return movement;
-  }
-
-  public int nell_getAttackBonusPercentage() {
-    if (power || superPower) {
-      return 110;
-    } else {
       return 100;
-    }
   }
 
-  public int nell_getDefenseBonusPercentage() {
-    if (power || superPower) {
-      return 110;
-    } else {
+  public int caulder_getDefenseBonusPercentage() {
+    if (power || attacker.isInCOZone())
+      return 160;
+    else
       return 100;
-    }
   }
 
-  public void olaf_superPower() {
-    for (Player player : game.getAllPlayers()) {
-      if (!game.getActivePlayer().isAlliedWith(player)) {
-        for (Unit unit : player.getArmy()) {
-          unit.addHp(-2);
-        }
+  public void caulder_dayStart() {
+    for (Unit unit : game.getActivePlayer().getArmy()) {
+      if (unit.isInCOZone()) {
+        unit.heal(5);
       }
     }
   }
 
-  public int olaf_getAttackBonusPercentage() {
-    if (power || superPower)
-      return 110;
-    else
-      return 100;
-  }
-
-  public int olaf_getDefenseBonusPercentage() {
-    if (power || superPower)
-      return 110;
-    else
-      return 100;
-  }
-
-  public int sami_getAttackBonusPercentage() {
-    attackerName = attacker.stats.name;
-    if (attackerName.equals("inf") || attackerName.equals("mech")) {
-      if (superPower) {
-        return 180;
-      } else if (power) {
-        return 160;
-      }
-      return 120;
-    } else if (attacker.attackRange.minRange > 1) {
-      if (superPower || power) {
-        return 110;
+  public int gage_getAttackBonusPercentage() {
+    if (power || attacker.isInCOZone()) {
+      if (attacker.isInDirect() || attacker.isNaval()) {
+        return 130;
       } else {
-        return 100;
+        return 110;
       }
-    }
-    if (superPower || power) {
-      return 100;
-    } else {
-      return 90;
-    }
-  }
-
-  public int sami_getDefenseBonusPercentage() {
-    if (power || superPower) {
-      return 110;
     } else {
       return 100;
     }
   }
 
-  public int sami_unitMovementHook() {
-    if (power && mover.stats.name.equals("mech")) {
-      return movement + 1;
+  public int gage_getDefenseBonusPercentage() {
+    if (power || defender.isInCOZone()) {
+      if (defender.isInDirect() || defender.isNaval()) {
+        return 120;
+      } else {
+        return 110;
+      }
     } else {
+      return 100;
+    }
+  }
+
+  public int gage_fireRangeHook() {
+    if (power)
+      return fireRange + 2;
+    else
+      return fireRange;
+  }
+
+  public int greyfield_getAttackBonusPercentage() {
+    if (power || attacker.isInCOZone()) {
+      if (attacker.isNaval() ||
+        attacker.getName.equals("bcopter") ||
+        attacker.getName.equals("tcopter") ||
+        attacker.getName.equals("ship_plane")) {
+        return 120;
+      }else{
+        return 110;
+      }
+    } else {
+      return 100;
+    }
+  }
+
+  public int greyfield_getDefenseBonusPercentage() {
+    if (power || defender.isInCOZone()) {
+      if (attacker.isNaval() ||
+        attacker.stats.name.equals("bcopter") ||
+        attacker.stats.name.equals("tcopter") ||
+        attacker.stats.name.equals("ship_plane"))  {
+        return 150;
+      }else{
+        return 110;
+      }
+    } else {
+      return 100;
+    }
+  }
+
+  public void greyfield_power() {
+    for (Unit unit : game.getActivePlayer().getArmy()) {
+      unit.resupply();
+    }
+  }
+
+  public int isabella_getAttackBonusPercentage() {
+    if (power || attacker.isInCOZone())
+      return 120;
+    else
+      return 100;
+  }
+
+  public int isabella_getDefenseBonusPercentage() {
+    if (power || defender.isInCOZone())
+      return 120;
+    else
+      return 100;
+  }
+
+  public int isabella_unitMovementHook() {
+    if (power)
+      return movement + 2;
+    else
       return movement;
+  }
+
+  public int isabella_fireRangeHook() {
+    if (power)
+      return fireRange + 2;
+    else
+      return fireRange;
+  }
+
+  public int lin_getAttackBonusPercentage() {
+    if (power || attacker.isInCOZone()) {
+      if (attacker.isLand()) {
+        return 130;
+      } else {
+        return 110;
+      }
+    } else {
+      return 100;
     }
   }
 
-  public int sami_captureRateHook() {
-    if (superPower) {
-      return captureRate * 2;
+  public int lin_getDefenseBonusPercentage() {
+    if (power || attacker.isInCOZone()) {
+      if (attacker.isLand()) {
+        return 130;
+      } else {
+        return 110;
+      }
     } else {
-      return captureRate;
+      return 100;
     }
   }
 
-  public int sturm_getAttackBonusPercentage() {
-    if (power || superPower) {
-      return 130;
-    } else {
-      return 120;
-    }
+  public int lin_visionHook() {
+    if (power)
+      return vision + 2;
+    else
+      return vision;
   }
 
-  public int sturm_getDefenseBonusPercentage() {
-    if (power || superPower) {
-      return 130;
-    } else {
-      return 120;
-    }
-  }
-
-    public int von_bolt_getAttackBonusPercentage() {
-    if (power || superPower) {
-      return 120;
-    } else {
+  public int penny_getAttackBonusPercentage() {
+    if (power || attacker.isInCOZone())
       return 110;
+    else
+      return 100;
+  }
+
+  public int penny_getDefenseBonusPercentage() {
+    if (power || attacker.isInCOZone())
+      return 110;
+    else
+      return 100;
+  }
+
+  public void power() {
+    // todo weather
+    game.startWeather(3, 3);
+  }
+
+  public int tasha_getAttackBonusPercentage() {
+    if (power || attacker.isInCOZone()) {
+      if (attacker.isAir()) {
+        return 150;
+      } else {
+        return 110;
+      }
+    } else {
+      return 100;
     }
   }
 
-  public int von_bolt_getDefenseBonusPercentage() {
-    if (power || superPower) {
-      return 120;
+  public int tasha_getDefenseBonusPercentage() {
+    if (power || defender.isInCOZone()) {
+      if (attacker.isAir()) {
+        return 130;
+      } else {
+        return 110;
+      }
     } else {
-      return 110;
+      return 100;
     }
+  }
+
+  public int tasha_unitMovementHook() {
+    if (power)
+      return movement + 2;
+    else
+      return movement;
+  }
+
+  public int waylon_getAttackBonusPercentage() {
+    if (power || attacker.isInCOZone()) {
+      if (attacker.isAir()) {
+        return 130;
+      } else {
+        return 110;
+      }
+    } else {
+      return 100;
+    }
+  }
+
+  public int waylon_getDefenseBonusPercentage() {
+    if (power || defender.isInCOZone()) {
+      if (attacker.isAir()) {
+        return 420;
+      } else if (defender.isAir()) {
+        return 140;
+      } else {
+        return 110;
+      }
+    } else {
+      return 100;
+    }
+  }
+
+  public int will_getAttackBonusPercentage() {
+    if (power || attacker.isInCOZone()) {
+      if (attacker.isDirect()) {
+        return 130;
+      } else {
+        return 110;
+      }
+    } else {
+      return 100;
+    }
+  }
+
+  public int will_getDefenseBonusPercentage() {
+    if (power || defender.isInCOZone())
+      return 110;
+    else
+      return 100;
+  }
+
+  public int will_unitMovementHook() {
+    if (power)
+      return movement + 2;
+    else
+      return movement;
   }

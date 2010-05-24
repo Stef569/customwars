@@ -38,10 +38,15 @@ o co_background menu/co/colayout.png
 o co_background2 menu/co/colayoutRecolor.png
 o co_banner menu/co/cobanner.png
 s co_style_tabs menu/co/costyletabs.png 19 53
-o co_adder co/sheets/adder.gif
-o co_andy co/sheets/andy.gif
-o co_nell co/sheets/nell.gif
-o co_olaf co/sheets/olaf.gif
-o co_sami co/sheets/sami.gif
-o co_sturm co/sheets/sturm.gif
-o co_von_bolt co/sheets/von_bolt.gif
+o co_brenner co/sheets/brenner.png
+o co_caulder co/sheets/caulder.png
+o co_forsythe co/sheets/forsythe.png
+o co_gage co/sheets/gage.png
+o co_greyfield co/sheets/greyfield.png
+o co_isabella co/sheets/isabella.png
+o co_lin co/sheets/lin.png
+o co_penny co/sheets/penny.png
+o co_tabitha co/sheets/tabitha.png
+o co_tasha co/sheets/tasha.png
+o co_waylon co/sheets/waylon.png
+o co_will co/sheets/will.png
