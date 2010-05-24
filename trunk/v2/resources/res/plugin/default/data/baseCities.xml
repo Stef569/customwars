@@ -1,0 +1,180 @@
+<!--
+    id is a reference to the city image sheet
+    moveCosts have the following order
+    Infantry
+    Mech
+    Tread
+    Tires
+    Air
+    Naval
+-->
+<list>
+  <city name="base" id="0" imgRowID="0" type='road'>
+    <hidden>true</hidden>
+    <defenseBonus>3</defenseBonus>
+    <moveCosts>
+      <int>1</int>
+      <int>1</int>
+      <int>1</int>
+      <int>2</int>
+      <int>1</int>
+      <int>127</int>
+    </moveCosts>
+    <vision>1</vision>
+
+    <heals>
+      <armyBranch>LAND</armyBranch>
+    </heals>
+    <healRate>2</healRate>
+    <canBeCaptureBy>
+      <int>0</int>
+      <int>1</int>
+    </canBeCaptureBy>
+    <maxCapCount>20</maxCapCount>
+    <description>They give you money and heal units inside them.</description>
+  </city>
+  <city name="factory" id="1" imgRowID="1" type='road'>
+    <hidden>true</hidden>
+    <defenseBonus>3</defenseBonus>
+    <moveCosts>
+      <int>1</int>
+      <int>1</int>
+      <int>1</int>
+      <int>2</int>
+      <int>1</int>
+      <int>127</int>
+    </moveCosts>
+    <vision>1</vision>
+
+    <heals>
+      <armyBranch>LAND</armyBranch>
+    </heals>
+    <healRate>2</healRate>
+    <canBeCaptureBy>
+      <int>0</int>
+      <int>1</int>
+    </canBeCaptureBy>
+    <builds>
+      <int>0</int>
+      <int>1</int>
+      <int>2</int>
+      <int>3</int>
+      <int>4</int>
+      <int>5</int>
+      <int>6</int>
+      <int>7</int>
+      <int>8</int>
+      <int>9</int>
+      <int>10</int>
+    </builds>
+    <maxCapCount>20</maxCapCount>
+    <description>Factories heal, provide supplies and can create new ground units.</description>
+  </city>
+  <city name="airport" id="2" imgRowID="2" type='road'>
+    <hidden>true</hidden>
+    <defenseBonus>3</defenseBonus>
+    <moveCosts>
+      <int>1</int>
+      <int>1</int>
+      <int>1</int>
+      <int>2</int>
+      <int>1</int>
+      <int>127</int>
+    </moveCosts>
+    <vision>1</vision>
+
+    <heals>
+      <armyBranch>AIR</armyBranch>
+    </heals>
+    <healRate>2</healRate>
+    <canBeCaptureBy>
+      <int>0</int>
+      <int>1</int>
+    </canBeCaptureBy>
+    <builds>
+      <int>11</int>
+      <int>12</int>
+      <int>13</int>
+      <int>14</int>
+      <int>21</int>
+    </builds>
+    <maxCapCount>20</maxCapCount>
+    <description>empty</description>
+  </city>
+  <city name="port" id="3" imgRowID="3" type='road'>
+    <hidden>true</hidden>
+    <defenseBonus>3</defenseBonus>
+    <moveCosts>
+      <int>1</int>
+      <int>1</int>
+      <int>1</int>
+      <int>2</int>
+      <int>1</int>
+      <int>1</int>
+    </moveCosts>
+    <vision>1</vision>
+
+    <heals>
+      <armyBranch>NAVAL</armyBranch>
+    </heals>
+    <healRate>2</healRate>
+    <canBeCaptureBy>
+      <int>0</int>
+      <int>1</int>
+    </canBeCaptureBy>
+    <builds>
+      <int>15</int>
+      <int>16</int>
+      <int>17</int>
+      <int>18</int>
+      <int>19</int>
+      <int>20</int>
+    </builds>
+    <maxCapCount>20</maxCapCount>
+    <description></description>
+  </city>
+  <city name="hq" id="4" imgRowID="4" type='road'>
+    <hidden>true</hidden>
+    <defenseBonus>3</defenseBonus>
+    <moveCosts>
+      <int>1</int>
+      <int>1</int>
+      <int>1</int>
+      <int>2</int>
+      <int>1</int>
+      <int>127</int>
+    </moveCosts>
+    <vision>1</vision>
+
+    <heals>
+      <armyBranch>LAND</armyBranch>
+    </heals>
+    <healRate>2</healRate>
+    <canBeCaptureBy>
+      <int>0</int>
+      <int>1</int>
+    </canBeCaptureBy>
+    <maxCapCount>20</maxCapCount>
+    <description></description>
+  </city>
+  <city name="missle_silo" id="5" imgRowID="0" type='road'>
+    <hidden>true</hidden>
+    <defenseBonus>3</defenseBonus>
+    <moveCosts>
+      <int>1</int>
+      <int>1</int>
+      <int>1</int>
+      <int>2</int>
+      <int>1</int>
+      <int>127</int>
+    </moveCosts>
+    <vision>1</vision>
+    <canBeLaunchedBy>
+      <int>0</int>
+      <int>1</int>
+    </canBeLaunchedBy>
+
+    <maxCapCount>20</maxCapCount>
+    <description></description>
+  </city>
+</list>
