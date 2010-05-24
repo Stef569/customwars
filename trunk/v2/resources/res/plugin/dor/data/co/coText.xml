@@ -1,314 +1,322 @@
-<list>
-    <co name="andy" style="ORANGE_STAR">
-        <title>Mr. Fix-It</title>
-        <hit>Mechanics</hit>
-        <miss>Getting up early</miss>
-        <bio>A whiz with a wrench, this mechanical boy wonder earned fame as the hero who defeated Sturm in the first
-            two great wars.
-        </bio>
-        <skill>No real weakness. Equally proficient with all types of units. Ready to fight wherever and whenever.
-        </skill>
-
-        <power name="Hyper Repair">
-            <description>Restores two HP to all units. Firepower increases.</description>
-        </power>
-        <superpower name="Hyper Upgrade">
-            <description>Restores five HP to all units. Firepower rises, and unit movement increases by
-                one space.
-            </description>
-        </superpower>
-
-        <intel>
-            <string>Andy's units have no main strengths</string>
-            <string>or weaknesses meaning he's able to</string>
-            <string>adapt to any situation. Both of his</string>
-            <string>powers focus on repairing damaged</string>
-            <string>units.</string>
-        </intel>
-
-        <quotes>
-            <string>I haven't even cranked the engine yet!</string>
-            <string>Pass me my wrench!!</string>
-            <string>I'm not giving up!</string>
-            <string>It's time for a tune-up!</string>
-            <string>Never give up, and never lose! I'm on my way!</string>
-            <string>I'm not worried! I can fix anything!</string>
-        </quotes>
-
-        <victory>
-            <string>We won! Wooooooohooo!</string>
-            <string>I can fix anything!</string>
-            <string>I did it! Did you see that!?</string>
-        </victory>
-
-        <defeat>
-            <string>Oh, come on!</string>
-            <string>Next time I see you, you're in trouble!</string>
-        </defeat>
-    </co>
-    <co name="adder" style="BLACK_HOLE">
-        <title>Snake Eyes</title>
-        <hit>His own face</hit>
-        <miss>Dirty things</miss>
-        <bio>A self-absorbed commander who believes his skills are matchless. Second to Hawke in rank.</bio>
-        <skill>Adept at making quick command decisions, his CO power gauge is shorter than it should be.</skill>
-
-        <power name="Sideslip">
-            <description>Movement range for all units is increased by one space.</description>
-        </power>
-        <superpower name="Sidewinder">
-            <description>Movement range for all units is increased by two spaces. Firepower rises.</description>
-        </superpower>
-
-        <intel>
-            <string>Adder can get his power gauge filled</string>
-            <string>quicker than other COs. Both of his</string>
-            <string>powers enhance movement abilities.</string>
-        </intel>
-
-        <quotes>
-            <string>Heh heh heh... kneel before Adder!</string>
-            <string>Heh heh heh... it only hurts for a moment.</string>
-            <string>The look of terror on your face... It's absolutely delicious.</string>
-            <string>Heh heh heh... I'm going to enjoy breaking you!</string>
-            <string>Heh heh heh... Can't a guy have a little fun!?</string>
-            <string>Wriggle, worm...wriggle!</string>
-        </quotes>
-
-        <victory>
-            <string>Heh heh heh... What did you expect?</string>
-            <string>My apologies. Should I have gone easier on you?</string>
-            <string>Don't forget me now. That would be a shame.</string>
-        </victory>
-
-        <defeat>
-            <string>Hssss! Today was... unlucky. A bad day. Nothing more.</string>
-            <string>It's the blasted weather! That was the problem! Hssss!</string>
-        </defeat>
-    </co>
-    <co name="nell" style="ORANGE_STAR">
-        <title>Lady Luck</title>
-        <hit>Willful students</hit>
-        <miss>Downtime</miss>
-        <bio>Rachel's older sister and supreme commander of the Orange Star army, Nell is an able commanding officer
-            with a superb sense of fashion.
-        </bio>
-        <skill>Sometimes strikes with slightly more force than expected. She's the first to tell you she was born lucky.
-        </skill>
-
-        <power name="Lucky Star">
-            <description>Has a chance to strike with more damage than expected. Lucky!</description>
-        </power>
-        <superpower name="Lady Luck">
-            <description>Improves her chance to strike with massive damage. Very lucky!</description>
-        </superpower>
-
-        <intel>
-            <string>Nells units are lucky, which means</string>
-            <string>they may randomly deal more damage</string>
-            <string>than expected. Her powers increase</string>
-            <string>the luck range higher beyond the day</string>
-            <string>to day, she may become incredibly</string>
-            <string>lucky</string>
-        </intel>
-
-        <quotes>
-            <string>Luck IS a skill!</string>
-            <string>Hmm... Time to get serious!</string>
-            <string>I'm just getting started!</string>
-            <string>Don't hate me just because I'm lucky!</string>
-            <string>Everything will work out!</string>
-            <string>I'm feelin' lucky!</string>
-        </quotes>
-
-        <victory>
-            <string>Did I go too far?</string>
-            <string>Lady luck was with me!</string>
-            <string>...And that's how it's done.</string>
-        </victory>
-
-        <defeat>
-            <string>Seems like I just wasn't lucky enough...</string>
-            <string>Congratulations! You've beaten me!</string>
-        </defeat>
-    </co>
-    <co name="olaf" style="BLUE_MOON">
-        <title>Old Man Winter</title>
-        <hit>Warm boots</hit>
-        <miss>Rain clouds</miss>
-        <bio>He may be a pompous braggart, but his tactical prowess has earned him the respect of his peers and the
-            admiration of his people.
-        </bio>
-        <skill>Winter poses no problem for Olaf or his troops. Snow causes his firepower to rise, and his troops can
-            move through it without any fuel penalties.
-        </skill>
-
-        <power name="Blizzard">
-            <description>Causes snow to fall for two days, causing his firepower to rise.</description>
-        </power>
-        <superpower name="Winter Fury">
-            <description>A mighty blizzard causes two HP of damage to all enemy troops. The snow will also cause his
-                firepower to rise for two days.
-            </description>
-        </superpower>
-
-        <intel>
-            <string>Being used to the harsh weathers of</string>
-            <string>Blue Moon, Olaf's troops are boosted</string>
-            <string>during snow storms. His powers both</string>
-            <string>cause snow to fall for 2 days while</string>
-            <string>his super also strikes all enemies</string>
-            <string>for instant mass damage.</string>
-        </intel>
-
-        <quotes>
-            <string>Oho ho ho. Do you think your pitiful troops can stand the cold?</string>
-            <string>Neither man nor machine can withstand the fury of nature!</string>
-            <string>You're going to regret challenging me!</string>
-            <string>Let the winds of war bring snow!</string>
-            <string>I'll bury you!</string>
-            <string>Your weapons are powerless before the might of nature!</string>
-        </quotes>
-
-        <victory>
-            <string>Olaf's troops know no match!</string>
-            <string>I won! ...That is...we won!</string>
-            <string>In the end, Olaf stands victorious!</string>
-        </victory>
-
-        <defeat>
-            <string>Unbelievable! We've been forced to withdraw? What's going on?</string>
-            <string>Next time, I will give them a display of true might! Mark my words!</string>
-        </defeat>
-    </co>
-    <co name="sami" style="ORANGE_STAR">
-        <title>Darling of the Soldiers</title>
-        <hit>Chocolate</hit>
-        <miss>Cowards</miss>
-        <bio>A strong-willed Orange Star special forces captain who loves long hair. Despite having short hair.
-            Whatever, IS.
-        </bio>
-        <skill>As an infantry specialist, her foot soldiers do more damage and capture faster. Non-infantry
-            direct-combat units have weaker firepower
-        </skill>
-
-        <power name="Double Time">
-            <description>Infantry units receive a movement bonus of one space. Their attack also increases.
-            </description>
-        </power>
-        <superpower name="Victory March">
-            <description>All foot soldiers's capturing rate is doubled. Their movement is increased by two spaces and
-                their attack increases greatly.
-            </description>
-        </superpower>
-
-        <intel>
-            <string>Sami's infantry is able to capture</string>
-            <string>and attack more effectively at the</string>
-            <string>expense of her direct units. Sami's</string>
-            <string>powers increase the movement and</string>
-            <string>effectiveness of her infantry troops.</string>
-        </intel>
-
-        <quotes>
-            <string>You're not bad! Now it's my turn!</string>
-            <string>All right! Time to end this!</string>
-            <string>Infantry... Assault!</string>
-            <string>Ready or not, here I come!</string>
-            <string>All right, it's make-or-break time!</string>
-            <string>Move out, grunts!</string>
-        </quotes>
-
-        <victory>
-            <string>Mission accomplished! Awaiting orders!</string>
-            <string>Commandos always complete their mission.</string>
-            <string>Score one for the grunts!</string>
-        </victory>
-
-        <defeat>
-            <string>Things would be easier if we had more infantry units...</string>
-            <string>Next time's for real. I won't lose focus.</string>
-        </defeat>
-    </co>
-    <co name="sturm" style="BLACK_HOLE">
-        <title>Enigma</title>
-        <hit>Plotting invasions</hit>
-        <miss>Peace</miss>
-        <bio>The original commander of the Black Hole army. A mysterious invader from another world. Mastermind of the
-            Cosmo and Macro wars.
-        </bio>
-        <skill>Invasions</skill>
-
-        <superpower name="Meteor Strike">
-            <description>Pulls a giant meteor from space, which deals 4 HP of damage to all affected units. Firepower
-                and defense is increased.
-            </description>
-        </superpower>
-
-        <intel></intel>
-
-        <quotes>
-            <string>Prepare to embrace darkness!</string>
-            <string>You will tremble before my power!</string>
-            <string>Fear is all you have left...</string>
-            <string>You shall not survive!</string>
-            <string>Burning earth!!!</string>
-            <string>Such power... I regret crushing it.</string>
-        </quotes>
-
-        <victory>
-            <string>Who would have thought you could oppose me?</string>
-            <string>My name is Sturm. Hear it and tremble.</string>
-            <string>This is but a taste of my power!</string>
-        </victory>
-
-        <defeat>
-            <string>Gwaaaaaaaaaahhhh! I underestimated the strength of these worms!</string>
-            <string>NOOOOOOOOOOOOOOOOOOO!!!</string>
-        </defeat>
-    </co>
-    <co name="von_bolt" style="BLACK_HOLE">
-        <title>Immortal Evil</title>
-        <hit>Long life</hit>
-        <miss>Young 'uns!</miss>
-        <bio>Former commander-in-chief of the Black Hole forces. A mysterious old man who has been alive a very, very
-            long time. Masterminded the Omega war.
-        </bio>
-        <skill>No real weakness. Equally proficient with all types of units. Ready to fight wherever and whenever.
-        </skill>
-
-        <superpower name="Ex Machina">
-            <description>Fires shock waves that disables electrical systems and all forces in range become paralyzed.
-                Affected units suffer three HP of damage. Firepower and defense rises.
-            </description>
-        </superpower>
-
-        <intel>
-            <string>Von Bolt's non-infantry units enjoy</string>
-            <string>increased attack and defense. He has</string>
-            <string>no power to use, but his super truly</string>
-            <string>devastates a select area of troops</string>
-            <string>with damage and paralysis.</string>
-        </intel>
-
-        <quotes>
-            <string>No matter how powerful...hhh...you are, you're...hhh...still a worm on a hook...</string>
-            <string>Well...hhh...let me have a taste...hhh...of your soul.</string>
-            <string>Hheh heh heh... Stop panicking... it's...hhh...almost over...</string>
-            <string>Hheh heh heh. The darkness rises...</string>
-            <string>The sweet scent of destruction...hhh...it makes me...hhh...feel young!</string>
-            <string>Hold still...hhh...I'm going to...hhhhh...suck the marrow from your bones.</string>
-        </quotes>
-
-        <victory>
-            <string>Predator...prey...hhh... I hunt them all...</string>
-            <string>Hehh hhh hhh... Pathetic.</string>
-            <string>Even death...hhh...fears me...</string>
-        </victory>
-
-        <defeat>
-            <string>Bah! Enough...hhh... Leave me...hhh... I grow...hhh...tired. I must...hhh...rest.</string>
-            <string>No...hhhh... No...! Hhhhhh... Must...hhhh...live...hhhh...</string>
-        </defeat>
-    </co>
-</list>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<cos>
+  <co name="brenner" style="TWELFTH_BATTALION">
+    <title>Great protector</title>
+    <hit>Dogs</hit>
+    <miss>Cats</miss>
+    <bio>Captain of the 12th Battalion. He has an unshakable faith in humanity's goodness and will aid any in need.</bio>
+    <skill>CO Zone: 3 Defense Boost: 0/2 All Units</skill>
+    <coZone>3</coZone>
+    <power name="Reinforce">
+      <description>Restores two HP to all units. Firepower increases.</description>
+    </power>
+    <intel>
+      <string>Co Zone: 3</string>
+      <string>Defense boosts</string>
+      <string>0 / 2 All units</string>
+      <string>Reinforce All units recover 3 HP</string>
+    </intel>
+    <quotes>
+      <string>Know thyself. Heal thyself.</string>
+      <string>I'm not leavng anyone behind.</string>
+      <string>Hold steady</string>
+      <string>Medics, tend to the wounded!</string>
+      <string>No general treats his troops as expendable.</string>
+      <string>Replacements are on the way.</string>
+    </quotes>
+    <victory>
+      <string/>
+    </victory>
+    <defeat>
+      <string/>
+    </defeat>
+  </co>
+  <co name="caulder" style="INTELLIGENT_DEFENSE_SYSTEMS">
+    <title>Terribly Sane</title>
+    <hit>Laboratories</hit>
+    <miss>Ethics Committees</miss>
+    <bio>The head of the private military contractor IDS. He seeks a world where he is free to carry out his terrible experiments.</bio>
+    <skill>CO Zone: 5 Ultimate Boost: 5/5 All Units, Units recover 5HP every day.</skill>
+    <coZone>3</coZone>
+    <intel>
+      <string>CO Zone: 3</string>
+      <string>Final Boost</string>
+      <string>5 / 5 All Units</string>
+      <string>No CO Power</string>
+      <string>All units in zone recover 5 HP</string>
+    </intel>
+    <quotes>
+      <string>None</string>
+    </quotes>
+    <victory>
+      <string>None</string>
+    </victory>
+    <defeat>
+      <string>None</string>
+    </defeat>
+  </co>
+  <co name="forsythe" style="LAZURIAN_MILITARY">
+    <title>True Gentleman</title>
+    <hit>Pianos</hit>
+    <miss>Saxophones</miss>
+    <bio>The Lazurian Army commander. He was called out of retirement to defend his nation.</bio>
+    <skill>CO Zone: 5 Huge Boost: 1/1 All Units</skill>
+    <coZone>5</coZone>
+    <intel>
+      <string>CO Zone: 5</string>
+      <string>Huge General Boost</string>
+      <string>1 / 1 All Units</string>
+      <string>No CO Power</string>
+      <string>I am a soldier, not a killer</string>
+    </intel>
+    <quotes>
+      <string>None</string>
+    </quotes>
+    <victory>
+      <string>None</string>
+    </victory>
+    <defeat>
+      <string>None</string>
+    </defeat>
+  </co>
+  <co name="gage" style="LAZURIAN_MILITARY">
+    <title>Strong and Silent</title>
+    <hit>Getting things done</hit>
+    <miss>Talking</miss>
+    <bio>A Lazurian soldier. He is a man of few words, but a consummate professional.</bio>
+    <skill>CO Zone: 2 Indirect Boost: 2/1 Ranged and Sea Units</skill>
+    <coZone>2</coZone>
+    <power name="Longshot">
+      <description>Boosts attack and defense of all naval and indirect attack units.</description>
+    </power>
+    <intel>
+      <string>None</string>
+    </intel>
+    <quotes>
+      <string>They don't pay me to think.</string>
+    </quotes>
+    <victory>
+      <string>Win!</string>
+    </victory>
+    <defeat>
+      <string>Unbelievable!</string>
+    </defeat>
+  </co>
+  <co name="greyfield" style="NEW_RUBINELLE_ARMY">
+    <title>Megalomaniac</title>
+    <hit>Pipes</hit>
+    <miss>Gum</miss>
+    <bio>Ambitious and powerhungry, he wants to destroy the Lazurian Army and rule the world as its new king.</bio>
+    <skill>CO Zone: 3 Sea Boost: 1/4 Naval units, Seaplanes, Copters.</skill>
+    <coZone>3</coZone>
+    <power name="Supply chain">
+      <description>Refills fuel, ammo, and materials.</description>
+    </power>
+    <intel>
+      <string>CO Zone: 3</string>
+      <string>Sea Boost</string>
+      <string>1 / 4 Navy, seaplanes, copters</string>
+    </intel>
+    <quotes>
+      <string>I suppose I can spare a few supplies...</string>
+      <string>How dare you stand up to the might of Greyfield!</string>
+      <string>Mutiny? Do not fear, I am cruel but harsh!</string>
+      <string>I will not stand for this!</string>
+      <string>Overwhelming power requires a mountain of supplies!</string>
+      <string>It is time you learned what war truly is!</string>
+    </quotes>
+    <victory>
+      <string>Win!</string>
+    </victory>
+    <defeat>
+      <string>I'll see you hanged for this!</string>
+    </defeat>
+  </co>
+  <co name="isabella" style="TWELFTH_BATTALION">
+    <title>Amnesiac</title>
+    <hit>Flowers</hit>
+    <miss>Test Tubes</miss>
+    <bio>Has no memory of her past. Rescued by Will, she has joined the 12th Battalion. Where she dreams of living in peace.</bio>
+    <skill/>
+    <coZone>2</coZone>
+    <superpower name="Deep Strike">
+      <description>All units gain 2 additional move, while ranged units gain additional range.</description>
+    </superpower>
+    <intel>
+      <string>CO Zone: 2</string>
+      <string>Mega Boost</string>
+      <string>1 / 1 All Units</string>
+    </intel>
+    <quotes>
+      <string>Commence Deep Strike!</string>
+      <string>I may not remember my past, but I will always fight for the future!</string>
+      <string>Fear is all you have left...</string>
+      <string>I have to help with the fight...</string>
+      <string>They trusted me. Now it's time to pay them back!</string>
+      <string>This...reminds me of something...</string>
+      <string>I can do it! I know I can!</string>
+    </quotes>
+    <victory>
+      <string>I can't remember anything</string>
+    </victory>
+    <defeat>
+      <string>Unbelievable!</string>
+    </defeat>
+  </co>
+  <co name="lin" style="TWELFTH_BATTALION">
+    <title>Ice</title>
+    <hit>Mechanical Pencils</hit>
+    <miss>Crayons</miss>
+    <bio>The 12th Battalion's unflappable second in command.She has tremendous respect for Captain Brenner, although they disagree often.</bio>
+    <skill>No real weakness. Equally proficient with all types of units. Ready to fight wherever and whenever.</skill>
+    <coZone>1</coZone>
+    <superpower name="Scout">
+      <description>Ground units gain 2 peircing vision.</description>
+    </superpower>
+    <intel/>
+    <quotes>
+      <string>This is all according to plan...</string>
+      <string>I've gathered enough data about the situation.</string>
+      <string>Ha! You're too soft for war!</string>
+      <string>My strategy is foolproof!</string>
+      <string>This is where it all turns around!</string>
+    </quotes>
+    <victory>
+      <string>Keep a cool head.</string>
+    </victory>
+    <defeat>
+      <string>No...</string>
+    </defeat>
+  </co>
+  <co name="penny" style="INTELLIGENT_DEFENSE_SYSTEMS">
+    <title>Ill Omens</title>
+    <hit>Mr. Bear</hit>
+    <miss>Mr. Bear</miss>
+    <bio>The youngest child of Dr. Caulder. Numerous experiments have left her mind permanently shattered.</bio>
+    <skill>No real weakness. Equally proficient with all types of units. Ready to fight wherever and whenever.</skill>
+    <coZone>3</coZone>
+    <power name="Stormfront">
+      <description>The weather is changed for three turns.</description>
+    </power>
+    <intel/>
+    <quotes>
+      <string>Dimensional index rising, oscillating fluid bilfur...BOOM!</string>
+      <string>Do you like teddy bears?</string>
+      <string>Tee he he!</string>
+      <string>Lets give Enigma a try!</string>
+      <string>Nice weather we're having!</string>
+      <string>The weather's been so changeable recently!</string>
+    </quotes>
+    <victory>
+      <string>Yes!</string>
+    </victory>
+    <defeat>
+      <string>No...</string>
+    </defeat>
+  </co>
+  <co name="tabitha" style="INTELLIGENT_DEFENSE_SYSTEMS">
+    <title>Queen of Calamity</title>
+    <hit>Dark Chocolate</hit>
+    <miss>Hamburgers</miss>
+    <bio>Belongs to the private military company IDS. A daughter of Dr. Caulder, she is extremely cruel and vindictive.</bio>
+    <skill>CO Zone: 0 Mega Boost: 4/4 All Units</skill>
+    <coZone>0</coZone>
+    <power name="Firestorm">
+      <description>A 3x3 8 damage missile is launched.</description>
+    </power>
+    <intel/>
+    <quotes>
+      <string>Weak! Pathetic! Miserable!</string>
+      <string>Lowly worms! You deserve nothing less than total annihilation!</string>
+      <string>You're not even worth my time!</string>
+      <string>Burn. BURN! Ahahahahaha!</string>
+      <string>Feast your eyes on true power!</string>
+      <string>Don't die so quickly. I'm having so much fun!</string>
+    </quotes>
+    <victory>
+      <string>Yes!</string>
+    </victory>
+    <defeat>
+      <string>Stupid weak people!</string>
+    </defeat>
+  </co>
+  <co name="tasha" style="LAZURIAN_MILITARY">
+    <title>Queen of Calamity</title>
+    <hit>Leather</hit>
+    <miss>Wool</miss>
+    <bio>A Lazurian soldier who burns with the desire to avenge her late brother.</bio>
+    <skill>CO Zone: 1 Aerial Attack Boost: 4/2 Air Units</skill>
+    <coZone>1</coZone>
+    <power name="Sonic Boom">
+      <description>All air units gain 2 additional movement.</description>
+    </power>
+    <intel/>
+    <quotes>
+      <string>At last, revenge!</string>
+      <string>I've waited so long for this day.</string>
+      <string>This is for my brother!</string>
+      <string>Sweet revenge. I'll be sure to savor this.</string>
+      <string>Feast your eyes on true power!</string>
+      <string>I will fight on, even if it costs me my life!</string>
+      <string>Revenge!</string>
+    </quotes>
+    <victory>
+      <string>Yes!</string>
+    </victory>
+    <defeat>
+      <string>Noo...</string>
+    </defeat>
+  </co>
+  <co name="waylon" style="NEW_RUBINELLE_ARMY">
+    <title>Hedonist</title>
+    <hit>Disco</hit>
+    <miss>Dance Hall</miss>
+    <bio>A member of the Rubinelle Army who seeks only to fulfill his own pleasures and desires.</bio>
+    <skill>CO Zone:2 Aerial Defense Boost: 2/3 Air units</skill>
+    <coZone>2</coZone>
+    <power name="Wingman">
+      <description>All damage dealt to air units are quartered.</description>
+    </power>
+    <intel/>
+    <quotes>
+      <string>Time for Waylon to show off his moves!</string>
+      <string>We'll be finished by dinnertime!</string>
+      <string>Waylon's on the move. Yeah!</string>
+      <string>You've got no sense of style!</string>
+      <string>My airforce is invincible!</string>
+      <string>I'm over here! C'mon, give me your best shot!</string>
+    </quotes>
+    <victory>
+      <string>Yes!</string>
+    </victory>
+    <defeat>
+      <string>Noo...</string>
+    </defeat>
+  </co>
+  <co name="will" style="TWELFTH_BATTALION">
+    <title>When There's A Will</title>
+    <hit>Courage</hit>
+    <miss>Arrogance</miss>
+    <bio>A former Rubinelle military cadet who joined the 12th Battalion after being rescued by Captain Brenner whom he idolizes.</bio>
+    <skill>CO Zone: 2 Direct Boost: 2/0 Direct Units</skill>
+    <coZone>2</coZone>
+    <power name="Rally Cry">
+      <description>All direct units gain 2 movement.</description>
+    </power>
+    <intel/>
+    <quotes>
+      <string>They've left themselves open!</string>
+      <string>We survived the meteors. Nothing can stop us!</string>
+      <string>Everyone, move out!</string>
+      <string>This is it...</string>
+      <string>Nothing will stand between us and a better future!</string>
+      <string>When there's life, there's hope!</string>
+    </quotes>
+    <victory>
+      <string>Yes!</string>
+    </victory>
+    <defeat>
+      <string>Noo...</string>
+    </defeat>
+  </co>
+</cos>

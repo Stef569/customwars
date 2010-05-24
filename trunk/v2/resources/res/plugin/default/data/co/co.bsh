@@ -1,0 +1,166 @@
+// CO scripted methods.
+// All method consists of 2 parts the <co name>_<method name>
+// Java based syntax more info @ http://www.beanshell.org/manual/syntax.html
+
+  public void andy_power() {
+    for (Unit unit : game.getActivePlayer().getArmy()) {
+      unit.addHp(2);
+    }
+  }
+
+  public void andy_superPower() {
+    for (Unit unit : game.getActivePlayer().getArmy()) {
+      unit.addHp(5);
+    }
+  }
+
+  public int andy_getAttackBonusPercentage() {
+    if (power)
+      return 110;
+    if (superPower)
+      return 130;
+    else
+      return 100;
+  }
+
+  public int andy_getDefenseBonusPercentage() {
+    if (power || superPower)
+      return 110;
+    return 100;
+  }
+
+  public int andy_unitMovementHook() {
+    if (superPower) {
+      return movement + 1;
+    } else {
+      return movement;
+    }
+  }
+
+  public int adder_unitMovementHook() {
+    if (power)
+      return movement + 2;
+    else if (superPower)
+      return movement + 2;
+    else
+      return movement;
+  }
+
+  public int nell_getAttackBonusPercentage() {
+    if (power || superPower) {
+      return 110;
+    } else {
+      return 100;
+    }
+  }
+
+  public int nell_getDefenseBonusPercentage() {
+    if (power || superPower) {
+      return 110;
+    } else {
+      return 100;
+    }
+  }
+
+  public void olaf_superPower() {
+    for (Player player : game.getAllPlayers()) {
+      if (!game.getActivePlayer().isAlliedWith(player)) {
+        for (Unit unit : player.getArmy()) {
+          unit.addHp(-2);
+        }
+      }
+    }
+  }
+
+  public int olaf_getAttackBonusPercentage() {
+    if (power || superPower)
+      return 110;
+    else
+      return 100;
+  }
+
+  public int olaf_getDefenseBonusPercentage() {
+    if (power || superPower)
+      return 110;
+    else
+      return 100;
+  }
+
+  public int sami_getAttackBonusPercentage() {
+    attackerName = attacker.stats.name;
+    if (attackerName.equals("inf") || attackerName.equals("mech")) {
+      if (superPower) {
+        return 180;
+      } else if (power) {
+        return 160;
+      }
+      return 120;
+    } else if (attacker.attackRange.minRange > 1) {
+      if (superPower || power) {
+        return 110;
+      } else {
+        return 100;
+      }
+    }
+    if (superPower || power) {
+      return 100;
+    } else {
+      return 90;
+    }
+  }
+
+  public int sami_getDefenseBonusPercentage() {
+    if (power || superPower) {
+      return 110;
+    } else {
+      return 100;
+    }
+  }
+
+  public int sami_unitMovementHook() {
+    if (power && mover.stats.name.equals("mech")) {
+      return movement + 1;
+    } else {
+      return movement;
+    }
+  }
+
+  public int sami_captureRateHook() {
+    if (superPower) {
+      return captureRate * 2;
+    } else {
+      return captureRate;
+    }
+  }
+
+  public int sturm_getAttackBonusPercentage() {
+    if (power || superPower) {
+      return 130;
+    } else {
+      return 120;
+    }
+  }
+
+  public int sturm_getDefenseBonusPercentage() {
+    if (power || superPower) {
+      return 130;
+    } else {
+      return 120;
+    }
+  }
+
+    public int von_bolt_getAttackBonusPercentage() {
+    if (power || superPower) {
+      return 120;
+    } else {
+      return 110;
+    }
+  }
+
+  public int von_bolt_getDefenseBonusPercentage() {
+    if (power || superPower) {
+      return 120;
+    } else {
+      return 110;
+    }
+  }

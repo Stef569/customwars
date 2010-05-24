@@ -1,0 +1,17 @@
+<list>
+  <COStyle name="ORANGE_STAR" id="0">
+    <color>D98719</color>
+  </COStyle>
+  <COStyle name="BLUE_MOON" id="1">
+    <color>0000EE</color>
+  </COStyle>
+  <COStyle name="GREEN_EARTH" id="2">
+    <color>00B4FF</color>
+  </COStyle>
+  <COStyle name="YELLOW_COMMET" id="3">
+    <color>ADAD00</color>
+  </COStyle>
+  <COStyle name="BLACK_HOLE" id="4">
+    <color>808080</color>
+  </COStyle>
+</list>
