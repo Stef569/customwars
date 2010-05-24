@@ -1,36 +1,52 @@
 package com.customwars.client.model.co;
 
+import com.customwars.client.App;
+import com.customwars.client.model.map.Location;
+import com.customwars.client.model.map.TileMap;
+import com.customwars.client.tools.Args;
+
+import java.awt.Color;
+
 /**
  * A commanding officer, subclasses should extend functions of interest
  */
 public abstract class AbstractCO implements CO {
+  private static final double MAX_NUM_BARS = 12;
+
   private final String name;
-  private final CoStyle style;
+  private final COStyle style;
   private final String bio;
   private final String title;
   private final String hit;
   private final String miss;
   private final String skill;
 
-  private final Power power;
-  private final Power superpower;
+  private Power power;
+  private Power superpower;
 
   private final String[] intel;
   private final String[] defeat;
   private final String[] victory;
   private final String[] quotes;
 
-  protected AbstractCO() {
-    this("unnamed", CoStyle.NONE, "", "", "", "", "", new Power("", ""), new Power("", ""), null, null, null, null);
+  private static final double NUM_BARS_TO_EXTEND_COZONE = App.getDouble("plugin.co_num_bars_to_extend_zone");
+  private static final double NUM_BARS_TO_ACTIVATE_POWER = App.getDouble("plugin.co_num_bars_to_activate_power");
+  private static final double NUM_BARS_TO_ACTIVATE_SUPER_POWER = App.getDouble("plugin.co_num_bars_to_activate_superpower");
+  private final int coZone;
+  private double bars;
+
+  protected AbstractCO(String name) {
+    this(name, new COStyle("", Color.white, 0), "", "", 0, "", "", "", new Power("", ""), new Power("", ""), null, null, null, null);
   }
 
-  protected AbstractCO(String name, CoStyle style, String bio,
-                       String title, String hit, String miss, String skill,
+  protected AbstractCO(String name, COStyle style, String bio, String title, int coZone,
+                       String hit, String miss, String skill,
                        Power power, Power superPower,
                        String[] intel, String[] defeat, String[] victory, String[] quotes) {
     this.name = name;
     this.style = style;
     this.bio = bio;
+    this.coZone = coZone;
     this.title = title;
     this.hit = hit;
     this.miss = miss;
@@ -41,6 +57,19 @@ public abstract class AbstractCO implements CO {
     this.defeat = defeat;
     this.victory = victory;
     this.quotes = quotes;
+    init();
+  }
+
+  public void init() {
+    // Make sure power and super power are not null
+    this.power = power == null ? Power.NONE : power;
+    this.superpower = superpower == null ? Power.NONE : superpower;
+
+    // Valid values are > -1  && < MAX_NUM_BARS
+    int maxBars = (int) MAX_NUM_BARS + 1;
+    Args.validateBetweenMinMax((int) NUM_BARS_TO_ACTIVATE_POWER, -1, maxBars, "num bars to activate power");
+    Args.validateBetweenMinMax((int) NUM_BARS_TO_ACTIVATE_SUPER_POWER, -1, maxBars, "num bars to activate super power");
+    Args.validateBetweenMinMax((int) NUM_BARS_TO_EXTEND_COZONE, -1, maxBars, "num bars to extend co zone");
   }
 
   /**
@@ -48,11 +77,12 @@ public abstract class AbstractCO implements CO {
    *
    * @param co the co to copy
    */
-  public AbstractCO(AbstractCO co) {
+  protected AbstractCO(AbstractCO co) {
     this.name = co.name;
     this.style = co.style;
     this.bio = co.bio;
     this.title = co.title;
+    this.coZone = co.coZone;
     this.hit = co.hit;
     this.miss = co.miss;
     this.skill = co.skill;
@@ -64,11 +94,60 @@ public abstract class AbstractCO implements CO {
     this.quotes = co.quotes;
   }
 
+  @Override
+  public void chargePowerGauge(double chargeRate) {
+    bars += chargeRate;
+
+    if (bars < 0) {
+      bars = 0;
+    } else if (bars > MAX_NUM_BARS) {
+      bars = MAX_NUM_BARS;
+    }
+  }
+
+  @Override
+  public void resetPowerGauge() {
+    bars = 0;
+  }
+
+  public boolean isInCOZone(Location coLocation, Location otherLocation) {
+    int distance = TileMap.getDistanceBetween(coLocation, otherLocation);
+    return distance - getCOZone() <= 0;
+  }
+
+  private int getCOZone() {
+    return hasExtendedZone() ? coZone + 1 : hasMaxedZone() ? coZone + 2 : coZone;
+  }
+
+  private boolean hasExtendedZone() {
+    return bars >= NUM_BARS_TO_EXTEND_COZONE;
+  }
+
+  private boolean hasMaxedZone() {
+    return bars == MAX_NUM_BARS;
+  }
+
+  public boolean canDoPower() {
+    return bars == NUM_BARS_TO_ACTIVATE_POWER;
+  }
+
+  public boolean canDoSuperPower() {
+    return bars == NUM_BARS_TO_ACTIVATE_SUPER_POWER;
+  }
+
+  public int getMaxBars() {
+    return (int) MAX_NUM_BARS;
+  }
+
+  public int getBars() {
+    return (int) (bars + 0.5);
+  }
+
   public String getName() {
     return name;
   }
 
-  public CoStyle getStyle() {
+  public COStyle getStyle() {
     return style;
   }
 

@@ -29,9 +29,10 @@ public class Player extends GameObject {
   private static final Logger logger = Logger.getLogger(Player.class);
   private static final int NEUTRAL_PLAYER_ID = -1;
   private static final int NEUTRAL_TEAM = -1;
+  private static final String DUMMY_CO_NAME = "dummy";
   private final int id;           // Unique Number
   private final Color color;      // Unique Color
-  private int team;               // The team this player is in
+  private final int team;         // The team this player is in
   private final boolean ai;       // Is this a human or an AI player
   private String name;            // Name for this player
   private City hq;                // Headquarters
@@ -46,7 +47,7 @@ public class Player extends GameObject {
    * Create an unnamed human player
    */
   public Player(int id, Color color) {
-    this(id, color, "Unnamed", 0, 0, false, new BasicCO());
+    this(id, color, "Unnamed", 0, 0, false, new BasicCO(DUMMY_CO_NAME));
   }
 
   /**
@@ -54,7 +55,7 @@ public class Player extends GameObject {
    * Post: isNeutral returns true
    */
   public static Player createNeutralPlayer(Color color) {
-    return new Player(NEUTRAL_PLAYER_ID, color, "Neutral", 0, NEUTRAL_TEAM, false, new BasicCO());
+    return new Player(NEUTRAL_PLAYER_ID, color, "Neutral", 0, NEUTRAL_TEAM, false, new BasicCO(DUMMY_CO_NAME));
   }
 
   /**
@@ -73,11 +74,17 @@ public class Player extends GameObject {
     this.ai = otherPlayer.ai;
     this.army = new LinkedList<Unit>();
     this.cities = new LinkedList<City>();
-    this.co = COFactory.getCO(otherPlayer.co.getName());
+
+    String otherPlayerCOName = otherPlayer.co.getName();
+    if (otherPlayerCOName.equals(DUMMY_CO_NAME)) {
+      this.co = new BasicCO(DUMMY_CO_NAME);
+    } else {
+      this.co = COFactory.getCO(otherPlayerCOName);
+    }
   }
 
   public Player(int id, Color color, String name, int startBudget, int team, boolean ai) {
-    this(id, color, name, startBudget, team, ai, new BasicCO());
+    this(id, color, name, startBudget, team, ai, new BasicCO(DUMMY_CO_NAME));
   }
 
   public Player(int id, Color color, String name, int startBudget, int team, boolean ai, CO co) {

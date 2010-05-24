@@ -11,17 +11,18 @@ import com.customwars.client.ui.renderer.GameRenderer;
  */
 public class BasicCO extends AbstractCO {
 
-  public BasicCO() {
+  public BasicCO(String name) {
+    super(name);
   }
 
   /**
    * Create a CO with all required values
    */
-  public BasicCO(String name, CoStyle style, String bio, String title,
+  public BasicCO(String name, COStyle style, String bio, String title, int coZone,
                  String hit, String miss, String skill,
                  Power power, Power superPower,
                  String[] intel, String[] defeat, String[] victory, String[] quotes) {
-    super(name, style, bio, title,
+    super(name, style, bio, title, coZone,
       hit, miss, skill, power, superPower, intel, defeat, victory, quotes);
   }
 
@@ -58,6 +59,10 @@ public class BasicCO extends AbstractCO {
   public void deActivateSuperPower() {
   }
 
+  @Override
+  public void dayStart() {
+  }
+
   public int getAttackBonusPercentage(Unit attacker, Unit defender) {
     return 100;
   }
@@ -89,5 +94,15 @@ public class BasicCO extends AbstractCO {
   @Override
   public int terrainDefenseHook(int terrainDefenseBonus) {
     return terrainDefenseBonus;
+  }
+
+  @Override
+  public int fireRangeHook(int fireRange) {
+    return fireRange;
+  }
+
+  @Override
+  public int visionHook(int vision) {
+    return vision;
   }
 }

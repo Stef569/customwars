@@ -1,5 +1,6 @@
 package com.customwars.client.model.gameobject;
 
+import com.customwars.client.App;
 import com.customwars.client.model.ArmyBranch;
 import com.customwars.client.model.TurnHandler;
 import com.customwars.client.model.fight.Attacker;
@@ -202,7 +203,9 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
     tryToFireWeapon(fight);
 
     if (defender.isDestroyed()) {
-      setExperience(experience + 1);
+      if (App.getBoolean("plugin.unit_can_gain_experience")) {
+        setExperience(experience + 1);
+      }
     }
   }
 
@@ -733,7 +736,11 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   }
 
   public int getMovePoints() {
-    return owner.getCO().unitMovementHook(this, stats.movement);
+    if (owner == null) {
+      return stats.movement;
+    } else {
+      return owner.getCO().unitMovementHook(this, stats.movement);
+    }
   }
 
   public void addPathMoveCost(int moveCost) {
@@ -824,7 +831,11 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   }
 
   public int getCaptureRate() {
-    return owner.getCO().captureRateHook(getHp());
+    if (owner == null) {
+      return getHp();
+    } else {
+      return owner.getCO().captureRateHook(getHp());
+    }
   }
 
   public boolean isInTransport() {
@@ -860,7 +871,11 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   }
 
   public int getPrice() {
-    return owner.getCO().unitPriceHook(stats.price);
+    if (owner == null) {
+      return stats.price;
+    } else {
+      return owner.getCO().unitPriceHook(stats.price);
+    }
   }
 
   @Override

@@ -41,7 +41,7 @@ public class CWAnimLib {
    * Supported directions(N,E,S,W) all other directions will throw an IllegalArgumentException
    */
   public Animation getUnitAnim(Unit unit, Color color, Direction direction) {
-    int unitID = unit.getStats().getID();
+    int unitID = unit.getStats().getImgRowID();
 
     switch (direction) {
       case NORTH:
@@ -61,6 +61,6 @@ public class CWAnimLib {
    * Get a darker version of a unit animation
    */
   public Animation getInactiveUnitAnim(Unit unit, Color color) {
-    return animLib.getUnitAnim(unit.getStats().getID(), color, AnimLib.ANIM_INACTIVE);
+    return animLib.getUnitAnim(unit.getStats().getImgRowID(), color, AnimLib.ANIM_INACTIVE);
   }
 }

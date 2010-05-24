@@ -3,6 +3,7 @@ package com.customwars.client.model.co;
 import java.io.Serializable;
 
 public class Power implements Serializable {
+  public static final Power NONE = new Power("", "");
   private final String name, description;
   private boolean active;
 
