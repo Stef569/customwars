@@ -24,7 +24,7 @@ public class ScriptedCOTest {
     scriptManager = new ScriptManager();
     scriptManager.init("resources/testData/coScript.bsh");
 
-    CO andy = new BasicCO("andy", CoStyle.ORANGE_STAR, "", "", "", "", "", new Power("", ""), new Power("", ""), new String[]{}, new String[]{}, new String[]{}, new String[]{});
+    CO andy = new BasicCO("andy");
     scriptedAndyCO = new ScriptedCO(andy, scriptManager);
   }
 

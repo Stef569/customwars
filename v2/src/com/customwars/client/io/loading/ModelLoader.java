@@ -1,12 +1,15 @@
 package com.customwars.client.io.loading;
 
+import com.customwars.client.io.converter.COXmlConverter;
 import com.customwars.client.io.converter.CityXmlConverter;
+import com.customwars.client.io.converter.HexColorConverter;
 import com.customwars.client.io.converter.TerrainXmlConverter;
 import com.customwars.client.model.ArmyBranch;
 import com.customwars.client.model.co.AbstractCO;
 import com.customwars.client.model.co.BasicCO;
 import com.customwars.client.model.co.CO;
 import com.customwars.client.model.co.COFactory;
+import com.customwars.client.model.co.COStyle;
 import com.customwars.client.model.co.Power;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.CityFactory;
@@ -27,6 +30,7 @@ import org.newdawn.slick.util.ResourceLoader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Loads: Damage tables and Model classes to their Factories ie
@@ -35,7 +39,7 @@ import java.util.Collection;
  * Unit -> UnitFactory
  * City -> CityFactory
  * Dmg table -> UnitFight
- * CO text -> COFactory
+ * CO -> COFactory
  *
  * @author stefan
  */
@@ -49,6 +53,7 @@ public class ModelLoader implements CWResourceLoader {
   private static final String XML_DATA_ALL_CITY_FILE = "cities.xml";
   private static final String DMG_XML_FILE = "damage.xml";
   private static final String XML_CO_TEXT_FILE = "coText.xml";
+  private static final String XML_CO_STYLE_FILE = "coStyle.xml";
   private static final XStream xStream = new XStream(new DomDriver());
   private final String modelResPath;
 
@@ -62,7 +67,7 @@ public class ModelLoader implements CWResourceLoader {
     loadUnits();
     loadCities();
     loadDamageTables();
-    loadCOTexts();
+    loadCOs();
   }
 
   private void loadTerrains() {
@@ -136,14 +141,29 @@ public class ModelLoader implements CWResourceLoader {
     xmlDamageParser.load();
   }
 
-  public void loadCOTexts() {
+  public void loadCOs() {
+    XStreamUtil.useReflectionFor(xStream, BasicCO.class);
+    XStreamUtil.useReflectionFor(xStream, AbstractCO.class);
+    XStreamUtil.useReflectionFor(xStream, COStyle.class);
+    xStream.registerConverter(new HexColorConverter(), XStream.PRIORITY_VERY_HIGH);
+
+    xStream.alias("COStyle", COStyle.class);
+    xStream.useAttributeFor(COStyle.class, "name");
+    xStream.useAttributeFor(COStyle.class, "id");
+
+    xStream.alias("cos", List.class);
     xStream.alias("co", BasicCO.class);
     xStream.useAttributeFor(AbstractCO.class, "name");
     xStream.useAttributeFor(AbstractCO.class, "style");
     xStream.useAttributeFor(Power.class, "name");
 
+    InputStream CoStyleXmlStream = ResourceLoader.getResourceAsStream(modelResPath + "co/" + XML_CO_STYLE_FILE);
+    Collection<COStyle> CoStyles = (Collection<COStyle>) XStreamUtil.readObject(xStream, CoStyleXmlStream);
+
+    xStream.registerConverter(new COXmlConverter(CoStyles));
     InputStream coXmlStream = ResourceLoader.getResourceAsStream(modelResPath + "co/" + XML_CO_TEXT_FILE);
     Collection<CO> cos = (Collection<CO>) XStreamUtil.readObject(xStream, coXmlStream);
-    COFactory.addAll(cos);
+    COFactory.addCOStyles(CoStyles);
+    COFactory.addCOs(cos);
   }
 }

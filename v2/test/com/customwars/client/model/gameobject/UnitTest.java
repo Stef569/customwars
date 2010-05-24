@@ -100,4 +100,13 @@ public class UnitTest {
     Assert.assertFalse(rockets.isDirect());
     Assert.assertTrue(rockets.isInDirect());
   }
+
+  @Test
+  public void testGetters() {
+    // Some unit getters are special since they have co hook.
+    // If the unit does not has an owner/co then don't throw an exception.
+    UnitFactory.getUnit("infantry").getPrice();
+    UnitFactory.getUnit("infantry").getMovePoints();
+    UnitFactory.getUnit("infantry").getCaptureRate();
+  }
 }

@@ -1,6 +1,11 @@
 package com.customwars.client.model;
 
 import com.customwars.client.App;
+import com.customwars.client.model.co.BasicCO;
+import com.customwars.client.model.co.CO;
+import com.customwars.client.model.co.COFactory;
+import com.customwars.client.model.co.COStyle;
+import com.customwars.client.model.co.Power;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.CityFactory;
 import com.customwars.client.model.gameobject.Terrain;
@@ -13,7 +18,9 @@ import com.customwars.client.model.gameobject.Weapon;
 import com.customwars.client.model.gameobject.WeaponFactory;
 import com.customwars.client.model.map.Direction;
 import com.customwars.client.model.map.Range;
+import com.customwars.client.script.ScriptManager;
 
+import java.awt.Color;
 import java.util.Arrays;
 import java.util.List;
 
@@ -24,6 +31,8 @@ import java.util.List;
  * @author stefan
  */
 public class TestData {
+  private static final String[] EMPTY_ARR = new String[]{};
+
   public static final int MOVE_INF = 0;
   public static final int MOVE_MECH = 1;
   public static final int MOVE_TREAD = 2;
@@ -122,6 +131,10 @@ public class TestData {
   private static City silo = new City(5, 5, "road", "missle_silo", "", 0, 0, plainMoveCosts, 1, true,
     cityRoadConnection, null, null, null, 20, CITY_HEAL_RATE, 0);
 
+  // CO
+  private static CO andy = new BasicCO("andy", new COStyle("ORANGE_STAR", Color.orange, 0), "", "", 0, "", "", "", Power.NONE, Power.NONE, EMPTY_ARR, EMPTY_ARR, EMPTY_ARR, EMPTY_ARR);
+  private static CO sturm = new BasicCO("sturm", new COStyle("BLACK_HOLE", Color.black, 0), "", "", 0, "", "", "", Power.NONE, Power.NONE, EMPTY_ARR, EMPTY_ARR, EMPTY_ARR, EMPTY_ARR);
+
   public static void storeTestData() {
     clearTestData();
     TerrainFactory.addTerrain(plain);
@@ -150,6 +163,10 @@ public class TestData {
     CityFactory.addCity(port);
     CityFactory.addCity(silo);
 
+    COFactory.setScriptManager(new ScriptManager());
+    COFactory.addCO(andy);
+    COFactory.addCO(sturm);
+
     UnitFight.setBaseDMG(initBaseDmg());
     UnitFight.setAltDMG(initAltDmg());
 
@@ -162,6 +179,7 @@ public class TestData {
     WeaponFactory.clear();
     UnitFactory.clear();
     CityFactory.clear();
+    COFactory.clear();
     UnitFight.setBaseDMG(null);
     UnitFight.setAltDMG(null);
   }

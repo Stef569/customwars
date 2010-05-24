@@ -23,7 +23,8 @@ public class ScriptedCO extends BasicCO {
     init();
   }
 
-  private void init() {
+  public void init() {
+    super.init();
     scriptManager.set("superPower", getPower().isActive());
     scriptManager.set("power", getSuperpower().isActive());
   }
