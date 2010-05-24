@@ -18,6 +18,7 @@ s numbers numbers.png 16 14
 m unit units_RED.png 32 40 true
 s unitDecoration unitDecorations.png 16 16
 
+m neutral_cities neutralCities.png 32 60
 m city cities_RED.png 32 60 true
 s cityDecorations cityDecorations.png 16 16
 
