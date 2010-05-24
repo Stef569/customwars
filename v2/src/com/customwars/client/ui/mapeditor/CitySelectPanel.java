@@ -3,6 +3,7 @@ package com.customwars.client.ui.mapeditor;
 import com.customwars.client.io.ResourceManager;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.CityFactory;
+import com.customwars.client.model.map.Tile;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.gui.GUIContext;
 
@@ -23,6 +24,17 @@ public class CitySelectPanel extends SelectPanel {
   @Override
   public void recolor(Color color) {
     buildComponent(color);
+  }
+
+  @Override
+  public void select(Tile location) {
+    int cityIndex = location.getTerrain().getID();
+    setSelectedIndex(cityIndex);
+  }
+
+  @Override
+  public boolean canSelect(Tile cursorLocation) {
+    return cursorLocation.getTerrain().getClass() == City.class;
   }
 
   private void buildComponent(Color color) {

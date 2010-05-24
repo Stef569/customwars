@@ -119,7 +119,17 @@ public class MapEditorController {
     cursorController.activateCursor("SELECT");
   }
 
-  public void add(Tile t, int selectedIndex) {
+  public void addToMap() {
+    boolean clickedOnMap = mapEditorView.isMouseInMap();
+
+    if (clickedOnMap) {
+      Tile cursorLocation = mapEditorView.getCursorLocation();
+      int selectedIndex = mapEditorView.getSelectedIndex();
+      add(cursorLocation, selectedIndex);
+    }
+  }
+
+  private void add(Tile t, int selectedIndex) {
     Color color = getActiveColor();
     getActiveControl().addToTile(t, selectedIndex, color);
 
@@ -143,6 +153,23 @@ public class MapEditorController {
 
   public void fill(int selectedIndex) {
     getActiveControl().fillMap(map, selectedIndex);
+  }
+
+  /**
+   * Quick copy
+   * Stores the game object under the cursor, so that when addToMap is invoked
+   * the stored game object is placed on the cursor location.
+   */
+  public void storeGameObject() {
+    boolean clickedOnMap = mapEditorView.isMouseInMap();
+
+    if (clickedOnMap) {
+      Tile cursorLocation = mapEditorView.getCursorLocation();
+
+      // Select the game object in the ui, as if the user has chosen it.
+      int panelID = mapEditorView.select(cursorLocation);
+      changeToPanel(panelID);
+    }
   }
 
   private void logCurrentMapSituation() {
@@ -219,10 +246,19 @@ public class MapEditorController {
   }
 
   public void moveCursor(Direction direction) {
-    cursorController.moveCursor(direction);
+    if (!mapEditorView.isShowingSelectPanel()) {
+      cursorController.moveCursor(direction);
+    }
   }
 
   public void moveCursor(int x, int y) {
-    cursorController.moveCursor(x, y);
+    if (!mapEditorView.isShowingSelectPanel()) {
+      cursorController.moveCursor(x, y);
+    }
+    mapEditorView.toggleShowSelectPanel();
+  }
+
+  public void toggleCursorLock() {
+    cursorController.toggleCursorLock();
   }
 }
