@@ -58,9 +58,15 @@ public class ThemeLoader {
 
   private static ThingleColor convertToThingleColor(String colorValue) {
     String[] rgb = colorValue.split(",");
-    int red = Integer.valueOf(rgb[0]);
-    int green = Integer.valueOf(rgb[1]);
-    int blue = Integer.valueOf(rgb[2]);
-    return Thingle.createColor(red, green, blue);
+    int red = Integer.valueOf(rgb[0].trim());
+    int green = Integer.valueOf(rgb[1].trim());
+    int blue = Integer.valueOf(rgb[2].trim());
+
+    // alpha is optional
+    int alpha = 255;
+    if (rgb.length > 3) {
+      alpha = Integer.valueOf(rgb[3].trim());
+    }
+    return Thingle.createColor(red, green, blue, alpha);
   }
 }
