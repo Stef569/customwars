@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="ISO-8859-1"?><!--Created with Theodore 3.0 (#7)  AP Edition
+Licensed Carlsbad Cubes - Wolf Paulus--><!--Theodore, XUL Editor for Thinlet--><!--(c) 2002-2009 Carlsbad Cubes, http://www.carlsbadcubes.com-->
+<panel name="container" weighty="1" property="encoding=ISO-8859-1;buildpath=;cls=" init="init(page)" columns="1"
+       top="10" left="10" bottom="10" right="10">
+  <panel name="centerPanel" weightx="1" weighty="1" halign="center" valign="center" columns="1" top="10" left="10"
+         bottom="10" right="10" gap="20" border="true"/>
+  <panel name="btnPanel" weighty="1" valign="bottom">
+    <button text="Back" action="back()"/>
+    <button weightx="1" halign="right" text="Continue" action="continueToNextState()"/>
+  </panel>
+</panel>
+

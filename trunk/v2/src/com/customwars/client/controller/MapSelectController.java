@@ -74,7 +74,7 @@ public class MapSelectController {
 
   public void continueToNextState() {
     stateSession.map = getCurrentSelectedMap();
-    stateChanger.changeTo("GAME_RULES");
+    stateChanger.changeTo("PLAYER_OPTIONS");
   }
 
   public void back() {
