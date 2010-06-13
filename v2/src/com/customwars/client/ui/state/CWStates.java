@@ -48,6 +48,8 @@ public class CWStates extends CWStateBasedGame {
     addState("REMAP_CONTROLS", new ControlBindingState());
     addState("OPTIONS", new AppOptionsState());
     addState("MAP_SELECT", new MapSelectState());
+    addState("PLAYER_OPTIONS", new PlayerOptionsState());
+    addState("CO_SELECT", new COSelectState());
     addState("GAME_RULES", new GameRulesState());
     addState("IN_GAME", new InGameState());
     addState("END_TURN", new EndTurnState());

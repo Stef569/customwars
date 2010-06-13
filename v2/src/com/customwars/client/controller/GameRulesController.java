@@ -1,6 +1,7 @@
 package com.customwars.client.controller;
 
 import com.customwars.client.App;
+import com.customwars.client.model.co.CO;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.game.GameRules;
 import com.customwars.client.model.game.Player;
@@ -19,7 +20,7 @@ import java.util.List;
 
 /**
  * Handle input in the game rules state
- *
+ * <p/>
  * Pre: A map is set in the statesession
  */
 public class GameRulesController {
@@ -94,13 +95,15 @@ public class GameRulesController {
    */
   private List<Player> buildGamePlayers(Map<Tile> map) {
     List<Player> gamePlayers = new ArrayList<Player>();
-    int team = 0;
     for (Player mapPlayer : map.getUniquePlayers()) {
       int id = mapPlayer.getId();
-      Color color = mapPlayer.getColor();
+      Color color = stateSession.getColor(mapPlayer);
       String colorName = ColorUtil.toString(color);
       int startBudget = gameRules.getPlayerBudgetStart();
-      Player gamePlayer = new Player(id, color, colorName, startBudget, team++, false);
+      int team = stateSession.getTeam(mapPlayer);
+      boolean ai = stateSession.getControllerType(mapPlayer).equalsIgnoreCase("AI");
+      CO co = stateSession.getCO(mapPlayer);
+      Player gamePlayer = new Player(id, color, colorName, startBudget, team, ai, co);
 
       if (mapPlayer.getHq() != null) {
         gamePlayer.setHq(mapPlayer.getHq());
