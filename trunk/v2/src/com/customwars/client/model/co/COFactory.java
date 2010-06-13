@@ -87,6 +87,15 @@ public class COFactory {
     return coStyles.containsKey(coStyle);
   }
 
+  public static boolean hasCOStyleFor(int index) {
+    for (COStyle coStyle : coStyles.values()) {
+      if (coStyle.getID() == index) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   public static int getCOStyleCount() {
     return coStyles.size();
   }

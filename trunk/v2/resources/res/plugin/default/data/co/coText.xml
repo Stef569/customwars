@@ -16,12 +16,7 @@
       </description>
     </superpower>
 
-    <intel>
-      <string>Andy's units have no main strengths</string>
-      <string>or weaknesses meaning he's able to</string>
-      <string>adapt to any situation. Both of his</string>
-      <string>powers focus on repairing damaged</string>
-      <string>units.</string>
+    <intel>Andy's units have no main strengths or weaknesses meaning he's able to adapt to any situation. Both of his powers focus on repairing damaged units.
     </intel>
 
     <quotes>
@@ -58,10 +53,7 @@
       <description>Movement range for all units is increased by two spaces. Firepower rises.</description>
     </superpower>
 
-    <intel>
-      <string>Adder can get his power gauge filled</string>
-      <string>quicker than other COs. Both of his</string>
-      <string>powers enhance movement abilities.</string>
+    <intel>Adder can get his power gauge filled quicker than other COs. Both of his powers enhance movement abilities.
     </intel>
 
     <quotes>
@@ -100,14 +92,7 @@
       <description>Improves her chance to strike with massive damage. Very lucky!</description>
     </superpower>
 
-    <intel>
-      <string>Nells units are lucky, which means</string>
-      <string>they may randomly deal more damage</string>
-      <string>than expected. Her powers increase</string>
-      <string>the luck range higher beyond the day</string>
-      <string>to day, she may become incredibly</string>
-      <string>lucky</string>
-    </intel>
+    <intel>Nells units are lucky, which means they may randomly deal more damage than expected. Her powers increase the luck range higher beyond the day to day, she may become incredibly lucky.</intel>
 
     <quotes>
       <string>Luck IS a skill!</string>
@@ -146,13 +131,7 @@
       </description>
     </superpower>
 
-    <intel>
-      <string>Being used to the harsh weathers of</string>
-      <string>Blue Moon, Olaf's troops are boosted</string>
-      <string>during snow storms. His powers both</string>
-      <string>cause snow to fall for 2 days while</string>
-      <string>his super also strikes all enemies</string>
-      <string>for instant mass damage.</string>
+    <intel>Being used to the harsh weathers of Blue Moon, Olaf's troops are boosted during snow storms. His powers both cause snow to fall for 2 days while his super also strikes all enemies for instant mass damage.
     </intel>
 
     <quotes>
@@ -193,12 +172,7 @@
       </description>
     </superpower>
 
-    <intel>
-      <string>Sami's infantry is able to capture</string>
-      <string>and attack more effectively at the</string>
-      <string>expense of her direct units. Sami's</string>
-      <string>powers increase the movement and</string>
-      <string>effectiveness of her infantry troops.</string>
+    <intel>Sami's infantry is able to capture and attack more effectively at the expense of her direct units. Sami's powers increase the movement and effectiveness of her infantry troops.
     </intel>
 
     <quotes>
@@ -270,12 +244,7 @@
       </description>
     </superpower>
 
-    <intel>
-      <string>Von Bolt's non-infantry units enjoy</string>
-      <string>increased attack and defense. He has</string>
-      <string>no power to use, but his super truly</string>
-      <string>devastates a select area of troops</string>
-      <string>with damage and paralysis.</string>
+    <intel>Von Bolt's non-infantry units enjoy increased attack and defense. He has no power to use, but his super truly devastates a select area of troops with damage and paralysis.
     </intel>
 
     <quotes>

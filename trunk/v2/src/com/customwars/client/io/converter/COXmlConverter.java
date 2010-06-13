@@ -94,7 +94,7 @@ public class COXmlConverter implements Converter {
       superPower = readPower(reader);
     }
 
-    String[] intel = readStringArray(reader);
+    String intel = reader.getValue();
     gotoNextNode(reader);
     String[] quotes = readStringArray(reader);
     gotoNextNode(reader);

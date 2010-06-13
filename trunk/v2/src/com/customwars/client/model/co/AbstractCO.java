@@ -1,16 +1,23 @@
 package com.customwars.client.model.co;
 
 import com.customwars.client.App;
+import com.customwars.client.model.fight.Defender;
+import com.customwars.client.model.game.Game;
+import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.TileMap;
 import com.customwars.client.tools.Args;
+import com.customwars.client.ui.renderer.GameRenderer;
 
 import java.awt.Color;
 
 /**
- * A commanding officer, subclasses should extend functions of interest
+ * A commanding officer, subclasses should extend functions of interest.
  */
 public abstract class AbstractCO implements CO {
+  private static final double NUM_BARS_TO_EXTEND_COZONE = App.getDouble("plugin.co_num_bars_to_extend_zone");
+  private static final double NUM_BARS_TO_ACTIVATE_POWER = App.getDouble("plugin.co_num_bars_to_activate_power");
+  private static final double NUM_BARS_TO_ACTIVATE_SUPER_POWER = App.getDouble("plugin.co_num_bars_to_activate_superpower");
   private static final double MAX_NUM_BARS = 12;
 
   private final String name;
@@ -24,29 +31,25 @@ public abstract class AbstractCO implements CO {
   private Power power;
   private Power superpower;
 
-  private final String[] intel;
+  private final String intel;
   private final String[] defeat;
   private final String[] victory;
   private final String[] quotes;
 
-  private static final double NUM_BARS_TO_EXTEND_COZONE = App.getDouble("plugin.co_num_bars_to_extend_zone");
-  private static final double NUM_BARS_TO_ACTIVATE_POWER = App.getDouble("plugin.co_num_bars_to_activate_power");
-  private static final double NUM_BARS_TO_ACTIVATE_SUPER_POWER = App.getDouble("plugin.co_num_bars_to_activate_superpower");
   private final int coZone;
   private double bars;
 
   protected AbstractCO(String name) {
-    this(name, new COStyle("", Color.white, 0), "", "", 0, "", "", "", new Power("", ""), new Power("", ""), null, null, null, null);
+    this(name, new COStyle("", Color.white, 0, "white"), "", "", 0, "", "", "", new Power("", ""), new Power("", ""), "", null, null, null);
   }
 
   protected AbstractCO(String name, COStyle style, String bio, String title, int coZone,
                        String hit, String miss, String skill,
                        Power power, Power superPower,
-                       String[] intel, String[] defeat, String[] victory, String[] quotes) {
+                       String intel, String[] defeat, String[] victory, String[] quotes) {
     this.name = name;
     this.style = style;
     this.bio = bio;
-    this.coZone = coZone;
     this.title = title;
     this.hit = hit;
     this.miss = miss;
@@ -57,6 +60,7 @@ public abstract class AbstractCO implements CO {
     this.defeat = defeat;
     this.victory = victory;
     this.quotes = quotes;
+    this.coZone = coZone;
     init();
   }
 
@@ -65,11 +69,15 @@ public abstract class AbstractCO implements CO {
     this.power = power == null ? Power.NONE : power;
     this.superpower = superpower == null ? Power.NONE : superpower;
 
-    // Valid values are > -1  && < MAX_NUM_BARS
+    // Valid bar values are > -1  && < MAX_NUM_BARS
     int maxBars = (int) MAX_NUM_BARS + 1;
     Args.validateBetweenMinMax((int) NUM_BARS_TO_ACTIVATE_POWER, -1, maxBars, "num bars to activate power");
     Args.validateBetweenMinMax((int) NUM_BARS_TO_ACTIVATE_SUPER_POWER, -1, maxBars, "num bars to activate super power");
     Args.validateBetweenMinMax((int) NUM_BARS_TO_EXTEND_COZONE, -1, maxBars, "num bars to extend co zone");
+
+    if (intel == null) {
+      throw new IllegalArgumentException("No intel for co " + name);
+    }
   }
 
   /**
@@ -82,7 +90,6 @@ public abstract class AbstractCO implements CO {
     this.style = co.style;
     this.bio = co.bio;
     this.title = co.title;
-    this.coZone = co.coZone;
     this.hit = co.hit;
     this.miss = co.miss;
     this.skill = co.skill;
@@ -92,6 +99,8 @@ public abstract class AbstractCO implements CO {
     this.defeat = co.defeat;
     this.victory = co.victory;
     this.quotes = co.quotes;
+    this.coZone = co.coZone;
+    this.bars = co.bars;
   }
 
   @Override
@@ -110,8 +119,36 @@ public abstract class AbstractCO implements CO {
     bars = 0;
   }
 
-  public boolean isInCOZone(Location coLocation, Location otherLocation) {
-    int distance = TileMap.getDistanceBetween(coLocation, otherLocation);
+  @Override
+  public void unitAttackedHook(Unit attacker, Defender defender) {
+    if (attacker.getOwner().isInCOZone(defender.getLocation()) && defender instanceof Unit) {
+      chargePowerGauge(attacker.getHp() / 50.0);
+    }
+  }
+
+  @Override
+  public void power(Game game, GameRenderer gameRenderer) {
+    power.activate();
+  }
+
+  @Override
+  public void deActivatePower() {
+    power.deActivate();
+  }
+
+  @Override
+  public void superPower(Game game, GameRenderer gameRenderer) {
+    superpower.activate();
+  }
+
+  @Override
+  public void deActivateSuperPower() {
+    superpower.deActivate();
+  }
+
+  @Override
+  public boolean isInCOZone(Unit unit, Location location) {
+    int distance = TileMap.getDistanceBetween(unit.getLocation(), location);
     return distance - getCOZone() <= 0;
   }
 
@@ -171,26 +208,42 @@ public abstract class AbstractCO implements CO {
     return skill;
   }
 
-  public Power getPower() {
-    return power;
+  @Override
+  public boolean isPowerActive() {
+    return power.isActive();
   }
 
-  public Power getSuperpower() {
-    return superpower;
+  @Override
+  public String getPowerDescription() {
+    return power.getDescription();
   }
 
-  public String[] getIntel() {
+  @Override
+  public boolean isSuperPowerActive() {
+    return superpower.isActive();
+  }
+
+  @Override
+  public String getSuperPowerDescription() {
+    return superpower.getDescription();
+  }
+
+  @Override
+  public String getIntel() {
     return intel;
   }
 
+  @Override
   public String[] getQuotes() {
     return quotes;
   }
 
+  @Override
   public String[] getVictory() {
     return victory;
   }
 
+  @Override
   public String[] getDefeat() {
     return defeat;
   }

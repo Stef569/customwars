@@ -10,6 +10,7 @@ import com.customwars.client.io.loading.ResourcesLoader;
 import com.customwars.client.io.loading.map.BinaryCW2MapParser;
 import com.customwars.client.io.loading.map.MapManager;
 import com.customwars.client.io.loading.map.MapParser;
+import com.customwars.client.model.co.CO;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Direction;
@@ -128,8 +129,12 @@ public class ResourceManager {
   }
 
   //----------------------------------------------------------------------------
-  // Images : Getters
+  // Images
   //----------------------------------------------------------------------------
+
+  public void addImage(String imgRef, Image img) {
+    imageLib.addSlickImg(imgRef, img);
+  }
 
   public Image getSlickImg(String imgRef) {
     return imageLib.getSlickImg(imgRef);
@@ -183,8 +188,17 @@ public class ResourceManager {
     return cwImageLib.getShadedUnitImg(unit, color, direction);
   }
 
-  public COSheet getCOSheet(String coName) {
-    return cwImageLib.getCoSheet(coName);
+  public COSheet getCOSheet(CO co) {
+    return cwImageLib.getCoSheet(co.getName());
+  }
+
+  public Image getLeftCOBar(CO co) {
+    int styleID = co.getStyle().getID();
+    return getSlickImg("cobar" + styleID);
+  }
+
+  public Image getRightCOBar(CO co) {
+    return getLeftCOBar(co).getFlippedCopy(true, false);
   }
 
   public int countSlickImages() {

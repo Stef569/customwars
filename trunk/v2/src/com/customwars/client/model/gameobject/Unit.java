@@ -46,6 +46,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   private UnitState unitState;  // Current Unitstate (submerged, capturing a city,...)
   private Player owner;         // Player owning this unit
   private Location location;    // Current Location
+  private boolean coOnBoard;        // Is a CO loaded within this unit
   private List<Location> moveZone;  // A zone where this unit can move in
   private List<Location> attZone;   // A zone where this unit can attack in
   private Direction orientation;    // The direction this unit is looking at
@@ -89,6 +90,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
     secondaryWeapon = otherUnit.secondaryWeapon != null ? new Weapon(otherUnit.secondaryWeapon) : null;
 
     location = otherUnit.location;
+    coOnBoard = otherUnit.coOnBoard;
     owner = otherUnit.owner;
     moveStrategy = otherUnit.stats.moveStrategy.newInstance(this);
     copyUnitsInTheTransport(otherUnit.transport);
@@ -123,6 +125,11 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
    *                  This allows listeners to take an action when this unit is destroyed.
    */
   public void destroy(boolean fireEvent) {
+    if (coOnBoard) {
+      setCoOnBoard(false);
+      owner.getCO().resetPowerGauge();
+    }
+
     clearTransport();
     owner.removeUnit(this);
     owner = null;
@@ -176,6 +183,16 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
     }
   }
 
+  public void loadCO() {
+    setCoOnBoard(true);
+  }
+
+  private void setCoOnBoard(boolean coOnBoard) {
+    boolean oldVal = this.coOnBoard;
+    this.coOnBoard = coOnBoard;
+    firePropertyChange("cooboard", oldVal, this.coOnBoard);
+  }
+
   // ----------------------------------------------------------------------------
   // Actions :: Submarine
   // ----------------------------------------------------------------------------
@@ -207,6 +224,8 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
         setExperience(experience + 1);
       }
     }
+
+    owner.getCO().unitAttackedHook(this, defender);
   }
 
   public boolean canAttack(Defender defender) {
@@ -633,7 +652,15 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
 
   public Range getAttackRange() {
     Weapon weapon = getAvailableWeapon();
-    return weapon != null ? weapon.getRange() : Range.ZERO_RANGE;
+
+    if (weapon != null) {
+      int minRange = weapon.getRange().getMinRange();
+      int maxRange = weapon.getRange().getMaxRange();
+      int coMaxRange = owner.getCO().fireRangeHook(maxRange);
+      return new Range(minRange, coMaxRange);
+    } else {
+      return Range.ZERO_RANGE;
+    }
   }
 
   /**
@@ -876,6 +903,14 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
     } else {
       return owner.getCO().unitPriceHook(stats.price);
     }
+  }
+
+  public boolean isCoOnBoard() {
+    return coOnBoard;
+  }
+
+  public boolean isInCOZone() {
+    return owner.isInCOZone(location);
   }
 
   @Override
