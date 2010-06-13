@@ -2,7 +2,6 @@ package com.customwars.client.model.co;
 
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.gameobject.Unit;
-import com.customwars.client.ui.renderer.GameRenderer;
 
 /**
  * This CO has hooks called from within the game. It returns default or when applicable the parameter value.
@@ -15,13 +14,10 @@ public class BasicCO extends AbstractCO {
     super(name);
   }
 
-  /**
-   * Create a CO with all required values
-   */
   public BasicCO(String name, COStyle style, String bio, String title, int coZone,
                  String hit, String miss, String skill,
                  Power power, Power superPower,
-                 String[] intel, String[] defeat, String[] victory, String[] quotes) {
+                 String intel, String[] defeat, String[] victory, String[] quotes) {
     super(name, style, bio, title, coZone,
       hit, miss, skill, power, superPower, intel, defeat, victory, quotes);
   }
@@ -39,28 +35,12 @@ public class BasicCO extends AbstractCO {
   // ------------------------------------------------
 
   @Override
+  public void dayStart(Game game) {
+  }
+
+  @Override
   public int unitMovementHook(Unit mover, int movement) {
     return movement;
-  }
-
-  @Override
-  public void power(Game game, GameRenderer gameRenderer) {
-  }
-
-  @Override
-  public void deActivatePower() {
-  }
-
-  @Override
-  public void superPower(Game game, GameRenderer gameRenderer) {
-  }
-
-  @Override
-  public void deActivateSuperPower() {
-  }
-
-  @Override
-  public void dayStart() {
   }
 
   public int getAttackBonusPercentage(Unit attacker, Unit defender) {

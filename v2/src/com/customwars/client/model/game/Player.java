@@ -7,6 +7,7 @@ import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.GameObject;
 import com.customwars.client.model.gameobject.GameObjectState;
 import com.customwars.client.model.gameobject.Unit;
+import com.customwars.client.model.map.Location;
 import com.customwars.client.tools.Args;
 import com.customwars.client.tools.ColorUtil;
 import org.apache.log4j.Logger;
@@ -44,14 +45,14 @@ public class Player extends GameObject {
   private boolean createdFirstUnit; // Has this player created his first unit
 
   /**
-   * Create an unnamed human player
+   * Create an unnamed human player with a dummy CO
    */
   public Player(int id, Color color) {
     this(id, color, "Unnamed", 0, 0, false, new BasicCO(DUMMY_CO_NAME));
   }
 
   /**
-   * Create a neutral player
+   * Create a neutral player with a dummy CO
    * Post: isNeutral returns true
    */
   public static Player createNeutralPlayer(Color color) {
@@ -234,6 +235,20 @@ public class Player extends GameObject {
     };
   }
 
+  /**
+   * @see CO#resetPowerGauge();
+   */
+  public void resetPowerGauge() {
+    co.resetPowerGauge();
+  }
+
+  /**
+   * @see CO#chargePowerGauge(double);
+   */
+  public void chargePowerGauge(double chargeRate) {
+    co.chargePowerGauge(chargeRate);
+  }
+
   public void setName(String name) {
     String oldVal = this.name;
     this.name = name;
@@ -294,6 +309,37 @@ public class Player extends GameObject {
 
   public CO getCO() {
     return co;
+  }
+
+  /**
+   * Check if the given location is within the co Zone:
+   * <ul>
+   * <li>A CO should be loaded into a unit</li>
+   * <li>The location should be within the zone of this coUnit</li>
+   * </ul>
+   */
+  public boolean isInCOZone(Location location) {
+    return isCOLoaded() && co.isInCOZone(getCOUnit(), location);
+  }
+
+  /**
+   * @return is the CO loaded into a unit owned by this player
+   */
+  public boolean isCOLoaded() {
+    return getCOUnit() != null;
+  }
+
+  /**
+   * Get the unit that has a CO on board.
+   * Null if the CO is not boarded into a unit.
+   */
+  private Unit getCOUnit() {
+    for (Unit unit : army) {
+      if (unit.isCoOnBoard()) {
+        return unit;
+      }
+    }
+    return null;
   }
 
   @Override

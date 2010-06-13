@@ -1,5 +1,6 @@
 package com.customwars.client.model.co;
 
+import com.customwars.client.model.fight.Defender;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Location;
@@ -12,19 +13,15 @@ import java.io.Serializable;
  */
 public interface CO extends Serializable {
 
-  boolean canDoPower();
-
   void power(Game game, GameRenderer gameRenderer);
 
   void deActivatePower();
-
-  boolean canDoSuperPower();
 
   void superPower(Game game, GameRenderer gameRenderer);
 
   void deActivateSuperPower();
 
-  void dayStart();
+  void dayStart(Game game);
 
   int getAttackBonusPercentage(Unit attacker, Unit defender);
 
@@ -46,39 +43,94 @@ public interface CO extends Serializable {
 
   int visionHook(int vision);
 
+  void unitAttackedHook(Unit attacker, Defender defender);
+
   String getName();
 
   COStyle getStyle();
 
-  public String getBio();
+  /**
+   * @return The condensed biography
+   */
+  String getBio();
 
-  public String getTitle();
+  String getTitle();
 
-  public String getHit();
+  /**
+   * @return What this CO likes
+   */
+  String getHit();
 
-  public String getMiss();
+  /**
+   * @return What this CO dislikes
+   */
+  String getMiss();
 
-  public String getSkill();
+  /**
+   * @return Describes what the speciality of this CO is.
+   */
+  String getSkill();
 
-  public Power getPower();
+  /**
+   * @return Intelligence to the point what advantage(s) does this co have.
+   */
+  String getIntel();
 
-  public Power getSuperpower();
+  boolean canDoPower();
 
-  public String[] getIntel();
+  boolean isPowerActive();
 
-  public String[] getQuotes();
+  String getPowerDescription();
 
-  public String[] getVictory();
+  boolean canDoSuperPower();
 
-  public String[] getDefeat();
+  boolean isSuperPowerActive();
 
-  public boolean isInCOZone(Location zoneCenter, Location otherLocation);
+  String getSuperPowerDescription();
 
+  /**
+   * Is the location within the co zone of the given unit
+   *
+   * @param unit     The unit that contains the CO
+   * @param location The location to apply the range check to
+   * @return Is the location included in the CO Zone of the given unit
+   */
+  public boolean isInCOZone(Unit unit, Location location);
+
+  /**
+   * Increase the power gauge. When the power gauge is already full nothing happens.
+   *
+   * @param chargeRate The rate for increasing the power gauge in the range of [0..1]
+   */
   public void chargePowerGauge(double chargeRate);
 
+  /**
+   * Reset the power gauge back to it's initial state.
+   */
   void resetPowerGauge();
 
+  /**
+   * @return The number of bars that are active in the power gauge
+   */
   int getBars();
 
+  /**
+   * @return The maximum number of bars that can be active
+   */
   int getMaxBars();
+
+  /**
+   * @return a collection of quotes
+   */
+  String[] getQuotes();
+
+  /**
+   * @return a collection of possible victory strings
+   */
+  String[] getVictory();
+
+  /**
+   * @return a collection of possible defeat strings
+   */
+  String[] getDefeat();
 }

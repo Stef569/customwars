@@ -479,12 +479,14 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
       if (unit != null && unit.isAlliedWith(player)) {
         int visionBonus = getUnitVisionBonus(unit);
         int vision = unit.getStats().getVision();
-        showLos(t, vision + visionBonus);
+        int coVision = unit.getOwner().getCO().visionHook(vision + visionBonus);
+        showLos(t, coVision);
       }
 
       if (city != null && city.isAlliedWith(player)) {
         int vision = city.getVision();
-        showLos(t, vision);
+        int coVision = city.getOwner().getCO().visionHook(vision);
+        showLos(t, coVision);
       }
     }
   }

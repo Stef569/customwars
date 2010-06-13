@@ -338,7 +338,7 @@ public class TurnBasedGame implements Observable, Serializable {
     // game players must be equal to num players in map
     if (map.getNumPlayers() != players.size()) {
       throw new IllegalStateException("The amount of players in the map (" + map.getNumPlayers() + ") " +
-              "does not equal the amount of players given (" + (players.size()) + ")");
+        "does not equal the amount of players given (" + (players.size()) + ")");
     }
 
     // Each player must be unique
@@ -360,7 +360,7 @@ public class TurnBasedGame implements Observable, Serializable {
       for (Player player : getAllPlayers()) {
         if (p == player) continue;
 
-        if (p.getColor() == player.getColor()) {
+        if (p.getColor().equals(player.getColor())) {
           throw new IllegalStateException("Player " + p + " has the same color as player " + player);
         }
 
@@ -392,7 +392,7 @@ public class TurnBasedGame implements Observable, Serializable {
 
     if (invoker != activePlayer) {
       throw new NotYourTurnException("Player " + invoker + " cannot end his turn , because it is not the Active player in the Game\n" +
-              "Expected=" + activePlayer.getName());
+        "Expected=" + activePlayer.getName());
     }
   }
 

@@ -132,8 +132,8 @@ public class TestData {
     cityRoadConnection, null, null, null, 20, CITY_HEAL_RATE, 0);
 
   // CO
-  private static CO andy = new BasicCO("andy", new COStyle("ORANGE_STAR", Color.orange, 0), "", "", 0, "", "", "", Power.NONE, Power.NONE, EMPTY_ARR, EMPTY_ARR, EMPTY_ARR, EMPTY_ARR);
-  private static CO sturm = new BasicCO("sturm", new COStyle("BLACK_HOLE", Color.black, 0), "", "", 0, "", "", "", Power.NONE, Power.NONE, EMPTY_ARR, EMPTY_ARR, EMPTY_ARR, EMPTY_ARR);
+  private static CO andy = new BasicCO("andy", new COStyle("ORANGE_STAR", Color.orange, 0, "orange"), "", "", 0, "", "", "", Power.NONE, Power.NONE, "", EMPTY_ARR, EMPTY_ARR, EMPTY_ARR);
+  private static CO sturm = new BasicCO("sturm", new COStyle("BLACK_HOLE", Color.black, 0, "black"), "", "", 0, "", "", "", Power.NONE, Power.NONE, "", EMPTY_ARR, EMPTY_ARR, EMPTY_ARR);
 
   public static void storeTestData() {
     clearTestData();

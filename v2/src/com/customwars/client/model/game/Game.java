@@ -134,6 +134,7 @@ public class Game extends TurnBasedGame implements PropertyChangeListener {
     super.startTurn(player);
     destroyUnitsWithoutSupplies(player);
     supplyUnitsAdjacentOfTransport(player);
+    player.getCO().dayStart(this);
   }
 
   /**

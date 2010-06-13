@@ -10,12 +10,7 @@
     <power name="Reinforce">
       <description>Restores two HP to all units. Firepower increases.</description>
     </power>
-    <intel>
-      <string>Co Zone: 3</string>
-      <string>Defense boosts</string>
-      <string>0 / 2 All units</string>
-      <string>Reinforce All units recover 3 HP</string>
-    </intel>
+    <intel/>
     <quotes>
       <string>Know thyself. Heal thyself.</string>
       <string>I'm not leavng anyone behind.</string>
@@ -36,15 +31,9 @@
     <hit>Laboratories</hit>
     <miss>Ethics Committees</miss>
     <bio>The head of the private military contractor IDS. He seeks a world where he is free to carry out his terrible experiments.</bio>
-    <skill>CO Zone: 5 Ultimate Boost: 5/5 All Units, Units recover 5HP every day.</skill>
+    <skill>CO Zone: 5 Ultimate Boost: 5/5 All Units, Units in zone recover 5HP.</skill>
     <coZone>3</coZone>
-    <intel>
-      <string>CO Zone: 3</string>
-      <string>Final Boost</string>
-      <string>5 / 5 All Units</string>
-      <string>No CO Power</string>
-      <string>All units in zone recover 5 HP</string>
-    </intel>
+    <intel/>
     <quotes>
       <string>None</string>
     </quotes>
@@ -62,15 +51,9 @@
     <bio>The Lazurian Army commander. He was called out of retirement to defend his nation.</bio>
     <skill>CO Zone: 5 Huge Boost: 1/1 All Units</skill>
     <coZone>5</coZone>
-    <intel>
-      <string>CO Zone: 5</string>
-      <string>Huge General Boost</string>
-      <string>1 / 1 All Units</string>
-      <string>No CO Power</string>
-      <string>I am a soldier, not a killer</string>
-    </intel>
+    <intel/>
     <quotes>
-      <string>None</string>
+      <string>I am a soldier, not a killer</string>
     </quotes>
     <victory>
       <string>None</string>
@@ -89,9 +72,7 @@
     <power name="Longshot">
       <description>Boosts attack and defense of all naval and indirect attack units.</description>
     </power>
-    <intel>
-      <string>None</string>
-    </intel>
+    <intel/>
     <quotes>
       <string>They don't pay me to think.</string>
     </quotes>
@@ -112,11 +93,7 @@
     <power name="Supply chain">
       <description>Refills fuel, ammo, and materials.</description>
     </power>
-    <intel>
-      <string>CO Zone: 3</string>
-      <string>Sea Boost</string>
-      <string>1 / 4 Navy, seaplanes, copters</string>
-    </intel>
+    <intel/>
     <quotes>
       <string>I suppose I can spare a few supplies...</string>
       <string>How dare you stand up to the might of Greyfield!</string>
@@ -137,16 +114,12 @@
     <hit>Flowers</hit>
     <miss>Test Tubes</miss>
     <bio>Has no memory of her past. Rescued by Will, she has joined the 12th Battalion. Where she dreams of living in peace.</bio>
-    <skill/>
+    <skill>CO Zone: 2 Mega Boost 1 / 1 All Units</skill>
     <coZone>2</coZone>
     <superpower name="Deep Strike">
       <description>All units gain 2 additional move, while ranged units gain additional range.</description>
     </superpower>
-    <intel>
-      <string>CO Zone: 2</string>
-      <string>Mega Boost</string>
-      <string>1 / 1 All Units</string>
-    </intel>
+    <intel/>
     <quotes>
       <string>Commence Deep Strike!</string>
       <string>I may not remember my past, but I will always fight for the future!</string>

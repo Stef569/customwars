@@ -25,12 +25,13 @@ public class ScriptedCO extends BasicCO {
 
   public void init() {
     super.init();
-    scriptManager.set("superPower", getPower().isActive());
-    scriptManager.set("power", getSuperpower().isActive());
+    scriptManager.set("superPower", isPowerActive());
+    scriptManager.set("power", isSuperPowerActive());
   }
 
   @Override
   public void power(Game game, GameRenderer gameRenderer) {
+    super.power(game, gameRenderer);
     String methodName = getName() + "_power";
 
     if (scriptManager.isMethod(methodName)) {
@@ -38,7 +39,6 @@ public class ScriptedCO extends BasicCO {
       scriptManager.invoke(methodName,
         new Parameter<Game>("game", game),
         new Parameter<GameRenderer>("gameRenderer", gameRenderer));
-      getPower().activate();
     } else {
       throw new IllegalArgumentException("No scripted power method for " + getName());
     }
@@ -46,12 +46,13 @@ public class ScriptedCO extends BasicCO {
 
   @Override
   public void deActivatePower() {
+    super.deActivatePower();
     scriptManager.set("power", false);
-    getPower().deActivate();
   }
 
   @Override
   public void superPower(Game game, GameRenderer gameRenderer) {
+    super.superPower(game, gameRenderer);
     String methodName = getName() + "_superPower";
 
     if (scriptManager.isMethod(methodName)) {
@@ -59,7 +60,6 @@ public class ScriptedCO extends BasicCO {
       scriptManager.invoke(methodName,
         new Parameter<Game>("game", game),
         new Parameter<GameRenderer>("gameRenderer", gameRenderer));
-      getSuperpower().activate();
     } else {
       throw new IllegalArgumentException("No scripted super power method for " + getName());
     }
@@ -67,8 +67,8 @@ public class ScriptedCO extends BasicCO {
 
   @Override
   public void deActivateSuperPower() {
+    super.deActivateSuperPower();
     scriptManager.set("superPower", false);
-    getSuperpower().deActivate();
   }
 
   public int unitMovementHook(Unit mover, int movement) {
@@ -160,6 +160,37 @@ public class ScriptedCO extends BasicCO {
       return (Integer) scriptManager.invoke(methodName, new Parameter<Integer>("terrainDefense", terrainDefenseBonus));
     } else {
       return super.terrainDefenseHook(terrainDefenseBonus);
+    }
+  }
+
+  @Override
+  public int fireRangeHook(int fireRange) {
+    String methodName = getName() + "_fireRangeHook";
+
+    if (scriptManager.isMethod(methodName)) {
+      return (Integer) scriptManager.invoke(methodName, new Parameter<Integer>("fireRange", fireRange));
+    } else {
+      return super.fireRangeHook(fireRange);
+    }
+  }
+
+  @Override
+  public int visionHook(int vision) {
+    String methodName = getName() + "_visionHook";
+
+    if (scriptManager.isMethod(methodName)) {
+      return (Integer) scriptManager.invoke(methodName, new Parameter<Integer>("vision", vision));
+    } else {
+      return super.visionHook(vision);
+    }
+  }
+
+  @Override
+  public void dayStart(Game game) {
+    String methodName = getName() + "_dayStart";
+
+    if (scriptManager.isMethod(methodName)) {
+      scriptManager.invoke(methodName, new Parameter<Game>("game", game));
     }
   }
 

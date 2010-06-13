@@ -44,8 +44,8 @@ public class DamageRenderer implements Renderable {
 
     Insets insets = new Insets(BOX_MARGIN, BOX_MARGIN, BOX_MARGIN, BOX_MARGIN);
     dmgTextBox = new TextBox(dmgPercentage, textFont, insets);
-    positionTextBox(map);
     quadrant = map.getQuadrantFor(defenderLocation);
+    positionTextBox(map);
   }
 
   private void positionTextBox(Map<Tile> map) {
