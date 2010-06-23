@@ -24,6 +24,7 @@ import org.newdawn.slick.thingle.spi.ThingleColor;
 
 import java.awt.Color;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Allows the user to choose a CO, team and color for each player
@@ -112,8 +113,10 @@ public class PlayerOptionsState extends CWState {
     cboControllerType.setProperty("row", row);
     cboControllerType.setMethod("action", "controllerTypeChanged(this)", controller);
     cboControllerType.setBoolean("editable", false);
-    ThingleUtil.fillCbo(page, cboControllerType, Arrays.asList("AI", "Human"));
-    ThingleUtil.selectChild(cboControllerType, "Human");
+
+    List<String> translatedControllerValues = Arrays.asList(App.translate("ai"), App.translate("human"));
+    ThingleUtil.fillCbo(page, cboControllerType, translatedControllerValues, Arrays.asList("ai", "human"));
+    ThingleUtil.selectChild(cboControllerType, "human");
     panel.add(cboControllerType);
 
     CO co = stateSession.getCO(player);
@@ -131,7 +134,7 @@ public class PlayerOptionsState extends CWState {
     cboTeams.setProperty("row", row);
     cboTeams.setMethod("action", "teamChanged(this)", controller);
     cboTeams.setBoolean("editable", false);
-    ThingleUtil.fillCboWithNumbers(page, cboTeams, 1, 4, 1);
+    ThingleUtil.fillCboWithNumbers(page, cboTeams, 1, 6, 1);
     ThingleUtil.selectChild(cboTeams, stateSession.getTeam(player) + "");
     panel.add(cboTeams);
 
