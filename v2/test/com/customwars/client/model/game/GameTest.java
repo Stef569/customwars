@@ -345,6 +345,35 @@ public class GameTest {
     Assert.assertEquals(P1_START_BUDGET + CITY_FUNDS * 3 + CITY_FUNDS * 4, p1.getBudget());
   }
 
+  @Test
+  public void testCapturingNeutralCityStats() {
+    buildHardCodedMap(2);
+    MapUtil.addCityToMap(map, 0, 0, TestData.BASE, map.getNeutralPlayer());
+    MapUtil.addCityToMap(map, 0, 1, TestData.BASE, map.getNeutralPlayer());
+    MapUtil.addCityToMap(map, 0, 2, TestData.BASE, new Player(1, Color.RED));
+    Unit inf = MapUtil.addUnitToMap(map, 0, 0, TestData.INF, new Player(0, Color.BLACK));
+
+    Player p1 = new Player(0, Color.BLACK, "First player", 0, 1, false);
+    Player p2 = new Player(1, Color.RED, "Second player to prevent immediate victory", 0, 2, false);
+    startGame(new GameRules(), p1, p2);
+
+    inf.setOwner(p1);
+    City city = game.getMap().getCityOn(0, 0);
+    city.capture(inf);
+    city.capture(inf);
+    Assert.assertEquals(1, game.getStats().getNumericStat(0, "cities_captured"));
+
+    city = game.getMap().getCityOn(0, 1);
+    city.capture(inf);
+    city.capture(inf);
+    Assert.assertEquals(2, game.getStats().getNumericStat(0, "cities_captured"));
+
+    city = game.getMap().getCityOn(0, 2);
+    city.capture(inf);
+    city.capture(inf);
+    Assert.assertEquals(3, game.getStats().getNumericStat(0, "cities_captured"));
+  }
+
   // Util Functions
 
   private void checkUnitState(Iterable<Unit> units, GameObjectState state) {

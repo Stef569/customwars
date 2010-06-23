@@ -573,6 +573,7 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
       Player newPlayer = new Player(nextPlayerIndex++, currentPlayer.getColor());
       replacePlayer(currentPlayer, newPlayer);
     }
+    replacePlayer(neutralPlayer, neutralPlayer);
   }
 
   /**
@@ -581,12 +582,12 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
   public void replacePlayer(Player oldPlayer, Player newPlayer) {
     for (Tile t : getAllTiles()) {
       Unit unit = getUnitOn(t);
-      if (unit != null && unit.getOwner() == oldPlayer) {
+      if (unit != null && unit.getOwner().equals(oldPlayer)) {
         replaceUnitOwner(newPlayer, unit);
       }
 
       City city = getCityOn(t);
-      if (city != null && city.getOwner() == oldPlayer) {
+      if (city != null && city.getOwner().equals(oldPlayer)) {
         replaceCityOwner(newPlayer, city);
       }
     }
