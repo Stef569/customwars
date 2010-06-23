@@ -1,37 +1,30 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
-<!--Created with Theodore 3.0 (#7)  AP Edition
-Licensed Carlsbad Cubes - Wolf Paulus-->
-<!--Theodore, XUL Editor for Thinlet-->
-<!--(c) 2002-2009 Carlsbad Cubes, http://www.carlsbadcubes.com-->
+<?xml version="1.0" encoding="ISO-8859-1"?><!--Created with Theodore 3.0 (#7)  AP Edition
+Licensed Carlsbad Cubes - Wolf Paulus--><!--Theodore, XUL Editor for Thinlet--><!--(c) 2002-2009 Carlsbad Cubes, http://www.carlsbadcubes.com-->
 <panel name="container" init="init(page)" columns="1" top="10" left="10" right="10" bottom="10" weighty="1">
-    <panel name="centerPanel" weightx="1" weighty="1" halign="center" valign="center" columns="2" top="10" left="10"
-           bottom="10" right="10" gap="20" border="true">
-        <panel gap="20">
-            <label text="Fog" tooltip="Limit visibility in the game"/>
-            <combobox name="fog" weightx="1" halign="right" width="60" editable="false" action="fogChange(this)">
-                <choice text="On"/>
-                <choice text="Off"/>
-            </combobox>
-        </panel>
-        <panel gap="20">
-            <label text="Days" tooltip="Configure how many days a game should last"/>
-            <combobox name="day_limit" weightx="1" halign="right" width="60" editable="false"
-                      action="dayLimitChange(day_limit.text)"/>
-        </panel>
-        <panel gap="20">
-            <label text="Funds" tooltip="The funds received from each captured city"/>
-            <combobox name="funds" weightx="1" halign="right" width="60" editable="false"
-                      action="fundsChange(funds.text)"/>
-        </panel>
-        <panel gap="20">
-            <label text="Income" tooltip="The start budget for each player"/>
-            <combobox name="income" weightx="1" halign="right" width="60" editable="false"
-                      action="incomeChange(income.text)"/>
-        </panel>
+  <panel name="centerPanel" weightx="1" weighty="1" halign="center" valign="center" columns="2" top="10" left="10"
+         bottom="10" right="10" gap="20" border="true">
+    <panel gap="20">
+      <label text="Fog" tooltip="Limit visibility in the game"/>
+      <combobox name="fog" weightx="1" halign="right" width="60" editable="false" action="fogChange(this)"/>
     </panel>
-    <panel name="btnPanel" valign="bottom" weighty="1">
-        <button text="Back" action="back()"/>
-        <button weightx="1" halign="right" text="Continue" action="continueToNextState()"/>
+    <panel gap="20">
+      <label text="Days" tooltip="Configure how many days a game should last"/>
+      <combobox name="day_limit" weightx="1" halign="right" width="60" editable="false"
+                action="dayLimitChange(day_limit)"/>
     </panel>
+    <panel gap="20">
+      <label text="Funds" tooltip="The funds received from each captured city"/>
+      <combobox name="funds" weightx="1" halign="right" width="60" editable="false" action="fundsChange(funds.text)"/>
+    </panel>
+    <panel gap="20">
+      <label text="Income" tooltip="The start budget for each player"/>
+      <combobox name="income" weightx="1" halign="right" width="60" editable="false"
+                action="incomeChange(income.text)"/>
+    </panel>
+  </panel>
+  <panel name="btnPanel" valign="bottom" weighty="1">
+    <button text="Back" action="back()"/>
+    <button weightx="1" halign="right" text="Continue" action="continueToNextState()"/>
+  </panel>
 </panel>
 

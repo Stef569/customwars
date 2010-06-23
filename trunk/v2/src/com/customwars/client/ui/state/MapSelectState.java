@@ -54,7 +54,7 @@ public class MapSelectState extends CWState {
     if (!mapCategories.isEmpty()) {
       Widget mapCategoryCbo = page.getWidget("map_categories");
       for (String mapCategory : mapCategories) {
-        ThingleUtil.addToList(page, mapCategoryCbo, mapCategory);
+        ThingleUtil.addChoice(page, mapCategoryCbo, mapCategory);
       }
       mapCategoryCbo.setText(mapCategories.get(0));
     }

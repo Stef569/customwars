@@ -44,7 +44,7 @@ public class GameRulesController {
    * and show them as the selected value of the cbo
    */
   public void initValues() {
-    ThingleUtil.selectChild(page.getWidget("fog"), gameRules.isFogOfWarOn() ? "On" : "Off");
+    ThingleUtil.selectChild(page.getWidget("fog"), gameRules.isFogOfWarOn() ? "on" : "off");
     ThingleUtil.selectChild(page.getWidget("day_limit"), gameRules.getDayLimit() + "");
     ThingleUtil.selectChild(page.getWidget("funds"), gameRules.getCityFunds() + "");
     ThingleUtil.selectChild(page.getWidget("income"), gameRules.getPlayerBudgetStart() + "");
@@ -61,13 +61,14 @@ public class GameRulesController {
   }
 
   public void fogChange(Widget fogCbo) {
-    String selectedText = fogCbo.getChild(fogCbo.getSelectedIndex()).getText();
-    boolean fogON = selectedText.equals("On");
+    String selectedChoice = fogCbo.getSelectedWidget().getString("name");
+    boolean fogON = selectedChoice.equals("on");
     gameRules.setFogOfWar(fogON);
   }
 
-  public void dayLimitChange(String newValue) {
-    int dayLimit = Integer.parseInt(newValue);
+  public void dayLimitChange(Widget dayLimitCbo) {
+    String selectedChoice = dayLimitCbo.getSelectedWidget().getString("name");
+    int dayLimit = Integer.parseInt(selectedChoice);
     gameRules.setDayLimit(dayLimit);
   }
 
@@ -118,7 +119,8 @@ public class GameRulesController {
     stateSession.map.setDefaultRules(gameRules);
 
     // Return to the multiplayer state by
-    // going back 2 states (map select, game rules)
+    // going back 3 states (map select, player rules, game rules)
+    stateChanger.changeToPrevious();
     stateChanger.changeToPrevious();
     stateChanger.changeToPrevious();
   }

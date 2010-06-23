@@ -13,6 +13,9 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.thingle.Page;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Allow the user to define the game rules
  */
@@ -34,7 +37,9 @@ public class GameRulesState extends CWState {
   }
 
   private void initPageContent() {
-    ThingleUtil.fillCboWithNumbers(page, "day_limit", -1, 0, 1);
+    List<String> translatedFogValues = Arrays.asList(App.translate("on"), App.translate("off"));
+    ThingleUtil.fillCbo(page, page.getWidget("fog"), translatedFogValues, Arrays.asList("on", "off"));
+    ThingleUtil.addChoice(page, page.getWidget("day_limit"), App.translate("unlimited"), "-1");
     ThingleUtil.fillCboWithNumbers(page, "day_limit", 5, 99, 1);
     ThingleUtil.fillCboWithNumbers(page, "funds", 1000, 10000, 1000);
     ThingleUtil.fillCboWithNumbers(page, "income", 1000, 10000, 1000);

@@ -6,7 +6,9 @@ import org.newdawn.slick.thingle.spi.ThingleColor;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 
 /**
  * Utilities for thingle gui components
@@ -20,7 +22,7 @@ public final class ThingleUtil {
   }
 
   /**
-   * Select the child of a combobox with the given text. The cboChildName is entered in the cbo.
+   * Select the child of a combobox with the given name or text. The cboChildName is entered in the cbo.
    * <p/>
    * If the cboChildName is a choice in the cbo then the selected index is updated
    * to the index of the cboChildName.
@@ -29,13 +31,14 @@ public final class ThingleUtil {
    * selected index is put to -1(custom value)
    *
    * @param cbo          The combobox where we want to select a child from
-   * @param cboChildName The name of the child that we want to select in the cbo
+   * @param cboChildName The name or text value of the child that we want to select in the cbo
    */
   public static void selectChild(Widget cbo, String cboChildName) {
     int selected = -1;
     for (int childIndex = 0; childIndex < cbo.getChildrenCount(); childIndex++) {
       Widget child = cbo.getChild(childIndex);
-      if (child.getText().equals(cboChildName)) {
+
+      if (cboChildName.equals(child.getString("name")) || cboChildName.equals(child.getText())) {
         selected = childIndex;
       }
     }
@@ -97,13 +100,20 @@ public final class ThingleUtil {
     for (int i = start; i < end; i += increment) {
       numbers.add(i + "");
     }
-    fillCbo(page, cboWidget, numbers);
+    fillCbo(page, cboWidget, numbers, numbers);
   }
 
-  public static void fillCbo(Page page, Widget cboWidget, Iterable<String> data) {
-    for (String text : data) {
+  public static void addChoice(Page page, Widget widget, String data, String name) {
+    fillCbo(page, widget, Arrays.asList(data), Arrays.asList(name));
+  }
+
+  public static void fillCbo(Page page, Widget cboWidget, Iterable<String> data, Iterable<String> names) {
+    Iterator<String> nameIterator = names.iterator();
+
+    for (String textData : data) {
       Widget choice = page.createWidget("choice");
-      choice.setText(text);
+      choice.setText(textData);
+      choice.setString("name", nameIterator.next());
       cboWidget.add(choice);
     }
   }
@@ -127,13 +137,22 @@ public final class ThingleUtil {
   }
 
   /**
-   * Create a choice widget with text, add it to the listWidget
+   * Create a choice widget with text. The name is equal to the text. Add the choice to the end of the widget.
    * and return the create choice widget.
    */
-  public static Widget addToList(Page page, Widget listWidget, String text) {
+  public static Widget addChoice(Page page, Widget widget, String text) {
+    return addToList(page, widget, text, text);
+  }
+
+  /**
+   * Create a choice widget with text and a name. Add the choice to the end of the widget.
+   * and return the created choice widget.
+   */
+  public static Widget addToList(Page page, Widget widget, String text, String name) {
     Widget choice = page.createWidget("choice");
     choice.setText(text);
-    listWidget.add(choice);
+    choice.setString("name", name);
+    widget.add(choice);
     return choice;
   }
 }

@@ -98,8 +98,6 @@ public class InGameState extends CWState implements PropertyChangeListener {
     hud.moveOverTile(gameRenderer.getCursorLocation());
     stateChanger.clearPreviousStatesHistory();
     stateChanger.stopRecordingStateHistory();
-    cursorControl.addListener(this);
-    gameOver = false;
   }
 
   /**
@@ -172,6 +170,7 @@ public class InGameState extends CWState implements PropertyChangeListener {
 
     cursorControl = new InGameCursorController(game, gameRenderer.getMapRenderer().getSpriteManager());
     inGameContext.registerObj(CursorController.class, cursorControl);
+    cursorControl.addListener(this);
 
     inputHandler = new UserInGameInputHandler(inGameContext);
     inGameContext.registerObj(InGameInputHandler.class, inputHandler);

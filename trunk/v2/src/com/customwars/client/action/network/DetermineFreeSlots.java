@@ -11,15 +11,15 @@ import org.newdawn.slick.thingle.Widget;
 /**
  * This code can be used in a thread.
  * It's main purpose is to ask the server: 'does the given server game exists'
- *
+ * <p/>
  * if there is a side widget
  * When the server game exists the side cbo widget is updated so it contains the free slots
  * When the server game does not exists the side cbo widget is disabled and an error message is shown
- *
+ * <p/>
  * if there is a user name widget
  * When the server game exists the user name cbo widget is updated so it contains the available users
  * When the server game does not exists user name cbo widget is disabled and an error message is shown
- *
+ * <p/>
  * sending a network message can potentially take a long time. Since slick is single threaded normally
  * the game locks up until the reply from the server is received. Using a thread prevents that.
  */
@@ -73,7 +73,7 @@ public class DetermineFreeSlots implements Runnable {
       int slotNr = serverGameInfo.getSlotNrForUser(userName);
 
       if (!serverGameInfo.isFreeSlot(slotNr)) {
-        ThingleUtil.addToList(page, cboUserName, userName);
+        ThingleUtil.addChoice(page, cboUserName, userName);
       }
     }
   }
@@ -105,7 +105,7 @@ public class DetermineFreeSlots implements Runnable {
     cboSide.removeChildren();
 
     for (int freeSlotNr : serverGameInfo.getFreeSlots()) {
-      Widget choice = ThingleUtil.addToList(page, cboSide, freeSlotNr + "");
+      Widget choice = ThingleUtil.addChoice(page, cboSide, freeSlotNr + "");
 
       if (serverGameInfo.isFreeSlot(freeSlotNr)) {
         choice.setBoolean("enabled", true);
