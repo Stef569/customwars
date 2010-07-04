@@ -55,7 +55,7 @@ public class PlayerOptionsController {
       stateSession.setCO(selectedCO, playerRow);
 
       COSheet coSheet = resources.getCOSheet(selectedCO);
-      coButton.setIcon(new ImageWrapper(coSheet.getHead(3)));
+      coButton.setIcon(new ImageWrapper(coSheet.getLeftHead(3)));
       stateSession.selectedCO = null;
     }
   }

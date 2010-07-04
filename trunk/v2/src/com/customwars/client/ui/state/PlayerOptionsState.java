@@ -125,7 +125,7 @@ public class PlayerOptionsState extends CWState {
     btnCO.setString("name", "co" + row);
     btnCO.setProperty("row", row);
     btnCO.setString("tooltip", App.translate(co.getName()));
-    btnCO.setIcon(new ImageWrapper(coSheet.getHead(3)));
+    btnCO.setIcon(new ImageWrapper(coSheet.getLeftHead(3)));
     btnCO.setMethod("action", "selectCO(this)", controller);
     panel.add(btnCO);
 

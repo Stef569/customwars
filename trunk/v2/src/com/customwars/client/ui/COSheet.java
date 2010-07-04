@@ -41,15 +41,27 @@ public class COSheet extends Image {
     heads[3] = lastHead.getSubImage(0, 0, 32, 12);
   }
 
-  public Image getBodyImg() {
+  public Image getLeftBodyImg() {
     return bodyImg;
   }
 
-  public Image getHead(int index) {
+  public Image getRightBody() {
+    return bodyImg.getFlippedCopy(true, false);
+  }
+
+  public Image getLeftHead(int index) {
     return heads[index];
   }
 
-  public Image getTorso(int index) {
+  public Image getRightHead(int index) {
+    return heads[index].getFlippedCopy(true, false);
+  }
+
+  public Image getLeftTorso(int index) {
     return torso[index];
+  }
+
+  public Image getRightTorso(int index) {
+    return torso[index].getFlippedCopy(true, false);
   }
 }

@@ -28,9 +28,9 @@ public class COViewer extends BasicGame {
 
   @Override
   public void render(GameContainer container, Graphics g) throws SlickException {
-    g.drawImage(coSheet.getBodyImg(), 0, 0);
-    g.drawImage(coSheet.getHead(1), 100, 100);
-    g.drawImage(coSheet.getTorso(2), 250, 250);
+    g.drawImage(coSheet.getLeftBodyImg(), 0, 0);
+    g.drawImage(coSheet.getLeftHead(1), 100, 100);
+    g.drawImage(coSheet.getLeftTorso(2), 250, 250);
   }
 
   public static void main(String[] args) throws SlickException {
