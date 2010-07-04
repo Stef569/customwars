@@ -2,20 +2,23 @@ package com.customwars.client.ui.state;
 
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.game.Player;
+import com.customwars.client.ui.GUI;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
 
+import java.awt.Point;
+
 /**
- * Show information about the next turn
- * end the current turn when the delay has passed
+ * Show information about the next turn.
+ * End the current turn when any key or mouse button has been pressed
  */
 public class EndTurnState extends CWState {
   private Game game;
   private Player nextPlayer;
   private int nextDay;
-  private boolean endTurnPressed;
 
   public void init(GameContainer gameContainer, StateBasedGame stateBasedGame) throws SlickException {
   }
@@ -26,12 +29,18 @@ public class EndTurnState extends CWState {
     game = stateSession.game;
     nextPlayer = game.getNextActivePlayer(game.getActivePlayer());
     nextDay = game.getDay() + 1;
-    endTurnPressed = false;
   }
 
   public void render(GameContainer container, Graphics g) throws SlickException {
     if (entered) {
-      g.drawString("Day " + nextDay + " " + nextPlayer.getName() + " Make your moves", 150, 150);
+      Image coBackgroundImg = resources.getEndTurnImg(nextPlayer.getCO());
+      Point center = GUI.getCenteredRenderPoint(coBackgroundImg.getWidth(), coBackgroundImg.getHeight(), container);
+      g.drawImage(coBackgroundImg, center.x, center.y);
+
+      int maxTextWidth = g.getFont().getWidth("Day 99");
+      int nextDayTextX = center.x + coBackgroundImg.getWidth() - maxTextWidth - 10;
+      int nextDayTextY = center.y + 10;
+      g.drawString("Day " + nextDay, nextDayTextX, nextDayTextY);
     }
   }
 
@@ -49,11 +58,8 @@ public class EndTurnState extends CWState {
   }
 
   private void endTurn() {
-    if (!endTurnPressed) {
-      endTurnPressed = true;
-      changeToState("IN_GAME");
-      game.endTurn();
-    }
+    changeToState("IN_GAME");
+    game.endTurn();
   }
 
   public int getID() {
