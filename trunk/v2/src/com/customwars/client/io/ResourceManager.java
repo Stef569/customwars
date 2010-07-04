@@ -201,6 +201,11 @@ public class ResourceManager {
     return getLeftCOBar(co).getFlippedCopy(true, false);
   }
 
+  public Image getEndTurnImg(CO co) {
+    int styleID = co.getStyle().getID();
+    return getSlickImg("day" + styleID);
+  }
+
   public int countSlickImages() {
     return imageLib.countSlickImages();
   }
