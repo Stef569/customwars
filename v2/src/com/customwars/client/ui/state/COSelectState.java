@@ -156,7 +156,7 @@ public class COSelectState extends CWState {
     CO co = coByStyle[currentCOStyleIndex][index];
     if (co != null) {
       COSheet coSheet = resources.getCOSheet(co);
-      g.drawImage(coSheet.getHead(0), x, y);
+      g.drawImage(coSheet.getLeftHead(0), x, y);
       intelRenderer.render(g);
     }
   }
