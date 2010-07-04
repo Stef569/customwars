@@ -7,6 +7,7 @@ import com.customwars.client.tools.UCaseMap;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -55,7 +56,11 @@ public class COFactory {
   }
 
   public static Collection<CO> getAllCOS() {
-    return Collections.unmodifiableCollection(cos.values());
+    Collection<CO> allCOS = new HashSet<CO>();
+    for (String coName : cos.keySet()) {
+      allCOS.add(getCO(coName));
+    }
+    return Collections.unmodifiableCollection(allCOS);
   }
 
   public static boolean hasCOForName(String coName) {

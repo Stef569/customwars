@@ -425,7 +425,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
    * @return Can this unit supply the given unit
    */
   public boolean canSupply(Unit unit) {
-    return unit != null && stats.canSupply && !unit.isFullySupplied() && owner == unit.owner;
+    return unit != null && stats.canSupply && !unit.hasMaxSupplies() && owner == unit.owner;
   }
 
   /**
@@ -433,7 +433,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
    *         #1 the unit is 100% supplied
    *         #2 The weapons of the unit both have 100% ammo, when one of the weapons is null it has 100% ammo.
    */
-  public boolean isFullySupplied() {
+  public boolean hasMaxSupplies() {
     boolean fullSupplies = getSuppliesPercentage() == 100;
     boolean priWeaponAmmoIsFull = !hasPrimaryWeapon() || primaryWeapon.getAmmoPercentage() == 100;
     boolean secWeaponAmmoIsFull = !hasSecondaryWeapon() || secondaryWeapon.getAmmoPercentage() == 100;
@@ -449,7 +449,11 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   }
 
   public boolean canHeal(int healCost) {
-    return hp != stats.maxHp && owner.isWithinBudget(healCost);
+    return !hasMaxHP() && owner.isWithinBudget(healCost);
+  }
+
+  public boolean hasMaxHP() {
+    return hp == stats.maxHp;
   }
 
   private int getHealCost(int healRate) {

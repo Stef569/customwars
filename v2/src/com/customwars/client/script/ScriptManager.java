@@ -7,25 +7,64 @@ import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
+/**
+ * The ScriptManager simplifies interaction with BeanShell scripts.
+ * It allows to load a script file. After loading the script a script method with optional parameters can be invoked.
+ * This method can then alter the java object passed as a parameter and optionally return a value.
+ * <p/>
+ * Usage:
+ * scriptManager.loadScript(myScriptPath)
+ * <p/>
+ * Invoking the method 'myMethod' with 1 parameter 'myParam'
+ * if (scriptManager.isMethod("myMethod")) {
+ * scriptManager.invoke("myMethod", new Parameter<Integer>("myParam", value));
+ * }
+ */
 public class ScriptManager implements Serializable {
   private static final Logger logger = Logger.getLogger(ScriptManager.class);
   private static final Class[] NO_ARGS = new Class[0];
   private final Interpreter bsh;
+  private final Set<String> scriptFiles;
 
   public ScriptManager() {
+    scriptFiles = new HashSet<String>();
     bsh = new Interpreter();
+
+    try {
+      bsh.eval("setAccessibility(true)");
+      bsh.set("out", System.out);
+    } catch (EvalError evalError) {
+      throw new RuntimeException(evalError);
+    }
   }
 
   public void init(String... scriptFiles) {
     for (String scriptFile : scriptFiles) {
-      try {
-        bsh.source(scriptFile);
-      } catch (IOException e) {
-        logger.warn("Failed to load script file", e);
-      } catch (EvalError evalError) {
-        logger.warn("Failed to load script file", evalError);
-      }
+      loadScript(scriptFile);
+    }
+  }
+
+  /**
+   * Reload all scripts files. This method should be performed after editing a script file.
+   * Since they are not reloaded automatically.
+   */
+  public void reload() {
+    for (String scriptFile : scriptFiles) {
+      loadScript(scriptFile);
+    }
+  }
+
+  public void loadScript(String scriptFile) {
+    try {
+      bsh.source(scriptFile);
+      scriptFiles.add(scriptFile);
+    } catch (IOException e) {
+      logger.warn("Failed to load script file", e);
+    } catch (EvalError evalError) {
+      logger.warn("Failed to load script file", evalError);
     }
   }
 
@@ -49,10 +88,10 @@ public class ScriptManager implements Serializable {
    * <p/>
    * The scripted method can use the parameters.
    * For example:
-   * </code>invoke(doIt, new Parameter<String>("param","now please"));</code>
-   * The following scripted method would be executed:
+   * </code>invoke("doIt", new Parameter<String>("param","now please"));</code>
+   * The following scripted method would be executed and prints 'now please' on the console.
    * String doIt() {
-   * return param;
+   * out.println(param);
    * }
    */
   public Object invoke(String methodName, Parameter... parameters) {
