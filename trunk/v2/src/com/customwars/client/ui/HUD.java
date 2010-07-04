@@ -17,6 +17,7 @@ import com.customwars.client.ui.hud.panel.PlayerInfoPanel;
 import com.customwars.client.ui.hud.panel.VerticalTerrainInfoPanel;
 import com.customwars.client.ui.hud.panel.VerticalTransportInfoPanel;
 import com.customwars.client.ui.hud.panel.VerticalUnitInfoPanel;
+import com.customwars.client.ui.layout.Box;
 import com.customwars.client.ui.layout.Layout;
 import com.customwars.client.ui.sprite.SpriteManager;
 import com.customwars.client.ui.state.input.CWCommand;
@@ -39,7 +40,6 @@ import java.util.List;
 public class HUD {
   private static final Logger logger = Logger.getLogger(HUD.class);
   private static final int INFO_PANEL_HEIGHT = 110;
-  private static final int TOP_MARGIN = 30;
 
   // Control
   private boolean renderInfoPanels = true;
@@ -52,8 +52,8 @@ public class HUD {
   // GUI
   private final boolean showHorizontalInfoPanels = App.getBoolean("plugin.horizontal_panels");
   private final GUIContext guiContext;
-  private final List<Component> topComponents;
   private final List<Component> bottomComponents;
+  private Box playerInfoPanel;
   private SpriteManager spriteManager;
   private Camera2D camera;
   private PopupMenu popupMenu;
@@ -64,15 +64,12 @@ public class HUD {
 
   public HUD(GUIContext guiContext) {
     this.guiContext = guiContext;
-    topComponents = new ArrayList<Component>();
     bottomComponents = new ArrayList<Component>();
   }
 
   public void loadResources(ResourceManager resources) {
     initComponents();
-    for (Component panel : topComponents) {
-      panel.loadResources(resources);
-    }
+    playerInfoPanel.loadResources(resources);
     for (Component panel : bottomComponents) {
       panel.loadResources(resources);
     }
@@ -85,10 +82,9 @@ public class HUD {
       createVerticalPanels();
     }
 
-    PlayerInfoPanel playerInfoPanel = new PlayerInfoPanel(game);
+    playerInfoPanel = new PlayerInfoPanel(game, guiContext.getWidth());
     playerInfoPanel.setWidth(240);
     playerInfoPanel.setHeight(20);
-    topComponents.add(playerInfoPanel);
   }
 
   private void createHorizontalPanels() {
@@ -170,21 +166,21 @@ public class HUD {
 
   private void locateHorizontalPanels(Direction quadrant) {
     if (Direction.isWestQuadrant(quadrant)) {
+      playerInfoPanel.setAlignment(Box.ALIGNMENT.RIGHT);
       int leftOffset = guiContext.getWidth() - bottomComponents.get(0).getWidth();
-      Layout.locateRightToLeft(topComponents, leftOffset, TOP_MARGIN);
       Layout.locateBottomToTop(bottomComponents, leftOffset, guiContext.getHeight());
     } else {
-      Layout.locateLeftToRight(topComponents, 0, TOP_MARGIN);
+      playerInfoPanel.setAlignment(Box.ALIGNMENT.LEFT);
       Layout.locateBottomToTop(bottomComponents, 0, guiContext.getHeight());
     }
   }
 
   private void locateVerticalPanels(Direction quadrant) {
     if (Direction.isWestQuadrant(quadrant)) {
-      Layout.locateRightToLeft(topComponents, camera.getWidth(), TOP_MARGIN);
+      playerInfoPanel.setAlignment(Box.ALIGNMENT.RIGHT);
       Layout.locateRightToLeft(bottomComponents, camera.getWidth(), camera.getHeight() - INFO_PANEL_HEIGHT);
     } else {
-      Layout.locateLeftToRight(topComponents, 0, TOP_MARGIN);
+      playerInfoPanel.setAlignment(Box.ALIGNMENT.LEFT);
       Layout.locateLeftToRight(bottomComponents, 0, camera.getHeight() - INFO_PANEL_HEIGHT);
     }
   }
@@ -247,9 +243,7 @@ public class HUD {
   }
 
   private void renderInfoPanels(Graphics g) {
-    for (Component comp : topComponents) {
-      comp.render(g);
-    }
+    playerInfoPanel.render(g);
     for (Component comp : bottomComponents) {
       comp.render(g);
     }

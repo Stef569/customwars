@@ -2,6 +2,7 @@ package slick;
 
 import com.customwars.client.App;
 import com.customwars.client.model.TestData;
+import com.customwars.client.model.co.BasicCO;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.game.GameRules;
 import com.customwars.client.model.game.Player;
@@ -29,9 +30,9 @@ public class HardCodedGame {
    */
   public static Game getGame() {
     // 3 Game Players
-    Player p_RED = new Player(0, Color.RED, "Stef", 19800, 0, false);
-    Player p_BLUE = new Player(1, Color.BLUE, "JSR", 35500, 1, false);
-    Player p_GREEN = new Player(2, Color.GREEN, "Kiwi", 25000, 2, false);
+    Player p_RED = new Player(0, Color.RED, "Stef", 19800, 0, false, new BasicCO("penny"));
+    Player p_BLUE = new Player(1, Color.BLUE, "JSR", 35500, 1, false, new BasicCO("penny"));
+    Player p_GREEN = new Player(2, Color.GREEN, "Kiwi", 25000, 2, false, new BasicCO("penny"));
     List<Player> players = Arrays.asList(p_RED, p_BLUE, p_GREEN);
     GameRules gameRules = new GameRules();
     gameRules.setDayLimit(Turn.UNLIMITED);

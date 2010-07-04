@@ -134,6 +134,7 @@ public class TestData {
   // CO
   private static CO andy = new BasicCO("andy", new COStyle("ORANGE_STAR", Color.orange, 0, "orange"), "", "", 0, "", "", "", Power.NONE, Power.NONE, "", EMPTY_ARR, EMPTY_ARR, EMPTY_ARR);
   private static CO sturm = new BasicCO("sturm", new COStyle("BLACK_HOLE", Color.black, 0, "black"), "", "", 0, "", "", "", Power.NONE, Power.NONE, "", EMPTY_ARR, EMPTY_ARR, EMPTY_ARR);
+  private static CO penny = new BasicCO("penny", new COStyle("ORANGE_STAR", Color.orange, 0, "green"), "", "", 0, "", "", "", Power.NONE, Power.NONE, "", EMPTY_ARR, EMPTY_ARR, EMPTY_ARR);
 
   public static void storeTestData() {
     clearTestData();
@@ -166,10 +167,13 @@ public class TestData {
     COFactory.setScriptManager(new ScriptManager());
     COFactory.addCO(andy);
     COFactory.addCO(sturm);
+    COFactory.addCO(penny);
 
     UnitFight.setBaseDMG(initBaseDmg());
     UnitFight.setAltDMG(initAltDmg());
 
+    App.put("game.name", "CW2");
+    App.put("game.version", "1.1");
     App.put("plugin.neutral_color", "gray");
     App.put("plugin.tilesize", "32");
   }
