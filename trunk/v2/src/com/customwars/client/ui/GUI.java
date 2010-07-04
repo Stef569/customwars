@@ -50,6 +50,13 @@ public class GUI {
     consoleFrame = new JFrame("Console");
     JConsole console = new JConsole();
     bsh = new Interpreter(console);
+
+    try {
+      bsh.eval("setAccessibility(true)");
+    } catch (EvalError evalError) {
+      throw new RuntimeException(evalError);
+    }
+
     consoleFrame.add(console);
     consoleFrame.setBounds(0, 0, 400, 400);
     new Thread(bsh).start();

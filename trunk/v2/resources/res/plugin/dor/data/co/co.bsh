@@ -1,10 +1,29 @@
 // CO scripts
-// All method consists of 2 parts the <co name>_<method name>
+// All method consists of 2 parts: <co name>_<method name>
 // The syntax is based on Java, more info @ http://www.beanshell.org/manual/syntax.html
 
+// Methods that can be used:
+// Method name                     Available parameters
+// void power                      Game game, GameRenderer gameRenderer
+// void superPower                 Game game, GameRenderer gameRenderer
+// int unitMovementHook            Unit mover, int movement
+// int getAttackBonusPercentage    Unit attacker, Unit defender
+// int getDefenseBonusPercentage   Unit attacker, Unit defender
+// int captureRateHook             int captureRate
+// int cityFundsHook               int funds
+// int unitPriceHook               int price
+// int healRateHook                int healRate
+// int terrainDefenseHook          int terrainDefenseBonus
+// int fireRangeHook               int fireRange
+// int visionHook                  int vision
+// void dayStart                   Game game
+//
+// Debug
+// out.println("this message is printed on the console. Healed unit " + unit.stats.name + " hp+5");
+
   public void brenner_power() {
-    for (Unit unit : game.getActivePlayer().getArmy()) {
-      unit.addHp(3);
+    for (Unit unit : game.activePlayer.army) {
+      if(!unit.hasMaxHP()) unit.addHp(3);
     }
   }
 
@@ -37,9 +56,10 @@
   }
 
   public void caulder_dayStart() {
-    for (Unit unit : game.getActivePlayer().getArmy()) {
-      if (unit.isInCOZone()) {
+    for (Unit unit : game.activePlayer.army) {
+      if (unit.isInCOZone() && !unit.hasMaxHP()) {
         unit.heal(5);
+        out.println("Caulder day start: Healed unit " + unit.stats.name + " hp+5");
       }
     }
   }
@@ -106,7 +126,7 @@
   }
 
   public void greyfield_power() {
-    for (Unit unit : game.getActivePlayer().getArmy()) {
+    for (Unit unit : game.activePlayer.army()) {
       unit.resupply();
     }
   }
