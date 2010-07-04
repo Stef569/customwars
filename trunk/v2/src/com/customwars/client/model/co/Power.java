@@ -26,15 +26,15 @@ public class Power implements Serializable {
     return description;
   }
 
-  public boolean isActive() {
+  protected boolean isActive() {
     return active;
   }
 
-  public void activate() {
+  protected void activate() {
     this.active = true;
   }
 
-  public void deActivate() {
+  protected void deActivate() {
     this.active = false;
   }
 }

@@ -13,6 +13,7 @@ import com.customwars.client.action.unit.DropAction;
 import com.customwars.client.action.unit.FireFlareAction;
 import com.customwars.client.action.unit.JoinAction;
 import com.customwars.client.action.unit.LoadAction;
+import com.customwars.client.action.unit.LoadCOAction;
 import com.customwars.client.action.unit.MoveAnimatedAction;
 import com.customwars.client.action.unit.ProduceUnitAction;
 import com.customwars.client.action.unit.SupplyAction;
@@ -236,5 +237,16 @@ public class ActionFactory {
 
   public static CWAction buildEndGameAction() {
     return new EndGameAction();
+  }
+
+  public static CWAction buildLoadCOAction(Unit unit, Location to) {
+    ActionBag loadCOAction = new ActionBag("loadCO");
+    loadCOAction.add(new InitAction());
+    loadCOAction.add(new MoveAnimatedAction(unit.getLocation(), to));
+    loadCOAction.add(new WaitAction(unit));
+    loadCOAction.add(new LoadCOAction(unit));
+    loadCOAction.add(new ClearInGameStateAction());
+    loadCOAction.setActionText(unit, to);
+    return loadCOAction;
   }
 }

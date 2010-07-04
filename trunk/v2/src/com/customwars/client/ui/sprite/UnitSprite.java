@@ -231,18 +231,22 @@ public class UnitSprite extends TileSprite implements PropertyChangeListener {
   }
 
   private void experienceChange(int newExperience) {
-    switch (newExperience) {
-      case 0:
-        break;
-      case 1:
-        showRank(RANK_I);
-        break;
-      case 2:
-        showRank(RANK_II);
-        break;
-      case 3:
-        showRank(RANK_V);
-        break;
+    if (unit.isCoOnBoard()) {
+      showRank(CO);
+    } else {
+      switch (newExperience) {
+        case 0:
+          break;
+        case 1:
+          showRank(RANK_I);
+          break;
+        case 2:
+          showRank(RANK_II);
+          break;
+        case 3:
+          showRank(RANK_V);
+          break;
+      }
     }
   }
 
