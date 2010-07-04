@@ -29,7 +29,7 @@ import org.newdawn.slick.gui.GUIContext;
  * When in drop mode a drop menu is build else a context menu is build
  */
 public class UnitMenuBuilder {
-  private boolean canDropUnit, canCapture, canSupply, canStartAttack, canWait, canJoin, canLoad;
+  private boolean canDropUnit, canCapture, canSupply, canStartAttack, canWait, canJoin, canLoad, canLoadCO;
   private boolean canLaunchRocketFromCity, canTransformTerrain;
   private boolean canFireFlare;
   private boolean canBuildCity, canBuildUnit;
@@ -136,6 +136,7 @@ public class UnitMenuBuilder {
       canBuildUnit = controller.canBuildUnit();
       canDive = controller.canDive();
       canSurface = controller.canSurface();
+      canLoadCO = controller.canLoadCO();
     } else {
       // Actions where the active and selected unit are on the same tile.
       canJoin = controller.canJoin(selected);
@@ -224,6 +225,11 @@ public class UnitMenuBuilder {
     if (canSurface) {
       CWAction surfaceAction = ActionFactory.buildSurfaceAction(unit, to);
       addToMenu(surfaceAction, App.translate("surface"));
+    }
+
+    if (canLoadCO) {
+      CWAction loadCOAction = ActionFactory.buildLoadCOAction(unit, to);
+      addToMenu(loadCOAction, App.translate("co"));
     }
 
     if (canWait) {

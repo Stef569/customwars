@@ -50,3 +50,15 @@ o co_tabitha co/sheets/tabitha.png
 o co_tasha co/sheets/tasha.png
 o co_waylon co/sheets/waylon.png
 o co_will co/sheets/will.png
+o light_bar co/bar0.png
+o dark_bar co/bar1.png
+o cobar0 co/cobar0.png
+o cobar1 co/cobar1.png
+o cobar2 co/cobar2.png
+o cobar3 co/cobar3.png
+o cobar4 co/cobar4.png
+o day0  co/day0.png
+o day1  co/day1.png
+o day2  co/day2.png
+o day3  co/day3.png
+o day4  co/day4.png
