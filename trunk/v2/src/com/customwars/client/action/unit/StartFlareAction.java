@@ -28,7 +28,7 @@ public class StartFlareAction extends DirectAction {
   @Override
   protected void invokeAction() {
     Unit activeUnit = game.getActiveUnit();
-    game.getMap().buildAttackZone(activeUnit);
+    game.getMap().buildFlareZone(activeUnit);
     mapRenderer.showAttackZone();
     cursorController.activateCursor("SILO");
     cursorController.moveCursor(activeUnit.getAttackZone().get(0));

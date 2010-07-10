@@ -37,7 +37,6 @@ public class Weapon extends GameObject {
   public void init() {
     String weaponName = "Weapon " + name;
     Args.checkForNull(attacks, weaponName + " cannot attack any armybranch");
-    Args.validate(attacks.isEmpty(), weaponName + " cannot attack any armybranch");
     Args.checkForNull(fireRange, weaponName + " needs a range");
     Args.validate(fireRange.getMinRange() < 0, weaponName + " minRange should be positive");
     Args.validate(fireRange.getMaxRange() < 0, weaponName + " maxRange should be positive");
@@ -102,8 +101,15 @@ public class Weapon extends GameObject {
     return ammo;
   }
 
-  public boolean canFire(ArmyBranch armyBranch) {
+  public boolean canFireOn(ArmyBranch armyBranch) {
     return hasAmmoLeft() && attacks.contains(armyBranch);
+  }
+
+  /**
+   * @return If this weapon has ammo and has the ability to attack. A flare for example is a a weapon that cannot attack.
+   */
+  public boolean canAttack() {
+    return !attacks.isEmpty() && hasAmmoLeft();
   }
 
   public boolean hasAmmoLeft() {

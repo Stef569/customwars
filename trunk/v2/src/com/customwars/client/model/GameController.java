@@ -12,7 +12,7 @@ import java.util.Collection;
  * Defines methods that can change the game. The context of these methods are not validated. This means that
  * before calling a method the caller should check if that action is actually possible. ie.:
  * if(canTeleport(from,to)) gameController.teleport(from,to);
- *
+ * <p/>
  * When the action is not possible the behaviour of these methods is not determined. Most probably they will throw a NPE.
  */
 public interface GameController {
@@ -82,10 +82,10 @@ public interface GameController {
   void transformTerrain(Unit unit, Location location, Terrain transformToTerrain);
 
   /**
-   * The unit fires a flare revealing flareRange tiles around the flareCenter.*
-   * The secondary ammo is decreased by 1.
+   * The unit fires a flare revealing flareRange tiles around the flareCenter.
+   * The primary weapon ammo is decreased by 1.
    */
-  void flare(Unit unit, Location flareCenter, int flareRange);
+  void flare(Unit unit, Location flareCenter, int numOfTilesToReveal);
 
   /**
    * The unit constructs a new city on the location.
