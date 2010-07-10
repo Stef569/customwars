@@ -341,8 +341,6 @@ public class MouseOverArea extends BasicComponent {
           currentImage = mouseDownImage;
           currentColor = mouseDownColor;
           state = MOUSE_DOWN;
-
-          notifyListeners();
           mouseUp = false;
         }
       } else {

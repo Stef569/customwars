@@ -45,10 +45,10 @@ public class StateSession {
     map = null;
     serverGameName = "";
     selectedCO = null;
-    Arrays.fill(cos, null);
-    Arrays.fill(teams, -1);
-    Arrays.fill(colors, null);
-    Arrays.fill(controllers, null);
+    if (cos != null) Arrays.fill(cos, null);
+    if (teams != null) Arrays.fill(teams, -1);
+    if (colors != null) Arrays.fill(colors, null);
+    if (controllers != null) Arrays.fill(controllers, null);
   }
 
   /**

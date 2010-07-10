@@ -51,6 +51,7 @@ public class TestMenu extends CWState implements ComponentListener {
   public void enter(GameContainer container, StateBasedGame game) throws SlickException {
     super.enter(container, game);
     backgroundMusic.loop();
+    testmenu.setAcceptingInput(true);
   }
 
   public void render(GameContainer gameContainer, Graphics g) throws SlickException {
@@ -87,6 +88,7 @@ public class TestMenu extends CWState implements ComponentListener {
   public void leave(GameContainer container, StateBasedGame game) throws SlickException {
     super.leave(container, game);
     backgroundMusic.stop();
+    testmenu.setAcceptingInput(false);
   }
 
   public void componentActivated(AbstractComponent source) {
