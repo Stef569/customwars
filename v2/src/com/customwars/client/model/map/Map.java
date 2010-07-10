@@ -428,6 +428,21 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
   }
 
   /**
+   * Build a zone in which the unit can flare and set it to the unit as the attackZone.
+   * The flare zone includes the unit location and has a max range equal to the flare weapon range.
+   *
+   * @param unit The unit to build the flare zone for
+   */
+  public void buildFlareZone(Unit unit) {
+    List<Location> flareZone = new ArrayList<Location>();
+    flareZone.add(unit.getLocation());
+    for (Tile t : getSurroundingTiles(unit.getLocation(), unit.getPrimaryWeapon().getRange())) {
+      flareZone.add(t);
+    }
+    unit.setAttackZone(flareZone);
+  }
+
+  /**
    * Get a path of directions(N,E,S,W) from the mover location to the destination
    * Each Direction in the path is relative to the previous location.
    * In case of illegal data an empty list is returned

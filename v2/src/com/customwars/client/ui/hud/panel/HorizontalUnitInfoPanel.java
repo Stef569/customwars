@@ -81,17 +81,7 @@ public class HorizontalUnitInfoPanel extends HorizontalInfoPanel {
     setFrontImage(resources.getUnitImg(unit, Unit.DEFAULT_ORIENTATION));
     hpTxtBox.setText(unit.getHp() + "");
     suppliesTxtBox.setText(unit.getSupplies() + "");
-    ammoTxtBox.setText(getWeaponAmmo() + "");
-  }
-
-  private int getWeaponAmmo() {
-    int weaponAmmo = 0;
-    if (unit.hasSecondaryWeapon()) {
-      weaponAmmo = unit.getAvailableWeapon().getAmmo();
-    } else if (unit.hasPrimaryWeapon()) {
-      weaponAmmo = unit.getPrimaryWeapon().getAmmo();
-    }
-    return weaponAmmo;
+    ammoTxtBox.setText(unit.getAmmo() + "");
   }
 
   protected Dimension getNameSize() {

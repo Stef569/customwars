@@ -612,6 +612,22 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
     return canFirePrimaryWeapon() ? primaryWeapon : canFireSecondaryWeapon() ? secondaryWeapon : null;
   }
 
+  /**
+   * Retrieve the first available attack weapon: Not null some ammo left and the ability to attack.
+   * starting with the primary weapon
+   *
+   * @return The first available weapon that can attack. Null when no weapons are available.
+   */
+  public Weapon getAvailableAttackWeapon() {
+    if (canFirePrimaryWeapon() && primaryWeapon.canAttack()) {
+      return primaryWeapon;
+    } else if (canFireSecondaryWeapon() && secondaryWeapon.canAttack()) {
+      return secondaryWeapon;
+    } else {
+      return null;
+    }
+  }
+
   public Weapon getPrimaryWeapon() {
     return primaryWeapon;
   }
@@ -621,12 +637,29 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   }
 
   /**
+   * <lu>
+   * <li>If there is a primary weapon return the primary ammo count</li>
+   * <li>If there is no primary weapon but a secondary weapon return the secondary ammo count</li>
+   * <li>If there is no weapon return 0</li>
+   * </lu>
+   */
+  public int getAmmo() {
+    if (hasPrimaryWeapon()) {
+      return primaryWeapon.getAmmo();
+    } else if (hasSecondaryWeapon()) {
+      return secondaryWeapon.getAmmo();
+    } else {
+      return 0;
+    }
+  }
+
+  /**
    * @return if this unit can fire on the defender
    */
   private boolean canFireOn(Defender defender) {
     ArmyBranch defenderArmyBranch = defender.getArmyBranch();
-    boolean canFirePrimaryWeapon = hasPrimaryWeapon() && primaryWeapon.canFire(defenderArmyBranch);
-    boolean canFireSecondaryWeapon = hasSecondaryWeapon() && secondaryWeapon.canFire(defenderArmyBranch);
+    boolean canFirePrimaryWeapon = hasPrimaryWeapon() && primaryWeapon.canFireOn(defenderArmyBranch);
+    boolean canFireSecondaryWeapon = hasSecondaryWeapon() && secondaryWeapon.canFireOn(defenderArmyBranch);
 
     return canFirePrimaryWeapon || canFireSecondaryWeapon;
   }
@@ -655,7 +688,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   }
 
   public Range getAttackRange() {
-    Weapon weapon = getAvailableWeapon();
+    Weapon weapon = getAvailableAttackWeapon();
 
     if (weapon != null) {
       int minRange = weapon.getRange().getMinRange();
@@ -877,7 +910,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
    * @return Can this unit fire only on adjacent enemies
    */
   public boolean isDirect() {
-    Weapon weapon = getAvailableWeapon();
+    Weapon weapon = getAvailableAttackWeapon();
     return weapon != null && weapon.isDirect();
   }
 
@@ -885,7 +918,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
    * @return Can this unit fire on enemies that are 1 or more tiles away
    */
   public boolean isInDirect() {
-    Weapon weapon = getAvailableWeapon();
+    Weapon weapon = getAvailableAttackWeapon();
     return weapon != null && weapon.isInDirect();
   }
 

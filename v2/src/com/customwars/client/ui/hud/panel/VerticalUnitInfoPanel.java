@@ -4,7 +4,6 @@ import com.customwars.client.App;
 import com.customwars.client.io.ResourceManager;
 import com.customwars.client.io.img.slick.ImageStrip;
 import com.customwars.client.model.gameobject.Unit;
-import com.customwars.client.model.gameobject.Weapon;
 import com.customwars.client.model.map.Direction;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.ui.layout.Box;
@@ -64,13 +63,7 @@ public class VerticalUnitInfoPanel extends Box implements InfoPanel {
     unitImgBox.setWidth(getWidth());
     suppliesRow.setText(unit.getSupplies() + "");
     hpRow.setText(unit.getInternalHp() + "");
-
-    Weapon weapon = unit.getAvailableWeapon();
-    if (weapon != null) {
-      ammoRow.setText(weapon.getAmmo() + "");
-    } else {
-      ammoRow.setText("0");
-    }
+    ammoRow.setText(unit.getAmmo() + "");
   }
 
   private void locateBoxes() {

@@ -170,11 +170,12 @@ public class CWGameController implements GameController {
   }
 
   @Override
-  public void flare(Unit unit, Location flareCenter, int flareRange) {
+  public void flare(Unit unit, Location flareCenter, int numOfTilesToReveal) {
     map.getTile(flareCenter).setFogged(false);
-    for (Tile t : map.getSurroundingTiles(flareCenter, 1, flareRange)) {
+    for (Tile t : map.getSurroundingTiles(flareCenter, 1, numOfTilesToReveal)) {
       t.setFogged(false);
     }
+    unit.getPrimaryWeapon().fire(1);
   }
 
   @Override
