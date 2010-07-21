@@ -155,42 +155,39 @@ public final class IOUtil {
     copy(new FileInputStream(input), output);
   }
 
-  public static void copy(InputStream i, File output) throws IOException {
-    copy(i, new FileOutputStream(output));
+  public static void copy(InputStream in, File output) throws IOException {
+    copy(in, new FileOutputStream(output));
   }
 
-  public static void copy(InputStream i, OutputStream o) throws IOException {
+  public static void copy(InputStream in, OutputStream out) throws IOException {
     byte[] buf = new byte[4096];
 
     int len;
 
-    while ((len = i.read(buf)) >= 0) {
-      o.write(buf, 0, len);
+    while ((len = in.read(buf)) >= 0) {
+      out.write(buf, 0, len);
     }
 
-    i.close();
-    o.close();
+    in.close();
+    out.close();
   }
 
   /**
-   * Get All non empty lines from an InputStream
-   * A line filled with spaces is considered empty
+   * Get All lines from an InputStream. The stream is closed.
    */
-  public static List<String> getLinesFromFile(InputStream stream) throws IOException {
+  public static String[] readLines(InputStream stream) throws IOException {
     BufferedReader br = new BufferedReader(new InputStreamReader(stream));
     List<String> lines = new ArrayList<String>();
 
     try {
       String line;
       while ((line = br.readLine()) != null) {
-        if (StringUtil.hasContent(line)) {
-          lines.add(line);
-        }
+        lines.add(line);
       }
     } finally {
       IOUtil.closeStream(stream);
     }
-    return lines;
+    return lines.toArray(new String[lines.size()]);
   }
 
   /**

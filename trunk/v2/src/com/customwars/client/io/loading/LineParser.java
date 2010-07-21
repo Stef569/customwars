@@ -1,6 +1,7 @@
 package com.customwars.client.io.loading;
 
 import com.customwars.client.tools.IOUtil;
+import com.customwars.client.tools.StringUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,8 +20,8 @@ public abstract class LineParser implements CWResourceLoader {
   }
 
   public void load() throws IOException {
-    for (String line : IOUtil.getLinesFromFile(stream)) {
-      if (!line.startsWith(COMMENT_PREFIX)) {
+    for (String line : IOUtil.readLines(stream)) {
+      if (StringUtil.hasContent(line) && !line.startsWith(COMMENT_PREFIX)) {
         parseLine(line);
       }
     }
