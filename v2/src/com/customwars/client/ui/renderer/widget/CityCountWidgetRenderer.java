@@ -49,13 +49,9 @@ public class CityCountWidgetRenderer implements WidgetRenderer {
 
   private void calcCityCount() {
     mapCitiesCount = new int[CityFactory.countBaseCities()];
-    for (Tile t : map.getAllTiles()) {
-      City city = map.getCityOn(t);
-
-      if (city != null) {
-        City baseCity = CityFactory.getBaseCity(city.getType());
-        mapCitiesCount[baseCity.getID()]++;
-      }
+    for (City baseCity : CityFactory.getBaseCities()) {
+      int cityCount = map.getCityCount(baseCity.getName());
+      mapCitiesCount[baseCity.getID()] = cityCount;
     }
   }
 
