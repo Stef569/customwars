@@ -816,6 +816,37 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
   }
 
   /**
+   * Counts cities of a given type owned by a given player.
+   * If the player argument is null. All cities in the map of a given city type are counted.
+   *
+   * @param baseCityName The city to count. Eg: 'airport'
+   * @param player       The owner of the cities to count
+   * @return The amount of cities in this map of a city type owned by player.
+   */
+  public int getCityCount(String baseCityName, Player player) {
+    int cityCount = 0;
+    for (Tile t : getAllTiles()) {
+      City city = getCityOn(t);
+
+      if (city != null && city.getType().equalsIgnoreCase(baseCityName))
+        if (player == null || city.isOwnedBy(player)) {
+          cityCount++;
+        }
+    }
+    return cityCount;
+  }
+
+  /**
+   * Counts all cities of the same city type. For example You can use this to retrieve the amount of ports.
+   *
+   * @param baseCityName The city to count. Eg: 'airport'
+   * @return The amount of cities in this map of a city type.
+   */
+  public int getCityCount(String baseCityName) {
+    return getCityCount(baseCityName, null);
+  }
+
+  /**
    * Return a map player from this map for the given color
    * If the map already contains a player for the given color then that player is returned.
    * else a new player with an unique ID is returned.
