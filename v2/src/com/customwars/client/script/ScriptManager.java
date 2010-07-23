@@ -6,6 +6,7 @@ import bsh.UtilEvalError;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
@@ -26,11 +27,15 @@ import java.util.Set;
 public class ScriptManager implements Serializable {
   private static final Logger logger = Logger.getLogger(ScriptManager.class);
   private static final Class[] NO_ARGS = new Class[0];
-  private final Interpreter bsh;
+  private transient Interpreter bsh;
   private final Set<String> scriptFiles;
 
   public ScriptManager() {
     scriptFiles = new HashSet<String>();
+    initBeanshell();
+  }
+
+  private void initBeanshell() {
     bsh = new Interpreter();
 
     try {
@@ -65,6 +70,14 @@ public class ScriptManager implements Serializable {
       logger.warn("Failed to load script file", e);
     } catch (EvalError evalError) {
       logger.warn("Failed to load script file", evalError);
+    }
+  }
+
+  public void eval(String text) {
+    try {
+      bsh.eval(text);
+    } catch (EvalError evalError) {
+      logger.warn("Failed to eval text", evalError);
     }
   }
 
@@ -144,5 +157,10 @@ public class ScriptManager implements Serializable {
     } catch (EvalError evalError) {
       logger.warn("Could not unset", evalError);
     }
+  }
+
+  private void readObject(ObjectInputStream in) throws ClassNotFoundException, IOException {
+    in.defaultReadObject();
+    initBeanshell();
   }
 }

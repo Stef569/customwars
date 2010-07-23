@@ -1,6 +1,8 @@
 package com.customwars.client.model.gameobject;
 
+import com.customwars.client.model.fight.Attacker;
 import com.customwars.client.model.fight.BasicFight;
+import com.customwars.client.model.fight.Defender;
 import com.customwars.client.model.fight.Fight;
 import com.customwars.client.tools.NumberUtil;
 
@@ -12,6 +14,10 @@ import com.customwars.client.tools.NumberUtil;
 public class UnitVsCityFight extends BasicFight {
   private static int[][] baseDMG;
   private static int[][] altDMG;
+
+  public UnitVsCityFight(Attacker attacker, Defender defender) {
+    super(attacker, defender);
+  }
 
   public int getAttackDamagePercentage() {
     Unit attackingUnit = (Unit) attacker;

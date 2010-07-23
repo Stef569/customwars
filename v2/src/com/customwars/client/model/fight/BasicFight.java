@@ -6,14 +6,14 @@ import com.customwars.client.tools.Args;
 /**
  * Allows an Attacker to attack a Defender
  * When canCounterAttack returns true the defender will counterAttack the attacker
- * An attack - counter attack sequense can only be performed once.
+ * An attack - counter attack sequence can only be performed once.
  */
 public abstract class BasicFight implements Fight {
   protected Attacker attacker;
   protected Defender defender;
   private boolean fightComplete;
 
-  public void initFight(Attacker attacker, Defender defender) {
+  protected BasicFight(Attacker attacker, Defender defender) {
     init(attacker, defender);
   }
 
