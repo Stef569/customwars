@@ -1,10 +1,14 @@
 package com.customwars.client.model.gameobject;
 
 import com.customwars.client.model.TestData;
+import com.customwars.client.model.co.CO;
+import com.customwars.client.model.co.COFactory;
 import com.customwars.client.model.fight.Fight;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
+import com.customwars.client.script.ScriptManager;
+import com.customwars.client.script.ScriptedCO;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
@@ -50,8 +54,7 @@ public class UnitFightTest {
     tank2.setHp(40);
     map.getTile(0, 1).add(tank2);
 
-    UnitFight fight = new UnitFight();
-    fight.initFight(tank1, tank2);
+    UnitFight fight = new UnitFight(map, tank1, tank2);
     fight.startFight();
 
     Assert.assertTrue(tank2.isDestroyed());
@@ -67,8 +70,7 @@ public class UnitFightTest {
     map.getTile(0, 1).add(tank2);
     tank2.setOwner(p2);
 
-    UnitFight fight = new UnitFight();
-    fight.initFight(tank1, tank2);
+    UnitFight fight = new UnitFight(map, tank1, tank2);
     fight.startFight();
 
     // Both tanks are damaged, because of counter attack
@@ -93,8 +95,7 @@ public class UnitFightTest {
     int expectedHpPercentage = artillery.getHpPercentage();
     int targetHpPercentage = target.getHpPercentage();
 
-    UnitFight fight = new UnitFight();
-    fight.initFight(artillery, target);
+    UnitFight fight = new UnitFight(map, artillery, target);
     fight.startFight();
 
     // No counter attack, attacker hp didn't change
@@ -117,8 +118,7 @@ public class UnitFightTest {
 
     // The inf is outside of the attack zone of the rocket
     // and the rocket has a min attack range of 3 It can't counter attack.
-    Fight fight = new UnitFight();
-    fight.initFight(inf, rocket);
+    Fight fight = new UnitFight(map, inf, rocket);
     fight.startFight();
 
     Assert.assertEquals(inf.getMaxHp(), inf.getHp());
@@ -137,8 +137,7 @@ public class UnitFightTest {
     tank1.getPrimaryWeapon().setAmmo(0);
 
     // tank1 has no primary ammo so it will use it's secondary weapon to attack the tank...
-    Fight fight = new UnitFight();
-    fight.initFight(tank1, tank2);
+    Fight fight = new UnitFight(map, tank1, tank2);
 
     // 6 comes from the alt damage table tank vs tank.
     Assert.assertEquals(6, fight.getAttackDamagePercentage());
@@ -159,8 +158,7 @@ public class UnitFightTest {
     mech.setOwner(p1);
     mech.setHp(90);
 
-    Fight fight = new UnitFight();
-    fight.initFight(tank1, mech);
+    Fight fight = new UnitFight(map, tank1, mech);
     fight.startFight();
 
     Assert.assertEquals(tank1.getHp(), tank1.getMaxHp());
@@ -178,10 +176,115 @@ public class UnitFightTest {
     mech.setHp(5);
 
     int startAmmo = mech.getPrimaryWeapon().getAmmo();
-    Fight fight = new UnitFight();
-    fight.initFight(mech, tank1);
+    Fight fight = new UnitFight(map, mech, tank1);
     fight.startFight();
 
     Assert.assertSame(startAmmo - 1, mech.getPrimaryWeapon().getAmmo());
+  }
+
+  @Test
+  public void testInfVSInf() {
+    Unit attInf = UnitFactory.getUnit("infantry");
+    map.getTile(0, 0).add(attInf);
+    attInf.setOwner(p1);
+
+    Unit defInf = UnitFactory.getUnit("infantry");
+    map.getTile(0, 1).add(defInf);
+    defInf.setOwner(p2);
+
+    Fight unitFight = new UnitFight(map, attInf, defInf);
+    int preFightDmg = unitFight.getAttackDamagePercentage();
+
+    // There are no modifiers (terrain,co)
+    // See TestData Alternative damage chart
+    Assert.assertEquals(55, preFightDmg);
+    unitFight.startFight();
+    Assert.assertEquals(7, attInf.getHp());
+    Assert.assertEquals(4, defInf.getHp());
+  }
+
+  @Test
+  public void testInfVSInfOnMountain() {
+    Unit attInf = UnitFactory.getUnit("infantry");
+    map.getTile(0, 0).add(attInf);
+    attInf.setOwner(p1);
+
+    Unit defInf = UnitFactory.getUnit("infantry");
+    map.getTile(0, 1).add(defInf);
+    map.getTile(0, 1).setTerrain(TerrainFactory.getTerrain("mountain"));
+    defInf.setOwner(p2);
+
+    Fight unitFight = new UnitFight(map, attInf, defInf);
+    int preFightDmg = unitFight.getAttackDamagePercentage();
+
+    Assert.assertEquals(39, preFightDmg);
+    unitFight.startFight();
+    Assert.assertEquals(6, attInf.getHp());
+    Assert.assertEquals(6, defInf.getHp());
+  }
+
+  @Test
+  public void testInfVsInfWithCO() {
+    ScriptManager scriptManager = new ScriptManager();
+    String sturmCOAttackMethod =
+      "public int sturm_getAttackBonusPercentage() {" +
+        "if (power || superPower) {return 130;} else {return 120;}" +
+        "}";
+
+    scriptManager.eval(sturmCOAttackMethod);
+    COFactory.setScriptManager(scriptManager);
+    CO sturm = new ScriptedCO(COFactory.getCO("sturm"), scriptManager);
+
+    p1 = new Player(8, Color.GREEN, "Jos", 0, 0, false, sturm);
+    Unit attInf = UnitFactory.getUnit("infantry");
+    Unit defInf = UnitFactory.getUnit("infantry");
+    map.getTile(0, 0).add(attInf);
+    attInf.setOwner(p1);
+
+    map.getTile(0, 1).add(defInf);
+    defInf.setOwner(p2);
+
+    Fight unitFight = new UnitFight(map, attInf, defInf);
+    int damagePercentage = unitFight.getAttackDamagePercentage();
+
+    // Attacking infantry has Sturm as CO
+    // Adding 20% to the attack value
+    Assert.assertEquals(66, damagePercentage);
+    unitFight.startFight();
+  }
+
+  @Test
+  public void testInfVsInfWith2COS() {
+    ScriptManager scriptManager = new ScriptManager();
+    scriptManager.eval("public int sturm_getAttackBonusPercentage() {" +
+      "if (power || superPower) {return 130;} else {return 120;}}");
+    scriptManager.eval("public int andy_getDefenseBonusPercentage() {" +
+      "if (power || superPower) {return 110;} else {return 100;}}");
+    COFactory.setScriptManager(scriptManager);
+
+    CO sturm = new ScriptedCO(COFactory.getCO("sturm"), scriptManager);
+    CO andy = new ScriptedCO(COFactory.getCO("andy"), scriptManager);
+    p1 = new Player(8, Color.GREEN, "Sturm", 0, 0, false, sturm);
+    p2 = new Player(9, Color.BLUE, "Andy", 0, 1, false, andy);
+
+    Unit attInf = UnitFactory.getUnit("infantry");
+    map.getTile(0, 0).add(attInf);
+    attInf.setOwner(p1);
+
+    Unit defInf = UnitFactory.getUnit("infantry");
+    map.getTile(0, 1).add(defInf);
+    defInf.setOwner(p2);
+
+    Fight unitFight = new UnitFight(map, attInf, defInf);
+    int damagePercentage = unitFight.getAttackDamagePercentage();
+
+    // Attacking infantry has Sturm as CO
+    // Adding 20% to the attack value
+    // Defending infantry has andy as CO
+    // Adding 10% to the defense value
+    Assert.assertEquals(66, damagePercentage);
+    unitFight.startFight();
+    Assert.assertEquals(8, attInf.getHp());
+    Assert.assertEquals(3, defInf.getHp());
   }
 }

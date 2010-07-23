@@ -740,14 +740,24 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   /**
    * Converts the internal hp to a number between 0 - 10 rounding up to the nearest value.
    * hp=25
-   * getHp() return 3
-   * hp=19
    * getHp() return 2
+   * hp=18
+   * getHp() return 2
+   * hp=0
+   * getHp() return 0
+   * 0>hp<10
+   * getHp() returns 1
    *
    * @return The rounded Hp between 0 - 10
    */
   public int getHp() {
-    return (int) Math.ceil((double) hp / 10);
+    if (hp == 0) {
+      return 0;
+    } else if (hp < 10) {
+      return 1;
+    } else {
+      return (int) Math.floor(hp / 10 + 0.45f);
+    }
   }
 
   /**
@@ -756,11 +766,13 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
    * getMaxHp() return 10
    * maxhp=79
    * getMaxHp() return 8
+   * maxhp=75
+   * getMaxHp() return 7
    *
    * @return The max Hp between 0 - 10
    */
   public int getMaxHp() {
-    return (int) Math.ceil((double) stats.maxHp / 10);
+    return (int) Math.floor(stats.maxHp / 10 + 0.45f);
   }
 
   public int getInternalHp() {

@@ -91,7 +91,7 @@ public class TestData {
   private static Terrain sea = new Terrain(SEA, "ocean", "ocean", "", 0, -2, false, 0, seaMoveCosts);
 
   // Units
-  private static UnitStats infStats = new UnitStats(INF, INF, "infantry", "", 3000, 3, 3, 10, UNIT_MAX_HP, MAX_UNIT_SUPPLIES, 0, 0, true, false, false, false, true, false, false, null, ArmyBranch.LAND, MOVE_INF, new Range(0, 0), SMG, "", 0, 0);
+  private static UnitStats infStats = new UnitStats(INF, INF, "infantry", "", 3000, 3, 3, 10, UNIT_MAX_HP, MAX_UNIT_SUPPLIES, 0, 0, true, false, false, false, true, false, false, null, ArmyBranch.LAND, MOVE_INF, new Range(0, 0), "", SMG, 0, 0);
   private static Unit infantry = new Unit(infStats);
   private static UnitStats mechStats = new UnitStats(MECH, MECH, "mech", "", 3000, 3, 3, 10, UNIT_MAX_HP, MAX_UNIT_SUPPLIES, 0, 0, true, false, false, false, true, false, false, null, ArmyBranch.LAND, MOVE_MECH, new Range(0, 0), BAZOOKA, SMG, 0, 0);
   private static Unit mech = new Unit(mechStats);

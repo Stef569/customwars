@@ -104,8 +104,7 @@ public class CWGameController implements GameController {
 
   @Override
   public int attack(Unit attacker, Unit defender) {
-    Fight unitFight = new UnitFight();
-    unitFight.initFight(attacker, defender);
+    Fight unitFight = new UnitFight(map, attacker, defender);
     int damagePercentage = unitFight.getAttackDamagePercentage();
     unitFight.startFight();
 
@@ -122,8 +121,7 @@ public class CWGameController implements GameController {
   @Override
   public int attack(Unit attacker, City city) {
     Tile cityLocation = (Tile) city.getLocation();
-    Fight unitVsCityFight = new UnitVsCityFight();
-    unitVsCityFight.initFight(attacker, city);
+    Fight unitVsCityFight = new UnitVsCityFight(attacker, city);
     int damagePercentage = unitVsCityFight.getAttackDamagePercentage();
     unitVsCityFight.startFight();
 

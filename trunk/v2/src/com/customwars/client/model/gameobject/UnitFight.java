@@ -1,7 +1,10 @@
 package com.customwars.client.model.gameobject;
 
 import com.customwars.client.App;
+import com.customwars.client.model.fight.Attacker;
 import com.customwars.client.model.fight.BasicFight;
+import com.customwars.client.model.fight.Defender;
+import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.tools.NumberUtil;
 
@@ -13,36 +16,41 @@ import com.customwars.client.tools.NumberUtil;
 public class UnitFight extends BasicFight {
   private static int[][] baseDMG;
   private static int[][] altDMG;
+  private Map<Tile> map;
+
+  public UnitFight(Map<Tile> map, Attacker attacker, Defender defender) {
+    super(attacker, defender);
+    this.map = map;
+  }
 
   public int getAttackDamagePercentage() {
     Unit attackingUnit = (Unit) attacker;
     Unit defendingUnit = (Unit) defender;
+
     int attackerHP = attackingUnit.getInternalHp();
     int attackMaxHP = attackingUnit.getInternalMaxHp();
+    int attExpBonus = getExperienceBonus(attackingUnit);
+    int attCOBonus = attackingUnit.getOwner().getCO().getAttackBonusPercentage(attackingUnit, defendingUnit);
+    int attCommTowersCount = map.getCityCount("commtower", attackingUnit.getOwner());
+    int attackBonus = attCOBonus + attCommTowersCount * 5 + attExpBonus;
 
-    int terrainDef = getTerrainDefense(defendingUnit);
+    int defHP = defendingUnit.getInternalHp();
+    int defMaxHP = defendingUnit.getInternalMaxHp();
+    int defExpBonus = getExperienceBonus(defendingUnit);
+    int defCoBonus = defendingUnit.getOwner().getCO().getDefenseBonusPercentage(attackingUnit, defendingUnit);
+    int defCommTowersCount = map.getCityCount("commtower", defendingUnit.getOwner());
+    int terrainDefense = getTerrainDefense(defendingUnit);
+    int defenseBonus = defCoBonus + defCommTowersCount * 5 + (terrainDefense * 10 * defHP / defMaxHP) + defExpBonus;
+
     int baseDmg = getAttackDamagePercentage(attackingUnit, defendingUnit);
-    int expBonus = getExperienceBonus(attackingUnit, defendingUnit);
-    int coBonus = getCOBonus(attackingUnit, defendingUnit);
+    float attackValue = baseDmg * (attackerHP / (float) attackMaxHP);
 
-    double dmg = Math.floor(attackerHP / (float) attackMaxHP * baseDmg - terrainDef) + expBonus + coBonus;
-    return dmg < 0 ? 0 : (int) dmg;
-  }
-
-  private int getExperienceBonus(Unit attackingUnit, Unit defendingUnit) {
-    int attackBonus = getExperienceBonus(attackingUnit);
-    int defenderBonus = getExperienceBonus(defendingUnit);
-    return attackBonus - defenderBonus;
+    int dmg = (int) Math.floor(attackValue * attackBonus / defenseBonus);
+    return dmg < 0 ? 0 : dmg;
   }
 
   private int getExperienceBonus(Unit unit) {
     return App.getInt("plugin.unit_rank" + unit.getExperience() + "_fight_bonus");
-  }
-
-  private int getCOBonus(Unit attackingUnit, Unit defendingUnit) {
-    int attackBonus = attackingUnit.getOwner().getCO().getAttackBonusPercentage(attackingUnit, defendingUnit);
-    int defenseBonus = defendingUnit.getOwner().getCO().getDefenseBonusPercentage(attackingUnit, defendingUnit);
-    return attackBonus - defenseBonus;
   }
 
   private int getTerrainDefense(Unit unit) {

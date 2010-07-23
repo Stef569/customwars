@@ -7,7 +7,7 @@ import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
 
 /**
- * Creates a Fight class based on the defender on the defenderLocation.
+ * Creates a Fight class based on the defender on the defender location.
  */
 public class FightFactory {
 
@@ -19,16 +19,15 @@ public class FightFactory {
     Defender defender;
 
     if (hasUnit) {
-      fight = new UnitFight();
       defender = map.getUnitOn(defenderLocation);
+      fight = new UnitFight(map, attacker, defender);
     } else if (hasCity) {
-      fight = new UnitVsCityFight();
       defender = map.getCityOn(defenderLocation);
+      fight = new UnitVsCityFight(attacker, defender);
     } else {
       throw new IllegalArgumentException("Can't create Fight for defender on " + defenderLocation);
     }
 
-    fight.initFight(attacker, defender);
     return fight;
   }
 }
