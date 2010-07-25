@@ -213,8 +213,8 @@ public class UnitMenuBuilder {
 
     if (canBuildCity) {
       City city = getCityThatCanBeBuildOn(to);
-      CWAction buildCityAction = ActionFactory.buildConstructCityAction(unit, city, to);
-      addToMenu(buildCityAction, App.translate("build") + ' ' + city.getName());
+      CWAction buildCityAction = ActionFactory.buildConstructCityAction(unit, city.getID(), to);
+      addToMenu(buildCityAction, App.translate("build") + ' ' + App.translate(city.getName()));
     }
 
     if (canDive) {

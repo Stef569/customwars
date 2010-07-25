@@ -4,6 +4,7 @@ import com.customwars.client.App;
 import com.customwars.client.action.DirectAction;
 import com.customwars.client.model.GameController;
 import com.customwars.client.model.gameobject.City;
+import com.customwars.client.model.gameobject.CityFactory;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.network.MessageSender;
@@ -19,13 +20,13 @@ public class ConstructCityAction extends DirectAction {
   private MessageSender messageSender;
   private final Unit unit;
   private final Location to;
-  private final City city;
+  private final int cityID;
 
-  public ConstructCityAction(Unit unit, City city, Location moveTo) {
+  public ConstructCityAction(Unit unit, int cityID, Location moveTo) {
     super("Construct City", false);
     this.unit = unit;
     this.to = moveTo;
-    this.city = city;
+    this.cityID = cityID;
   }
 
   @Override
@@ -43,12 +44,14 @@ public class ConstructCityAction extends DirectAction {
   }
 
   private void constructCity() {
-    boolean constructionComplete = gameController.constructCity(unit, city, to);
+    boolean constructionComplete = gameController.constructCity(unit, cityID, to);
     logConstructingProgress(constructionComplete);
     if (App.isMultiplayer()) sendConstructCity();
   }
 
   private void logConstructingProgress(boolean constructionComplete) {
+    City city = CityFactory.getCity(cityID);
+
     if (constructionComplete) {
       logger.debug(
         String.format("%s constructed a %s",
@@ -56,15 +59,15 @@ public class ConstructCityAction extends DirectAction {
       );
     } else {
       logger.debug(
-        String.format("%s is constructing a %s constructed:%s%%",
-          unit.getStats().getName(), city.getName(), city.getCapCountPercentage())
+        String.format("%s is constructing a %s",
+          unit.getStats().getName(), city.getName())
       );
     }
   }
 
   private void sendConstructCity() {
     try {
-      messageSender.constructCity(unit, city, to);
+      messageSender.constructCity(unit, cityID, to);
     } catch (NetworkException ex) {
       logger.warn("Could not send construct city", ex);
       if (GUI.askToResend(ex) == GUI.YES_OPTION) {

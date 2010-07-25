@@ -120,7 +120,7 @@ public class MessageSenderAdapter implements MessageSender {
   }
 
   @Override
-  public void constructCity(Unit unit, City city, Location constructOn) throws NetworkException {
+  public void constructCity(Unit unit, int cityID, Location constructOn) throws NetworkException {
   }
 
   @Override
