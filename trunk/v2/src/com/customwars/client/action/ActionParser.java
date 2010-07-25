@@ -4,7 +4,6 @@ import com.customwars.client.model.drop.DropLocationsQueue;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.City;
-import com.customwars.client.model.gameobject.CityFactory;
 import com.customwars.client.model.gameobject.Terrain;
 import com.customwars.client.model.gameobject.TerrainFactory;
 import com.customwars.client.model.gameobject.Unit;
@@ -244,8 +243,7 @@ public class ActionParser {
     Location from = map.getTile(fromCol, fromRow);
     Location to = map.getTile(toCol, toRow);
     Unit unit = map.getUnitOn(from);
-    City city = CityFactory.getCity(cityID);
-    return ActionFactory.buildConstructCityAction(unit, city, to);
+    return ActionFactory.buildConstructCityAction(unit, cityID, to);
   }
 
   private CWAction parseDive(Scanner scanner) {

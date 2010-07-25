@@ -17,7 +17,7 @@ import java.util.Collection;
  */
 public interface GameController {
   /**
-   * Drops a unit within the transport to a drop location
+   * Drops a unit from within the transport to a drop location
    */
   void drop(Unit transport, Unit unit, Location dropLocation);
 
@@ -40,13 +40,15 @@ public interface GameController {
   /**
    * Supplies units around the apc
    *
+   * @param apc The unit that performs the supply action
    * @return The amount of units that have been supplied
    */
   int supply(Unit apc);
 
   /**
    * The unit joins with target. Only the target unit remains on the map.
-   * If joining causes the target to go over the max HP of a unit then add that to the unit owner.
+   * If joining causes the target to go over the max HP of a unit then
+   * translate that excess hp to money and add it to the budget of the unit owner.
    */
   void join(Unit unit, Unit target);
 
@@ -89,10 +91,10 @@ public interface GameController {
 
   /**
    * The unit constructs a new city on the location.
-   * Constructing might take several turns before completion. The city is owned by the unit.
-   * Constructing cities costs construction points.
+   * Constructing might take several turns before completion.
+   * Constructing a city costs construction materials.
    */
-  boolean constructCity(Unit unit, City city, Location location);
+  boolean constructCity(Unit unit, int cityID, Location location);
 
   void dive(Unit unit);
 

@@ -191,14 +191,14 @@ public class ActionFactory {
     return transformTerrainAction;
   }
 
-  public static CWAction buildConstructCityAction(Unit unit, City city, Location to) {
+  public static CWAction buildConstructCityAction(Unit unit, int cityID, Location to) {
     ActionBag buildCityAction = new ActionBag("Build_City");
     buildCityAction.add(new InitAction());
     buildCityAction.add(new MoveAnimatedAction(unit.getLocation(), to));
     buildCityAction.add(new WaitAction(unit));
-    buildCityAction.add(new ConstructCityAction(unit, city, to));
+    buildCityAction.add(new ConstructCityAction(unit, cityID, to));
     buildCityAction.add(new ClearInGameStateAction());
-    buildCityAction.setActionText(unit, to, city.getID());
+    buildCityAction.setActionText(unit, to, cityID);
     return buildCityAction;
   }
 

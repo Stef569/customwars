@@ -6,6 +6,7 @@ import com.customwars.client.model.fight.Fight;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.City;
+import com.customwars.client.model.gameobject.CityFactory;
 import com.customwars.client.model.gameobject.GameObjectState;
 import com.customwars.client.model.gameobject.Locatable;
 import com.customwars.client.model.gameobject.Terrain;
@@ -17,10 +18,11 @@ import com.customwars.client.model.gameobject.UnitVsCityFight;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
-import com.customwars.client.tools.MapUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * CW implementation of a GameController
@@ -29,11 +31,13 @@ public class CWGameController implements GameController {
   private final Game game;
   private final Map<Tile> map;
   private final ControllerManager controllerManager;
+  private final java.util.Map<Location, City> citiesUnderConstruction;
 
   public CWGameController(Game game, ControllerManager controllerManager) {
     this.game = game;
     this.map = game.getMap();
     this.controllerManager = controllerManager;
+    this.citiesUnderConstruction = new HashMap<Location, City>();
   }
 
   @Override
@@ -177,11 +181,15 @@ public class CWGameController implements GameController {
   }
 
   @Override
-  public boolean constructCity(Unit unit, City city, Location location) {
+  public boolean constructCity(Unit unit, int cityID, Location location) {
+    City city = getCityUnderConstructionAt(location, cityID);
+    addCityUnderConstruction(location, city);
+
+    // Note: When the city is constructed it is added to the player cities collection.
     unit.construct(city);
 
     if (unit.isConstructionComplete()) {
-      unit.stopConstructing();
+      stopConstructingCity(unit, location);
       addCityToTile(location, city, unit.getOwner());
       return true;
     } else {
@@ -189,14 +197,37 @@ public class CWGameController implements GameController {
     }
   }
 
+  private void addCityUnderConstruction(Location location, City city) {
+    if (!citiesUnderConstruction.containsKey(location)) {
+      citiesUnderConstruction.put(location, city);
+    }
+  }
+
+  public City getCityUnderConstructionAt(Location location, int cityID) {
+    City city;
+    if (citiesUnderConstruction.containsKey(location)) {
+      city = citiesUnderConstruction.get(location);
+    } else {
+      city = CityFactory.getCity(cityID);
+    }
+    return city;
+  }
+
   private void addCityToTile(Location to, City city, Player cityOwner) {
-    MapUtil.addCityToMap(map, to, city, cityOwner);
+    Tile t = map.getTile(to);
+    city.setLocation(t);
+    t.setTerrain(city);
 
     if (cityOwner.isAi()) {
       controllerManager.addAICityController(city);
     } else {
       controllerManager.addHumanCityController(city);
     }
+  }
+
+  public void stopConstructingCity(Unit unit, Location location) {
+    unit.stopConstructing();
+    citiesUnderConstruction.remove(location);
   }
 
   @Override
@@ -223,6 +254,23 @@ public class CWGameController implements GameController {
       Player activePlayer = game.getActivePlayer();
       map.showLosFor(activePlayer);
       map.resetAllHiddenUnits(activePlayer);
+      validateConstructingCities(unit);
+    }
+  }
+
+  private void validateConstructingCities(Unit unitThatMoved) {
+    // Remove the city under construction location(s) with no apc on.
+    // This happens when the apc construct a city in 1 turn.
+    // But then moves to another location leaving the city in the citiesUnderConstruction collection..
+    if (unitThatMoved.canConstructCity()) {
+      Iterator<Location> iterator = citiesUnderConstruction.keySet().iterator();
+
+      while (iterator.hasNext()) {
+        Location location = iterator.next();
+        if (map.getUnitOn(location) == null) {
+          iterator.remove();
+        }
+      }
     }
   }
 
