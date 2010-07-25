@@ -60,13 +60,8 @@ public class MapUtil {
   }
 
   public static City addCityToMap(TileMap<Tile> map, int col, int row, City city, Player owner) {
-    Tile t = map.getTile(col, row);
-
     owner.addCity(city);
-
-    if (city.isHQ()) {
-      owner.setHq(city);
-    }
+    Tile t = map.getTile(col, row);
     city.setLocation(t);
     t.setTerrain(city);
     return city;
