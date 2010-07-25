@@ -167,7 +167,8 @@ public class Player extends GameObject {
   }
 
   /**
-   * Add the given city to this player, and set this player as owner of the city
+   * Add the given city to this player, and set this player as owner of the city.
+   * If the city is a HQ it is added and set as HQ.
    */
   public void addCity(City city) {
     Args.checkForNull(city, "null city cannot be added");
@@ -175,6 +176,7 @@ public class Player extends GameObject {
 
     cities.add(city);
     city.setOwner(this);
+    if (city.isHQ()) hq = city;
     firePropertyChange("city", null, city);
   }
 
@@ -182,9 +184,19 @@ public class Player extends GameObject {
     return cities.contains(city);
   }
 
+  /**
+   * Remove the given city from this player.
+   * If the city is a HQ it is removed and the hq is set to null.
+   */
   public void removeCity(City city) {
-    cities.remove(city);
-    firePropertyChange("city", city, null);
+    boolean removed = cities.remove(city);
+
+    if (removed) {
+      if (city.isHQ()) hq = null;
+      firePropertyChange("city", city, null);
+    } else {
+      logger.warn("Removing city " + city.getName() + " from player " + name + " failed!");
+    }
   }
 
   /**

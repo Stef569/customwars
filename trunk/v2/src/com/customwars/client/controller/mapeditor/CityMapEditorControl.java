@@ -44,10 +44,6 @@ public class CityMapEditorControl implements MapEditorControl {
       City city = (City) t.getTerrain();
       Player cityOwner = city.getOwner();
       cityOwner.removeCity(city);
-
-      if (city.isHQ()) {
-        cityOwner.setHq(null);
-      }
     }
   }
 

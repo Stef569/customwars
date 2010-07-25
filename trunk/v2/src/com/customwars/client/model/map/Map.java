@@ -603,7 +603,7 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
 
       City city = getCityOn(t);
       if (city != null && city.getOwner().equals(oldPlayer)) {
-        replaceCityOwner(newPlayer, city);
+        newPlayer.addCity(city);
       }
     }
   }
@@ -615,13 +615,6 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
       Unit unitInTransport = (Unit) unit.getLocatable(i);
       newPlayer.addUnit(unitInTransport);
     }
-  }
-
-  private void replaceCityOwner(Player newPlayer, City city) {
-    if (city.isHQ()) {
-      newPlayer.setHq(city);
-    }
-    newPlayer.addCity(city);
   }
 
   public void setFogOfWarOn(boolean fogOfWarOn) {
