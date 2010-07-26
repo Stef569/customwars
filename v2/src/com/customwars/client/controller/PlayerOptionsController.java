@@ -24,6 +24,7 @@ import java.awt.Color;
  * </lu>
  */
 public class PlayerOptionsController {
+  private static final int MAX_NUM_TEAMS = 20;
   private final StateChanger stateChanger;
   private final StateSession stateSession;
   private final ResourceManager resources;
@@ -100,7 +101,7 @@ public class PlayerOptionsController {
   }
 
   private boolean validInput() {
-    if (atLeast2Teams()) {
+    if (!atLeast2Teams()) {
       GUI.showErrDialog(App.translate("gui_teams_same_msg"), App.translate("gui_teams_same_title"));
       return false;
     } else if (!colorsAreUnique()) {
@@ -111,32 +112,68 @@ public class PlayerOptionsController {
   }
 
   /**
+   * Check if there are at least 2 unique teams.
+   * Teams should be in the inclusive range [1-19]
+   * Teams start at 1. There is no team 0.
+   *
    * @return true if there are at least 2 different teams
    */
   private boolean atLeast2Teams() {
+    int teamCount[] = countTeams();
+
+    int numTeams = 0;
+    for (int team = 1; team < MAX_NUM_TEAMS; team++) {
+      if (teamCount[team] > 0) {
+        numTeams++;
+      }
+    }
+
+    return numTeams >= 2;
+  }
+
+  private int[] countTeams() {
     int rows = stateSession.map.getUniquePlayers().size();
-    int team = stateSession.getTeam(0);
+    int[] teamCount = new int[MAX_NUM_TEAMS];
+
+    for (int team = 0; team < MAX_NUM_TEAMS; team++) {
+      for (int row = 0; row < rows; row++) {
+        if (stateSession.getTeam(row) == team) {
+          teamCount[team]++;
+        }
+      }
+    }
+    return teamCount;
+  }
+
+  /**
+   * Checks if each player has an unique color.
+   * If however all CO colors are used up allow any color to be used.
+   *
+   * @return true if each color of each player is unique
+   */
+  private boolean colorsAreUnique() {
+    if (stateSession.hasMoreCOsThenStyles()) return true;
+
+    int rows = stateSession.map.getUniquePlayers().size();
 
     for (int row = 0; row < rows; row++) {
-      if (stateSession.getTeam(row) != team) {
+      int colorCount = getColorCount(stateSession.getColor(row));
+      if (colorCount > 1) {
         return false;
       }
     }
     return true;
   }
 
-  /**
-   * @return true if each color of each player is unique
-   */
-  private boolean colorsAreUnique() {
+  private int getColorCount(Color color) {
+    int colorCount = 0;
     int rows = stateSession.map.getUniquePlayers().size();
-
-    for (int row = 1; row < rows; row++) {
-      Color previousColor = stateSession.getColor(row - 1);
-      if (stateSession.getColor(row).equals(previousColor)) {
-        return false;
+    for (int row = 0; row < rows; row++) {
+      Color colorOnRow = stateSession.getColor(row);
+      if (colorOnRow.equals(color)) {
+        colorCount++;
       }
     }
-    return true;
+    return colorCount;
   }
 }
