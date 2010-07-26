@@ -53,7 +53,7 @@ public class StateSession {
 
   /**
    * Set player defaults for each player:
-   * random CO
+   * random unique CO
    * color equal to the co style
    * unique team
    * human controller
@@ -68,7 +68,7 @@ public class StateSession {
     int team = 1;
     for (Player player : mapPlayers) {
       int playerID = player.getId();
-      CO randomCO = COFactory.getRandomCO();
+      CO randomCO = getUniqueRandomCO();
 
       cos[playerID] = randomCO;
       teams[playerID] = team++;
@@ -76,6 +76,30 @@ public class StateSession {
       colors[playerID] = ColorUtil.toColor(colorName);
       controllers[playerID] = "HUMAN";
     }
+  }
+
+  /**
+   * Get a random CO that is not already included in the CO array.
+   * If all styles are taken just return a random CO.
+   */
+  private CO getUniqueRandomCO() {
+    CO randomCO = COFactory.getRandomCO();
+
+    if (!hasMoreCOsThenStyles()) {
+      while (isColorTaken(randomCO.getStyle().getColor())) {
+        randomCO = COFactory.getRandomCO();
+      }
+    }
+    return randomCO;
+  }
+
+  private boolean isColorTaken(Color color) {
+    for (CO co : cos) {
+      if (co != null && co.getStyle().getColor().equals(color)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   public void setCO(CO co, int playerID) {
@@ -116,5 +140,9 @@ public class StateSession {
 
   public String getControllerType(Player player) {
     return controllers[player.getId()];
+  }
+
+  public boolean hasMoreCOsThenStyles() {
+    return cos.length > COFactory.getAllCOStyles().size();
   }
 }
