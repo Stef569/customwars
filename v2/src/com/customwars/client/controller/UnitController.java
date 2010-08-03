@@ -207,7 +207,7 @@ public abstract class UnitController {
   }
 
   boolean canBuildCity(Tile selected) {
-    return unit.getStats().canBuildCityOn(selected.getTerrain());
+    return unit.canConstructCityOn(selected.getTerrain());
   }
 
   boolean canBuildUnit() {

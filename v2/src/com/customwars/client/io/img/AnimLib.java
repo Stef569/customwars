@@ -20,6 +20,11 @@ import java.util.Map;
  * @author stefan
  */
 public class AnimLib {
+  /**
+   * The start ID of neutral animations. The first neutral city anim has 101 as ID.
+   * This allows to add both neutral cities and cities that can be captured without overlapping the ID's.
+   */
+  public static final int NEUTRAL_CITY_OFFSET = 100;
   public static final String ANIM_LEFT = "LEFT";
   public static final String ANIM_RIGHT = "RIGHT";
   public static final String ANIM_UP = "UP";
@@ -86,23 +91,22 @@ public class AnimLib {
    * The neutral city spritesheet image has 2 cols.
    * the first column contains the active city img and
    * the second column contains the inactive city img.
-   *
+   * <p/>
    * For example a Missile silo would have a platform+rocket as active anim and
    * just a platform w/o rocket as inactive anim.
    */
   private void createNeutralCityAnimations(ResourceManager resources) {
     Color neutralColor = App.getColor("plugin.neutral_color");
-    int coloredCityCount = resources.getCitySpriteSheet(neutralColor).getVerticalCount();
     SpriteSheet neutralCitySpriteSheet = resources.getNeutralCitySpriteSheet();
 
     for (int row = 0; row < neutralCitySpriteSheet.getVerticalCount(); row++) {
       Animation animActive = createAnim(neutralCitySpriteSheet, 0, 1, row, NO_DURATION);
       animActive.setLooping(false);
-      addCityAnim(row + coloredCityCount, neutralColor, "", animActive);
+      addCityAnim(row + NEUTRAL_CITY_OFFSET, neutralColor, "", animActive);
 
       Animation animInActive = createAnim(neutralCitySpriteSheet, 1, 2, row, NO_DURATION);
       animInActive.setLooping(false);
-      addCityAnim(row + coloredCityCount, neutralColor, ANIM_INACTIVE, animInActive);
+      addCityAnim(row + NEUTRAL_CITY_OFFSET, neutralColor, ANIM_INACTIVE, animInActive);
     }
   }
 

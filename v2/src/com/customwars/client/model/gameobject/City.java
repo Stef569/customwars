@@ -43,6 +43,7 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
   private final int healRate;       // Healing/repairs this city can give to a Unit
   private final int maxHp;          // Maximum health points
   private int funds;                // Money that this city produces every turn
+  private boolean canProduceFunds;  // Does this city has the ability to produce funds
   private int imgRowID;             // The row that contains an image for this city
 
   private Location location;  // The location this City is on
@@ -55,7 +56,7 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
   public City(int id, int imgRowID, String type, String connectType, String name, String description, int defenseBonus, int height, List<Integer> moveCosts,
               int vision, boolean hidden, List<Direction> connectedDirections,
               List<ArmyBranch> heals, List<Integer> canBeCaptureBy, List<Integer> builds, int maxCapCount, int healRate,
-              int maxHp) {
+              int maxHp, boolean canProduceFunds) {
     super(id, type, connectType, name, description, defenseBonus, height, hidden, vision, moveCosts, connectedDirections, "");
     this.imgRowID = imgRowID;
     this.heals = heals;
@@ -64,6 +65,7 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
     this.maxCapCount = maxCapCount;
     this.healRate = healRate;
     this.maxHp = maxHp;
+    this.canProduceFunds = canProduceFunds;
     init();
   }
 
@@ -71,14 +73,7 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
    * Create a city with the given ID all the other values are set to default values
    */
   public City(int id) {
-    this(id, id, "", "", "dummy city", "", 0, 0, Arrays.asList(1), 0, false, null, null, null, null, 0, 0, 0);
-  }
-
-  public City(int id, int imgRowID, String type, String name, String description, int defenseBonus, int height, List<Integer> moveCosts,
-              int vision, boolean hidden, List<Direction> connectedDirections,
-              List<ArmyBranch> heals, List<Integer> canBeCaptureBy, List<Integer> builds, int maxCapCount, int healRate,
-              int maxHp) {
-    this(id, imgRowID, type, type, name, description, defenseBonus, height, moveCosts, vision, hidden, connectedDirections, heals, canBeCaptureBy, builds, maxCapCount, healRate, maxHp);
+    this(id, id, "", "", "dummy city", "", 0, 0, Arrays.asList(1), 0, false, null, null, null, null, 0, 0, 0, true);
   }
 
   @Override
@@ -109,6 +104,7 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
     this.capturer = otherCity.capturer;
     this.capCount = otherCity.capCount;
     this.funds = otherCity.funds;
+    this.canProduceFunds = otherCity.canProduceFunds;
     this.hp = otherCity.hp;
   }
 
@@ -122,14 +118,16 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
 
   /**
    * For every start of a Turn
-   * #1 The funds of this city are added to the player budget.
+   * #1 If the city can produce funds. The funds of this city are added to the player budget.
    * #2 If a friendly unit is located on this city it is healed and supplied.
    *
    * @param player the Player that is active in this turn
    */
   public void startTurn(Player player) {
-    int coFunds = player.getCO().cityFundsHook(funds);
-    player.addToBudget(coFunds);
+    if (canProduceFunds) {
+      int coFunds = player.getCO().cityFundsHook(funds);
+      player.addToBudget(coFunds);
+    }
     healFriendlyUnitOnCity();
   }
 
@@ -209,7 +207,9 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
   }
 
   /**
-   * Launch the single rocket from this city
+   * Launch the single rocket missile from this city
+   *
+   * @param unit The unit that wants to fire the missile
    */
   public void launchRocket(Unit unit) {
     if (canLaunchRocket(unit)) {
@@ -247,6 +247,7 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
     return maxHp > 0 && hp != 0;
   }
 
+  @Override
   public boolean isDestroyed() {
     return hp == 0;
   }
@@ -261,10 +262,11 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
     firePropertyChange("owner", oldVal, owner);
   }
 
-  public void setLocation(Location location) {
+  @Override
+  public void setLocation(Location newLocation) {
     Location oldVal = this.location;
-    this.location = location;
-    firePropertyChange("location", oldVal, location);
+    this.location = newLocation;
+    firePropertyChange("location", oldVal, newLocation);
   }
 
   public void setFunds(int funds) {
@@ -336,11 +338,11 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
    */
   public boolean canSupply(Unit unit) {
     return unit != null && heals.contains(unit.getArmyBranch()) &&
-      owner.isAlliedWith(unit.getOwner()) && unit.getLocation() == location;
+      owner.isAlliedWith(unit.getOwner()) && unit.getLocation().equals(location);
   }
 
   public boolean canBeCapturedBy(Unit unit) {
-    return unit != null && canBeCaptureBy.contains(unit.getStats().getID()) && unit.getLocation() == location;
+    return unit != null && canBeCaptureBy.contains(unit.getStats().getID()) && unit.getLocation().equals(location);
   }
 
   public boolean canBeCaptured() {
@@ -423,6 +425,7 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
     return owner == player;
   }
 
+  @Override
   public boolean isAlliedWith(Player player) {
     return owner.isAlliedWith(player);
   }
@@ -455,6 +458,7 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
    * Reset the capturing process:
    * if the unit dies or when the unit moves off this city
    */
+  @Override
   public void propertyChange(PropertyChangeEvent evt) {
     assert capturer != null && evt.getSource() == capturer : "Only interested in events from the unit that is capturing";
     String propertyName = evt.getPropertyName();

@@ -51,13 +51,16 @@ public class UnitStats implements Serializable {
   private final String primaryWeaponName;     // Weapons, "" means no weapon
   private final String secondaryWeaponName;
   private final int suppliesPerTurnWhenHidden;
+  final int maxConstructionMaterial;
 
   public UnitStats(int unitID, int imgRowID, String name, String description,
                    int price, int movement, int vision, int maxExperience,
                    int maxHp, int maxSupplies, int maxTransportCount, int suppliesPerTurn,
                    boolean canCapture, boolean canDive, boolean canSupply, boolean canTransport, boolean canJoin,
                    boolean canFlare, boolean canHide, List<Integer> transports,
-                   ArmyBranch armyBranch, int movementType, Range supplyRange, String primaryWeaponName, String secondaryWeaponName, int healRate, int suppliesPerTurnWhenHidden) {
+                   ArmyBranch armyBranch, int movementType, Range supplyRange,
+                   String primaryWeaponName, String secondaryWeaponName, int healRate,
+                   int suppliesPerTurnWhenHidden, int maxConstructionMaterial) {
     this.unitID = unitID;
     this.imgRowID = imgRowID;
     this.name = name;
@@ -88,6 +91,7 @@ public class UnitStats implements Serializable {
     this.secondaryWeaponName = secondaryWeaponName;
     this.healRate = healRate;
     this.suppliesPerTurnWhenHidden = suppliesPerTurnWhenHidden;
+    this.maxConstructionMaterial = maxConstructionMaterial;
     validate();
   }
 
@@ -102,6 +106,7 @@ public class UnitStats implements Serializable {
     Args.validate(suppliesPerTurn < 0, "supplies per turn should be positive");
     Args.validate(suppliesPerTurnWhenHidden < 0, "supplies per turn when hidden should be positive");
     if (moveStrategy == null) moveStrategy = new DefaultMoveStrategy();
+    Args.validate(maxConstructionMaterial < 0, "Construction material must be positive");
   }
 
   public ArmyBranch getArmyBranch() {
@@ -248,6 +253,10 @@ public class UnitStats implements Serializable {
     return suppliesPerTurnWhenHidden;
   }
 
+  public int getMaxConstructionMaterial() {
+    return maxConstructionMaterial;
+  }
+
   @Override
   public String toString() {
     return "UnitStats{" +
@@ -263,6 +272,7 @@ public class UnitStats implements Serializable {
       ", supplyRange=" + supplyRange +
       ", maxSupplies=" + maxSupplies +
       ", maxTransportCount=" + maxTransportCount +
+      ", maxConstructionMaterial=" + maxConstructionMaterial +
       ", suppliesPerTurn=" + suppliesPerTurn +
       ", suppliesPerTurnWhenHidden=" + suppliesPerTurnWhenHidden +
       ", canCapture=" + canCapture +

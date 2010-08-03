@@ -422,7 +422,7 @@ public class CW1MapConverter {
    */
   private Unit createUnit(int id) {
     UnitStats unitStats = new UnitStats(id, 0, "dummy unit", "", 0, 0, 0, 0, 0, 0, 0, 0,
-      false, false, false, false, false, false, false, null, ArmyBranch.LAND, 0, Range.ZERO_RANGE, "", "", 0, 0);
+      false, false, false, false, false, false, false, null, ArmyBranch.LAND, 0, Range.ZERO_RANGE, "", "", 0, 0, 0);
 
     return new Unit(unitStats);
   }

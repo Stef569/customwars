@@ -31,14 +31,14 @@ public class UnitFight extends BasicFight {
     int attackMaxHP = attackingUnit.getInternalMaxHp();
     int attExpBonus = getExperienceBonus(attackingUnit);
     int attCOBonus = attackingUnit.getOwner().getCO().getAttackBonusPercentage(attackingUnit, defendingUnit);
-    int attCommTowersCount = map.getCityCount("commtower", attackingUnit.getOwner());
+    int attCommTowersCount = map.getCityCount("comm_tower", attackingUnit.getOwner());
     int attackBonus = attCOBonus + attCommTowersCount * 5 + attExpBonus;
 
     int defHP = defendingUnit.getInternalHp();
     int defMaxHP = defendingUnit.getInternalMaxHp();
     int defExpBonus = getExperienceBonus(defendingUnit);
     int defCoBonus = defendingUnit.getOwner().getCO().getDefenseBonusPercentage(attackingUnit, defendingUnit);
-    int defCommTowersCount = map.getCityCount("commtower", defendingUnit.getOwner());
+    int defCommTowersCount = map.getCityCount("comm_tower", defendingUnit.getOwner());
     int terrainDefense = getTerrainDefense(defendingUnit);
     int defenseBonus = defCoBonus + defCommTowersCount * 5 + (terrainDefense * 10 * defHP / defMaxHP) + defExpBonus;
 
