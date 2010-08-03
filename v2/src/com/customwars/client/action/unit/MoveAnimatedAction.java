@@ -64,6 +64,7 @@ public class MoveAnimatedAction extends DelayedAction {
     game = inGameContext.getObj(Game.class);
     moveTraverse = inGameContext.getObj(MoveTraverse.class);
     gameController = inGameContext.getObj(GameController.class);
+    messageSender = inGameContext.getObj(MessageSender.class);
     cursorControl = inGameContext.getObj(CursorController.class);
     cursorControl.setCursorLocked(true);
 
