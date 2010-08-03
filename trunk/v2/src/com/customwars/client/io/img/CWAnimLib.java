@@ -19,10 +19,12 @@ public class CWAnimLib {
   }
 
   /**
-   * Get a colored city animation
+   * Get a city animation. Colored if the city can be captured. Neutral if not.
    */
   public Animation getCityAnim(City city, Color color) {
-    return animLib.getCityAnim(city.getID(), color, "");
+    return city.canBeCaptured() ?
+      animLib.getCityAnim(city.getImgRowID(), color, "") :
+      animLib.getCityAnim(city.getImgRowID() + AnimLib.NEUTRAL_CITY_OFFSET, color, "");
   }
 
   /**
@@ -33,7 +35,8 @@ public class CWAnimLib {
    * if the city can be captured null is returned.
    */
   public Animation getInActiveCityAnim(City city, Color color) {
-    return city.canBeCaptured() ? null : animLib.getCityAnim(city.getID(), color, AnimLib.ANIM_INACTIVE);
+    return city.canBeCaptured() ? null :
+      animLib.getCityAnim(city.getImgRowID() + AnimLib.NEUTRAL_CITY_OFFSET, color, AnimLib.ANIM_INACTIVE);
   }
 
   /**

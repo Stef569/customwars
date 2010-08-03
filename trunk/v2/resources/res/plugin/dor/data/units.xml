@@ -1,24 +1,61 @@
 <!DOCTYPE list [<!ELEMENT list (unit*)>
 
-    <!ELEMENT unit (price, movement, vision,canHide?, canDive?, canCapture?, canJoin?, canFlare?, canSupply?, canTransport?,transports?, transformTerrains?, buildCities?, buildUnits?,maxExperience?, maxHp, supplyRange?, maxSupplies, suppliesPerTurn?, suppliesPerTurnWhenHidden?, maxTransportCount?, healRate?, armyBranch,movementType, primaryWeaponName?, secondaryWeaponName?, description)><!ATTLIST unit name CDATA #REQUIRED><!ATTLIST unit unitID CDATA #REQUIRED><!ATTLIST unit imgRowID CDATA #REQUIRED>
+    <!ELEMENT unit (price, movement, vision,canHide?, canDive?, canCapture?, canJoin?, canFlare?, canSupply?,
+        canTransport?,transports?, transformTerrains?, buildCities?, buildUnits?, maxExperience?, maxHp, supplyRange?,
+        maxSupplies, suppliesPerTurn?, suppliesPerTurnWhenHidden?, maxTransportCount?, maxConstructionMaterial?,
+        buildCities?, healRate?, armyBranch,movementType, primaryWeaponName?, secondaryWeaponName?, description)>
 
-    <!ELEMENT price (#PCDATA)><!ELEMENT movement (#PCDATA)><!ELEMENT vision (#PCDATA)><!ELEMENT canHide (#PCDATA)><!ELEMENT canDive (#PCDATA)>
+    <!ATTLIST unit name CDATA #REQUIRED>
+    <!ATTLIST unit unitID CDATA #REQUIRED>
+    <!ATTLIST unit imgRowID CDATA #REQUIRED>
 
-    <!ELEMENT canCapture (#PCDATA)><!ELEMENT canJoin (#PCDATA)><!ELEMENT canFlare (#PCDATA)><!ELEMENT canSupply (#PCDATA)><!ELEMENT canTransport (#PCDATA)><!ELEMENT transports (int*)><!ELEMENT transformTerrains (map)><!ELEMENT buildCities (map)><!ELEMENT buildUnits (int*)>
+    <!ELEMENT price (#PCDATA)>
+    <!ELEMENT movement (#PCDATA)>
+    <!ELEMENT vision (#PCDATA)>
+    <!ELEMENT canHide (#PCDATA)>
+    <!ELEMENT canDive (#PCDATA)>
 
-    <!ELEMENT map (int*)><!ELEMENT int (#PCDATA)>
+    <!ELEMENT canCapture (#PCDATA)>
+    <!ELEMENT canJoin (#PCDATA)>
+    <!ELEMENT canFlare (#PCDATA)>
+    <!ELEMENT canSupply (#PCDATA)>
+    <!ELEMENT canTransport (#PCDATA)>
+    <!ELEMENT transports (int*)>
+    <!ELEMENT transformTerrains (entry*)>
+    <!ELEMENT buildCities (entry*)>
+    <!ELEMENT buildUnits (int*)>
 
-    <!ELEMENT maxExperience (#PCDATA)><!ELEMENT maxHp (#PCDATA)><!ELEMENT supplyRange (minRange, maxRange)><!ELEMENT minRange (#PCDATA)><!ELEMENT maxRange (#PCDATA)>
+    <!ELEMENT entry (int+)>
+    <!ELEMENT int (#PCDATA)>
 
-    <!ELEMENT maxSupplies (#PCDATA)><!ELEMENT suppliesPerTurn (#PCDATA)><!ELEMENT suppliesPerTurnWhenHidden (#PCDATA)>
+    <!ELEMENT maxExperience (#PCDATA)>
+    <!ELEMENT maxHp (#PCDATA)>
+    <!ELEMENT supplyRange (minRange, maxRange)>
+    <!ELEMENT minRange (#PCDATA)>
+    <!ELEMENT maxRange (#PCDATA)>
 
-    <!ELEMENT maxTransportCount (#PCDATA)><!ELEMENT healRate (#PCDATA)><!ELEMENT armyBranch (#PCDATA)><!ELEMENT movementType (#PCDATA)>
+    <!ELEMENT maxSupplies (#PCDATA)>
+    <!ELEMENT suppliesPerTurn (#PCDATA)>
+    <!ELEMENT suppliesPerTurnWhenHidden (#PCDATA)>
 
-    <!ELEMENT primaryWeaponName (#PCDATA) ><!ELEMENT secondaryWeaponName (#PCDATA)>
+    <!ELEMENT maxTransportCount (#PCDATA)>
+    <!ELEMENT maxConstructionMaterial (#PCDATA)>
+    <!ELEMENT healRate (#PCDATA)>
+    <!ELEMENT armyBranch (#PCDATA)>
+    <!ELEMENT movementType (#PCDATA)>
+
+    <!ELEMENT primaryWeaponName (#PCDATA)>
+    <!ELEMENT secondaryWeaponName (#PCDATA)>
 
     <!ELEMENT description (#PCDATA)>
 
-    <!-- Move Types: --><!ENTITY INF "0"><!ENTITY MECH "1"><!ENTITY TREAD "2"><!ENTITY TIRES "3"><!ENTITY AIR "4"><!ENTITY NAVAL "5">]>
+    <!-- Move Types: -->
+    <!ENTITY INF "0">
+    <!ENTITY MECH "1">
+    <!ENTITY TREAD "2">
+    <!ENTITY TIRES "3">
+    <!ENTITY AIR "4">
+    <!ENTITY NAVAL "5">]>
 <list>
   <unit name="infantry" unitID="0" imgRowID="0">
     <price>1500</price>
@@ -272,6 +309,24 @@
     </supplyRange>
     <maxSupplies>99</maxSupplies>
     <maxTransportCount>1</maxTransportCount>
+
+    <maxConstructionMaterial>1</maxConstructionMaterial>
+    <buildCities>
+      <entry>
+        <int>18</int>
+        <!-- Terrain -->
+        <int>12</int>
+        <!-- City -->
+      </entry>
+      <entry>
+        <int>65</int>
+        <int>11</int>
+      </entry>
+      <entry>
+        <int>0</int>
+        <int>11</int>
+      </entry>
+    </buildCities>
 
     <armyBranch>LAND</armyBranch>
     <movementType>&TREAD;</movementType>

@@ -40,6 +40,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
 
   private final UnitStats stats;
   private City constructingCity; // A City that is being build by this unit
+  private int constructionMaterials;   // Amount of construction material carried
   private int hp;               // Health Points, if 0 the unit is destroyed
   private int supplies;         // Supplies, this can be in the form of rations(troops) or fuel(motorized vehicles)
   private int experience;       // Each time a unit wins a fight his Experience rises(starting from 0)
@@ -116,6 +117,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
     setExperience(0);
     setOrientation(DEFAULT_ORIENTATION);
     setState(GameObjectState.ACTIVE);
+    constructionMaterials = stats.maxConstructionMaterial;
   }
 
   /**
@@ -476,12 +478,18 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
    * @param city The city to construct
    */
   public void construct(City city) {
-    Args.checkForNull(city);
-    if (constructingCity == null || constructingCity.getID() != city.getID()) {
-      constructingCity = city;
-    }
+    if (constructionMaterials > 0) {
+      Args.checkForNull(city);
+      if (constructingCity == null || constructingCity != city) {
+        constructingCity = city;
+      }
 
-    constructingCity.capture(this);
+      constructingCity.capture(this);
+
+      if (constructingCity.isCaptured()) {
+        deCreaseConstructionMaterials();
+      }
+    }
   }
 
   public boolean isConstructionComplete() {
@@ -492,9 +500,23 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
     constructingCity = null;
   }
 
+  public boolean canConstructCity() {
+    return constructionMaterials > 0;
+  }
+
+  public boolean canConstructCityOn(Terrain terrain) {
+    return canConstructCity() && stats.canBuildCityOn(terrain);
+  }
+
   // ---------------------------------------------------------------------------
   // Setters
   // ---------------------------------------------------------------------------
+
+  public void deCreaseConstructionMaterials() {
+    int oldVal = this.constructionMaterials;
+    this.constructionMaterials = Args.getBetweenZeroMax(constructionMaterials - 1, stats.maxConstructionMaterial);
+    firePropertyChange("constructionMaterials", oldVal, constructionMaterials);
+  }
 
   public void setExperience(int newExperience) {
     int oldVal = this.experience;
