@@ -588,7 +588,9 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
       Player newPlayer = new Player(nextPlayerIndex++, currentPlayer.getColor());
       replacePlayer(currentPlayer, newPlayer);
     }
-    replacePlayer(neutralPlayer, neutralPlayer);
+
+    Player newNeutralPlayer = Player.createNeutralPlayer(App.getColor("plugin.neutral_color"));
+    replacePlayer(neutralPlayer, newNeutralPlayer);
   }
 
   /**
