@@ -192,7 +192,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   private void setCoOnBoard(boolean coOnBoard) {
     boolean oldVal = this.coOnBoard;
     this.coOnBoard = coOnBoard;
-    firePropertyChange("cooboard", oldVal, this.coOnBoard);
+    firePropertyChange("coOnBoard", oldVal, this.coOnBoard);
   }
 
   // ----------------------------------------------------------------------------
@@ -620,6 +620,10 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
     firePropertyChange("moveStrategy", oldVal, moveStrategy);
   }
 
+  public void setDefaultOrientation() {
+    setOrientation(owner.getUnitFacingDirection());
+  }
+
   // ---------------------------------------------------------------------------
   // Getters :: Weapon
   // ---------------------------------------------------------------------------
@@ -982,6 +986,10 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
 
   public boolean isInCOZone() {
     return owner.isInCOZone(location);
+  }
+
+  public boolean isFacingTowards(Direction direction) {
+    return orientation == direction;
   }
 
   @Override

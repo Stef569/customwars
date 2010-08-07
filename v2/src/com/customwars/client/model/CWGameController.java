@@ -243,7 +243,7 @@ public class CWGameController implements GameController {
   @Override
   public void makeUnitWait(Unit unit) {
     if (!unit.isDestroyed()) {
-      unit.setOrientation(Unit.DEFAULT_ORIENTATION);
+      unit.setDefaultOrientation();
 
       // Make sure that the change to idle is picked up by the event listeners
       unit.setState(GameObjectState.ACTIVE);

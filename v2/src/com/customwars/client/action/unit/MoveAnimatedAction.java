@@ -95,7 +95,7 @@ public class MoveAnimatedAction extends DelayedAction {
   }
 
   public void undo() {
-    unit.setOrientation(Unit.DEFAULT_ORIENTATION);
+    unit.setDefaultOrientation();
     gameController.teleport(from, to);
     game.setActiveUnit(null);
   }

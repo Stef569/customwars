@@ -36,7 +36,7 @@ public class CWAnimLib {
    */
   public Animation getInActiveCityAnim(City city, Color color) {
     return city.canBeCaptured() ? null :
-      animLib.getCityAnim(city.getImgRowID() + AnimLib.NEUTRAL_CITY_OFFSET, color, AnimLib.ANIM_INACTIVE);
+      animLib.getCityAnim(city.getImgRowID() + AnimLib.NEUTRAL_CITY_OFFSET, color, AnimLib.ANIM_INACTIVE_CITY);
   }
 
   /**
@@ -61,9 +61,18 @@ public class CWAnimLib {
   }
 
   /**
-   * Get a darker version of a unit animation
+   * Get a darker version of a unit animation looking at a specific direction. Only East and West are supported.
    */
-  public Animation getInactiveUnitAnim(Unit unit, Color color) {
-    return animLib.getUnitAnim(unit.getStats().getImgRowID(), color, AnimLib.ANIM_INACTIVE);
+  public Animation getInactiveUnitAnim(Unit unit, Color color, Direction direction) {
+    int unitID = unit.getStats().getImgRowID();
+
+    switch (direction) {
+      case EAST:
+        return animLib.getUnitAnim(unitID, color, AnimLib.ANIM_INACTIVE_UNIT_RIGHT);
+      case WEST:
+        return animLib.getUnitAnim(unitID, color, AnimLib.ANIM_INACTIVE_UNIT_LEFT);
+      default:
+        throw new IllegalArgumentException("Direction " + direction + " is not supported for a unit animation");
+    }
   }
 }

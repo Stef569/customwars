@@ -2,6 +2,9 @@ package com.customwars.client.model.game;
 
 import com.customwars.client.model.Observable;
 import com.customwars.client.model.gameobject.GameObjectState;
+import com.customwars.client.model.gameobject.Unit;
+import com.customwars.client.model.map.Direction;
+import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.tools.Args;
@@ -87,12 +90,31 @@ public class TurnBasedGame implements Observable, Serializable {
 
     for (Player player : players) {
       player.setState(GameObjectState.ACTIVE);
+      detectUnitFacingDirection(player);
+
+      for (Unit unit : player.getArmy()) {
+        unit.setDefaultOrientation();
+      }
     }
 
     setActivePlayer(gameStarter);
     setState(GameState.STARTED);
     startTurn(activePlayer);
     logger.debug("Game with map '" + map.getMapName() + "' has started");
+  }
+
+  /**
+   * The units facing direction is based on the HQ location.
+   * If the HQ is on the left side of the map the units will face to the right.
+   * If the HQ is on the right side of the map the units will face to the left.
+   */
+  private void detectUnitFacingDirection(Player player) {
+    if (player.getHq() != null) {
+      Location hqLocation = player.getHq().getLocation();
+      Direction hqQuadrant = map.getQuadrantFor(hqLocation);
+      Direction unitFacingDir = Direction.isEastQuadrant(hqQuadrant) ? Direction.WEST : Direction.EAST;
+      player.setUnitFacingDirection(unitFacingDir);
+    }
   }
 
   /**

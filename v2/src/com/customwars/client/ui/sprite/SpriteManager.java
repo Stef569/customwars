@@ -29,12 +29,12 @@ import java.util.Set;
 /**
  * Handles all sprites in the game
  * cursors, units, cities
- *
+ * <p/>
  * Each unique animation is stored and updated, if we would update each sprite animation
  * there would be a small interval between other sprite animations.
- *
+ * <p/>
  * This class listens for changes from the model and updates the graphical representations
- *
+ * <p/>
  * For example when a city is captured a new Player is set.
  * This class receives a PropertyChangeEvent and recolors the city to the new owner color.
  *
@@ -150,7 +150,7 @@ public class SpriteManager implements PropertyChangeListener {
   /**
    * Move each cursor on a random position in the map
    * to prevent off the map cursor positions.
-   *
+   * <p/>
    * If an activeCursor has been set then add it to the uniqueAnimations
    */
   private void initCursors() {
@@ -230,12 +230,14 @@ public class SpriteManager implements PropertyChangeListener {
     Animation animRight = resources.getUnitAnim(unit, color, Direction.EAST);
     Animation animUp = resources.getUnitAnim(unit, color, Direction.NORTH);
     Animation animDown = resources.getUnitAnim(unit, color, Direction.SOUTH);
-    Animation animInactive = resources.getInactiveUnitAnim(unit, color);
+    Animation animInactiveLeft = resources.getInactiveUnitAnim(unit, color, Direction.WEST);
+    Animation animInactiveRight = resources.getInactiveUnitAnim(unit, color, Direction.EAST);
     sprite.setAnimLeft(animLeft);
     sprite.setAnimRight(animRight);
     sprite.setAnimUp(animUp);
     sprite.setAnimDown(animDown);
-    sprite.setAnimInActive(animInactive);
+    sprite.setAnimInActiveLeft(animInactiveLeft);
+    sprite.setAnimInActiveRight(animInactiveRight);
     sprite.updateAnim();
   }
 
