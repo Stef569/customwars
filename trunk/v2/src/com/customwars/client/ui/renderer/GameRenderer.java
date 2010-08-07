@@ -118,6 +118,10 @@ public class GameRenderer implements Renderable, PropertyChangeListener {
     return spriteManager.isDyingUnitAnimationCompleted();
   }
 
+  public void shakeScreen() {
+    camera.shake();
+  }
+
   /**
    * Update the active unit in mapRenderer
    * each time the activeunit in the game has changed
