@@ -43,7 +43,7 @@ public class UnitSprite extends TileSprite implements PropertyChangeListener {
   private Animation animRight;
   private Animation animUp;
   private Animation animDown;
-  private Animation animInActive;
+  private Animation animInActiveLeft, animInactiveRight;
   private Animation animDying;
 
   private final Unit unit;
@@ -105,8 +105,12 @@ public class UnitSprite extends TileSprite implements PropertyChangeListener {
     this.animDown = animDown;
   }
 
-  public void setAnimInActive(Animation animInActive) {
-    this.animInActive = animInActive;
+  public void setAnimInActiveLeft(Animation animInActiveLeft) {
+    this.animInActiveLeft = animInActiveLeft;
+  }
+
+  public void setAnimInActiveRight(Animation animInactiveRight) {
+    this.animInactiveRight = animInactiveRight;
   }
 
   public void setAnimDying(Animation animDying) {
@@ -137,12 +141,14 @@ public class UnitSprite extends TileSprite implements PropertyChangeListener {
   }
 
   private void changeState(GameObjectState gameObjectState) {
+    boolean isUnitFacingEast = unit.isFacingTowards(Direction.EAST);
+
     switch (gameObjectState) {
       case IDLE:
-        setAnim(animInActive);
+        setAnim(isUnitFacingEast ? animInactiveRight : animInActiveLeft);
         break;
       case ACTIVE:
-        setAnim(animRight);
+        setAnim(isUnitFacingEast ? animRight : animLeft);
         break;
       case DESTROYED:
         if (animDying.isStopped()) {

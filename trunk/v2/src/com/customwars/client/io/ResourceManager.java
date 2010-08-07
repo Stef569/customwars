@@ -230,8 +230,8 @@ public class ResourceManager {
     return cwAnimLib.getUnitAnim(unit, color, direction);
   }
 
-  public Animation getInactiveUnitAnim(Unit unit, Color color) {
-    return cwAnimLib.getInactiveUnitAnim(unit, color);
+  public Animation getInactiveUnitAnim(Unit unit, Color color, Direction direction) {
+    return cwAnimLib.getInactiveUnitAnim(unit, color, direction);
   }
 
   public Collection<Animation> getAllAnims() {

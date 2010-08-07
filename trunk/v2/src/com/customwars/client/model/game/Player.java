@@ -7,6 +7,7 @@ import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.GameObject;
 import com.customwars.client.model.gameobject.GameObjectState;
 import com.customwars.client.model.gameobject.Unit;
+import com.customwars.client.model.map.Direction;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.tools.Args;
 import com.customwars.client.tools.ColorUtil;
@@ -38,6 +39,7 @@ public class Player extends GameObject {
   private String name;            // Name for this player
   private City hq;                // Headquarters
   private CO co;                  // Commanding officer
+  private Direction unitFacingDirection;  // The direction unit's will face to when idle
 
   private int budget;               // Amount of money that can be spend
   private final List<Unit> army;    // All the units of this player
@@ -98,6 +100,7 @@ public class Player extends GameObject {
     this.co = co;
     this.army = new LinkedList<Unit>();
     this.cities = new LinkedList<City>();
+    this.unitFacingDirection = Unit.DEFAULT_ORIENTATION;
   }
 
   public void startTurn() {
@@ -271,6 +274,10 @@ public class Player extends GameObject {
     this.hq = hq;
   }
 
+  public void setUnitFacingDirection(Direction direction) {
+    this.unitFacingDirection = direction;
+  }
+
   public int getId() {
     return id;
   }
@@ -352,6 +359,10 @@ public class Player extends GameObject {
       }
     }
     return null;
+  }
+
+  public Direction getUnitFacingDirection() {
+    return unitFacingDirection;
   }
 
   @Override

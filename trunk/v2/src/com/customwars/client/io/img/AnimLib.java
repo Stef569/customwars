@@ -29,7 +29,9 @@ public class AnimLib {
   public static final String ANIM_RIGHT = "RIGHT";
   public static final String ANIM_UP = "UP";
   public static final String ANIM_DOWN = "DOWN";
-  public static final String ANIM_INACTIVE = "INACTIVE";
+  public static final String ANIM_INACTIVE_CITY = "INACTIVE";
+  public static final String ANIM_INACTIVE_UNIT_LEFT = "INACTIVE_LEFT";
+  public static final String ANIM_INACTIVE_UNIT_RIGHT = "INACTIVE_RIGHT";
   private static final int NO_DURATION = 1;
   private final Map<String, Animation> animations;
 
@@ -106,7 +108,7 @@ public class AnimLib {
 
       Animation animInActive = createAnim(neutralCitySpriteSheet, 1, 2, row, NO_DURATION);
       animInActive.setLooping(false);
-      addCityAnim(row + NEUTRAL_CITY_OFFSET, neutralColor, ANIM_INACTIVE, animInActive);
+      addCityAnim(row + NEUTRAL_CITY_OFFSET, neutralColor, ANIM_INACTIVE_CITY, animInActive);
     }
   }
 
@@ -187,10 +189,16 @@ public class AnimLib {
       frame += animUpFrameCount;
       totalFrames += animUpFrameCount;
 
-      Animation animInActive = new Animation(false);
-      Image img = inactiveUnitSpriteSheet.getSubImage(animLeftFrameCount + 1, row);
-      animInActive.addFrame(img, NO_DURATION);
-      addUnitAnim(row, color, ANIM_INACTIVE, animInActive);
+      // Create left and right animation with a single shaded unit image
+      Animation animInactiveLeft = new Animation(false);
+      Image inactiveImgLeft = inactiveUnitSpriteSheet.getSubImage(0, row);
+      animInactiveLeft.addFrame(inactiveImgLeft, NO_DURATION);
+      addUnitAnim(row, color, ANIM_INACTIVE_UNIT_LEFT, animInactiveLeft);
+
+      Animation animInactiveRight = new Animation(false);
+      Image inactiveImgRight = inactiveUnitSpriteSheet.getSubImage(animLeftFrameCount + 1, row);
+      animInactiveRight.addFrame(inactiveImgRight, NO_DURATION);
+      addUnitAnim(row, color, ANIM_INACTIVE_UNIT_RIGHT, animInactiveRight);
     }
   }
 
