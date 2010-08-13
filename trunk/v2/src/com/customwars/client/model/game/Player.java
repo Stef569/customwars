@@ -77,6 +77,7 @@ public class Player extends GameObject {
     this.ai = otherPlayer.ai;
     this.army = new LinkedList<Unit>();
     this.cities = new LinkedList<City>();
+    this.unitFacingDirection = otherPlayer.unitFacingDirection;
 
     String otherPlayerCOName = otherPlayer.co.getName();
     if (otherPlayerCOName.equals(DUMMY_CO_NAME)) {
@@ -386,7 +387,7 @@ public class Player extends GameObject {
   @Override
   public String toString() {
     return String.format("[name=%s id=%s state=%s color=%s budget=%s team=%s]",
-      name, id, getState(), ColorUtil.toString(color), budget, team);
+            name, id, getState(), ColorUtil.toString(color), budget, team);
   }
 
   public String printStats() {
