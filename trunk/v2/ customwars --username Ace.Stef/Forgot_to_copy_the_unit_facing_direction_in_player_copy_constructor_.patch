@@ -1,0 +1,12 @@
+Index: src/com/customwars/client/model/game/Player.java
+===================================================================
+--- src/com/customwars/client/model/game/Player.java	(revision 705)
++++ src/com/customwars/client/model/game/Player.java	Fri Aug 13 23:28:48 CEST 2010
+@@ -77,6 +77,7 @@
+     this.ai = otherPlayer.ai;
+     this.army = new LinkedList<Unit>();
+     this.cities = new LinkedList<City>();
++    this.unitFacingDirection = otherPlayer.unitFacingDirection;
+ 
+     String otherPlayerCOName = otherPlayer.co.getName();
+     if (otherPlayerCOName.equals(DUMMY_CO_NAME)) {
