@@ -12,6 +12,7 @@ import com.customwars.client.model.map.Direction;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.tools.FileUtil;
+import com.customwars.client.tools.StringUtil;
 import com.customwars.client.ui.renderer.MapEditorRenderer;
 import com.customwars.client.ui.sprite.SpriteManager;
 import com.customwars.client.ui.sprite.TileSprite;
@@ -91,10 +92,28 @@ public class MapEditorController {
   }
 
   public void saveMap(String mapName, String mapDescription, String author) throws IOException {
+    validateMap(mapName);
     map.setMapName(mapName);
     map.setDescription(mapDescription);
     map.setAuthor(author);
     resources.saveMap(map);
+  }
+
+  private void validateMap(String mapName) {
+    if (map.getNumPlayers() < 2) {
+      throw new IllegalArgumentException(
+        App.translate("gui_err_mapeditor_not_enough_players_msg"));
+    }
+
+    if (!StringUtil.hasContent(mapName)) {
+      throw new IllegalArgumentException(
+        App.translate("gui_err_mapeditor_empty_map_name"));
+    }
+
+    if (resources.isMapCached(mapName)) {
+      throw new IllegalArgumentException(
+        App.translate("gui_err_mapeditor_map_name_not_unique"));
+    }
   }
 
   private void setMap(Map<Tile> map) {
