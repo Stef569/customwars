@@ -39,8 +39,12 @@ public class AppOptionsController {
 
   public void pluginChanged(Widget pluginCbo) {
     String selectedPlugin = pluginCbo.getChild(pluginCbo.getSelectedIndex()).getText();
-    App.put("user.activeplugin", selectedPlugin);
-    GUI.showdialog("The plugin " + selectedPlugin + " will be loaded on the next restart", "Plugin changed");
+    String currentPlugin = App.get("user.activeplugin");
+
+    if (!selectedPlugin.equals(currentPlugin)) {
+      App.put("user.activeplugin", selectedPlugin);
+      GUI.showdialog("The plugin " + selectedPlugin + " will be loaded on the next restart", "Plugin changed");
+    }
   }
 
   public void continueToNextState() {

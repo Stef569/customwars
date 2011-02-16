@@ -52,9 +52,11 @@ public class AppOptionsState extends CWState {
     Widget pluginCbo = page.getWidget("cbo_plugin");
 
     for (String plugin : new File("resources/res/plugin").list()) {
-      Widget choice = page.createWidget("choice");
-      choice.setText(plugin);
-      pluginCbo.add(choice);
+      if (!plugin.startsWith(".")) {
+        Widget choice = page.createWidget("choice");
+        choice.setText(plugin);
+        pluginCbo.add(choice);
+      }
     }
     ThingleUtil.selectChild(pluginCbo, App.get("user.activeplugin"));
   }
