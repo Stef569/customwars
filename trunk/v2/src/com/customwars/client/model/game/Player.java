@@ -14,6 +14,8 @@ import com.customwars.client.tools.ColorUtil;
 import org.apache.log4j.Logger;
 
 import java.awt.Color;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -45,6 +47,7 @@ public class Player extends GameObject {
   private final List<Unit> army;    // All the units of this player
   private final List<City> cities;  // All the cities of this player, including the HQ
   private boolean createdFirstUnit; // Has this player created his first unit
+  private Collection<Location> coZone;
 
   /**
    * Create an unnamed human player with a dummy CO
@@ -78,6 +81,7 @@ public class Player extends GameObject {
     this.army = new LinkedList<Unit>();
     this.cities = new LinkedList<City>();
     this.unitFacingDirection = otherPlayer.unitFacingDirection;
+    this.coZone = otherPlayer.coZone;
 
     String otherPlayerCOName = otherPlayer.co.getName();
     if (otherPlayerCOName.equals(DUMMY_CO_NAME)) {
@@ -102,6 +106,7 @@ public class Player extends GameObject {
     this.army = new LinkedList<Unit>();
     this.cities = new LinkedList<City>();
     this.unitFacingDirection = Unit.DEFAULT_ORIENTATION;
+    this.coZone = Collections.emptyList();
   }
 
   public void startTurn() {
@@ -279,6 +284,10 @@ public class Player extends GameObject {
     this.unitFacingDirection = direction;
   }
 
+  public void setCoZone(Collection<Location> coZone) {
+    this.coZone = coZone;
+  }
+
   public int getId() {
     return id;
   }
@@ -362,6 +371,10 @@ public class Player extends GameObject {
     return null;
   }
 
+  public Collection<Location> getCoZone() {
+    return Collections.unmodifiableCollection(coZone);
+  }
+
   public Direction getUnitFacingDirection() {
     return unitFacingDirection;
   }
@@ -387,7 +400,7 @@ public class Player extends GameObject {
   @Override
   public String toString() {
     return String.format("[name=%s id=%s state=%s color=%s budget=%s team=%s]",
-            name, id, getState(), ColorUtil.toString(color), budget, team);
+      name, id, getState(), ColorUtil.toString(color), budget, team);
   }
 
   public String printStats() {

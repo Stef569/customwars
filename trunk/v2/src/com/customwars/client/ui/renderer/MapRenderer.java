@@ -2,6 +2,7 @@ package com.customwars.client.ui.renderer;
 
 import com.customwars.client.io.ResourceManager;
 import com.customwars.client.io.img.slick.ImageStrip;
+import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Terrain;
 import com.customwars.client.model.gameobject.Unit;
@@ -40,19 +41,26 @@ import java.util.List;
  * @author Stefan
  */
 public class MapRenderer implements Renderable {
-  // Control
+  private static final int CO_ZONE_TOTAL_FADE_TIME = 380;// in ms, smaller value is faster fading
+  private static final int CO_ZONE_ALPHA_STEP = 3;
+  private static final int CO_ZONE_MIN_ALPHA = 6;
+  private static final int CO_ZONE_MAX_ALPHA = 18;
+
   private boolean renderTerrain = true;
 
-  // Graphics
   private SpriteManager spriteManager;
   private ImageStrip terrainStrip;
-  private final Color fogColor = Color.lightGray;
   private MapEffectsRenderer effectsRenderer;
+  private final Color fogColor = Color.lightGray;
+  private final Color coZoneColor = new Color(0, 0, 0, CO_ZONE_MIN_ALPHA / 100f);
+  private boolean increaseAlpha = true;
+  private int coZoneAlpha;
+  private int timer;
 
-  // Data
   private Map<Tile> map;
   private int tileSize;
   private Unit activeUnit;
+  private Player activePlayer;
 
   public MapRenderer(Map<Tile> map) {
     this(map, new SpriteManager(map));
@@ -75,11 +83,37 @@ public class MapRenderer implements Renderable {
   public void update(int elapsedTime) {
     spriteManager.update(elapsedTime);
     effectsRenderer.update(elapsedTime);
+    if (activePlayer != null && activePlayer.isCOLoaded()) {
+      updateZoneAlpha(elapsedTime);
+    }
+  }
+
+  private void updateZoneAlpha(int elapsedTime) {
+    timer += elapsedTime;
+    if (timer > CO_ZONE_TOTAL_FADE_TIME) {
+      timer = 0;
+
+      if (increaseAlpha) {
+        coZoneAlpha += CO_ZONE_ALPHA_STEP;
+      } else {
+        coZoneAlpha -= CO_ZONE_ALPHA_STEP;
+      }
+
+      if (coZoneAlpha >= CO_ZONE_MAX_ALPHA) {
+        increaseAlpha = false;
+      } else if (coZoneAlpha <= CO_ZONE_MIN_ALPHA) {
+        increaseAlpha = true;
+      }
+
+      // Convert int to float since slick color uses floats in the range [0.1 - 1.0]
+      coZoneColor.a = coZoneAlpha / 100f;
+    }
   }
 
   public void render(Graphics g) {
     renderMap(g);
     effectsRenderer.render(g);
+    renderCOZone(activePlayer, g);
     spriteManager.renderUnit(g, activeUnit);
     spriteManager.renderCursor(g);
 
@@ -159,6 +193,19 @@ public class MapRenderer implements Renderable {
     g.drawImage(img, px, py, color);
   }
 
+  public void renderCOZone(Player player, Graphics g) {
+    Color origColor = g.getColor();
+    g.setColor(coZoneColor);
+    if (player != null) {
+      for (Location zoneTile : player.getCoZone()) {
+        int x = zoneTile.getCol() * tileSize;
+        int y = zoneTile.getRow() * tileSize;
+        g.fillRect(x, y, tileSize, tileSize);
+      }
+      g.setColor(origColor);
+    }
+  }
+
   public void removeUnit(Unit unit) {
     if (activeUnit == unit) {
       activeUnit = null;
@@ -173,6 +220,10 @@ public class MapRenderer implements Renderable {
   public void setActiveUnit(Unit activeUnit) {
     this.activeUnit = activeUnit;
     effectsRenderer.setActiveUnit(activeUnit);
+  }
+
+  public void setActivePlayer(Player activePlayer) {
+    this.activePlayer = activePlayer;
   }
 
   public void setTerrainStrip(ImageStrip terrainStrip) {

@@ -130,6 +130,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
     if (coOnBoard) {
       setCoOnBoard(false);
       owner.getCO().resetPowerGauge();
+      owner.setCoZone(Collections.<Location>emptyList());
     }
 
     clearTransport();

@@ -6,9 +6,12 @@ import com.customwars.client.action.DelayedAction;
 import com.customwars.client.controller.CursorController;
 import com.customwars.client.model.GameController;
 import com.customwars.client.model.game.Game;
+import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.gameobject.UnitState;
 import com.customwars.client.model.map.Location;
+import com.customwars.client.model.map.Map;
+import com.customwars.client.model.map.Tile;
 import com.customwars.client.model.map.path.MoveTraverse;
 import com.customwars.client.network.MessageSender;
 import com.customwars.client.network.NetworkException;
@@ -16,6 +19,8 @@ import com.customwars.client.ui.GUI;
 import com.customwars.client.ui.renderer.MapRenderer;
 import com.customwars.client.ui.state.InGameContext;
 import org.apache.log4j.Logger;
+
+import java.util.Collection;
 
 /**
  * Moves the unit animated from the 'from' location to the 'to' location
@@ -31,6 +36,7 @@ public class MoveAnimatedAction extends DelayedAction {
   InGameContext context;
   MoveTraverse moveTraverse;
   Game game;
+  Map<Tile> map;
   Location from;
   Location to;
   Unit unit;
@@ -62,6 +68,7 @@ public class MoveAnimatedAction extends DelayedAction {
 
     this.context = inGameContext;
     game = inGameContext.getObj(Game.class);
+    map = game.getMap();
     moveTraverse = inGameContext.getObj(MoveTraverse.class);
     gameController = inGameContext.getObj(GameController.class);
     messageSender = inGameContext.getObj(MessageSender.class);
@@ -90,6 +97,14 @@ public class MoveAnimatedAction extends DelayedAction {
     } else {
       context.setTrapped(false);
     }
+
+    if (unit.isCoOnBoard()) {
+      Player unitOwner = unit.getOwner();
+      int zoneRange = unitOwner.getCO().getZoneRange();
+      Collection<Location> coZone = map.buildCOZone(unit, zoneRange);
+      unitOwner.setCoZone(coZone);
+    }
+
     cursorControl.setCursorLocked(false);
     if (App.isMultiplayer()) sendMove();
   }

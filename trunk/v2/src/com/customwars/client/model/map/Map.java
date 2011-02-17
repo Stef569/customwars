@@ -723,6 +723,21 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
   }
 
   /**
+   * Create a collection of tiles that covers the co zone area around the given unit.
+   * When the zone range is 0 an empty collection is returned.
+   */
+  public Collection<Location> buildCOZone(Unit unit, int zoneRange) {
+    Collection<Location> coZone = new ArrayList<Location>();
+    if (zoneRange != 0) {
+      coZone.add(unit.getLocation());
+      for (Tile t : getSurroundingTiles(unit.getLocation(), 1, zoneRange)) {
+        coZone.add(t);
+      }
+    }
+    return coZone;
+  }
+
+  /**
    * @return Amount of human players in this map
    */
   public int getNumPlayers() {

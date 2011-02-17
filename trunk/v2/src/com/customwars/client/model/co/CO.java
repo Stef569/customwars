@@ -133,4 +133,9 @@ public interface CO extends Serializable {
    * @return a collection of possible defeat strings
    */
   String[] getDefeat();
+
+  /**
+   * @return The distance in tiles around a unit that covers the co zone..
+   */
+  int getZoneRange();
 }
