@@ -149,10 +149,11 @@ public abstract class AbstractCO implements CO {
   @Override
   public boolean isInCOZone(Unit unit, Location location) {
     int distance = TileMap.getDistanceBetween(unit.getLocation(), location);
-    return distance - getCOZone() <= 0;
+    return distance - getZoneRange() <= 0;
   }
 
-  private int getCOZone() {
+  @Override
+  public int getZoneRange() {
     return hasExtendedZone() ? coZone + 1 : hasMaxedZone() ? coZone + 2 : coZone;
   }
 

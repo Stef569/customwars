@@ -2,6 +2,7 @@ package com.customwars.client.ui.renderer;
 
 import com.customwars.client.io.ResourceManager;
 import com.customwars.client.model.game.Game;
+import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
@@ -123,8 +124,7 @@ public class GameRenderer implements Renderable, PropertyChangeListener {
   }
 
   /**
-   * Update the active unit in mapRenderer
-   * each time the activeunit in the game has changed
+   * Keep the active unit and active player in sync with the map renderer.
    *
    * @param evt An event from the game
    */
@@ -133,6 +133,9 @@ public class GameRenderer implements Renderable, PropertyChangeListener {
       if (evt.getPropertyName().equals("activeunit")) {
         Unit activeUnit = (Unit) evt.getNewValue();
         mapRenderer.setActiveUnit(activeUnit);
+      } else if (evt.getPropertyName().equals("activeplayer")) {
+        Player player = (Player) evt.getNewValue();
+        mapRenderer.setActivePlayer(player);
       }
     }
   }
