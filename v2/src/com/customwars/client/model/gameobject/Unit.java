@@ -558,7 +558,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
     setHp(hp + additionalHp * 10);
   }
 
-  protected void setHp(int hp) {
+  public void setHp(int hp) {
     if (hp <= 0) {
       destroy(true);
     }
@@ -991,6 +991,16 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
 
   public boolean isFacingTowards(Direction direction) {
     return orientation == direction;
+  }
+
+  /**
+   * Checks if the given damage would destroy the unit.
+   *
+   * @param dmg the damage to subtract in health points.
+   * @return if the unit will be destroyed when the given damage is applied.
+   */
+  public boolean willBeDestroyedAfterTakingDamage(int dmg) {
+    return hp - dmg * 10 <= 0;
   }
 
   @Override
