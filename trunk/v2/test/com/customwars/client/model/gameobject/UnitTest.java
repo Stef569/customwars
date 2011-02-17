@@ -109,4 +109,16 @@ public class UnitTest {
     UnitFactory.getUnit("infantry").getMovePoints();
     UnitFactory.getUnit("infantry").getCaptureRate();
   }
+
+  @Test
+  public void testWillBeDestroyed() {
+    Unit unit = UnitFactory.getUnit("infantry");
+
+    Assert.assertFalse(unit.willBeDestroyedAfterTakingDamage(2));
+    Assert.assertFalse(unit.willBeDestroyedAfterTakingDamage(4));
+    Assert.assertFalse(unit.willBeDestroyedAfterTakingDamage(5));
+    Assert.assertFalse(unit.willBeDestroyedAfterTakingDamage(6));
+    Assert.assertFalse(unit.willBeDestroyedAfterTakingDamage(9));
+    Assert.assertTrue(unit.willBeDestroyedAfterTakingDamage(10));
+  }
 }

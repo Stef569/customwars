@@ -155,13 +155,17 @@ public class CWGameController implements GameController {
     return explosionArea;
   }
 
-  private void inflictDamageToArea(Collection<Location> range, int damage) {
-    for (Location location : range) {
+  private void inflictDamageToArea(Collection<Location> area, int damage) {
+    for (Location location : area) {
       Locatable locatable = location.getLastLocatable();
 
       if (locatable instanceof Unit) {
         Unit unitInRange = (Unit) locatable;
-        unitInRange.addHp(-damage);
+        if (unitInRange.willBeDestroyedAfterTakingDamage(damage)) {
+          unitInRange.setHp(1);
+        } else {
+          unitInRange.addHp(-damage);
+        }
       }
     }
   }

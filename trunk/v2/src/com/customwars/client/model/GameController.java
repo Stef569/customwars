@@ -67,7 +67,8 @@ public interface GameController {
   int attack(Unit attacker, Unit defender);
 
   /**
-   * Launch a rocket and inflict damage to the effect range
+   * Launch a rocket from a silo and inflict damage to the effect range.
+   * Note that units cannot die of a rocket attack. Instead they will keep 1HP.
    *
    * @param unit              unit that caused the rocket to launch
    * @param silo              The silo containing the rocket
