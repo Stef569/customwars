@@ -248,13 +248,15 @@ public class GameTest {
 
     Assert.assertSame(p1, game.getActivePlayer());
 
+    City player2HQ = p2.getHq();
+
     // p1 inf1 Captures the HQ of p2
     p2.getHq().capture(inf1);
     p2.getHq().capture(inf1);
 
     Assert.assertTrue(inf2.isDestroyed());
-    Assert.assertTrue(p2.getHq().isCapturedBy(inf1));
-    Assert.assertSame(p1, p2.getHq().getOwner());
+    Assert.assertTrue(player2HQ.isCapturedBy(inf1));
+    Assert.assertSame(p1, player2HQ.getOwner());
     Assert.assertTrue(map.getCityOn(map.getTile(1, 0)).getOwner() == p1);
     Assert.assertTrue(p2.isDestroyed());
     Assert.assertTrue(game.isGameOver());
