@@ -259,6 +259,14 @@ public class CWGameController implements GameController {
       map.showLosFor(activePlayer);
       map.resetAllHiddenUnits(activePlayer);
       validateConstructingCities(unit);
+
+      // Update the co zone
+      if (unit.isCoOnBoard()) {
+        Player unitOwner = unit.getOwner();
+        int zoneRange = unitOwner.getCO().getZoneRange();
+        Collection<Location> coZone = map.buildCOZone(unit, zoneRange);
+        unitOwner.setCoZone(coZone);
+      }
     }
   }
 
