@@ -6,7 +6,6 @@ import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Direction;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Map;
-import com.customwars.client.model.map.Tile;
 import com.customwars.client.tools.Args;
 import org.apache.log4j.Logger;
 
@@ -40,7 +39,7 @@ public class TurnBasedGame implements Observable, Serializable {
     IDLE, STARTED, GAME_OVER
   }
 
-  final Map<Tile> map;          // The map containing all the tiles
+  final Map map;          // The map containing all the tiles
   private final Turn turn;      // The current turn + limits
   private final List<Player> players; // The Human and AI players that are in this game
   private Player activePlayer;  // There can only be one active player in a game at any time
@@ -52,7 +51,7 @@ public class TurnBasedGame implements Observable, Serializable {
    * @param otherGame game to copy
    */
   public TurnBasedGame(TurnBasedGame otherGame) {
-    map = new Map<Tile>(otherGame.map);
+    map = new Map(otherGame.map);
     turn = new Turn(otherGame.turn);
     players = copyPlayers(otherGame.players);
     if (otherGame.activePlayer != null) {
@@ -70,7 +69,7 @@ public class TurnBasedGame implements Observable, Serializable {
     return playerCopies;
   }
 
-  public TurnBasedGame(Map<Tile> map, List<Player> players, int dayLimit) {
+  public TurnBasedGame(Map map, List<Player> players, int dayLimit) {
     Args.checkForNull(map);
     Args.checkForNull(players);
 
@@ -218,7 +217,7 @@ public class TurnBasedGame implements Observable, Serializable {
     return playerCount;
   }
 
-  public Map<Tile> getMap() {
+  public Map getMap() {
     return map;
   }
 

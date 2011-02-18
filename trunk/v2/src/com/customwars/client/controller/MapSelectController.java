@@ -2,7 +2,6 @@ package com.customwars.client.controller;
 
 import com.customwars.client.io.ResourceManager;
 import com.customwars.client.model.map.Map;
-import com.customwars.client.model.map.Tile;
 import com.customwars.client.tools.StringUtil;
 import com.customwars.client.ui.renderer.widget.CityCountWidgetRenderer;
 import com.customwars.client.ui.renderer.widget.MiniMapWidgetRenderer;
@@ -35,7 +34,7 @@ public class MapSelectController {
   }
 
   public void mapSelected() {
-    Map<Tile> map = getCurrentSelectedMap();
+    Map map = getCurrentSelectedMap();
 
     Widget mapNameWidget = page.getWidget("map_name");
     if (StringUtil.hasContent(map.getAuthor())) {
@@ -54,7 +53,7 @@ public class MapSelectController {
       Widget mapList = page.getWidget("map_list");
       mapList.removeChildren();
 
-      for (Map<Tile> map : resources.getAllMapsByCategory(mapCategory)) {
+      for (Map map : resources.getAllMapsByCategory(mapCategory)) {
         Widget item = page.createWidget("item");
         item.setText(map.getMapName());
         mapList.add(item);
@@ -66,7 +65,7 @@ public class MapSelectController {
     }
   }
 
-  private Map<Tile> getCurrentSelectedMap() {
+  private Map getCurrentSelectedMap() {
     Widget mapList = page.getWidget("map_list");
     Widget selectedItem = mapList.getSelectedWidget();
     return resources.getMap(selectedItem.getText());

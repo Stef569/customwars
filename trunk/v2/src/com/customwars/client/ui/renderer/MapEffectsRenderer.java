@@ -6,7 +6,6 @@ import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Direction;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Map;
-import com.customwars.client.model.map.Tile;
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Graphics;
 
@@ -19,7 +18,7 @@ public class MapEffectsRenderer {
   private boolean renderArrowHead = true;
 
   // Data
-  private final Map<Tile> map;
+  private final Map map;
   private final int tileSize;
   private Unit activeUnit;
   private Collection<Location> explosionArea;
@@ -35,7 +34,7 @@ public class MapEffectsRenderer {
   private Animation attackZoneAnim;
   private ImageStrip arrowImages;
 
-  public MapEffectsRenderer(MapRenderer mapRenderer, Map<Tile> map) {
+  public MapEffectsRenderer(MapRenderer mapRenderer, Map map) {
     this.mapRenderer = mapRenderer;
     this.map = map;
     this.tileSize = map.getTileSize();
@@ -121,7 +120,7 @@ public class MapEffectsRenderer {
    * To render an arrow we need a current and next direction
    * Read 1 Direction ahead, When the loop is at the last item in the path we render an arrowHead
    * The arrowHead only needs 1 direction(the arrow base)
-   *
+   * <p/>
    * nextLocation starts at the unit location and is set to the next location in the path in each loop
    */
   private void renderArrowPath(Graphics g, List<Direction> directionPath) {
@@ -195,6 +194,7 @@ public class MapEffectsRenderer {
   //----------------------------------------------------------------------------
   // Zones & Arrows
   //----------------------------------------------------------------------------
+
   public void removeZones() {
     removeMoveZone();
     removeAttackZone();

@@ -12,9 +12,9 @@ import java.awt.Color;
  * Add/Remove units from a map in map editor mode
  */
 public class UnitMapEditorControl implements MapEditorControl {
-  private final Map<Tile> map;
+  private final Map map;
 
-  public UnitMapEditorControl(Map<Tile> map) {
+  public UnitMapEditorControl(Map map) {
     this.map = map;
   }
 
@@ -41,7 +41,7 @@ public class UnitMapEditorControl implements MapEditorControl {
     }
   }
 
-  public void fillMap(Map<Tile> map, int id) {
+  public void fillMap(Map map, int id) {
     // map can't be filled with units
   }
 

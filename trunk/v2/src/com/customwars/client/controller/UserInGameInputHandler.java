@@ -31,7 +31,7 @@ public class UserInGameInputHandler implements InGameInputHandler {
   private final GUIContext guiContext;
   private final Game game;
   private final CursorController cursorController;
-  private final Map<Tile> map;
+  private final Map map;
 
   public UserInGameInputHandler(InGameContext inGameContext) {
     this.game = inGameContext.getObj(Game.class);

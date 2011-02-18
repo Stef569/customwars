@@ -28,7 +28,7 @@ public class TileMapTest {
   @Before
   public void beforeEachTest() {
     plain = TerrainFactory.getTerrain(TestData.PLAIN);
-    map = new Map<Tile>(10, 15, 32, plain);
+    map = new Map(10, 15, 32, plain);
   }
 
   @AfterClass
@@ -347,7 +347,7 @@ public class TileMapTest {
   @Test
   public void quadrantWithUnEvenMapSize() {
     Location middle = new Location2D(5, 7);
-    TileMap map = new Map<Tile>(10, 15, 32, plain);
+    TileMap map = new Map(10, 15, 32, plain);
     Direction quadrant = map.getQuadrantFor(middle);
     Assert.assertNotNull(quadrant);
   }

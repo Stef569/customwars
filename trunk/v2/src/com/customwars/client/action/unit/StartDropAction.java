@@ -25,7 +25,7 @@ public class StartDropAction extends DirectAction {
   private InGameContext inGameContext;
   private CursorController cursorControl;
   private MapRenderer mapRenderer;
-  private Map<Tile> map;
+  private Map map;
   private final Location center;
   private final Unit transport;
   private final Unit unitToBeDropped;

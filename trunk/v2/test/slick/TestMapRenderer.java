@@ -5,7 +5,6 @@ import com.customwars.client.controller.CursorController;
 import com.customwars.client.model.map.Direction;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Map;
-import com.customwars.client.model.map.Tile;
 import com.customwars.client.ui.Camera2D;
 import com.customwars.client.ui.Scroller;
 import com.customwars.client.ui.renderer.MapRenderer;
@@ -26,7 +25,7 @@ import java.awt.Dimension;
 public class TestMapRenderer extends CWState {
   private GUIContext guiContext;
   private MapRenderer mapRenderer;
-  private Map<Tile> map;
+  private Map map;
   private Camera2D camera;
   private Scroller scroller;
   private CursorController cursorControl;
@@ -41,7 +40,7 @@ public class TestMapRenderer extends CWState {
     initMap(map);
   }
 
-  public void initMap(Map<Tile> map) {
+  public void initMap(Map map) {
     SpriteManager spriteManager = new SpriteManager(map);
     mapRenderer = new MapRenderer(map, spriteManager);
     mapRenderer.loadResources(resources);

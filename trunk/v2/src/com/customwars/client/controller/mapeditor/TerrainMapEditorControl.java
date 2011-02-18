@@ -30,7 +30,7 @@ public class TerrainMapEditorControl implements MapEditorControl {
     return true;
   }
 
-  public void fillMap(Map<Tile> map, int terrainID) {
+  public void fillMap(Map map, int terrainID) {
     map.fillWithTerrain(getTerrain(terrainID));
   }
 

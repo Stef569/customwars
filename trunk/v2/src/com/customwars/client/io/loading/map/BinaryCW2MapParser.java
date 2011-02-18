@@ -27,29 +27,29 @@ import java.util.HashMap;
 /**
  * Converts a CW2 map objects to and from a binary file.
  * Each Terrain, City and Unit object has an unique ID: eg. Tank=1 Inf=4 Bomber=403
- *
+ * <p/>
  * When a data block is optional or when the data block varies in size, a start byte is prepended
  * eg. Terrain=0 City=1 Unit=2 no_unit=3
- *
+ * <p/>
  * The bin format has 2 chunks the Header and the map data.
  * The header has 3 chunks:
  * Static, Player and Map properties
- *
+ * <p/>
  * Formatting used:
  * One binary field
  * <field name> data type (possible values)
- *
+ * <p/>
  * A group of related fields
  * CHUNK:
- *
+ * <p/>
  * Reads/writes the field list under the for each multiple times
  * for each entity
- *
+ * <p/>
  * Reads/writes fieldList1 or 2 depending on the start byte
  * fieldList1
  * or
  * fieldList2
- *
+ * <p/>
  * STATIC HEADER:
  * <CW2_HEADER_START> txt
  * <COLS> int
@@ -57,7 +57,7 @@ import java.util.HashMap;
  * <MAP_NAME>
  * <AUTHOR>
  * <DESCRIPTION>
- *
+ * <p/>
  * PLAYER HEADER:
  * <NUM_PLAYERS> byte
  * for each player (excluding the neutral player)
@@ -65,25 +65,25 @@ import java.util.HashMap;
  * <PLAYER_RGB> int
  * <PLAYER_HQ_COL> int
  * <PLAYER_HQ_ROW> int
- *
+ * <p/>
  * RULES:
  * <startWeather> int
  * <cityFunds> int
  * <dayLimit> int
  * <playerBudgetStart> int
  * <fogOfWar> boolean
- *
+ * <p/>
  * MAP DATA:
  * <TILE COL> int
  * <TILE ROW> int
- *
+ * <p/>
  * <START_TERRAIN> byte (TERRAIN_START)
  * <TERRAIN_ID> byte
  * or
  * <START_CITY> byte (CITY_START)
  * <CITY_ID> byte
  * <OWNER_ID> byte
- *
+ * <p/>
  * <START_UNIT> byte (UNIT_START or NO_UNIT)
  * <UNIT_ID> byte
  * <OWNER_ID> byte
@@ -101,12 +101,12 @@ public class BinaryCW2MapParser implements MapParser {
   private static final byte UNIT_START = 2;
   private static final byte NO_UNIT = 3;
 
-  public Map<Tile> readMap(InputStream in) throws IOException {
+  public Map readMap(InputStream in) throws IOException {
     BinaryMapReader reader = new BinaryMapReader(new DataInputStream(in));
     return reader.read();
   }
 
-  public void writeMap(Map<Tile> map, OutputStream out) throws IOException {
+  public void writeMap(Map map, OutputStream out) throws IOException {
     BinaryMapWriter binMapParser = new BinaryMapWriter(map, new DataOutputStream(out));
     binMapParser.write();
   }
@@ -120,8 +120,8 @@ public class BinaryCW2MapParser implements MapParser {
       this.in = in;
     }
 
-    public Map<Tile> read() throws IOException {
-      Map<Tile> map = null;
+    public Map read() throws IOException {
+      Map map = null;
 
       try {
         validateStream(in);
@@ -143,14 +143,14 @@ public class BinaryCW2MapParser implements MapParser {
       }
     }
 
-    private Map<Tile> readMap() throws IOException {
-      Map<Tile> map = readHeader();
+    private Map readMap() throws IOException {
+      Map map = readHeader();
       map.setDefaultRules(readGameRules());
       return readMapData(map);
     }
 
-    private Map<Tile> readHeader() throws IOException {
-      Map<Tile> map = readStaticHeader();
+    private Map readHeader() throws IOException {
+      Map map = readStaticHeader();
       readMapPlayers();
 
       // Always add the neutral player so neutral cities can be looked up
@@ -158,7 +158,7 @@ public class BinaryCW2MapParser implements MapParser {
       return map;
     }
 
-    private Map<Tile> readStaticHeader() throws IOException {
+    private Map readStaticHeader() throws IOException {
       int cols = in.readInt();
       int rows = in.readInt();
       String mapName = in.readUTF();
@@ -167,7 +167,7 @@ public class BinaryCW2MapParser implements MapParser {
 
       Terrain plain = TerrainFactory.getTerrain(0);
       int tileSize = App.getInt("plugin.tilesize");
-      return new Map<Tile>(mapName, author, description, cols, rows, tileSize, plain);
+      return new Map(mapName, author, description, cols, rows, tileSize, plain);
     }
 
     private void readMapPlayers() throws IOException {
@@ -208,7 +208,7 @@ public class BinaryCW2MapParser implements MapParser {
       return new GameRules(weatherStart, fogOfWar, dayLimit, cityFunds, playerBudgetStart);
     }
 
-    private Map<Tile> readMapData(Map<Tile> map) throws IOException {
+    private Map readMapData(Map map) throws IOException {
       while (true) {
         try {
           Tile t = readTile();
@@ -352,10 +352,10 @@ public class BinaryCW2MapParser implements MapParser {
   }
 
   private static class BinaryMapWriter {
-    private final Map<Tile> map;
+    private final Map map;
     private final DataOutputStream out;
 
-    public BinaryMapWriter(Map<Tile> map, DataOutputStream out) {
+    public BinaryMapWriter(Map map, DataOutputStream out) {
       this.map = map;
       this.out = out;
     }
@@ -471,7 +471,7 @@ public class BinaryCW2MapParser implements MapParser {
      * If this unit is a transport with units inside it
      * write the transport count followed by
      * a list of the units inside
-     *
+     * <p/>
      * If this unit is not a transport or the transport is empty
      * write 0 as transport count
      */

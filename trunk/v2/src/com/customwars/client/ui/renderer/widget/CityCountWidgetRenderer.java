@@ -5,7 +5,6 @@ import com.customwars.client.io.ResourceManager;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.CityFactory;
 import com.customwars.client.model.map.Map;
-import com.customwars.client.model.map.Tile;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Font;
 import org.newdawn.slick.Graphics;
@@ -28,7 +27,7 @@ public class CityCountWidgetRenderer implements WidgetRenderer {
   private static final int BACKGROUND_MARGIN = 8;
   private final ResourceManager resources;
 
-  private Map<Tile> map;
+  private Map map;
   private int tileSize;
   private int[] mapCitiesCount;  // index=base city ID, value=city count in the map
 
@@ -40,7 +39,7 @@ public class CityCountWidgetRenderer implements WidgetRenderer {
     numbers = resources.getFont("numbers");
   }
 
-  public void setMap(Map<Tile> map) {
+  public void setMap(Map map) {
     this.map = map;
     this.tileSize = map.getTileSize();
     calcCityCount();

@@ -40,7 +40,7 @@ public class GameRenderer implements Renderable, PropertyChangeListener {
 
   // Data
   private final Game game;
-  private final Map<Tile> map;
+  private final Map map;
 
   public GameRenderer(Game game, Camera2D camera, HUD hud, MoveTraverse moveTraverse) {
     this.game = game;

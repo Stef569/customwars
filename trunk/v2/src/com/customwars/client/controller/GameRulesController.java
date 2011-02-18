@@ -6,7 +6,6 @@ import com.customwars.client.model.game.Game;
 import com.customwars.client.model.game.GameRules;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.map.Map;
-import com.customwars.client.model.map.Tile;
 import com.customwars.client.tools.ColorUtil;
 import com.customwars.client.tools.ThingleUtil;
 import com.customwars.client.ui.state.StateChanger;
@@ -85,7 +84,7 @@ public class GameRulesController {
   }
 
   private void startSinglePlayerGame() {
-    Map<Tile> map = stateSession.map;
+    Map map = stateSession.map;
     List<Player> players = buildGamePlayers(map);
     stateSession.game = new Game(map, players, gameRules);
     stateChanger.changeTo("IN_GAME");
@@ -94,7 +93,7 @@ public class GameRulesController {
   /**
    * Create a new game player for each player in the map
    */
-  private List<Player> buildGamePlayers(Map<Tile> map) {
+  private List<Player> buildGamePlayers(Map map) {
     List<Player> gamePlayers = new ArrayList<Player>();
     for (Player mapPlayer : map.getUniquePlayers()) {
       int id = mapPlayer.getId();

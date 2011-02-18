@@ -3,7 +3,6 @@ package com.customwars.client.controller.multiplayer;
 import com.customwars.client.App;
 import com.customwars.client.action.network.CheckGameNameAlreadyUsed;
 import com.customwars.client.model.map.Map;
-import com.customwars.client.model.map.Tile;
 import com.customwars.client.network.MessageSender;
 import com.customwars.client.network.MessageSenderFactory;
 import com.customwars.client.network.NetworkException;
@@ -22,7 +21,7 @@ public class ServerGameCreateController {
   private final StateSession stateSession;
   private MessageSender messageSender;
   private Page page;
-  private Map<Tile> map;
+  private Map map;
 
   public ServerGameCreateController(StateChanger stateChanger, StateSession stateSession) {
     this.stateChanger = stateChanger;

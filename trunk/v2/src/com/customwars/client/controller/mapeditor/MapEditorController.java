@@ -43,7 +43,7 @@ public class MapEditorController {
   private List<MapEditorControl> controls;
   private final int panelCount;
   private int activePanelID, colorID;
-  private Map<Tile> map;
+  private Map map;
 
   public MapEditorController(MapEditorRenderer mapEditorView, ResourceManager resources) {
     this.resources = resources;
@@ -63,7 +63,7 @@ public class MapEditorController {
     int tileSize = App.getInt("plugin.tilesize");
     Terrain plain = TerrainFactory.getTerrain(0);
 
-    Map<Tile> emptyMap = new Map<Tile>(cols, rows, tileSize, plain);
+    Map emptyMap = new Map(cols, rows, tileSize, plain);
     setMap(emptyMap);
   }
 
@@ -81,7 +81,7 @@ public class MapEditorController {
 
     String mapName = FileUtil.StripFileExtension(file.getName());
     boolean isCached = resources.isMapCached(mapName);
-    Map<Tile> map = isCached ? resources.getMap(mapName) : resources.loadMap(new FileInputStream(file));
+    Map map = isCached ? resources.getMap(mapName) : resources.loadMap(new FileInputStream(file));
     setMap(map);
   }
 
@@ -116,7 +116,7 @@ public class MapEditorController {
     }
   }
 
-  private void setMap(Map<Tile> map) {
+  private void setMap(Map map) {
     this.map = map;
     SpriteManager spriteManager = new SpriteManager(map);
     mapEditorView.setMap(map, spriteManager);
@@ -125,14 +125,14 @@ public class MapEditorController {
     initCursors(map);
   }
 
-  private void buildControls(Map<Tile> map) {
+  private void buildControls(Map map) {
     controls = new ArrayList<MapEditorControl>();
     controls.add(new TerrainMapEditorControl(map));
     controls.add(new CityMapEditorControl(map));
     controls.add(new UnitMapEditorControl(map));
   }
 
-  private void initCursors(Map<Tile> map) {
+  private void initCursors(Map map) {
     TileSprite selectCursor = resources.createCursor(map, App.get("user.selectcursor"));
     cursorController.addCursor("SELECT", selectCursor);
     cursorController.activateCursor("SELECT");

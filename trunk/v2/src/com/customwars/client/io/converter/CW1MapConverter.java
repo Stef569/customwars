@@ -62,7 +62,7 @@ public class CW1MapConverter {
   private void convertMaps() {
     for (File file : new File(CW1_INPUT_DIR).listFiles()) {
       if (file.isFile()) {
-        Map<Tile> map = readCW1MAPFile(file);
+        Map map = readCW1MAPFile(file);
 
         // Terrains need to be connected, since cw1 maps only store base terrains
         // not specific terrains
@@ -76,7 +76,7 @@ public class CW1MapConverter {
 
   //reads a .map file (determines which .map type a file is and calls correct reading function)
 
-  public Map<Tile> readCW1MAPFile(File file) {
+  public Map readCW1MAPFile(File file) {
     int fileType = 0;
     DataInputStream inputStream = null;
 
@@ -87,7 +87,7 @@ public class CW1MapConverter {
       System.err.println(e);
     }
 
-    Map<Tile> map = null;
+    Map map = null;
     try {
       if (fileType <= -1) {
         map = readNewMapFile(inputStream);
@@ -100,7 +100,7 @@ public class CW1MapConverter {
     return map;
   }
 
-  public Map<Tile> readNewMapFile(DataInputStream in) throws IOException {
+  public Map readNewMapFile(DataInputStream in) throws IOException {
     String name = readUntil((char) 0, in);
     String author = readUntil((char) 0, in);
     String desc = readUntil((char) 0, in);
@@ -117,7 +117,7 @@ public class CW1MapConverter {
     players.add(Player.createNeutralPlayer(Color.GRAY));
 
     Terrain plain = new Terrain(0, "dummy", "dum", "my", 0, 0, false, 0, Arrays.asList(5));
-    Map<Tile> map = new Map<Tile>(width, height, 32, plain);
+    Map map = new Map(width, height, 32, plain);
     map.setMapName(name);
     map.setAuthor(author);
     map.setDescription(desc);
@@ -435,7 +435,7 @@ public class CW1MapConverter {
     return new City(id);
   }
 
-  private void writeCW2Map(File cw1File, Map<Tile> map) {
+  private void writeCW2Map(File cw1File, Map map) {
     String mapName = map.getMapName();
 
     // Some cw1 maps don't have a name!
@@ -456,7 +456,7 @@ public class CW1MapConverter {
     }
   }
 
-  private void connectTerrains(Map<Tile> map) {
+  private void connectTerrains(Map map) {
     TerrainConnector terrainConnector = new TerrainConnector(map);
     for (Tile t : map.getAllTiles()) {
       Terrain terr = t.getTerrain();

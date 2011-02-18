@@ -13,7 +13,7 @@ import org.junit.Test;
 import java.awt.Color;
 
 public class CityTest {
-  private Map<Tile> map;
+  private Map map;
   private Player player1, player2;
   private City city;
 
@@ -28,7 +28,7 @@ public class CityTest {
     player1 = new Player(0, Color.RED, "Stef", Integer.MAX_VALUE, 0, false);
     player2 = new Player(1, Color.BLUE, "JSR", 8500, 1, false);
     Terrain plain = TerrainFactory.getTerrain(TestData.PLAIN);
-    map = new Map<Tile>(10, 10, 32, plain);
+    map = new Map(10, 10, 32, plain);
   }
 
   @AfterClass

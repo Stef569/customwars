@@ -57,16 +57,16 @@ public class MapRenderer implements Renderable {
   private int coZoneAlpha;
   private int timer;
 
-  private Map<Tile> map;
+  private Map map;
   private int tileSize;
   private Unit activeUnit;
   private Player activePlayer;
 
-  public MapRenderer(Map<Tile> map) {
+  public MapRenderer(Map map) {
     this(map, new SpriteManager(map));
   }
 
-  public MapRenderer(Map<Tile> map, SpriteManager spriteManager) {
+  public MapRenderer(Map map, SpriteManager spriteManager) {
     this.map = map;
     this.tileSize = map.getTileSize();
     this.spriteManager = spriteManager;

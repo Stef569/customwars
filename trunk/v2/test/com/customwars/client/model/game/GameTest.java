@@ -8,7 +8,6 @@ import com.customwars.client.model.gameobject.TerrainFactory;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.gameobject.UnitFactory;
 import com.customwars.client.model.map.Map;
-import com.customwars.client.model.map.Tile;
 import com.customwars.client.tools.MapUtil;
 import junit.framework.JUnit4TestAdapter;
 import org.junit.After;
@@ -23,7 +22,7 @@ import java.util.Arrays;
 
 public class GameTest {
   private Game game;
-  private Map<Tile> map;    // Hardcoded map, see beforeEachTest and buildHardCodedMap
+  private Map map;    // Hardcoded map, see beforeEachTest and buildHardCodedMap
   private static final Color[] colors = new Color[]{Color.WHITE, Color.GREEN, Color.BLUE, Color.BLACK, Color.RED, Color.YELLOW};
 
   @BeforeClass
@@ -34,7 +33,7 @@ public class GameTest {
   @Before
   public void beforeEachTest() {
     Terrain plain = TerrainFactory.getTerrain(TestData.PLAIN);
-    map = new Map<Tile>(10, 10, 32, plain);
+    map = new Map(10, 10, 32, plain);
   }
 
   @After

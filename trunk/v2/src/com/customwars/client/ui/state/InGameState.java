@@ -53,7 +53,7 @@ import java.beans.PropertyChangeListener;
 public class InGameState extends CWState implements PropertyChangeListener {
   // Model
   private Game game;
-  private Map<Tile> map;
+  private Map map;
   private boolean gameOver;
   private InGameContext inGameContext;
 
@@ -210,7 +210,7 @@ public class InGameState extends CWState implements PropertyChangeListener {
     GUI.setCamera(camera);
   }
 
-  private void initCursors(Map<Tile> map) {
+  private void initCursors(Map map) {
     TileSprite selectCursor = resources.createCursor(map, App.get("user.selectcursor"));
     TileSprite attackCursor = resources.createCursor(map, App.get("user.attackcursor"));
     TileSprite siloCursor = resources.createCursor(map, App.get("user.silocursor"));

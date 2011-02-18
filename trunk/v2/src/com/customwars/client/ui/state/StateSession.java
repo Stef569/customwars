@@ -6,7 +6,6 @@ import com.customwars.client.model.game.Game;
 import com.customwars.client.model.game.GameReplay;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.map.Map;
-import com.customwars.client.model.map.Tile;
 import com.customwars.client.network.User;
 import com.customwars.client.tools.ColorUtil;
 
@@ -23,7 +22,7 @@ public class StateSession {
   public GameReplay replay;
   public Game initialGame;
   public Game game;
-  public Map<Tile> map;
+  public Map map;
 
   // The CO selected by the user
   public CO selectedCO;

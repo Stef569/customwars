@@ -15,7 +15,6 @@ import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Direction;
 import com.customwars.client.model.map.Map;
-import com.customwars.client.model.map.Tile;
 import com.customwars.client.tools.UCaseMap;
 import com.customwars.client.ui.COSheet;
 import com.customwars.client.ui.sprite.TileSprite;
@@ -281,28 +280,28 @@ public class ResourceManager {
   /**
    * @see MapManager#loadMap(InputStream)
    */
-  public Map<Tile> loadMap(InputStream in) throws IOException {
+  public Map loadMap(InputStream in) throws IOException {
     return mapManager.loadMap(in);
   }
 
   /**
    * @see MapManager#saveMap(Map)
    */
-  public void saveMap(Map<Tile> map) throws IOException {
+  public void saveMap(Map map) throws IOException {
     mapManager.saveMap(map);
   }
 
   /**
    * @see MapManager#getMap(String)
    */
-  public Map<Tile> getMap(String mapName) {
+  public Map getMap(String mapName) {
     return mapManager.getMap(mapName);
   }
 
   /**
    * @see MapManager#addMap(String, Map)
    */
-  public void addMap(String category, Map<Tile> map) {
+  public void addMap(String category, Map map) {
     mapManager.addMap(category, map);
   }
 
@@ -323,7 +322,7 @@ public class ResourceManager {
   /**
    * @see MapManager#getAllMapsByCategory(String)
    */
-  public Collection<Map<Tile>> getAllMapsByCategory(String category) {
+  public Collection<Map> getAllMapsByCategory(String category) {
     return mapManager.getAllMapsByCategory(category);
   }
 
@@ -348,7 +347,7 @@ public class ResourceManager {
   /**
    * Create a new Cursor and place it in the map on a random tile
    */
-  public TileSprite createCursor(Map<Tile> map, String cursorName) {
+  public TileSprite createCursor(Map map, String cursorName) {
     TileSprite cursor = getCursor(cursorName);
     cursor.setMap(map);
     cursor.setLocation(map.getRandomTile());

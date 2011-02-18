@@ -25,7 +25,7 @@ public interface MapEditorControl {
   /**
    * Completely fill a map with game objects
    */
-  void fillMap(Map<Tile> map, int id);
+  void fillMap(Map map, int id);
 
   /**
    * @return true when the impl supports the gameobject of type c
