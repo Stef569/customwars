@@ -17,10 +17,10 @@ import java.awt.Color;
  * Add/Remove cities from a map in map editor mode
  */
 public class CityMapEditorControl implements MapEditorControl {
-  private final Map<Tile> map;
+  private final Map map;
   private final TerrainConnector terrainConnector;
 
-  public CityMapEditorControl(Map<Tile> map) {
+  public CityMapEditorControl(Map map) {
     this.map = map;
     terrainConnector = new TerrainConnector(map);
   }
@@ -59,7 +59,7 @@ public class CityMapEditorControl implements MapEditorControl {
     }
   }
 
-  public void fillMap(Map<Tile> map, int id) {
+  public void fillMap(Map map, int id) {
     // map can't be filled with cities
   }
 

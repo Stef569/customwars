@@ -4,14 +4,13 @@ import com.customwars.client.model.gameobject.UnitFight;
 import com.customwars.client.model.gameobject.UnitVsCityFight;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Map;
-import com.customwars.client.model.map.Tile;
 
 /**
  * Creates a Fight class based on the defender on the defender location.
  */
 public class FightFactory {
 
-  public static Fight createFight(Map<Tile> map, Attacker attacker, Location defenderLocation) {
+  public static Fight createFight(Map map, Attacker attacker, Location defenderLocation) {
     boolean hasUnit = map.getUnitOn(defenderLocation) != null;
     boolean hasCity = map.getCityOn(defenderLocation) != null;
 

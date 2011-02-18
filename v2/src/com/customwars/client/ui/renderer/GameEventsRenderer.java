@@ -7,7 +7,6 @@ import com.customwars.client.model.gameobject.GameObjectState;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Map;
-import com.customwars.client.model.map.Tile;
 import com.customwars.client.model.map.path.MoveTraverse;
 import com.customwars.client.ui.Camera2D;
 import org.newdawn.slick.Graphics;
@@ -29,7 +28,7 @@ public class GameEventsRenderer implements PropertyChangeListener, Renderable {
 
   // Model
   private Game game;
-  private Map<Tile> map;
+  private Map map;
   private MoveTraverse moveTraverse;
   private final List<Location> renderLocations;
 

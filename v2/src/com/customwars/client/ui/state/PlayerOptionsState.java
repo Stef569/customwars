@@ -6,7 +6,6 @@ import com.customwars.client.io.loading.ThinglePageLoader;
 import com.customwars.client.model.co.CO;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.map.Map;
-import com.customwars.client.model.map.Tile;
 import com.customwars.client.tools.ThingleUtil;
 import com.customwars.client.ui.COSheet;
 import com.customwars.client.ui.state.input.CWCommand;
@@ -32,7 +31,7 @@ import java.util.List;
 public class PlayerOptionsState extends CWState {
   private Page page;
   private PlayerOptionsController controller;
-  private Map<Tile> map;
+  private Map map;
   private Image backgroundImg;
 
   @Override

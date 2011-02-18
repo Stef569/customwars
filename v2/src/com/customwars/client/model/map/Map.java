@@ -42,7 +42,7 @@ import java.util.Set;
  *
  * @author stefan
  */
-public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
+public class Map extends TileMap<Tile> implements TurnHandler {
   private static final Logger logger = Logger.getLogger(Map.class);
   private String mapName, author, description;    // The properties of the map
   private boolean fogOfWarOn;                     // Is fog of war in effect
@@ -84,7 +84,7 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
     for (int row = 0; row < rows; row++) {
       for (int col = 0; col < cols; col++) {
         Tile t = new Tile(col, row, terrain);
-        setTile(col, row, (T) t);
+        setTile(col, row, t);
       }
     }
   }
@@ -124,7 +124,7 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
    *
    * @param otherMap map to copy
    */
-  public Map(Map<Tile> otherMap) {
+  public Map(Map otherMap) {
     this(otherMap.getCols(), otherMap.getRows(), otherMap.getTileSize(), otherMap.getTile(0, 0).getTerrain());
     this.mapName = otherMap.mapName;
     this.author = otherMap.author;
@@ -136,7 +136,7 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
   }
 
   @SuppressWarnings("unchecked")
-  private void copyMapData(Map<Tile> otherMap) {
+  private void copyMapData(Map otherMap) {
     for (Tile t : otherMap.getAllTiles()) {
       int col = t.getCol();
       int row = t.getRow();
@@ -147,7 +147,7 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
       Tile tileCopy = new Tile(col, row, terrainCopy, fogged);
       copyCityLocation(tileCopy);
       copyUnits(t, tileCopy);
-      setTile((T) tileCopy);
+      setTile(tileCopy);
     }
   }
 
@@ -690,10 +690,10 @@ public class Map<T extends Tile> extends TileMap<T> implements TurnHandler {
    *
    * @return a list of locations where units can be dropped on
    */
-  public List<T> getFreeDropLocations(Unit transport) {
+  public List<Tile> getFreeDropLocations(Unit transport) {
     int maxDropRange = transport.getMaxDropRange();
-    List<T> surroundingTiles = new ArrayList<T>(maxDropRange);
-    for (T tile : getSurroundingTiles(transport.getLocation(), 1, maxDropRange)) {
+    List<Tile> surroundingTiles = new ArrayList<Tile>(maxDropRange);
+    for (Tile tile : getSurroundingTiles(transport.getLocation(), 1, maxDropRange)) {
       if (isFreeDropLocation(tile, transport)) {
         surroundingTiles.add(tile);
       }

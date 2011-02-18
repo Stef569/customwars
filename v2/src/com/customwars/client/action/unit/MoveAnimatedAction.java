@@ -11,7 +11,6 @@ import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.gameobject.UnitState;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Map;
-import com.customwars.client.model.map.Tile;
 import com.customwars.client.model.map.path.MoveTraverse;
 import com.customwars.client.network.MessageSender;
 import com.customwars.client.network.NetworkException;
@@ -36,7 +35,7 @@ public class MoveAnimatedAction extends DelayedAction {
   InGameContext context;
   MoveTraverse moveTraverse;
   Game game;
-  Map<Tile> map;
+  Map map;
   Location from;
   Location to;
   Unit unit;

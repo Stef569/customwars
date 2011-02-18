@@ -2,7 +2,6 @@ package com.customwars.client.ui.renderer.widget;
 
 import com.customwars.client.io.ResourceManager;
 import com.customwars.client.model.map.Map;
-import com.customwars.client.model.map.Tile;
 import com.customwars.client.ui.GUI;
 import com.customwars.client.ui.renderer.MiniMapRenderer;
 import org.newdawn.slick.Graphics;
@@ -26,7 +25,7 @@ public class MiniMapWidgetRenderer implements WidgetRenderer {
     miniMapRenderer.setTerrainMiniMap(resources.getSlickImgStrip("miniMap"));
   }
 
-  public void setMap(Map<Tile> map) {
+  public void setMap(Map map) {
     miniMapRenderer.setMap(map);
   }
 

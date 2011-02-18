@@ -5,7 +5,6 @@ import com.customwars.client.io.FileSystemManager;
 import com.customwars.client.io.ResourceManager;
 import com.customwars.client.io.loading.CWResourceLoader;
 import com.customwars.client.model.map.Map;
-import com.customwars.client.model.map.Tile;
 import org.apache.log4j.Logger;
 import org.newdawn.slick.util.ResourceLoader;
 
@@ -65,7 +64,7 @@ public class MapLoader implements CWResourceLoader {
   }
 
   private void loadMap(String category, InputStream in) throws IOException {
-    Map<Tile> map = mapParser.readMap(in);
+    Map map = mapParser.readMap(in);
     resources.addMap(category, map);
   }
 }

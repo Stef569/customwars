@@ -19,7 +19,7 @@ import java.awt.Color;
  * Test functions in the Map class
  */
 public class MapTest {
-  private Map<Tile> map;
+  private Map map;
 
   @BeforeClass
   public static void beforeAllTests() {
@@ -29,7 +29,7 @@ public class MapTest {
   @Before
   public void beforeEachTest() {
     Terrain plain = TerrainFactory.getTerrain(TestData.PLAIN);
-    map = new Map<Tile>(10, 15, 32, plain);
+    map = new Map(10, 15, 32, plain);
   }
 
   @AfterClass

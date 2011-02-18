@@ -29,7 +29,7 @@ import java.util.Iterator;
  */
 public class CWGameController implements GameController {
   private final Game game;
-  private final Map<Tile> map;
+  private final Map map;
   private final ControllerManager controllerManager;
   private final java.util.Map<Location, City> citiesUnderConstruction;
 

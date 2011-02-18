@@ -4,7 +4,6 @@ import com.customwars.client.model.TestData;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.map.Map;
-import com.customwars.client.model.map.Tile;
 import junit.framework.Assert;
 import org.apache.log4j.BasicConfigurator;
 import org.junit.AfterClass;
@@ -23,7 +22,7 @@ import java.util.List;
 /**
  * Create a Hardcoded Game, write the game to a file
  * and read it back in again.
- *
+ * <p/>
  * The hardcoded game and the game read from the file should be equal.
  */
 public class BinCW2GameParserTest {
@@ -71,8 +70,8 @@ public class BinCW2GameParserTest {
     Assert.assertTrue(hardCodedGame.isStarted());
     Assert.assertEquals(hardCodedGame.isStarted(), gameFromFile.isStarted());
 
-    Map<Tile> hardCodedMap = hardCodedGame.getMap();
-    Map<Tile> mapFromFile = gameFromFile.getMap();
+    Map hardCodedMap = hardCodedGame.getMap();
+    Map mapFromFile = gameFromFile.getMap();
     mapFromFile.validate();
     List<Player> players = new ArrayList<Player>(mapFromFile.getUniquePlayers());
     for (Player player : hardCodedMap.getUniquePlayers()) {

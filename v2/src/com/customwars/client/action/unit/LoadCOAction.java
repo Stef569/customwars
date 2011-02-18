@@ -6,7 +6,6 @@ import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Map;
-import com.customwars.client.model.map.Tile;
 import com.customwars.client.ui.state.InGameContext;
 
 import java.util.Collection;
@@ -16,7 +15,7 @@ import java.util.Collection;
  */
 public class LoadCOAction extends DirectAction {
   private final Unit unit;
-  private Map<Tile> map;
+  private Map map;
 
   public LoadCOAction(Unit unit) {
     super("Load CO", false);

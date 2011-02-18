@@ -160,7 +160,7 @@ public class MapEditorRenderer implements Renderable {
       mouseY > helpImageLocation.y && mouseY < helpImageLocation.y + helpImage.getHeight();
   }
 
-  public void setMap(Map<Tile> map, SpriteManager spriteManager) {
+  public void setMap(Map map, SpriteManager spriteManager) {
     initCamera(map);
     scroller = new Scroller(camera);
     helpImageLocation = new Point(camera.getWidth() - helpImage.getWidth() - 10, 10);

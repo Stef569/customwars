@@ -37,7 +37,7 @@ public class UnitMenuBuilder {
   private final InGameContext inGameContext;
   private final Unit unit;
   private final HumanUnitController controller;
-  private final Map<Tile> map;
+  private final Map map;
   private PopupMenu menu;
 
   public UnitMenuBuilder(HumanUnitController controller, Unit unit, InGameContext inGamecontext, Tile selected) {

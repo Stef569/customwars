@@ -3,7 +3,6 @@ package com.customwars.client.network.http.battleserver;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.map.Map;
-import com.customwars.client.model.map.Tile;
 import com.customwars.client.network.MessageSenderAdapter;
 import com.customwars.client.network.NetworkException;
 import com.customwars.client.network.ServerGame;
@@ -19,7 +18,7 @@ import java.util.List;
 /**
  * Send game messages to a server using the HTTP protocol.
  * All the real work is delegated to CW1NetworkIO.
- *
+ * <p/>
  * The user and server game information is set when invoking one of the entry methods:
  * createNewServerGame, joinServerGame and loginToServerGame.
  * Other method calls will reuse the user and server game info passed to these methods.
@@ -45,7 +44,7 @@ public class BattleServerMessageSender extends MessageSenderAdapter {
   /**
    * Create a new Server game and join the game as user 1
    */
-  public void createNewServerGame(String gameName, String gamePass, Map<Tile> map, String userName, String userPassword, String comment) throws NetworkException {
+  public void createNewServerGame(String gameName, String gamePass, Map map, String userName, String userPassword, String comment) throws NetworkException {
     serverGame = new ServerGame(gameName, gamePass, map.getMapName(), map.getNumPlayers(), comment);
     user = new User(userName, userPassword);
 
@@ -95,7 +94,7 @@ public class BattleServerMessageSender extends MessageSenderAdapter {
   public Game startServerGame() throws NetworkException {
     try {
       battleServerConnection.canPlay(serverGame, user);
-      Map<Tile> map = battleServerConnection.downloadMap(serverGame);
+      Map map = battleServerConnection.downloadMap(serverGame);
       ServerGameInfo serverInfo = battleServerConnection.getServerGameInfo(serverGame.getGameName());
       return createGame(map, serverInfo);
     } catch (IOException ex) {
@@ -107,7 +106,7 @@ public class BattleServerMessageSender extends MessageSenderAdapter {
    * Use the information stored on the server(server game info and the map)
    * to create a Game
    */
-  private static Game createGame(Map<Tile> map, ServerGameInfo serverGameInfo) {
+  private static Game createGame(Map map, ServerGameInfo serverGameInfo) {
     List<Player> mapPlayers = new ArrayList<Player>(map.getUniquePlayers());
     String[] userNames = serverGameInfo.getUserNames();
     List<Player> gamePlayers = new ArrayList<Player>();

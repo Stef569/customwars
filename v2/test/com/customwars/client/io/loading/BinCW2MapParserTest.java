@@ -29,7 +29,7 @@ public class BinCW2MapParserTest {
   private static File mapFile;
 
   private BinaryCW2MapParser mapParser;
-  private Map<Tile> hardCodedMap;
+  private Map hardCodedMap;
 
   @BeforeClass
   public static void beforeEachClass() {
@@ -75,7 +75,7 @@ public class BinCW2MapParserTest {
     mapParser.writeMap(hardCodedMap, new FileOutputStream(mapFile));
 
     // Read the map back in
-    Map<Tile> loadedMap = mapParser.readMap(new FileInputStream(mapFile));
+    Map loadedMap = mapParser.readMap(new FileInputStream(mapFile));
 
     // The hardcoded map should be equal to the map loaded from the file
     Assert.assertEquals(hardCodedMap.getTileSize(), loadedMap.getTileSize());

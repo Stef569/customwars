@@ -16,9 +16,9 @@ import com.customwars.client.tools.NumberUtil;
 public class UnitFight extends BasicFight {
   private static int[][] baseDMG;
   private static int[][] altDMG;
-  private Map<Tile> map;
+  private Map map;
 
-  public UnitFight(Map<Tile> map, Attacker attacker, Defender defender) {
+  public UnitFight(Map map, Attacker attacker, Defender defender) {
     super(attacker, defender);
     this.map = map;
   }

@@ -11,7 +11,6 @@ import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Terrain;
 import com.customwars.client.model.gameobject.TerrainFactory;
 import com.customwars.client.model.map.Map;
-import com.customwars.client.model.map.Tile;
 import com.customwars.client.tools.MapUtil;
 
 import java.awt.Color;
@@ -22,7 +21,7 @@ import java.util.List;
  * Hardcoded game, useful for using in Slick tests
  */
 public class HardCodedGame {
-  private static Map<Tile> map;
+  private static Map map;
 
   /**
    * Creates a Game with hard coded values, a default map is loaded.
@@ -41,10 +40,10 @@ public class HardCodedGame {
     return new Game(getMap(), players, gameRules);
   }
 
-  public static Map<Tile> getMap() {
+  public static Map getMap() {
     int tileSize = App.getInt("plugin.tilesize", 32);
     Terrain plain = TerrainFactory.getTerrain(TestData.PLAIN);
-    map = new Map<Tile>(15, 20, tileSize, plain);
+    map = new Map(15, 20, tileSize, plain);
     map.setFogOfWarOn(true);
     initMapProperties();
     initTerrains();

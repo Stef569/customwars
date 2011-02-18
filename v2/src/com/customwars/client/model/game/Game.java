@@ -31,7 +31,7 @@ public class Game extends TurnBasedGame implements PropertyChangeListener {
 
   private Unit activeUnit;        // There can only be one active unit in a game at any time
 
-  public Game(Map<Tile> map, List<Player> players, GameRules gameRules) {
+  public Game(Map map, List<Player> players, GameRules gameRules) {
     super(map, players, gameRules.getDayLimit());
     applyGameConfig(gameRules);
     gameStatistics = new GameStatistics(players);

@@ -24,7 +24,7 @@ import java.util.Scanner;
 public class ActionParser {
   private static final Logger logger = Logger.getLogger(ActionParser.class);
   private final Game game;
-  private final Map<Tile> map;
+  private final Map map;
 
   public ActionParser(Game game) {
     this.game = game;

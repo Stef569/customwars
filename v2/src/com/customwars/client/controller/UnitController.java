@@ -26,7 +26,7 @@ import java.util.List;
  */
 public abstract class UnitController {
   Game game;
-  Map<Tile> map;
+  Map map;
   Unit unit;
   MoveTraverse moveTraverse;
 

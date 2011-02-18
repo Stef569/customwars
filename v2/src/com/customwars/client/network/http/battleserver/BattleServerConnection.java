@@ -5,7 +5,6 @@ import com.customwars.client.io.loading.BinaryCW2GameParser;
 import com.customwars.client.io.loading.map.BinaryCW2MapParser;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.map.Map;
-import com.customwars.client.model.map.Tile;
 import com.customwars.client.network.NetworkException;
 import com.customwars.client.network.ServerGame;
 import com.customwars.client.network.ServerGameInfo;
@@ -206,7 +205,7 @@ public class BattleServerConnection {
     }
   }
 
-  public void uploadMap(ServerGame serverGame, Map<Tile> map) throws IOException, NetworkException {
+  public void uploadMap(ServerGame serverGame, Map map) throws IOException, NetworkException {
     HttpClient client = new HttpClient(serverURL + UPLOAD_MAP_SCRIPT);
     File tempSaveFile = File.createTempFile(TEMP_SAVE_FILE_NAME, TEMP_SAVE_FILE_EXT);
     BinaryCW2MapParser mapParser = new BinaryCW2MapParser();
@@ -222,13 +221,13 @@ public class BattleServerConnection {
     }
   }
 
-  public Map<Tile> downloadMap(ServerGame serverGame) throws IOException {
+  public Map downloadMap(ServerGame serverGame) throws IOException {
     HttpClient client = new HttpClient(serverURL + DOWNLOAD_MAP_SCRIPT);
     File tempSaveFile = File.createTempFile(TEMP_SAVE_FILE_NAME, TEMP_SAVE_FILE_EXT);
     client.download(serverGame.getGameName(), tempSaveFile);
 
     BinaryCW2MapParser mapParser = new BinaryCW2MapParser();
-    Map<Tile> map = mapParser.readMap(new GZIPInputStream(new FileInputStream(tempSaveFile)));
+    Map map = mapParser.readMap(new GZIPInputStream(new FileInputStream(tempSaveFile)));
     tempSaveFile.delete();
     return map;
   }

@@ -6,7 +6,6 @@ import com.customwars.client.model.fight.FightFactory;
 import com.customwars.client.model.map.Direction;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Map;
-import com.customwars.client.model.map.Tile;
 import com.customwars.client.ui.GUI;
 import com.customwars.client.ui.layout.TextBox;
 import org.newdawn.slick.Color;
@@ -37,7 +36,7 @@ public class DamageRenderer implements Renderable {
   private final Direction quadrant;
   private static Font textFont;
 
-  public DamageRenderer(Map<Tile> map, Attacker attacker, Location defenderLocation) {
+  public DamageRenderer(Map map, Attacker attacker, Location defenderLocation) {
     this.defenderLocation = defenderLocation;
     Fight fight = FightFactory.createFight(map, attacker, defenderLocation);
     String dmgPercentage = "Damage:" + fight.getAttackDamagePercentage() + "%";
@@ -48,7 +47,7 @@ public class DamageRenderer implements Renderable {
     positionTextBox(map);
   }
 
-  private void positionTextBox(Map<Tile> map) {
+  private void positionTextBox(Map map) {
     int tileSize = map.getTileSize();
     int defenderX = defenderLocation.getCol() * tileSize + tileSize / 2;
     int defenderY = defenderLocation.getRow() * tileSize + 5;

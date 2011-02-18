@@ -7,7 +7,6 @@ import com.customwars.client.model.gameobject.Terrain;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Map;
-import com.customwars.client.model.map.Tile;
 
 /**
  * Sends game messages
@@ -16,7 +15,7 @@ public interface MessageSender {
 
   void connect() throws NetworkException;
 
-  void createNewServerGame(String gameName, String gamePass, Map<Tile> map,
+  void createNewServerGame(String gameName, String gamePass, Map map,
                            String userName, String userPassword,
                            String comment) throws NetworkException;
 

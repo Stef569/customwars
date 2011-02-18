@@ -6,7 +6,6 @@ import com.customwars.client.model.co.COFactory;
 import com.customwars.client.model.fight.Fight;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.map.Map;
-import com.customwars.client.model.map.Tile;
 import com.customwars.client.script.ScriptManager;
 import com.customwars.client.script.ScriptedCO;
 import org.junit.AfterClass;
@@ -22,7 +21,7 @@ import java.awt.Color;
 public class UnitFightTest {
   private Player p1;
   private Player p2;
-  private Map<Tile> map;
+  private Map map;
 
   @BeforeClass
   public static void beforeAllTests() {

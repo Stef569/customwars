@@ -2,7 +2,6 @@ package slick;
 
 import com.customwars.client.io.loading.map.BinaryCW2MapParser;
 import com.customwars.client.model.map.Map;
-import com.customwars.client.model.map.Tile;
 import com.customwars.client.ui.renderer.MapRenderer;
 import com.customwars.client.ui.state.CWState;
 import org.newdawn.slick.GameContainer;
@@ -20,10 +19,10 @@ import java.io.OutputStream;
 /**
  * Test the map parser by writing the hard coded map to a file testmap.map
  * then read that map back in and start rendering it.
- *
+ * <p/>
  * This ensures that the map parser does not return an invalid map
  * eg.: if a city has a null player then the maprenderer will throw an exception.
- *
+ * <p/>
  * The test starts when a key is pressed
  *
  * @author stefan
@@ -49,7 +48,7 @@ public class TestMapParser extends CWState {
   }
 
   public void keyPressed(int col, char c) {
-    Map<Tile> loadedMap;  // the resulting map read from disk
+    Map loadedMap;  // the resulting map read from disk
     File mapFile = new File("testmap.map");
 
     try {
@@ -72,7 +71,7 @@ public class TestMapParser extends CWState {
     mapParser.writeMap(HardCodedGame.getMap(), out);
   }
 
-  private Map<Tile> readMapFromFile(File mapFile) throws IOException {
+  private Map readMapFromFile(File mapFile) throws IOException {
     InputStream in = new FileInputStream(mapFile);
     return mapParser.readMap(in);
   }

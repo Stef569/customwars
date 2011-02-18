@@ -4,7 +4,6 @@ import com.customwars.client.action.DirectAction;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Map;
-import com.customwars.client.model.map.Tile;
 import com.customwars.client.ui.renderer.MapRenderer;
 import com.customwars.client.ui.state.InGameContext;
 
@@ -18,7 +17,7 @@ public class ShowAttackZoneAction extends DirectAction {
   private InGameContext inGameContext;
   private MapRenderer mapRenderer;
   private final Unit unit;
-  private Map<Tile> map;
+  private Map map;
 
   public ShowAttackZoneAction(Unit unit) {
     super("Show Attack zone");

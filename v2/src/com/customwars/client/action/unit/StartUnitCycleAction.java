@@ -7,7 +7,6 @@ import com.customwars.client.model.gameobject.Locatable;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Map;
-import com.customwars.client.model.map.Tile;
 import com.customwars.client.tools.MapUtil;
 import com.customwars.client.ui.state.InGameContext;
 
@@ -18,7 +17,7 @@ import java.util.List;
 public class StartUnitCycleAction extends DirectAction {
   private InGameContext inGameContext;
   private CursorController cursorControl;
-  private Map<Tile> map;
+  private Map map;
 
   public StartUnitCycleAction() {
     super("Start unit Cycle");

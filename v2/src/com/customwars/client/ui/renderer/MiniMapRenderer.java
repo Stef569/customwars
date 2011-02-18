@@ -31,7 +31,7 @@ public class MiniMapRenderer implements Renderable {
   private static final int HQ_MAX_ALPHA = 255;
   private static final int HQ_MIN_ALPHA = 0;
   private ImageStrip terrainMiniMap;
-  private Map<Tile> map;
+  private Map map;
   private int tileSize;
   private Point location;
   private int hqAlpha;
@@ -40,7 +40,7 @@ public class MiniMapRenderer implements Renderable {
     this(null);
   }
 
-  public MiniMapRenderer(Map<Tile> map) {
+  public MiniMapRenderer(Map map) {
     this.location = new Point();
     this.map = map;
   }
@@ -50,7 +50,7 @@ public class MiniMapRenderer implements Renderable {
     this.tileSize = terrainMiniMap.getTileWidth();
   }
 
-  public void setMap(Map<Tile> map) {
+  public void setMap(Map map) {
     this.map = map;
   }
 

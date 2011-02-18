@@ -23,7 +23,7 @@ import java.awt.Color;
 
 public class UnitTest {
   private Player player1;
-  private Map<Tile> map;
+  private Map map;
   private InGameContext inGameContext;
 
   @BeforeClass
