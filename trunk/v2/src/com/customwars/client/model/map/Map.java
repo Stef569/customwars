@@ -4,6 +4,7 @@ import com.customwars.client.App;
 import com.customwars.client.model.TurnHandler;
 import com.customwars.client.model.fight.Attacker;
 import com.customwars.client.model.fight.Defender;
+import com.customwars.client.model.fight.Fight;
 import com.customwars.client.model.game.GameRules;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.City;
@@ -11,6 +12,7 @@ import com.customwars.client.model.gameobject.GameObjectState;
 import com.customwars.client.model.gameobject.Locatable;
 import com.customwars.client.model.gameobject.Terrain;
 import com.customwars.client.model.gameobject.Unit;
+import com.customwars.client.model.gameobject.UnitFight;
 import com.customwars.client.model.map.path.Mover;
 import com.customwars.client.model.map.path.PathFinder;
 import com.customwars.client.tools.Args;
@@ -320,7 +322,10 @@ public class Map extends TileMap<Tile> implements TurnHandler {
       City city = getCityOn(t);
 
       if (isUnitVisible(unit) && attacker.canAttack(unit)) {
-        enemies.add(unit);
+        Fight fight = new UnitFight(this, attacker, unit);
+        if (fight.getAttackDamagePercentage() != 0) {
+          enemies.add(unit);
+        }
       }
 
       if (city != null && attacker.canAttack(city)) {
@@ -329,7 +334,6 @@ public class Map extends TileMap<Tile> implements TurnHandler {
     }
     return enemies;
   }
-
 
   /**
    * A unit is visible when the tile it is on is not fogged and the unit is not hidden.
