@@ -45,6 +45,7 @@ public class ClearInGameStateAction extends DirectAction {
     mapRenderer.removeZones();
     mapRenderer.showArrows(false);
     mapRenderer.setActiveUnit(null);
+    mapRenderer.setDropLocations(null, null);
 
     hud.hidePopup();
 
