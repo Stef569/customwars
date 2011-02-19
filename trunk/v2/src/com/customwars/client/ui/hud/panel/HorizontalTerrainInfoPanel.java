@@ -97,11 +97,16 @@ public class HorizontalTerrainInfoPanel extends HorizontalInfoPanel {
       City city = (City) terrain;
       textBox.setVisible(true);
 
-      if (city.canBeDestroyed()) {
-        textBox.setText(city.getHp() + "");
+      Tile t = (Tile) city.getLocation();
+      if (t.isFogged()) {
+        textBox.setText(" ");
       } else {
-        captureImgBox.setVisible(true);
-        textBox.setText(city.getCapCount() + "");
+        if (city.canBeDestroyed()) {
+          textBox.setText(city.getHp() + "");
+        } else {
+          captureImgBox.setVisible(true);
+          textBox.setText(city.getCapCount() + "");
+        }
       }
     } else {
       captureImgBox.setVisible(false);
