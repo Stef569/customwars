@@ -1,8 +1,8 @@
 <!DOCTYPE list [<!ELEMENT list (unit*)>
 
     <!ELEMENT unit (price, movement, vision,canHide?, canDive?, canCapture?, canJoin?, canFlare?, canSupply?,
-        canTransport?,transports?, transformTerrains?, buildCities?, buildUnits?, maxExperience?, maxHp, supplyRange?,
-        maxSupplies, suppliesPerTurn?, suppliesPerTurnWhenHidden?, maxTransportCount?, maxConstructionMaterial?,
+        canTransport?, maxTransportCount?, transports?, transformTerrains?, buildCities?, buildUnits?, maxExperience?, maxHp, supplyRange?,
+        maxSupplies, suppliesPerTurn?, suppliesPerTurnWhenHidden?, maxConstructionMaterial?,
         buildCities?, healRate?, armyBranch,movementType, primaryWeaponName?, secondaryWeaponName?, description)>
 
     <!ATTLIST unit name CDATA #REQUIRED>
@@ -20,6 +20,7 @@
     <!ELEMENT canFlare (#PCDATA)>
     <!ELEMENT canSupply (#PCDATA)>
     <!ELEMENT canTransport (#PCDATA)>
+    <!ELEMENT maxTransportCount (#PCDATA)>
     <!ELEMENT transports (int*)>
     <!ELEMENT transformTerrains (entry*)>
     <!ELEMENT buildCities (entry*)>
@@ -38,7 +39,6 @@
     <!ELEMENT suppliesPerTurn (#PCDATA)>
     <!ELEMENT suppliesPerTurnWhenHidden (#PCDATA)>
 
-    <!ELEMENT maxTransportCount (#PCDATA)>
     <!ELEMENT maxConstructionMaterial (#PCDATA)>
     <!ELEMENT healRate (#PCDATA)>
     <!ELEMENT armyBranch (#PCDATA)>
@@ -296,6 +296,7 @@
     <canJoin>true</canJoin>
     <canSupply>true</canSupply>
     <canTransport>true</canTransport>
+    <maxTransportCount>1</maxTransportCount>
     <transports>
       <int>0</int>
       <int>1</int>
@@ -308,7 +309,6 @@
       <maxRange>1</maxRange>
     </supplyRange>
     <maxSupplies>99</maxSupplies>
-    <maxTransportCount>1</maxTransportCount>
 
     <maxConstructionMaterial>1</maxConstructionMaterial>
     <buildCities>
@@ -338,6 +338,8 @@
     <movement>9</movement>
     <vision>5</vision>
 
+    <canJoin>true</canJoin>
+
     <maxExperience>3</maxExperience>
     <maxHp>100</maxHp>
     <maxSupplies>99</maxSupplies>
@@ -353,6 +355,8 @@
     <price>20000</price>
     <movement>7</movement>
     <vision>3</vision>
+
+    <canJoin>true</canJoin>
 
     <maxExperience>3</maxExperience>
     <maxHp>100</maxHp>
@@ -370,6 +374,8 @@
     <movement>7</movement>
     <vision>4</vision>
 
+    <canJoin>true</canJoin>
+
     <maxExperience>3</maxExperience>
     <maxHp>100</maxHp>
     <maxSupplies>40</maxSupplies>
@@ -386,6 +392,8 @@
     <movement>8</movement>
     <vision>4</vision>
 
+    <canJoin>true</canJoin>
+
     <maxExperience>3</maxExperience>
     <maxHp>100</maxHp>
     <maxSupplies>99</maxSupplies>
@@ -401,6 +409,8 @@
     <price>9000</price>
     <movement>6</movement>
     <vision>2</vision>
+
+    <canJoin>true</canJoin>
 
     <maxExperience>3</maxExperience>
     <maxHp>100</maxHp>
@@ -419,7 +429,10 @@
     <movement>6</movement>
     <vision>1</vision>
 
+    <canJoin>true</canJoin>
+
     <canTransport>true</canTransport>
+    <maxTransportCount>1</maxTransportCount>
     <transports>
       <int>0</int>
       <int>1</int>
@@ -428,7 +441,6 @@
     <maxHp>100</maxHp>
     <maxSupplies>99</maxSupplies>
     <suppliesPerTurn>2</suppliesPerTurn>
-    <maxTransportCount>1</maxTransportCount>
 
     <armyBranch>AIR</armyBranch>
     <movementType>&AIR;</movementType>
@@ -441,6 +453,12 @@
     <vision>2</vision>
 
     <canJoin>true</canJoin>
+    <canTransport>true</canTransport>
+    <maxTransportCount>1</maxTransportCount>
+    <transports>
+      <int>0</int>
+      <int>1</int>
+    </transports>
 
     <maxExperience>3</maxExperience>
     <maxHp>100</maxHp>
@@ -455,6 +473,15 @@
     <price>16000</price>
     <movement>6</movement>
     <vision>5</vision>
+
+    <canJoin>true</canJoin>
+
+    <canTransport>true</canTransport>
+    <maxTransportCount>2</maxTransportCount>
+    <transports>
+      <int>18</int>
+      <int>19</int>
+    </transports>
 
     <maxExperience>3</maxExperience>
     <maxHp>100</maxHp>
@@ -475,6 +502,7 @@
 
     <canHide>true</canHide>
     <canDive>true</canDive>
+    <canJoin>true</canJoin>
 
     <maxExperience>3</maxExperience>
     <maxHp>100</maxHp>
@@ -493,7 +521,10 @@
     <movement>5</movement>
     <vision>4</vision>
 
+    <canJoin>true</canJoin>
+
     <canTransport>true</canTransport>
+    <maxTransportCount>2</maxTransportCount>
     <transports>
       <int>&AIR;</int>
     </transports>
@@ -506,7 +537,6 @@
     <maxHp>100</maxHp>
     <maxSupplies>99</maxSupplies>
     <suppliesPerTurn>1</suppliesPerTurn>
-    <maxTransportCount>2</maxTransportCount>
     <healRate>2</healRate>
 
     <armyBranch>NAVAL</armyBranch>
@@ -519,6 +549,8 @@
     <price>25000</price>
     <movement>5</movement>
     <vision>3</vision>
+
+    <canJoin>true</canJoin>
 
     <maxExperience>3</maxExperience>
     <maxHp>100</maxHp>
@@ -536,7 +568,9 @@
     <movement>6</movement>
     <vision>1</vision>
 
+    <canJoin>true</canJoin>
     <canTransport>true</canTransport>
+    <maxTransportCount>2</maxTransportCount>
     <transports>
       <int>0</int>
       <int>1</int>
@@ -557,7 +591,6 @@
     <maxHp>100</maxHp>
     <maxSupplies>99</maxSupplies>
     <suppliesPerTurn>1</suppliesPerTurn>
-    <maxTransportCount>2</maxTransportCount>
 
     <armyBranch>NAVAL</armyBranch>
     <movementType>&NAVAL;</movementType>
