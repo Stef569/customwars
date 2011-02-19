@@ -285,7 +285,7 @@
     <armyBranch>LAND</armyBranch>
     <movementType>&TREAD;</movementType>
 
-    <primaryWeaponName>anti_air_rockets</primaryWeaponName>
+    <primaryWeaponName>anti_air_missiles</primaryWeaponName>
     <description></description>
   </unit>
   <unit name="apc" unitID="13" imgRowID="13">

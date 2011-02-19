@@ -109,10 +109,10 @@
     <maxAmmo>6</maxAmmo>
     <description></description>
   </weapon>
-  <weapon name="anti_air_rockets">
+  <weapon name="anti_air_missiles">
     <fireRange>
       <minRange>3</minRange>
-      <maxRange>5</maxRange>
+      <maxRange>6</maxRange>
     </fireRange>
     <attacks>
       <armyBranch>AIR</armyBranch>
@@ -243,6 +243,7 @@
     </fireRange>
     <attacks>
       <armyBranch>LAND</armyBranch>
+      <armyBranch>AIR</armyBranch>
     </attacks>
     <maxAmmo>6</maxAmmo>
     <description></description>
