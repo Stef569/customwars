@@ -102,6 +102,7 @@ public abstract class UnitController {
    * #1 This controller controls a unit with transport abilities
    * #2 There is at least 1 free tile within the drop range
    * #3 There is at least 1 unit in the transport
+   * #4 At least 1 unit in the transport can be unloaded on an adjacent tile.
    *
    * @return true if the transport can drop at least 1 unit
    */
@@ -111,8 +112,27 @@ public abstract class UnitController {
     boolean isTransportingUnit = unit.getStats().canTransport();
     boolean atleast1FreeDropTile = !freeDropLocations.isEmpty();
     boolean atLeast1UnitToDrop = unit.getLocatableCount() > 0;
+    boolean atLeast1UnitAbleToDrop = canStartDrop1Unit(unit, freeDropLocations);
 
-    return isTransportingUnit && atleast1FreeDropTile && atLeast1UnitToDrop;
+    return isTransportingUnit && atleast1FreeDropTile && atLeast1UnitToDrop && atLeast1UnitAbleToDrop;
+  }
+
+  /**
+   * @return true if at least 1 unit in the transport can be unloaded on 1 adjacent tile.
+   */
+  private boolean canStartDrop1Unit(Unit transport, List<Tile> freeDropLocations) {
+    for (int i = 0; i < transport.getLocatableCount(); i++) {
+      Unit unitInTransport = (Unit) transport.getLocatable(i);
+      for (Tile dropLocation : freeDropLocations) {
+        Terrain terrain = dropLocation.getTerrain();
+        int unitMoveType = unitInTransport.getMovementType();
+
+        if (terrain.canBeTraverseBy(unitMoveType)) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   /**
