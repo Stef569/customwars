@@ -63,9 +63,9 @@ public class UnitMenuBuilder {
     // Temporarily teleport the active unit(transport) to the 2ND tile
     // to determine what actions are available
     Tile to = inGameContext.getClick(2);
-    map.teleport(from, to, unit);
+    teleportWithoutEvents(from, to, unit);
     menu = buildDropMenu(from, to);
-    map.teleport(to, from, unit);
+    teleportWithoutEvents(to, from, unit);
   }
 
   private PopupMenu buildDropMenu(Tile from, Tile to) {
@@ -110,10 +110,20 @@ public class UnitMenuBuilder {
   private void buildUnitContextMenu(Tile from, Tile selected) {
     // Temporarily teleport the active unit to the selected tile
     // to determine what actions are available
-    map.teleport(from, selected, unit);
+    teleportWithoutEvents(from, selected, unit);
     initUnitActions(selected);
-    map.teleport(selected, from, unit);
+    teleportWithoutEvents(selected, from, unit);
     menu = buildUnitContextMenu();
+  }
+
+  private void teleportWithoutEvents(Tile from, Tile to, Unit unit) {
+    from.disableEvents();
+    to.disableEvents();
+    unit.disableEvents();
+    map.teleport(from, to, unit);
+    from.enableEvents();
+    to.enableEvents();
+    unit.enableEvents();
   }
 
   /**
