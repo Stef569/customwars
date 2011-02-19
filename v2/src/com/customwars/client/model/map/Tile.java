@@ -1,12 +1,12 @@
 package com.customwars.client.model.map;
 
+import com.customwars.client.model.CWPropertyChangeSupport;
 import com.customwars.client.model.Observable;
 import com.customwars.client.model.gameobject.Locatable;
 import com.customwars.client.model.gameobject.Terrain;
 import com.customwars.client.tools.Args;
 
 import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +17,7 @@ import java.util.List;
  * @author stefan
  */
 public class Tile extends AbstractLocation implements Observable {
-  private final PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
+  private final CWPropertyChangeSupport changeSupport = new CWPropertyChangeSupport(this);
   private boolean fogged;
   private Terrain terrain;
   private List<Locatable> locatables;
@@ -75,6 +75,20 @@ public class Tile extends AbstractLocation implements Observable {
     boolean oldVal = this.fogged;
     this.fogged = fogged;
     firePropertyChange("fog", oldVal, fogged);
+  }
+
+  /**
+   * @see com.customwars.client.model.CWPropertyChangeSupport#enableEvents()
+   */
+  public void enableEvents() {
+    changeSupport.enableEvents();
+  }
+
+  /**
+   * @see com.customwars.client.model.CWPropertyChangeSupport#disableEvents()
+   */
+  public void disableEvents() {
+    this.changeSupport.disableEvents();
   }
 
   public boolean isFogged() {

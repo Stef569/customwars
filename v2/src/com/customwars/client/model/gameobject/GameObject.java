@@ -1,10 +1,9 @@
 package com.customwars.client.model.gameobject;
 
+import com.customwars.client.model.CWPropertyChangeSupport;
 import com.customwars.client.model.Observable;
 
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.io.Serializable;
 
 /**
@@ -13,7 +12,7 @@ import java.io.Serializable;
  * but instead should implement the Observable Interface.
  */
 public class GameObject implements Observable, Serializable {
-  protected PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
+  protected CWPropertyChangeSupport changeSupport = new CWPropertyChangeSupport(this);
 
   /**
    * The different states a gameObject can be in, at all times a gameObject is in one of these states
@@ -63,12 +62,22 @@ public class GameObject implements Observable, Serializable {
     return state;
   }
 
-  protected void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
-    changeSupport.firePropertyChange(propertyName, oldValue, newValue);
+  /**
+   * @see com.customwars.client.model.CWPropertyChangeSupport#enableEvents()
+   */
+  public void enableEvents() {
+    changeSupport.enableEvents();
   }
 
-  protected void firePropertyChange(PropertyChangeEvent evt) {
-    changeSupport.firePropertyChange(evt);
+  /**
+   * @see com.customwars.client.model.CWPropertyChangeSupport#disableEvents()
+   */
+  public void disableEvents() {
+    changeSupport.disableEvents();
+  }
+
+  protected void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
+    changeSupport.firePropertyChange(propertyName, oldValue, newValue);
   }
 
   public void addPropertyChangeListener(PropertyChangeListener listener) {
