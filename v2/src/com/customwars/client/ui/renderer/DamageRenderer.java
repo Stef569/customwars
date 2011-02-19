@@ -39,7 +39,7 @@ public class DamageRenderer implements Renderable {
   public DamageRenderer(Map map, Attacker attacker, Location defenderLocation) {
     this.defenderLocation = defenderLocation;
     Fight fight = FightFactory.createFight(map, attacker, defenderLocation);
-    String dmgPercentage = "Damage:" + fight.getAttackDamagePercentage() + "%";
+    String dmgPercentage = "Damage:" + fight.getBasicAttackDamagePercentage() + "%";
 
     Insets insets = new Insets(BOX_MARGIN, BOX_MARGIN, BOX_MARGIN, BOX_MARGIN);
     dmgTextBox = new TextBox(dmgPercentage, textFont, insets);

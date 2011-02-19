@@ -5,6 +5,7 @@ import com.customwars.client.model.TurnHandler;
 import com.customwars.client.model.fight.Attacker;
 import com.customwars.client.model.fight.Defender;
 import com.customwars.client.model.fight.Fight;
+import com.customwars.client.model.fight.FightFactory;
 import com.customwars.client.model.game.GameRules;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.City;
@@ -12,7 +13,6 @@ import com.customwars.client.model.gameobject.GameObjectState;
 import com.customwars.client.model.gameobject.Locatable;
 import com.customwars.client.model.gameobject.Terrain;
 import com.customwars.client.model.gameobject.Unit;
-import com.customwars.client.model.gameobject.UnitFight;
 import com.customwars.client.model.map.path.Mover;
 import com.customwars.client.model.map.path.PathFinder;
 import com.customwars.client.tools.Args;
@@ -320,16 +320,17 @@ public class Map extends TileMap<Tile> implements TurnHandler {
     for (Tile t : getSurroundingTiles(center, attacker.getAttackRange())) {
       Unit unit = getUnitOn(t);
       City city = getCityOn(t);
+      boolean canAttackCity = city != null && attacker.canAttack(city);
+      boolean canAttackUnit = isUnitVisible(unit) && attacker.canAttack(unit);
 
-      if (isUnitVisible(unit) && attacker.canAttack(unit)) {
-        Fight fight = new UnitFight(this, attacker, unit);
-        if (fight.getAttackDamagePercentage() != 0) {
-          enemies.add(unit);
+      if (canAttackUnit || canAttackCity) {
+        Fight fight = FightFactory.createFight(this, attacker, t);
+
+        if (fight != null) {
+          if (fight.canUsePrimaryWeapon() || fight.canUseSecondaryWeapon()) {
+            enemies.add(unit);
+          }
         }
-      }
-
-      if (city != null && attacker.canAttack(city)) {
-        enemies.add(city);
       }
     }
     return enemies;
