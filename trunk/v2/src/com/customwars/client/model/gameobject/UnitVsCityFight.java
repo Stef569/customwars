@@ -14,21 +14,28 @@ import com.customwars.client.tools.NumberUtil;
 public class UnitVsCityFight extends BasicFight {
   private static int[][] baseDMG;
   private static int[][] altDMG;
+  private final City defendingCity;
+  private final Unit attackingUnit;
 
   public UnitVsCityFight(Attacker attacker, Defender defender) {
     super(attacker, defender);
+    attackingUnit = (Unit) attacker;
+    defendingCity = (City) defender;
   }
 
   public int getAttackDamagePercentage() {
-    Unit attackingUnit = (Unit) attacker;
-    City city = (City) defender;
-    City baseCity = CityFactory.getBaseCity(city.getType());
+    City baseCity = CityFactory.getBaseCity(defendingCity.getType());
     int attackerHP = attackingUnit.getInternalHp();
     int attackMaxHP = attackingUnit.getInternalMaxHp();
 
     int baseDmg = getAttackDamagePercentage(attackingUnit, baseCity);
     double dmg = Math.floor(attackerHP / (float) attackMaxHP * baseDmg);
     return dmg < 0 ? 0 : (int) dmg;
+  }
+
+  @Override
+  public int getBasicAttackDamagePercentage() {
+    return getAttackDamagePercentage();
   }
 
   /**
@@ -71,6 +78,16 @@ public class UnitVsCityFight extends BasicFight {
     } else {
       return Fight.WeaponType.NONE;
     }
+  }
+
+  @Override
+  public boolean canUsePrimaryWeapon() {
+    return attackingUnit.canFirePrimaryWeapon() && getBaseDamage(attackingUnit, defendingCity) > 0;
+  }
+
+  @Override
+  public boolean canUseSecondaryWeapon() {
+    return attackingUnit.canFireSecondaryWeapon() && getAltDamage(attackingUnit, defendingCity) > 0;
   }
 
   public static void setBaseDMG(int[][] baseDMG) {

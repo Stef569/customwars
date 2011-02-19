@@ -16,17 +16,17 @@ import com.customwars.client.tools.NumberUtil;
 public class UnitFight extends BasicFight {
   private static int[][] baseDMG;
   private static int[][] altDMG;
-  private Map map;
+  private final Map map;
+  private final Unit attackingUnit, defendingUnit;
 
   public UnitFight(Map map, Attacker attacker, Defender defender) {
     super(attacker, defender);
     this.map = map;
+    this.attackingUnit = (Unit) attacker;
+    this.defendingUnit = (Unit) defender;
   }
 
   public int getAttackDamagePercentage() {
-    Unit attackingUnit = (Unit) attacker;
-    Unit defendingUnit = (Unit) defender;
-
     int attackerHP = attackingUnit.getInternalHp();
     int attackMaxHP = attackingUnit.getInternalMaxHp();
     int attExpBonus = getExperienceBonus(attackingUnit);
@@ -90,14 +90,16 @@ public class UnitFight extends BasicFight {
     }
   }
 
+  @Override
+  public int getBasicAttackDamagePercentage() {
+    return getAttackDamagePercentage(attackingUnit, defendingUnit);
+  }
+
   /**
    * @return The WeaponType that will do the highest damage
    *         WeaponType.NONE is returned when the damage == 0
    */
   public WeaponType getBestAttackWeaponType() {
-    Unit attackingUnit = (Unit) attacker;
-    Unit defendingUnit = (Unit) defender;
-
     int baseDmg = getBaseDamage(attackingUnit, defendingUnit);
     int altDmg = getAltDamage(attackingUnit, defendingUnit);
     int highestDamage = NumberUtil.findHighest(baseDmg, altDmg);
@@ -111,6 +113,16 @@ public class UnitFight extends BasicFight {
     } else {
       return WeaponType.NONE;
     }
+  }
+
+  @Override
+  public boolean canUsePrimaryWeapon() {
+    return getBaseDamage(attackingUnit, defendingUnit) > 0;
+  }
+
+  @Override
+  public boolean canUseSecondaryWeapon() {
+    return getAltDamage(attackingUnit, defendingUnit) > 0;
   }
 
   public static void setBaseDMG(int[][] baseDMG) {
