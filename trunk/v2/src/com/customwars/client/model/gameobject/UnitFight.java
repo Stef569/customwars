@@ -17,16 +17,15 @@ public class UnitFight extends BasicFight {
   private static int[][] baseDMG;
   private static int[][] altDMG;
   private final Map map;
-  private final Unit attackingUnit, defendingUnit;
 
   public UnitFight(Map map, Attacker attacker, Defender defender) {
     super(attacker, defender);
     this.map = map;
-    this.attackingUnit = (Unit) attacker;
-    this.defendingUnit = (Unit) defender;
   }
 
   public int getAttackDamagePercentage() {
+    Unit attackingUnit = (Unit) attacker;
+    Unit defendingUnit = (Unit) defender;
     int attackerHP = attackingUnit.getInternalHp();
     int attackMaxHP = attackingUnit.getInternalMaxHp();
     int attExpBonus = getExperienceBonus(attackingUnit);
@@ -92,6 +91,8 @@ public class UnitFight extends BasicFight {
 
   @Override
   public int getBasicAttackDamagePercentage() {
+    Unit attackingUnit = (Unit) attacker;
+    Unit defendingUnit = (Unit) defender;
     return getAttackDamagePercentage(attackingUnit, defendingUnit);
   }
 
@@ -100,6 +101,8 @@ public class UnitFight extends BasicFight {
    *         WeaponType.NONE is returned when the damage == 0
    */
   public WeaponType getBestAttackWeaponType() {
+    Unit attackingUnit = (Unit) attacker;
+    Unit defendingUnit = (Unit) defender;
     int baseDmg = getBaseDamage(attackingUnit, defendingUnit);
     int altDmg = getAltDamage(attackingUnit, defendingUnit);
     int highestDamage = NumberUtil.findHighest(baseDmg, altDmg);
@@ -117,11 +120,15 @@ public class UnitFight extends BasicFight {
 
   @Override
   public boolean canUsePrimaryWeapon() {
+    Unit attackingUnit = (Unit) attacker;
+    Unit defendingUnit = (Unit) defender;
     return getBaseDamage(attackingUnit, defendingUnit) > 0;
   }
 
   @Override
   public boolean canUseSecondaryWeapon() {
+    Unit attackingUnit = (Unit) attacker;
+    Unit defendingUnit = (Unit) defender;
     return getAltDamage(attackingUnit, defendingUnit) > 0;
   }
 

@@ -23,8 +23,8 @@ public class PathFinder implements MovementCost {
   private static final Logger logger = Logger.getLogger(PathFinder.class);
   TileMap map;
   Dijkstra dijkstra;          // data
-  Mover currentMover = null;  // remembering this saves an unnessary recalculation of Dijk0
-  Location currentLocation = null;
+  Mover currentMover;         // remembering this saves an unnecessary recalculation of Dijk0
+  Location currentLocation;
 
   public PathFinder(TileMap map) {
     this.map = map;
@@ -36,7 +36,7 @@ public class PathFinder implements MovementCost {
    * Gets all the possible movement locations.
    *
    * @param mover that wants to see its movement zone.
-   * @return a collection on tiles the mover can move too.
+   * @return a collection of tiles the mover can move too.
    */
   public List<Location> getMovementZone(Mover mover) {
     calculatePaths(mover);
@@ -62,7 +62,6 @@ public class PathFinder implements MovementCost {
       return Collections.emptyList();
     }
     List<Point> points = dijkstra.getRoute(destination.getCol(), destination.getRow());
-    List<Location> tiles = new ArrayList<Location>(points.size());
     return pointsToTiles(points);
   }
 
@@ -122,12 +121,11 @@ public class PathFinder implements MovementCost {
     if (mover == null) {
       logger.warn("Mover is null");
       return;
-
-      // Only call the expensive calculate() method if required
-      // IF selecting a new mover OR mover has moved THEN
-      //    recalculate dijkstra
     }
 
+    // Only call the expensive calculate() method if required
+    // IF selecting a new mover OR mover has moved THEN
+    // recalculate dijkstra
     if (currentMover == null || mover != currentMover || currentLocation == null || mover.getLocation() != currentLocation) {
       currentMover = mover;
       currentLocation = mover.getLocation();
