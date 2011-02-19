@@ -839,10 +839,12 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   }
 
   public int getMovePoints() {
+    boolean lowSupplies = supplies < stats.movement;
+
     if (owner == null) {
-      return stats.movement;
+      return lowSupplies ? supplies : stats.movement;
     } else {
-      return owner.getCO().unitMovementHook(this, stats.movement);
+      return owner.getCO().unitMovementHook(this, lowSupplies ? supplies : stats.movement);
     }
   }
 
