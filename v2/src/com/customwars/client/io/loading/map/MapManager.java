@@ -127,6 +127,14 @@ public class MapManager {
     }
   }
 
+  /**
+   * Checks if a map has been loaded into memory.
+   * When a map is cached {@link #getMap(String)} will return a copy.
+   * When a map is not cached it needs to be loaded.
+   *
+   * @param mapName The name of a map without the extension.
+   * @return If the map has been cached.
+   */
   public boolean isMapCached(String mapName) {
     return maps.containsKey(mapName);
   }
