@@ -91,10 +91,12 @@ public class PlayerOptionsState extends CWState {
     lblCo.setChoice("alignment", "center");
     panel.add(lblCo);
 
-    Widget lblTeam = page.createWidget("label");
-    lblTeam.setText(" Team");
-    lblTeam.setChoice("alignment", "center");
-    panel.add(lblTeam);
+    if (map.getNumPlayers() > 2) {
+      Widget lblTeam = page.createWidget("label");
+      lblTeam.setText(" Team");
+      lblTeam.setChoice("alignment", "center");
+      panel.add(lblTeam);
+    }
 
     Widget lblColor = page.createWidget("label");
     lblColor.setText("Color");
@@ -128,14 +130,16 @@ public class PlayerOptionsState extends CWState {
     btnCO.setMethod("action", "selectCO(this)", controller);
     panel.add(btnCO);
 
-    Widget cboTeams = page.createWidget("combobox");
-    cboTeams.setString("name", "team" + row);
-    cboTeams.setProperty("row", row);
-    cboTeams.setMethod("action", "teamChanged(this)", controller);
-    cboTeams.setBoolean("editable", false);
-    ThingleUtil.fillCboWithNumbers(page, cboTeams, 1, 6, 1);
-    ThingleUtil.selectChild(cboTeams, stateSession.getTeam(player) + "");
-    panel.add(cboTeams);
+    if (map.getNumPlayers() > 2) {
+      Widget cboTeams = page.createWidget("combobox");
+      cboTeams.setString("name", "team" + row);
+      cboTeams.setProperty("row", row);
+      cboTeams.setMethod("action", "teamChanged(this)", controller);
+      cboTeams.setBoolean("editable", false);
+      ThingleUtil.fillCboWithNumbers(page, cboTeams, 1, 6, 1);
+      ThingleUtil.selectChild(cboTeams, stateSession.getTeam(player) + "");
+      panel.add(cboTeams);
+    }
 
     Widget cboColor = page.createWidget("combobox");
     cboColor.setString("name", "color" + row);
