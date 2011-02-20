@@ -409,8 +409,13 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
     return NumberUtil.calcPercentage(capCount, maxCapCount);
   }
 
-  public int getCapCount() {
-    return capCount;
+  /**
+   * @return How many capture points are left.
+   *         If the max = 20 and we already captured 5
+   *         then the remaining = 15
+   */
+  public int getRemainingCapturePoints() {
+    return maxCapCount - capCount;
   }
 
   public Location getLocation() {

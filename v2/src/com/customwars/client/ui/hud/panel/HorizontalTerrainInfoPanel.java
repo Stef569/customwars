@@ -105,7 +105,7 @@ public class HorizontalTerrainInfoPanel extends HorizontalInfoPanel {
           textBox.setText(city.getHp() + "");
         } else {
           captureImgBox.setVisible(true);
-          textBox.setText(city.getCapCount() + "");
+          textBox.setText(city.getRemainingCapturePoints() + "");
         }
       }
     } else {
