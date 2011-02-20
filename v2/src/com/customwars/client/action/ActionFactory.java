@@ -243,7 +243,6 @@ public class ActionFactory {
     ActionBag loadCOAction = new ActionBag("loadCO");
     loadCOAction.add(new InitAction());
     loadCOAction.add(new MoveAnimatedAction(unit.getLocation(), to));
-    loadCOAction.add(new WaitAction(unit));
     loadCOAction.add(new LoadCOAction(unit));
     loadCOAction.add(new ClearInGameStateAction());
     loadCOAction.setActionText(unit, to);
