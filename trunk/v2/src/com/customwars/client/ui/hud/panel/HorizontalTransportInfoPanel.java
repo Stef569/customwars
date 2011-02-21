@@ -66,7 +66,7 @@ public class HorizontalTransportInfoPanel extends Box implements InfoPanel {
   private void initBoxes() {
     transportBoxes.clear();
     for (int i = 0; i < unit.getLocatableCount(); i++) {
-      Unit unitInTransport = (Unit) unit.getLocatable(0);
+      Unit unitInTransport = (Unit) unit.getLocatable(i);
       Image unitImg = getEastFacingUnitImg(unitInTransport);
       transportBoxes.add(new ImageBox(unitImg));
     }
