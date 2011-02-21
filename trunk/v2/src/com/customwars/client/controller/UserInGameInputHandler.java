@@ -4,6 +4,7 @@ import com.customwars.client.App;
 import com.customwars.client.SFX;
 import com.customwars.client.action.ActionFactory;
 import com.customwars.client.action.CWAction;
+import com.customwars.client.action.ClearInGameStateAction;
 import com.customwars.client.action.ShowPopupMenuAction;
 import com.customwars.client.action.game.LoadGameAction;
 import com.customwars.client.action.game.SaveGameAction;
@@ -50,6 +51,7 @@ public class UserInGameInputHandler implements InGameInputHandler {
     } else if (canCityBuild(city)) {
       inGameContext.handleCityAPress(city);
     } else if (inGameContext.isDefaultMode()) {
+      new ClearInGameStateAction().invoke(inGameContext);
       showContextMenu(cursorLocation);
     } else {
       throw new AssertionError("could not handle A press");

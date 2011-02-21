@@ -3,6 +3,7 @@ package com.customwars.client.controller;
 import com.customwars.client.App;
 import com.customwars.client.action.ActionFactory;
 import com.customwars.client.action.CWAction;
+import com.customwars.client.action.ClearInGameStateAction;
 import com.customwars.client.action.ShowPopupMenuAction;
 import com.customwars.client.io.ResourceManager;
 import com.customwars.client.model.game.Game;
@@ -48,6 +49,7 @@ public class HumanCityController extends CityController {
     Tile selected = mapRenderer.getCursorLocation();
 
     if (inGameContext.isDefaultMode() && canShowMenu()) {
+      new ClearInGameStateAction().invoke(inGameContext);
       PopupMenu popupMenu = buildMenu(selected);
       inGameContext.doAction(new ShowPopupMenuAction(popupMenu));
     }
