@@ -177,7 +177,7 @@ public abstract class UnitController {
    * The join conditions are:
    * Our unit is on the same tile as the target, both units are of the same type
    * The two units must have the same owner
-   * The target unit must have 50% or less HP
+   * The target unit must have 9HP or less.
    * Both units can use the join command
    * If the unit-type of the units is Transport, the two unit must not have any units loaded
    */
@@ -189,7 +189,7 @@ public abstract class UnitController {
 
     if (target != null && target != unit) {
       if (selected.getLastLocatable() == unit && unitStats.getID() == targetStats.getID()) {
-        if (target.getOwner() == unit.getOwner() && target.getHpPercentage() <= 50) {
+        if (target.getOwner() == unit.getOwner() && target.getHp() <= 9) {
           if (targetStats.canJoin() && unitStats.canJoin()) {
             if (targetStats.canTransport()) {
               if (target.getLocatableCount() == 0 && unit.getLocatableCount() == 0) {
