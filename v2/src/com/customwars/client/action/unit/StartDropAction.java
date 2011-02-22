@@ -16,9 +16,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Allow unit(s) in a transport to be dropped on a free drop tile around the center location within dropRange
- *
- * @author stefan
+ * Allow a unit in a transport to be dropped on a free drop tile around the center location.
+ * This action does not actually performs the drop but instead allows the user to choose from
+ * all available drop locations indicated by a move zone.
+ * <p/>
+ * There are 2 locations for the transport:
+ * transport.getLocation() -> The location of the transport before it moved.
+ * center -> The destination of the move, where the user can choose an adjacent tile.
  */
 public class StartDropAction extends DirectAction {
   private static final Logger logger = Logger.getLogger(StartDropAction.class);
@@ -64,24 +68,21 @@ public class StartDropAction extends DirectAction {
 
   /**
    * @param transportLocation the location of the transporting unit
-   * @return a list of locations where the unit in the transport can be dropped on
+   * @return a list of locations where the unit in the transport can be dropped on.
+   *         Excluding drop tiles that are invalid or already taken by another unit.
    */
   private List<Location> getEmptyDropTiles(Location transportLocation) {
-    List<Location> surroundingTiles = new ArrayList<Location>();
-    for (Tile dropTile : map.getSurroundingTiles(transportLocation, 1, transport.getMaxDropRange())) {
+    List<Location> availableDropLocations = new ArrayList<Location>();
+    List<Location> freeDropLocations = map.getFreeDropLocations(transport, transportLocation);
+    for (Location dropLocation : freeDropLocations) {
+      Tile dropTile = (Tile) dropLocation;
       if (!inGameContext.isDropLocationTaken(dropTile)) {
-        if (map.isFreeDropLocation(dropTile, transport)) {
-          if (canUnitMoveOverTerrain(dropTile)) {
-            surroundingTiles.add(dropTile);
-          }
+        if (map.isFreeDropLocation(transport, unitToBeDropped, dropTile)) {
+          availableDropLocations.add(dropLocation);
         }
       }
     }
-    return surroundingTiles;
-  }
-
-  private boolean canUnitMoveOverTerrain(Tile tile) {
-    return tile.getTerrain().canBeTraverseBy(unitToBeDropped.getMovementType());
+    return availableDropLocations;
   }
 
   /**
