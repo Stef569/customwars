@@ -3,22 +3,26 @@ package com.customwars.client.ui.state;
 import com.customwars.client.App;
 import com.customwars.client.action.game.SaveReplayAction;
 import com.customwars.client.model.game.Game;
+import com.customwars.client.model.game.Player;
 import com.customwars.client.network.MessageSender;
 import com.customwars.client.network.MessageSenderFactory;
 import com.customwars.client.network.NetworkException;
 import com.customwars.client.ui.GUI;
 import com.customwars.client.ui.renderer.GameOverRenderer;
 import org.apache.log4j.Logger;
+import org.newdawn.slick.Font;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
 
+import java.awt.Point;
+
 /**
  * Show the statistics as a table
  * In SP and MP mode:
  * The continue button takes the user back to the MAIN_MENU and the session is cleared.
- *
+ * <p/>
  * In MP Snail mode:
  * Send a game over message to the server
  */
@@ -26,10 +30,16 @@ public class GameOverState extends CWState {
   private static final Logger logger = Logger.getLogger(GameOverState.class);
   private MessageSender messageSender;
   private GameOverRenderer gameOverRenderer;
+  private Point gameOverPosition;
+  private String gameOverMsg;
+  private Font gameOverFont;
 
   public void init(GameContainer gameContainer, StateBasedGame stateBasedGame) throws SlickException {
     gameOverRenderer = new GameOverRenderer();
     gameOverRenderer.load(this);
+    gameOverPosition = new Point();
+    gameOverMsg = "";
+    gameOverFont = resources.getFont("menu");
   }
 
   @Override
@@ -49,6 +59,19 @@ public class GameOverState extends CWState {
         new SaveReplayAction(stateSession.replay).invoke(null);
       }
     }
+
+    Player winner = null;
+    for (Player player : game.getActivePlayers()) {
+      if (!player.isDestroyed()) {
+        winner = player;
+      }
+    }
+
+    gameOverMsg = winner.getName() + " wins!";
+    int width = gameOverFont.getWidth(gameOverMsg);
+    int height = gameOverFont.getHeight(gameOverMsg);
+
+    gameOverPosition = GUI.getCenteredRenderPoint(width, height, container);
   }
 
   private void sendEndGameToServer() {
@@ -69,6 +92,7 @@ public class GameOverState extends CWState {
   }
 
   public void render(GameContainer container, Graphics g) throws SlickException {
+    gameOverFont.drawString(gameOverPosition.x, 5, gameOverMsg);
     gameOverRenderer.render(g);
   }
 
