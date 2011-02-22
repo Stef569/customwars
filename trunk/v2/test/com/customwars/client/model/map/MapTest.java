@@ -52,6 +52,11 @@ public class MapTest {
     Player p_blue = new Player(0, java.awt.Color.blue);
     MapUtil.addUnitToMap(map, apcLocation, apc, p_blue);
 
+    // Add inf to APC
+    Unit infInAPC = UnitFactory.getUnit(TestData.INF);
+    p_blue.addUnit(infInAPC);
+    apc.add(infInAPC);
+
     // Create and add a hidden tank east of the apc
     Unit hiddenTank = UnitFactory.getUnit(TestData.TANK);
     hiddenTank.setHidden(true);
@@ -67,16 +72,66 @@ public class MapTest {
     MapUtil.addUnitToMap(map, westDropLocation, apc2, p_blue);
 
     // North is a free adjacent tile since it does not contain any unit
-    Assert.assertTrue(map.isFreeDropLocation(northDropLocation, apc));
+    Assert.assertTrue(map.canDropAtLeast1Unit(apc, northDropLocation));
 
     // East is taken by a hidden unit so it's free since we can't see that unit yet.
-    Assert.assertTrue(map.isFreeDropLocation(eastDropLocation, apc));
+    Assert.assertTrue(map.canDropAtLeast1Unit(apc, eastDropLocation));
 
     // South drop location is already taken by a unit
-    Assert.assertFalse(map.isFreeDropLocation(southDropLocation, apc));
+    Assert.assertFalse(map.canDropAtLeast1Unit(apc, southDropLocation));
 
     // Drop into another transport(apc2 on westDropLocation) is not supported
-    Assert.assertFalse(map.isFreeDropLocation(westDropLocation, apc));
+    Assert.assertFalse(map.canDropAtLeast1Unit(apc, westDropLocation));
+
+    // Drop into self is allowed
+    Assert.assertTrue(map.canDropAtLeast1Unit(apc, apcLocation));
+  }
+
+  @Test
+  public void testFreeDropLocationNotTraversable() {
+    Tile apcLocation = map.getTile(1, 1);
+
+    // Get the adjacent tiles around the apc
+    Tile northDropLocation = map.getTile(1, 0);
+    Tile eastDropLocation = map.getTile(2, 1);
+    Tile southDropLocation = map.getTile(1, 2);
+    Tile westDropLocation = map.getTile(0, 1);
+
+    // Create and add a transport in the map (We allows 2 units in the transport this time)
+    Unit apc = UnitFactory.getUnit(TestData.APC);
+    Player p_blue = new Player(0, java.awt.Color.blue);
+    MapUtil.addUnitToMap(map, apcLocation, apc, p_blue);
+
+    // Add artillery into APC
+    Unit artilleryInAPC = UnitFactory.getUnit(TestData.ARTILLERY);
+    p_blue.addUnit(artilleryInAPC);
+    apc.add(artilleryInAPC);
+
+    // Add mech into APC
+    Unit mechInAPC = UnitFactory.getUnit(TestData.MECH);
+    p_blue.addUnit(mechInAPC);
+    apc.add(mechInAPC);
+
+    // Add an ocean north of the apc
+    northDropLocation.setTerrain(TerrainFactory.getTerrain("ocean"));
+
+    // Add a river east of the apc
+    eastDropLocation.setTerrain(TerrainFactory.getTerrain("river"));
+
+    // North is a not free since none of the units in the transport can be dropped on it.
+    Assert.assertFalse(map.isFreeDropLocation(apc, artilleryInAPC, northDropLocation));
+    Assert.assertFalse(map.isFreeDropLocation(apc, mechInAPC, northDropLocation));
+    Assert.assertFalse(map.canDropAtLeast1Unit(apc, northDropLocation));
+
+    // artillery cannot be dropped into the river east, but a mech can swim
+    Assert.assertFalse(map.isFreeDropLocation(apc, artilleryInAPC, eastDropLocation));
+    Assert.assertTrue(map.isFreeDropLocation(apc, mechInAPC, eastDropLocation));
+
+    // The apc can drop at least 1 unit east(the mech).
+    Assert.assertTrue(map.canDropAtLeast1Unit(apc, eastDropLocation));
+
+    // 3 plains - 1 ocean gives 3 open drop locations.
+    Assert.assertEquals(3, map.getFreeDropLocations(apc).size());
   }
 
   @Test

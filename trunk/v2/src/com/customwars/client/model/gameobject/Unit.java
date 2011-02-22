@@ -371,25 +371,6 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
     return -1;
   }
 
-  /**
-   * @return The range in tiles around this unit
-   *         where units in this transport can be dropped on
-   */
-  public int getMaxDropRange() {
-    if (stats.canTransport && !transport.isEmpty()) {
-      Unit unitInTransport = (Unit) transport.get(0);
-
-      switch (unitInTransport.getArmyBranch()) {
-        case LAND:
-          return 1;
-        default:
-          return unitInTransport.getMovePoints();
-      }
-    } else {
-      return 1;
-    }
-  }
-
   // ----------------------------------------------------------------------------
   // Actions :: supply, heal
   // ----------------------------------------------------------------------------
