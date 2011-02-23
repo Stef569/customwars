@@ -6,6 +6,8 @@ import com.customwars.client.action.game.EndTurnAction;
 import com.customwars.client.action.unit.AddUnitToTileAction;
 import com.customwars.client.action.unit.AttackCityAction;
 import com.customwars.client.action.unit.AttackUnitAction;
+import com.customwars.client.action.unit.COPowerAction;
+import com.customwars.client.action.unit.COSuperPowerAction;
 import com.customwars.client.action.unit.CaptureAction;
 import com.customwars.client.action.unit.ConstructCityAction;
 import com.customwars.client.action.unit.DiveAction;
@@ -247,5 +249,27 @@ public class ActionFactory {
     loadCOAction.add(new ClearInGameStateAction());
     loadCOAction.setActionText(unit, to);
     return loadCOAction;
+  }
+
+  public static CWAction buildCOPowerAction(Unit unit, Location to) {
+    ActionBag coPowerAction = new ActionBag("co_Power");
+    coPowerAction.add(new InitAction());
+    coPowerAction.add(new MoveAnimatedAction(unit.getLocation(), to));
+    coPowerAction.add(new COPowerAction());
+    coPowerAction.add(new WaitAction(unit));
+    coPowerAction.add(new ClearInGameStateAction());
+    coPowerAction.setActionText(unit, to);
+    return coPowerAction;
+  }
+
+  public static CWAction buildCOSuperPowerAction(Unit unit, Location to) {
+    ActionBag coSuperPowerAction = new ActionBag("co_Super_Power");
+    coSuperPowerAction.add(new InitAction());
+    coSuperPowerAction.add(new MoveAnimatedAction(unit.getLocation(), to));
+    coSuperPowerAction.add(new COSuperPowerAction());
+    coSuperPowerAction.add(new WaitAction(unit));
+    coSuperPowerAction.add(new ClearInGameStateAction());
+    coSuperPowerAction.setActionText(unit, to);
+    return coSuperPowerAction;
   }
 }

@@ -144,19 +144,4 @@ public class HumanUnitController extends UnitController {
   private void showAttackZone(Unit selectedUnit) {
     inGameContext.doAction(new ShowAttackZoneAction(selectedUnit));
   }
-
-  public boolean canLoadCO() {
-    Location unitLocation = unit.getLocation();
-    City city = map.getCityOn(unitLocation);
-
-    if (city != null) {
-      boolean coLoaded = unit.getOwner().isCOLoaded();
-      boolean canAffordCO = unit.getOwner().isWithinBudget(unit.getPrice() / 2);
-      boolean onFriendlyCity = city.isOwnedBy(unit.getOwner());
-
-      return !coLoaded && onFriendlyCity && canAffordCO && city.canBuild(unit);
-    } else {
-      return false;
-    }
-  }
 }

@@ -7,7 +7,6 @@ import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.TileMap;
 import com.customwars.client.tools.Args;
-import com.customwars.client.ui.renderer.GameRenderer;
 
 import java.awt.Color;
 
@@ -120,6 +119,15 @@ public abstract class AbstractCO implements CO {
   }
 
   @Override
+  public void dayStart(Game game) {
+    if (isPowerActive()) {
+      deActivatePower();
+    } else if (isSuperPowerActive()) {
+      deActivateSuperPower();
+    }
+  }
+
+  @Override
   public void unitAttackedHook(Unit attacker, Defender defender) {
     if (attacker.getOwner().isInCOZone(defender.getLocation()) && defender instanceof Unit) {
       chargePowerGauge(attacker.getHp() / 50.0);
@@ -127,22 +135,24 @@ public abstract class AbstractCO implements CO {
   }
 
   @Override
-  public void power(Game game, GameRenderer gameRenderer) {
+  public void power(Game game) {
     power.activate();
   }
 
   @Override
   public void deActivatePower() {
+    resetPowerGauge();
     power.deActivate();
   }
 
   @Override
-  public void superPower(Game game, GameRenderer gameRenderer) {
+  public void superPower(Game game) {
     superpower.activate();
   }
 
   @Override
   public void deActivateSuperPower() {
+    resetPowerGauge();
     superpower.deActivate();
   }
 
@@ -220,6 +230,11 @@ public abstract class AbstractCO implements CO {
   }
 
   @Override
+  public String getPowerName() {
+    return power.getName();
+  }
+
+  @Override
   public boolean isSuperPowerActive() {
     return superpower.isActive();
   }
@@ -227,6 +242,11 @@ public abstract class AbstractCO implements CO {
   @Override
   public String getSuperPowerDescription() {
     return superpower.getDescription();
+  }
+
+  @Override
+  public String getSuperPowerName() {
+    return superpower.getName();
   }
 
   @Override

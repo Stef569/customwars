@@ -36,6 +36,7 @@ public class BasicCO extends AbstractCO {
 
   @Override
   public void dayStart(Game game) {
+    super.dayStart(game);
   }
 
   @Override
@@ -82,7 +83,12 @@ public class BasicCO extends AbstractCO {
   }
 
   @Override
-  public int visionHook(int vision) {
+  public int unitVisionHook(int vision) {
+    return vision;
+  }
+
+  @Override
+  public int cityVisionHook(int vision) {
     return vision;
   }
 }

@@ -31,7 +31,7 @@
     <hit>Laboratories</hit>
     <miss>Ethics Committees</miss>
     <bio>The head of the private military contractor IDS. He seeks a world where he is free to carry out his terrible experiments.</bio>
-    <skill>CO Zone: 5 Ultimate Boost: 5/5 All Units, Units in zone recover 5HP.</skill>
+    <skill>CO Zone: 3 Ultimate Boost: 5/5 All Units, Units in zone recover 5HP.</skill>
     <coZone>3</coZone>
     <intel/>
     <quotes>
@@ -116,9 +116,9 @@
     <bio>Has no memory of her past. Rescued by Will, she has joined the 12th Battalion. Where she dreams of living in peace.</bio>
     <skill>CO Zone: 2 Mega Boost 1 / 1 All Units</skill>
     <coZone>2</coZone>
-    <superpower name="Deep Strike">
+    <power name="Deep Strike">
       <description>All units gain 2 additional move, while ranged units gain additional range.</description>
-    </superpower>
+    </power>
     <intel/>
     <quotes>
       <string>Commence Deep Strike!</string>
@@ -143,9 +143,9 @@
     <bio>The 12th Battalion's unflappable second in command.She has tremendous respect for Captain Brenner, although they disagree often.</bio>
     <skill>No real weakness. Equally proficient with all types of units. Ready to fight wherever and whenever.</skill>
     <coZone>1</coZone>
-    <superpower name="Scout">
+    <power name="Scout">
       <description>Ground units gain 2 peircing vision.</description>
-    </superpower>
+    </power>
     <intel/>
     <quotes>
       <string>This is all according to plan...</string>

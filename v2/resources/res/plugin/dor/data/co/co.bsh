@@ -4,8 +4,8 @@
 
 // Methods that can be used:
 // Method name                     Available parameters
-// void power                      Game game, GameRenderer gameRenderer
-// void superPower                 Game game, GameRenderer gameRenderer
+// void power                      Game game
+// void superPower                 Game game
 // int unitMovementHook            Unit mover, int movement
 // int getAttackBonusPercentage    Unit attacker, Unit defender
 // int getDefenseBonusPercentage   Unit attacker, Unit defender
@@ -17,9 +17,6 @@
 // int fireRangeHook               int fireRange
 // int visionHook                  int vision
 // void dayStart                   Game game
-//
-// Debug
-// out.println("this message is printed on the console. Healed unit " + unit.stats.name + " hp+5");
 
   public void brenner_power() {
     for (Unit unit : game.activePlayer.army) {
@@ -98,9 +95,9 @@
   public int greyfield_getAttackBonusPercentage() {
     if (power || attacker.isInCOZone()) {
       if (attacker.isNaval() ||
-        attacker.getName.equals("bcopter") ||
-        attacker.getName.equals("tcopter") ||
-        attacker.getName.equals("ship_plane")) {
+        attacker.stats.name.equals("bcopter") ||
+        attacker.stats.name.equals("tcopter") ||
+        attacker.stats.name.equals("ship_plane")) {
         return 120;
       }else{
         return 110;
@@ -183,7 +180,7 @@
     }
   }
 
-  public int lin_visionHook() {
+  public int lin_unitVisionHook() {
     if (power)
       return vision + 2;
     else

@@ -260,12 +260,8 @@ public class CWGameController implements GameController {
       map.resetAllHiddenUnits(activePlayer);
       validateConstructingCities(unit);
 
-      // Update the co zone
       if (unit.isCoOnBoard()) {
-        Player unitOwner = unit.getOwner();
-        int zoneRange = unitOwner.getCO().getZoneRange();
-        Collection<Location> coZone = map.buildCOZone(unit, zoneRange);
-        unitOwner.setCoZone(coZone);
+        updateCOZone(unit);
       }
     }
   }
@@ -297,5 +293,31 @@ public class CWGameController implements GameController {
     } else {
       controllerManager.addHumanUnitController(unit);
     }
+  }
+
+  @Override
+  public void loadCO(Unit unit) {
+    unit.loadCO();
+    unit.setExperience(unit.getStats().getMaxExperience());
+    unit.getOwner().addToBudget(-unit.getPrice() / 2);
+    unit.setDefaultOrientation();
+    updateCOZone(unit);
+  }
+
+  private void updateCOZone(Unit unit) {
+    Player unitOwner = unit.getOwner();
+    int zoneRange = unitOwner.getCO().getZoneRange();
+    Collection<Location> coZone = map.buildCOZone(unit, zoneRange);
+    unitOwner.setCoZone(coZone);
+  }
+
+  @Override
+  public void coPower() {
+    game.getActivePlayer().getCO().power(game);
+  }
+
+  @Override
+  public void coSuperPower() {
+    game.getActivePlayer().getCO().superPower(game);
   }
 }

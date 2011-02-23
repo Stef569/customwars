@@ -112,4 +112,19 @@ public interface GameController {
    * Creating a unit costs the player the price of the unit.
    */
   void buildUnit(Unit unit, Location location, Player player);
+
+  /**
+   * Load a CO into a Unit
+   */
+  void loadCO(Unit unit);
+
+  /**
+   * Perform the CO power of the active player.
+   */
+  void coPower();
+
+  /**
+   * Perform the CO super power of the active player.
+   */
+  void coSuperPower();
 }

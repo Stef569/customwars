@@ -5,7 +5,7 @@ import com.customwars.client.model.co.BasicCO;
 import com.customwars.client.model.co.CO;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.gameobject.Unit;
-import com.customwars.client.ui.renderer.GameRenderer;
+import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -15,6 +15,7 @@ import java.io.ObjectInputStream;
  * If there is no scripted method in the script file the super method is used.
  */
 public class ScriptedCO extends BasicCO {
+  private static final Logger logger = Logger.getLogger(ScriptedCO.class);
   private final ScriptManager scriptManager;
 
   public ScriptedCO(CO co, ScriptManager scriptManager) {
@@ -25,22 +26,21 @@ public class ScriptedCO extends BasicCO {
 
   public void init() {
     super.init();
-    scriptManager.set("superPower", isPowerActive());
-    scriptManager.set("power", isSuperPowerActive());
+    scriptManager.set("power", isPowerActive());
+    scriptManager.set("superPower", isSuperPowerActive());
   }
 
   @Override
-  public void power(Game game, GameRenderer gameRenderer) {
-    super.power(game, gameRenderer);
-    String methodName = getName() + "_power";
+  public void power(Game game) {
+    super.power(game);
+    scriptManager.set("power", true);
 
+    String methodName = getName() + "_power";
     if (scriptManager.isMethod(methodName)) {
-      scriptManager.set("power", true);
       scriptManager.invoke(methodName,
-        new Parameter<Game>("game", game),
-        new Parameter<GameRenderer>("gameRenderer", gameRenderer));
+        new Parameter<Game>("game", game));
     } else {
-      throw new IllegalArgumentException("No scripted power method for " + getName());
+      logger.debug("No power method for " + getName());
     }
   }
 
@@ -51,17 +51,16 @@ public class ScriptedCO extends BasicCO {
   }
 
   @Override
-  public void superPower(Game game, GameRenderer gameRenderer) {
-    super.superPower(game, gameRenderer);
-    String methodName = getName() + "_superPower";
+  public void superPower(Game game) {
+    super.superPower(game);
+    scriptManager.set("superPower", true);
 
+    String methodName = getName() + "_superPower";
     if (scriptManager.isMethod(methodName)) {
-      scriptManager.set("superPower", true);
       scriptManager.invoke(methodName,
-        new Parameter<Game>("game", game),
-        new Parameter<GameRenderer>("gameRenderer", gameRenderer));
+        new Parameter<Game>("game", game));
     } else {
-      throw new IllegalArgumentException("No scripted super power method for " + getName());
+      logger.debug("No super power method for " + getName());
     }
   }
 
@@ -175,18 +174,30 @@ public class ScriptedCO extends BasicCO {
   }
 
   @Override
-  public int visionHook(int vision) {
-    String methodName = getName() + "_visionHook";
+  public int unitVisionHook(int vision) {
+    String methodName = getName() + "_unitVisionHook";
 
     if (scriptManager.isMethod(methodName)) {
       return (Integer) scriptManager.invoke(methodName, new Parameter<Integer>("vision", vision));
     } else {
-      return super.visionHook(vision);
+      return super.unitVisionHook(vision);
+    }
+  }
+
+  @Override
+  public int cityVisionHook(int vision) {
+    String methodName = getName() + "_cityVisionHook";
+
+    if (scriptManager.isMethod(methodName)) {
+      return (Integer) scriptManager.invoke(methodName, new Parameter<Integer>("vision", vision));
+    } else {
+      return super.cityVisionHook(vision);
     }
   }
 
   @Override
   public void dayStart(Game game) {
+    super.dayStart(game);
     String methodName = getName() + "_dayStart";
 
     if (scriptManager.isMethod(methodName)) {
