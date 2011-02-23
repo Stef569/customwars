@@ -77,4 +77,10 @@ public interface MessageSender {
   void buildUnit(Unit unit, Location location, Player unitOwner) throws NetworkException;
 
   void destroyPlayer(Player player) throws NetworkException;
+
+  void loadCO(Unit unit) throws NetworkException;
+
+  void coPower() throws NetworkException;
+
+  void coSuperPower() throws NetworkException;
 }

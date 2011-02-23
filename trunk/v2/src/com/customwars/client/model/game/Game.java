@@ -114,27 +114,11 @@ public class Game extends TurnBasedGame implements PropertyChangeListener {
     }
   }
 
-  /**
-   * Create move/Attack zones for each unit of each player.
-   */
-  public void initZones() {
-    // The map is temporarily reset for each player since fog and hidden units affects zones.
-    for (Player player : getAllPlayers()) {
-      map.resetFogMap(player);
-      map.resetAllHiddenUnits(player);
-      map.initUnitZonesForPlayer(player);
-    }
-
-    // put the map back in the state it was before invoking this method
-    map.resetFogMap(getActivePlayer());
-    map.resetAllHiddenUnits(getActivePlayer());
-  }
-
   void startTurn(Player player) {
-    super.startTurn(player);
+    player.getCO().dayStart(this);
     destroyUnitsWithoutSupplies(player);
     supplyUnitsAdjacentOfTransport(player);
-    player.getCO().dayStart(this);
+    super.startTurn(player);
   }
 
   /**

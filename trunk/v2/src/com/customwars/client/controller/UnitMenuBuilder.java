@@ -16,6 +16,7 @@ import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.gameobject.UnitFactory;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
+import com.customwars.client.ui.MenuItem;
 import com.customwars.client.ui.PopupMenu;
 import com.customwars.client.ui.StandardMenuItem;
 import com.customwars.client.ui.state.InGameContext;
@@ -29,7 +30,7 @@ import org.newdawn.slick.gui.GUIContext;
  * When in drop mode a drop menu is build else a context menu is build
  */
 public class UnitMenuBuilder {
-  private boolean canDropUnit, canCapture, canSupply, canStartAttack, canWait, canJoin, canLoad, canLoadCO;
+  private boolean canDropUnit, canCapture, canSupply, canStartAttack, canWait, canJoin, canLoad;
   private boolean canLaunchRocketFromCity, canTransformTerrain;
   private boolean canFireFlare;
   private boolean canBuildCity, canBuildUnit;
@@ -39,6 +40,7 @@ public class UnitMenuBuilder {
   private final HumanUnitController controller;
   private final Map map;
   private PopupMenu menu;
+  private boolean canLoadCO, canDoPower, canDoSuperPower;
 
   public UnitMenuBuilder(HumanUnitController controller, Unit unit, InGameContext inGamecontext, Tile selected) {
     this.controller = controller;
@@ -146,7 +148,9 @@ public class UnitMenuBuilder {
       canBuildUnit = controller.canBuildUnit();
       canDive = controller.canDive();
       canSurface = controller.canSurface();
-      canLoadCO = controller.canLoadCO();
+      canLoadCO = controller.canLoadCO(from);
+      canDoPower = controller.canDoPower();
+      canDoSuperPower = controller.canDoSuperPower();
     } else {
       // Actions where the active and selected unit are on the same tile.
       canJoin = controller.canJoin(selected);
@@ -242,6 +246,16 @@ public class UnitMenuBuilder {
       addToMenu(loadCOAction, App.translate("co"));
     }
 
+    if (canDoPower) {
+      CWAction COPowerAction = ActionFactory.buildCOPowerAction(unit, to);
+      addToMenu(COPowerAction, App.translate("power"));
+    }
+
+    if (canDoSuperPower) {
+      CWAction COSuperPowerAction = ActionFactory.buildCOSuperPowerAction(unit, to);
+      addToMenu(COSuperPowerAction, App.translate("super_power"));
+    }
+
     if (canWait) {
       CWAction waitAction = ActionFactory.buildMoveAction(unit, to);
       addToMenu(waitAction, App.translate("wait"));
@@ -266,7 +280,7 @@ public class UnitMenuBuilder {
    * @param menuItemName The name of the menu item, as shown in the gui
    */
   private void addToMenu(final CWAction action, String menuItemName) {
-    StandardMenuItem menuItem = new StandardMenuItem(menuItemName, inGameContext.getObj(GUIContext.class));
+    MenuItem menuItem = new StandardMenuItem(menuItemName, inGameContext.getObj(GUIContext.class));
     menuItem.addListener(new ComponentListener() {
       public void componentActivated(AbstractComponent source) {
         inGameContext.doAction(action);

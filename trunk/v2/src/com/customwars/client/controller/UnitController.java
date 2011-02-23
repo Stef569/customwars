@@ -225,6 +225,30 @@ public abstract class UnitController {
     return unit.getStats().canDive() && unit.getUnitState() == UnitState.SUBMERGED;
   }
 
+  boolean canLoadCO(Location originalLocation) {
+    City city = map.getCityOn(unit.getLocation());
+
+    if (city != null) {
+      boolean coLoaded = unit.getOwner().isCOLoaded();
+      boolean canAffordCO = unit.getOwner().isWithinBudget(unit.getPrice() / 2);
+      boolean onCity = city.getLocation().equals(originalLocation);
+      boolean onFriendlyCity = city.isOwnedBy(unit.getOwner()) && onCity;
+      boolean cityCanProduceCO = city.canBuild(unit) || city.isHQ();
+
+      return !coLoaded && canAffordCO && onFriendlyCity && cityCanProduceCO;
+    } else {
+      return false;
+    }
+  }
+
+  boolean canDoPower() {
+    return unit.isCoOnBoard() && unit.getOwner().getCO().canDoPower();
+  }
+
+  boolean canDoSuperPower() {
+    return unit.isCoOnBoard() && unit.getOwner().getCO().canDoSuperPower();
+  }
+
   boolean isActiveUnitInGame() {
     return game.getActiveUnit() == unit;
   }

@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -116,7 +117,7 @@ public class ScriptManager implements Serializable {
         return result;
       }
       catch (EvalError e) {
-        logger.warn("", e);
+        logger.warn("Could not execute method " + methodName + " parameters " + Arrays.toString(parameters), e);
         return null;
       }
     }

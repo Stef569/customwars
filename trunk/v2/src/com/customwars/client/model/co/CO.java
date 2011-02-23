@@ -4,7 +4,6 @@ import com.customwars.client.model.fight.Defender;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Location;
-import com.customwars.client.ui.renderer.GameRenderer;
 
 import java.io.Serializable;
 
@@ -13,11 +12,11 @@ import java.io.Serializable;
  */
 public interface CO extends Serializable {
 
-  void power(Game game, GameRenderer gameRenderer);
+  void power(Game game);
 
   void deActivatePower();
 
-  void superPower(Game game, GameRenderer gameRenderer);
+  void superPower(Game game);
 
   void deActivateSuperPower();
 
@@ -41,7 +40,9 @@ public interface CO extends Serializable {
 
   int fireRangeHook(int fireRange);
 
-  int visionHook(int vision);
+  int unitVisionHook(int vision);
+
+  int cityVisionHook(int vision);
 
   void unitAttackedHook(Unit attacker, Defender defender);
 
@@ -82,11 +83,15 @@ public interface CO extends Serializable {
 
   String getPowerDescription();
 
+  String getPowerName();
+
   boolean canDoSuperPower();
 
   boolean isSuperPowerActive();
 
   String getSuperPowerDescription();
+
+  String getSuperPowerName();
 
   /**
    * Is the location within the co zone of the given unit

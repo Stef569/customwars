@@ -66,7 +66,7 @@ public class ScriptedCOTest {
     game.setActiveUnit(unit);
     // mech is the active unit in the game
     // game is passed to the scripted co method
-    scriptedAndyCO.power(game, null);
+    scriptedAndyCO.power(game);
 
     // The power decreased the inf hp -2
     Assert.assertEquals(8, unit.getHp());
@@ -79,13 +79,30 @@ public class ScriptedCOTest {
     game.setActiveUnit(unit);
     // mech is the active unit in the game
     // game is passed to the scripted co method
-    scriptedAndyCO.superPower(game, null);
+    scriptedAndyCO.superPower(game);
     // 10-4=6
     Assert.assertEquals(6, unit.getHp());
 
     Assert.assertEquals("When the super power is active 400 is the att bonus", 400, scriptedAndyCO.getAttackBonusPercentage(null, null));
     scriptedAndyCO.deActivateSuperPower();
     Assert.assertEquals("If super power off, 350 is the att bonus", 350, scriptedAndyCO.getAttackBonusPercentage(null, null));
+  }
+
+  @Test
+  public void testGreyField() {
+    Game game = HardCodedGame.getGame();
+    CO scriptedGreyfieldCO = new ScriptedCO(new BasicCO("greyfield"), scriptManager);
+    Unit attacker = UnitFactory.getUnit("mech");
+    game.getPlayerByID(0).addUnit(attacker);
+
+    Unit defender = UnitFactory.getUnit("mech");
+    game.getPlayerByID(1).addUnit(defender);
+
+    Assert.assertEquals(100, scriptedGreyfieldCO.getAttackBonusPercentage(attacker, defender));
+    scriptedGreyfieldCO.power(game);
+    Assert.assertTrue(scriptedGreyfieldCO.isPowerActive());
+    Assert.assertFalse(scriptedGreyfieldCO.isSuperPowerActive());
+    Assert.assertEquals(110, scriptedGreyfieldCO.getAttackBonusPercentage(attacker, defender));
   }
 }
 

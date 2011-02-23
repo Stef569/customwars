@@ -23,3 +23,18 @@
   public int andy_unitMovementHook() {
     return movement + 2;
   }
+
+  public int greyfield_getAttackBonusPercentage() {
+    if (power || attacker.isInCOZone()) {
+      if (attacker.isNaval() ||
+        attacker.stats.name.equals("bcopter") ||
+        attacker.stats.name.equals("tcopter") ||
+        attacker.stats.name.equals("ship_plane")) {
+        return 120;
+      }else{
+        return 110;
+      }
+    } else {
+      return 100;
+    }
+  }

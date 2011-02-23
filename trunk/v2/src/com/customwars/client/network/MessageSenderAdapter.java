@@ -141,4 +141,16 @@ public class MessageSenderAdapter implements MessageSender {
   @Override
   public void destroyPlayer(Player player) throws NetworkException {
   }
+
+  @Override
+  public void loadCO(Unit unit) throws NetworkException {
+  }
+
+  @Override
+  public void coPower() throws NetworkException {
+  }
+
+  @Override
+  public void coSuperPower() throws NetworkException {
+  }
 }
