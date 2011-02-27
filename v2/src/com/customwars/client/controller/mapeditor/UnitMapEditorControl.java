@@ -28,6 +28,7 @@ public class UnitMapEditorControl implements MapEditorControl {
     if (t.getLocatableCount() > 0) {
       Unit unit = map.getUnitOn(t);
       unit.getOwner().removeUnit(unit);
+      t.remove(unit);
     }
   }
 

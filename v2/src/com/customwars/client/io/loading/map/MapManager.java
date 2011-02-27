@@ -2,7 +2,6 @@ package com.customwars.client.io.loading.map;
 
 import com.customwars.client.App;
 import com.customwars.client.model.map.Map;
-import com.customwars.client.tools.StringUtil;
 import org.apache.log4j.Logger;
 
 import java.io.File;
@@ -14,8 +13,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
+/**
+ * Keep a reference to Map objects. Maps can be retrieved by map name.
+ * Each map is stored into a category.
+ */
 public class MapManager {
   private static final Logger logger = Logger.getLogger(MapManager.class);
   private final java.util.Map<String, Map> maps = new HashMap<String, Map>();
@@ -48,7 +52,7 @@ public class MapManager {
 
   /**
    * Save the map to the $mapDirPath/$category location, The map name is used as the name for the map file.
-   * A category contains maps with the same player count. A map with 2 players are saved in the category "2P".
+   * A category contains maps with the same player count. A map with 2 players is saved in the category "2P".
    * The category subdir is created when it does not exists.
    * <p/>
    * Post:
@@ -57,21 +61,70 @@ public class MapManager {
    * getAllMapsByCategory($category) includes a copy of the loaded map
    *
    * @param map map to persists
-   * @throws IOException When the map could not be saved, or the map already exists
+   * @throws IOException When the map could not be saved.
    */
   public void saveMap(Map map) throws IOException {
-    String mapFileName = StringUtil.appendTrailingSuffix(map.getMapName(), App.get("map.file.extension"));
     String mapDirPath = App.get("home.maps.dir");
+    String mapExtension = App.get("map.file.extension");
+    String mapFileName = map.getMapName() + mapExtension;
     String category = map.getNumPlayers() + "P";
-    File mapDir = new File(mapDirPath, category);
-    File mapFile = new File(mapDir, mapFileName);
+    File categoryDir = new File(mapDirPath, category);
+    File mapFile = new File(categoryDir, mapFileName);
 
     if (mapFile.exists()) {
-      throw new IOException("The map " + mapFileName + " already exists");
-    } else {
-      boolean categoryCreated = mapDir.mkdir();
-      assert categoryCreated : "In case the map category does not exist yet, create it now";
-      saveMap(map, category, new FileOutputStream(mapFile));
+      logger.debug("Overwriting map " + mapFileName);
+    }
+
+    String currentCategory = getCategory(map);
+    if (currentCategory != null && !currentCategory.equals(category)) {
+      // The map file to save is in another category.
+      // Delete the old map
+      logger.debug("New category for " + map.getMapName() + " old=" + currentCategory + " new=" + category);
+      deleteMap(map, currentCategory);
+    }
+
+    if (categoryDir.mkdir()) {
+      logger.debug("New category created: " + categoryDir);
+    }
+
+    saveMap(map, category, new FileOutputStream(mapFile));
+  }
+
+  private String getCategory(Map map) {
+    for (String category : mapsByCategory.keySet()) {
+      for (Map aMap : mapsByCategory.get(category)) {
+        if (aMap.getMapName().equals(map.getMapName())) {
+          return category;
+        }
+      }
+    }
+    // the map is not stored in a category
+    return null;
+  }
+
+  private void deleteMap(Map map, String category) {
+    String mapDirPath = App.get("home.maps.dir");
+    String mapExtension = App.get("map.file.extension");
+    String mapFileName = map.getMapName() + mapExtension;
+    File categoryDir = new File(mapDirPath, category);
+    File mapFile = new File(categoryDir, mapFileName);
+    assert mapFile.delete();
+
+    maps.remove(map.getMapName());
+    assert !maps.containsKey(map.getMapName());
+
+    String currentCategory = getCategory(map);
+    for (String aCategory : mapsByCategory.keySet()) {
+      if (aCategory.equals(currentCategory)) {
+        Iterator it = mapsByCategory.get(aCategory).iterator();
+        while (it.hasNext()) {
+          Map aMap = (Map) it.next();
+          if (aMap.getMapName().equals(map.getMapName())) {
+            it.remove();
+            break;
+          }
+        }
+      }
     }
   }
 
