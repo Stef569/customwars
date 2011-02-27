@@ -40,6 +40,7 @@ public class CWInput extends InputProvider {
   public static final Command SAVE = new CWCommand(CommandEnum.SAVE);
   public static final Command OPEN = new CWCommand(CommandEnum.OPEN);
   public static final Command NEW = new CWCommand(CommandEnum.NEW);
+  public static final Command MAP_EDITOR_CONSTANT_MODE = new CWCommand(CommandEnum.MAP_EDITOR_CONSTANT_MODE);
   public static final Command UNIT_CYCLE = new CWCommand(CommandEnum.UNIT_CYCLE);
 
   private final Input input;

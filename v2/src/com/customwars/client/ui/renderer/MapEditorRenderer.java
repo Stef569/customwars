@@ -74,6 +74,7 @@ public class MapEditorRenderer implements Renderable {
     lineRenderer.addText("Save map:" + cwInput.getControlsAsText(CWInput.SAVE));
     lineRenderer.addText("Open map:" + cwInput.getControlsAsText(CWInput.OPEN));
     lineRenderer.addText("New map:" + cwInput.getControlsAsText(CWInput.NEW));
+    lineRenderer.addText("Constant mode:" + cwInput.getControlsAsText(CWInput.MAP_EDITOR_CONSTANT_MODE));
     lineRenderer.addText("Move the mouse near the bottom");
     lineRenderer.addText("to show the active panel");
     lineRenderer.setLocation(350, 40);

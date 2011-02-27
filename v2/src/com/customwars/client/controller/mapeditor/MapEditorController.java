@@ -45,6 +45,7 @@ public class MapEditorController {
   private final int panelCount;
   private int activePanelID, colorID;
   private Map map;
+  private boolean constantMode;
 
   public MapEditorController(MapEditorRenderer mapEditorView, ResourceManager resources) {
     this.resources = resources;
@@ -287,11 +288,18 @@ public class MapEditorController {
   public void moveCursor(int x, int y) {
     if (!mapEditorView.isShowingSelectPanel()) {
       cursorController.moveCursor(x, y);
+      if (constantMode) {
+        addToMap();
+      }
     }
     mapEditorView.toggleShowSelectPanel();
   }
 
   public void toggleCursorLock() {
     cursorController.toggleCursorLock();
+  }
+
+  public void toggleConstantMode() {
+    this.constantMode = !constantMode;
   }
 }

@@ -92,6 +92,9 @@ public class MapEditorState extends CWState {
       case NEW:
         createNewMap();
         break;
+      case MAP_EDITOR_CONSTANT_MODE:
+        mapEditorController.toggleConstantMode();
+        break;
       case EXIT:
         changeToPreviousState();
         break;
