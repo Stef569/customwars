@@ -33,10 +33,7 @@ public class MapSelectState extends CWState {
 
     initPage();
     initWidgetRenderers();
-
-    List<String> mapCategories = resources.getAllMapCategories();
-    initPageContent(mapCategories);
-    initFilter(mapCategories);
+    loadMapCategories();
     backGroundImage = resources.getSlickImg("light_menu_background");
   }
 
@@ -50,9 +47,23 @@ public class MapSelectState extends CWState {
     page = thingleLoader.loadPage("mapSelect.xml", "greySkin.properties", controller);
   }
 
+  @Override
+  public void enter(GameContainer container, StateBasedGame game) throws SlickException {
+    super.enter(container, game);
+    loadMapCategories();
+    page.enable();
+  }
+
+  private void loadMapCategories() {
+    List<String> mapCategories = resources.getAllMapCategories();
+    initPageContent(mapCategories);
+    initFilter(mapCategories);
+  }
+
   private void initPageContent(List<String> mapCategories) {
     if (!mapCategories.isEmpty()) {
       Widget mapCategoryCbo = page.getWidget("map_categories");
+      mapCategoryCbo.removeChildren();
       for (String mapCategory : mapCategories) {
         ThingleUtil.addChoice(page, mapCategoryCbo, mapCategory);
       }
@@ -65,12 +76,6 @@ public class MapSelectState extends CWState {
       String firstMapCat = mapCategories.toArray(new String[mapCategories.size()])[0];
       controller.filterMapsOnCategory(firstMapCat);
     }
-  }
-
-  @Override
-  public void enter(GameContainer container, StateBasedGame game) throws SlickException {
-    super.enter(container, game);
-    page.enable();
   }
 
   @Override

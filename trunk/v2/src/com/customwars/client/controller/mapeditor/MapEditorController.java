@@ -13,6 +13,7 @@ import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.tools.FileUtil;
 import com.customwars.client.tools.StringUtil;
+import com.customwars.client.ui.GUI;
 import com.customwars.client.ui.renderer.MapEditorRenderer;
 import com.customwars.client.ui.sprite.SpriteManager;
 import com.customwars.client.ui.sprite.TileSprite;
@@ -91,8 +92,25 @@ public class MapEditorController {
     return fileName != null && fileName.endsWith(mapFileExtension);
   }
 
-  public void saveMap(String mapName, String mapDescription, String author) throws IOException {
+  public boolean saveMap(String mapName, String mapDescription, String author) throws IOException {
     validateMap(mapName);
+
+    boolean saved = false;
+    if (resources.isMapCached(mapName)) {
+      if (GUI.showConfirmationDialog(
+        App.translate("gui_err_mapeditor_map_name_not_unique_msg"),
+        App.translate("gui_err_mapeditor_map_name_not_unique_title")) == GUI.YES_OPTION) {
+        saveMapNow(mapName, mapDescription, author);
+        saved = true;
+      }
+    } else {
+      saveMapNow(mapName, mapDescription, author);
+      saved = true;
+    }
+    return saved;
+  }
+
+  private void saveMapNow(String mapName, String mapDescription, String author) throws IOException {
     map.setMapName(mapName);
     map.setDescription(mapDescription);
     map.setAuthor(author);
@@ -100,6 +118,7 @@ public class MapEditorController {
   }
 
   private void validateMap(String mapName) {
+    map.validate();
     if (map.getNumPlayers() < 2) {
       throw new IllegalArgumentException(
         App.translate("gui_err_mapeditor_not_enough_players_msg"));
@@ -108,11 +127,6 @@ public class MapEditorController {
     if (!StringUtil.hasContent(mapName)) {
       throw new IllegalArgumentException(
         App.translate("gui_err_mapeditor_empty_map_name"));
-    }
-
-    if (resources.isMapCached(mapName)) {
-      throw new IllegalArgumentException(
-        App.translate("gui_err_mapeditor_map_name_not_unique"));
     }
   }
 

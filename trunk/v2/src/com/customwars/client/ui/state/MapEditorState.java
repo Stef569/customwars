@@ -55,6 +55,8 @@ public class MapEditorState extends CWState {
   public void leave(GameContainer container, StateBasedGame game) throws SlickException {
     super.leave(container, game);
     cwInput.resetInputTransform();
+    mapEditorRenderer = null;
+    mapEditorController = null;
   }
 
   @Override
@@ -128,11 +130,13 @@ public class MapEditorState extends CWState {
       String author = dialog.getFieldValue("author");
 
       try {
-        mapEditorController.saveMap(mapName, mapDescription, author);
-        GUI.showdialog(
-          String.format("%s your map '%s'\nhas been saved to %s", author, mapName, App.get("home.maps.dir")),
-          "Saved"
-        );
+        boolean saved = mapEditorController.saveMap(mapName, mapDescription, author);
+        if (saved) {
+          GUI.showdialog(
+            String.format("%s your map '%s'\nhas been saved to %s", author, mapName, App.get("home.maps.dir")),
+            "Saved"
+          );
+        }
       } catch (Exception e) {
         logger.error(e);
         GUI.showExceptionDialog(

@@ -23,7 +23,7 @@ public interface MapParser {
 
   /**
    * Write a map object to the outputstream
-   * <p/>
+   * If the stream points to a map file that already exists it is overwritten.
    * After writing the map to the outputstream
    * readMap(in) from the same physical location returns an equal map.
    *
