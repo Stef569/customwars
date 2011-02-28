@@ -508,7 +508,7 @@
 
       <enemy id="gun_boat" basedamage="85"/>
       <enemy id="cruiser" basedamage="28"/>
-      <enemy id="sub" basedamage="95"/>
+      <enemy id="sub" basedamage="95" submerged="95"/>
       <enemy id="carrier" basedamage="38"/>
       <enemy id="battleship" basedamage="38"/>
       <enemy id="lander" basedamage="40"/>
@@ -519,7 +519,7 @@
     <enemies>
       <enemy id="gun_boat" basedamage="120"/>
       <enemy id="cruiser" basedamage="110"/>
-      <enemy id="sub" basedamage="55"/>
+      <enemy id="sub" basedamage="55" submerged="55"/>
       <enemy id="carrier" basedamage="110"/>
       <enemy id="battleship" basedamage="80"/>
       <enemy id="lander" basedamage="85"/>
