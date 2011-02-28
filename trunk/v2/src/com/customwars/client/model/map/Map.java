@@ -241,7 +241,8 @@ public class Map extends TileMap<Tile> implements TurnHandler {
    * A unit is revealed when:
    * <ul>
    * <li>The unit is allied to the active player</li>
-   * <li>The enemy unit is adjacent to an allied unit or city</li>
+   * <li>The unit is adjacent to an allied unit or city</li>
+   * <li>The unit is a sub and is at the surface</li>
    * </ul>
    * Note that only units that have the reveal/hide ability can reset their hidden status.
    * All other units are ignored.
@@ -253,8 +254,9 @@ public class Map extends TileMap<Tile> implements TurnHandler {
     if (unit.canHide()) {
       boolean allied = unit.isAlliedWith(player);
       boolean hasAdjacentAlliedUnitOrCity = hasAdjacentAlliedUnitOrCity(unit.getLocation(), player);
+      boolean surfacedSub = unit.canDive() && !unit.isSubmerged();
 
-      if (allied || hasAdjacentAlliedUnitOrCity) {
+      if (allied || hasAdjacentAlliedUnitOrCity || surfacedSub) {
         unit.setHidden(false);
       } else {
         unit.setHidden(true);

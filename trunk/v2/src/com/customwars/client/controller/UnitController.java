@@ -7,7 +7,6 @@ import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Locatable;
 import com.customwars.client.model.gameobject.Terrain;
 import com.customwars.client.model.gameobject.Unit;
-import com.customwars.client.model.gameobject.UnitState;
 import com.customwars.client.model.gameobject.UnitStats;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Map;
@@ -217,12 +216,12 @@ public abstract class UnitController {
   }
 
   boolean canDive() {
-    return unit.getStats().canDive() && unit.getUnitState() != UnitState.SUBMERGED;
+    return unit.canDive() && !unit.isSubmerged();
   }
 
   boolean canSurface() {
     // if a unit can dive it can also surface...
-    return unit.getStats().canDive() && unit.getUnitState() == UnitState.SUBMERGED;
+    return unit.canDive() && unit.isSubmerged();
   }
 
   boolean canLoadCO(Location originalLocation) {

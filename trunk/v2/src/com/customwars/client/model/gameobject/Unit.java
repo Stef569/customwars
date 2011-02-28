@@ -55,7 +55,6 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
 
   private Weapon primaryWeapon, secondaryWeapon;
   private List<Locatable> transport;  // Locatables that are within this Transport
-  private boolean hideAbilityEnabled; // Allows to hide for a longer time
   private MoveStrategy moveStrategy;  // A MoveStrategy instance for this unit
 
   public Unit(UnitStats unitStats) {
@@ -202,12 +201,10 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
 
   public void dive() {
     setUnitState(UnitState.SUBMERGED);
-    hideAbilityEnabled = true;
   }
 
   public void surface() {
     setUnitState(UnitState.IDLE);
-    hideAbilityEnabled = false;
   }
 
   // ----------------------------------------------------------------------------
@@ -913,7 +910,11 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   }
 
   public boolean canHide() {
-    return stats.canHide || hideAbilityEnabled;
+    return stats.canHide;
+  }
+
+  public boolean canDive() {
+    return stats.canDive();
   }
 
   public int getCaptureRate() {
@@ -942,6 +943,10 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   public boolean isInDirect() {
     Weapon weapon = getAvailableAttackWeapon();
     return weapon != null && weapon.isInDirect();
+  }
+
+  public boolean isSubmerged() {
+    return unitState == UnitState.SUBMERGED;
   }
 
   public boolean isNaval() {

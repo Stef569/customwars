@@ -22,21 +22,22 @@ import java.util.List;
  * <damages>
  * <unit id="LTANK">
  * <enemies>
- * <enemy id="LTANK" basedamage="55"/>
- * ...
- * <enemy id="BSHIP" basedamage="1" altdamage="3"/>
+ * <enemy id="xxx" basedamage="1" altdamage="2" submerged="3"/>
  * </enemies>
  * </unit>
  * </damages>
- *
- * The enemy id can be a unit or a base city but not a terrain
+ * <p/>
+ * The enemy id can be a unit or a base city but not a terrain.
+ * The enemy parameters base damage, alt damage and submerged damage
+ * default to 0 and are optional.
  */
 public class XMLDamageParser implements CWResourceLoader {
   private static final XStream xStream = new XStream(new DomDriver());
+  private static final int NO_DAMAGE = 0;
   private final InputStream in;
   private final int[][] unitBaseDmgTables, unitAltDmgTables;
   private final int[][] cityBaseDmgTables, cityAltDmgTables;
-  private static final int NO_DAMAGE = 0;
+  private final int[][] unitSubmergedDmgTable;
   private final int dmgChartSize;
 
   public XMLDamageParser(InputStream in) {
@@ -48,6 +49,7 @@ public class XMLDamageParser implements CWResourceLoader {
     unitAltDmgTables = new int[dmgChartSize][dmgChartSize];
     cityBaseDmgTables = new int[dmgChartSize][dmgChartSize];
     cityAltDmgTables = new int[dmgChartSize][dmgChartSize];
+    unitSubmergedDmgTable = new int[dmgChartSize][dmgChartSize];
   }
 
   public void load() throws IOException {
@@ -58,6 +60,7 @@ public class XMLDamageParser implements CWResourceLoader {
     xStream.useAttributeFor(Enemy.class, "id");
     xStream.useAttributeFor(Enemy.class, "basedamage");
     xStream.useAttributeFor(Enemy.class, "altdamage");
+    xStream.useAttributeFor(Enemy.class, "submerged");
 
     try {
       @SuppressWarnings("unchecked")
@@ -66,6 +69,7 @@ public class XMLDamageParser implements CWResourceLoader {
 
       UnitFight.setBaseDMG(unitBaseDmgTables);
       UnitFight.setAltDMG(unitAltDmgTables);
+      UnitFight.setSubmergedDMG(unitSubmergedDmgTable);
       UnitVsCityFight.setBaseDMG(cityBaseDmgTables);
       UnitVsCityFight.setAltDMG(cityAltDmgTables);
     } finally {
@@ -105,11 +109,16 @@ public class XMLDamageParser implements CWResourceLoader {
     int defenderID = unit.getStats().getID();
     int baseDamage = enemy.basedamage;
     int altDamage = enemy.altdamage;
+    int submergedDamage = enemy.submerged;
 
     if (baseDamage != NO_DAMAGE) {
       unitBaseDmgTables[attackerID][defenderID] = baseDamage;
     } else if (altDamage != NO_DAMAGE) {
       unitAltDmgTables[attackerID][defenderID] = altDamage;
+    }
+
+    if (submergedDamage != NO_DAMAGE) {
+      unitSubmergedDmgTable[attackerID][defenderID] = submergedDamage;
     }
   }
 
@@ -141,5 +150,6 @@ public class XMLDamageParser implements CWResourceLoader {
     String id;
     int basedamage;
     int altdamage;
+    int submerged;
   }
 }

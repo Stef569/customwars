@@ -16,6 +16,7 @@ import com.customwars.client.tools.NumberUtil;
 public class UnitFight extends BasicFight {
   private static int[][] baseDMG;
   private static int[][] altDMG;
+  private static int[][] submergedDMG;
   private final Map map;
 
   public UnitFight(Map map, Attacker attacker, Defender defender) {
@@ -74,8 +75,15 @@ public class UnitFight extends BasicFight {
   }
 
   private int getBaseDamage(Unit attacker, Unit defender) {
+    int attackerID = attacker.getStats().getID();
+    int defenderID = defender.getStats().getID();
+
     if (attacker.canFirePrimaryWeapon()) {
-      return baseDMG[attacker.getStats().getID()][defender.getStats().getID()];
+      if (defender.isSubmerged()) {
+        return submergedDMG[attackerID][defenderID];
+      } else {
+        return baseDMG[attackerID][defenderID];
+      }
     } else {
       return 0;
     }
@@ -138,5 +146,9 @@ public class UnitFight extends BasicFight {
 
   public static void setAltDMG(int[][] altDMG) {
     UnitFight.altDMG = altDMG;
+  }
+
+  public static void setSubmergedDMG(int[][] submergedDMG) {
+    UnitFight.submergedDMG = submergedDMG;
   }
 }
