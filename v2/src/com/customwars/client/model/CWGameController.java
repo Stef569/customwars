@@ -7,7 +7,6 @@ import com.customwars.client.model.game.Game;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.CityFactory;
-import com.customwars.client.model.gameobject.GameObjectState;
 import com.customwars.client.model.gameobject.Locatable;
 import com.customwars.client.model.gameobject.Terrain;
 import com.customwars.client.model.gameobject.TerrainFactory;
@@ -248,10 +247,7 @@ public class CWGameController implements GameController {
   public void makeUnitWait(Unit unit) {
     if (!unit.isDestroyed()) {
       unit.setDefaultOrientation();
-
-      // Make sure that the change to idle is picked up by the event listeners
-      unit.setState(GameObjectState.ACTIVE);
-      unit.setState(GameObjectState.IDLE);
+      unit.setActive(false);
 
       // The unit moved
       // Reveal the los and check if we detected any hidden units.
