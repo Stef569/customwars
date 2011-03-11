@@ -603,6 +603,19 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
     setOrientation(owner.getUnitFacingDirection());
   }
 
+  /**
+   * Change the state of this unit to active or idle.
+   */
+  public void setActive(boolean active) {
+    if (active) {
+      setState(GameObjectState.ACTIVE);
+    } else {
+      // Make sure that the change to idle is picked up by the event listeners
+      setState(GameObjectState.ACTIVE);
+      setState(GameObjectState.IDLE);
+    }
+  }
+
   // ---------------------------------------------------------------------------
   // Getters :: Weapon
   // ---------------------------------------------------------------------------

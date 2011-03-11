@@ -9,7 +9,6 @@ import com.customwars.client.model.fight.FightFactory;
 import com.customwars.client.model.game.GameRules;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.City;
-import com.customwars.client.model.gameobject.GameObjectState;
 import com.customwars.client.model.gameobject.Locatable;
 import com.customwars.client.model.gameobject.Terrain;
 import com.customwars.client.model.gameobject.Unit;
@@ -213,16 +212,17 @@ public class Map extends TileMap<Tile> implements TurnHandler {
   }
 
   /**
-   * Set Game Object State: not owned by player -> IDLE, owned by player -> ACTIVE.
+   * Activate all the units owned by the given player.
+   * Deactivate all other units.
    *
    * @param unit   The unit to reset
    * @param player The active player
    */
   private void resetUnitState(Unit unit, Player player) {
     if (unit.getOwner() == player) {
-      unit.setState(GameObjectState.ACTIVE);
+      unit.setActive(true);
     } else {
-      unit.setState(GameObjectState.IDLE);
+      unit.setActive(false);
     }
   }
 
