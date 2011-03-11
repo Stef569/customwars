@@ -10,7 +10,7 @@ import java.util.List;
 
 /**
  * A Queue of drop locations
- *
+ * <p/>
  * Usage:
  * DropLocationsQueue queue = new DropLocationsQueue();
  * queue.addDropLocation(location, unit);
@@ -73,5 +73,9 @@ public class DropLocationsQueue {
 
   public void clearDropLocations() {
     dropLocations.clear();
+  }
+
+  public int size() {
+    return dropLocations.size();
   }
 }

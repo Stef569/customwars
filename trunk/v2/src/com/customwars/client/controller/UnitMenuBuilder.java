@@ -7,6 +7,7 @@ import com.customwars.client.action.city.StartLaunchRocketAction;
 import com.customwars.client.action.unit.StartAttackAction;
 import com.customwars.client.action.unit.StartDropAction;
 import com.customwars.client.action.unit.StartFlareAction;
+import com.customwars.client.model.drop.DropLocationsQueue;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.CityFactory;
@@ -14,6 +15,7 @@ import com.customwars.client.model.gameobject.Terrain;
 import com.customwars.client.model.gameobject.TerrainFactory;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.gameobject.UnitFactory;
+import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.ui.MenuItem;
@@ -23,6 +25,8 @@ import com.customwars.client.ui.state.InGameContext;
 import org.newdawn.slick.gui.AbstractComponent;
 import org.newdawn.slick.gui.ComponentListener;
 import org.newdawn.slick.gui.GUIContext;
+
+import java.util.List;
 
 /**
  * Build a menu for a given unit once and allow to retrieve that menu see getMenu()
@@ -62,16 +66,28 @@ public class UnitMenuBuilder {
   }
 
   private void buildDropMenu(Tile from) {
-    // Temporarily teleport the active unit(transport) to the 2ND tile
-    // to determine what actions are available
+    menu = new PopupMenu(inGameContext.getObj(GUIContext.class), "Unit drop menu");
+
     Tile to = inGameContext.getClick(2);
-    teleportWithoutEvents(from, to, unit);
-    menu = buildDropMenu(from, to);
-    teleportWithoutEvents(to, from, unit);
+    if (areAllDropTilesTaken(to)) {
+      CWAction dropAction = ActionFactory.buildDropAction(unit, from, to, inGameContext.getDropQueue());
+      addToMenu(dropAction, App.translate("wait"));
+    } else {
+      // Temporarily teleport the active unit(transport) to the 2ND tile
+      // to determine what actions are available
+      teleportWithoutEvents(from, to, unit);
+      menu = buildDropMenu(from, to);
+      teleportWithoutEvents(to, from, unit);
+    }
+  }
+
+  private boolean areAllDropTilesTaken(Tile to) {
+    List<Location> freeDropLocations = map.getFreeDropLocations(unit, to);
+    DropLocationsQueue dropQueue = inGameContext.getDropQueue();
+    return freeDropLocations.size() == dropQueue.size();
   }
 
   private PopupMenu buildDropMenu(Tile from, Tile to) {
-    menu = new PopupMenu(inGameContext.getObj(GUIContext.class), "Unit drop menu");
     inGameContext.clearUnitsInTransport();
 
     if (controller.canWait(to)) {
