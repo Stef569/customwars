@@ -136,7 +136,8 @@ public class PlayerOptionsState extends CWState {
       cboTeams.setProperty("row", row);
       cboTeams.setMethod("action", "teamChanged(this)", controller);
       cboTeams.setBoolean("editable", false);
-      ThingleUtil.fillCboWithNumbers(page, cboTeams, 1, 6, 1);
+      int maxTeams = map.getNumPlayers() + 1;
+      ThingleUtil.fillCboWithNumbers(page, cboTeams, 1, maxTeams, 1);
       ThingleUtil.selectChild(cboTeams, stateSession.getTeam(player) + "");
       panel.add(cboTeams);
     }

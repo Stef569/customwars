@@ -207,14 +207,14 @@ public class MapEditorController {
   }
 
   private void logCurrentMapSituation() {
-    StringBuilder mapSituation = new StringBuilder(" " + map.getNumPlayers() + " Player(s) ");
+    StringBuilder mapSituation = new StringBuilder(" " + map.getNumPlayers() + " Player(s): ");
     for (Player player : map.getUniquePlayers()) {
       mapSituation.append(player.printStats());
       mapSituation.append(' ');
     }
 
-    // Remove last ','
-    mapSituation.setCharAt(mapSituation.length() - 1, ' ');
+    // Remove last ' '
+    mapSituation.deleteCharAt(mapSituation.length() - 1);
     logger.debug(mapSituation.toString());
   }
 
@@ -282,6 +282,10 @@ public class MapEditorController {
   public void moveCursor(Direction direction) {
     if (!mapEditorView.isShowingSelectPanel()) {
       cursorController.moveCursor(direction);
+
+      if (constantMode) {
+        addToMap();
+      }
     }
   }
 

@@ -10,6 +10,7 @@ import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.model.map.connector.TerrainConnector;
 import com.customwars.client.tools.MapUtil;
+import org.apache.log4j.Logger;
 
 import java.awt.Color;
 
@@ -17,6 +18,8 @@ import java.awt.Color;
  * Add/Remove cities from a map in map editor mode
  */
 public class CityMapEditorControl implements MapEditorControl {
+  private static final Logger logger = Logger.getLogger(CityMapEditorControl.class);
+  private static final Color NEUTRAL_COLOR = App.getColor("plugin.neutral_color");
   private final Map map;
   private final TerrainConnector terrainConnector;
 
@@ -29,8 +32,15 @@ public class CityMapEditorControl implements MapEditorControl {
     removePreviousCity(t);
     City city = CityFactory.getCity(cityID);
 
+    if (NEUTRAL_COLOR.equals(color) && city.isHQ()) {
+      logger.debug("The use of a neutral HQ is not allowed");
+      city = CityFactory.getCity(0);
+    }
+
+    // Walls, pipes and other types of cities cannot be captured.
+    // They default to a neutral owner.
     if (!city.canBeCaptured()) {
-      color = App.getColor("plugin.neutral_color");
+      color = NEUTRAL_COLOR;
     }
 
     Player mapPlayer = map.getPlayer(color);
