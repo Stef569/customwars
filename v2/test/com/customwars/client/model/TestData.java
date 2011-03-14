@@ -19,16 +19,14 @@ import com.customwars.client.model.gameobject.WeaponFactory;
 import com.customwars.client.model.map.Direction;
 import com.customwars.client.model.map.Range;
 import com.customwars.client.script.ScriptManager;
+import com.customwars.client.tools.ListUtil;
 
 import java.awt.Color;
 import java.util.Arrays;
 import java.util.List;
 
 /**
- * Contains test data
- * The ids for Unit,Terrain,City are the indexes within the corresponding image.
- *
- * @author stefan
+ * Contains test data.
  */
 public class TestData {
   private static final String[] EMPTY_ARR = new String[]{};
@@ -51,6 +49,7 @@ public class TestData {
   public static final int ARTILLERY = 9;
   public static final int ROCKETS = 11;
   public static final int APC = 13;
+  public static final int CARRIER = 23;
 
   public static final String SMG = "smg";
   public static final String BAZOOKA = "bazooka";
@@ -58,6 +57,7 @@ public class TestData {
   public static final String ROCKET = "rocket";
   public static final String ART_CANNON = "art_cannon";
   public static final String TANK_CANNON = "tank_cannon";
+  public static final String CARRIER_ANTI_AIR = "naval_anti_air_missle";
 
   public static final int BASE = 0;
   public static final int FACTORY = 1;
@@ -73,63 +73,71 @@ public class TestData {
   private static final List<ArmyBranch> ARMY_BRANCH_LAND_ONLY = Arrays.asList(ArmyBranch.LAND);
   private static final List<ArmyBranch> ARMY_BRANCH_NAVAL_ONLY = Arrays.asList(ArmyBranch.NAVAL);
   private static final List<ArmyBranch> ARMY_BRANCH_AIR_ONLY = Arrays.asList(ArmyBranch.AIR);
-  private static final List<Integer> allLandUnits = Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12);
-  private static final List<Integer> allAirUnits = Arrays.asList(14, 15, 17, 18, 19);
-  private static final List<Integer> allNavalUnits = Arrays.asList(20, 21, 22, 23, 24, 25);
+  private static final List<String> allLandUnits = Arrays.asList("infantry", "mech", "bikes", "recon", "flare", "anti_air",
+    "light_tank", "medium_tank", "heavy_tank", "artillery", "anti_tank", "rockets", "missles", "apc");
+  private static final List<String> allAirUnits =
+    Arrays.asList("jet", "bomber", "sea_plane", "fighter", "bcopter", "tcopter");
+  private static final List<String> allNavalUnits =
+    Arrays.asList("gun_boat", "cruiser", "sub", "carrier", "battleship", "lander");
+  private static final List<String> allUnits = ListUtil.join(allLandUnits, allAirUnits, allNavalUnits);
+  private static final List<String> infAndMech = Arrays.asList("infantry", "mech");
 
   // Movecosts: INF, MECH, TREAD, TIRES, AIR, NAVAL
-  private static int IMP = Terrain.IMPASSIBLE;
-  public static List<Integer> plainMoveCosts = Arrays.asList(1, 1, 1, 2, 1, IMP);
-  public static List<Integer> riverMoveCosts = Arrays.asList(1, 1, IMP, IMP, 1, IMP);
-  public static List<Integer> mountainMoveCosts = Arrays.asList(3, 2, IMP, IMP, 1, IMP);
-  public static List<Integer> seaMoveCosts = Arrays.asList(IMP, IMP, IMP, IMP, 1, 1);
+  private static final int IMP = Terrain.IMPASSIBLE;
+  public static final List<Integer> plainMoveCosts = Arrays.asList(1, 1, 1, 2, 1, IMP);
+  public static final List<Integer> riverMoveCosts = Arrays.asList(1, 1, IMP, IMP, 1, IMP);
+  public static final List<Integer> mountainMoveCosts = Arrays.asList(3, 2, IMP, IMP, 1, IMP);
+  public static final List<Integer> seaMoveCosts = Arrays.asList(IMP, IMP, IMP, IMP, 1, 1);
 
   // Terrains
-  private static Terrain plain = new Terrain(0, "plain", "plain", "", 0, 0, false, 0, plainMoveCosts);
-  private static Terrain verticalRiver = new Terrain(20, "river", "river", "", 0, -1, false, 0, riverMoveCosts);
-  private static Terrain mountain = new Terrain(17, "mountain", "mountain", "", 4, 2, false, 3, mountainMoveCosts);
-  private static Terrain sea = new Terrain(SEA, "ocean", "ocean", "", 0, -2, false, 0, seaMoveCosts);
+  private static final Terrain plain = new Terrain(0, "plain", "plain", "", 0, 0, false, 0, plainMoveCosts);
+  private static final Terrain verticalRiver = new Terrain(20, "river", "river", "", 0, -1, false, 0, riverMoveCosts);
+  private static final Terrain mountain = new Terrain(17, "mountain", "mountain", "", 4, 2, false, 3, mountainMoveCosts);
+  private static final Terrain sea = new Terrain(SEA, "ocean", "ocean", "", 0, -2, false, 0, seaMoveCosts);
 
   // Units
-  private static UnitStats infStats = new UnitStats(INF, INF, "infantry", "", 3000, 3, 3, 10, UNIT_MAX_HP, MAX_UNIT_SUPPLIES, 0, 0, true, false, false, false, true, false, false, null, ArmyBranch.LAND, MOVE_INF, new Range(0, 0), "", SMG, 0, 0, 0);
-  private static Unit infantry = new Unit(infStats);
-  private static UnitStats mechStats = new UnitStats(MECH, MECH, "mech", "", 3000, 3, 3, 10, UNIT_MAX_HP, MAX_UNIT_SUPPLIES, 0, 0, true, false, false, false, true, false, false, null, ArmyBranch.LAND, MOVE_MECH, new Range(0, 0), BAZOOKA, SMG, 0, 0, 0);
-  private static Unit mech = new Unit(mechStats);
-  private static UnitStats apcStats = new UnitStats(APC, APC, "apc", "", 8000, 5, 1, 10, UNIT_MAX_HP, MAX_UNIT_SUPPLIES, 3, 0, false, false, true, true, true, false, false, Arrays.asList(MOVE_INF, MOVE_MECH), ArmyBranch.LAND, MOVE_TREAD, new Range(1, 1), "", "", 0, 0, 1);
-  private static Unit apc = new Unit(apcStats);
-  private static UnitStats tankStats = new UnitStats(TANK, TANK, "light_tank", "", 7000, 6, 3, 10, UNIT_MAX_HP, MAX_UNIT_SUPPLIES, 0, 0, false, false, false, false, true, false, false, null, ArmyBranch.LAND, MOVE_TIRES, new Range(0, 0), TANK_CANNON, SMG, 0, 0, 0);
-  private static Unit tank = new Unit(tankStats);
-  private static UnitStats rocketStats = new UnitStats(ROCKETS, ROCKETS, "rockets", "", 14000, 5, 1, 10, UNIT_MAX_HP, MAX_UNIT_SUPPLIES, 0, 0, false, false, false, false, true, false, false, null, ArmyBranch.LAND, MOVE_TIRES, new Range(0, 0), ROCKET, "", 0, 0, 0);
-  private static Unit rocket = new Unit(rocketStats);
-  private static UnitStats artilleryStats = new UnitStats(ARTILLERY, ARTILLERY, "artillery", "", 6000, 5, 1, 10, UNIT_MAX_HP, 50, 0, 0, false, false, false, false, true, false, false, null, ArmyBranch.LAND, MOVE_TREAD, new Range(0, 0), ART_CANNON, "", 0, 0, 0);
-  private static Unit artillery = new Unit(artilleryStats);
+  private static final UnitStats infStats = new UnitStats(INF, INF, "infantry", "", 3000, 3, 3, 10, UNIT_MAX_HP, MAX_UNIT_SUPPLIES, 0, 0, true, false, true, false, false, false, null, null, null, ArmyBranch.LAND, MOVE_INF, new Range(0, 0), "", SMG, 0, 0, 0);
+  private static final Unit infantry = new Unit(infStats);
+  private static final UnitStats mechStats = new UnitStats(MECH, MECH, "mech", "", 3000, 3, 3, 10, UNIT_MAX_HP, MAX_UNIT_SUPPLIES, 0, 0, true, false, true, false, false, false, null, null, null, ArmyBranch.LAND, MOVE_MECH, new Range(0, 0), BAZOOKA, SMG, 0, 0, 0);
+  private static final Unit mech = new Unit(mechStats);
+  private static final UnitStats apcStats = new UnitStats(APC, APC, "apc", "", 8000, 5, 1, 10, UNIT_MAX_HP, MAX_UNIT_SUPPLIES, 3, 0, false, false, true, false, false, false, Arrays.asList("infantry", "mech"), null, allUnits, ArmyBranch.LAND, MOVE_TREAD, new Range(1, 1), "", "", 0, 0, 1);
+  private static final Unit apc = new Unit(apcStats);
+  private static final UnitStats tankStats = new UnitStats(TANK, TANK, "light_tank", "", 7000, 6, 3, 10, UNIT_MAX_HP, MAX_UNIT_SUPPLIES, 0, 0, false, false, true, false, false, false, null, null, null, ArmyBranch.LAND, MOVE_TIRES, new Range(0, 0), TANK_CANNON, SMG, 0, 0, 0);
+  private static final Unit tank = new Unit(tankStats);
+  private static final UnitStats rocketStats = new UnitStats(ROCKETS, ROCKETS, "rockets", "", 14000, 5, 1, 10, UNIT_MAX_HP, MAX_UNIT_SUPPLIES, 0, 0, false, false, true, false, false, false, null, null, null, ArmyBranch.LAND, MOVE_TIRES, new Range(0, 0), ROCKET, "", 0, 0, 0);
+  private static final Unit rocket = new Unit(rocketStats);
+  private static final UnitStats artilleryStats = new UnitStats(ARTILLERY, ARTILLERY, "artillery", "", 6000, 5, 1, 10, UNIT_MAX_HP, 50, 0, 0, false, false, true, false, false, false, null, null, null, ArmyBranch.LAND, MOVE_TREAD, new Range(0, 0), ART_CANNON, "", 0, 0, 0);
+  private static final Unit artillery = new Unit(artilleryStats);
+  private static final UnitStats carrierStats = new UnitStats(CARRIER, CARRIER, "carrier", "", 25000, 5, 4, 10, UNIT_MAX_HP, 99, 2, 1, false, false, true, false, false, true, allAirUnits, allAirUnits, null, ArmyBranch.NAVAL, MOVE_NAVAL, new Range(0, 0), "", CARRIER_ANTI_AIR, 2, 0, 0);
+  private static final Unit carrier = new Unit(carrierStats);
 
   // Weapons
-  private static Weapon smg = new Weapon(SMG, "", new Range(1, 1), Weapon.UNLIMITED_AMMO, false, ARMY_BRANCH_LAND_ONLY);
-  private static Weapon bazooka = new Weapon(BAZOOKA, "", new Range(1, 1), 5, false, ARMY_BRANCH_LAND_ONLY);
-  private static Weapon tankCannon = new Weapon(TANK_CANNON, "", new Range(1, 1), 9, false, ARMY_BRANCH_LAND_ONLY);
-  private static Weapon cannon = new Weapon(CANNON, "", new Range(2, 3), 9, false, ARMY_BRANCH_LAND_ONLY);
-  private static Weapon rockets = new Weapon(ROCKET, "", new Range(3, 5), 6, false, ARMY_BRANCH_LAND_ONLY);
-  private static Weapon artilleryCannon = new Weapon(ART_CANNON, "", new Range(2, 3), 9, false, ARMY_BRANCH_LAND_ONLY);
+  private static final Weapon smg = new Weapon(SMG, "", new Range(1, 1), Weapon.UNLIMITED_AMMO, false, ARMY_BRANCH_LAND_ONLY);
+  private static final Weapon bazooka = new Weapon(BAZOOKA, "", new Range(1, 1), 5, false, ARMY_BRANCH_LAND_ONLY);
+  private static final Weapon tankCannon = new Weapon(TANK_CANNON, "", new Range(1, 1), 9, false, ARMY_BRANCH_LAND_ONLY);
+  private static final Weapon cannon = new Weapon(CANNON, "", new Range(2, 3), 9, false, ARMY_BRANCH_LAND_ONLY);
+  private static final Weapon rockets = new Weapon(ROCKET, "", new Range(3, 5), 6, false, ARMY_BRANCH_LAND_ONLY);
+  private static final Weapon artilleryCannon = new Weapon(ART_CANNON, "", new Range(2, 3), 9, false, ARMY_BRANCH_LAND_ONLY);
+  private static final Weapon carrierAA = new Weapon(CARRIER_ANTI_AIR, "", new Range(1, 1), 4, false, ARMY_BRANCH_AIR_ONLY);
 
   // City
   private static City base = new City(0, 0, "road", "road", "base", "", 0, 0, plainMoveCosts, 1, true,
-    cityRoadConnection, ARMY_BRANCH_LAND_ONLY, Arrays.asList(INF, MECH), null, 20, CITY_HEAL_RATE, 0, true);
+    cityRoadConnection, ARMY_BRANCH_LAND_ONLY, infAndMech, null, null, 20, CITY_HEAL_RATE, 0, true);
 
   private static City factory = new City(1, 1, "road", "road", "factory", "", 0, 0, plainMoveCosts, 1, true,
-    cityRoadConnection, ARMY_BRANCH_LAND_ONLY, Arrays.asList(INF, MECH), allLandUnits, 20, CITY_HEAL_RATE, 0, true);
+    cityRoadConnection, ARMY_BRANCH_LAND_ONLY, infAndMech, allLandUnits, null, 20, CITY_HEAL_RATE, 0, true);
 
   private static City hq = new City(4, 4, "road", "road", "hq", "", 0, 0, plainMoveCosts, 1, true,
-    cityRoadConnection, ARMY_BRANCH_LAND_ONLY, Arrays.asList(INF, MECH), null, 20, CITY_HEAL_RATE, 0, true);
+    cityRoadConnection, ARMY_BRANCH_LAND_ONLY, infAndMech, null, null, 20, CITY_HEAL_RATE, 0, true);
 
   private static City airport = new City(AIRPORT, AIRPORT, "road", "road", "airport", "", 0, 0, plainMoveCosts, 1, true,
-    cityRoadConnection, ARMY_BRANCH_AIR_ONLY, Arrays.asList(INF, MECH), allAirUnits, 20, CITY_HEAL_RATE, 0, true);
+    cityRoadConnection, ARMY_BRANCH_AIR_ONLY, infAndMech, allAirUnits, null, 20, CITY_HEAL_RATE, 0, true);
 
   private static City port = new City(PORT, PORT, "road", "road", "port", "", 0, 0, plainMoveCosts, 1, true,
-    cityRoadConnection, ARMY_BRANCH_NAVAL_ONLY, Arrays.asList(INF, MECH), allNavalUnits, 20, CITY_HEAL_RATE, 0, true);
+    cityRoadConnection, ARMY_BRANCH_NAVAL_ONLY, infAndMech, allNavalUnits, null, 20, CITY_HEAL_RATE, 0, true);
 
   private static City silo = new City(5, 5, "road", "road", "missle_silo", "", 0, 0, plainMoveCosts, 1, true,
-    cityRoadConnection, null, null, null, 20, CITY_HEAL_RATE, 0, true);
+    cityRoadConnection, null, null, null, infAndMech, 20, CITY_HEAL_RATE, 0, true);
 
   // CO
   private static CO andy = new BasicCO("andy", new COStyle("ORANGE_STAR", Color.orange, 0, "orange"), "", "", 0, "", "", "", Power.NONE, Power.NONE, "", EMPTY_ARR, EMPTY_ARR, EMPTY_ARR);
@@ -149,6 +157,7 @@ public class TestData {
     WeaponFactory.addWeapon(tankCannon);
     WeaponFactory.addWeapon(rockets);
     WeaponFactory.addWeapon(artilleryCannon);
+    WeaponFactory.addWeapon(carrierAA);
 
     UnitFactory.addUnit(infantry);
     UnitFactory.addUnit(mech);
@@ -156,6 +165,7 @@ public class TestData {
     UnitFactory.addUnit(tank);
     UnitFactory.addUnit(artillery);
     UnitFactory.addUnit(rocket);
+    UnitFactory.addUnit(carrier);
 
     CityFactory.addCity(base);
     CityFactory.addCity(factory);

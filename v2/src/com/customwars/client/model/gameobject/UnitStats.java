@@ -5,10 +5,10 @@ import com.customwars.client.model.map.Range;
 import com.customwars.client.model.map.path.DefaultMoveStrategy;
 import com.customwars.client.model.map.path.MoveStrategy;
 import com.customwars.client.tools.Args;
+import com.customwars.client.tools.StringUtil;
 
 import java.io.Serializable;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -16,6 +16,7 @@ import java.util.Map;
  * Immutable statistics of a Unit
  */
 public class UnitStats implements Serializable {
+  private static final Range DEFAULT_SUPPLY_RANGE = new Range(1, 1);
   final int unitID;       // The unit Type ie(1->INF, 2->APC,...)
   final int imgRowID;     // The id, used to retrieve the images for this unit
   final String name;            // Full name ie Infantry, Tank, ...
@@ -29,35 +30,36 @@ public class UnitStats implements Serializable {
   final int maxHp;              // The value when this unit is 100% Healthy
   Range supplyRange;            // Range in which the unit can supply
   final int maxSupplies;        // The value when this unit has 100% supplies
-  final int maxTransportCount;  // Amount of units that can be transported
   final int suppliesPerTurn;    // Amount of supplies that are subtracted each turn from supplies
   final int healRate;           // Amount of healing that a transport can give to units that can be build by that transport
 
   final boolean canCapture;     // Abilities
   final boolean canDive;
-  final boolean canSupply;
-  final boolean canTransport;
   final boolean canJoin;
   final boolean canFlare;
   final boolean canHide;
+  final boolean canLaunchUnit;
 
-  private Map<Integer, Integer> transformTerrains;  // Terrain Ids this unit can transform to for a given TerrainId
-  private Map<Integer, Integer> buildCities;        // City Ids this unit can build on given terrains
-  private List<Integer> buildUnits;           // Units that can be build/healed
-  private List<Integer> transports;           // Units that can be transported (empty when this unit can't transport)
+  private Map<String, String> transformTerrains;  // Terrain Ids this unit can transform to for a given TerrainId
+  private Map<String, String> buildCities;        // City Ids this unit can build on given terrains
+  private List<String> buildUnits;              // Units that can be build
+  private List<String> supplyUnitsInTransport;  // Units that can be supplied and healed when within this transport(empty means no unit can be supplied)
+  private List<String> supplyUnits;           // Units that can be supplied and healed around this unit(empty means no unit can be supplied)
   final ArmyBranch armyBranch;                // Naval, Ground, Air
   final int movementType;                     // Inf, Mech, Tires, Tread, Air, Naval ...
 
-  private final String primaryWeaponName;     // Weapons, "" means no weapon
-  private final String secondaryWeaponName;
+  private String primaryWeaponName;           // Weapons, "" means no weapon
+  private String secondaryWeaponName;
   private final int suppliesPerTurnWhenHidden;
   final int maxConstructionMaterial;
+  private TransportStats transportStats;
 
   public UnitStats(int unitID, int imgRowID, String name, String description,
                    int price, int movement, int vision, int maxExperience,
                    int maxHp, int maxSupplies, int maxTransportCount, int suppliesPerTurn,
-                   boolean canCapture, boolean canDive, boolean canSupply, boolean canTransport, boolean canJoin,
-                   boolean canFlare, boolean canHide, List<Integer> transports,
+                   boolean canCapture, boolean canDive, boolean canJoin,
+                   boolean canFlare, boolean canHide, boolean canLaunchUnit, List<String> transports,
+                   List<String> supplyUnitsInTransport, List<String> supplyUnits,
                    ArmyBranch armyBranch, int movementType, Range supplyRange,
                    String primaryWeaponName, String secondaryWeaponName, int healRate,
                    int suppliesPerTurnWhenHidden, int maxConstructionMaterial) {
@@ -72,18 +74,18 @@ public class UnitStats implements Serializable {
 
     this.maxHp = maxHp;
     this.maxSupplies = maxSupplies;
-    this.maxTransportCount = maxTransportCount;
     this.suppliesPerTurn = suppliesPerTurn;
 
     this.canCapture = canCapture;
     this.canDive = canDive;
-    this.canSupply = canSupply;
-    this.canTransport = canTransport;
     this.canJoin = canJoin;
     this.canFlare = canFlare;
     this.canHide = canHide;
-    this.transports = transports;
-
+    this.canLaunchUnit = canLaunchUnit;
+    this.transportStats = new TransportStats(maxTransportCount);
+    this.transportStats.addAll(transports);
+    this.supplyUnitsInTransport = supplyUnitsInTransport;
+    this.supplyUnits = supplyUnits;
     this.armyBranch = armyBranch;
     this.movementType = movementType;
     this.supplyRange = supplyRange;
@@ -92,21 +94,68 @@ public class UnitStats implements Serializable {
     this.healRate = healRate;
     this.suppliesPerTurnWhenHidden = suppliesPerTurnWhenHidden;
     this.maxConstructionMaterial = maxConstructionMaterial;
-    validate();
+    init();
   }
 
-  public void validate() {
-    transports = Args.createEmptyListIfNull(transports);
-    transformTerrains = transformTerrains == null ? new HashMap<Integer, Integer>() : transformTerrains;
-    buildCities = buildCities == null ? new HashMap<Integer, Integer>() : buildCities;
+  public void init() {
+    if (transportStats == null) transportStats = new TransportStats();
+    transportStats.init(this);
+    transformTerrains = Args.createEmptyMapIfNull(transformTerrains);
+    buildCities = Args.createEmptyMapIfNull(buildCities);
     buildUnits = Args.createEmptyListIfNull(buildUnits);
-    supplyRange = supplyRange == null ? Range.ZERO_RANGE : supplyRange;
+    supplyUnitsInTransport = Args.createEmptyListIfNull(supplyUnitsInTransport);
+    supplyUnits = Args.createEmptyListIfNull(supplyUnits);
+    if (primaryWeaponName == null) primaryWeaponName = "";
+    if (secondaryWeaponName == null) secondaryWeaponName = "";
+    if (moveStrategy == null) moveStrategy = new DefaultMoveStrategy();
     Args.checkForNull(name, "please provide a name for unitID " + unitID);
-    Args.checkForNull(description, "please provide a description for unitID " + unitID);
+    Args.checkForNull(description, "please provide a description for unit " + name);
     Args.validate(suppliesPerTurn < 0, "supplies per turn should be positive");
     Args.validate(suppliesPerTurnWhenHidden < 0, "supplies per turn when hidden should be positive");
-    if (moveStrategy == null) moveStrategy = new DefaultMoveStrategy();
     Args.validate(maxConstructionMaterial < 0, "Construction material must be positive");
+    initSupplyRange();
+  }
+
+  private void initSupplyRange() {
+    boolean canSupply = !supplyUnits.isEmpty();
+    if (canSupply && supplyRange == null) {
+      supplyRange = DEFAULT_SUPPLY_RANGE; // Default to adjacent supply range when no range has been given
+    } else {
+      supplyRange = supplyRange == null ? Range.ZERO_RANGE : supplyRange;
+    }
+  }
+
+  /**
+   * Validate ensures that String references to other objects are valid.
+   * This check cannot be done in the init() method because all resources may not be loaded yet.
+   * Call this method when all objects have been loaded.
+   */
+  public void validate() {
+    transportStats.validate(this);
+
+    for (String unitName : buildUnits) {
+      Args.validate(!UnitFactory.hasUnitForName(unitName), "Illegal unit name " + unitName + " in build unit stats");
+    }
+
+    for (Map.Entry<String, String> entry : buildCities.entrySet()) {
+      String terrainName = entry.getKey();
+      String cityName = entry.getValue();
+      Args.validate(!TerrainFactory.hasTerrainForName(terrainName), "Illegal terrain " + terrainName + " in build cities stats");
+      Args.validate(!CityFactory.hasCityForName(cityName), "Illegal city " + cityName + " in build cities stats");
+    }
+
+    for (String unitName : supplyUnits) {
+      Args.validate(!UnitFactory.hasUnitForName(unitName), "Illegal unit " + unitName + " in supply units stats");
+    }
+
+    for (String unitName : supplyUnitsInTransport) {
+      Args.validate(!UnitFactory.hasUnitForName(unitName), "Illegal unit " + unitName + " in supply units in transport stats");
+    }
+
+    Args.validate(StringUtil.hasContent(primaryWeaponName) && !WeaponFactory.hasWeapon(primaryWeaponName),
+      "Illegal primary weapon " + primaryWeaponName + " for unit " + name);
+    Args.validate(StringUtil.hasContent(secondaryWeaponName) && !WeaponFactory.hasWeapon(secondaryWeaponName),
+      "Illegal secondary weapon " + secondaryWeaponName + " for unit " + name);
   }
 
   public ArmyBranch getArmyBranch() {
@@ -166,7 +215,7 @@ public class UnitStats implements Serializable {
   }
 
   public int getMaxTransportCount() {
-    return maxTransportCount;
+    return transportStats.maxTransportCount;
   }
 
   public int getSuppliesPerTurn() {
@@ -181,12 +230,12 @@ public class UnitStats implements Serializable {
     return movementType;
   }
 
-  public boolean canSupply() {
-    return canSupply;
-  }
-
   public boolean canHide() {
     return canHide;
+  }
+
+  public boolean canLaunchUnit() {
+    return canLaunchUnit;
   }
 
   public boolean canCapture() {
@@ -194,50 +243,62 @@ public class UnitStats implements Serializable {
   }
 
   public boolean canTransformTerrain(Terrain terrain) {
-    return transformTerrains.containsKey(terrain.getID());
+    return transformTerrains.containsKey(terrain.getName());
   }
 
-  public int getTransformTerrainFor(Terrain terrain) {
-    return transformTerrains.get(terrain.getID());
-  }
-
-  public Map<Integer, Integer> getTransformTerrains() {
-    return Collections.unmodifiableMap(transformTerrains);
+  public String getTransformTerrainFor(Terrain terrain) {
+    return transformTerrains.get(terrain.getName());
   }
 
   public boolean canTransport() {
-    return canTransport;
+    return transportStats.canTransport();
   }
 
-  public boolean canTransport(int id) {
-    return transports.contains(id);
+  public boolean canTransport(String unitID) {
+    return transportStats.canTransport(unitID);
   }
 
-  public List<Integer> getTransports() {
-    return Collections.unmodifiableList(transports);
+  public List<String> getTransports() {
+    return transportStats.getTransports();
   }
 
-  public boolean canBuildCity(int id) {
+  public boolean canBuildCity(String id) {
     return buildCities.containsKey(id);
   }
 
   public boolean canBuildCityOn(Terrain terrain) {
-    return canBuildCity(terrain.getID());
+    return canBuildCity(terrain.getName());
   }
 
-  public int getCityToBuildOnTerrain(Terrain terrain) {
-    return buildCities.get(terrain.getID());
+  public String getCityToBuildOnTerrain(Terrain terrain) {
+    return buildCities.get(terrain.getName());
   }
 
   public boolean canBuildUnit(Unit unit) {
-    return canBuildUnit(unit.getStats().unitID);
+    return canBuildUnit(unit.getStats().name);
   }
 
-  public boolean canBuildUnit(int unitID) {
+  public boolean canBuildUnit(String unitID) {
     return buildUnits.contains(unitID);
   }
 
-  public Iterable<Integer> getUnitsThatCanBeBuild() {
+  public boolean canSupplyUnitInTransport(Unit unit) {
+    return canSupplyUnitInTransport(unit.getStats().name);
+  }
+
+  public boolean canSupplyUnitInTransport(String unitID) {
+    return supplyUnitsInTransport.contains(unitID);
+  }
+
+  public boolean canSupplyUnitAroundTransport(Unit unit) {
+    return canSupplyUnitAroundTransport(unit.getStats().name);
+  }
+
+  public boolean canSupplyUnitAroundTransport(String unitID) {
+    return supplyUnits.contains(unitID);
+  }
+
+  public Iterable<String> getUnitsThatCanBeBuild() {
     return Collections.unmodifiableList(buildUnits);
   }
 
@@ -259,37 +320,41 @@ public class UnitStats implements Serializable {
 
   @Override
   public String toString() {
-    return "UnitStats{" +
-      "unitID=" + unitID +
-      ", imgRowID=" + imgRowID +
-      ", name='" + name + '\'' +
-      ", description='" + description + '\'' +
-      ", price=" + price +
-      ", movement=" + movement +
-      ", vision=" + vision +
-      ", maxExperience=" + maxExperience +
-      ", maxHp=" + maxHp +
-      ", supplyRange=" + supplyRange +
-      ", maxSupplies=" + maxSupplies +
-      ", maxTransportCount=" + maxTransportCount +
-      ", maxConstructionMaterial=" + maxConstructionMaterial +
-      ", suppliesPerTurn=" + suppliesPerTurn +
-      ", suppliesPerTurnWhenHidden=" + suppliesPerTurnWhenHidden +
-      ", canCapture=" + canCapture +
-      ", canDive=" + canDive +
-      ", canSupply=" + canSupply +
-      ", canTransport=" + canTransport +
-      ", canJoin=" + canJoin +
-      ", canFlare=" + canFlare +
-      ", canHide=" + canHide +
-      ", transformTerrains=" + transformTerrains +
-      ", buildCities=" + buildCities +
-      ", buildUnits=" + buildUnits +
-      ", transports=" + transports +
-      ", armyBranch=" + armyBranch +
-      ", movementType=" + movementType +
-      ", primaryWeaponName='" + primaryWeaponName + '\'' +
-      ", secondaryWeaponName='" + secondaryWeaponName + '\'' +
-      '}';
+    final StringBuffer sb = new StringBuffer(100);
+    sb.append("UnitStats");
+    sb.append("{unitID=").append(unitID);
+    sb.append(", imgRowID=").append(imgRowID);
+    sb.append(", name='").append(name).append('\'');
+    sb.append(", description='").append(description).append('\'');
+    sb.append(", price=").append(price);
+    sb.append(", movement=").append(movement);
+    sb.append(", vision=").append(vision);
+    sb.append(", moveStrategy=").append(moveStrategy);
+    sb.append(", maxExperience=").append(maxExperience);
+    sb.append(", maxHp=").append(maxHp);
+    sb.append(", supplyRange=").append(supplyRange);
+    sb.append(", maxSupplies=").append(maxSupplies);
+    sb.append(", suppliesPerTurn=").append(suppliesPerTurn);
+    sb.append(", healRate=").append(healRate);
+    sb.append(", canCapture=").append(canCapture);
+    sb.append(", canDive=").append(canDive);
+    sb.append(", canJoin=").append(canJoin);
+    sb.append(", canFlare=").append(canFlare);
+    sb.append(", canHide=").append(canHide);
+    sb.append(", canLaunchUnit=").append(canLaunchUnit);
+    sb.append(", transformTerrains=").append(transformTerrains);
+    sb.append(", buildCities=").append(buildCities);
+    sb.append(", buildUnits=").append(buildUnits);
+    sb.append(", supplyUnitsInTransport=").append(supplyUnitsInTransport);
+    sb.append(", supplyUnits=").append(supplyUnits);
+    sb.append(", armyBranch=").append(armyBranch);
+    sb.append(", movementType=").append(movementType);
+    sb.append(", primaryWeaponName='").append(primaryWeaponName).append('\'');
+    sb.append(", secondaryWeaponName='").append(secondaryWeaponName).append('\'');
+    sb.append(", suppliesPerTurnWhenHidden=").append(suppliesPerTurnWhenHidden);
+    sb.append(", maxConstructionMaterial=").append(maxConstructionMaterial);
+    sb.append(", transportStats=").append(transportStats);
+    sb.append('}');
+    return sb.toString();
   }
 }

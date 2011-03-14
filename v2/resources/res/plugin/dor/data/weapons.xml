@@ -157,7 +157,7 @@
   <weapon name="naval_anti_air_missle">
     <fireRange>
       <minRange>1</minRange>
-      <maxRange>2</maxRange>
+      <maxRange>1</maxRange>
     </fireRange>
     <attacks>
       <armyBranch>AIR</armyBranch>
@@ -256,5 +256,16 @@
     <attacks/>
     <maxAmmo>3</maxAmmo>
     <description>Fires a flare that reveals fogged tiles.</description>
+  </weapon>
+  <weapon name="gunboat_anti_ship_missile">
+    <fireRange>
+      <minRange>1</minRange>
+      <maxRange>1</maxRange>
+    </fireRange>
+    <attacks>
+      <armyBranch>NAVAL</armyBranch>
+    </attacks>
+    <maxAmmo>1</maxAmmo>
+    <description></description>
   </weapon>
 </list>

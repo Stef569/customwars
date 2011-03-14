@@ -1,9 +1,11 @@
 <!DOCTYPE list [<!ELEMENT list (unit*)>
 
-    <!ELEMENT unit (price, movement, vision,canHide?, canDive?, canCapture?, canJoin?, canFlare?, canSupply?,
-        canTransport?, maxTransportCount?, transports?, transformTerrains?, buildCities?, buildUnits?, maxExperience?, maxHp, supplyRange?,
-        maxSupplies, suppliesPerTurn?, suppliesPerTurnWhenHidden?, maxConstructionMaterial?,
-        buildCities?, healRate?, armyBranch,movementType, primaryWeaponName?, secondaryWeaponName?, description)>
+    <!ELEMENT unit (price, movement, vision,
+        canHide?, canDive?, canCapture?, canJoin?, canFlare?, canLaunchUnit?,
+        transports?, transformTerrains?, buildCities?, buildUnits?, supplyUnits?, supplyUnitsInTransport?,
+        maxExperience?, maxHp, supplyRange?, maxSupplies, suppliesPerTurn?, suppliesPerTurnWhenHidden?,
+        maxConstructionMaterial?, healRate?,
+        armyBranch,movementType, primaryWeaponName?, secondaryWeaponName?, description)>
 
     <!ATTLIST unit name CDATA #REQUIRED>
     <!ATTLIST unit unitID CDATA #REQUIRED>
@@ -19,22 +21,27 @@
     <!ELEMENT canJoin (#PCDATA)>
     <!ELEMENT canFlare (#PCDATA)>
     <!ELEMENT canSupply (#PCDATA)>
+    <!ELEMENT canLaunchUnit (#PCDATA)>
     <!ELEMENT canTransport (#PCDATA)>
-    <!ELEMENT maxTransportCount (#PCDATA)>
-    <!ELEMENT transports (int*)>
+
+    <!ELEMENT transports (unitID*)>
+    <!ATTLIST transports max CDATA #REQUIRED>
+
     <!ELEMENT transformTerrains (entry*)>
     <!ELEMENT buildCities (entry*)>
-    <!ELEMENT buildUnits (int*)>
+    <!ELEMENT buildUnits (unitID*)>
+    <!ELEMENT supplyUnitsInTransport (unitID*)>
+    <!ELEMENT supplyUnits (unitID*)>
 
-    <!ELEMENT entry (int+)>
-    <!ELEMENT int (#PCDATA)>
+    <!ELEMENT entry (id+)>
+    <!ELEMENT id (#PCDATA)>
+    <!ELEMENT unitID (#PCDATA)>
+    <!ELEMENT minRange (#PCDATA)>
+    <!ELEMENT maxRange (#PCDATA)>
 
     <!ELEMENT maxExperience (#PCDATA)>
     <!ELEMENT maxHp (#PCDATA)>
     <!ELEMENT supplyRange (minRange, maxRange)>
-    <!ELEMENT minRange (#PCDATA)>
-    <!ELEMENT maxRange (#PCDATA)>
-
     <!ELEMENT maxSupplies (#PCDATA)>
     <!ELEMENT suppliesPerTurn (#PCDATA)>
     <!ELEMENT suppliesPerTurnWhenHidden (#PCDATA)>
@@ -294,43 +301,59 @@
     <vision>1</vision>
 
     <canJoin>true</canJoin>
-    <canSupply>true</canSupply>
-    <canTransport>true</canTransport>
-    <maxTransportCount>1</maxTransportCount>
-    <transports>
-      <int>0</int>
-      <int>1</int>
+    <transports max="1">
+      <unitID>infantry</unitID>
+      <unitID>mech</unitID>
     </transports>
 
-    <maxExperience>3</maxExperience>
-    <maxHp>100</maxHp>
-    <supplyRange>
-      <minRange>1</minRange>
-      <maxRange>1</maxRange>
-    </supplyRange>
-    <maxSupplies>99</maxSupplies>
-
-    <maxConstructionMaterial>1</maxConstructionMaterial>
     <buildCities>
       <entry>
-        <int>18</int>
-        <!-- Terrain -->
-        <int>12</int>
-        <!-- City -->
+        <id>plain</id>
+        <id>temp_airport</id>
       </entry>
       <entry>
-        <int>65</int>
-        <int>11</int>
-      </entry>
-      <entry>
-        <int>0</int>
-        <int>11</int>
+        <id>shoal</id>
+        <id>temp_port</id>
       </entry>
     </buildCities>
 
+    <supplyUnits>
+      <unitID>infantry</unitID>
+      <unitID>mech</unitID>
+      <unitID>bikes</unitID>
+      <unitID>recon</unitID>
+      <unitID>flare</unitID>
+      <unitID>anti_air</unitID>
+      <unitID>light_tank</unitID>
+      <unitID>medium_tank</unitID>
+      <unitID>heavy_tank</unitID>
+      <unitID>artillery</unitID>
+      <unitID>anti_tank</unitID>
+      <unitID>rockets</unitID>
+      <unitID>missiles</unitID>
+      <unitID>apc</unitID>
+      <unitID>jet</unitID>
+      <unitID>bomber</unitID>
+      <unitID>sea_plane</unitID>
+      <unitID>fighter</unitID>
+      <unitID>bcopter</unitID>
+      <unitID>tcopter</unitID>
+      <unitID>gun_boat</unitID>
+      <unitID>cruiser</unitID>
+      <unitID>sub</unitID>
+      <unitID>carrier</unitID>
+      <unitID>battleship</unitID>
+      <unitID>lander</unitID>
+    </supplyUnits>
+
+    <maxExperience>3</maxExperience>
+    <maxHp>100</maxHp>
+    <maxSupplies>99</maxSupplies>
+    <maxConstructionMaterial>1</maxConstructionMaterial>
+
     <armyBranch>LAND</armyBranch>
     <movementType>&TREAD;</movementType>
-    <description>Can transport 1 unit(Infantry or Mech) they also have the ability to supply.</description>
+    <description>Can transport 1 unit(Infantry or Mech) can supply units, can build temp properties.</description>
   </unit>
 
   <unit name="jet" unitID="14" imgRowID="14">
@@ -431,11 +454,9 @@
 
     <canJoin>true</canJoin>
 
-    <canTransport>true</canTransport>
-    <maxTransportCount>1</maxTransportCount>
-    <transports>
-      <int>0</int>
-      <int>1</int>
+    <transports max="1">
+      <unitID>infantry</unitID>
+      <unitID>mech</unitID>
     </transports>
 
     <maxHp>100</maxHp>
@@ -453,11 +474,9 @@
     <vision>2</vision>
 
     <canJoin>true</canJoin>
-    <canTransport>true</canTransport>
-    <maxTransportCount>1</maxTransportCount>
-    <transports>
-      <int>0</int>
-      <int>1</int>
+    <transports max="1">
+      <unitID>infantry</unitID>
+      <unitID>mech</unitID>
     </transports>
 
     <maxExperience>3</maxExperience>
@@ -467,6 +486,7 @@
 
     <armyBranch>NAVAL</armyBranch>
     <movementType>&NAVAL;</movementType>
+    <primaryWeaponName>gunboat_anti_ship_missile</primaryWeaponName>
     <description></description>
   </unit>
   <unit name="cruiser" unitID="21" imgRowID="21">
@@ -476,11 +496,9 @@
 
     <canJoin>true</canJoin>
 
-    <canTransport>true</canTransport>
-    <maxTransportCount>2</maxTransportCount>
-    <transports>
-      <int>18</int>
-      <int>19</int>
+    <transports max="2">
+      <unitID>tcopter</unitID>
+      <unitID>bcopter</unitID>
     </transports>
 
     <maxExperience>3</maxExperience>
@@ -522,16 +540,29 @@
     <vision>4</vision>
 
     <canJoin>true</canJoin>
+    <canLaunchUnit>true</canLaunchUnit>
 
-    <canTransport>true</canTransport>
-    <maxTransportCount>2</maxTransportCount>
-    <transports>
-      <int>&AIR;</int>
+    <transports max="2">
+      <unitID>jet</unitID>
+      <unitID>bomber</unitID>
+      <unitID>tcopter</unitID>
+      <unitID>bcopter</unitID>
+      <unitID>sea_plane</unitID>
+      <unitID>fighter</unitID>
     </transports>
 
     <buildUnits>
-      <int>16</int>
+      <unitID>sea_plane</unitID>
     </buildUnits>
+
+    <supplyUnitsInTransport>
+      <unitID>jet</unitID>
+      <unitID>bomber</unitID>
+      <unitID>tcopter</unitID>
+      <unitID>bcopter</unitID>
+      <unitID>sea_plane</unitID>
+      <unitID>fighter</unitID>
+    </supplyUnitsInTransport>
 
     <maxExperience>3</maxExperience>
     <maxHp>100</maxHp>
@@ -542,7 +573,7 @@
     <armyBranch>NAVAL</armyBranch>
     <movementType>&NAVAL;</movementType>
 
-    <secondaryWeaponName>naval_anti_air_missle</secondaryWeaponName>
+    <primaryWeaponName>naval_anti_air_missle</primaryWeaponName>
     <description>Can produce and carry 2 air units</description>
   </unit>
   <unit name="battleship" unitID="24" imgRowID="24">
@@ -569,23 +600,21 @@
     <vision>1</vision>
 
     <canJoin>true</canJoin>
-    <canTransport>true</canTransport>
-    <maxTransportCount>2</maxTransportCount>
-    <transports>
-      <int>0</int>
-      <int>1</int>
-      <int>2</int>
-      <int>3</int>
-      <int>4</int>
-      <int>5</int>
-      <int>6</int>
-      <int>7</int>
-      <int>8</int>
-      <int>9</int>
-      <int>18</int>
-      <int>22</int>
-      <int>23</int>
-      <int>24</int>
+    <transports max="2">
+      <unitID>infantry</unitID>
+      <unitID>mech</unitID>
+      <unitID>bikes</unitID>
+      <unitID>recon</unitID>
+      <unitID>flare</unitID>
+      <unitID>anti_air</unitID>
+      <unitID>light_tank</unitID>
+      <unitID>medium_tank</unitID>
+      <unitID>heavy_tank</unitID>
+      <unitID>artillery</unitID>
+      <unitID>anti_tank</unitID>
+      <unitID>rockets</unitID>
+      <unitID>missiles</unitID>
+      <unitID>apc</unitID>
     </transports>
 
     <maxHp>100</maxHp>

@@ -293,7 +293,7 @@ public class Map extends TileMap<Tile> implements TurnHandler {
       Unit unitInRange = getUnitOn(t);
 
       if (unitInRange != null) {
-        if (isUnitVisible(unitInRange) && supplier.canSupply(unitInRange)) {
+        if (isUnitVisible(unitInRange) && supplier.canSupply(unitInRange, false)) {
           units.add(unitInRange);
         }
       }
@@ -330,7 +330,11 @@ public class Map extends TileMap<Tile> implements TurnHandler {
 
         if (fight != null) {
           if (fight.canUsePrimaryWeapon() || fight.canUseSecondaryWeapon()) {
-            enemies.add(unit);
+            if (canAttackUnit) {
+              enemies.add(unit);
+            } else {
+              enemies.add(city);
+            }
           }
         }
       }
@@ -726,6 +730,7 @@ public class Map extends TileMap<Tile> implements TurnHandler {
 
   /**
    * Determines if at least 1 unit in the transport can be dropped on the drop location.
+   * If the transport is empty false is returned.
    *
    * @param dropLocation The tile that a unit wants to be dropped on
    * @param transporter  The transport unit that attempts to drop a unit to the dropLocation
@@ -733,6 +738,8 @@ public class Map extends TileMap<Tile> implements TurnHandler {
    * @see #isFreeDropLocation(Unit, Unit, Tile)
    */
   public boolean canDropAtLeast1Unit(Unit transporter, Tile dropLocation) {
+    if (transporter.getLocatableCount() == 0) return false;
+
     for (int i = 0; i < transporter.getLocatableCount(); i++) {
       Unit unit = (Unit) transporter.getLocatable(i);
       if (!isFreeDropLocation(transporter, unit, dropLocation)) {

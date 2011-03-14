@@ -16,6 +16,7 @@ import com.customwars.client.model.gameobject.CityFactory;
 import com.customwars.client.model.gameobject.Terrain;
 import com.customwars.client.model.gameobject.TerrainConnection;
 import com.customwars.client.model.gameobject.TerrainFactory;
+import com.customwars.client.model.gameobject.TransportStats;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.gameobject.UnitFactory;
 import com.customwars.client.model.gameobject.UnitStats;
@@ -68,6 +69,7 @@ public class ModelLoader implements CWResourceLoader {
     loadCities();
     loadDamageTables();
     loadCOs();
+    validateData();
   }
 
   private void loadTerrains() {
@@ -103,11 +105,22 @@ public class ModelLoader implements CWResourceLoader {
 
   private void loadUnits() {
     xStream.alias("unit", UnitStats.class);
-    XStreamUtil.useReflectionFor(xStream, Unit.class);
+    XStreamUtil.useReflectionFor(xStream, UnitStats.class);
     xStream.useAttributeFor(UnitStats.class, "unitID");
     xStream.useAttributeFor(UnitStats.class, "imgRowID");
     xStream.useAttributeFor(UnitStats.class, "name");
+    xStream.useAttributeFor(Range.class, "minRange");
+    xStream.useAttributeFor(Range.class, "maxRange");
+
+    xStream.aliasField("transports", UnitStats.class, "transportStats");
+    xStream.addImplicitCollection(TransportStats.class, "transports");
+    xStream.useAttributeFor(TransportStats.class, "maxTransportCount");
+    xStream.aliasAttribute("max", "maxTransportCount");
+
     xStream.alias("supplyRange", Range.class);
+    xStream.alias("unitID", String.class);
+    xStream.alias("id", String.class);
+
     InputStream unitStream = ResourceLoader.getResourceAsStream(modelResPath + XML_DATA_UNITS_FILE);
     Collection<UnitStats> unitStats = (Collection<UnitStats>) XStreamUtil.readObject(xStream, unitStream);
     UnitFactory.addUnits(unitStats);
@@ -121,6 +134,7 @@ public class ModelLoader implements CWResourceLoader {
     xStream.useAttributeFor(Terrain.class, "type");
     xStream.useAttributeFor(City.class, "imgRowID");
     xStream.alias("armyBranch", ArmyBranch.class);
+    xStream.alias("unitID", String.class);
     xStream.aliasField("connect", Terrain.class, "connection");
 
     // Load Base Cities, they contain the city stats
@@ -165,5 +179,14 @@ public class ModelLoader implements CWResourceLoader {
     Collection<CO> cos = (Collection<CO>) XStreamUtil.readObject(xStream, coXmlStream);
     COFactory.addCOStyles(CoStyles);
     COFactory.addCOs(cos);
+  }
+
+  private void validateData() {
+    for (Unit unit : UnitFactory.getAllUnits()) {
+      unit.getStats().validate();
+    }
+    for (City city : CityFactory.getBaseCities()) {
+      city.validate();
+    }
   }
 }
