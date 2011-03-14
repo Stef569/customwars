@@ -138,13 +138,40 @@ public class CityTest {
 
   @Test
   // The factory produces Ground units
-  // our Infantry is armybranch Ground so the factory can build this unit.
+  // our units are ground units so the factory can build these unit.
+  // A Carrier cannot be build by a factory.
   public void testBuildingUnit() {
     City factory = CityFactory.getCity(TestData.FACTORY);
     map.getTile(4, 0).setTerrain(factory);
     factory.setOwner(player1);
 
+    Unit inf = UnitFactory.getUnit(TestData.INF);
+    Unit mech = UnitFactory.getUnit(TestData.MECH);
+    Unit artillery = UnitFactory.getUnit(TestData.ARTILLERY);
+    Unit rockets = UnitFactory.getUnit(TestData.ROCKETS);
+    Unit apc = UnitFactory.getUnit(TestData.APC);
+    Assert.assertTrue(factory.canBuild());
+    Assert.assertTrue(factory.canBuild(inf));
+    Assert.assertTrue(factory.canBuild(mech));
+    Assert.assertTrue(factory.canBuild(artillery));
+    Assert.assertTrue(factory.canBuild(rockets));
+    Assert.assertTrue(factory.canBuild(apc));
+
+    Unit carrier = UnitFactory.getUnit(TestData.CARRIER);
+    Assert.assertFalse(factory.canBuild(carrier));
+  }
+
+  @Test
+  public void testLaunchRocket() {
+    City silo = CityFactory.getCity(TestData.MISSILE_SILO);
+    map.getTile(4, 0).setTerrain(silo);
+    silo.setOwner(player1);
+
     Unit unit = UnitFactory.getUnit(TestData.INF);
-    Assert.assertTrue(factory.canBuild(unit));
+    Assert.assertTrue(silo.canLaunchRocket());
+    Assert.assertTrue(silo.canLaunchRocket(unit));
+
+    Unit apc = UnitFactory.getUnit(TestData.APC);
+    Assert.assertFalse(silo.canLaunchRocket(apc));
   }
 }

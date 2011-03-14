@@ -190,7 +190,7 @@ public class UnitMenuBuilder {
     }
 
     if (canBuildUnit) {
-      for (int unitID : unit.getStats().getUnitsThatCanBeBuild()) {
+      for (String unitID : unit.getStats().getUnitsThatCanBeBuild()) {
         Unit unitThatCanBeBuild = UnitFactory.getUnit(unitID);
         CWAction buildUnitAction = ActionFactory.buildProduceUnitAction(unit, unitThatCanBeBuild, to);
         String menuText = App.translate("build") + " - " + App.translate(unitThatCanBeBuild.getStats().getName());
@@ -280,12 +280,12 @@ public class UnitMenuBuilder {
   }
 
   private Terrain getTransformToTerrain(Tile tile) {
-    int transformID = unit.getStats().getTransformTerrainFor(tile.getTerrain());
+    String transformID = unit.getStats().getTransformTerrainFor(tile.getTerrain());
     return TerrainFactory.getTerrain(transformID);
   }
 
   private City getCityThatCanBeBuildOn(Tile tile) {
-    int cityID = unit.getStats().getCityToBuildOnTerrain(tile.getTerrain());
+    String cityID = unit.getStats().getCityToBuildOnTerrain(tile.getTerrain());
     return CityFactory.getCity(cityID);
   }
 

@@ -28,9 +28,9 @@
     </heals>
     <healRate>2</healRate>
     <canBeCaptureBy>
-      <int>0</int>
-      <int>1</int>
-      <int>2</int>
+      <unitID>infantry</unitID>
+      <unitID>mech</unitID>
+      <unitID>bikes</unitID>
     </canBeCaptureBy>
     <maxCapCount>20</maxCapCount>
     <description>They give you money and heal units inside them.</description>
@@ -54,25 +54,25 @@
     </heals>
     <healRate>2</healRate>
     <canBeCaptureBy>
-      <int>0</int>
-      <int>1</int>
-      <int>2</int>
+      <unitID>infantry</unitID>
+      <unitID>mech</unitID>
+      <unitID>bikes</unitID>
     </canBeCaptureBy>
     <builds>
-      <int>0</int>
-      <int>1</int>
-      <int>2</int>
-      <int>3</int>
-      <int>4</int>
-      <int>5</int>
-      <int>6</int>
-      <int>7</int>
-      <int>8</int>
-      <int>9</int>
-      <int>10</int>
-      <int>11</int>
-      <int>12</int>
-      <int>13</int>
+      <unitID>infantry</unitID>
+      <unitID>mech</unitID>
+      <unitID>bikes</unitID>
+      <unitID>recon</unitID>
+      <unitID>flare</unitID>
+      <unitID>anti_air</unitID>
+      <unitID>light_tank</unitID>
+      <unitID>medium_tank</unitID>
+      <unitID>heavy_tank</unitID>
+      <unitID>artillery</unitID>
+      <unitID>anti_tank</unitID>
+      <unitID>rockets</unitID>
+      <unitID>missiles</unitID>
+      <unitID>apc</unitID>
     </builds>
     <maxCapCount>20</maxCapCount>
     <description>Factories heal, provide supplies and can create new ground units.</description>
@@ -96,16 +96,16 @@
     </heals>
     <healRate>2</healRate>
     <canBeCaptureBy>
-      <int>0</int>
-      <int>1</int>
-      <int>2</int>
+      <unitID>infantry</unitID>
+      <unitID>mech</unitID>
+      <unitID>bikes</unitID>
     </canBeCaptureBy>
     <builds>
-      <int>14</int>
-      <int>15</int>
-      <int>17</int>
-      <int>18</int>
-      <int>19</int>
+      <unitID>jet</unitID>
+      <unitID>bomber</unitID>
+      <unitID>tcopter</unitID>
+      <unitID>bcopter</unitID>
+      <unitID>fighter</unitID>
     </builds>
     <maxCapCount>20</maxCapCount>
     <description>empty</description>
@@ -129,17 +129,17 @@
     </heals>
     <healRate>2</healRate>
     <canBeCaptureBy>
-      <int>0</int>
-      <int>1</int>
-      <int>2</int>
+      <unitID>infantry</unitID>
+      <unitID>mech</unitID>
+      <unitID>bikes</unitID>
     </canBeCaptureBy>
     <builds>
-      <int>20</int>
-      <int>21</int>
-      <int>22</int>
-      <int>23</int>
-      <int>24</int>
-      <int>25</int>
+      <unitID>gun_boat</unitID>
+      <unitID>cruiser</unitID>
+      <unitID>sub</unitID>
+      <unitID>carrier</unitID>
+      <unitID>battleship</unitID>
+      <unitID>lander</unitID>
     </builds>
     <maxCapCount>20</maxCapCount>
     <description></description>
@@ -163,9 +163,9 @@
     </heals>
     <healRate>2</healRate>
     <canBeCaptureBy>
-      <int>0</int>
-      <int>1</int>
-      <int>2</int>
+      <unitID>infantry</unitID>
+      <unitID>mech</unitID>
+      <unitID>bikes</unitID>
     </canBeCaptureBy>
     <maxCapCount>20</maxCapCount>
     <description></description>
@@ -183,9 +183,9 @@
     </moveCosts>
     <vision>1</vision>
     <canBeLaunchedBy>
-      <int>0</int>
-      <int>1</int>
-      <int>2</int>
+      <unitID>infantry</unitID>
+      <unitID>mech</unitID>
+      <unitID>bikes</unitID>
     </canBeLaunchedBy>
 
     <maxCapCount>20</maxCapCount>
@@ -231,9 +231,9 @@
     <vision>5</vision>
 
     <canBeCaptureBy>
-      <int>0</int>
-      <int>1</int>
-      <int>2</int>
+      <unitID>infantry</unitID>
+      <unitID>mech</unitID>
+      <unitID>bikes</unitID>
     </canBeCaptureBy>
     <maxCapCount>20</maxCapCount>
     <description>Reveals 5 tiles around this city in all directions.</description>
@@ -250,9 +250,9 @@
       <int>127</int>
     </moveCosts>
     <canBeCaptureBy>
-      <int>0</int>
-      <int>1</int>
-      <int>2</int>
+      <unitID>infantry</unitID>
+      <unitID>mech</unitID>
+      <unitID>bikes</unitID>
     </canBeCaptureBy>
     <maxCapCount>20</maxCapCount>
     <description>A small airfield that can repair and resupply your air units.</description>
@@ -269,9 +269,9 @@
       <int>1</int>
     </moveCosts>
     <canBeCaptureBy>
-      <int>0</int>
-      <int>1</int>
-      <int>2</int>
+      <unitID>infantry</unitID>
+      <unitID>mech</unitID>
+      <unitID>bikes</unitID>
     </canBeCaptureBy>
     <maxCapCount>20</maxCapCount>
     <description>A small dock that can repair and resupply your fleet.</description>
@@ -290,9 +290,9 @@
     <vision>1</vision>
 
     <canBeCaptureBy>
-      <int>0</int>
-      <int>1</int>
-      <int>2</int>
+      <unitID>infantry</unitID>
+      <unitID>mech</unitID>
+      <unitID>bikes</unitID>
     </canBeCaptureBy>
     <maxCapCount>20</maxCapCount>
     <description>Once captured, this structure boosts all unit's offense by 5%</description>

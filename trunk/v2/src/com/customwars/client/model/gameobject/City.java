@@ -31,14 +31,12 @@ import java.util.List;
  * <p/>
  * A City can fire a rocket once
  * A City can be destroyed
- *
- * @author stefan
  */
 public class City extends Terrain implements PropertyChangeListener, TurnHandler, Locatable, Defender {
   private List<ArmyBranch> heals;       // The army branches this City can heal(Empty list means it cannot heal)
-  private List<Integer> canBeCaptureBy; // The unit ids this City can be captured by(Empty list means it cannot be captured)
-  private List<Integer> builds;         // The unit ids this City can build (Empty list means it cannot build)
-  private List<Integer> canBeLaunchedBy;// The unit ids that can launch a rocket from this city (Empty list means it cannot launch rockets)
+  private List<String> canBeCaptureBy; // The unit ids this City can be captured by(Empty list means it cannot be captured)
+  private List<String> builds;         // The unit ids this City can build (Empty list means it cannot build)
+  private List<String> canBeLaunchedBy;// The unit ids that can launch a rocket from this city (Empty list means it cannot launch rockets)
   private final int maxCapCount;
   private final int healRate;       // Healing/repairs this city can give to a Unit
   private final int maxHp;          // Maximum health points
@@ -55,13 +53,14 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
 
   public City(int id, int imgRowID, String type, String connectType, String name, String description, int defenseBonus, int height, List<Integer> moveCosts,
               int vision, boolean hidden, List<Direction> connectedDirections,
-              List<ArmyBranch> heals, List<Integer> canBeCaptureBy, List<Integer> builds, int maxCapCount, int healRate,
+              List<ArmyBranch> heals, List<String> canBeCaptureBy, List<String> builds, List<String> canBeLaunchedBy, int maxCapCount, int healRate,
               int maxHp, boolean canProduceFunds) {
     super(id, type, connectType, name, description, defenseBonus, height, hidden, vision, moveCosts, connectedDirections, "");
     this.imgRowID = imgRowID;
     this.heals = heals;
     this.canBeCaptureBy = canBeCaptureBy;
     this.builds = builds;
+    this.canBeLaunchedBy = canBeLaunchedBy;
     this.maxCapCount = maxCapCount;
     this.healRate = healRate;
     this.maxHp = maxHp;
@@ -73,7 +72,7 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
    * Create a city with the given ID all the other values are set to default values
    */
   public City(int id) {
-    this(id, id, "", "", "dummy city", "", 0, 0, Arrays.asList(1), 0, false, null, null, null, null, 0, 0, 0, true);
+    this(id, id, "", "", "dummy city", "", 0, 0, Arrays.asList(1), 0, false, null, null, null, null, null, 0, 0, 0, true);
   }
 
   @Override
@@ -85,6 +84,25 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
     this.canBeLaunchedBy = Args.createEmptyListIfNull(canBeLaunchedBy);
     Args.validate(maxCapCount < 0, "maxCapcount should be positive");
     Args.validate(maxHp < 0, "maxHP should be positive");
+  }
+
+  public void validate() {
+    for (String unitName : canBeCaptureBy) {
+      validateUnitName(unitName,
+        "Illegal unit name " + unitName + " in can be captured by");
+    }
+    for (String unitName : builds) {
+      validateUnitName(unitName,
+        "Illegal unit name " + unitName + " in builds");
+    }
+    for (String unitName : canBeLaunchedBy) {
+      validateUnitName(unitName,
+        "Illegal unit name " + unitName + " in can be launched");
+    }
+  }
+
+  private void validateUnitName(String unitName, String err) {
+    Args.validate(!UnitFactory.hasUnitForName(unitName), err);
   }
 
   public City(City otherCity) {
@@ -153,7 +171,6 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
    * the player that is owning the capturing unit will be the new owner of this city
    * <p/>
    * Pre: canBeCapturedBy(unit) == true
-   * Post: isCaptured() == true isCapturedBy(unit) == true
    *
    * @param capturer The Unit that will perform the capture action
    */
@@ -342,7 +359,7 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
   }
 
   public boolean canBeCapturedBy(Unit unit) {
-    return unit != null && canBeCaptureBy.contains(unit.getStats().getID()) && unit.getLocation().equals(location);
+    return unit != null && canBeCaptureBy.contains(unit.getStats().getName()) && unit.getLocation().equals(location);
   }
 
   public boolean canBeCaptured() {
@@ -353,7 +370,7 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
    * @return does this city has the ability to build the given unit
    */
   public boolean canBuild(Unit unit) {
-    return unit != null && builds.contains(unit.getStats().getID());
+    return unit != null && builds.contains(unit.getStats().getName());
   }
 
   /**
@@ -392,7 +409,7 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
    * @return if the unit can launch a rocket from this city
    */
   public boolean canLaunchRocket(Unit unit) {
-    return unit != null && canLaunchRocket() && canBeLaunchedBy.contains(unit.getStats().getID());
+    return unit != null && canLaunchRocket() && canBeLaunchedBy.contains(unit.getStats().getName());
   }
 
   /**

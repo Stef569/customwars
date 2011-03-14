@@ -65,7 +65,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   }
 
   void init() {
-    stats.validate();
+    stats.init();
     transport = new LinkedList<Locatable>();
     if (stats.canDive) dive();
     unitState = UnitState.IDLE;
@@ -162,15 +162,15 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   }
 
   /**
-   * If this unit is transporting units and it can build the unit in the transport
+   * If this unit is transporting units and it can supply the unit in the transport
    * then supply and heal the units in the transport
    */
   private void supplyUnitsInTransport() {
-    if (stats.canTransport && !transport.isEmpty()) {
+    if (stats.canTransport() && !transport.isEmpty()) {
       for (Locatable locatable : transport) {
         Unit unit = (Unit) locatable;
-        if (stats.canBuildUnit(unit)) {
-          supply(unit);
+        if (stats.canSupplyUnitInTransport(unit)) {
+          supplyInTransport(unit);
           unit.heal(stats.healRate);
         }
       }
@@ -330,18 +330,18 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   public boolean canAdd(Locatable locatable) {
     if (locatable instanceof Unit) {
       Unit unit = (Unit) locatable;
-      return canTransport(unit.getMovementType());
+      return canTransport(unit.stats.name);
     } else {
       return false;
     }
   }
 
-  public boolean canTransport(int id) {
-    return stats.canTransport && stats.canTransport(id) && !isTransportFull();
+  public boolean canTransport(String unitName) {
+    return stats.canTransport(unitName) && !isTransportFull();
   }
 
   private boolean isTransportFull() {
-    return transport.size() >= stats.maxTransportCount;
+    return transport.size() >= stats.getMaxTransportCount();
   }
 
   /**
@@ -391,9 +391,16 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
     }
   }
 
-  public void supply(Unit unit) {
-    if (canSupply(unit))
+  public void supplyInTransport(Unit unit) {
+    if (canSupply(unit, true)) {
       unit.resupply();
+    }
+  }
+
+  public void supply(Unit unit) {
+    if (canSupply(unit, false)) {
+      unit.resupply();
+    }
   }
 
   /**
@@ -402,11 +409,17 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
    * #2 Can we add supplies or ammo to one of the weapons of the unit
    * #3 Is the supplier and the unit owned by the same player
    *
-   * @param unit the unit that is going to be supplied by this unit
+   * @param unit        the unit that is going to be supplied by this unit
+   * @param inTransport true if only units in the transport should be resupplied..
    * @return Can this unit supply the given unit
    */
-  public boolean canSupply(Unit unit) {
-    return unit != null && stats.canSupply && !unit.hasMaxSupplies() && owner == unit.owner;
+  public boolean canSupply(Unit unit, boolean inTransport) {
+    if (unit == null) return false;
+    boolean canSupply = inTransport ? stats.canSupplyUnitInTransport(unit) : stats.canSupplyUnitAroundTransport(unit);
+    boolean needsSupplies = !unit.hasMaxSupplies();
+    boolean allied = owner.equals(unit.owner);
+
+    return canSupply && needsSupplies && allied;
   }
 
   /**
@@ -919,7 +932,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
    * @return Can this unit build units
    */
   public boolean canBuildUnit() {
-    return stats.canTransport && !isTransportFull();
+    return stats.canTransport() && !isTransportFull();
   }
 
   public boolean canHide() {
