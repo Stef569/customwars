@@ -70,12 +70,13 @@ public class MapManager {
     String category = map.getNumPlayers() + "P";
     File categoryDir = new File(mapDirPath, category);
     File mapFile = new File(categoryDir, mapFileName);
+    String currentCategory = getCategory(map);
 
     if (mapFile.exists()) {
       logger.debug("Overwriting map " + mapFileName);
+      deleteMap(map, category);
     }
 
-    String currentCategory = getCategory(map);
     if (currentCategory != null && !currentCategory.equals(category)) {
       // The map file to save is in another category.
       // Delete the old map
@@ -160,7 +161,12 @@ public class MapManager {
   private void addMapCategory(String category, Map map) {
     if (mapsByCategory.containsKey(category)) {
       List<Map> categoryMaps = mapsByCategory.get(category);
-      categoryMaps.add(map);
+
+      if (!categoryMaps.contains(map)) {
+        categoryMaps.add(map);
+      } else {
+        logger.warn("Map name " + map.getMapName() + " in category " + category + " is already cached");
+      }
     } else {
       List<Map> categoryMaps = new ArrayList<Map>();
       categoryMaps.add(map);
