@@ -339,6 +339,8 @@ public class InGameState extends CWState implements PropertyChangeListener {
           }
           input.consumeEvent();
         }
+      } else if (button == Input.MOUSE_RIGHT_BUTTON) {
+        inputHandler.undo();
       }
     }
   }

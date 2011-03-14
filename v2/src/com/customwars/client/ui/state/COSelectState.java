@@ -214,9 +214,12 @@ public class COSelectState extends CWState {
   }
 
   @Override
-  public void mouseClicked(int button, int x, int y, int clickCount) {
-    if (isMouseWithinCOFramework(x, y)) {
-      selectCurrentCO();
+  public void mousePressed(int button, int x, int y) {
+    super.mousePressed(button, x, y);
+    if (button == Input.MOUSE_LEFT_BUTTON) {
+      if (isMouseWithinCOFramework(x, y)) {
+        selectCurrentCO();
+      }
     }
   }
 

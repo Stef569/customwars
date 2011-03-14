@@ -4,7 +4,6 @@ import com.customwars.client.ui.slick.InputField;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
-import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.command.BasicCommand;
 import org.newdawn.slick.gui.TextField;
@@ -17,8 +16,6 @@ import java.util.List;
 /**
  * Show current Command binds and allow to remap them
  * Right click takes you back to the menu
- *
- * @author stefan
  */
 public class ControlBindingState extends CWState {
   private static final boolean DEBUG = false;
@@ -31,10 +28,8 @@ public class ControlBindingState extends CWState {
   private static final int BIND_LIMIT = LEFT_MARGIN;
   private static final Point leftTop = new Point(LEFT_MARGIN, 50);
   private static final List<TextField> fields = new ArrayList<TextField>();
-  private Input input;
 
   public void init(GameContainer container, StateBasedGame game) throws SlickException {
-    this.input = container.getInput();
     int rowCount = 0;
 
     List commands = cwInput.getUniqueCommands();
@@ -134,14 +129,6 @@ public class ControlBindingState extends CWState {
           field.setBorderColor(null);
         }
       }
-    }
-  }
-
-  @Override
-  public void mousePressed(int button, int x, int y) {
-    // CWInput is disabled, check for right click
-    if (input.isMousePressed(1)) {
-      changeToPreviousState();
     }
   }
 

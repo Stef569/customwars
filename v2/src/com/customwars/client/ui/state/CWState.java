@@ -6,6 +6,7 @@ import com.customwars.client.ui.state.input.CWInput;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
@@ -14,8 +15,6 @@ import org.newdawn.slick.state.StateBasedGame;
  * A state that CW can be in, examples MainMenu, EndTurn, InGame
  * each state can listen for input commands(Select, Cancel, menuUp,menuDown etc)
  * by overwriting controlPressed(Command command)
- *
- * @author stefan
  */
 public abstract class CWState extends BasicGameState {
   protected static StateChanger stateChanger;   // Allows to change to another state
@@ -40,6 +39,18 @@ public abstract class CWState extends BasicGameState {
   }
 
   public void controlReleased(CWCommand command, CWInput cwInput) {
+  }
+
+  @Override
+  /**
+   * Default behaviour of a CW state.
+   * When a right click occurs return to the previous state.
+   * Subclasses that don't want this behaviour must override this method.
+   */
+  public void mousePressed(int button, int x, int y) {
+    if (button == Input.MOUSE_RIGHT_BUTTON) {
+      changeToPreviousState();
+    }
   }
 
   public void enter(GameContainer container, StateBasedGame stateBasedGame) throws SlickException {
