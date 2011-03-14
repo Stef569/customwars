@@ -75,13 +75,13 @@ moveCosts have the following order
       <int>1</int>
       <int>127</int>
     </moveCosts>
-    <description>In Fog of War, these add 3 to the vision of inf and mech units.</description>
+    <description>+3 vision for inf and mech units in Fog of War.</description>
   </terrain>
   <terrain name="river" id="19" type="river">
     <defenseBonus>0</defenseBonus>
     <height>-1</height>
     <moveCosts>
-      <int>1</int>
+      <int>2</int>
       <int>1</int>
       <int>127</int>
       <int>127</int>

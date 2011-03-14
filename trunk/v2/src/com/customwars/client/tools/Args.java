@@ -1,14 +1,14 @@
 package com.customwars.client.tools;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Based on http://www.javapractices.com
  * validate methods throw an <tt>IllegalArgumentException<tt> when the input was not valid
  * get methods return a value within bounds
- *
- * @author stefan
  */
 public final class Args {
 
@@ -117,7 +117,17 @@ public final class Args {
     return result;
   }
 
+  /**
+   * Create an empty list if the given list parameter is null, otherwise return the list parameter.
+   */
   public static <T> List<T> createEmptyListIfNull(List<T> lst) {
     return lst == null ? new ArrayList<T>() : lst;
+  }
+
+  /**
+   * Create an empty Map if the given map parameter is null, otherwise return the map parameter.
+   */
+  public static <T> Map<T, T> createEmptyMapIfNull(Map<T, T> map) {
+    return map == null ? Collections.<T, T>emptyMap() : map;
   }
 }
