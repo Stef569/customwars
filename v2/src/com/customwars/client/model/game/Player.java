@@ -14,6 +14,7 @@ import com.customwars.client.tools.ColorUtil;
 import org.apache.log4j.Logger;
 
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -22,12 +23,13 @@ import java.util.List;
 
 /**
  * Represent a player that can participate in a game, can be either a human, AI or neutral player.
- * Can be allied with another Player by being in the same team
- * Each non neutral player has an unique ID, neutral players always have the same NEUTRAL_PLAYER_ID
+ * Can be allied with another Player by being in the same team.
  * <p/>
- * A Player is equal to another Player by having the same ID and color
- *
- * @author stefan
+ * Each non neutral player has an unique ID.
+ * Neutral players are special. They always have an id of -1 and are in the team -1.
+ * They never have a HQ and the unit and city collection is always empty.
+ * <p/>
+ * A Player is equal to another Player by having the same ID and color.
  */
 public class Player extends GameObject {
   private static final Logger logger = Logger.getLogger(Player.class);
@@ -57,6 +59,30 @@ public class Player extends GameObject {
   }
 
   /**
+   * Create a human or ai player with a dummy CO
+   */
+  public Player(int id, Color color, String name, int startBudget, int team, boolean ai) {
+    this(id, color, name, startBudget, team, ai, new BasicCO(DUMMY_CO_NAME));
+  }
+
+  /**
+   * Create a human or ai player with the given CO
+   */
+  public Player(int id, Color color, String name, int startBudget, int team, boolean ai, CO co) {
+    this.id = id;
+    this.color = color;
+    this.name = name;
+    this.budget = startBudget;
+    this.team = team;
+    this.ai = ai;
+    this.co = co;
+    this.army = new LinkedList<Unit>();
+    this.cities = new LinkedList<City>();
+    this.unitFacingDirection = Unit.DEFAULT_ORIENTATION;
+    this.coZone = Collections.emptyList();
+  }
+
+  /**
    * Create a neutral player with a dummy CO
    * Post: isNeutral returns true
    */
@@ -81,32 +107,14 @@ public class Player extends GameObject {
     this.army = new LinkedList<Unit>();
     this.cities = new LinkedList<City>();
     this.unitFacingDirection = otherPlayer.unitFacingDirection;
-    this.coZone = otherPlayer.coZone;
-
-    String otherPlayerCOName = otherPlayer.co.getName();
-    if (otherPlayerCOName.equals(DUMMY_CO_NAME)) {
-      this.co = new BasicCO(DUMMY_CO_NAME);
-    } else {
-      this.co = COFactory.getCO(otherPlayerCOName);
-    }
+    this.coZone = new ArrayList<Location>(otherPlayer.coZone);
+    copyCO(otherPlayer.co);
   }
 
-  public Player(int id, Color color, String name, int startBudget, int team, boolean ai) {
-    this(id, color, name, startBudget, team, ai, new BasicCO(DUMMY_CO_NAME));
-  }
-
-  public Player(int id, Color color, String name, int startBudget, int team, boolean ai, CO co) {
-    this.id = id;
-    this.color = color;
-    this.name = name;
-    this.budget = startBudget;
-    this.team = team;
-    this.ai = ai;
-    this.co = co;
-    this.army = new LinkedList<Unit>();
-    this.cities = new LinkedList<City>();
-    this.unitFacingDirection = Unit.DEFAULT_ORIENTATION;
-    this.coZone = Collections.emptyList();
+  private void copyCO(CO otherCO) {
+    String otherCOName = otherCO.getName();
+    boolean hasDummyCO = otherCOName.equals(DUMMY_CO_NAME);
+    this.co = hasDummyCO ? new BasicCO(DUMMY_CO_NAME) : COFactory.getCO(otherCOName);
   }
 
   public void startTurn() {
@@ -130,7 +138,7 @@ public class Player extends GameObject {
   }
 
   /**
-   * Destroy all units of this owner
+   * Destroy all units of this player.
    * Change the owner of the cities owned by this player to the conqueror player.
    *
    * @param conqueror the player that has conquered this player
@@ -142,19 +150,17 @@ public class Player extends GameObject {
     logger.info(name + " is destroyed. All cities now belong to " + conqueror.name);
   }
 
-  /**
-   * Remove all units from army, until there are none left
-   * unit.destroy() removes the unit from this player's army.
-   */
   private void destroyAllUnits() {
     while (!army.isEmpty()) {
       Unit unit = army.get(army.size() - 1);
+      // destroy will remove the unit from this army.
       unit.destroy(true);
     }
   }
 
   /**
-   * Change the owner of each city owned by this player to newOwner
+   * Change the owner of each city owned by this player to newOwner.
+   * Post: getCityCount() = 0
    *
    * @param newOwner The new owner of the cities owned by this player
    */
@@ -257,14 +263,14 @@ public class Player extends GameObject {
   }
 
   /**
-   * @see CO#resetPowerGauge();
+   * @see CO#resetPowerGauge
    */
   public void resetPowerGauge() {
     co.resetPowerGauge();
   }
 
   /**
-   * @see CO#chargePowerGauge(double);
+   * @see CO#chargePowerGauge(double)
    */
   public void chargePowerGauge(double chargeRate) {
     co.chargePowerGauge(chargeRate);
@@ -304,10 +310,16 @@ public class Player extends GameObject {
     return budget;
   }
 
+  /**
+   * @return The number of units owned by this player.
+   */
   public int getArmyCount() {
     return army.size();
   }
 
+  /**
+   * @return The number of cities owned by this player.
+   */
   public int getCityCount() {
     return cities.size();
   }
@@ -332,8 +344,15 @@ public class Player extends GameObject {
     return hq;
   }
 
-  public boolean isWithinBudget(int price) {
-    return budget - price >= 0;
+  /**
+   * Check if the player can spend the given amount of money.
+   * without causing a negative balance.
+   *
+   * @param money The money to spend.
+   * @return If this player can spend the given money.
+   */
+  public boolean isWithinBudget(int money) {
+    return budget - money >= 0;
   }
 
   public CO getCO() {
@@ -343,7 +362,7 @@ public class Player extends GameObject {
   /**
    * Check if the given location is within the co Zone:
    * <ul>
-   * <li>A CO should be loaded into a unit</li>
+   * <li>A CO should be loaded into a unit owned by this player</li>
    * <li>The location should be within the zone of this coUnit</li>
    * </ul>
    */
@@ -399,8 +418,8 @@ public class Player extends GameObject {
 
   @Override
   public String toString() {
-    return String.format("[name=%s id=%s state=%s color=%s budget=%s team=%s]",
-      name, id, getState(), ColorUtil.toString(color), budget, team);
+    return String.format("[name=%s id=%s state=%s color=%s budget=%s team=%s co=%s]",
+      name, id, getState(), ColorUtil.toString(color), budget, team, co.getName());
   }
 
   public String printStats() {

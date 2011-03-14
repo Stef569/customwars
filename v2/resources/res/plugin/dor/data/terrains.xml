@@ -224,7 +224,9 @@
   <terrain name="ocean" id="74" type="ocean">
     <connect>North, NorthEast, East, South, SouthWest, West</connect>
   </terrain>
-  <terrain name="reef" id="75" type="ocean"/>
+  <terrain name="reef" id="75" type="reef">
+    <connect type="ocean">North, NorthEast, East, SouthEast, South, SouthWest, West, NorthWest</connect>
+  </terrain>
   <terrain name="shoal" id="76" type="shoal">
     <connect type="ocean">North, NorthEast, East, SouthWest, West, NorthWest</connect>
   </terrain>
