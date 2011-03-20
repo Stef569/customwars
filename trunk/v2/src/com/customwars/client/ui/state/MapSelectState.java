@@ -98,6 +98,8 @@ public class MapSelectState extends CWState {
   public void controlPressed(CWCommand command, CWInput cwInput) {
     if (command == CWInput.CANCEL) {
       controller.back();
+    } else if (command == CWInput.SELECT) {
+      controller.continueToNextState();
     }
   }
 

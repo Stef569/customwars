@@ -252,7 +252,7 @@ public class Game extends TurnBasedGame implements PropertyChangeListener {
   public void setActiveUnit(Unit unit) {
     Unit oldVal = this.activeUnit;
     this.activeUnit = unit;
-    firePropertyChange("activeUnit", oldVal, this.activeUnit);
+    firePropertyChange("activeunit", oldVal, this.activeUnit);
   }
 
   public void setWeather(int weather) {
