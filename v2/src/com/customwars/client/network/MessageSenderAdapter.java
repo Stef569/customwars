@@ -119,7 +119,7 @@ public class MessageSenderAdapter implements MessageSender {
   }
 
   @Override
-  public void constructCity(Unit unit, int cityID, Location constructOn) throws NetworkException {
+  public void constructCity(Unit unit, String cityID, Location constructOn) throws NetworkException {
   }
 
   @Override
@@ -152,5 +152,9 @@ public class MessageSenderAdapter implements MessageSender {
 
   @Override
   public void coSuperPower() throws NetworkException {
+  }
+
+  @Override
+  public void produceUnit(Unit producer, String unitToProduce, Player owner) throws NetworkException {
   }
 }

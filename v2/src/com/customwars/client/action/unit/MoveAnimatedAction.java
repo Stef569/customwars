@@ -2,6 +2,7 @@ package com.customwars.client.action.unit;
 
 import com.customwars.client.App;
 import com.customwars.client.SFX;
+import com.customwars.client.action.ActionCommandEncoder;
 import com.customwars.client.action.DelayedAction;
 import com.customwars.client.controller.CursorController;
 import com.customwars.client.model.GameController;
@@ -21,15 +22,13 @@ import org.apache.log4j.Logger;
 /**
  * Moves the unit animated from the 'from' location to the 'to' location
  * by moving the unit on each tile between those locations.
- *
- * @author stefan
  */
 public class MoveAnimatedAction extends DelayedAction {
   private static final Logger logger = Logger.getLogger(MoveAnimatedAction.class);
   private CursorController cursorControl;
   private GameController gameController;
   private MessageSender messageSender;
-  InGameContext context;
+  InGameContext inGameContext;
   MoveTraverse moveTraverse;
   Game game;
   Map map;
@@ -62,7 +61,7 @@ public class MoveAnimatedAction extends DelayedAction {
       unit.setUnitState(UnitState.IDLE);
     }
 
-    this.context = inGameContext;
+    this.inGameContext = inGameContext;
     game = inGameContext.getObj(Game.class);
     map = game.getMap();
     moveTraverse = inGameContext.getObj(MoveTraverse.class);
@@ -89,9 +88,9 @@ public class MoveAnimatedAction extends DelayedAction {
   void pathMoveComplete() {
     if (moveTraverse.foundTrapper()) {
       SFX.playSound("trapped");
-      context.setTrapped(true);
+      inGameContext.setTrapped(true);
     } else {
-      context.setTrapped(false);
+      inGameContext.setTrapped(false);
     }
 
     cursorControl.setCursorLocked(false);
@@ -113,5 +112,10 @@ public class MoveAnimatedAction extends DelayedAction {
         sendMove();
       }
     }
+  }
+
+  @Override
+  public String getActionCommand() {
+    return new ActionCommandEncoder().add(from).add(to).build();
   }
 }

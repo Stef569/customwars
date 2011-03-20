@@ -1,6 +1,5 @@
 package com.customwars.client.action;
 
-import com.customwars.client.model.map.Location;
 import com.customwars.client.ui.state.InGameContext;
 
 import java.util.ArrayList;
@@ -10,10 +9,8 @@ import java.util.List;
  * A List of CWActions
  * If the list contains delayed actions then this class
  * Will wait with processing the next actions until the delayed action has been completed.
- *
+ * <p/>
  * undo doesn't wait for the action to be completed, undo code should not be delayed.
- *
- * @author stefan
  */
 public class ActionBag implements CWAction {
   private static final int CHECK_ACTION_COMPLETE_DELAY = 250;
@@ -23,11 +20,12 @@ public class ActionBag implements CWAction {
   private final List<CWAction> actions;
   private final String actionName;
   private InGameContext context;
-  private String actionText;
+  private String actionCommand;
 
   public ActionBag(String actionName) {
     this.actionName = actionName;
     actions = new ArrayList<CWAction>();
+    actionCommand = buildActionCommand();
   }
 
   public void invoke(InGameContext context) {
@@ -81,6 +79,24 @@ public class ActionBag implements CWAction {
 
   public void add(CWAction action) {
     actions.add(action);
+    actionCommand = buildActionCommand();
+  }
+
+  private String buildActionCommand() {
+    StringBuilder actionCMDBuilder = new StringBuilder(actionName.toLowerCase());
+    actionCMDBuilder.append(" ");
+
+    for (CWAction action : actions) {
+      String actionCMD = action.getActionCommand();
+      if (actionCMD != null) {
+        actionCMDBuilder.append(actionCMD);
+        actionCMDBuilder.append(" ");
+      }
+    }
+
+    // Remove last " " space.
+    actionCMDBuilder.deleteCharAt(actionCMDBuilder.length() - 1);
+    return actionCMDBuilder.toString();
   }
 
   /**
@@ -94,40 +110,6 @@ public class ActionBag implements CWAction {
     return true;
   }
 
-  public void setActionText(String actionText) {
-    this.actionText = actionText;
-  }
-
-  /**
-   * Set the action text where the action happens on 1 tile
-   */
-  public void setActionText(Location tile, Integer... params) {
-    setActionText(tile, null, params);
-  }
-
-  /**
-   * Set the action text where the action starts at <from> and ends on <to>
-   */
-  public void setActionText(Location from, Location to, Integer... params) {
-    StringBuilder actionTextBuilder = new StringBuilder(actionName.toLowerCase());
-    actionTextBuilder
-      .append(' ').append(from.getCol())
-      .append(' ').append(from.getRow());
-
-    if (to != null) {
-      actionTextBuilder
-        .append(' ').append(to.getCol())
-        .append(' ').append(to.getRow());
-    }
-
-    for (Integer param : params) {
-      actionTextBuilder
-        .append(' ')
-        .append(param);
-    }
-    this.actionText = actionTextBuilder.toString();
-  }
-
   public String getName() {
     return actionName;
   }
@@ -136,8 +118,8 @@ public class ActionBag implements CWAction {
     return !started;
   }
 
-  public String getActionText() {
-    return actionText;
+  public String getActionCommand() {
+    return actionCommand;
   }
 
   @Override
@@ -146,6 +128,9 @@ public class ActionBag implements CWAction {
     for (CWAction action : actions) {
       strBuilder.append(action.getName()).append(" - ");
     }
+
+    // Remove last " - "
+    strBuilder.delete(strBuilder.length() - 3, strBuilder.length());
     return strBuilder.toString();
   }
 }

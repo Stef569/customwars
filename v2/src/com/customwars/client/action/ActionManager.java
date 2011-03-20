@@ -10,14 +10,14 @@ import java.util.List;
 /**
  * Allow Actions to be executed
  * Keep a history of actions that can be undone -> undoManager
- * Keep a history of actions that have an action text -> actionHistory
+ * Keep a history of actions that have an action command -> actionHistory
  */
 public class ActionManager {
   private static final Logger logger = Logger.getLogger(ActionManager.class);
   private final UndoManager undoManager;
   private final InGameContext inGameContext;
   private final List<CWAction> actionHistory;
-  private CWAction action;
+  private CWAction currentAction;
 
   public ActionManager(InGameContext inGameContext) {
     this.inGameContext = inGameContext;
@@ -27,7 +27,8 @@ public class ActionManager {
 
   /**
    * Executes an action
-   * If the action can be undone then it is added to the undo history, and canUndo will return true
+   * If the action can be undone then it is added to the undo history, and {@link #canUndo()} will return true
+   * If the action had an action command then it is added to the action history.
    */
   public void doAction(CWAction action) {
     if (action == null) {
@@ -35,33 +36,33 @@ public class ActionManager {
       return;
     }
 
-    if (this.action == null) {
+    if (currentAction == null) {
       invokeAction(action);
 
       if (action.canUndo()) {
         undoManager.addUndoAction(action, inGameContext);
       }
     } else {
-      logger.debug("Skipping action -> " + action.getName() + " other action " + this.action.getName() + " is still executing.");
+      logger.debug("Skipping action -> " + action.getName() + " other action " + currentAction.getName() + " is still executing.");
     }
   }
 
   private void invokeAction(CWAction action) {
     logger.debug("Launching action -> " + action.getName());
-    this.action = action;
+    currentAction = action;
     action.invoke(inGameContext);
 
-    if (action.getActionText() != null) {
+    if (action.getActionCommand() != null) {
       actionHistory.add(action);
     }
   }
 
   public void update(int elapsedTime) {
-    if (action != null) {
-      action.update(elapsedTime);
+    if (currentAction != null) {
+      currentAction.update(elapsedTime);
 
-      if (action.isCompleted()) {
-        action = null;
+      if (currentAction.isCompleted()) {
+        currentAction = null;
       }
     }
   }
@@ -80,7 +81,7 @@ public class ActionManager {
   }
 
   public boolean isActionCompleted() {
-    return action == null;
+    return currentAction == null;
   }
 
   public List<CWAction> getExecutedActions() {

@@ -1,6 +1,7 @@
 package com.customwars.client.action.unit;
 
 import com.customwars.client.App;
+import com.customwars.client.action.ActionCommandEncoder;
 import com.customwars.client.action.DirectAction;
 import com.customwars.client.model.GameController;
 import com.customwars.client.model.gameobject.Unit;
@@ -14,14 +15,14 @@ public class ProduceUnitAction extends DirectAction {
   private static final Logger logger = Logger.getLogger(ProduceUnitAction.class);
   private InGameContext inGameContext;
   private final Unit producer;
-  private final Unit unitToBuild;
+  private final String unitToProduce;
   private GameController gameController;
   private MessageSender messageSender;
 
-  public ProduceUnitAction(Unit producer, Unit unitToBuild) {
+  public ProduceUnitAction(Unit producer, String unitToProduce) {
     super("produce unit", false);
     this.producer = producer;
-    this.unitToBuild = unitToBuild;
+    this.unitToProduce = unitToProduce;
   }
 
   @Override
@@ -39,19 +40,26 @@ public class ProduceUnitAction extends DirectAction {
   }
 
   private void produce() {
-    logger.debug(producer.getStats().getName() + " producing a " + unitToBuild.getStats().getName());
-    gameController.buildUnit(unitToBuild, producer, producer.getOwner());
+    logger.debug(producer.getStats().getName() + " producing a " + unitToProduce);
+    gameController.produceUnit(producer, unitToProduce);
     if (App.isMultiplayer()) sendProduce();
   }
 
   private void sendProduce() {
     try {
-      messageSender.buildUnit(unitToBuild, producer, producer.getOwner());
+      messageSender.produceUnit(producer, unitToProduce, producer.getOwner());
     } catch (NetworkException ex) {
       logger.warn("Could not send produce unit", ex);
       if (GUI.askToResend(ex) == GUI.YES_OPTION) {
         sendProduce();
       }
     }
+  }
+
+  @Override
+  public String getActionCommand() {
+    return new ActionCommandEncoder()
+      .add(producer.getLocation())
+      .add(unitToProduce).build();
   }
 }

@@ -95,7 +95,7 @@ public interface GameController {
    * Constructing might take several turns before completion.
    * Constructing a city costs construction materials.
    */
-  boolean constructCity(Unit unit, int cityID, Location location);
+  boolean constructCity(Unit unit, String cityID, Location location);
 
   void dive(Unit unit);
 
@@ -105,6 +105,15 @@ public interface GameController {
    * Make the unit IDLE, meaning that it can no longer be controlled.
    */
   void makeUnitWait(Unit unit);
+
+  /**
+   * Create a unit and load it into the producer unit.
+   * The unit cost is subtracted from the player.
+   *
+   * @param producer      The unit that wants to create a new unit.
+   * @param unitToProduce The name of the unit to produce.
+   */
+  void produceUnit(Unit producer, String unitToProduce);
 
   /**
    * The player creates a new unit. The unit is placed on the location in the map.

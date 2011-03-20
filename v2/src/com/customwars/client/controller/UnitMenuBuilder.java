@@ -14,7 +14,6 @@ import com.customwars.client.model.gameobject.CityFactory;
 import com.customwars.client.model.gameobject.Terrain;
 import com.customwars.client.model.gameobject.TerrainFactory;
 import com.customwars.client.model.gameobject.Unit;
-import com.customwars.client.model.gameobject.UnitFactory;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
@@ -37,7 +36,7 @@ public class UnitMenuBuilder {
   private boolean canDropUnit, canCapture, canSupply, canStartAttack, canWait, canJoin, canLoad;
   private boolean canLaunchRocketFromCity, canTransformTerrain;
   private boolean canFireFlare;
-  private boolean canBuildCity, canBuildUnit;
+  private boolean canBuildCity, canProduceUnit;
   private boolean canDive, canSurface;
   private final InGameContext inGameContext;
   private final Unit unit;
@@ -115,14 +114,8 @@ public class UnitMenuBuilder {
   }
 
   private String getDropMenuItemText(Unit unitInTransport) {
-    String menuText;
     String unitName = App.translate(unitInTransport.getStats().getName());
-    if (unitInTransport.isLand()) {
-      menuText = App.translate("drop") + " - " + unitName;
-    } else {
-      menuText = App.translate("launch") + " - " + unitName;
-    }
-    return menuText;
+    return App.translate("drop") + " - " + unitName;
   }
 
   private void buildUnitContextMenu(Tile from, Tile selected) {
@@ -161,7 +154,7 @@ public class UnitMenuBuilder {
       canTransformTerrain = controller.canTransformTerrain(selected);
       canFireFlare = controller.canFireFlare(from);
       canBuildCity = controller.canBuildCity(selected);
-      canBuildUnit = controller.canBuildUnit();
+      canProduceUnit = controller.canStartProduceUnit(from);
       canDive = controller.canDive();
       canSurface = controller.canSurface();
       canLoadCO = controller.canLoadCO(from);
@@ -189,12 +182,13 @@ public class UnitMenuBuilder {
       map.teleport(to, from, unit);
     }
 
-    if (canBuildUnit) {
-      for (String unitID : unit.getStats().getUnitsThatCanBeBuild()) {
-        Unit unitThatCanBeBuild = UnitFactory.getUnit(unitID);
-        CWAction buildUnitAction = ActionFactory.buildProduceUnitAction(unit, unitThatCanBeBuild, to);
-        String menuText = App.translate("build") + " - " + App.translate(unitThatCanBeBuild.getStats().getName());
-        addToMenu(buildUnitAction, menuText);
+    if (canProduceUnit) {
+      for (String unitID : unit.getStats().getUnitsThatCanBeProduced()) {
+        if (controller.canProduceUnit(from, unitID)) {
+          CWAction buildUnitAction = ActionFactory.buildProduceUnitAction(unit, unitID);
+          String menuText = App.translate("produce") + " - " + App.translate(unitID);
+          addToMenu(buildUnitAction, menuText);
+        }
       }
     }
 
@@ -243,7 +237,7 @@ public class UnitMenuBuilder {
 
     if (canBuildCity) {
       City city = getCityThatCanBeBuildOn(to);
-      CWAction buildCityAction = ActionFactory.buildConstructCityAction(unit, city.getID(), to);
+      CWAction buildCityAction = ActionFactory.buildConstructCityAction(unit, city.getName(), to);
       addToMenu(buildCityAction, App.translate("build") + ' ' + App.translate(city.getName()));
     }
 

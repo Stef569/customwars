@@ -11,6 +11,7 @@ import com.customwars.client.model.gameobject.Locatable;
 import com.customwars.client.model.gameobject.Terrain;
 import com.customwars.client.model.gameobject.TerrainFactory;
 import com.customwars.client.model.gameobject.Unit;
+import com.customwars.client.model.gameobject.UnitFactory;
 import com.customwars.client.model.gameobject.UnitFight;
 import com.customwars.client.model.gameobject.UnitState;
 import com.customwars.client.model.gameobject.UnitVsCityFight;
@@ -184,11 +185,11 @@ public class CWGameController implements GameController {
   }
 
   @Override
-  public boolean constructCity(Unit unit, int cityID, Location location) {
+  public boolean constructCity(Unit unit, String cityID, Location location) {
     City city = getCityUnderConstructionAt(location, cityID);
     addCityUnderConstruction(location, city);
 
-    // Note: When the city is constructed it is added to the player cities collection.
+    // When the city is constructed it is added to the player cities collection.
     unit.construct(city);
 
     if (unit.isConstructionComplete()) {
@@ -206,7 +207,7 @@ public class CWGameController implements GameController {
     }
   }
 
-  public City getCityUnderConstructionAt(Location location, int cityID) {
+  public City getCityUnderConstructionAt(Location location, String cityID) {
     City city;
     if (citiesUnderConstruction.containsKey(location)) {
       city = citiesUnderConstruction.get(location);
@@ -266,7 +267,7 @@ public class CWGameController implements GameController {
     // Remove the city under construction location(s) with no apc on.
     // This happens when the apc construct a city in 1 turn.
     // But then moves to another location leaving the city in the citiesUnderConstruction collection..
-    if (unitThatMoved.canConstructCity()) {
+    if (unitThatMoved.hasConstructionMaterials()) {
       Iterator<Location> iterator = citiesUnderConstruction.keySet().iterator();
 
       while (iterator.hasNext()) {
@@ -276,6 +277,12 @@ public class CWGameController implements GameController {
         }
       }
     }
+  }
+
+  public void produceUnit(Unit producer, String unitToProduce) {
+    Unit unit = UnitFactory.getUnit(unitToProduce);
+    buildUnit(unit, producer, producer.getOwner());
+    producer.deCreaseConstructionMaterials();
   }
 
   @Override

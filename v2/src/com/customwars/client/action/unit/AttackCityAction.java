@@ -2,6 +2,7 @@ package com.customwars.client.action.unit;
 
 import com.customwars.client.App;
 import com.customwars.client.SFX;
+import com.customwars.client.action.ActionCommandEncoder;
 import com.customwars.client.action.DirectAction;
 import com.customwars.client.model.GameController;
 import com.customwars.client.model.gameobject.City;
@@ -66,5 +67,10 @@ public class AttackCityAction extends DirectAction {
         sendAttackCity();
       }
     }
+  }
+
+  @Override
+  public String getActionCommand() {
+    return new ActionCommandEncoder().add(city.getLocation()).build();
   }
 }

@@ -7,6 +7,7 @@ import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Locatable;
 import com.customwars.client.model.gameobject.Terrain;
 import com.customwars.client.model.gameobject.Unit;
+import com.customwars.client.model.gameobject.UnitFactory;
 import com.customwars.client.model.gameobject.UnitStats;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Map;
@@ -211,8 +212,45 @@ public abstract class UnitController {
     return unit.canConstructCityOn(selected.getTerrain());
   }
 
-  boolean canBuildUnit() {
-    return unit.canBuildUnit();
+  /**
+   * #1 The unit with the lowest produce cost can be bought by the player
+   * #2 Only transporting units can produce a unit
+   * #3 There is min 1 free place in the transport
+   * #4 The unit did not move
+   * #5 The unit has min 1 construction material
+   */
+  boolean canStartProduceUnit(Tile from) {
+    UnitStats stats = unit.getStats();
+
+    int lowestUnitPrice = Integer.MAX_VALUE;
+    for (String unitName : stats.getUnitsThatCanBeProduced()) {
+      int price = UnitFactory.getUnit(unitName).getPrice();
+      if (price < lowestUnitPrice) {
+        lowestUnitPrice = price;
+      }
+    }
+
+    boolean canProduce = stats.canProduceUnits();
+    boolean canAfford = unit.getOwner().isWithinBudget(lowestUnitPrice);
+    boolean canTransport = stats.canTransport() && !unit.isTransportFull();
+    boolean moved = from != unit.getLocation();
+    boolean hasMaterials = unit.hasConstructionMaterials();
+
+    return canProduce && canAfford && canTransport && !moved && hasMaterials;
+  }
+
+  /**
+   * #1 Same conditions as canStartProduce
+   * #2 The unitID can be bought
+   * #3 The unitID can be produced
+   */
+  public boolean canProduceUnit(Tile from, String unitID) {
+    boolean canStartProduce = canStartProduceUnit(from);
+    boolean canProduce = unit.getStats().canProduceUnit(unitID);
+    int price = UnitFactory.getUnit(unitID).getPrice();
+    boolean canBuy = unit.getOwner().isWithinBudget(price);
+
+    return canStartProduce && canProduce && canBuy;
   }
 
   boolean canDive() {

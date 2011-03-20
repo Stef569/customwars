@@ -2,6 +2,7 @@ package com.customwars.client.action.unit;
 
 import com.customwars.client.App;
 import com.customwars.client.SFX;
+import com.customwars.client.action.ActionCommandEncoder;
 import com.customwars.client.action.DirectAction;
 import com.customwars.client.model.GameController;
 import com.customwars.client.model.gameobject.Unit;
@@ -82,5 +83,10 @@ public class AttackUnitAction extends DirectAction {
         sendAttackUnit();
       }
     }
+  }
+
+  @Override
+  public String getActionCommand() {
+    return new ActionCommandEncoder().add(defender.getLocation()).build();
   }
 }
