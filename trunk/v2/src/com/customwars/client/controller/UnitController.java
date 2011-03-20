@@ -1,5 +1,6 @@
 package com.customwars.client.controller;
 
+import com.customwars.client.model.ArmyBranch;
 import com.customwars.client.model.fight.Defender;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.game.Player;
@@ -101,7 +102,7 @@ public abstract class UnitController {
    * Can the transport drop any units
    * #1 This controller controls a unit with transport abilities
    * #2 There is at least 1 free tile within the drop range
-   * #3 There is at least 1 unit in the transport
+   * #3 There is at least 1 ground unit in the transport
    * #4 At least 1 unit in the transport can be unloaded on an adjacent tile.
    *
    * @return true if the transport can drop at least 1 unit
@@ -111,26 +112,40 @@ public abstract class UnitController {
 
     boolean isTransportingUnit = unit.getStats().canTransport();
     boolean atleast1FreeDropTile = !freeDropLocations.isEmpty();
-    boolean atLeast1UnitToDrop = unit.getLocatableCount() > 0;
+    boolean atLeast1GroundUnitToDrop = unit.isTransportingUnitType(ArmyBranch.LAND);
 
-    return isTransportingUnit && atleast1FreeDropTile && atLeast1UnitToDrop;
+    return isTransportingUnit && atleast1FreeDropTile && atLeast1GroundUnitToDrop;
   }
 
   /**
-   * Can this transporting unit drop a unit at dropIndex on the given tile
-   *
-   * @param tile      The tile the unit is going to be dropped to
-   * @param dropIndex The index of the unit in the transport(0 based)
-   * @return true If this transport can drop the unit in the transport at the given index
-   *         on the given tile
+   * Can this unit launch planes:
+   * #1 This controller controls a unit with transport abilities
+   * #2 There is at least 1 unit in the transport
+   * #3 The plane can fly at least 1 tile away.
+   * #4 The plane did not land on the carrier in this turn.
+   * Note that carrier is just an example any unit can have launch abilities.
+   * Only planes can be launched all other units are dropped.
    */
-  boolean canDrop(Tile tile, int dropIndex) {
-    if (unit.getStats().canTransport() && unit.getLocatableCount() > dropIndex) {
-      Unit unitToDrop = (Unit) unit.getLocatable(dropIndex);
-      return map.isFreeDropLocation(unit, unitToDrop, tile);
-    } else {
-      return false;
-    }
+  boolean canStartLaunch(Tile from, Tile to) {
+    boolean isCarrier = unit.getStats().canTransport();
+    boolean surroundedByEnemyUnits = map.isSurroundedByEnemyUnits(unit);
+    boolean atLeast1ActiveAirUnitLoaded = unit.isTransportingUnitType(ArmyBranch.AIR);
+    boolean moved = !from.equals(to);
+
+    return isCarrier && !surroundedByEnemyUnits && atLeast1ActiveAirUnitLoaded &&
+      !moved && unit.isActive();
+  }
+
+  /**
+   * Can the unit be launched from the carrier:
+   * #1 The unit is an air unit.
+   *
+   * @see #canStartLaunch(Tile, Tile)
+   */
+  public boolean canLaunch(Tile from, Tile to, Unit unitToLaunch) {
+    boolean canStartLaunch = canStartLaunch(from, to);
+
+    return canStartLaunch && unitToLaunch.isAir();
   }
 
   /**

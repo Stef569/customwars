@@ -14,12 +14,9 @@ import org.apache.log4j.Logger;
 
 /**
  * Load the unit in the transport
- * and remove the unit sprite
- *
- * @author stefan
  */
 public class LoadAction extends DirectAction {
-  private Logger logger = Logger.getLogger(LoadAction.class);
+  private static final Logger logger = Logger.getLogger(LoadAction.class);
   private InGameContext inGameContext;
   private MapRenderer mapRenderer;
   private GameController gameController;
@@ -49,6 +46,15 @@ public class LoadAction extends DirectAction {
     logger.debug("Loading " + unit + " into " + transport);
     gameController.load(unit, transport);
     mapRenderer.removeUnit(unit);
+
+    if (transport.getStats().canLaunchUnit()) {
+      // Planes that land on a carrier have to wait 1 turn
+      unit.setActive(false);
+    } else {
+      // Other units can be dropped in the same turn
+      unit.setActive(true);
+    }
+
     SFX.playSound("load");
     if (App.isMultiplayer()) sendLoad();
   }

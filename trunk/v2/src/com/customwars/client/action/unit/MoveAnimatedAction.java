@@ -7,6 +7,7 @@ import com.customwars.client.action.DelayedAction;
 import com.customwars.client.controller.CursorController;
 import com.customwars.client.model.GameController;
 import com.customwars.client.model.game.Game;
+import com.customwars.client.model.gameobject.Locatable;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.gameobject.UnitState;
 import com.customwars.client.model.map.Location;
@@ -28,6 +29,7 @@ public class MoveAnimatedAction extends DelayedAction {
   private CursorController cursorControl;
   private GameController gameController;
   private MessageSender messageSender;
+  private boolean alreadyRevealed;
   InGameContext inGameContext;
   MoveTraverse moveTraverse;
   Game game;
@@ -82,6 +84,10 @@ public class MoveAnimatedAction extends DelayedAction {
       setActionCompleted(true);
     } else {
       moveTraverse.update();
+
+      if (inGameContext.isLaunchingUnit()) {
+        revealUnit();
+      }
     }
   }
 
@@ -95,6 +101,24 @@ public class MoveAnimatedAction extends DelayedAction {
 
     cursorControl.setCursorLocked(false);
     if (App.isMultiplayer()) sendMove();
+  }
+
+  private void revealUnit() {
+    // At first the from tile contains 2 units the plane and the carrier.
+    // Only the plane sprite is visible, if the plane moves then we need to reveal the carrier.
+    if (!alreadyRevealed && !from.contains(unit)) {
+      revealCarrier(from);
+    }
+  }
+
+  private void revealCarrier(Location carrierLocation) {
+    // Remove and add the carrier to the tile
+    // This triggers a show unit event and will reveal the carrier sprite.
+    Locatable carrier = carrierLocation.getLastLocatable();
+    carrierLocation.remove(carrier);
+    carrierLocation.add(carrier);
+    logger.debug("Revealed " + carrier);
+    alreadyRevealed = true;
   }
 
   public void undo() {
