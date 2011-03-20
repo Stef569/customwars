@@ -54,7 +54,7 @@ public class UserInGameInputHandler implements InGameInputHandler {
       new ClearInGameStateAction().invoke(inGameContext);
       showContextMenu(cursorLocation);
     } else {
-      throw new AssertionError("could not handle A press");
+      throw new AssertionError("could not handle A press context=" + inGameContext.toString());
     }
   }
 

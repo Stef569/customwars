@@ -202,8 +202,8 @@ public class MapRenderer implements Renderable {
         int y = zoneTile.getRow() * tileSize;
         g.fillRect(x, y, tileSize, tileSize);
       }
-      g.setColor(origColor);
     }
+    g.setColor(origColor);
   }
 
   public void removeUnit(Unit unit) {

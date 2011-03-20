@@ -113,7 +113,9 @@ public class XMLDamageParser implements CWResourceLoader {
 
     if (baseDamage != NO_DAMAGE) {
       unitBaseDmgTables[attackerID][defenderID] = baseDamage;
-    } else if (altDamage != NO_DAMAGE) {
+    }
+
+    if (altDamage != NO_DAMAGE) {
       unitAltDmgTables[attackerID][defenderID] = altDamage;
     }
 
@@ -130,7 +132,9 @@ public class XMLDamageParser implements CWResourceLoader {
 
     if (baseDamage != NO_DAMAGE) {
       cityBaseDmgTables[attackerID][defenderID] = baseDamage;
-    } else if (altDamage != NO_DAMAGE) {
+    }
+
+    if (altDamage != NO_DAMAGE) {
       cityAltDmgTables[attackerID][defenderID] = altDamage;
     }
   }
