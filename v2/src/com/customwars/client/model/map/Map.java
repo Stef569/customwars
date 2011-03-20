@@ -358,19 +358,6 @@ public class Map extends TileMap<Tile> implements TurnHandler {
   }
 
   /**
-   * Init the move and attack zone of each unit owned by the given player
-   * excluding units within transports
-   */
-  public void initUnitZonesForPlayer(Player player) {
-    for (Unit unit : player.getArmy()) {
-      if (!unit.isInTransport()) {
-        buildMovementZone(unit);
-        buildAttackZone(unit);
-      }
-    }
-  }
-
-  /**
    * Build a zone in which the mover can make a move and set it to the mover
    * If the mover is within a transport then the movezone is null
    * If the mover cannot move then the current mover location is set as the moveZone
@@ -696,7 +683,7 @@ public class Map extends TileMap<Tile> implements TurnHandler {
   }
 
   /**
-   * Retrieve a list of drop locations where a unit can be dropped on.
+   * Retrieve a list of drop locations where all units can be dropped on.
    *
    * @see #getFreeDropLocations(Unit, Location)
    */
@@ -705,7 +692,7 @@ public class Map extends TileMap<Tile> implements TurnHandler {
   }
 
   /**
-   * Retrieve a list of drop locations where a unit can be dropped on.
+   * Retrieve a list of drop locations where all units can be dropped on.
    * Drop locations are always adjacent.
    * <p/>
    * The center parameter allows a transport to find out if any units can be dropped
@@ -729,6 +716,30 @@ public class Map extends TileMap<Tile> implements TurnHandler {
   }
 
   /**
+   * Retrieve a list of drop locations where the given unit can be dropped on.
+   * Drop locations are always adjacent.
+   * <p/>
+   * The center parameter allows a transport to find out if any units can be dropped
+   * around a given center without actually moving to that location.
+   *
+   * @param transport The transport where we want to find the free drop locations for.
+   * @param center    The center where the drop locations are located around.
+   * @return a list of adjacent locations where units inside the transport can be dropped on.
+   * @see #isFreeDropLocation(Unit, Unit, Tile)
+   */
+  public List<Location> getFreeDropLocations(Unit transport, Unit unitToBeDropped, Location center) {
+    if (transport.getLocatableCount() == 0) return Collections.emptyList();
+
+    List<Location> freeDropLocations = new ArrayList<Location>(4);
+    for (Tile tile : getSurroundingTiles(center, 1, 1)) {
+      if (isFreeDropLocation(transport, unitToBeDropped, tile)) {
+        freeDropLocations.add(tile);
+      }
+    }
+    return freeDropLocations;
+  }
+
+  /**
    * Determines if at least 1 unit in the transport can be dropped on the drop location.
    * If the transport is empty false is returned.
    *
@@ -737,7 +748,7 @@ public class Map extends TileMap<Tile> implements TurnHandler {
    * @return Can a unit in the transport be dropped to the given drop location
    * @see #isFreeDropLocation(Unit, Unit, Tile)
    */
-  public boolean canDropAtLeast1Unit(Unit transporter, Tile dropLocation) {
+  boolean canDropAtLeast1Unit(Unit transporter, Tile dropLocation) {
     if (transporter.getLocatableCount() == 0) return false;
 
     for (int i = 0; i < transporter.getLocatableCount(); i++) {
@@ -910,6 +921,21 @@ public class Map extends TileMap<Tile> implements TurnHandler {
    */
   public int getCityCount(String baseCityName) {
     return getCityCount(baseCityName, null);
+  }
+
+  /**
+   * Check if each adjacent tile around the unit is occupied by an enemy unit.
+   * Fog and hidden units have no influence since adjacent tiles are always visible.
+   */
+  public boolean isSurroundedByEnemyUnits(Unit unit) {
+    int enemies = 0;
+    for (Tile t : getSurroundingTiles(unit.getLocation(), 1, 1)) {
+      Unit adjacentUnit = (Unit) t.getLastLocatable();
+      if (adjacentUnit != null && !adjacentUnit.isAlliedWith(unit.getOwner())) {
+        enemies++;
+      }
+    }
+    return enemies == 4;
   }
 
   /**

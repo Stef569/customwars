@@ -36,6 +36,7 @@ public class ClearInGameStateAction extends DirectAction {
     inGameContext.clearUndoHistory();
     inGameContext.clearClickHistory();
     inGameContext.setTrapped(false);
+    inGameContext.setLaunchingUnit(false);
     inGameContext.clearDropHistory();
     inGameContext.getObj(GUIContext.class).getInput().resume();
 

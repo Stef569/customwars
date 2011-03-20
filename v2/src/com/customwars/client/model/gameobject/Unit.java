@@ -30,8 +30,6 @@ import java.util.List;
  * hp=100, maxhp=100 getHP() = 10 -5% damage
  * hp=95, maxhp=100 getHP() = 10 -5% damage
  * hp=90, maxhp=100 getHP() = 9
- *
- * @author Stefan
  */
 public class Unit extends GameObject implements Mover, Location, TurnHandler, Attacker, Defender {
   public static final Direction DEFAULT_ORIENTATION = Direction.EAST;
@@ -160,11 +158,12 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
 
   public void startTurn(Player currentPlayer) {
     supplyUnitsInTransport();
+    activateUnitsInTransport();
   }
 
   /**
-   * If this unit is transporting units and it can supply the unit in the transport
-   * then supply and heal the units in the transport
+   * If this unit is transporting units and it can supply the units.
+   * then supply and heal the units in the transport.
    */
   private void supplyUnitsInTransport() {
     if (stats.canTransport() && !transport.isEmpty()) {
@@ -178,11 +177,28 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
     }
   }
 
+  /**
+   * Make all units in the transport active
+   * so they can be dropped/launched in this turn.
+   */
+  private void activateUnitsInTransport() {
+    for (Locatable locatable : transport) {
+      Unit unitInTransport = (Unit) locatable;
+      unitInTransport.setActive(true);
+    }
+  }
+
   public void endTurn(Player currentPlayer) {
-    if (unitState == UnitState.SUBMERGED || hidden) {
+    subtractSupplies();
+  }
+
+  private void subtractSupplies() {
+    if (isSubmerged() || hidden) {
       addSupplies(-stats.getSuppliesPerTurnWhenHidden());
     } else {
-      addSupplies(-stats.suppliesPerTurn);
+      if (!isInTransport()) {
+        addSupplies(-stats.suppliesPerTurn);
+      }
     }
   }
 
@@ -343,6 +359,21 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
 
   public boolean isTransportFull() {
     return transport.size() >= stats.getMaxTransportCount();
+  }
+
+  /**
+   * Check if this transport is transporting at least 1 active unit of the given armybranch.
+   */
+  public boolean isTransportingUnitType(ArmyBranch armyBranch) {
+    if (transport.isEmpty()) return false;
+
+    for (Locatable locatable : transport) {
+      Unit unitInTransport = (Unit) locatable;
+      if (unitInTransport.getArmyBranch() == armyBranch && unitInTransport.isActive()) {
+        return true;
+      }
+    }
+    return false;
   }
 
   /**
@@ -998,6 +1029,10 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
    */
   public boolean willBeDestroyedAfterTakingDamage(int dmg) {
     return hp - dmg * 10 <= 0;
+  }
+
+  public int getCurrentConstructionMaterials() {
+    return constructionMaterials;
   }
 
   @Override

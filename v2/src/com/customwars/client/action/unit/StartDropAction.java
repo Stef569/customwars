@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Allow a unit in a transport to be dropped on a free drop tile around the center location.
+ * Allow the given unit to be dropped on a free drop tile around the center location.
  * This action does not actually performs the drop but instead allows the user to choose from
  * all available drop locations indicated by a move zone.
  * <p/>
@@ -72,14 +72,19 @@ public class StartDropAction extends DirectAction {
    *         Excluding drop tiles that are invalid or already taken by another unit.
    */
   private List<Location> getEmptyDropTiles(Location transportLocation) {
-    List<Location> availableDropLocations = new ArrayList<Location>();
-    List<Location> freeDropLocations = map.getFreeDropLocations(transport, transportLocation);
+    List<Location> freeDropLocations = map.getFreeDropLocations(transport, unitToBeDropped, transportLocation);
+    List<Location> availableDropLocations = removeAlreadyUsedTiles(freeDropLocations);
+
+    return availableDropLocations;
+  }
+
+  private List<Location> removeAlreadyUsedTiles(List<Location> freeDropLocations) {
+    List<Location> availableDropLocations = new ArrayList<Location>(freeDropLocations.size());
+
     for (Location dropLocation : freeDropLocations) {
       Tile dropTile = (Tile) dropLocation;
       if (!inGameContext.isDropLocationTaken(dropTile)) {
-        if (map.isFreeDropLocation(transport, unitToBeDropped, dropTile)) {
-          availableDropLocations.add(dropLocation);
-        }
+        availableDropLocations.add(dropLocation);
       }
     }
     return availableDropLocations;

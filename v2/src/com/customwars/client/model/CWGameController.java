@@ -248,7 +248,12 @@ public class CWGameController implements GameController {
   public void makeUnitWait(Unit unit) {
     if (!unit.isDestroyed()) {
       unit.setDefaultOrientation();
-      unit.setActive(false);
+
+      if (!unit.isInTransport()) {
+        // Deactivate the unit
+        // so that it cannot be controlled anymore.
+        unit.setActive(false);
+      }
 
       // The unit moved
       // Reveal the los and check if we detected any hidden units.

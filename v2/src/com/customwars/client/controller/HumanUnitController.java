@@ -58,15 +58,10 @@ public class HumanUnitController extends UnitController {
   private void dropUnit(Tile selected) {
     // The menu option clicked on is the index of the unit in the transport List
     int unitInTransportIndex = menu.getCurrentItem();
-
-    if (canDrop(selected, unitInTransportIndex)) {
-      Unit unitInTransport = inGameContext.getUnitInTransport(unitInTransportIndex);
-      inGameContext.addDropLocation(selected, unitInTransport);
-      this.menu = new UnitMenuBuilder(this, unit, inGameContext, selected).getMenu();
-      showMenu(selected);
-    } else {
-      logger.warn("Trying to drop unit on " + selected + " failed");
-    }
+    Unit unitInTransport = inGameContext.getUnitInTransport(unitInTransportIndex);
+    inGameContext.addDropLocation(selected, unitInTransport);
+    this.menu = new UnitMenuBuilder(this, unit, inGameContext, selected).getMenu();
+    showMenu(selected);
   }
 
   private void attack(Tile selected, Location to) {

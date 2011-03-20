@@ -19,29 +19,27 @@ import java.util.Map;
  * This object uses the Service locator pattern.
  * To lookup objects that are shared while playing a Game
  * Execution and undo of CWActions are delegated to the ActionManager.
- *
+ * <p/>
  * Objects that are stored:
  * A history of clicks in a tileMap
  * The drop locations and units to be dropped on those locations.
  * The current input mode, this changes the way a click on the map is interpreted
- * ControllerManager, Game, MoveTraverse, MapRenderer, Hud
- *
- * @author stefan
  */
 public class InGameContext {
   public enum INPUT_MODE {
-    DEFAULT,        // Clicking shows a Menu or selects a unit
-    GUI,            // Input is handled by the GUI
-    UNIT_SELECT,    // Clicking on a unit will select it
-    UNIT_ATTACK,    // Clicking on a unit will attack it
-    UNIT_DROP,      // Clicking on empty space drops the unit
-    LAUNCH_ROCKET,  // Clicking on a tile fires the rocket
-    UNIT_FLARE,     // Clicking on a tile fires a flare
-    UNIT_CYCLE      // Start Iterating between units
+    DEFAULT,          // Clicking shows a Menu or selects a unit
+    GUI,              // Input is handled by the GUI
+    UNIT_SELECT,      // Clicking on a unit will select it
+    UNIT_ATTACK,      // Clicking on a unit will attack it
+    UNIT_DROP,        // Clicking on empty space drops the unit
+    LAUNCH_ROCKET,    // Clicking on a tile fires the rocket
+    UNIT_FLARE,       // Clicking on a tile fires a flare
+    UNIT_CYCLE        // Start Iterating between units
   }
 
   private INPUT_MODE inputMode;
   private boolean trapped;
+  private boolean launching;
   private final List<Unit> unitsInTransport;
   private final DropLocationsQueue dropQueue;
   private final ActionManager actionManager;
@@ -130,12 +128,20 @@ public class InGameContext {
     this.trapped = trapped;
   }
 
+  public void setLaunchingUnit(boolean launching) {
+    this.launching = launching;
+  }
+
   public List<CWAction> getExecutedActions() {
     return actionManager.getExecutedActions();
   }
 
   public boolean isTrapped() {
     return trapped;
+  }
+
+  public boolean isLaunchingUnit() {
+    return launching;
   }
 
   public boolean isActionCompleted() {
@@ -155,7 +161,8 @@ public class InGameContext {
   }
 
   public boolean isInUnitMode() {
-    return isUnitSelectMode() || isUnitAttackMode() || isUnitDropMode() || isRocketLaunchMode();
+    return isUnitSelectMode() || isUnitAttackMode() || isUnitDropMode() ||
+      isRocketLaunchMode();
   }
 
   public boolean isDefaultMode() {

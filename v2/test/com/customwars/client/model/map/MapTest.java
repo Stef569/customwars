@@ -49,7 +49,7 @@ public class MapTest {
 
     // Create and add a transport in the map
     Unit apc = UnitFactory.getUnit(TestData.APC);
-    Player p_blue = new Player(0, java.awt.Color.blue);
+    Player p_blue = new Player(0, Color.blue);
     MapUtil.addUnitToMap(map, apcLocation, apc, p_blue);
 
     // Add inf to APC
@@ -99,7 +99,7 @@ public class MapTest {
 
     // Create and add a transport in the map (We allows 2 units in the transport this time)
     Unit apc = UnitFactory.getUnit(TestData.APC);
-    Player p_blue = new Player(0, java.awt.Color.blue);
+    Player p_blue = new Player(0, Color.blue);
     MapUtil.addUnitToMap(map, apcLocation, apc, p_blue);
 
     // Add artillery into APC
@@ -167,5 +167,47 @@ public class MapTest {
 
     Assert.assertTrue(pGreen.getId() < 3);
     Assert.assertEquals(1, pGreen.getArmyCount());
+  }
+
+  @Test
+  public void testSurroundedByEnemies() {
+    Tile unitLocation = map.getTile(1, 1);
+
+    // Get the adjacent tiles around the inf
+    Tile northTile = map.getTile(1, 0);
+    Tile eastTile = map.getTile(2, 1);
+    Tile southTile = map.getTile(1, 2);
+    Tile westTile = map.getTile(0, 1);
+
+    // 2 players with different teams
+    Player p_blue = new Player(0, Color.blue, "blue", 0, 0, false);
+    Player p_red = new Player(1, Color.red, "red", 0, 1, false);
+
+    // Create and add an inf to the map
+    Unit inf = UnitFactory.getUnit(TestData.INF);
+    MapUtil.addUnitToMap(map, unitLocation, inf, p_blue);
+    Assert.assertFalse(map.isSurroundedByEnemyUnits(inf));
+
+    // Create and add a tank NORTH of the inf
+    Unit tank = UnitFactory.getUnit(TestData.TANK);
+    MapUtil.addUnitToMap(map, northTile, tank, p_red);
+    Assert.assertFalse(map.isSurroundedByEnemyUnits(inf));
+
+    // Create and add a hidden tank EAST of the apc
+    Unit hiddenTank = UnitFactory.getUnit(TestData.TANK);
+    hiddenTank.setHidden(true);
+    MapUtil.addUnitToMap(map, eastTile, hiddenTank, p_red);
+    Assert.assertFalse(map.isSurroundedByEnemyUnits(inf));
+
+    // Create and add an apc unit SOUTH of the inf
+    Unit apc = UnitFactory.getUnit(TestData.APC);
+    southTile.setFogged(true);
+    MapUtil.addUnitToMap(map, southTile, apc, p_red);
+    Assert.assertFalse(map.isSurroundedByEnemyUnits(inf));
+
+    // Create and add an apc unit WEST of the apc
+    Unit apc2 = UnitFactory.getUnit(TestData.APC);
+    MapUtil.addUnitToMap(map, westTile, apc2, p_red);
+    Assert.assertTrue(map.isSurroundedByEnemyUnits(inf));
   }
 }

@@ -3,6 +3,7 @@ package com.customwars.client.controller;
 import com.customwars.client.App;
 import com.customwars.client.action.ActionFactory;
 import com.customwars.client.action.CWAction;
+import com.customwars.client.action.StartUnitLaunchAction;
 import com.customwars.client.action.city.StartLaunchRocketAction;
 import com.customwars.client.action.unit.StartAttackAction;
 import com.customwars.client.action.unit.StartDropAction;
@@ -35,7 +36,7 @@ import java.util.List;
 public class UnitMenuBuilder {
   private boolean canDropUnit, canCapture, canSupply, canStartAttack, canWait, canJoin, canLoad;
   private boolean canLaunchRocketFromCity, canTransformTerrain;
-  private boolean canFireFlare;
+  private boolean canFireFlare, canStartLaunch;
   private boolean canBuildCity, canProduceUnit;
   private boolean canDive, canSurface;
   private final InGameContext inGameContext;
@@ -160,6 +161,7 @@ public class UnitMenuBuilder {
       canLoadCO = controller.canLoadCO(from);
       canDoPower = controller.canDoPower();
       canDoSuperPower = controller.canDoSuperPower();
+      canStartLaunch = controller.canStartLaunch(from, selected);
     } else {
       // Actions where the active and selected unit are on the same tile.
       canJoin = controller.canJoin(selected);
@@ -180,6 +182,10 @@ public class UnitMenuBuilder {
       map.teleport(from, to, unit);
       buildDropMenu(from, to);
       map.teleport(to, from, unit);
+    }
+
+    if (canStartLaunch) {
+      buildLaunchMenu(from, to);
     }
 
     if (canProduceUnit) {
@@ -281,6 +287,31 @@ public class UnitMenuBuilder {
   private City getCityThatCanBeBuildOn(Tile tile) {
     String cityID = unit.getStats().getCityToBuildOnTerrain(tile.getTerrain());
     return CityFactory.getCity(cityID);
+  }
+
+  private PopupMenu buildLaunchMenu(Tile from, Tile to) {
+    menu = new PopupMenu(inGameContext.getObj(GUIContext.class), "Unit launch menu");
+    inGameContext.clearUnitsInTransport();
+
+    if (controller.canWait(to)) {
+      for (int unitIndex = 0; unitIndex < unit.getLocatableCount(); unitIndex++) {
+        Unit unitInTransport = (Unit) unit.getLocatable(unitIndex);
+
+        // Build start launch actions for each unit in the transport
+        if (controller.canLaunch(from, to, unitInTransport)) {
+          CWAction launchAction = new StartUnitLaunchAction(unit, unitInTransport);
+          String menuText = getLaunchMenuItemText(unitInTransport);
+          addToMenu(launchAction, menuText);
+        }
+      }
+    }
+    return menu;
+  }
+
+  private String getLaunchMenuItemText(Unit unitInTransport) {
+    String unitName = App.translate(unitInTransport.getStats().getName());
+    String menuText = App.translate("launch") + " - " + unitName;
+    return menuText;
   }
 
   /**
