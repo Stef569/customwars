@@ -18,8 +18,6 @@ import java.util.Scanner;
 
 /**
  * Parse a string into a CWAction
- *
- * @author stefan
  */
 public class ActionParser {
   private static final Logger logger = Logger.getLogger(ActionParser.class);
@@ -79,6 +77,12 @@ public class ActionParser {
       return parseProduce(scanner);
     } else if (actionName.equals("end_turn")) {
       return ActionFactory.buildEndTurnAction();
+    } else if (actionName.equals("load_co")) {
+      return parseLoadCO(scanner);
+    } else if (actionName.equals("co_power")) {
+      return parseCOP(scanner);
+    } else if (actionName.equals("co_super_power")) {
+      return parseSCOP(scanner);
     } else {
       logger.warn("Unknown action " + actionName);
       throw new IllegalArgumentException("unknown action " + actionName);
@@ -186,13 +190,12 @@ public class ActionParser {
   private CWAction parseBuildUnit(Scanner scanner) {
     int col = scanner.nextInt();
     int row = scanner.nextInt();
-    int unitID = scanner.nextInt();
+    String unitID = scanner.next();
     int playerID = scanner.nextInt();
     Tile selectTile = map.getTile(col, row);
     Unit unit = UnitFactory.getUnit(unitID);
     Player player = game.getPlayerByID(playerID);
-    unit.setOwner(player);
-    return ActionFactory.buildAddUnitToTileAction(unit, selectTile, false);
+    return ActionFactory.buildAddUnitToTileAction(unit, player, selectTile);
   }
 
   private CWAction parseLaunchRocketAction(Scanner scanner) {
@@ -213,7 +216,7 @@ public class ActionParser {
     int fromRow = scanner.nextInt();
     int toCol = scanner.nextInt();
     int toRow = scanner.nextInt();
-    int terrainID = scanner.nextInt();
+    String terrainID = scanner.next();
     Location from = map.getTile(fromCol, fromRow);
     Location to = map.getTile(toCol, toRow);
     Unit unit = map.getUnitOn(from);
@@ -239,7 +242,7 @@ public class ActionParser {
     int fromRow = scanner.nextInt();
     int toCol = scanner.nextInt();
     int toRow = scanner.nextInt();
-    int cityID = scanner.nextInt();
+    String cityID = scanner.next();
     Location from = map.getTile(fromCol, fromRow);
     Location to = map.getTile(toCol, toRow);
     Unit unit = map.getUnitOn(from);
@@ -269,12 +272,38 @@ public class ActionParser {
   private CWAction parseProduce(Scanner scanner) {
     int fromCol = scanner.nextInt();
     int fromRow = scanner.nextInt();
+    String unitID = scanner.next();
+    Unit producer = map.getUnitOn(fromCol, fromRow);
+    return ActionFactory.buildProduceUnitAction(producer, unitID);
+  }
+
+  private CWAction parseLoadCO(Scanner scanner) {
+    int fromCol = scanner.nextInt();
+    int fromRow = scanner.nextInt();
     int toCol = scanner.nextInt();
     int toRow = scanner.nextInt();
-    int unitID = scanner.nextInt();
-    Unit producer = map.getUnitOn(fromCol, fromRow);
+    Unit unit = map.getUnitOn(fromCol, fromRow);
     Location to = map.getTile(toCol, toRow);
-    Unit unitToBuild = UnitFactory.getUnit(unitID);
-    return ActionFactory.buildProduceUnitAction(producer, unitToBuild, to);
+    return ActionFactory.buildLoadCOAction(unit, to);
+  }
+
+  private CWAction parseCOP(Scanner scanner) {
+    int fromCol = scanner.nextInt();
+    int fromRow = scanner.nextInt();
+    int toCol = scanner.nextInt();
+    int toRow = scanner.nextInt();
+    Unit unit = map.getUnitOn(fromCol, fromRow);
+    Location to = map.getTile(toCol, toRow);
+    return ActionFactory.buildCOPowerAction(unit, to);
+  }
+
+  private CWAction parseSCOP(Scanner scanner) {
+    int fromCol = scanner.nextInt();
+    int fromRow = scanner.nextInt();
+    int toCol = scanner.nextInt();
+    int toRow = scanner.nextInt();
+    Unit unit = map.getUnitOn(fromCol, fromRow);
+    Location to = map.getTile(toCol, toRow);
+    return ActionFactory.buildCOSuperPowerAction(unit, to);
   }
 }

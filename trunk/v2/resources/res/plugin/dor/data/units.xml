@@ -2,7 +2,7 @@
 
     <!ELEMENT unit (price, movement, vision,
         canHide?, canDive?, canCapture?, canJoin?, canFlare?, canLaunchUnit?,
-        transports?, transformTerrains?, buildCities?, buildUnits?, supplyUnits?, supplyUnitsInTransport?,
+        transports?, transformTerrains?, buildCities?, produces?, supplyUnits?, supplyUnitsInTransport?,
         maxExperience?, maxHp, supplyRange?, maxSupplies, suppliesPerTurn?, suppliesPerTurnWhenHidden?,
         maxConstructionMaterial?, healRate?,
         armyBranch,movementType, primaryWeaponName?, secondaryWeaponName?, description)>
@@ -29,7 +29,7 @@
 
     <!ELEMENT transformTerrains (entry*)>
     <!ELEMENT buildCities (entry*)>
-    <!ELEMENT buildUnits (unitID*)>
+    <!ELEMENT produces (unitID*)>
     <!ELEMENT supplyUnitsInTransport (unitID*)>
     <!ELEMENT supplyUnits (unitID*)>
 
@@ -551,9 +551,9 @@
       <unitID>fighter</unitID>
     </transports>
 
-    <buildUnits>
+    <produces>
       <unitID>sea_plane</unitID>
-    </buildUnits>
+    </produces>
 
     <supplyUnitsInTransport>
       <unitID>jet</unitID>
@@ -568,6 +568,7 @@
     <maxHp>100</maxHp>
     <maxSupplies>99</maxSupplies>
     <suppliesPerTurn>1</suppliesPerTurn>
+    <maxConstructionMaterial>4</maxConstructionMaterial>
     <healRate>2</healRate>
 
     <armyBranch>NAVAL</armyBranch>

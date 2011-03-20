@@ -2,6 +2,7 @@ package com.customwars.client.action.unit;
 
 import com.customwars.client.App;
 import com.customwars.client.SFX;
+import com.customwars.client.action.ActionCommandEncoder;
 import com.customwars.client.model.drop.DropLocation;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Location;
@@ -13,17 +14,17 @@ import org.apache.log4j.Logger;
 
 /**
  * Drop the unit within the transport to the drop location
- *
- * @author stefan
  */
 public class DropAction extends MoveAnimatedAction {
   private static final Logger logger = Logger.getLogger(DropAction.class);
-  private MessageSender messageSender;
   private final Unit transport;
+  private final DropLocation dropLocation;
+  private MessageSender messageSender;
 
   public DropAction(Unit transport, DropLocation dropLocation) {
     super(dropLocation.getUnit(), transport.getLocation(), dropLocation.getLocation());
     this.transport = transport;
+    this.dropLocation = dropLocation;
   }
 
   protected void init(InGameContext inGameContext) {
@@ -72,5 +73,12 @@ public class DropAction extends MoveAnimatedAction {
         sendDrop();
       }
     }
+  }
+
+  @Override
+  public String getActionCommand() {
+    return new ActionCommandEncoder()
+      .add(transport.indexOf(dropLocation.getUnit()))
+      .add(dropLocation.getLocation()).build();
   }
 }

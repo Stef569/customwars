@@ -1,6 +1,7 @@
 package com.customwars.client.action.unit;
 
 import com.customwars.client.App;
+import com.customwars.client.action.ActionCommandEncoder;
 import com.customwars.client.action.DirectAction;
 import com.customwars.client.model.GameController;
 import com.customwars.client.model.gameobject.Unit;
@@ -14,8 +15,6 @@ import org.apache.log4j.Logger;
 /**
  * Fires a flare
  * all tiles within flare range, surrounding the center tile are revealed.
- *
- * @author stefan
  */
 public class FireFlareAction extends DirectAction {
   private static final Logger logger = Logger.getLogger(FireFlareAction.class);
@@ -62,5 +61,10 @@ public class FireFlareAction extends DirectAction {
         sendFlare();
       }
     }
+  }
+
+  @Override
+  public String getActionCommand() {
+    return new ActionCommandEncoder().add(flareCenter).build();
   }
 }

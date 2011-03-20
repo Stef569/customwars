@@ -2,8 +2,6 @@ package com.customwars.client.action;
 
 /**
  * Default implementation of a CWAction
- *
- * @author stefan
  */
 public abstract class AbstractCWAction implements CWAction {
   private String name;
@@ -39,11 +37,11 @@ public abstract class AbstractCWAction implements CWAction {
   }
 
   @Override
-  public String getActionText() {
+  public String getActionCommand() {
     return null;
   }
 
   public String toString() {
-    return name + " canUndo=" + canUndo + " Completed=" + actionCompleted;
+    return String.format("%s canUndo=%s Completed=%s actionTxt=%s", name, canUndo, actionCompleted, getActionCommand());
   }
 }

@@ -42,7 +42,7 @@ public class UnitStats implements Serializable {
 
   private Map<String, String> transformTerrains;  // Terrain Ids this unit can transform to for a given TerrainId
   private Map<String, String> buildCities;        // City Ids this unit can build on given terrains
-  private List<String> buildUnits;              // Units that can be build
+  private List<String> produces;                // Units that can be produced
   private List<String> supplyUnitsInTransport;  // Units that can be supplied and healed when within this transport(empty means no unit can be supplied)
   private List<String> supplyUnits;           // Units that can be supplied and healed around this unit(empty means no unit can be supplied)
   final ArmyBranch armyBranch;                // Naval, Ground, Air
@@ -102,7 +102,7 @@ public class UnitStats implements Serializable {
     transportStats.init(this);
     transformTerrains = Args.createEmptyMapIfNull(transformTerrains);
     buildCities = Args.createEmptyMapIfNull(buildCities);
-    buildUnits = Args.createEmptyListIfNull(buildUnits);
+    produces = Args.createEmptyListIfNull(produces);
     supplyUnitsInTransport = Args.createEmptyListIfNull(supplyUnitsInTransport);
     supplyUnits = Args.createEmptyListIfNull(supplyUnits);
     if (primaryWeaponName == null) primaryWeaponName = "";
@@ -133,7 +133,7 @@ public class UnitStats implements Serializable {
   public void validate() {
     transportStats.validate(this);
 
-    for (String unitName : buildUnits) {
+    for (String unitName : produces) {
       Args.validate(!UnitFactory.hasUnitForName(unitName), "Illegal unit name " + unitName + " in build unit stats");
     }
 
@@ -274,14 +274,6 @@ public class UnitStats implements Serializable {
     return buildCities.get(terrain.getName());
   }
 
-  public boolean canBuildUnit(Unit unit) {
-    return canBuildUnit(unit.getStats().name);
-  }
-
-  public boolean canBuildUnit(String unitID) {
-    return buildUnits.contains(unitID);
-  }
-
   public boolean canSupplyUnitInTransport(Unit unit) {
     return canSupplyUnitInTransport(unit.getStats().name);
   }
@@ -298,8 +290,16 @@ public class UnitStats implements Serializable {
     return supplyUnits.contains(unitID);
   }
 
-  public Iterable<String> getUnitsThatCanBeBuild() {
-    return Collections.unmodifiableList(buildUnits);
+  public boolean canProduceUnit(String unitID) {
+    return produces.contains(unitID);
+  }
+
+  public Iterable<String> getUnitsThatCanBeProduced() {
+    return Collections.unmodifiableList(produces);
+  }
+
+  public boolean canProduceUnits() {
+    return !produces.isEmpty();
   }
 
   public String getSecondaryWeaponName() {
@@ -344,7 +344,7 @@ public class UnitStats implements Serializable {
     sb.append(", canLaunchUnit=").append(canLaunchUnit);
     sb.append(", transformTerrains=").append(transformTerrains);
     sb.append(", buildCities=").append(buildCities);
-    sb.append(", buildUnits=").append(buildUnits);
+    sb.append(", buildUnits=").append(produces);
     sb.append(", supplyUnitsInTransport=").append(supplyUnitsInTransport);
     sb.append(", supplyUnits=").append(supplyUnits);
     sb.append(", armyBranch=").append(armyBranch);

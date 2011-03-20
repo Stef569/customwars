@@ -24,20 +24,14 @@ import com.customwars.client.action.unit.TransformTerrainAction;
 import com.customwars.client.action.unit.WaitAction;
 import com.customwars.client.model.drop.DropLocation;
 import com.customwars.client.model.drop.DropLocationsQueue;
+import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Terrain;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Location;
-import com.customwars.client.model.map.Tile;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 /**
  * Create in game actions
- *
- * @author stefan
  */
 public class ActionFactory {
   public static CWAction buildDropAction(Unit transport, Location from, Location moveTo, DropLocationsQueue dropQueue) {
@@ -47,23 +41,12 @@ public class ActionFactory {
     dropActions.add(new WaitAction(transport));
 
     // Drop each unit in the drop queue to the user chosen drop location
-    List<Integer> dropAction = new ArrayList<Integer>();
     for (DropLocation dropLocation : dropQueue.getDropLocations()) {
       dropActions.add(new DropAction(transport, dropLocation));
       dropActions.add(new WaitAction(dropLocation.getUnit()));
-      buildDropActionText(dropAction, transport, dropLocation);
     }
     dropActions.add(new ClearInGameStateAction());
-    dropActions.setActionText(from, moveTo, dropAction.toArray(new Integer[]{dropAction.size()}));
     return dropActions;
-  }
-
-  private static void buildDropActionText(Collection<Integer> actionTextParam, Unit transport, DropLocation dropLocation) {
-    Unit unitToDrop = dropLocation.getUnit();
-    int unitInTransportIndex = transport.indexOf(unitToDrop);
-    actionTextParam.add(unitInTransportIndex);
-    actionTextParam.add(dropLocation.getLocation().getCol());
-    actionTextParam.add(dropLocation.getLocation().getRow());
   }
 
   public static CWAction buildMoveAction(Unit unit, Location moveTo) {
@@ -72,7 +55,6 @@ public class ActionFactory {
     moveActions.add(new MoveAnimatedAction(unit.getLocation(), moveTo));
     moveActions.add(new WaitAction(unit));
     moveActions.add(new ClearInGameStateAction());
-    moveActions.setActionText(unit, moveTo);
     return moveActions;
   }
 
@@ -83,7 +65,6 @@ public class ActionFactory {
     captureActions.add(new CaptureAction(unit, city));
     captureActions.add(new WaitAction(unit));
     captureActions.add(new ClearInGameStateAction());
-    captureActions.setActionText(unit, city.getLocation());
     return captureActions;
   }
 
@@ -94,7 +75,6 @@ public class ActionFactory {
     loadActions.add(new LoadAction(unit, transport));
     loadActions.add(new WaitAction(unit));
     loadActions.add(new ClearInGameStateAction());
-    loadActions.setActionText(unit, transport);
     return loadActions;
   }
 
@@ -105,7 +85,6 @@ public class ActionFactory {
     supplyActions.add(new SupplyAction(supplier));
     supplyActions.add(new WaitAction(supplier));
     supplyActions.add(new ClearInGameStateAction());
-    supplyActions.setActionText(supplier, moveTo);
     return supplyActions;
   }
 
@@ -116,7 +95,6 @@ public class ActionFactory {
     joinActions.add(new JoinAction(unit, target));
     joinActions.add(new WaitAction(target));
     joinActions.add(new ClearInGameStateAction());
-    joinActions.setActionText(unit, target);
     return joinActions;
   }
 
@@ -127,7 +105,6 @@ public class ActionFactory {
     attackActions.add(new AttackUnitAction(attacker, defender));
     attackActions.add(new WaitAction(attacker));
     attackActions.add(new ClearInGameStateAction());
-    attackActions.setActionText(attacker, moveTo, defender.getCol(), defender.getRow());
     return attackActions;
   }
 
@@ -138,37 +115,33 @@ public class ActionFactory {
     attackActions.add(new AttackCityAction(attacker, city));
     attackActions.add(new WaitAction(attacker));
     attackActions.add(new ClearInGameStateAction());
-    attackActions.setActionText(attacker, moveTo, city.getLocation().getCol(), city.getLocation().getRow());
     return attackActions;
   }
 
-  public static CWAction buildAddUnitToTileAction(Unit unit, Tile selected, boolean canUndo) {
+  public static CWAction buildAddUnitToTileAction(Unit unit, Player newUnitOwner, Location location) {
     ActionBag buildUnitActions = new ActionBag("Build_Unit");
     buildUnitActions.add(new InitAction());
-    buildUnitActions.add(new AddUnitToTileAction(unit, selected, canUndo));
+    buildUnitActions.add(new AddUnitToTileAction(unit, newUnitOwner, location));
     buildUnitActions.add(new WaitAction(unit));
     buildUnitActions.add(new ClearInGameStateAction());
-    buildUnitActions.setActionText(selected, unit.getStats().getID(), unit.getOwner().getId());
     return buildUnitActions;
   }
 
   public static CWAction buildEndTurnAction() {
-    ActionBag endTurnAction = new ActionBag("End Turn");
-    endTurnAction.add(new ClearInGameStateAction());
-    endTurnAction.add(new EndTurnAction());
-    endTurnAction.setActionText("end_turn");
-    return endTurnAction;
+    ActionBag endTurnActions = new ActionBag("End_Turn");
+    endTurnActions.add(new ClearInGameStateAction());
+    endTurnActions.add(new EndTurnAction());
+    return endTurnActions;
   }
 
   public static CWAction buildLaunchRocketAction(Unit unit, City city, Location rocketDestination) {
-    ActionBag launchRocketAction = new ActionBag("Launch_Rocket");
-    launchRocketAction.add(new InitAction());
-    launchRocketAction.add(new MoveAnimatedAction(unit.getLocation(), city.getLocation()));
-    launchRocketAction.add(new WaitAction(unit));
-    launchRocketAction.add(new LaunchRocketAction(city, unit, rocketDestination));
-    launchRocketAction.add(new ClearInGameStateAction());
-    launchRocketAction.setActionText(unit, city.getLocation(), rocketDestination.getCol(), rocketDestination.getRow());
-    return launchRocketAction;
+    ActionBag launchRocketActions = new ActionBag("Launch_Rocket");
+    launchRocketActions.add(new InitAction());
+    launchRocketActions.add(new MoveAnimatedAction(unit.getLocation(), city.getLocation()));
+    launchRocketActions.add(new WaitAction(unit));
+    launchRocketActions.add(new LaunchRocketAction(city, unit, rocketDestination));
+    launchRocketActions.add(new ClearInGameStateAction());
+    return launchRocketActions;
   }
 
   public static CWAction buildTransformTerrainAction(Unit unit, Location to, Terrain transformTo) {
@@ -177,64 +150,56 @@ public class ActionFactory {
     transformTerrainActions.add(new MoveAnimatedAction(unit.getLocation(), to));
     transformTerrainActions.add(new WaitAction(unit));
     transformTerrainActions.add(new TransformTerrainAction(unit, to, transformTo));
-    transformTerrainActions.add(new ClearInGameStateAction());
-    transformTerrainActions.setActionText(unit, to, transformTo.getID());
     return transformTerrainActions;
   }
 
   public static CWAction buildFireFlareAction(Unit unit, Location to, Location flareCenter) {
-    ActionBag transformTerrainAction = new ActionBag("Flare");
-    transformTerrainAction.add(new InitAction());
-    transformTerrainAction.add(new MoveAnimatedAction(unit.getLocation(), to));
-    transformTerrainAction.add(new WaitAction(unit));
-    transformTerrainAction.add(new FireFlareAction(unit, flareCenter));
-    transformTerrainAction.add(new ClearInGameStateAction());
-    transformTerrainAction.setActionText(unit.getLocation(), to, flareCenter.getCol(), flareCenter.getRow());
-    return transformTerrainAction;
+    ActionBag flareActions = new ActionBag("Flare");
+    flareActions.add(new InitAction());
+    flareActions.add(new MoveAnimatedAction(unit.getLocation(), to));
+    flareActions.add(new WaitAction(unit));
+    flareActions.add(new FireFlareAction(unit, flareCenter));
+    flareActions.add(new ClearInGameStateAction());
+    return flareActions;
   }
 
-  public static CWAction buildConstructCityAction(Unit unit, int cityID, Location to) {
-    ActionBag buildCityAction = new ActionBag("Build_City");
-    buildCityAction.add(new InitAction());
-    buildCityAction.add(new MoveAnimatedAction(unit.getLocation(), to));
-    buildCityAction.add(new WaitAction(unit));
-    buildCityAction.add(new ConstructCityAction(unit, cityID, to));
-    buildCityAction.add(new ClearInGameStateAction());
-    buildCityAction.setActionText(unit, to, cityID);
-    return buildCityAction;
+  public static CWAction buildConstructCityAction(Unit unit, String cityID, Location to) {
+    ActionBag constructCityActions = new ActionBag("Build_City");
+    constructCityActions.add(new InitAction());
+    constructCityActions.add(new MoveAnimatedAction(unit.getLocation(), to));
+    constructCityActions.add(new WaitAction(unit));
+    constructCityActions.add(new ConstructCityAction(unit, cityID, to));
+    constructCityActions.add(new ClearInGameStateAction());
+    return constructCityActions;
   }
 
   public static CWAction buildDiveAction(Unit unit, Location to) {
-    ActionBag diveAction = new ActionBag("Dive");
-    diveAction.add(new InitAction());
-    diveAction.add(new MoveAnimatedAction(unit.getLocation(), to));
-    diveAction.add(new WaitAction(unit));
-    diveAction.add(new DiveAction(unit));
-    diveAction.add(new ClearInGameStateAction());
-    diveAction.setActionText(unit, to);
-    return diveAction;
+    ActionBag diveActions = new ActionBag("Dive");
+    diveActions.add(new InitAction());
+    diveActions.add(new MoveAnimatedAction(unit.getLocation(), to));
+    diveActions.add(new WaitAction(unit));
+    diveActions.add(new DiveAction(unit));
+    diveActions.add(new ClearInGameStateAction());
+    return diveActions;
   }
 
   public static CWAction buildSurfaceAction(Unit unit, Location to) {
-    ActionBag surfaceAction = new ActionBag("Surface");
-    surfaceAction.add(new InitAction());
-    surfaceAction.add(new MoveAnimatedAction(unit.getLocation(), to));
-    surfaceAction.add(new WaitAction(unit));
-    surfaceAction.add(new SurfaceAction(unit));
-    surfaceAction.add(new ClearInGameStateAction());
-    surfaceAction.setActionText(unit, to);
-    return surfaceAction;
+    ActionBag surfaceActions = new ActionBag("Surface");
+    surfaceActions.add(new InitAction());
+    surfaceActions.add(new MoveAnimatedAction(unit.getLocation(), to));
+    surfaceActions.add(new WaitAction(unit));
+    surfaceActions.add(new SurfaceAction(unit));
+    surfaceActions.add(new ClearInGameStateAction());
+    return surfaceActions;
   }
 
-  public static CWAction buildProduceUnitAction(Unit producer, Unit unitToBuild, Location to) {
-    ActionBag produceUnitAction = new ActionBag("Produce");
-    produceUnitAction.add(new InitAction());
-    produceUnitAction.add(new MoveAnimatedAction(producer.getLocation(), to));
-    produceUnitAction.add(new ProduceUnitAction(producer, unitToBuild));
-    produceUnitAction.add(new WaitAction(producer));
-    produceUnitAction.add(new ClearInGameStateAction());
-    produceUnitAction.setActionText(producer.getLocation(), to, unitToBuild.getStats().getID());
-    return produceUnitAction;
+  public static CWAction buildProduceUnitAction(Unit producer, String unitNameToProduce) {
+    ActionBag produceUnitActions = new ActionBag("Produce");
+    produceUnitActions.add(new InitAction());
+    produceUnitActions.add(new ProduceUnitAction(producer, unitNameToProduce));
+    produceUnitActions.add(new WaitAction(producer));
+    produceUnitActions.add(new ClearInGameStateAction());
+    return produceUnitActions;
   }
 
   public static CWAction buildEndGameAction() {
@@ -242,34 +207,31 @@ public class ActionFactory {
   }
 
   public static CWAction buildLoadCOAction(Unit unit, Location to) {
-    ActionBag loadCOAction = new ActionBag("loadCO");
-    loadCOAction.add(new InitAction());
-    loadCOAction.add(new MoveAnimatedAction(unit.getLocation(), to));
-    loadCOAction.add(new LoadCOAction(unit));
-    loadCOAction.add(new ClearInGameStateAction());
-    loadCOAction.setActionText(unit, to);
-    return loadCOAction;
+    ActionBag loadCOActions = new ActionBag("load_CO");
+    loadCOActions.add(new InitAction());
+    loadCOActions.add(new MoveAnimatedAction(unit.getLocation(), to));
+    loadCOActions.add(new LoadCOAction(unit));
+    loadCOActions.add(new ClearInGameStateAction());
+    return loadCOActions;
   }
 
   public static CWAction buildCOPowerAction(Unit unit, Location to) {
-    ActionBag coPowerAction = new ActionBag("co_Power");
-    coPowerAction.add(new InitAction());
-    coPowerAction.add(new MoveAnimatedAction(unit.getLocation(), to));
-    coPowerAction.add(new COPowerAction());
-    coPowerAction.add(new WaitAction(unit));
-    coPowerAction.add(new ClearInGameStateAction());
-    coPowerAction.setActionText(unit, to);
-    return coPowerAction;
+    ActionBag coPowerActions = new ActionBag("co_Power");
+    coPowerActions.add(new InitAction());
+    coPowerActions.add(new MoveAnimatedAction(unit.getLocation(), to));
+    coPowerActions.add(new COPowerAction());
+    coPowerActions.add(new WaitAction(unit));
+    coPowerActions.add(new ClearInGameStateAction());
+    return coPowerActions;
   }
 
   public static CWAction buildCOSuperPowerAction(Unit unit, Location to) {
-    ActionBag coSuperPowerAction = new ActionBag("co_Super_Power");
-    coSuperPowerAction.add(new InitAction());
-    coSuperPowerAction.add(new MoveAnimatedAction(unit.getLocation(), to));
-    coSuperPowerAction.add(new COSuperPowerAction());
-    coSuperPowerAction.add(new WaitAction(unit));
-    coSuperPowerAction.add(new ClearInGameStateAction());
-    coSuperPowerAction.setActionText(unit, to);
-    return coSuperPowerAction;
+    ActionBag coSuperPowerActions = new ActionBag("co_Super_Power");
+    coSuperPowerActions.add(new InitAction());
+    coSuperPowerActions.add(new MoveAnimatedAction(unit.getLocation(), to));
+    coSuperPowerActions.add(new COSuperPowerAction());
+    coSuperPowerActions.add(new WaitAction(unit));
+    coSuperPowerActions.add(new ClearInGameStateAction());
+    return coSuperPowerActions;
   }
 }

@@ -1,11 +1,12 @@
 package com.customwars.client.action.unit;
 
 import com.customwars.client.App;
+import com.customwars.client.action.ActionCommandEncoder;
 import com.customwars.client.action.DirectAction;
 import com.customwars.client.model.GameController;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.Unit;
-import com.customwars.client.model.map.Tile;
+import com.customwars.client.model.map.Location;
 import com.customwars.client.network.MessageSender;
 import com.customwars.client.network.NetworkException;
 import com.customwars.client.ui.GUI;
@@ -21,14 +22,14 @@ public class AddUnitToTileAction extends DirectAction {
   private GameController gameController;
   private MessageSender messageSender;
   private final Unit unit;                    // Unit to be put on tile
-  private final Tile tile;                    // Tile to add unit to
-  private final Player unitOwner;
+  private final Location location;            // Tile to add unit to
+  private final Player newUnitOwner;
 
-  public AddUnitToTileAction(Unit unit, Tile tile, boolean canUndo) {
-    super("Add unit to tile", canUndo);
+  public AddUnitToTileAction(Unit unit, Player newUnitOwner, Location location) {
+    super("Add unit to tile", false);
     this.unit = unit;
-    this.tile = tile;
-    this.unitOwner = unit.getOwner();
+    this.location = location;
+    this.newUnitOwner = newUnitOwner;
   }
 
   protected void init(InGameContext inGameContext) {
@@ -37,18 +38,26 @@ public class AddUnitToTileAction extends DirectAction {
   }
 
   protected void invokeAction() {
-    gameController.buildUnit(unit, tile, unitOwner);
+    gameController.buildUnit(unit, location, newUnitOwner);
     if (App.isMultiplayer()) sendBuildUnit();
   }
 
   private void sendBuildUnit() {
     try {
-      messageSender.buildUnit(unit, tile, unitOwner);
+      messageSender.buildUnit(unit, location, newUnitOwner);
     } catch (NetworkException ex) {
       logger.warn("Could not send build unit", ex);
       if (GUI.askToResend(ex) == GUI.YES_OPTION) {
         sendBuildUnit();
       }
     }
+  }
+
+  @Override
+  public String getActionCommand() {
+    return new ActionCommandEncoder()
+      .add(location)
+      .add(unit)
+      .add(newUnitOwner).build();
   }
 }

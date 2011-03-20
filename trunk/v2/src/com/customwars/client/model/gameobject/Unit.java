@@ -85,6 +85,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
     supplies = otherUnit.supplies;
     experience = otherUnit.experience;
     unitState = otherUnit.unitState;
+    constructionMaterials = otherUnit.constructionMaterials;
 
     primaryWeapon = otherUnit.primaryWeapon != null ? new Weapon(otherUnit.primaryWeapon) : null;
     secondaryWeapon = otherUnit.secondaryWeapon != null ? new Weapon(otherUnit.secondaryWeapon) : null;
@@ -340,7 +341,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
     return stats.canTransport(unitName) && !isTransportFull();
   }
 
-  private boolean isTransportFull() {
+  public boolean isTransportFull() {
     return transport.size() >= stats.getMaxTransportCount();
   }
 
@@ -492,12 +493,12 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
     constructingCity = null;
   }
 
-  public boolean canConstructCity() {
+  public boolean hasConstructionMaterials() {
     return constructionMaterials > 0;
   }
 
   public boolean canConstructCityOn(Terrain terrain) {
-    return canConstructCity() && stats.canBuildCityOn(terrain);
+    return hasConstructionMaterials() && stats.canBuildCityOn(terrain);
   }
 
   // ---------------------------------------------------------------------------
@@ -915,24 +916,6 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
 
   public boolean isHidden() {
     return hidden;
-  }
-
-  /**
-   * @return Can this unit build the specific unit
-   */
-  public boolean canBuildUnit(Unit unit) {
-    return canBuildUnit() && stats.canBuildUnit(unit);
-  }
-
-  /**
-   * Can this unit build units:
-   * #1 Only transporting units can build a unit
-   * #2 There is 1 free place in this transport
-   *
-   * @return Can this unit build units
-   */
-  public boolean canBuildUnit() {
-    return stats.canTransport() && !isTransportFull();
   }
 
   public boolean canHide() {

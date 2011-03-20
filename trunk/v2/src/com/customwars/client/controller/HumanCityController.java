@@ -27,8 +27,6 @@ import java.awt.Color;
 /**
  * Allows a human to control a city
  * by using a gui
- *
- * @author stefan
  */
 public class HumanCityController extends CityController {
   private static final org.newdawn.slick.Color DARKER_TEXT_COLOR = new org.newdawn.slick.Color(255, 255, 255, 100);
@@ -74,8 +72,7 @@ public class HumanCityController extends CityController {
         CWAction addUnitToTileAction;
 
         if (canAffordUnit) {
-          unit.setOwner(city.getOwner());
-          addUnitToTileAction = ActionFactory.buildAddUnitToTileAction(unit, selected, false);
+          addUnitToTileAction = ActionFactory.buildAddUnitToTileAction(unit, city.getOwner(), selected);
         } else {
           addUnitToTileAction = null;
         }

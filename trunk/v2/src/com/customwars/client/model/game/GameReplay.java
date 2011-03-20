@@ -11,13 +11,12 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 /**
  * A replay of a game containing The initial game and a queue of text actions.
  * These text actions are converted to a CWAction when invoking the execNextReplayAction method.
- *
+ * <p/>
  * You can only move 1 step forward. The replay can only be run once.
  * When at the last action hasMoreActions returns false.
  */
@@ -35,9 +34,9 @@ public class GameReplay implements Serializable {
     this.currentReplayIndex = 0;
   }
 
-  public void addActions(Collection<CWAction> actions) {
+  public void addActions(Iterable<CWAction> actions) {
     for (CWAction action : actions) {
-      replayQueue.add(action.getActionText());
+      replayQueue.add(action.getActionCommand());
     }
   }
 

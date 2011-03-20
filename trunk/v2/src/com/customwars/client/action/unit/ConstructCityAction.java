@@ -1,6 +1,7 @@
 package com.customwars.client.action.unit;
 
 import com.customwars.client.App;
+import com.customwars.client.action.ActionCommandEncoder;
 import com.customwars.client.action.DirectAction;
 import com.customwars.client.model.GameController;
 import com.customwars.client.model.gameobject.City;
@@ -20,9 +21,9 @@ public class ConstructCityAction extends DirectAction {
   private MessageSender messageSender;
   private final Unit unit;
   private final Location to;
-  private final int cityID;
+  private final String cityID;
 
-  public ConstructCityAction(Unit unit, int cityID, Location moveTo) {
+  public ConstructCityAction(Unit unit, String cityID, Location moveTo) {
     super("Construct City", false);
     this.unit = unit;
     this.to = moveTo;
@@ -74,5 +75,10 @@ public class ConstructCityAction extends DirectAction {
         sendConstructCity();
       }
     }
+  }
+
+  @Override
+  public String getActionCommand() {
+    return new ActionCommandEncoder().add(cityID).build();
   }
 }

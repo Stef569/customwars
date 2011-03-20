@@ -66,7 +66,7 @@ public interface MessageSender {
 
   void flare(Location flareCenter, int flareRange) throws NetworkException;
 
-  void constructCity(Unit unit, int cityID, Location constructOn) throws NetworkException;
+  void constructCity(Unit unit, String cityID, Location constructOn) throws NetworkException;
 
   void dive(Unit unit) throws NetworkException;
 
@@ -83,4 +83,6 @@ public interface MessageSender {
   void coPower() throws NetworkException;
 
   void coSuperPower() throws NetworkException;
+
+  void produceUnit(Unit producer, String unitToProduce, Player owner) throws NetworkException;
 }
