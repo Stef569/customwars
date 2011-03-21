@@ -15,7 +15,7 @@
     <originalColors>502820, 803020, A83020, C04838, D06048, F09060, E8B898</originalColors>
     <replacementColor>
       <name>BLUE</name>
-      <replacementColors>000091, 2820C0, 0068E8, 0098F0, 40B8F0, 68E0F0, B8F0F8</replacementColors>
+      <replacementColors>181840, 2820C0, 0068E8, 0098F0, 40B8F0, 68E0F0, B8F0F8</replacementColors>
     </replacementColor>
     <replacementColor>
       <name>GREEN</name>
@@ -35,7 +35,7 @@
     </replacementColor>
     <replacementColor>
       <name>BLACK</name>
-      <replacementColors>116566, 312b2c, 58544f, 74726b, 7c7b7b, 989898, eaeae8</replacementColors>
+      <replacementColors>2F2838, 312b2c, 58544f, 74726b, 7c7b7b, 989898, eaeae8</replacementColors>
     </replacementColor>
     <replacementColor>
       <name>CYAN</name>
@@ -56,31 +56,31 @@
     <originalColors>605058, C90405, a04068, e06068, f8b078, e8d090</originalColors>
     <replacementColor>
       <name>BLUE</name>
-      <replacementColors>000077, 6048d8, 6048d8, 6070f8, 78c8f0, 98e0f8</replacementColors>
+      <replacementColors>484880, 6048d8, 6048d8, 6070f8, 78c8f0, 98e0f8</replacementColors>
     </replacementColor>
     <replacementColor>
       <name>GREEN</name>
-      <replacementColors>008710, 50a050, 50a050, 40c080, 78e078, b8f880</replacementColors>
+      <replacementColors>386028, 50a050, 50a050, 40c080, 78e078, b8f880</replacementColors>
     </replacementColor>
     <replacementColor>
       <name>YELLOW</name>
-      <replacementColors>a2a000, a08040, a08040, d09838, F8c028, f8e048</replacementColors>
+      <replacementColors>605040, a08040, a08040, d09838, F8c028, f8e048</replacementColors>
     </replacementColor>
     <replacementColor>
       <name>ORANGE</name>
-      <replacementColors>ac7c09, 904058, a04068, ff6a00, f8b078, e8d090</replacementColors>
+      <replacementColors>605058, 904058, a04068, ff6a00, f8b078, e8d090</replacementColors>
     </replacementColor>
     <replacementColor>
       <name>CYAN</name>
-      <replacementColors>506060, 04c9bd, 409fa0, 60d2e0, 78f8de, 90e7e8</replacementColors>
+      <replacementColors>349496, 04c9bd, 409fa0, 60d2e0, 78f8de, 90e7e8</replacementColors>
     </replacementColor>
     <replacementColor>
       <name>PINK</name>
-      <replacementColors>792634, 606060, ba8780, f4bec7, ffced6, ffdde3</replacementColors>
+      <replacementColors>29107A, 606060, ba8780, ff7c92, ffaebb, ffb9c5</replacementColors>
     </replacementColor>
     <replacementColor>
       <name>GRAY</name>
-      <replacementColors>646464, 606060, 908890, b5b1b1, c4c4be, e0e0d2</replacementColors>
+      <replacementColors>706870, 606060, 908890, b5b1b1, c4c4be, e0e0d2</replacementColors>
     </replacementColor>
     <replacementColor>
       <name>BLACK</name>
