@@ -25,9 +25,9 @@ import java.util.List;
  * converting to slick images
  */
 public class RecolorTest extends BasicGame {
-  private static final String IMAGE_FILTER_FILE = "res/plugin/default/data/colors.xml";
-  private static final String UNIT_IMG_PATH = "res/plugin/default/images/units_RED.png";
-  private static final String CITY_IMG_PATH = "res/plugin/default/images/cities_RED.png";
+  private static final String IMAGE_FILTER_FILE = "res/plugin/dor/data/colors.xml";
+  private static final String UNIT_IMG_PATH = "res/plugin/dor/images/units.png";
+  private static final String CITY_IMG_PATH = "res/plugin/dor/images/cities.png";
 
   // Images
   private ImageLib imageLib;
@@ -39,7 +39,6 @@ public class RecolorTest extends BasicGame {
   // Recoloring
   private static List<Color> colors;
   private int currentColorPos;
-  private boolean darker;
 
   public RecolorTest() {
     super("recolor test");
@@ -88,13 +87,14 @@ public class RecolorTest extends BasicGame {
   }
 
   public void render(GameContainer container, Graphics g) throws SlickException {
+    g.setColor(org.newdawn.slick.Color.green.darker());
+    g.fillRect(0, 0, container.getWidth(), container.getHeight());
     g.setColor(org.newdawn.slick.Color.white);
     g.drawString("LOADING COMPLETED   scroll to see what has been loaded", 100, 50);
 
     Color currentColor = colors.get(currentColorPos);
     g.setColor(new org.newdawn.slick.Color(currentColor.getRGB()));
-    String darkTxt = darker ? "Darker " : "";
-    g.drawString(darkTxt + ColorUtil.toString(currentColor), 50, 70);
+    g.drawString(ColorUtil.toString(currentColor), 50, 70);
 
     if (currentUnitImg == null) {
       currentUnitImgStrip.getSubImage(0, 1).draw(100, 100);
@@ -125,15 +125,9 @@ public class RecolorTest extends BasicGame {
 
   private void recolor() {
     Color color = colors.get(currentColorPos);
-    this.darker = !darker;
     String colorName = ColorUtil.toString(color);
-    if (darker) {
-      currentUnitImg = imageLib.getSlickImg("UNIT_" + colorName + "_darker");
-      currentCityImg = imageLib.getSlickImg("city_" + colorName + "_darker");
-    } else {
-      currentUnitImg = imageLib.getSlickImg("UNIT_" + colorName);
-      currentCityImg = imageLib.getSlickImg("city_" + colorName);
-    }
+    currentUnitImg = imageLib.getSlickImg("UNIT_" + colorName);
+    currentCityImg = imageLib.getSlickImg("city_" + colorName);
   }
 
   public static void main(String[] args) throws SlickException {
