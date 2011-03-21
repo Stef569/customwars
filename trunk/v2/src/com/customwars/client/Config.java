@@ -25,7 +25,7 @@ import java.util.ResourceBundle;
 public class Config {
   private static final Logger logger = Logger.getLogger(Config.class);
   private static final String HOME_DIR = System.getProperty("user.home") + "/.cw2";
-  private static final String MAPS_DIR = HOME_DIR + "/maps";
+  private static final String MAPS_DIR = HOME_DIR + "/maps/";
 
   private static final String GAME_PROPERTIES_FILE = "game.properties";
   private static final String LOG_PROPERTIES_FILE = "log4j.properties";

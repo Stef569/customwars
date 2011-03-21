@@ -19,6 +19,8 @@ import java.util.Map;
 /**
  * Load all the resources,
  * the paths where the resources can be loaded from are set at runtime
+ *
+ * @see #putLoadPath(String, String)
  */
 public class ResourcesLoader {
   private static final Logger logger = Logger.getLogger(ResourcesLoader.class);
@@ -51,12 +53,15 @@ public class ResourcesLoader {
    * @param path     The loading path
    */
   public void putLoadPath(String pathName, String path) {
-    if (!paths.containsKey(pathName)) {
-      paths.put(pathName, path);
-    } else {
-      logger.warn("overwriting loading path " + pathName + " from " + paths.get(pathName) + " to " + path);
-      paths.put(pathName, path);
+    if (!path.endsWith("/")) {
+      throw new IllegalArgumentException("'" + path + "' path should end with a '/'");
     }
+
+    if (paths.containsKey(pathName)) {
+      logger.warn("overwriting loading path " + pathName + " from " + paths.get(pathName) + " to " + path);
+    }
+
+    paths.put(pathName, path);
   }
 
   public void loadAll() {
@@ -156,7 +161,7 @@ public class ResourcesLoader {
     if (paths.containsKey(key)) {
       return paths.get(key);
     } else {
-      throw new IllegalArgumentException("key could not be found in paths " + paths);
+      throw new IllegalArgumentException("key " + key + " could not be found in paths " + paths);
     }
   }
 

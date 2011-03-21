@@ -249,6 +249,11 @@
       <int>1</int>
       <int>127</int>
     </moveCosts>
+
+    <heals>
+      <armyBranch>AIR</armyBranch>
+    </heals>
+    <healRate>2</healRate>
     <canBeCaptureBy>
       <unitID>infantry</unitID>
       <unitID>mech</unitID>
@@ -268,6 +273,11 @@
       <int>1</int>
       <int>1</int>
     </moveCosts>
+
+    <heals>
+      <armyBranch>NAVAL</armyBranch>
+    </heals>
+    <healRate>2</healRate>
     <canBeCaptureBy>
       <unitID>infantry</unitID>
       <unitID>mech</unitID>
