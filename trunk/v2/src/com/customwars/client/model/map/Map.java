@@ -25,7 +25,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -50,6 +52,7 @@ public class Map extends TileMap<Tile> implements TurnHandler {
   private transient PathFinder pathFinder;        // To builds paths within the map
   private Player neutralPlayer;     // Idle neutral player owner of the neutral cities
   private GameRules defaultRules;   // The default game rules as chosen by the map creator
+  private final HashMap<Location, City> citiesUnderConstruction;
 
   /**
    * Convenient constructor to create an anonymous map. The map name and author are set to anonymous.
@@ -77,6 +80,7 @@ public class Map extends TileMap<Tile> implements TurnHandler {
     this.pathFinder = new PathFinder(this);
     this.neutralPlayer = Player.createNeutralPlayer(App.getColor("plugin.neutral_color"));
     this.defaultRules = new GameRules();
+    this.citiesUnderConstruction = new HashMap<Location, City>();
     fillMap(cols, rows, startTerrain);
   }
 
@@ -566,6 +570,7 @@ public class Map extends TileMap<Tile> implements TurnHandler {
     return !terrain.isHidden() || adjacent;
   }
 
+
   /**
    * Normalise this map
    * A normalised maps contains map players with Id's that start with ID 0 and increase by 1
@@ -637,6 +642,44 @@ public class Map extends TileMap<Tile> implements TurnHandler {
 
   public void setDefaultRules(GameRules rules) {
     this.defaultRules = rules;
+  }
+
+  public void addCityUnderConstruction(Location location, City city) {
+    if (!citiesUnderConstruction.containsKey(location)) {
+      citiesUnderConstruction.put(location, city);
+    }
+  }
+
+  /**
+   * Remove the cities under construction with no unit on them.
+   * This happens when the apc construct a city in 1 turn.
+   * But then moves to another location leaving the city in the citiesUnderConstruction collection.
+   */
+  public void validateConstructingCities() {
+    Iterator<Location> iterator = citiesUnderConstruction.keySet().iterator();
+
+    while (iterator.hasNext()) {
+      Location location = iterator.next();
+      if (getUnitOn(location) == null) {
+        iterator.remove();
+      }
+    }
+  }
+
+  public City getCityUnderConstructionAt(Location location) {
+    City city = null;
+    if (isConstructingCityAt(location)) {
+      city = citiesUnderConstruction.get(location);
+    }
+    return city;
+  }
+
+  public boolean isConstructingCityAt(Location location) {
+    return citiesUnderConstruction.containsKey(location);
+  }
+
+  public void stopConstructingCity(Location location) {
+    citiesUnderConstruction.remove(location);
   }
 
   /**
