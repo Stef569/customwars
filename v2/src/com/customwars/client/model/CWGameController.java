@@ -21,8 +21,6 @@ import com.customwars.client.model.map.Tile;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
 
 /**
  * CW implementation of a GameController
@@ -31,13 +29,11 @@ public class CWGameController implements GameController {
   private final Game game;
   private final Map map;
   private final ControllerManager controllerManager;
-  private final java.util.Map<Location, City> citiesUnderConstruction;
 
   public CWGameController(Game game, ControllerManager controllerManager) {
     this.game = game;
     this.map = game.getMap();
     this.controllerManager = controllerManager;
-    this.citiesUnderConstruction = new HashMap<Location, City>();
   }
 
   @Override
@@ -186,8 +182,13 @@ public class CWGameController implements GameController {
 
   @Override
   public boolean constructCity(Unit unit, String cityID, Location location) {
-    City city = getCityUnderConstructionAt(location, cityID);
-    addCityUnderConstruction(location, city);
+    City city;
+    if (map.isConstructingCityAt(location)) {
+      city = map.getCityUnderConstructionAt(location);
+    } else {
+      city = CityFactory.getCity(cityID);
+      map.addCityUnderConstruction(location, city);
+    }
 
     // When the city is constructed it is added to the player cities collection.
     unit.construct(city);
@@ -199,22 +200,6 @@ public class CWGameController implements GameController {
     } else {
       return false;
     }
-  }
-
-  private void addCityUnderConstruction(Location location, City city) {
-    if (!citiesUnderConstruction.containsKey(location)) {
-      citiesUnderConstruction.put(location, city);
-    }
-  }
-
-  public City getCityUnderConstructionAt(Location location, String cityID) {
-    City city;
-    if (citiesUnderConstruction.containsKey(location)) {
-      city = citiesUnderConstruction.get(location);
-    } else {
-      city = CityFactory.getCity(cityID);
-    }
-    return city;
   }
 
   private void addCityToTile(Location to, City city, Player cityOwner) {
@@ -231,7 +216,7 @@ public class CWGameController implements GameController {
 
   public void stopConstructingCity(Unit unit, Location location) {
     unit.stopConstructing();
-    citiesUnderConstruction.remove(location);
+    map.stopConstructingCity(location);
   }
 
   @Override
@@ -260,26 +245,10 @@ public class CWGameController implements GameController {
       Player activePlayer = game.getActivePlayer();
       map.showLosFor(activePlayer);
       map.resetAllHiddenUnits(activePlayer);
-      validateConstructingCities(unit);
+      map.validateConstructingCities();
 
       if (unit.isCoOnBoard()) {
         updateCOZone(unit);
-      }
-    }
-  }
-
-  private void validateConstructingCities(Unit unitThatMoved) {
-    // Remove the city under construction location(s) with no apc on.
-    // This happens when the apc construct a city in 1 turn.
-    // But then moves to another location leaving the city in the citiesUnderConstruction collection..
-    if (unitThatMoved.hasConstructionMaterials()) {
-      Iterator<Location> iterator = citiesUnderConstruction.keySet().iterator();
-
-      while (iterator.hasNext()) {
-        Location location = iterator.next();
-        if (map.getUnitOn(location) == null) {
-          iterator.remove();
-        }
       }
     }
   }
