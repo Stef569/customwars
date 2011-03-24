@@ -227,7 +227,7 @@ public class UnitMenuBuilder {
 
     if (canLaunchRocketFromCity) {
       CWAction startLaunchAction = new StartLaunchRocketAction();
-      addToMenu(startLaunchAction, App.translate("launch"));
+      addToMenu(startLaunchAction, App.translate("launch_rocket"));
     }
 
     if (canTransformTerrain) {
@@ -310,7 +310,7 @@ public class UnitMenuBuilder {
 
   private String getLaunchMenuItemText(Unit unitInTransport) {
     String unitName = App.translate(unitInTransport.getStats().getName());
-    String menuText = App.translate("launch") + " - " + unitName;
+    String menuText = App.translate("take_off") + " - " + unitName;
     return menuText;
   }
 
