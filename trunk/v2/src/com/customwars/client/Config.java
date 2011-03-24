@@ -2,6 +2,7 @@ package com.customwars.client;
 
 import com.customwars.client.io.ResourceManager;
 import com.customwars.client.model.co.COFactory;
+import com.customwars.client.script.BeanShell;
 import com.customwars.client.script.ScriptManager;
 import com.customwars.client.tools.IOUtil;
 import com.customwars.client.tools.StringUtil;
@@ -38,11 +39,11 @@ public class Config {
 
   private final ResourceManager resources;
   private static String resourcesPath;
-  private final ScriptManager scriptManager;
+  private final ScriptManager coScriptManager;
 
   public Config(ResourceManager resources) {
     this.resources = resources;
-    this.scriptManager = new ScriptManager();
+    this.coScriptManager = new ScriptManager();
   }
 
   /**
@@ -71,6 +72,7 @@ public class Config {
     storePaths();
     initHomeDir();
     loadConfigFiles();
+    initBeanshellConsole();
   }
 
   private static void checkForResourcesInClassPath() {
@@ -186,8 +188,8 @@ public class Config {
 
   private void initScripts(String pluginPath) {
     String coDir = pluginPath + "/data/co/";
-    scriptManager.init(coDir + MAIN_SCRIPT_FILE, coDir + CO_SCRIPT_FILE);
-    COFactory.setScriptManager(scriptManager);
+    coScriptManager.init(coDir + MAIN_SCRIPT_FILE, coDir + CO_SCRIPT_FILE);
+    COFactory.setScriptManager(coScriptManager);
   }
 
   private static Properties loadProperties(String location) throws IOException {
@@ -198,5 +200,12 @@ public class Config {
   private static Properties loadProperties(String location, Properties defaults) throws IOException {
     InputStream in = ResourceLoader.getResourceAsStream(location);
     return IOUtil.loadProperties(in, defaults);
+  }
+
+  private void initBeanshellConsole() {
+    BeanShell bsh = BeanShell.get();
+    bsh.set("coScripts", coScriptManager);
+    bsh.set("resources", resources);
+    bsh.eval("setAccessibility(true)");
   }
 }

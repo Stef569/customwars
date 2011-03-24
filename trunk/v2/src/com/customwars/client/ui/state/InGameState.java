@@ -21,6 +21,7 @@ import com.customwars.client.model.map.TileMap;
 import com.customwars.client.model.map.path.MoveTraverse;
 import com.customwars.client.network.MessageSender;
 import com.customwars.client.network.MessageSenderFactory;
+import com.customwars.client.script.BeanShell;
 import com.customwars.client.tools.ColorUtil;
 import com.customwars.client.ui.Camera2D;
 import com.customwars.client.ui.GUI;
@@ -134,6 +135,7 @@ public class InGameState extends CWState implements PropertyChangeListener {
   private void initSubSystems(Game game) {
     initGame(game);
     initGameContext(game, guiContext);
+    initScriptObjects();
   }
 
   private void initGame(Game game) {
@@ -141,7 +143,6 @@ public class InGameState extends CWState implements PropertyChangeListener {
     this.game = game;
     this.map = game.getMap();
     initCamera(map);
-    initScriptObjects();
     GUI.setGame(game);
     center = GUI.getCenteredRenderPoint(map.getSize(), guiContext);
   }
@@ -184,14 +185,14 @@ public class InGameState extends CWState implements PropertyChangeListener {
    * Add objects to beanshell, accessible by their name
    */
   private void initScriptObjects() {
+    BeanShell bsh = BeanShell.get();
     for (Player p : game.getAllPlayers()) {
       String colorName = ColorUtil.toString(p.getColor());
-      GUI.addLiveObjToConsole("p_" + colorName, p);
+      bsh.set("p_" + colorName, p);
     }
 
-    GUI.addLiveObjToConsole("game", game);
-    GUI.addLiveObjToConsole("map", map);
-    GUI.addLiveObjToConsole("resources", resources);
+    bsh.set("game", game);
+    bsh.set("map", map);
   }
 
   private void initGameListener(Game game) {
@@ -226,7 +227,22 @@ public class InGameState extends CWState implements PropertyChangeListener {
     super.leave(container, stateBasedGame);
     cwInput.resetInputTransform();
     cursorControl.removeListener(this);
-    gameOver = false;
+
+    if (gameOver) {
+      removeScriptObjects();
+      gameOver = false;
+    }
+  }
+
+  private void removeScriptObjects() {
+    BeanShell bsh = BeanShell.get();
+    for (Player p : game.getAllPlayers()) {
+      String colorName = ColorUtil.toString(p.getColor());
+      bsh.unset("p_" + colorName);
+    }
+
+    bsh.unset("game");
+    bsh.unset("map");
   }
 
   @Override
@@ -319,9 +335,9 @@ public class InGameState extends CWState implements PropertyChangeListener {
   @Override
   public void mousePressed(int button, int x, int y) {
     if (isInputAllowed()) {
-      if (button == Input.MOUSE_LEFT_BUTTON) {
-        Tile cursorLocation = gameRenderer.getCursorLocation();
+      Tile cursorLocation = gameRenderer.getCursorLocation();
 
+      if (button == Input.MOUSE_LEFT_BUTTON) {
         if (hud.isPopupVisible()) {
           if (!hud.isWithinPopupMenu(x, y)) {
             inputHandler.undo();
@@ -340,7 +356,11 @@ public class InGameState extends CWState implements PropertyChangeListener {
           input.consumeEvent();
         }
       } else if (button == Input.MOUSE_RIGHT_BUTTON) {
-        inputHandler.undo();
+        if (inGameContext.canUndo()) {
+          inputHandler.undo();
+        } else {
+          inputHandler.handleB(cursorLocation);
+        }
       }
     }
   }
@@ -374,7 +394,7 @@ public class InGameState extends CWState implements PropertyChangeListener {
   /**
    * Input is allowed when all animations and actions are finished
    *
-   * @return If the gui is ready to process input
+   * @return If any input is allowed.
    */
   private boolean isInputAllowed() {
     return entered && gameRenderer != null && gameRenderer.isDyingUnitAnimationCompleted() &&
