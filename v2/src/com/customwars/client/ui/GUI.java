@@ -1,11 +1,9 @@
 package com.customwars.client.ui;
 
-import bsh.EvalError;
-import bsh.Interpreter;
-import bsh.util.JConsole;
 import com.customwars.client.App;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.network.NetworkException;
+import com.customwars.client.script.BeanShell;
 import com.customwars.client.tools.StringUtil;
 import com.customwars.client.ui.hud.ModelEventScreen;
 import org.apache.log4j.Logger;
@@ -21,14 +19,12 @@ import java.io.File;
 
 /**
  * Application wide gui's Contains a console and a game event viewer window.
- * Live objects can be added to the console
  */
 public class GUI {
   public static int YES_OPTION = 0;
   public static int NO_OPTION = 1;
 
   private static final Logger logger = Logger.getLogger(GUI.class);
-  private static Interpreter bsh;
   private static JFrame eventFrame, consoleFrame;
   private static ModelEventScreen modelEventScreen;
   private static GUIContext guiContext;
@@ -40,26 +36,10 @@ public class GUI {
     GUI.guiContext = guiContext;
 
     if (!inited) {
-      initConsole();
+      consoleFrame = BeanShell.get().getConsole();
       initEventScreen();
       inited = true;
     }
-  }
-
-  private static void initConsole() {
-    consoleFrame = new JFrame("Console");
-    JConsole console = new JConsole();
-    bsh = new Interpreter(console);
-
-    try {
-      bsh.eval("setAccessibility(true)");
-    } catch (EvalError evalError) {
-      throw new RuntimeException(evalError);
-    }
-
-    consoleFrame.add(console);
-    consoleFrame.setBounds(0, 0, 400, 400);
-    new Thread(bsh).start();
   }
 
   private static void initEventScreen() {
@@ -114,40 +94,6 @@ public class GUI {
    */
   public static void setGame(Game game) {
     modelEventScreen.setGame(game);
-  }
-
-  /**
-   * Add a live object to the console
-   *
-   * @param objScriptName The name to reference the object
-   * @param obj           The object which methods should become accesible from the console
-   */
-  public static void addLiveObjToConsole(String objScriptName, Object obj) {
-    try {
-      bsh.set(objScriptName, obj);
-    } catch (EvalError ex) {
-      logger.warn("Could not add object " + objScriptName);
-    }
-  }
-
-  /**
-   * Remove a live object from the console
-   *
-   * @param objScriptName The name that an object has been previously referenced to
-   */
-  public static void removeLiveObjFromConsole(String objScriptName) {
-    try {
-      bsh.unset(objScriptName);
-    } catch (EvalError ex) {
-      logger.warn("Could not remove object " + objScriptName);
-    }
-  }
-
-  /**
-   * @return a list of names for each live objects
-   */
-  public static String[] getAllLiveObjectNames() {
-    return bsh.getNameSpace().getVariableNames();
   }
 
   /**
