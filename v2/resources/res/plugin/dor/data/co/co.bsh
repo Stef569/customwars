@@ -1,11 +1,13 @@
 // CO scripts
 // All method consists of 2 parts: <co name>_<method name>
 // The syntax is based on Java, more info @ http://www.beanshell.org/manual/syntax.html
+// When a method is to be linked to a co simply prefix the method with the co name in lower case.
+// The parameters are java objects that can be used within the method.
+// Use out.println("your text"); to print a message on the console.
 
-// Methods that can be used:
-// Method name                     Available parameters
-// void power                      Game game
-// void superPower                 Game game
+// Available CO methods:
+// Method name                     Parameters
+//
 // int unitMovementHook            Unit mover, int movement
 // int getAttackBonusPercentage    Unit attacker, Unit defender
 // int getDefenseBonusPercentage   Unit attacker, Unit defender
@@ -14,15 +16,12 @@
 // int unitPriceHook               int price
 // int healRateHook                int healRate
 // int terrainDefenseHook          int terrainDefenseBonus
-// int fireRangeHook               int fireRange
-// int visionHook                  int vision
-// void dayStart                   Game game
-
-  public void brenner_power() {
-    for (Unit unit : game.activePlayer.army) {
-      if(!unit.hasMaxHP()) unit.addHp(3);
-    }
-  }
+// int fireRangeHook               int fireRange, Unit unit
+// int visionHook                  int vision, Unit unit
+// void dayStart                   Player player
+// void power                      Game game
+// void superPower                 Game game
+// bool piercingVision
 
   public int brenner_getAttackBonusPercentage() {
     if (power || attacker.isInCOZone())
@@ -36,6 +35,12 @@
       return 130;
     else
       return 100;
+  }
+
+  public void brenner_power() {
+    for (Unit unit : game.activePlayer.army) {
+      if(!unit.hasMaxHP()) unit.addHp(3);
+    }
   }
 
   public int caulder_getAttackBonusPercentage() {
@@ -53,7 +58,7 @@
   }
 
   public void caulder_dayStart() {
-    for (Unit unit : game.activePlayer.army) {
+    for (Unit unit : player.army) {
       if (unit.isInCOZone() && !unit.hasMaxHP()) {
         unit.heal(5);
         out.println("Caulder day start: Healed unit " + unit.stats.name + " hp+5");
@@ -86,7 +91,7 @@
   }
 
   public int gage_fireRangeHook() {
-    if (power)
+    if (power && unit.isInDirect())
       return fireRange + 2;
     else
       return fireRange;
@@ -123,8 +128,9 @@
   }
 
   public void greyfield_power() {
-    for (Unit unit : game.activePlayer.army()) {
+    for (Unit unit : game.activePlayer.army) {
       unit.resupply();
+      unit.setMaxConstructionMaterials();
     }
   }
 
@@ -150,10 +156,29 @@
   }
 
   public int isabella_fireRangeHook() {
-    if (power)
+    if (power && unit.isInDirect())
       return fireRange + 2;
     else
       return fireRange;
+  }
+  
+  public int tabitha_getAttackBonusPercentage() {
+    if (power || attacker.isInCOZone()) {
+      return 150;
+    } else {
+      return 100;
+    }
+  }
+
+  public int tabitha_getDefenseBonusPercentage() {
+    if (power || defender.isInCOZone())
+      return 150;
+    else
+      return 100;
+  }
+
+  public void tabitha_power() {
+    // todo showLaunchRocketCursor
   }
 
   public int lin_getAttackBonusPercentage() {
@@ -181,10 +206,14 @@
   }
 
   public int lin_unitVisionHook() {
-    if (power)
+    if (power && unit.isLand())
       return vision + 2;
     else
       return vision;
+  }
+
+  public boolean lin_piercingVision() {
+    return power;
   }
 
   public int penny_getAttackBonusPercentage() {
@@ -231,7 +260,7 @@
   }
 
   public int tasha_unitMovementHook() {
-    if (power)
+    if (power && unit.isAir())
       return movement + 2;
     else
       return movement;
@@ -283,7 +312,7 @@
   }
 
   public int will_unitMovementHook() {
-    if (power)
+    if (power && unit.isDirect())
       return movement + 2;
     else
       return movement;

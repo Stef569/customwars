@@ -1,7 +1,7 @@
 package com.customwars.client.script;
 
 /**
- * A single parameter of a scripted method
+ * A single parameter with a name and a value of type T.
  */
 public class Parameter<T> {
   private final String name;
@@ -18,5 +18,10 @@ public class Parameter<T> {
 
   public T getValue() {
     return value;
+  }
+
+  @Override
+  public String toString() {
+    return name + "->" + value;
   }
 }

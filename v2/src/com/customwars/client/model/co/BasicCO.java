@@ -1,6 +1,6 @@
 package com.customwars.client.model.co;
 
-import com.customwars.client.model.game.Game;
+import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.Unit;
 
 /**
@@ -35,8 +35,8 @@ public class BasicCO extends AbstractCO {
   // ------------------------------------------------
 
   @Override
-  public void dayStart(Game game) {
-    super.dayStart(game);
+  public void dayStart(Player player) {
+    super.dayStart(player);
   }
 
   @Override
@@ -78,17 +78,22 @@ public class BasicCO extends AbstractCO {
   }
 
   @Override
-  public int fireRangeHook(int fireRange) {
+  public int fireRangeHook(Unit unit, int fireRange) {
     return fireRange;
   }
 
   @Override
-  public int unitVisionHook(int vision) {
+  public int unitVisionHook(Unit unit, int vision) {
     return vision;
   }
 
   @Override
   public int cityVisionHook(int vision) {
     return vision;
+  }
+
+  @Override
+  public boolean isPiercingVision() {
+    return false;
   }
 }

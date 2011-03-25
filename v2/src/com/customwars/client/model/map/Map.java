@@ -2,6 +2,7 @@ package com.customwars.client.model.map;
 
 import com.customwars.client.App;
 import com.customwars.client.model.TurnHandler;
+import com.customwars.client.model.co.CO;
 import com.customwars.client.model.fight.Attacker;
 import com.customwars.client.model.fight.Defender;
 import com.customwars.client.model.fight.Fight;
@@ -494,16 +495,18 @@ public class Map extends TileMap<Tile> implements TurnHandler {
       City city = getCityOn(t);
 
       if (unit != null && unit.isAlliedWith(player)) {
+        CO co = unit.getOwner().getCO();
         int visionBonus = getUnitVisionBonus(unit);
         int vision = unit.getStats().getVision();
-        int coVision = unit.getOwner().getCO().unitVisionHook(vision + visionBonus);
-        showLos(t, coVision);
+        int coVision = co.unitVisionHook(unit, vision + visionBonus);
+        showLos(t, coVision, co.isPiercingVision());
       }
 
       if (city != null && city.isAlliedWith(player)) {
+        CO co = city.getOwner().getCO();
         int vision = city.getVision();
-        int coVision = city.getOwner().getCO().cityVisionHook(vision);
-        showLos(t, coVision);
+        int coVision = co.cityVisionHook(vision);
+        showLos(t, coVision, co.isPiercingVision());
       }
     }
   }
@@ -524,10 +527,11 @@ public class Map extends TileMap<Tile> implements TurnHandler {
   /**
    * Reveals all visible tiles within a vision range including the baseTile
    *
-   * @param baseTile The tile to show the line of sight around
-   * @param vision   The amount of tiles that have to be shown around the baseTile in all directions
+   * @param baseTile       The tile to show the line of sight around
+   * @param vision         The amount of tiles that have to be shown around the baseTile in all directions
+   * @param piercingVision Can the player see can see through hidden terrains.
    */
-  private void showLos(Tile baseTile, int vision) {
+  private void showLos(Tile baseTile, int vision, boolean piercingVision) {
     int col = baseTile.getCol();
     int row = baseTile.getRow();
 
@@ -539,16 +543,16 @@ public class Map extends TileMap<Tile> implements TurnHandler {
     {
       for (int j = 0; j < i; j++)     // for each tile within that layer
       {
-        clearFog(baseTile, getTile(col + i - j, row + j)); // bottom right sector
-        clearFog(baseTile, getTile(col - i + j, row - j)); // top left sector
-        clearFog(baseTile, getTile(col - j, row + i - j)); // bottom left sector
-        clearFog(baseTile, getTile(col + j, row - i + j)); // top right sector
+        clearFog(baseTile, getTile(col + i - j, row + j), piercingVision); // bottom right sector
+        clearFog(baseTile, getTile(col - i + j, row - j), piercingVision); // top left sector
+        clearFog(baseTile, getTile(col - j, row + i - j), piercingVision); // bottom left sector
+        clearFog(baseTile, getTile(col + j, row - i + j), piercingVision); // top right sector
       }
     }
   }
 
-  private void clearFog(Tile baseTile, Tile tile) {
-    if (isValid(tile) && canClearFog(baseTile, tile)) {
+  private void clearFog(Tile baseTile, Tile tile, boolean piercingVision) {
+    if (isValid(tile) && canClearFog(baseTile, tile, piercingVision)) {
       tile.setFogged(false);
     }
   }
@@ -558,18 +562,21 @@ public class Map extends TileMap<Tile> implements TurnHandler {
    * There are some terrains that remain fogged until directly next to the baseTile.
    * Hidden terrains can only be cleared of fog if the terrain is directly next to the baseTile
    *
-   * @param tile     A tile within vision range
-   * @param baseTile The center of the vision range that is being cleared
+   * @param baseTile       The center of the vision range that is being cleared
+   * @param tile           A tile within vision range
+   * @param piercingVision Can the player see through hidden terrains.
    * @return If the tile should be cleared of fog.
    */
-  private boolean canClearFog(Location baseTile, Tile tile) {
+  private boolean canClearFog(Location baseTile, Tile tile, boolean piercingVision) {
     Terrain terrain = tile.getTerrain();
     boolean adjacent = isAdjacent(tile, baseTile);
 
-    // If not hidden or directly next to the tile we can see everything
-    return !terrain.isHidden() || adjacent;
+    if (piercingVision && terrain.isHidden()) {
+      return true;
+    } else
+      // If not hidden or directly next to the tile we can see everything
+      return !terrain.isHidden() || adjacent;
   }
-
 
   /**
    * Normalise this map

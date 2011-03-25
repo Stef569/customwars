@@ -115,7 +115,7 @@ public class Game extends TurnBasedGame implements PropertyChangeListener {
   }
 
   void startTurn(Player player) {
-    player.getCO().dayStart(this);
+    player.getCO().dayStart(player);
     destroyUnitsWithoutSupplies(player);
     supplyUnitsAdjacentOfTransport(player);
     super.startTurn(player);

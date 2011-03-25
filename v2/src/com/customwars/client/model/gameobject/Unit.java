@@ -608,6 +608,10 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
     }
   }
 
+  public void setMaxConstructionMaterials() {
+    this.constructionMaterials = stats.maxConstructionMaterial;
+  }
+
   public void setLocation(Location newLocation) {
     Location oldLocation = this.location;
     this.location = newLocation;
@@ -756,7 +760,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
     if (weapon != null) {
       int minRange = weapon.getRange().getMinRange();
       int maxRange = weapon.getRange().getMaxRange();
-      int coMaxRange = owner.getCO().fireRangeHook(maxRange);
+      int coMaxRange = owner.getCO().fireRangeHook(this, maxRange);
       return new Range(minRange, coMaxRange);
     } else {
       return Range.ZERO_RANGE;

@@ -2,6 +2,7 @@ package com.customwars.client.model.co;
 
 import com.customwars.client.model.fight.Defender;
 import com.customwars.client.model.game.Game;
+import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Location;
 
@@ -20,7 +21,7 @@ public interface CO extends Serializable {
 
   void deActivateSuperPower();
 
-  void dayStart(Game game);
+  void dayStart(Player player);
 
   int getAttackBonusPercentage(Unit attacker, Unit defender);
 
@@ -38,9 +39,9 @@ public interface CO extends Serializable {
 
   int terrainDefenseHook(int terrainDefenseBonus);
 
-  int fireRangeHook(int fireRange);
+  int fireRangeHook(Unit unit, int fireRange);
 
-  int unitVisionHook(int vision);
+  int unitVisionHook(Unit unit, int vision);
 
   int cityVisionHook(int vision);
 
@@ -125,22 +126,27 @@ public interface CO extends Serializable {
   int getMaxBars();
 
   /**
-   * @return a collection of quotes
+   * @return a random quote
    */
-  String[] getQuotes();
+  String getQuote();
 
   /**
-   * @return a collection of possible victory strings
+   * @return a random victory strings
    */
-  String[] getVictory();
+  String getVictory();
 
   /**
-   * @return a collection of possible defeat strings
+   * @return a random defeat string
    */
-  String[] getDefeat();
+  String getDefeat();
 
   /**
    * @return The distance in tiles around a unit that covers the co zone..
    */
   int getZoneRange();
+
+  /**
+   * @return Can this CO see through hidden terrains.
+   */
+  boolean isPiercingVision();
 }
