@@ -3,6 +3,7 @@ package com.customwars.client.model.co;
 import com.customwars.client.App;
 import com.customwars.client.model.fight.Defender;
 import com.customwars.client.model.game.Game;
+import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.TileMap;
@@ -119,7 +120,7 @@ public abstract class AbstractCO implements CO {
   }
 
   @Override
-  public void dayStart(Game game) {
+  public void dayStart(Player player) {
     if (isPowerActive()) {
       deActivatePower();
     } else if (isSuperPowerActive()) {
@@ -255,18 +256,22 @@ public abstract class AbstractCO implements CO {
   }
 
   @Override
-  public String[] getQuotes() {
-    return quotes;
+  public String getQuote() {
+    return getRandom(quotes);
   }
 
   @Override
-  public String[] getVictory() {
-    return victory;
+  public String getVictory() {
+    return getRandom(victory);
   }
 
   @Override
-  public String[] getDefeat() {
-    return defeat;
+  public String getDefeat() {
+    return getRandom(defeat);
+  }
+
+  private static String getRandom(String[] array) {
+    return array[((int) (Math.random() * array.length))];
   }
 
   @Override

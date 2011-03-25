@@ -4,6 +4,7 @@ import com.customwars.client.model.co.AbstractCO;
 import com.customwars.client.model.co.BasicCO;
 import com.customwars.client.model.co.CO;
 import com.customwars.client.model.game.Game;
+import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.Unit;
 import org.apache.log4j.Logger;
 
@@ -163,24 +164,28 @@ public class ScriptedCO extends BasicCO {
   }
 
   @Override
-  public int fireRangeHook(int fireRange) {
+  public int fireRangeHook(Unit unit, int fireRange) {
     String methodName = getName() + "_fireRangeHook";
 
     if (scriptManager.isMethod(methodName)) {
-      return (Integer) scriptManager.invoke(methodName, new Parameter<Integer>("fireRange", fireRange));
+      return (Integer) scriptManager.invoke(methodName,
+        new Parameter<Unit>("unit", unit),
+        new Parameter<Integer>("fireRange", fireRange));
     } else {
-      return super.fireRangeHook(fireRange);
+      return super.fireRangeHook(unit, fireRange);
     }
   }
 
   @Override
-  public int unitVisionHook(int vision) {
+  public int unitVisionHook(Unit unit, int vision) {
     String methodName = getName() + "_unitVisionHook";
 
     if (scriptManager.isMethod(methodName)) {
-      return (Integer) scriptManager.invoke(methodName, new Parameter<Integer>("vision", vision));
+      return (Integer) scriptManager.invoke(methodName,
+        new Parameter<Unit>("unit", unit),
+        new Parameter<Integer>("vision", vision));
     } else {
-      return super.unitVisionHook(vision);
+      return super.unitVisionHook(unit, vision);
     }
   }
 
@@ -196,12 +201,23 @@ public class ScriptedCO extends BasicCO {
   }
 
   @Override
-  public void dayStart(Game game) {
-    super.dayStart(game);
+  public void dayStart(Player player) {
+    super.dayStart(player);
     String methodName = getName() + "_dayStart";
 
     if (scriptManager.isMethod(methodName)) {
-      scriptManager.invoke(methodName, new Parameter<Game>("game", game));
+      scriptManager.invoke(methodName, new Parameter<Player>("player", player));
+    }
+  }
+
+  @Override
+  public boolean isPiercingVision() {
+    String methodName = getName() + "_piercingVision";
+
+    if (scriptManager.isMethod(methodName)) {
+      return (Boolean) scriptManager.invoke(methodName);
+    } else {
+      return super.isPiercingVision();
     }
   }
 
