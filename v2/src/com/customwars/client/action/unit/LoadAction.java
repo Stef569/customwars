@@ -61,7 +61,7 @@ public class LoadAction extends DirectAction {
 
   private void sendLoad() {
     try {
-      messageSender.join(unit, transport);
+      messageSender.load(unit, transport);
     } catch (NetworkException ex) {
       logger.warn("Could not send load unit", ex);
       if (GUI.askToResend(ex) == GUI.YES_OPTION) {
