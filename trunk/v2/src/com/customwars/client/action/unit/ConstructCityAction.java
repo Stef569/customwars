@@ -4,8 +4,6 @@ import com.customwars.client.App;
 import com.customwars.client.action.ActionCommandEncoder;
 import com.customwars.client.action.DirectAction;
 import com.customwars.client.model.GameController;
-import com.customwars.client.model.gameobject.City;
-import com.customwars.client.model.gameobject.CityFactory;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.network.MessageSender;
@@ -45,23 +43,21 @@ public class ConstructCityAction extends DirectAction {
   }
 
   private void constructCity() {
-    boolean constructionComplete = gameController.constructCity(unit, cityID, to);
-    logConstructingProgress(constructionComplete);
+    int constructionPercentage = gameController.constructCity(unit, cityID, to);
+    logConstructingProgress(constructionPercentage);
     if (App.isMultiplayer()) sendConstructCity();
   }
 
-  private void logConstructingProgress(boolean constructionComplete) {
-    City city = CityFactory.getCity(cityID);
-
-    if (constructionComplete) {
+  private void logConstructingProgress(int constructionPercentage) {
+    if (constructionPercentage == 100) {
       logger.debug(
         String.format("%s constructed a %s",
-          unit.getStats().getName(), city.getName())
+          unit.getStats().getName(), cityID)
       );
     } else {
       logger.debug(
-        String.format("%s is constructing a %s",
-          unit.getStats().getName(), city.getName())
+        String.format("%s is constructing a %s (%s/100)",
+          unit.getStats().getName(), cityID, constructionPercentage)
       );
     }
   }

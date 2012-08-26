@@ -80,7 +80,7 @@ public interface GameController {
 
   /**
    * Transform the terrain on the location to the transformToTerrain terrain.
-   * Transforming terrains costs construction points.
+   * Transforming a terrain costs 1 construction point.
    */
   void transformTerrain(Unit unit, Location location, Terrain transformToTerrain);
 
@@ -91,11 +91,16 @@ public interface GameController {
   void flare(Unit unit, Location flareCenter, int numOfTilesToReveal);
 
   /**
-   * The unit constructs a new city on the location.
+   * The unit start constructing a new city on the location.
    * Constructing might take several turns before completion.
-   * Constructing a city costs construction materials.
+   * The construction materials are decreased by 1 if the city has been constructed.
+   *
+   * @param unit     The unit that wants to construct a new city
+   * @param location The location to construct the city
+   * @param cityID   The name of the city that is to be placed on the location
+   * @return the current construction percentage
    */
-  boolean constructCity(Unit unit, String cityID, Location location);
+  int constructCity(Unit unit, String cityID, Location location);
 
   void dive(Unit unit);
 

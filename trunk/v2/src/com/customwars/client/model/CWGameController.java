@@ -181,7 +181,7 @@ public class CWGameController implements GameController {
   }
 
   @Override
-  public boolean constructCity(Unit unit, String cityID, Location location) {
+  public int constructCity(Unit unit, String cityID, Location location) {
     City city;
     if (map.isConstructingCityAt(location)) {
       city = map.getCityUnderConstructionAt(location);
@@ -196,9 +196,9 @@ public class CWGameController implements GameController {
     if (unit.isConstructionComplete()) {
       stopConstructingCity(unit, location);
       addCityToTile(location, city, unit.getOwner());
-      return true;
+      return 100;
     } else {
-      return false;
+      return city.getCapCountPercentage();
     }
   }
 
