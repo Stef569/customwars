@@ -35,6 +35,7 @@ public class UnitSprite extends TileSprite implements PropertyChangeListener {
   private static final int RANK_II = 7;
   private static final int RANK_V = 8;
   private static final int CO = 9;
+  private static final int CONSTRUCTION_MATERIALS_DEPLETED = 10;
 
   private final ImageRotator statusRotator;
   private Font hpFont;
@@ -59,6 +60,7 @@ public class UnitSprite extends TileSprite implements PropertyChangeListener {
     statusRotator.setShowFrame(LOW_AMMO, unit.hasLowAmmo());
     statusRotator.setShowFrame(LOW_SUPPLIES, unit.hasLowSupplies());
     statusRotator.setShowFrame(LOAD, unit.getLocatableCount() > 0);
+    constructionMaterialsChanged(unit.getCurrentConstructionMaterials());
     experienceChange(unit.getExperience());
 
     // Hide the unit when it is on a fogged location
@@ -228,6 +230,8 @@ public class UnitSprite extends TileSprite implements PropertyChangeListener {
         unitStateChange((UnitState) evt.getNewValue());
       } else if (propertyName.equals("experience")) {
         experienceChange((Integer) evt.getNewValue());
+      } else if (propertyName.equals("constructionMaterials")) {
+        constructionMaterialsChanged((Integer) evt.getNewValue());
       }
     } else if (evt.getSource() == unit.getPrimaryWeapon()) {
       if (propertyName.equals("ammo")) {
@@ -254,6 +258,12 @@ public class UnitSprite extends TileSprite implements PropertyChangeListener {
           break;
       }
     }
+  }
+
+  private void constructionMaterialsChanged(int newValue) {
+    boolean canUseMaterials = unit.getStats().canBuildCity() || unit.getStats().canProduceUnits();
+    boolean materialsDepleted = canUseMaterials && newValue == 0;
+    statusRotator.setShowFrame(CONSTRUCTION_MATERIALS_DEPLETED, materialsDepleted);
   }
 
   private void showRank(int rank) {

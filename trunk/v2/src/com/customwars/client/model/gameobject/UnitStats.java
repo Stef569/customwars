@@ -262,6 +262,10 @@ public class UnitStats implements Serializable {
     return transportStats.getTransports();
   }
 
+  public boolean canBuildCity() {
+    return !buildCities.isEmpty();
+  }
+
   public boolean canBuildCity(String id) {
     return buildCities.containsKey(id);
   }
