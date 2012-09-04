@@ -537,8 +537,12 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   // ---------------------------------------------------------------------------
 
   public void deCreaseConstructionMaterials() {
+    setConstructionMaterials(constructionMaterials-1);
+  }
+
+  private void setConstructionMaterials(int newVal) {
     int oldVal = this.constructionMaterials;
-    this.constructionMaterials = Args.getBetweenZeroMax(constructionMaterials - 1, stats.maxConstructionMaterial);
+    this.constructionMaterials = Args.getBetweenZeroMax(newVal, stats.maxConstructionMaterial);
     firePropertyChange("constructionMaterials", oldVal, constructionMaterials);
   }
 
@@ -609,7 +613,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   }
 
   public void setMaxConstructionMaterials() {
-    this.constructionMaterials = stats.maxConstructionMaterial;
+    setConstructionMaterials(stats.maxConstructionMaterial);
   }
 
   public void setLocation(Location newLocation) {
