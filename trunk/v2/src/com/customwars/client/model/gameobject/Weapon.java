@@ -131,8 +131,12 @@ public class Weapon extends GameObject {
   /**
    * @return Can this weapon fire on adjacent enemies
    */
-  public boolean isDirect() {
+  public boolean canFireOnAdjacentEnemies() {
     return fireRange.isInRange(1);
+  }
+
+  public boolean isDirect() {
+    return fireRange.getMinRange() == 1 && fireRange.getMaxRange() == 1;
   }
 
   /**
@@ -148,8 +152,7 @@ public class Weapon extends GameObject {
     if (!(o instanceof Weapon)) return false;
 
     Weapon weapon = (Weapon) o;
-
-    return name == weapon.name;
+    return name.equals(weapon.name);
   }
 
   @Override
