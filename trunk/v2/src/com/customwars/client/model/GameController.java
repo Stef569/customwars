@@ -18,13 +18,17 @@ import java.util.Collection;
 public interface GameController {
   /**
    * Drops a unit from within the transport to a drop location
+   *
+   * @param transport The transporter that wants to drop the given unit
+   * @param unit The unit to be dropped on the given drop location
+   * @param dropLocation The location where the unit in the transport should be dropped on
    */
   void drop(Unit transport, Unit unit, Location dropLocation);
 
   void teleport(Location from, Location to);
 
   /**
-   * Capture the city with unit
+   * Capture the city with the given unit
    *
    * @param unit unit that wants to perform the capturing
    * @param city The city to capture
@@ -34,34 +38,45 @@ public interface GameController {
 
   /**
    * Remove the unit from the map and add it to the transport
+   *
+   * @param unit The unit that wants to be loaded into the transport
+   * @param transport The transporter that will load the given unit
    */
   void load(Unit unit, Unit transport);
 
   /**
-   * Supplies units around the apc
+   * Supplies units around the given unit
    *
-   * @param apc The unit that performs the supply action
+   * @param unit The unit that performs the supply action
    * @return The amount of units that have been supplied
    */
-  int supply(Unit apc);
+  int supply(Unit unit);
 
   /**
    * The unit joins with target. Only the target unit remains on the map.
    * If joining causes the target to go over the max HP of a unit then
    * translate that excess hp to money and add it to the budget of the unit owner.
+   *
+   * @param unit The unit that wants to join with the target
+   * @param target The unit that remains in the map after the join
    */
   void join(Unit unit, Unit target);
 
   /**
    * The attacking unit attacks the city
    *
+   * @param attacker The unit that wants to attack the city
+   * @param city The city that will be attacked
    * @return the damage percentage done to the city
    */
   int attack(Unit attacker, City city);
 
   /**
-   * The attacking unit attacks the defending unit
+   * The attacking unit attacks the defending unit.
+   * The defender can perform a counter attack.
    *
+   * @param attacker The unit that wants to attack the defender
+   * @param defender The unit that will receive the damage
    * @return the damage percentage done to the defender
    */
   int attack(Unit attacker, Unit defender);
@@ -81,12 +96,19 @@ public interface GameController {
   /**
    * Transform the terrain on the location to the transformToTerrain terrain.
    * Transforming a terrain costs 1 construction point.
+   * @param unit  The unit that wants to transform a terrain
+   * @param location The location of the terrain that will be transformed
+   * @param transformToTerrain The new terrain that will replace the previous terrain
    */
   void transformTerrain(Unit unit, Location location, Terrain transformToTerrain);
 
   /**
    * The unit fires a flare revealing flareRange tiles around the flareCenter.
    * The primary weapon ammo is decreased by 1.
+   *
+   * @param unit The unit that wants to fire a flare
+   * @param flareCenter The centre location, where numOfTilesToReveal will be revealed
+   * @param numOfTilesToReveal The radius of the spiral around the centre location.
    */
   void flare(Unit unit, Location flareCenter, int numOfTilesToReveal);
 
@@ -108,27 +130,34 @@ public interface GameController {
 
   /**
    * Make the unit IDLE, meaning that it can no longer be controlled.
+   *
+   * @param unit The unit that needs to be IDLE
    */
   void makeUnitWait(Unit unit);
 
   /**
    * Create a unit and load it into the producer unit.
-   * The unit cost is subtracted from the player.
+   * Creating a unit costs the player the price of the produced unit.
    *
-   * @param producer      The unit that wants to create a new unit.
+   * @param producer      The producing unit to add the new unit to
    * @param unitToProduce The name of the unit to produce.
    */
   void produceUnit(Unit producer, String unitToProduce);
 
   /**
    * The player creates a new unit. The unit is placed on the location in the map.
-   * Note that the location can be a Tile or a unit!
    * Creating a unit costs the player the price of the unit.
+   *
+   * @param unit The unit to be build and placed in the map on the given location
+   * @param location The location where the unit will be placed on
+   * @param player The player that will control this new unit
    */
   void buildUnit(Unit unit, Location location, Player player);
 
   /**
-   * Load a CO into a Unit
+   * Load the CO into the given unit
+   *
+   * @param unit The unit that wants to have the co on board
    */
   void loadCO(Unit unit);
 
