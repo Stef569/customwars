@@ -54,8 +54,13 @@ public class CWGameController implements GameController {
 
     if (city.isCapturedBy(unit)) {
       unit.setUnitState(UnitState.IDLE);
-      controllerManager.addHumanCityController(city);
       city.resetCapturing();
+
+      if(unit.getOwner().isAi()) {
+        controllerManager.setAICityController(city);
+      } else {
+        controllerManager.setHumanCityController(city);
+      }
       return true;
     } else {
       return false;
@@ -208,9 +213,9 @@ public class CWGameController implements GameController {
     t.setTerrain(city);
 
     if (cityOwner.isAi()) {
-      controllerManager.addAICityController(city);
+      controllerManager.setAICityController(city);
     } else {
-      controllerManager.addHumanCityController(city);
+      controllerManager.setHumanCityController(city);
     }
   }
 
@@ -262,9 +267,9 @@ public class CWGameController implements GameController {
     producer.deCreaseConstructionMaterials();
 
     if (player.isAi()) {
-      controllerManager.addAIUnitController(unit);
+      controllerManager.setAIUnitController(unit);
     } else {
-      controllerManager.addHumanUnitController(unit);
+      controllerManager.setHumanUnitController(unit);
     }
   }
 
@@ -275,9 +280,9 @@ public class CWGameController implements GameController {
     location.add(unit);
 
     if (player.isAi()) {
-      controllerManager.addAIUnitController(unit);
+      controllerManager.setAIUnitController(unit);
     } else {
-      controllerManager.addHumanUnitController(unit);
+      controllerManager.setHumanUnitController(unit);
     }
   }
 

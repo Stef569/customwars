@@ -12,8 +12,6 @@ import java.util.Map;
 /**
  * Manages every Controller in the game
  * When a controller could not be found for a unit/city an IllegalArgumentException is thrown
- *
- * @author stefan
  */
 public class ControllerManager {
   private Map<Unit, UnitController> unitControllers;
@@ -36,42 +34,51 @@ public class ControllerManager {
     cityControllers.clear();
     for (Player player : game.getAllPlayers()) {
       if (!player.isNeutral()) {
-        if (!player.isAi()) {
+        if (player.isAi()) {
           for (City city : player.getAllCities()) {
-            addHumanCityController(city);
+            setAICityController(city);
+          }
+        } else {
+          for (City city : player.getAllCities()) {
+            setHumanCityController(city);
           }
         }
       }
     }
   }
 
-  public void addHumanCityController(City city) {
-    CityController unitController = new HumanCityController(city, inGameContext);
-    cityControllers.put(city, unitController);
+  public void setHumanCityController(City city) {
+    CityController cityController = new HumanCityController(city, inGameContext);
+    cityControllers.put(city, cityController);
   }
 
-  public void addAICityController(City city) {
+  public void setAICityController(City city) {
 
   }
 
   public void initUnitControllers() {
     unitControllers.clear();
     for (Player player : game.getAllPlayers()) {
-      if (!player.isNeutral())
-        if (!player.isAi()) {
+      if (!player.isNeutral()) {
+        if (player.isAi()) {
           for (Unit unit : player.getArmy()) {
-            addHumanUnitController(unit);
+            setAIUnitController(unit);
+          }
+        } else {
+          for (Unit unit : player.getArmy()) {
+            setHumanUnitController(unit);
           }
         }
+      }
     }
   }
 
-  public void addHumanUnitController(Unit unit) {
+  public void setHumanUnitController(Unit unit) {
     UnitController unitController = new HumanUnitController(unit, inGameContext);
     unitControllers.put(unit, unitController);
   }
 
-  public void addAIUnitController(Unit unit) {
+  public void setAIUnitController(Unit unit) {
 
   }
 
