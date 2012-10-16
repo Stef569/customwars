@@ -47,8 +47,9 @@
     </fireRange>
     <attacks>
       <armyBranch>LAND</armyBranch>
+      <armyBranch>NAVAL</armyBranch>
     </attacks>
-    <maxAmmo>9</maxAmmo>
+    <maxAmmo>6</maxAmmo>
     <description></description>
   </weapon>
   <weapon name="medium_tank_main_gun">
@@ -58,8 +59,9 @@
     </fireRange>
     <attacks>
       <armyBranch>LAND</armyBranch>
+      <armyBranch>NAVAL</armyBranch>
     </attacks>
-    <maxAmmo>8</maxAmmo>
+    <maxAmmo>5</maxAmmo>
     <description></description>
   </weapon>
   <weapon name="recon_main_gun">
@@ -109,7 +111,7 @@
     <maxAmmo>6</maxAmmo>
     <description></description>
   </weapon>
-  <weapon name="anti_air_missiles">
+  <weapon name="anti_air_missile">
     <fireRange>
       <minRange>3</minRange>
       <maxRange>6</maxRange>
@@ -143,7 +145,7 @@
     <maxAmmo>6</maxAmmo>
     <description></description>
   </weapon>
-  <weapon name="anti_ship_missle">
+  <weapon name="anti_ship_missile">
     <fireRange>
       <minRange>1</minRange>
       <maxRange>1</maxRange>
@@ -154,7 +156,7 @@
     <maxAmmo>9</maxAmmo>
     <description></description>
   </weapon>
-  <weapon name="naval_anti_air_missle">
+  <weapon name="naval_anti_air_missile">
     <fireRange>
       <minRange>1</minRange>
       <maxRange>1</maxRange>
@@ -165,7 +167,7 @@
     <maxAmmo>99</maxAmmo>
     <description></description>
   </weapon>
-  <weapon name="aircraft_anti_air_missle">
+  <weapon name="aircraft_anti_air_missile">
     <fireRange>
       <minRange>1</minRange>
       <maxRange>1</maxRange>
@@ -185,10 +187,10 @@
       <armyBranch>AIR</armyBranch>
       <armyBranch>LAND</armyBranch>
     </attacks>
-    <maxAmmo>6</maxAmmo>
+    <maxAmmo>9</maxAmmo>
     <description></description>
   </weapon>
-  <weapon name="sea_plane_missle">
+  <weapon name="sea_plane_missile">
     <fireRange>
       <minRange>1</minRange>
       <maxRange>1</maxRange>
@@ -213,7 +215,7 @@
     <maxAmmo>6</maxAmmo>
     <description></description>
   </weapon>
-  <weapon name="heli_ground_missle">
+  <weapon name="heli_ground_missile">
     <fireRange>
       <minRange>1</minRange>
       <maxRange>1</maxRange>
@@ -225,13 +227,14 @@
     <maxAmmo>6</maxAmmo>
     <description></description>
   </weapon>
-  <weapon name="mega_tank_main_gun">
+  <weapon name="heavy_tank_main_gun">
     <fireRange>
       <minRange>1</minRange>
       <maxRange>1</maxRange>
     </fireRange>
     <attacks>
       <armyBranch>LAND</armyBranch>
+      <armyBranch>NAVAL</armyBranch>
     </attacks>
     <maxAmmo>6</maxAmmo>
     <description></description>
