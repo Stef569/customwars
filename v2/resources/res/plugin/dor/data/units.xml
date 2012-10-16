@@ -223,7 +223,7 @@
     <armyBranch>LAND</armyBranch>
     <movementType>&TREAD;</movementType>
 
-    <primaryWeaponName>mega_tank_main_gun</primaryWeaponName>
+    <primaryWeaponName>heavy_tank_main_gun</primaryWeaponName>
     <secondaryWeaponName>tank_machine_gun</secondaryWeaponName>
     <description></description>
   </unit>
@@ -292,7 +292,7 @@
     <armyBranch>LAND</armyBranch>
     <movementType>&TREAD;</movementType>
 
-    <primaryWeaponName>anti_air_missiles</primaryWeaponName>
+    <primaryWeaponName>anti_air_missile</primaryWeaponName>
     <description></description>
   </unit>
   <unit name="apc" unitID="13" imgRowID="13">
@@ -371,7 +371,7 @@
     <armyBranch>AIR</armyBranch>
     <movementType>&AIR;</movementType>
 
-    <primaryWeaponName>aircraft_anti_air_missle</primaryWeaponName>
+    <primaryWeaponName>aircraft_anti_air_missile</primaryWeaponName>
     <description>Can only attack other air units</description>
   </unit>
   <unit name="bomber" unitID="15" imgRowID="15">
@@ -407,7 +407,7 @@
     <armyBranch>AIR</armyBranch>
     <movementType>&AIR;</movementType>
 
-    <primaryWeaponName>sea_plane_missle</primaryWeaponName>
+    <primaryWeaponName>sea_plane_missile</primaryWeaponName>
     <description></description>
   </unit>
   <unit name="fighter" unitID="17" imgRowID="17">
@@ -443,7 +443,7 @@
     <armyBranch>AIR</armyBranch>
     <movementType>&AIR;</movementType>
 
-    <primaryWeaponName>heli_ground_missle</primaryWeaponName>
+    <primaryWeaponName>heli_ground_missile</primaryWeaponName>
     <secondaryWeaponName>machine_gun</secondaryWeaponName>
     <description>Can attack ground, naval and other helicopter units</description>
   </unit>
@@ -509,8 +509,8 @@
     <armyBranch>NAVAL</armyBranch>
     <movementType>&NAVAL;</movementType>
 
-    <primaryWeaponName>anti_ship_missle</primaryWeaponName>
-    <secondaryWeaponName>naval_anti_air_missle</secondaryWeaponName>
+    <primaryWeaponName>anti_ship_missile</primaryWeaponName>
+    <secondaryWeaponName>naval_anti_air_missile</secondaryWeaponName>
     <description>Strong against both air units and submarines</description>
   </unit>
   <unit name="sub" unitID="22" imgRowID="22">
@@ -574,7 +574,7 @@
     <armyBranch>NAVAL</armyBranch>
     <movementType>&NAVAL;</movementType>
 
-    <primaryWeaponName>naval_anti_air_missle</primaryWeaponName>
+    <primaryWeaponName>naval_anti_air_missile</primaryWeaponName>
     <description>Can produce and carry 2 air units</description>
   </unit>
   <unit name="battleship" unitID="24" imgRowID="24">
