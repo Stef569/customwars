@@ -8,8 +8,6 @@ import java.util.List;
 
 /**
  * An Objects that can move between tiles
- *
- * @author stefan
  */
 public interface Mover extends Locatable {
   /**
@@ -52,4 +50,6 @@ public interface Mover extends Locatable {
    * @return if the location contains a trapper
    */
   boolean hasTrapperOn(Location location);
+
+  boolean isInTransport();
 }

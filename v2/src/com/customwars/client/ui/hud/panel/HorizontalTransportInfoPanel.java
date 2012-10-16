@@ -54,7 +54,7 @@ public class HorizontalTransportInfoPanel extends Box implements InfoPanel {
   }
 
   public void setUnit(Unit unit) {
-    if (unit != null && !unit.isDestroyed() && unit.getLocatableCount() > 0) {
+    if (unit != null && !unit.isDestroyed() && unit.hasUnitsInTransport()) {
       this.unit = unit;
       initBoxes();
     } else {
@@ -65,8 +65,7 @@ public class HorizontalTransportInfoPanel extends Box implements InfoPanel {
 
   private void initBoxes() {
     transportBoxes.clear();
-    for (int i = 0; i < unit.getLocatableCount(); i++) {
-      Unit unitInTransport = (Unit) unit.getLocatable(i);
+    for (Unit unitInTransport : unit.getUnitsInTransport()) {
       Image unitImg = getEastFacingUnitImg(unitInTransport);
       transportBoxes.add(new ImageBox(unitImg));
     }

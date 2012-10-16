@@ -115,9 +115,9 @@ public class BinCW2MapParserTest {
   }
 
   private void validateUnits(Unit hardCodedUnit, Unit loadedUnit) {
-    if (hardCodedUnit.getStats().canTransport() && hardCodedUnit.getLocatableCount() > 0) {
-      int unitsInTransport = hardCodedUnit.getLocatableCount();
-      int loadedUnitsInTransport = loadedUnit.getLocatableCount();
+    if (hardCodedUnit.getStats().canTransport() && hardCodedUnit.hasUnitsInTransport()) {
+      int unitsInTransport = hardCodedUnit.getUnitsInTransportCount();
+      int loadedUnitsInTransport = loadedUnit.getUnitsInTransportCount();
       Assert.assertEquals(unitsInTransport, loadedUnitsInTransport);
     }
 

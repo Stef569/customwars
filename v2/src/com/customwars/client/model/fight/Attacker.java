@@ -29,4 +29,6 @@ public interface Attacker {
    * @return A list of locations where this unit can move in
    */
   List<Location> getMoveZone();
+
+  boolean isInTransport();
 }

@@ -18,8 +18,6 @@ import java.beans.PropertyChangeListener;
 
 /**
  * A 2D unit
- *
- * @author stefan
  */
 public class UnitSprite extends TileSprite implements PropertyChangeListener {
   private static final int UNIT_STATUS_FRAME_DURATION = 2000;
@@ -59,7 +57,7 @@ public class UnitSprite extends TileSprite implements PropertyChangeListener {
     lowHp = unit.hasLowHp();
     statusRotator.setShowFrame(LOW_AMMO, unit.hasLowAmmo());
     statusRotator.setShowFrame(LOW_SUPPLIES, unit.hasLowSupplies());
-    statusRotator.setShowFrame(LOAD, unit.getLocatableCount() > 0);
+    statusRotator.setShowFrame(LOAD, unit.hasUnitsInTransport());
     constructionMaterialsChanged(unit.getCurrentConstructionMaterials());
     experienceChange(unit.getExperience());
 
@@ -225,7 +223,7 @@ public class UnitSprite extends TileSprite implements PropertyChangeListener {
       } else if (propertyName.equals("location")) {
         setLocation((Location) evt.getNewValue());
       } else if (propertyName.equals("transport")) {
-        statusRotator.setShowFrame(LOAD, unit.getLocatableCount() > 0);
+        statusRotator.setShowFrame(LOAD, unit.hasUnitsInTransport());
       } else if (propertyName.equals("unitState")) {
         unitStateChange((UnitState) evt.getNewValue());
       } else if (propertyName.equals("experience")) {

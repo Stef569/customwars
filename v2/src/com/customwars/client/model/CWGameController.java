@@ -255,8 +255,17 @@ public class CWGameController implements GameController {
 
   public void produceUnit(Unit producer, String unitToProduce) {
     Unit unit = UnitFactory.getUnit(unitToProduce);
-    buildUnit(unit, producer, producer.getOwner());
+    Player player = producer.getOwner();
+    player.addToBudget(-unit.getPrice());
+    player.addUnit(unit);
+    producer.add(unit);
     producer.deCreaseConstructionMaterials();
+
+    if (player.isAi()) {
+      controllerManager.addAIUnitController(unit);
+    } else {
+      controllerManager.addHumanUnitController(unit);
+    }
   }
 
   @Override

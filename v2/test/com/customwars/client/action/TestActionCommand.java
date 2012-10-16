@@ -57,7 +57,7 @@ public class TestActionCommand {
     Unit apc = game.getMap().getUnitOn(6, 2);
     Location apcLocation = apc.getLocation();
     DropLocationsQueue dropQueue = new DropLocationsQueue();
-    dropQueue.addDropLocation(new Location2D(6, 1), (Unit) apc.getLastLocatable());
+    dropQueue.addDropLocation(new Location2D(6, 1), apc.getLastUnitInTransport());
     CWAction loadAction = ActionFactory.buildDropAction(apc, apcLocation, apcLocation, dropQueue);
 
     // From - To - unit in transport index - drop location

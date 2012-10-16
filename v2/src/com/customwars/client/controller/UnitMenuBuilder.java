@@ -91,8 +91,7 @@ public class UnitMenuBuilder {
     inGameContext.clearUnitsInTransport();
 
     if (controller.canWait(to)) {
-      for (int dropIndex = 0; dropIndex < unit.getLocatableCount(); dropIndex++) {
-        Unit unitInTransport = (Unit) unit.getLocatable(dropIndex);
+      for (Unit unitInTransport : unit.getUnitsInTransport()) {
         boolean unitIsAlreadyDropped = inGameContext.isUnitDropped(unitInTransport);
 
         // Build start drop actions for each unit in the transport
@@ -294,8 +293,7 @@ public class UnitMenuBuilder {
     inGameContext.clearUnitsInTransport();
 
     if (controller.canWait(to)) {
-      for (int unitIndex = 0; unitIndex < unit.getLocatableCount(); unitIndex++) {
-        Unit unitInTransport = (Unit) unit.getLocatable(unitIndex);
+      for (Unit unitInTransport : unit.getUnitsInTransport()) {
 
         // Build start launch actions for each unit in the transport
         if (controller.canLaunch(from, to, unitInTransport)) {

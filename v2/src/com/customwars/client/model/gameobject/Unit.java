@@ -21,7 +21,12 @@ import java.util.List;
 
 /**
  * Is a Mover meaning it has the ability to be put on and removed from a Location.
- * Is a Location, meaning it can transport Locatables
+ * It can transport other units:
+ * If a unit is within a transport the location will be null. The transport field will
+ * be set to the transporting unit. A unit in a transport can be idle or active:
+ * Active means that the unit can be loaded and dropped in the same turn.
+ * Idle means that the unit needs to wait 1 turn in the transport.
+ * <p/>
  * It has a Facing direction, this is one of the compass Direction(N,S,E,W)
  * Units have 2 weapons(both are optional): 1 Primary and 1 Secondary
  * <p/>
@@ -31,7 +36,7 @@ import java.util.List;
  * hp=95, maxhp=100 getHP() = 10 -5% damage
  * hp=90, maxhp=100 getHP() = 9
  */
-public class Unit extends GameObject implements Mover, Location, TurnHandler, Attacker, Defender {
+public class Unit extends GameObject implements Mover, TurnHandler, Attacker, Defender {
   public static final Direction DEFAULT_ORIENTATION = Direction.EAST;
   private static final int LOW_AMMO_PERCENTAGE = 50;
   private static final int LOW_SUPPLIES = 50;
@@ -44,7 +49,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   private int experience;       // Each time a unit wins a fight his Experience rises(starting from 0)
   private UnitState unitState;  // Current Unitstate (submerged, capturing a city,...)
   private Player owner;         // Player owning this unit
-  private Location location;    // Current Location
+  private Location location;    // Current Location, null if in a transport
   private boolean coOnBoard;        // Is a CO loaded within this unit
   private List<Location> moveZone;  // A zone where this unit can move in
   private List<Location> attZone;   // A zone where this unit can attack in
@@ -52,7 +57,8 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   private boolean hidden;           // In fog of war, is this unit hidden within enemy los
 
   private Weapon primaryWeapon, secondaryWeapon;
-  private List<Locatable> transport;  // Locatables that are within this Transport
+  private Unit transport;             // The unit that is transporting this unit
+  private List<Unit> unitsInTransport;// Units that are within this transport
   private MoveStrategy moveStrategy;  // A MoveStrategy instance for this unit
 
   public Unit(UnitStats unitStats) {
@@ -64,7 +70,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
 
   void init() {
     stats.init();
-    transport = new LinkedList<Locatable>();
+    unitsInTransport = new LinkedList<Unit>();
     if (stats.canDive) dive();
     unitState = UnitState.IDLE;
     moveStrategy = stats.moveStrategy.newInstance(this);
@@ -92,14 +98,13 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
     coOnBoard = otherUnit.coOnBoard;
     owner = otherUnit.owner;
     moveStrategy = otherUnit.stats.moveStrategy.newInstance(this);
-    copyUnitsInTheTransport(otherUnit.transport);
+    copyUnitsInTheTransport(otherUnit.unitsInTransport);
   }
 
-  private void copyUnitsInTheTransport(List<Locatable> unitsInTransport) {
-    this.transport = new LinkedList<Locatable>();
-    for (Locatable locatable : unitsInTransport) {
-      Unit unit = (Unit) locatable;
-      this.transport.add(new Unit(unit));
+  private void copyUnitsInTheTransport(List<Unit> unitsInTransport) {
+    this.unitsInTransport = new LinkedList<Unit>();
+    for (Unit unit : unitsInTransport) {
+      this.unitsInTransport.add(new Unit(unit));
     }
   }
 
@@ -134,8 +139,14 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
     clearTransport();
     owner.removeUnit(this);
     owner = null;
-    location.remove(this);
-    location = null;
+
+    if (isInTransport()) {
+      transport.remove(this);
+      transport = null;
+    } else {
+      location.remove(this);
+      location = null;
+    }
 
     if (fireEvent) {
       setState(GameObjectState.DESTROYED);
@@ -146,13 +157,9 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
    * Destroy each unit in the transport
    */
   private void clearTransport() {
-    while (!transport.isEmpty()) {
-      Locatable locatable = transport.get(transport.size() - 1);
-
-      if (locatable instanceof Unit) {
-        Unit unit = (Unit) locatable;
-        unit.destroy(false);
-      }
+    while (hasUnitsInTransport()) {
+      Unit unit = unitsInTransport.get(unitsInTransport.size() - 1);
+      unit.destroy(false);
     }
   }
 
@@ -166,9 +173,8 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
    * then supply and heal the units in the transport.
    */
   private void supplyUnitsInTransport() {
-    if (stats.canTransport() && !transport.isEmpty()) {
-      for (Locatable locatable : transport) {
-        Unit unit = (Unit) locatable;
+    if (stats.canTransport()) {
+      for (Unit unit : unitsInTransport) {
         if (stats.canSupplyUnitInTransport(unit)) {
           supplyInTransport(unit);
           unit.heal(stats.healRate);
@@ -182,8 +188,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
    * so they can be dropped/launched in this turn.
    */
   private void activateUnitsInTransport() {
-    for (Locatable locatable : transport) {
-      Unit unitInTransport = (Unit) locatable;
+    for (Unit unitInTransport : unitsInTransport) {
       unitInTransport.setActive(true);
     }
   }
@@ -301,56 +306,41 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   // Actions :: Transport
   // ---------------------------------------------------------------------------
 
-  public int getCol() {
-    return location.getCol();
+  public Unit getLastUnitInTransport() {
+    return getUnitInTransport(unitsInTransport.size() - 1);
   }
 
-  public int getRow() {
-    return location.getRow();
+  public Unit getUnitInTransport(int index) {
+    return !unitsInTransport.isEmpty() ? unitsInTransport.get(index) : null;
   }
 
-  public String getLocationString() {
-    return location.getLocationString();
-  }
-
-  public Locatable getLastLocatable() {
-    return getLocatable(transport.size() - 1);
-  }
-
-  public Locatable getLocatable(int index) {
-    return !transport.isEmpty() ? transport.get(index) : null;
-  }
-
-  public boolean remove(Locatable locatable) {
-    if (!contains(locatable) || locatable == null) {
+  public boolean remove(Unit unit) {
+    if (!contains(unit) || unit == null) {
       return false;
     }
 
-    locatable.setLocation(null);    // Keep locatable and tile in sync
-    transport.remove(locatable);
-    firePropertyChange("transport", locatable, null);
+    unit.setLocation(null);
+    unitsInTransport.remove(unit);
+    unit.transport = null;
+    firePropertyChange("transport", unit, null);
     return true;
   }
 
-  public boolean contains(Locatable locatable) {
-    return transport.contains(locatable);
+  public boolean contains(Unit unit) {
+    return unitsInTransport.contains(unit);
   }
 
-  public void add(Locatable locatable) {
-    if (canAdd(locatable)) {
-      transport.add(locatable);
-      locatable.setLocation(this);    // Keep locatable and tile in sync
+  public void add(Unit unit) {
+    if (canAdd(unit)) {
+      unitsInTransport.add(unit);
+      unit.setLocation(null);
+      unit.transport = this;
     }
-    firePropertyChange("transport", null, locatable);
+    firePropertyChange("transport", null, unit);
   }
 
-  public boolean canAdd(Locatable locatable) {
-    if (locatable instanceof Unit) {
-      Unit unit = (Unit) locatable;
-      return canTransport(unit.stats.name);
-    } else {
-      return false;
-    }
+  public boolean canAdd(Unit unit) {
+    return canTransport(unit.stats.name);
   }
 
   public boolean canTransport(String unitName) {
@@ -358,17 +348,18 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   }
 
   public boolean isTransportFull() {
-    return transport.size() >= stats.getMaxTransportCount();
+    return unitsInTransport.size() >= stats.getMaxTransportCount();
+  }
+
+  public boolean isInTransport() {
+    return transport != null;
   }
 
   /**
    * Check if this transport is transporting at least 1 active unit of the given armybranch.
    */
   public boolean isTransportingUnitType(ArmyBranch armyBranch) {
-    if (transport.isEmpty()) return false;
-
-    for (Locatable locatable : transport) {
-      Unit unitInTransport = (Unit) locatable;
+    for (Unit unitInTransport : unitsInTransport) {
       if (unitInTransport.getArmyBranch() == armyBranch && unitInTransport.isActive()) {
         return true;
       }
@@ -377,10 +368,24 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   }
 
   /**
+   * @return true if there is at least 1 unit in this transport.
+   */
+  public boolean hasUnitsInTransport() {
+    return !unitsInTransport.isEmpty();
+  }
+
+  /**
    * @return Amount of units in the transport
    */
-  public int getLocatableCount() {
-    return transport.size();
+  public int getUnitsInTransportCount() {
+    return unitsInTransport.size();
+  }
+
+  /**
+   * @return all the units in this transport, to be used in a for each loop.
+   */
+  public Iterable<Unit> getUnitsInTransport() {
+    return unitsInTransport;
   }
 
   /**
@@ -390,14 +395,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
    * @return the index or -1 when the unit is not in this transport
    */
   public int indexOf(Unit unit) {
-    for (int i = 0; i < transport.size(); i++) {
-      Unit unitInTransport = (Unit) getLocatable(i);
-
-      if (unitInTransport == unit) {
-        return i;
-      }
-    }
-    return -1;
+    return unitsInTransport.indexOf(unit);
   }
 
   // ----------------------------------------------------------------------------
@@ -537,7 +535,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   // ---------------------------------------------------------------------------
 
   public void deCreaseConstructionMaterials() {
-    setConstructionMaterials(constructionMaterials-1);
+    setConstructionMaterials(constructionMaterials - 1);
   }
 
   private void setConstructionMaterials(int newVal) {
@@ -647,7 +645,7 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   }
 
   public void setMoveStrategy(MoveStrategy moveStrategy) {
-    MoveStrategy oldVal = moveStrategy;
+    MoveStrategy oldVal = this.moveStrategy;
     this.moveStrategy = moveStrategy;
     firePropertyChange("moveStrategy", oldVal, moveStrategy);
   }
@@ -870,8 +868,16 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   // Getters :: Moving
   // ---------------------------------------------------------------------------
 
+  public String getLocationString() {
+    return getLocation().getLocationString();
+  }
+
   public Location getLocation() {
-    return location;
+    if (transport != null) {
+      return transport.getLocation();
+    } else {
+      return location;
+    }
   }
 
   public int getMovementType() {
@@ -973,10 +979,6 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
     }
   }
 
-  public boolean isInTransport() {
-    return location instanceof Unit;
-  }
-
   /**
    * @return Can this unit fire only on adjacent enemies
    */
@@ -1050,7 +1052,15 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
   }
 
   private String getLocationText() {
-    return location == null ? "Not located" : location.getLocationString();
+    if(location == null) {
+      if(transport == null) {
+        return "Not located";
+      } else {
+        return "in transport";
+      }
+    } else {
+      return location.getLocationString();
+    }
   }
 
   private String getOwnerText() {
@@ -1059,6 +1069,9 @@ public class Unit extends GameObject implements Mover, Location, TurnHandler, At
 
   private String getStatsText() {
     return String.format("hp=%s/%s supplies=%s/%s exp=%s/%s transport=%s/%s",
-      hp, stats.getMaxHp(), supplies, stats.getMaxSupplies(), experience, stats.getMaxExperience(), transport.size(), stats.getMaxTransportCount());
+        hp, stats.getMaxHp(),
+        supplies, stats.getMaxSupplies(),
+        experience, stats.getMaxExperience(),
+        unitsInTransport.size(), stats.getMaxTransportCount());
   }
 }

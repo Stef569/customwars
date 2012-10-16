@@ -472,13 +472,13 @@ public class BinaryCW2MapParser implements MapParser {
      * write 0 as transport count
      */
     private void writeUnitsInTransport(Unit unit) throws IOException {
-      int unitsInTransport = unit.getLocatableCount();
+      int unitsInTransport = unit.getUnitsInTransportCount();
 
       if (unit.getStats().canTransport() && unitsInTransport > 0) {
         out.writeByte(unitsInTransport);
 
         for (int i = 0; i < unitsInTransport; i++) {
-          Unit unitInTransport = (Unit) unit.getLocatable(i);
+          Unit unitInTransport = unit.getUnitInTransport(i);
           writeUnit(unitInTransport);
         }
       } else {

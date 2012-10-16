@@ -22,8 +22,6 @@ import java.util.List;
  * Handles any input for 1 unit
  * This can be surrounding tile information, clicks in a menu, Ai
  * Note that the unit is teleported to the select tile in each method.
- *
- * @author stefan
  */
 public abstract class UnitController {
   Game game;
@@ -189,7 +187,7 @@ public abstract class UnitController {
         if (target.getOwner() == unit.getOwner() && target.getHp() <= 9) {
           if (targetStats.canJoin() && unitStats.canJoin()) {
             if (targetStats.canTransport()) {
-              if (target.getLocatableCount() == 0 && unit.getLocatableCount() == 0) {
+              if (!target.hasUnitsInTransport() && !unit.hasUnitsInTransport()) {
                 return true;
               }
             } else {

@@ -43,8 +43,6 @@ import java.util.Set;
  * Players in a map are called 'map players'
  * name and funds unknown they are used to link units and cities to a player.
  * They hold the units, cities, hq location, the default color and the player ID.
- *
- * @author stefan
  */
 public class Map extends TileMap<Tile> implements TurnHandler {
   private static final Logger logger = Logger.getLogger(Map.class);
@@ -364,13 +362,15 @@ public class Map extends TileMap<Tile> implements TurnHandler {
 
   /**
    * Build a zone in which the mover can make a move and set it to the mover
-   * If the mover is within a transport then the movezone is null
+   * If the mover is within a transport then the move zone is null
    * If the mover cannot move then the current mover location is set as the moveZone
+   *
+   * @param mover The mover to build a move zone for
    */
   public void buildMovementZone(Mover mover) {
     List<Location> moveZone;
 
-    if (mover.getLocation() instanceof Unit) {
+    if (mover.isInTransport()) {
       moveZone = null;
     } else {
       if (mover.canMove()) {
@@ -384,7 +384,7 @@ public class Map extends TileMap<Tile> implements TurnHandler {
 
   /**
    * Build a zone in which the Attacker can attack and set it to the attacker
-   * If the attacker is within a transport then the attackzone is null
+   * If the attacker is within a transport then the attack zone is null
    *
    * @param attacker The attacker to build the attack zone for
    */
@@ -392,7 +392,7 @@ public class Map extends TileMap<Tile> implements TurnHandler {
     List<Location> attackZone = new ArrayList<Location>(30);
     Range attackRange = attacker.getAttackRange();
 
-    if (attacker.getLocation() instanceof Unit) {
+    if (attacker.isInTransport()) {
       attackZone = null;
     } else {
       for (Tile t : getAllTiles()) {
@@ -623,8 +623,7 @@ public class Map extends TileMap<Tile> implements TurnHandler {
   private void replaceUnitOwner(Player newPlayer, Unit unit) {
     newPlayer.addUnit(unit);
 
-    for (int i = 0; i < unit.getLocatableCount(); i++) {
-      Unit unitInTransport = (Unit) unit.getLocatable(i);
+    for (Unit unitInTransport : unit.getUnitsInTransport()) {
       newPlayer.addUnit(unitInTransport);
     }
   }
@@ -734,8 +733,11 @@ public class Map extends TileMap<Tile> implements TurnHandler {
 
   /**
    * Retrieve a list of drop locations where all units can be dropped on.
+   * Using the current location of the transport.
    *
+   * @param transport The transport that wants to start dropping units
    * @see #getFreeDropLocations(Unit, Location)
+   * @return If all units in the transport can be dropped
    */
   public List<Location> getFreeDropLocations(Unit transport) {
     return getFreeDropLocations(transport, transport.getLocation());
@@ -754,7 +756,7 @@ public class Map extends TileMap<Tile> implements TurnHandler {
    * @see #canDropAtLeast1Unit(Unit, Tile)
    */
   public List<Location> getFreeDropLocations(Unit transport, Location center) {
-    if (transport.getLocatableCount() == 0) return Collections.emptyList();
+    if (!transport.hasUnitsInTransport()) return Collections.emptyList();
 
     List<Location> freeDropLocations = new ArrayList<Location>(4);
     for (Tile tile : getSurroundingTiles(center, 1, 1)) {
@@ -772,13 +774,14 @@ public class Map extends TileMap<Tile> implements TurnHandler {
    * The center parameter allows a transport to find out if any units can be dropped
    * around a given center without actually moving to that location.
    *
-   * @param transport The transport where we want to find the free drop locations for.
-   * @param center    The center where the drop locations are located around.
-   * @return a list of adjacent locations where units inside the transport can be dropped on.
+   * @param transport       The transport that wants to drop the given unit
+   * @param unitToBeDropped The unit that wants to be dropped out of the transport into the map
+   * @param center          The location to search for free adjacent drop locations
+   * @return a list of adjacent locations where units inside the transport can be dropped on
    * @see #isFreeDropLocation(Unit, Unit, Tile)
    */
   public List<Location> getFreeDropLocations(Unit transport, Unit unitToBeDropped, Location center) {
-    if (transport.getLocatableCount() == 0) return Collections.emptyList();
+    if (!transport.hasUnitsInTransport()) return Collections.emptyList();
 
     List<Location> freeDropLocations = new ArrayList<Location>(4);
     for (Tile tile : getSurroundingTiles(center, 1, 1)) {
@@ -799,10 +802,9 @@ public class Map extends TileMap<Tile> implements TurnHandler {
    * @see #isFreeDropLocation(Unit, Unit, Tile)
    */
   boolean canDropAtLeast1Unit(Unit transporter, Tile dropLocation) {
-    if (transporter.getLocatableCount() == 0) return false;
+    if (!transporter.hasUnitsInTransport()) return false;
 
-    for (int i = 0; i < transporter.getLocatableCount(); i++) {
-      Unit unit = (Unit) transporter.getLocatable(i);
+    for (Unit unit : transporter.getUnitsInTransport()) {
       if (!isFreeDropLocation(transporter, unit, dropLocation)) {
         return false;
       }
@@ -821,6 +823,7 @@ public class Map extends TileMap<Tile> implements TurnHandler {
    * <li>At least 1 of the units in the transport can move over the drop location</li>
    * </ul>
    *
+   * @param unit The unit to be dropped
    * @param dropLocation The tile that a unit wants to be dropped on
    * @param transporter  The transport unit that attempts to drop a unit to the dropLocation
    * @return Can a unit be dropped to the given drop location
@@ -842,6 +845,10 @@ public class Map extends TileMap<Tile> implements TurnHandler {
   /**
    * Create a collection of tiles that covers the co zone area around the given unit.
    * When the zone range is 0 an empty collection is returned.
+   *
+   * @param unit The unit to retrieve the co zone from
+   * @param zoneRange the radius of the spiral that makes the co zone
+   * @return The locations that cover the co zone
    */
   public Collection<Location> buildCOZone(Unit unit, int zoneRange) {
     Collection<Location> coZone = new ArrayList<Location>();
@@ -976,11 +983,14 @@ public class Map extends TileMap<Tile> implements TurnHandler {
   /**
    * Check if each adjacent tile around the unit is occupied by an enemy unit.
    * Fog and hidden units have no influence since adjacent tiles are always visible.
+   *
+   * @param unit the unit to check for enemies on each adjacent tile
+   * @return If the unit is surrounded by enemies
    */
   public boolean isSurroundedByEnemyUnits(Unit unit) {
     int enemies = 0;
     for (Tile t : getSurroundingTiles(unit.getLocation(), 1, 1)) {
-      Unit adjacentUnit = (Unit) t.getLastLocatable();
+      Unit adjacentUnit = getUnitOn(t);
       if (adjacentUnit != null && !adjacentUnit.isAlliedWith(unit.getOwner())) {
         enemies++;
       }

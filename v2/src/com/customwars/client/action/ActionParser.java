@@ -104,7 +104,7 @@ public class ActionParser {
       int dropCol = scanner.nextInt();
       int dropRow = scanner.nextInt();
       Location dropLocation = map.getTile(dropCol, dropRow);
-      Unit unit = (Unit) transport.getLocatable(transportIndex);
+      Unit unit = transport.getUnitInTransport(transportIndex);
       dropQueue.addDropLocation(dropLocation, unit);
     }
 
