@@ -91,8 +91,6 @@ import java.util.HashMap;
  * for each unit in transport
  * <UNIT_ID>
  * <OWNER_ID>
- *
- * @author stefan
  */
 public class BinaryCW2MapParser implements MapParser {
   private static final String CW2_HEADER_START = "CW2.map";
@@ -126,8 +124,6 @@ public class BinaryCW2MapParser implements MapParser {
       try {
         validateStream(in);
         map = readMap();
-      } catch (IOException ex) {
-        throw new MapFormatException(ex);
       } finally {
         IOUtil.closeStream(in);
       }
@@ -191,7 +187,7 @@ public class BinaryCW2MapParser implements MapParser {
       return new Location2D(hqCol, hqRow);
     }
 
-    private void addPlayer(Player player) {
+    private void addPlayer(Player player) throws MapFormatException {
       if (players.containsKey(player.getId())) {
         throw new MapFormatException("Duplicate player ID(" + player.getId() + ")");
       } else {
@@ -398,7 +394,7 @@ public class BinaryCW2MapParser implements MapParser {
     }
 
     /**
-     * Write the players to the outputstream
+     * Write the players to the output stream
      * player size, playerID, color and hq location
      */
     private void writePlayers() throws IOException {
@@ -492,7 +488,7 @@ public class BinaryCW2MapParser implements MapParser {
 
     /**
      * This util method makes sure some text is always written
-     * to the outputstream, even if the given txt is null
+     * to the output stream, even if the given txt is null
      */
     private static void writeTxt(DataOutputStream out, String txt) throws IOException {
       if (txt == null) {
