@@ -288,14 +288,14 @@ public class Unit extends GameObject implements Mover, TurnHandler, Attacker, De
   /**
    * This unit can counter Attack when:
    * #1 it is not destroyed
-   * #2 it is direct
+   * #2 it is not indirect
    * #3 the Attacker is also a defender
    * #4 it has a weapon that can return fire to the attacker
    */
   public boolean canCounterAttack(Attacker attacker) {
     boolean attackerIsDefender = attacker instanceof Defender;
     boolean canReturnFire = attackerIsDefender && !isDestroyed() && canFireOn((Defender) attacker);
-    return canReturnFire && isDirect();
+    return canReturnFire && canFireOnAdjacentEnemies();
   }
 
   public List<Location> getAttackZone() {
@@ -980,7 +980,15 @@ public class Unit extends GameObject implements Mover, TurnHandler, Attacker, De
   }
 
   /**
-   * @return Can this unit fire only on adjacent enemies
+   * @return Can this unit fire on adjacent enemies
+   */
+  public boolean canFireOnAdjacentEnemies() {
+    Weapon weapon = getAvailableAttackWeapon();
+    return weapon != null && weapon.canFireOnAdjacentEnemies();
+  }
+
+  /**
+   * @return Can this unit fire on enemies that are max 1 tile away
    */
   public boolean isDirect() {
     Weapon weapon = getAvailableAttackWeapon();
