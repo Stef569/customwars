@@ -59,10 +59,13 @@
     <!-- Move Types: -->
     <!ENTITY INF "0">
     <!ENTITY MECH "1">
-    <!ENTITY TREAD "2">
-    <!ENTITY TIRES "3">
-    <!ENTITY AIR "4">
-    <!ENTITY NAVAL "5">]>
+    <!ENTITY TIREA "2">
+    <!ENTITY TIREB "3">
+    <!ENTITY TANK "4">
+    <!ENTITY AIR "5">
+    <!ENTITY NAVAL "6">
+    <!ENTITY NAVAL_TRANSPORT "7">
+]>
 <list>
   <unit name="infantry" unitID="0" imgRowID="0">
     <price>1500</price>
@@ -116,7 +119,7 @@
     <maxSupplies>70</maxSupplies>
 
     <armyBranch>LAND</armyBranch>
-    <movementType>&TIRES;</movementType>
+    <movementType>&TIREB;</movementType>
     <primaryWeaponName>machine_gun</primaryWeaponName>
     <description></description>
   </unit>
@@ -132,7 +135,7 @@
     <maxSupplies>80</maxSupplies>
 
     <armyBranch>LAND</armyBranch>
-    <movementType>&TIRES;</movementType>
+    <movementType>&TIREA;</movementType>
 
     <primaryWeaponName>recon_main_gun</primaryWeaponName>
     <secondaryWeaponName>tank_machine_gun</secondaryWeaponName>
@@ -151,7 +154,7 @@
     <maxSupplies>60</maxSupplies>
 
     <armyBranch>LAND</armyBranch>
-    <movementType>&TREAD;</movementType>
+    <movementType>&TANK;</movementType>
     <primaryWeaponName>flare_gun</primaryWeaponName>
     <secondaryWeaponName>tank_machine_gun</secondaryWeaponName>
     <description></description>
@@ -168,7 +171,7 @@
     <maxSupplies>60</maxSupplies>
 
     <armyBranch>LAND</armyBranch>
-    <movementType>&TREAD;</movementType>
+    <movementType>&TANK;</movementType>
 
     <primaryWeaponName>anti_air</primaryWeaponName>
     <description></description>
@@ -185,7 +188,7 @@
     <maxSupplies>70</maxSupplies>
 
     <armyBranch>LAND</armyBranch>
-    <movementType>&TREAD;</movementType>
+    <movementType>&TANK;</movementType>
 
     <primaryWeaponName>tank_main_gun</primaryWeaponName>
     <secondaryWeaponName>tank_machine_gun</secondaryWeaponName>
@@ -203,7 +206,7 @@
     <maxSupplies>50</maxSupplies>
 
     <armyBranch>LAND</armyBranch>
-    <movementType>&TREAD;</movementType>
+    <movementType>&TANK;</movementType>
 
     <primaryWeaponName>medium_tank_main_gun</primaryWeaponName>
     <secondaryWeaponName>tank_machine_gun</secondaryWeaponName>
@@ -221,7 +224,7 @@
     <maxSupplies>70</maxSupplies>
 
     <armyBranch>LAND</armyBranch>
-    <movementType>&TREAD;</movementType>
+    <movementType>&TANK;</movementType>
 
     <primaryWeaponName>heavy_tank_main_gun</primaryWeaponName>
     <secondaryWeaponName>tank_machine_gun</secondaryWeaponName>
@@ -239,7 +242,7 @@
     <maxSupplies>50</maxSupplies>
 
     <armyBranch>LAND</armyBranch>
-    <movementType>&TREAD;</movementType>
+    <movementType>&TANK;</movementType>
 
     <primaryWeaponName>long_range_cannon</primaryWeaponName>
     <description></description>
@@ -256,7 +259,7 @@
     <maxSupplies>50</maxSupplies>
 
     <armyBranch>LAND</armyBranch>
-    <movementType>&TIRES;</movementType>
+    <movementType>&TIREB;</movementType>
     <primaryWeaponName>anti_tank_cannon</primaryWeaponName>
     <description></description>
   </unit>
@@ -272,7 +275,7 @@
     <maxSupplies>50</maxSupplies>
 
     <armyBranch>LAND</armyBranch>
-    <movementType>&TIRES;</movementType>
+    <movementType>&TIREA;</movementType>
 
     <primaryWeaponName>rockets</primaryWeaponName>
     <description>Rocket units are the best long range units at your disposal. They can fire on both land and sea units.
@@ -290,7 +293,7 @@
     <maxSupplies>50</maxSupplies>
 
     <armyBranch>LAND</armyBranch>
-    <movementType>&TREAD;</movementType>
+    <movementType>&TIREA;</movementType>
 
     <primaryWeaponName>anti_air_missile</primaryWeaponName>
     <description></description>
@@ -352,7 +355,7 @@
     <maxConstructionMaterial>1</maxConstructionMaterial>
 
     <armyBranch>LAND</armyBranch>
-    <movementType>&TREAD;</movementType>
+    <movementType>&TANK;</movementType>
     <description>Can transport 1 unit(Infantry or Mech) can supply units, can build temp properties.</description>
   </unit>
 
@@ -485,7 +488,7 @@
     <suppliesPerTurn>1</suppliesPerTurn>
 
     <armyBranch>NAVAL</armyBranch>
-    <movementType>&NAVAL;</movementType>
+    <movementType>&NAVAL_TRANSPORT;</movementType>
     <primaryWeaponName>gunboat_anti_ship_missile</primaryWeaponName>
     <description></description>
   </unit>
@@ -623,7 +626,7 @@
     <suppliesPerTurn>1</suppliesPerTurn>
 
     <armyBranch>NAVAL</armyBranch>
-    <movementType>&NAVAL;</movementType>
+    <movementType>&NAVAL_TRANSPORT;</movementType>
     <description>Can transport 2 ground units</description>
   </unit>
 </list>
