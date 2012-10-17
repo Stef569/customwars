@@ -318,6 +318,10 @@ public class UnitStats implements Serializable {
     return suppliesPerTurnWhenHidden;
   }
 
+  public boolean hasConstructionMaterials() {
+    return maxConstructionMaterial > 0;
+  }
+
   public int getMaxConstructionMaterial() {
     return maxConstructionMaterial;
   }

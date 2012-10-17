@@ -81,7 +81,21 @@ public class HorizontalUnitInfoPanel extends HorizontalInfoPanel {
     setFrontImage(resources.getUnitImg(unit, Unit.DEFAULT_ORIENTATION));
     hpTxtBox.setText(unit.getHp() + "");
     suppliesTxtBox.setText(unit.getSupplies() + "");
-    ammoTxtBox.setText(unit.getAmmo() + "");
+    initAmmoBoxes();
+  }
+
+  /**
+   * If the unit has construction materials show them instead of the ammo.
+   * Using the same ammo boxes.
+   */
+  private void initAmmoBoxes() {
+    if(unit.getStats().hasConstructionMaterials()) {
+      ammoImgBox.setImage(statusImageStrip.getSubImage(6));
+      ammoTxtBox.setText(unit.getCurrentConstructionMaterials() + "");
+    } else {
+      ammoImgBox.setImage(statusImageStrip.getSubImage(3));
+      ammoTxtBox.setText(unit.getAmmo() + "");
+    }
   }
 
   protected Dimension getNameSize() {
