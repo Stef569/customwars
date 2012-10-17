@@ -320,8 +320,8 @@
       <enemy id="infantry" basedamage="95"/>
       <enemy id="mech" basedamage="90"/>
       <enemy id="bikes" basedamage="90"/>
-      <enemy id="recon" basedamage="90"/>
-      <enemy id="flare" basedamage="85"/>
+      <enemy id="recon" basedamage="81"/>
+      <enemy id="flare" basedamage="65"/>
       <enemy id="anti_air" basedamage="75"/>
       <enemy id="light_tank" basedamage="70"/>
       <enemy id="medium_tank" basedamage="55"/>
