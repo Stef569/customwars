@@ -328,7 +328,7 @@ public class UnitStats implements Serializable {
 
   @Override
   public String toString() {
-    final StringBuffer sb = new StringBuffer(100);
+    final StringBuilder sb = new StringBuilder(100);
     sb.append("UnitStats");
     sb.append("{unitID=").append(unitID);
     sb.append(", imgRowID=").append(imgRowID);
