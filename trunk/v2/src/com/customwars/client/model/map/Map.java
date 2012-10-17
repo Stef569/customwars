@@ -405,12 +405,20 @@ public class Map extends TileMap<Tile> implements TurnHandler {
   }
 
   /**
-   * Determines if a Location is in the attacker's attack range
+   * Determines if a Location is in the attacker's attack range.
+   *
+   * For indirect units check if the location is within the attack range.
+   * For direct units check if the location is in or adjacent of the move zone.
+   *
+   * @param attacker The attacker that wants to fire
+   * @param location The location that the attacker wants to fire on
+   * @param attackRange The range of the attacker in which it can fire
+   * @return True if the location is within the attack range of the attacker
    */
   public boolean inFireRange(Attacker attacker, Location location, Range attackRange) {
     if (attackRange.getMaxRange() >= 0) {
       int distance = getDistanceBetween(location, attacker.getLocation());
-      boolean indirect = attackRange.getMinRange() > 1;
+      boolean indirect = attackRange.getMinRange() >= 1 && attackRange.getMaxRange() > 1;
 
       if (indirect) {
         return attackRange.isInRange(distance);
@@ -736,8 +744,8 @@ public class Map extends TileMap<Tile> implements TurnHandler {
    * Using the current location of the transport.
    *
    * @param transport The transport that wants to start dropping units
-   * @see #getFreeDropLocations(Unit, Location)
    * @return If all units in the transport can be dropped
+   * @see #getFreeDropLocations(Unit, Location)
    */
   public List<Location> getFreeDropLocations(Unit transport) {
     return getFreeDropLocations(transport, transport.getLocation());
@@ -823,7 +831,7 @@ public class Map extends TileMap<Tile> implements TurnHandler {
    * <li>At least 1 of the units in the transport can move over the drop location</li>
    * </ul>
    *
-   * @param unit The unit to be dropped
+   * @param unit         The unit to be dropped
    * @param dropLocation The tile that a unit wants to be dropped on
    * @param transporter  The transport unit that attempts to drop a unit to the dropLocation
    * @return Can a unit be dropped to the given drop location
@@ -833,7 +841,7 @@ public class Map extends TileMap<Tile> implements TurnHandler {
 
     Unit unitOnDropLocation = getUnitOn(dropLocation);
     return dropLocation.isFogged() || dropLocation.getLocatableCount() == 0 ||
-      unitOnDropLocation.isHidden() || unitOnDropLocation == transporter;
+        unitOnDropLocation.isHidden() || unitOnDropLocation == transporter;
   }
 
   private boolean canTraverseTile(Unit unit, Tile tile) {
@@ -846,7 +854,7 @@ public class Map extends TileMap<Tile> implements TurnHandler {
    * Create a collection of tiles that covers the co zone area around the given unit.
    * When the zone range is 0 an empty collection is returned.
    *
-   * @param unit The unit to retrieve the co zone from
+   * @param unit      The unit to retrieve the co zone from
    * @param zoneRange the radius of the spiral that makes the co zone
    * @return The locations that cover the co zone
    */
