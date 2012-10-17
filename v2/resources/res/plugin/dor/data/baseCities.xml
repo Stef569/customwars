@@ -1,12 +1,14 @@
 <!--
-    id is a reference to the city image sheet
-    moveCosts have the following order
-    Infantry
-    Mech
-    Tread
-    Tires
-    Air
-    Naval
+id is a reference to the city image sheet
+moveCosts have the following order:
+  Infantry
+  Mech
+  Tire A
+  Tire B
+  Tank
+  Air
+  Naval
+  Naval Transport
 -->
 <list>
   <city name="base" id="0" imgRowID="0" type='road'>
@@ -17,8 +19,10 @@
       <int>1</int>
       <int>1</int>
       <int>1</int>
-      <int>2</int>
       <int>1</int>
+      <int>1</int>
+      <int>1</int>
+      <int>127</int>
       <int>127</int>
     </moveCosts>
     <vision>1</vision>
@@ -43,8 +47,10 @@
       <int>1</int>
       <int>1</int>
       <int>1</int>
-      <int>2</int>
       <int>1</int>
+      <int>1</int>
+      <int>1</int>
+      <int>127</int>
       <int>127</int>
     </moveCosts>
     <vision>1</vision>
@@ -85,8 +91,10 @@
       <int>1</int>
       <int>1</int>
       <int>1</int>
-      <int>2</int>
       <int>1</int>
+      <int>1</int>
+      <int>1</int>
+      <int>127</int>
       <int>127</int>
     </moveCosts>
     <vision>1</vision>
@@ -118,7 +126,9 @@
       <int>1</int>
       <int>1</int>
       <int>1</int>
-      <int>2</int>
+      <int>1</int>
+      <int>1</int>
+      <int>1</int>
       <int>1</int>
       <int>1</int>
     </moveCosts>
@@ -152,8 +162,10 @@
       <int>1</int>
       <int>1</int>
       <int>1</int>
-      <int>2</int>
       <int>1</int>
+      <int>1</int>
+      <int>1</int>
+      <int>127</int>
       <int>127</int>
     </moveCosts>
     <vision>1</vision>
@@ -177,8 +189,10 @@
       <int>1</int>
       <int>1</int>
       <int>1</int>
-      <int>2</int>
       <int>1</int>
+      <int>1</int>
+      <int>1</int>
+      <int>127</int>
       <int>127</int>
     </moveCosts>
     <vision>1</vision>
@@ -198,7 +212,9 @@
       <int>127</int>
       <int>127</int>
       <int>127</int>
+      <int>127</int>
       <int>1</int>
+      <int>127</int>
       <int>127</int>
     </moveCosts>
     <maxHp>20</maxHp>
@@ -211,7 +227,9 @@
       <int>127</int>
       <int>127</int>
       <int>127</int>
+      <int>127</int>
       <int>1</int>
+      <int>127</int>
       <int>127</int>
     </moveCosts>
     <maxHp>20</maxHp>
@@ -224,8 +242,10 @@
       <int>1</int>
       <int>1</int>
       <int>1</int>
-      <int>2</int>
       <int>1</int>
+      <int>1</int>
+      <int>1</int>
+      <int>127</int>
       <int>127</int>
     </moveCosts>
     <vision>5</vision>
@@ -245,8 +265,10 @@
       <int>1</int>
       <int>1</int>
       <int>1</int>
-      <int>2</int>
       <int>1</int>
+      <int>1</int>
+      <int>1</int>
+      <int>127</int>
       <int>127</int>
     </moveCosts>
 
@@ -269,7 +291,9 @@
       <int>1</int>
       <int>1</int>
       <int>1</int>
-      <int>2</int>
+      <int>1</int>
+      <int>1</int>
+      <int>1</int>
       <int>1</int>
       <int>1</int>
     </moveCosts>
@@ -293,8 +317,10 @@
       <int>1</int>
       <int>1</int>
       <int>1</int>
-      <int>2</int>
       <int>1</int>
+      <int>1</int>
+      <int>1</int>
+      <int>127</int>
       <int>127</int>
     </moveCosts>
     <vision>1</vision>
