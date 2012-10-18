@@ -83,6 +83,8 @@ public class ActionParser {
       return parseCOP(scanner);
     } else if (actionName.equals("co_super_power")) {
       return parseSCOP(scanner);
+    } else if (actionName.equals("delete_unit")) {
+        return parseDeleteUnit(scanner);
     } else {
       logger.warn("Unknown action " + actionName);
       throw new IllegalArgumentException("unknown action " + actionName);
@@ -305,5 +307,11 @@ public class ActionParser {
     Unit unit = map.getUnitOn(fromCol, fromRow);
     Location to = map.getTile(toCol, toRow);
     return ActionFactory.buildCOSuperPowerAction(unit, to);
+  }
+
+  private CWAction parseDeleteUnit(Scanner scanner) {
+    int col = scanner.nextInt();
+    int row = scanner.nextInt();
+    return ActionFactory.buildDeleteUnitAction(map.getTile(col,row));
   }
 }

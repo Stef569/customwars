@@ -2,6 +2,7 @@ package com.customwars.client.action;
 
 import com.customwars.client.controller.CursorController;
 import com.customwars.client.model.game.Game;
+import com.customwars.client.model.map.Location;
 import com.customwars.client.ui.HUD;
 import com.customwars.client.ui.renderer.MapRenderer;
 import com.customwars.client.ui.state.InGameContext;
@@ -9,8 +10,6 @@ import org.newdawn.slick.gui.GUIContext;
 
 /**
  * Reset everything in the in game state to default.
- *
- * @author stefan
  */
 public class ClearInGameStateAction extends DirectAction {
   private InGameContext inGameContext;
@@ -40,7 +39,9 @@ public class ClearInGameStateAction extends DirectAction {
     inGameContext.clearDropHistory();
     inGameContext.getObj(GUIContext.class).getInput().resume();
 
+    Location previousCursorLocation = mapRenderer.getCursorLocation();
     cursorControl.activateCursor("Select");
+    cursorControl.moveCursor(previousCursorLocation);
     cursorControl.stopCursorTraversal();
     cursorControl.setCursorLocked(false);
     mapRenderer.removeZones();

@@ -85,4 +85,6 @@ public interface MessageSender {
   void coSuperPower() throws NetworkException;
 
   void produceUnit(Unit producer, String unitToProduce, Player owner) throws NetworkException;
+
+  void deleteUnit(Location location) throws NetworkException;
 }

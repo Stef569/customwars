@@ -1,6 +1,7 @@
 package com.customwars.client.action;
 
 import com.customwars.client.action.city.LaunchRocketAction;
+import com.customwars.client.action.game.DeleteUnitAction;
 import com.customwars.client.action.game.EndGameAction;
 import com.customwars.client.action.game.EndTurnAction;
 import com.customwars.client.action.unit.AddUnitToTileAction;
@@ -233,5 +234,11 @@ public class ActionFactory {
     coSuperPowerActions.add(new WaitAction(unit));
     coSuperPowerActions.add(new ClearInGameStateAction());
     return coSuperPowerActions;
+  }
+
+  public static CWAction buildDeleteUnitAction(Location selected) {
+    ActionBag deleteUnitActions = new ActionBag("delete_unit");
+    deleteUnitActions.add(new DeleteUnitAction(selected));
+    return deleteUnitActions;
   }
 }

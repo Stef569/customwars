@@ -34,6 +34,7 @@ public class InGameContext {
     UNIT_DROP,        // Clicking on empty space drops the unit
     LAUNCH_ROCKET,    // Clicking on a tile fires the rocket
     UNIT_FLARE,       // Clicking on a tile fires a flare
+    UNIT_DELETE,      // Clicking on a unit will delete that unit
     UNIT_CYCLE        // Start Iterating between units
   }
 
@@ -195,6 +196,10 @@ public class InGameContext {
 
   public boolean isUnitCycleMode() {
     return inputMode == INPUT_MODE.UNIT_CYCLE;
+  }
+
+  public boolean isUnitDeleteMode() {
+    return inputMode == INPUT_MODE.UNIT_DELETE;
   }
 
   public void addUnitInTransport(Unit unitInTransport) {

@@ -157,4 +157,8 @@ public class MessageSenderAdapter implements MessageSender {
   @Override
   public void produceUnit(Unit producer, String unitToProduce, Player owner) throws NetworkException {
   }
+
+  @Override
+  public void deleteUnit(Location location) throws NetworkException {
+  }
 }
