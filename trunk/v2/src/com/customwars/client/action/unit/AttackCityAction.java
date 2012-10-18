@@ -55,6 +55,7 @@ public class AttackCityAction extends DirectAction {
       SFX.playSound("explode");
     }
 
+    logger.debug("city HP: " + city.getHp() + "/" + city.getMaxHp());
     if (App.isMultiplayer()) sendAttackCity();
   }
 
