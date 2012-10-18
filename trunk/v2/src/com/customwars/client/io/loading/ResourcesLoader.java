@@ -24,6 +24,7 @@ import java.util.Map;
  */
 public class ResourcesLoader {
   private static final Logger logger = Logger.getLogger(ResourcesLoader.class);
+  private static final String CURSOR_LOADER_FILE = "cursorLoader.txt";
   private static final String IMAGE_LOADER_FILE = "imageLoader.txt";
   private static final String ANIM_LOADER_FILE = "animLoader.txt";
   private static final String SOUND_LOADER_FILE = "soundLoader.txt";
@@ -95,7 +96,7 @@ public class ResourcesLoader {
 
   private void loadCursors() throws IOException {
     String cursorImgPath = getPath("cursorimg.path");
-    CWResourceLoader cursorLoader = new CursorLoader(resources, cursorImgPath);
+    CWResourceLoader cursorLoader = new CursorLoader(resources, cursorImgPath, CURSOR_LOADER_FILE);
     cursorLoader.load();
   }
 

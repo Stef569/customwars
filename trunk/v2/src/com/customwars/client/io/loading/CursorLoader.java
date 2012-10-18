@@ -1,66 +1,53 @@
 package com.customwars.client.io.loading;
 
 import com.customwars.client.App;
-import com.customwars.client.io.FileSystemManager;
 import com.customwars.client.io.ResourceManager;
 import com.customwars.client.io.img.slick.ImageStrip;
 import com.customwars.client.io.img.slick.SlickImageFactory;
-import com.customwars.client.tools.FileUtil;
 import com.customwars.client.ui.sprite.TileSprite;
 import org.newdawn.slick.Image;
+import org.newdawn.slick.util.ResourceLoader;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
+import java.util.Scanner;
+import java.util.StringTokenizer;
+
+import static com.customwars.client.io.ErrConstants.ERR_WRONG_NUM_ARGS;
 
 /**
- * Load and add cursors to the resource Manager.
- * This is done by loading each image in the cursorImgPath and creating a cursor out of them.
- * The name of the image w/o extension is used to store the cursor in the resourceManager.
+ * Parse the cursor load file create and add the cursor to the resource Manager.
  */
-public class CursorLoader implements CWResourceLoader {
-  private static final int CURSOR_ANIM_COUNT = 2;
-  private static final int CURSOR_ANIM_SPEED = 250;
-  private final ResourceManager resources;
+public class CursorLoader extends LineParser {
   private final String cursorImgPath;
+  private final ResourceManager resources;
 
-  public CursorLoader(ResourceManager resources, String cursorImgPath) {
+  public CursorLoader(ResourceManager resources, String cursorImgPath, String cursorLoaderFile) {
+    super(ResourceLoader.getResourceAsStream(cursorImgPath + cursorLoaderFile));
     this.resources = resources;
     this.cursorImgPath = cursorImgPath;
   }
 
-  /**
-   * Load all the images from the cursorImgPath
-   * A cursor images contains CURSOR_ANIM_COUNT horizontal images of the same width
-   * Create animation and TileSprite
-   * Add the cursor to the cursor collection
-   */
-  public void load() throws IOException {
-    FileSystemManager fsm = new FileSystemManager(cursorImgPath);
-    for (File cursorImgFile : fsm.getFiles()) {
-      if (isImageFile(cursorImgFile)) {
-        loadCursor(cursorImgFile);
-      }
+  @Override
+  public void parseLine(String line) {
+    StringTokenizer tokens = new StringTokenizer(line);
+    Scanner cmdScanner = new Scanner(line);
+
+    if (!(tokens.countTokens() == 4))
+      throw new IllegalArgumentException(ERR_WRONG_NUM_ARGS + " for " + line + " 4 required.");
+    else {
+      String cursorName = cmdScanner.next();
+      String imgFileName = cmdScanner.next();
+      int tileWidth = cmdScanner.nextInt();
+      int duration = cmdScanner.nextInt();
+      Image img = SlickImageFactory.createImage(cursorImgPath + imgFileName);
+      TileSprite cursor = createCursor(img, tileWidth, duration);
+      resources.addCursor(cursorName, cursor);
     }
   }
 
-  private boolean isImageFile(File cursorImgFile) {
-    String extension = FileUtil.getExtension(cursorImgFile);
-    return Arrays.asList("png", "jpg").contains(extension);
-  }
-
-  private void loadCursor(File cursorImgFile) {
-    String cursorName = FileUtil.getFileNameWithoutExtension(cursorImgFile);
-    Image cursorImg = SlickImageFactory.createImage(cursorImgFile.getPath());
-    TileSprite cursor = createCursor(cursorImg);
-    resources.addCursor(cursorName, cursor);
-  }
-
-  private TileSprite createCursor(Image cursorImg) {
-    int cursorWidth = cursorImg.getWidth() / CURSOR_ANIM_COUNT;
+  private TileSprite createCursor(Image cursorImg, int tileWidth, int duration) {
     int cursorHeight = cursorImg.getHeight();
-    ImageStrip cursorImgs = new ImageStrip(cursorImg, cursorWidth, cursorHeight);
-    TileSprite cursor = new TileSprite(cursorImgs, CURSOR_ANIM_SPEED, null, null);
+    ImageStrip cursorImgs = new ImageStrip(cursorImg, tileWidth, cursorHeight);
+    TileSprite cursor = new TileSprite(cursorImgs, duration, null, null);
 
     // Use the cursor image height to calculate the tile effect range ie
     // If the image has a height of 160/32=5 tiles 5/2 rounded to int becomes 2.

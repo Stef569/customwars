@@ -1,0 +1,6 @@
+// This file allows to define a cursor to the game
+// 1 line has following parameters:
+// <cursor name> <img name> <tile width> <animation frame duration>
+ATTACK attack.png 31 250
+SELECT select.png 31 250
+SILO silo.png 80 250
