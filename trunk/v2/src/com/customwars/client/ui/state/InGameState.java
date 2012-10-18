@@ -215,10 +215,15 @@ public class InGameState extends CWState implements PropertyChangeListener {
     TileSprite selectCursor = resources.createCursor(map, "SELECT");
     TileSprite attackCursor = resources.createCursor(map, "ATTACK");
     TileSprite siloCursor = resources.createCursor(map, "SILO");
+    TileSprite hammerCursor = resources.createCursor(map, "HAMMER");
+    TileSprite cancelCursor = resources.createCursor(map, "CANCEL");
 
     cursorControl.addCursor("SELECT", selectCursor);
     cursorControl.addCursor("ATTACK", attackCursor);
     cursorControl.addCursor("SILO", siloCursor);
+    cursorControl.addCursor("HAMMER", hammerCursor);
+    cursorControl.addCursor("CANCEL", cancelCursor);
+
     cursorControl.activateCursor("SELECT");
   }
 
@@ -389,6 +394,7 @@ public class InGameState extends CWState implements PropertyChangeListener {
         cursorControl.moveCursor(Direction.EAST);
         break;
     }
+    inputHandler.cursorMoved(gameRenderer.getCursorLocation());
   }
 
   /**
@@ -415,6 +421,7 @@ public class InGameState extends CWState implements PropertyChangeListener {
   public void mouseMoved(int oldx, int oldy, int newx, int newy) {
     if (isInputAllowed()) {
       cursorControl.moveCursor(newx, newy);
+      inputHandler.cursorMoved(gameRenderer.getCursorLocation());
     }
   }
 

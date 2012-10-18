@@ -1,5 +1,6 @@
 package com.customwars.client.controller;
 
+import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Tile;
 
 /**
@@ -15,4 +16,6 @@ public interface InGameInputHandler {
   void startUnitCycle();
 
   void endTurn();
+
+  void cursorMoved(Location newLocation);
 }

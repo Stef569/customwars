@@ -9,10 +9,12 @@ import com.customwars.client.action.ShowPopupMenuAction;
 import com.customwars.client.action.game.LoadGameAction;
 import com.customwars.client.action.game.SaveGameAction;
 import com.customwars.client.action.game.SaveReplayAction;
+import com.customwars.client.action.game.StartDeleteUnitAction;
 import com.customwars.client.action.unit.StartUnitCycleAction;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Unit;
+import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.ui.PopupMenu;
@@ -33,6 +35,7 @@ public class UserInGameInputHandler implements InGameInputHandler {
   private final Game game;
   private final CursorController cursorController;
   private final Map map;
+  private boolean canDeleteUnit;
 
   public UserInGameInputHandler(InGameContext inGameContext) {
     this.game = inGameContext.getObj(Game.class);
@@ -46,7 +49,9 @@ public class UserInGameInputHandler implements InGameInputHandler {
     City city = map.getCityOn(cursorLocation);
     Unit unit = getUnit(cursorLocation);
 
-    if (canUnitAct(unit)) {
+    if (inGameContext.isUnitDeleteMode()) {
+      tryToDeleteUnit(cursorLocation);
+    } else if (canUnitAct(unit)) {
       inGameContext.handleUnitAPress(unit);
     } else if (canCityBuild(city)) {
       inGameContext.handleCityAPress(city);
@@ -55,6 +60,16 @@ public class UserInGameInputHandler implements InGameInputHandler {
       showContextMenu(cursorLocation);
     } else {
       throw new AssertionError("could not handle A press context=" + inGameContext.toString());
+    }
+  }
+
+  private void tryToDeleteUnit(Tile cursorLocation) {
+    if (!canDeleteUnit) {
+      inGameContext.doAction(new ClearInGameStateAction());
+    } else {
+      CWAction deleteUnitAction = ActionFactory.buildDeleteUnitAction(cursorLocation);
+      inGameContext.doAction(deleteUnitAction);
+      canDeleteUnit = false;
     }
   }
 
@@ -91,6 +106,9 @@ public class UserInGameInputHandler implements InGameInputHandler {
     StandardMenuItem endTurnMenuItem = buildMenuItem(App.translate("end_turn"), ActionFactory.buildEndTurnAction());
     popupMenu.addItem(endTurnMenuItem);
 
+    StandardMenuItem deleteUnitMenuItem = buildMenuItem(App.translate("delete_unit"), new StartDeleteUnitAction());
+    popupMenu.addItem(deleteUnitMenuItem);
+
     if (App.isSinglePlayerGame()) {
       StandardMenuItem saveGameMenuItem = buildMenuItem(App.translate("save_game"), new SaveGameAction());
       popupMenu.addItem(saveGameMenuItem);
@@ -125,6 +143,11 @@ public class UserInGameInputHandler implements InGameInputHandler {
   }
 
   public void handleB(Tile cursorLocation) {
+    if (inGameContext.isUnitDeleteMode()) {
+      inGameContext.doAction(new ClearInGameStateAction());
+      return;
+    }
+
     Unit selectedUnit = getUnit(cursorLocation);
     if (selectedUnit != null) {
       inGameContext.handleUnitBPress(selectedUnit);
@@ -165,5 +188,30 @@ public class UserInGameInputHandler implements InGameInputHandler {
   public void endTurn() {
     CWAction endTurn = ActionFactory.buildEndTurnAction();
     inGameContext.doAction(endTurn);
+  }
+
+  public void cursorMoved(Location newLocation) {
+    updateDeleteUnitCursor(newLocation);
+  }
+
+  private void updateDeleteUnitCursor(Location newLocation) {
+    if (inGameContext.isUnitDeleteMode()) {
+      Unit unit = map.getUnitOn(newLocation);
+
+      if (canDeleteUnit(unit)) {
+        cursorController.activateCursor("HAMMER");
+        cursorController.moveCursor(newLocation);
+        canDeleteUnit = true;
+      } else {
+        cursorController.activateCursor("CANCEL");
+        cursorController.moveCursor(newLocation);
+        canDeleteUnit = false;
+      }
+    }
+  }
+
+  private boolean canDeleteUnit(Unit unit) {
+    return unit != null && unit.isActive() &&
+        unit.getOwner().equals(game.getActivePlayer());
   }
 }

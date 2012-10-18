@@ -4,3 +4,5 @@
 ATTACK attack.png 31 250
 SELECT select.png 31 250
 SILO silo.png 80 250
+HAMMER hammer.png 31 250
+CANCEL cancel.png 31 250
