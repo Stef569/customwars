@@ -212,9 +212,9 @@ public class InGameState extends CWState implements PropertyChangeListener {
   }
 
   private void initCursors(Map map) {
-    TileSprite selectCursor = resources.createCursor(map, App.get("user.selectcursor"));
-    TileSprite attackCursor = resources.createCursor(map, App.get("user.attackcursor"));
-    TileSprite siloCursor = resources.createCursor(map, App.get("user.silocursor"));
+    TileSprite selectCursor = resources.createCursor(map, "SELECT");
+    TileSprite attackCursor = resources.createCursor(map, "ATTACK");
+    TileSprite siloCursor = resources.createCursor(map, "SILO");
 
     cursorControl.addCursor("SELECT", selectCursor);
     cursorControl.addCursor("ATTACK", attackCursor);
