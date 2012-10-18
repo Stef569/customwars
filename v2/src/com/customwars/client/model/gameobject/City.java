@@ -463,6 +463,10 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
   public int getHp() {
     return hp;
   }
+  
+  public int getMaxHp() {
+    return maxHp;
+  }
 
   public int getImgRowID() {
     return imgRowID;
@@ -493,10 +497,5 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
         resetCapturing();
       }
     }
-  }
-
-  private void readObject(ObjectInputStream in) throws ClassNotFoundException, IOException {
-    in.defaultReadObject();
-    init();
   }
 }
