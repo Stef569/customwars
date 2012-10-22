@@ -19,4 +19,6 @@ public interface Defender {
   ArmyBranch getArmyBranch();
 
   Location getLocation();
+  
+  boolean canGainExperienceFromDestroying();
 }

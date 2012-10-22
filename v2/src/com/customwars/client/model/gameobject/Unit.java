@@ -241,10 +241,12 @@ public class Unit extends GameObject implements Mover, TurnHandler, Attacker, De
     defender.defend(this, fight);
     tryToFireWeapon(fight);
 
-    if (defender.isDestroyed()) {
-      if (App.getBoolean("plugin.unit_can_gain_experience")) {
+    boolean defenderDestroyed = defender.isDestroyed();
+    boolean canGainExp = defender.canGainExperienceFromDestroying();
+    boolean pluginAllowsPromotion = App.getBoolean("plugin.unit_can_gain_experience");
+
+    if (defenderDestroyed && canGainExp && pluginAllowsPromotion) {
         setExperience(experience + 1);
-      }
     }
 
     owner.getCO().unitAttackedHook(this, defender);
@@ -878,6 +880,11 @@ public class Unit extends GameObject implements Mover, TurnHandler, Attacker, De
     } else {
       return location;
     }
+  }
+
+  @Override
+  public boolean canGainExperienceFromDestroying() {
+    return true;
   }
 
   public int getMovementType() {

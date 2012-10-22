@@ -439,6 +439,11 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
     return location;
   }
 
+  @Override
+  public boolean canGainExperienceFromDestroying() {
+    return false;
+  }
+
   public Player getOwner() {
     return owner;
   }
