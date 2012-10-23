@@ -66,6 +66,22 @@
     }
   }
 
+  public int forsythe_getAttackBonusPercentage() {
+    if (attacker.isInCOZone()) {
+      return 110;
+    } else {
+      return 100;
+    }
+  }
+
+  public int forsythe_getDefenseBonusPercentage() {
+    if (defender.isInCOZone()) {
+      return 110;
+    } else {
+      return 100;
+    }
+  }
+
   public int gage_getAttackBonusPercentage() {
     if (power || attacker.isInCOZone()) {
       if (attacker.isInDirect() || attacker.isNaval()) {
