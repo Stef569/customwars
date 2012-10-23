@@ -62,7 +62,7 @@ public abstract class BasicFight implements Fight {
   }
 
   protected boolean isSuicidalCounterAttack() {
-    return false;
+    return getAttackDamagePercentage() == 0;
   }
 
   private void counterAttack() {
