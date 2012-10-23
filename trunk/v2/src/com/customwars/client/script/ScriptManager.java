@@ -85,6 +85,9 @@ public class ScriptManager implements Serializable {
   /**
    * Returns true if the specified method name is an existing
    * scripted method.
+   *
+   * @param methodName The scripted method name to check for existence
+   * @return If the scripted method exists
    */
   public boolean isMethod(String methodName) {
     try {
@@ -107,6 +110,10 @@ public class ScriptManager implements Serializable {
    * String doIt() {
    * out.println(param);
    * }
+   * @see #isMethod(String)
+   * @param methodName The name of the scripted method to execute
+   * @param parameters The parameter name, value pairs that are available in the scripted method.
+   * @return The return value of the scripted method. Null if there is no return value.
    */
   public Object invoke(String methodName, Parameter... parameters) {
     if (isMethod(methodName)) {
@@ -160,8 +167,14 @@ public class ScriptManager implements Serializable {
     }
   }
 
+  /**
+   * When the ScriptManager is persisted, the beanshell interpreter is not saved.
+   * Instead when loading the ScriptManager from the object stream,
+   * a new beanshell instance is created, and the script files are reloaded.
+   */
   private void readObject(ObjectInputStream in) throws ClassNotFoundException, IOException {
     in.defaultReadObject();
     initBeanshell();
+    reload();
   }
 }
