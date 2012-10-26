@@ -2,7 +2,9 @@ package com.customwars.client.io.loading;
 
 import com.customwars.client.model.TestData;
 import com.customwars.client.model.game.Game;
+import com.customwars.client.model.game.GameStatistics;
 import com.customwars.client.model.game.Player;
+import com.customwars.client.model.gameobject.UnitFactory;
 import com.customwars.client.model.map.Map;
 import junit.framework.Assert;
 import org.apache.log4j.BasicConfigurator;
@@ -17,6 +19,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -74,8 +77,13 @@ public class BinCW2GameParserTest {
     Map mapFromFile = gameFromFile.getMap();
     mapFromFile.validate();
     List<Player> players = new ArrayList<Player>(mapFromFile.getUniquePlayers());
-    for (Player player : hardCodedMap.getUniquePlayers()) {
-      Player playerFromFile = players.get(players.indexOf(player));
+    comparePlayers(hardCodedMap.getUniquePlayers(), players);
+    Assert.assertEquals(hardCodedMap.countTiles(), mapFromFile.countTiles());
+  }
+
+  private void comparePlayers(Collection<Player> players, List<Player> playersFromFile) {
+    for (Player player : players) {
+      Player playerFromFile = playersFromFile.get(playersFromFile.indexOf(player));
 
       Assert.assertEquals(player.getName(), playerFromFile.getName());
       Assert.assertEquals(player.getColor(), playerFromFile.getColor());
@@ -86,6 +94,24 @@ public class BinCW2GameParserTest {
       Assert.assertEquals(player.getCityCount(), playerFromFile.getCityCount());
       Assert.assertEquals(player.getState(), playerFromFile.getState());
     }
-    Assert.assertEquals(hardCodedMap.countTiles(), mapFromFile.countTiles());
+  }
+
+  @Test
+  public void testStatistics() throws IOException {
+    int playerID = 0;
+
+    // player 0 creates 1 unit
+    hardCodedGame.getPlayerByID(playerID).addUnit(UnitFactory.getUnit(0));
+
+    // Save and load the game
+    gameParser.writeGame(hardCodedGame, new FileOutputStream(SAVE_PATH));
+    Game gameFromFile = gameParser.readGame(new FileInputStream(SAVE_PATH));
+    GameStatistics stats = hardCodedGame.getStats();
+    GameStatistics statsFromFile = gameFromFile.getStats();
+
+    // Compare the stats, check if they are saved
+    int unitsCreated = stats.getNumericStat(playerID, "units_created");
+    int unitsCreatedFromFile  = statsFromFile.getNumericStat(playerID,"units_created");
+    Assert.assertEquals(unitsCreated, unitsCreatedFromFile);
   }
 }

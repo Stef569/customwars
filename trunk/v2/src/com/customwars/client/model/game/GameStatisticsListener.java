@@ -13,7 +13,15 @@ import java.util.Map;
  * Gather statistics for each player in the given game.
  * Player statistics are stored into the GameStatistics class
  *
- * @author stefan
+ * The following statistic keys are created when creating this listener.
+ * Note that if the key already exists it will not be overwritten.
+ * name - default value
+ * array_units_created - new int[]
+ * units_created - 0
+ * units_killed - 0
+ * units_lost - 0
+ * cities_captured - 0
+ * favorite_unit - "none"
  */
 public class GameStatisticsListener implements PropertyChangeListener {
   private final TurnBasedGame game;
@@ -105,12 +113,27 @@ public class GameStatisticsListener implements PropertyChangeListener {
     public PlayerStats(int playerID, GameStatistics stats) {
       this.playerID = playerID;
       this.stats = stats;
-      stats.setPlayerStat(playerID, "array_units_created", new int[UnitFactory.countUnits()]);
-      stats.setPlayerStat(playerID, "units_created", 0);
-      stats.setPlayerStat(playerID, "units_killed", 0);
-      stats.setPlayerStat(playerID, "units_lost", 0);
-      stats.setPlayerStat(playerID, "cities_captured", 0);
-      stats.setPlayerStat(playerID, "favorite_unit", "");
+      initStatistics();
+    }
+
+    private void initStatistics() {
+      createDefaultStat("array_units_created", new int[UnitFactory.countUnits()]);
+      createDefaultStat("units_created", 0);
+      createDefaultStat("units_killed", 0);
+      createDefaultStat("units_lost", 0);
+      createDefaultStat("cities_captured", 0);
+      createDefaultStat("favorite_unit", "none");
+    }
+
+    /**
+     * Creates a default statistic name-value pair if one does not exists yet.
+     * @param name The name of the statistic
+     * @param value The default value of the statistic
+     */
+    private void createDefaultStat(String name, Object value) {
+      if(!stats.hasStatFor(playerID, name)) {
+        stats.setPlayerStat(playerID, name, value);
+      }
     }
 
     public void unitCreated(int unitID) {
