@@ -151,7 +151,7 @@ public class InGameState extends CWState implements PropertyChangeListener {
     MoveTraverse moveTraverse = new MoveTraverse(map);
     hud = new HUD(container);
 
-    gameRenderer = new GameRenderer(game, camera, hud, moveTraverse);
+    gameRenderer = new GameRenderer(game, camera, hud, center, moveTraverse);
     gameRenderer.loadResources(resources);
 
     inGameContext = new InGameContext();
