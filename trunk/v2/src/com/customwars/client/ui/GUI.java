@@ -223,4 +223,16 @@ public class GUI {
       App.translate("gui_err_networkIO_msg") + " " + ex.getMessage(), App.translate("gui_err_networkIO_title")
     );
   }
+
+  public static int getScreenWidth() {
+    return guiContext.getWidth();
+  }
+
+  public static int getScreenHeight() {
+    return guiContext.getHeight();
+  }
+
+  public static Point worldToScreenCoordinate(int x, int y) {
+    return new Point(x - camera.getX(), y - camera.getY());
+  }
 }

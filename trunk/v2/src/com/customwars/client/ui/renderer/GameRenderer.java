@@ -13,6 +13,7 @@ import com.customwars.client.ui.Scroller;
 import com.customwars.client.ui.sprite.SpriteManager;
 import org.newdawn.slick.Graphics;
 
+import java.awt.Point;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -35,6 +36,9 @@ public class GameRenderer implements Renderable, PropertyChangeListener {
   private DamageRenderer damageRenderer;
   private final SpriteManager spriteManager;
   private final Camera2D camera;
+  // When the map is smaller then the screen it is centered,
+  // The center point is the top left position of the centered map
+  private final Point center;
   private final HUD hud;
   private final Scroller scroller;
 
@@ -42,9 +46,10 @@ public class GameRenderer implements Renderable, PropertyChangeListener {
   private final Game game;
   private final Map map;
 
-  public GameRenderer(Game game, Camera2D camera, HUD hud, MoveTraverse moveTraverse) {
+  public GameRenderer(Game game, Camera2D camera, HUD hud, Point center, MoveTraverse moveTraverse) {
     this.game = game;
     this.camera = camera;
+    this.center = center;
 
     this.game.addPropertyChangeListener(this);
     this.map = game.getMap();
@@ -90,12 +95,12 @@ public class GameRenderer implements Renderable, PropertyChangeListener {
       Unit activeUnit = game.getActiveUnit();
 
       if (damageRenderer == null) {
-        this.damageRenderer = new DamageRenderer(map, activeUnit, getCursorLocation());
+        this.damageRenderer = new DamageRenderer(map, activeUnit, center, getCursorLocation());
       } else {
         // Only create a new Damage renderer when the location has changed.
         // If the location has not changed keep using the old damage renderer
         if (!damageRenderer.isShowingDamageFor(getCursorLocation())) {
-          this.damageRenderer = new DamageRenderer(map, activeUnit, getCursorLocation());
+          this.damageRenderer = new DamageRenderer(map, activeUnit, center, getCursorLocation());
         }
       }
     } else {

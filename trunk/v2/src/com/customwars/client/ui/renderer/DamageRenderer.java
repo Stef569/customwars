@@ -3,7 +3,6 @@ package com.customwars.client.ui.renderer;
 import com.customwars.client.model.fight.Attacker;
 import com.customwars.client.model.fight.Fight;
 import com.customwars.client.model.fight.FightFactory;
-import com.customwars.client.model.map.Direction;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.ui.GUI;
@@ -13,6 +12,7 @@ import org.newdawn.slick.Font;
 import org.newdawn.slick.Graphics;
 
 import java.awt.Insets;
+import java.awt.Point;
 
 /**
  * Render the damage percentage that an Attacker can do against a Defender.
@@ -31,55 +31,52 @@ public class DamageRenderer implements Renderable {
    */
   private static final int OFFSET = 64;
 
+  // The position of a centered map
+  private final Point center;
   private final Location defenderLocation;
   private final TextBox dmgTextBox;
-  private final Direction quadrant;
   private static Font textFont;
 
-  public DamageRenderer(Map map, Attacker attacker, Location defenderLocation) {
+  public DamageRenderer(Map map, Attacker attacker, Point center, Location defenderLocation) {
+    this.center = center;
     this.defenderLocation = defenderLocation;
     Fight fight = FightFactory.createFight(map, attacker, defenderLocation);
     String dmgPercentage = "Damage:" + fight.getBasicAttackDamagePercentage() + "%";
 
     Insets insets = new Insets(BOX_MARGIN, BOX_MARGIN, BOX_MARGIN, BOX_MARGIN);
     dmgTextBox = new TextBox(dmgPercentage, textFont, insets);
-    quadrant = map.getQuadrantFor(defenderLocation);
     positionTextBox(map);
   }
 
   private void positionTextBox(Map map) {
     int tileSize = map.getTileSize();
-    int defenderX = defenderLocation.getCol() * tileSize + tileSize / 2;
-    int defenderY = defenderLocation.getRow() * tileSize + 5;
-    dmgTextBox.setLocation(defenderX + OFFSET, defenderY - OFFSET);
+    int defenderInMapX = defenderLocation.getCol() * tileSize + tileSize / 2;
+    int defenderInMapY = defenderLocation.getRow() * tileSize + tileSize / 2;
 
-    // If the damage percentage does not fit to the gui make sure that it does
-    // by positioning the dmg percentage to the opposite quadrant as where the defender is located.
-    // If the defender is located NORTH EAST in the map show the dmg percentage at SOUTH WEST
-    if (!GUI.canFitToScreen(dmgTextBox.getX(), dmgTextBox.getY(), dmgTextBox.getWidth(), dmgTextBox.getHeight())) {
-      int boxX, boxY;
-      switch (quadrant) {
-        case NORTHEAST:
-          boxX = dmgTextBox.getX() - OFFSET;
-          boxY = dmgTextBox.getY() + OFFSET;
-          break;
-        case NORTHWEST:
-          boxX = dmgTextBox.getX() + OFFSET;
-          boxY = dmgTextBox.getY() + OFFSET;
-          break;
-        case SOUTHEAST:
-          boxX = dmgTextBox.getX() - OFFSET;
-          boxY = dmgTextBox.getY() - OFFSET;
-          break;
-        case SOUTHWEST:
-          boxX = dmgTextBox.getX() + OFFSET;
-          boxY = dmgTextBox.getY() - OFFSET;
-          break;
-        default:
-          throw new AssertionError("Illegal Quadrant " + quadrant + " expected NE,NW,SE or SW");
+    // Add the center position and the offset
+    int boxWorldX = center.x + defenderInMapX + OFFSET;
+    int boxWorldY = center.y + defenderInMapY - OFFSET;
+
+    // Make sure that the damage percentage fits to the screen
+    if (!GUI.canFitToScreen(boxWorldX, boxWorldY, dmgTextBox.getWidth(), dmgTextBox.getHeight())) {
+      Point boxScreenCoordinate = GUI.worldToScreenCoordinate(boxWorldX, boxWorldY);
+
+      if (boxScreenCoordinate.x + dmgTextBox.getWidth() > GUI.getScreenWidth()) {
+        boxWorldX -= dmgTextBox.getWidth() + 2 * OFFSET;
+      } else if (boxScreenCoordinate.x < 0) {
+        boxWorldX += dmgTextBox.getWidth() + 2 * OFFSET;
       }
-      dmgTextBox.setLocation(boxX, boxY);
+
+      if (boxScreenCoordinate.y + dmgTextBox.getHeight() > GUI.getScreenHeight()) {
+        boxWorldY -= dmgTextBox.getHeight() + 2 * OFFSET;
+      } else if (boxScreenCoordinate.y < 0) {
+        boxWorldY += dmgTextBox.getHeight() + 2 * OFFSET;
+      }
+
     }
+
+    // Graphics are auto centered, subtract center position
+    dmgTextBox.setLocation(boxWorldX-center.x, boxWorldY-center.y);
   }
 
   @Override
