@@ -8,6 +8,8 @@ import com.customwars.client.model.map.Tile;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -271,5 +273,12 @@ public class Game extends TurnBasedGame implements PropertyChangeListener {
 
   public GameStatistics getStats() {
     return gameStatistics;
+  }
+
+  private void readObject(ObjectInputStream in) throws ClassNotFoundException, IOException {
+    in.defaultReadObject();
+    // When a Game is read from a stream,
+    // make sure to register the listeners for the statistics.
+    new GameStatisticsListener(this, gameStatistics);
   }
 }

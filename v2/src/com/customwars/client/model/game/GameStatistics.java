@@ -13,7 +13,7 @@ import java.util.Set;
  * <li>number</li>
  * <li>array</li>
  * </ul>
- *
+ * <p/>
  * Example key -> value pairs
  * units_killed -> 6
  * array_units_killed -> {1,0,0,0,0,0,0,0,5} (The array index is the unit ID)
@@ -44,7 +44,11 @@ public class GameStatistics implements Serializable {
    * @param otherGameStatistics gameStatistics to copy
    */
   public GameStatistics(GameStatistics otherGameStatistics) {
-    playerStatistics = new HashMap<Integer, Map<String, Object>>(otherGameStatistics.playerStatistics);
+    playerStatistics = new HashMap<Integer, Map<String, Object>>();
+    Map<Integer, Map<String, Object>> otherPlayerStatistics = otherGameStatistics.playerStatistics;
+    for (int key : otherPlayerStatistics.keySet()) {
+      playerStatistics.put(key, new HashMap<String, Object>(otherPlayerStatistics.get(key)));
+    }
   }
 
   void setPlayerStat(int playerID, String key, Object value) {
@@ -80,5 +84,10 @@ public class GameStatistics implements Serializable {
 
   private Object getStat(int player, String key) {
     return playerStatistics.get(player).get(key);
+  }
+
+  public boolean hasStatFor(int playerID, String key) {
+    return playerStatistics.containsKey(playerID) &&
+        playerStatistics.get(playerID).containsKey(key);
   }
 }
