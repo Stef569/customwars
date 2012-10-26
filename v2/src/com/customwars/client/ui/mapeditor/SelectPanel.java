@@ -161,9 +161,7 @@ public abstract class SelectPanel extends BasicComponent {
 
   @Override
   public boolean isWithinComponent(int x, int y) {
-    // The coordinates are within the component when
-    // y is within the vertical space
-    return y >= getY() && y <= getY() + getHeight();
+    return x >= getX() && x <= getX() + getWidth() && y >= getY() && y <= getY() + getHeight();
   }
 
   public abstract boolean canSelect(Tile cursorLocation);

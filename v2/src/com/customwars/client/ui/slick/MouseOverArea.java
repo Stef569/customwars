@@ -413,14 +413,14 @@ public class MouseOverArea extends BasicComponent {
    * @see org.newdawn.slick.gui.AbstractComponent#getHeight()
    */
   public int getHeight() {
-    return (int) (area.getMaxY() - area.getY());
+    return (int) area.getHeight();
   }
 
   /**
    * @see org.newdawn.slick.gui.AbstractComponent#getWidth()
    */
   public int getWidth() {
-    return (int) (area.getMaxX() - area.getX());
+    return (int) area.getWidth();
   }
 
   public boolean isSelected() {
