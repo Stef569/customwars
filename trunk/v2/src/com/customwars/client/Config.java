@@ -5,9 +5,11 @@ import com.customwars.client.model.co.COFactory;
 import com.customwars.client.script.BeanShell;
 import com.customwars.client.script.ScriptManager;
 import com.customwars.client.tools.IOUtil;
+import com.customwars.client.tools.Log4jLogSystem;
 import com.customwars.client.tools.StringUtil;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
+import org.newdawn.slick.util.Log;
 import org.newdawn.slick.util.ResourceLoader;
 
 import java.io.File;
@@ -44,6 +46,7 @@ public class Config {
   public Config(ResourceManager resources) {
     this.resources = resources;
     this.coScriptManager = new ScriptManager();
+    Log.setLogSystem(new Log4jLogSystem());
   }
 
   /**
