@@ -3,10 +3,16 @@ package com.customwars.client.script;
 import bsh.EvalError;
 import bsh.Interpreter;
 import bsh.UtilEvalError;
+import com.customwars.client.tools.IOUtil;
 import org.apache.log4j.Logger;
+import org.newdawn.slick.util.ResourceLoader;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
+import java.io.Reader;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -63,14 +69,22 @@ public class ScriptManager implements Serializable {
     }
   }
 
+  /**
+   * Loads a beanshell script file and evaluates the text.
+   * The location of the script file is saved to allow the script to be reloaded.
+   */
   public void loadScript(String scriptFile) {
+    Reader scriptInputStream = null;
+
     try {
-      bsh.source(scriptFile);
+      InputStream in = ResourceLoader.getResourceAsStream(scriptFile);
+      scriptInputStream = new BufferedReader(new InputStreamReader(in));
+      bsh.eval(scriptInputStream);
       scriptFiles.add(scriptFile);
-    } catch (IOException e) {
-      logger.warn("Failed to load script file", e);
     } catch (EvalError evalError) {
       logger.warn("Failed to load script file", evalError);
+    } finally {
+      IOUtil.closeStream(scriptInputStream);
     }
   }
 
