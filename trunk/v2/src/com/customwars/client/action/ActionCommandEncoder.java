@@ -55,6 +55,7 @@ public class ActionCommandEncoder {
    * A space character is put before the given parameter if the action command is not empty.
    *
    * @param parameter The parameter to add to the action command.
+   * @return this object, to allow method chaining
    */
   public ActionCommandEncoder add(String parameter) {
     if (actionCommand.length() != 0) {
