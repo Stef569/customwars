@@ -23,12 +23,13 @@ That's a good thing, everything compiles, only 1 more step.
 
 #8 We are using native libraries and the virtual machine needs to know where to find them.
 <br/>Add the relative path 
--Djava.library.path=lib/native/natives-(your os) to the *vm parameters*. Replace your os with the directory of you os.
+-Djava.library.path=lib/native/(your os) to the *vm parameters*. Replace your os with the directory of you os.
 
 Examples:
-  * -Djava.library.path=lib/native/natives-*linux*
-  * -Djava.library.path=lib/native/natives-*win32*
-  * -Djava.library.path=lib/native/natives-*mac*
+  * -Djava.library.path=lib/native/*linux*
+  * -Djava.library.path=lib/native/*windows*
+  * -Djava.library.path=lib/native/*macosx*
+  * -Djava.library.path=lib/native/*solaris*
 
 You should now be greeted with a screen.
 ----
