@@ -66,19 +66,23 @@
 
         <!-- Move files in native subdirs into native -->
         <copy todir="${dist.lib.native.dir}">
-            <fileset dir="${dist.lib.native.dir}/natives-linux"/>
+            <fileset dir="${dist.lib.native.dir}/windows"/>
         </copy>
         <copy todir="${dist.lib.native.dir}">
-            <fileset dir="${dist.lib.native.dir}/natives-mac"/>
+            <fileset dir="${dist.lib.native.dir}/macosx"/>
         </copy>
         <copy todir="${dist.lib.native.dir}">
-            <fileset dir="${dist.lib.native.dir}/natives-win32"/>
+            <fileset dir="${dist.lib.native.dir}/linux"/>
+        </copy>
+        <copy todir="${dist.lib.native.dir}">
+            <fileset dir="${dist.lib.native.dir}/solaris"/>
         </copy>
 
         <!-- Delete empty native subdirs -->
-        <delete dir="${dist.lib.native.dir}/natives-linux"/>
-        <delete dir="${dist.lib.native.dir}/natives-mac"/>
-        <delete dir="${dist.lib.native.dir}/natives-win32"/>
+        <delete dir="${dist.lib.native.dir}/windows"/>
+        <delete dir="${dist.lib.native.dir}/macosx"/>
+        <delete dir="${dist.lib.native.dir}/linux"/>
+        <delete dir="${dist.lib.native.dir}/solaris"/>
 
         <!-- Copy resource to dist/resource -->
         <copy todir="${dist.res.dir}">
