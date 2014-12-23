@@ -53,8 +53,8 @@ public class TestMapRenderer extends CWState {
     scroller = new Scroller(camera);
 
     // Create & add Cursors
-    TileSprite selectCursor = resources.createCursor(map, App.get("user.selectcursor"));
-    TileSprite attackCursor = resources.createCursor(map, App.get("user.attackcursor"));
+    TileSprite selectCursor = resources.createCursor(map, "SELECT");
+    TileSprite attackCursor = resources.createCursor(map, "ATTACK");
 
     cursorControl.addCursor("SELECT", selectCursor);
     cursorControl.addCursor("ATTACK", attackCursor);

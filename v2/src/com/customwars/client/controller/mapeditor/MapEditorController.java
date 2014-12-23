@@ -148,7 +148,7 @@ public class MapEditorController {
   }
 
   private void initCursors(Map map) {
-    TileSprite selectCursor = resources.createCursor(map, App.get("user.selectcursor"));
+    TileSprite selectCursor = resources.createCursor(map, "SELECT");
     cursorController.addCursor("SELECT", selectCursor);
     cursorController.activateCursor("SELECT");
   }
