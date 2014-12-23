@@ -44,9 +44,9 @@ public class ServerGameJoinController {
     }
 
     // Remove previously entered data
-    Widget cboSide = page.getWidget("side");
-    cboSide.setText("");
-    cboSide.removeChildren();
+    Widget cboSlot = page.getWidget("slot");
+    cboSlot.setText("");
+    cboSlot.removeChildren();
   }
 
   private void checkServerConnection() {
@@ -57,7 +57,7 @@ public class ServerGameJoinController {
     }
   }
 
-  public void fetchSides(Widget gameTxtField) {
+  public void fetchSlots(Widget gameTxtField) {
     if (StringUtil.hasContent(gameTxtField.getText())) {
       new DetermineFreeSlots(messageSender, gameTxtField, page).run();
     }
@@ -77,16 +77,16 @@ public class ServerGameJoinController {
       return;
     }
 
-    int side;
+    int slot;
     try {
-      side = Integer.parseInt(page.getWidget("side").getText());
+      slot = Integer.parseInt(page.getWidget("slot").getText());
     } catch (NumberFormatException ex) {
-      GUI.showErrDialog("No side selected", "Please choose a side");
+      GUI.showErrDialog("No slot selected", "Please choose a slot");
       return;
     }
 
     try {
-      messageSender.joinServerGame(gameName, gamePass, userName, userPassword, side);
+      messageSender.joinServerGame(gameName, gamePass, userName, userPassword, slot);
       GUI.showdialog(userName + " joined battle " + gameName, "Success");
       stateChanger.changeToPrevious();
     } catch (NetworkException e) {

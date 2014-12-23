@@ -60,12 +60,12 @@ public class BattleServerMessageSender extends MessageSenderAdapter {
   /**
    * Join an existing Server game
    */
-  public void joinServerGame(String gameName, String gamePass, String userName, String userPassword, int side) throws NetworkException {
+  public void joinServerGame(String gameName, String gamePass, String userName, String userPassword, int slot) throws NetworkException {
     serverGame = new ServerGame(gameName, gamePass);
     user = new User(userName, userPassword);
 
     try {
-      battleServerConnection.joinGame(serverGame, user, side);
+      battleServerConnection.joinGame(serverGame, user, slot);
     } catch (IOException ex) {
       throw new NetworkException(ex);
     }

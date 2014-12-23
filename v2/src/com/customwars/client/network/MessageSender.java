@@ -21,7 +21,7 @@ public interface MessageSender {
 
   void joinServerGame(String gameName, String gamePass,
                       String userName, String userPassword,
-                      int side) throws NetworkException;
+                      int slot) throws NetworkException;
 
   void loginToServerGame(String gameName,
                          String userName, String userPassword) throws NetworkException;

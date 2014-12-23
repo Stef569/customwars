@@ -56,7 +56,6 @@ public class ServerGameInfo {
       return -1;
     }
 
-
     int index = userNames.indexOf(userName);
     return index + 1;
   }

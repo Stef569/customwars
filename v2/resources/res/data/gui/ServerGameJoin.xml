@@ -8,7 +8,7 @@ Licensed Carlsbad Cubes - Wolf Paulus-->
         <panel enabled="false" gap="20">
             <label tooltip="The name shown in the server list" text="Game Name"/>
             <textfield name="server_game_name" weightx="1" halign="right"/>
-            <button name="fetch_sides" text="Fetch sides" action="fetchSides(server_game_name)"/>
+            <button name="fetch_slots" text="Fetch slots" action="fetchSlots(server_game_name)"/>
         </panel>
         <panel gap="20">
             <label tooltip="your name, used to login to the game" text="User name"/>
@@ -23,8 +23,8 @@ Licensed Carlsbad Cubes - Wolf Paulus-->
             <textfield name="user_password" weightx="1" halign="right"/>
         </panel>
         <panel gap="20">
-            <label tooltip="Select a side" text="Side"/>
-            <combobox name="side" weightx="1" halign="right"/>
+            <label tooltip="Select a slot" text="Slot"/>
+            <combobox name="slot" weightx="1" halign="right"/>
         </panel>
     </panel>
     <panel name="btnPanel" valign="bottom" left="10" bottom="10" right="10">

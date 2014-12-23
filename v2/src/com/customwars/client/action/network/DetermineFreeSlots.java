@@ -12,9 +12,9 @@ import org.newdawn.slick.thingle.Widget;
  * This code can be used in a thread.
  * It's main purpose is to ask the server: 'does the given server game exists'
  * <p/>
- * if there is a side widget
- * When the server game exists the side cbo widget is updated so it contains the free slots
- * When the server game does not exists the side cbo widget is disabled and an error message is shown
+ * if there is a slot widget
+ * When the server game exists the slot cbo widget is updated so it contains the free slots
+ * When the server game does not exists the slot cbo widget is disabled and an error message is shown
  * <p/>
  * if there is a user name widget
  * When the server game exists the user name cbo widget is updated so it contains the available users
@@ -27,29 +27,29 @@ public class DetermineFreeSlots implements Runnable {
   private final MessageSender messageSender;
   private final Page page;
   private final Widget gameTxtField;
-  private final Widget cboSide;
+  private final Widget cboSlot;
   private final Widget cboUserName;
 
   public DetermineFreeSlots(MessageSender messageSender, Widget gameTxtField, Page page) {
     this.messageSender = messageSender;
     this.gameTxtField = gameTxtField;
     this.page = page;
-    this.cboSide = page.getWidget("side");
+    this.cboSlot = page.getWidget("slot");
     this.cboUserName = page.getWidget("user_name");
   }
 
   public void run() {
     String gameName = gameTxtField.getText();
-    boolean hasSideComboBox = cboSide != null && cboSide.getWidgetClass().equals("combobox");
+    boolean hasSlotComboBox = cboSlot != null && cboSlot.getWidgetClass().equals("combobox");
     boolean hasUserNameComboBox = cboUserName != null && cboUserName.getWidgetClass().equals("combobox");
 
     try {
       ServerGameInfo serverGameInfo = messageSender.getGameInfo(gameName);
 
-      if (hasSideComboBox) {
-        fillSideCBO(serverGameInfo);
-        selectFirstAvailableSide(serverGameInfo);
-        cboSide.setBoolean("enabled", true);
+      if (hasSlotComboBox) {
+        fillSlotCBO(serverGameInfo);
+        selectFirstAvailableSlot(serverGameInfo);
+        cboSlot.setBoolean("enabled", true);
       }
       if (hasUserNameComboBox) {
         fillUserNameCBO(serverGameInfo);
@@ -57,7 +57,7 @@ public class DetermineFreeSlots implements Runnable {
         cboUserName.setBoolean("enabled", true);
       }
     } catch (NetworkException e) {
-      if (hasSideComboBox) cboSide.setBoolean("enabled", false);
+      if (hasSlotComboBox) cboSlot.setBoolean("enabled", false);
       if (hasUserNameComboBox) cboUserName.setBoolean("enabled", false);
       GUI.showExceptionDialog("Wrong game name", e);
     }
@@ -65,6 +65,8 @@ public class DetermineFreeSlots implements Runnable {
 
   /**
    * Add each user that has joined the game to the username combo box widget
+   *
+   * @param serverGameInfo The Game info object containing the user names
    */
   private void fillUserNameCBO(ServerGameInfo serverGameInfo) {
     cboUserName.removeChildren();
@@ -98,14 +100,16 @@ public class DetermineFreeSlots implements Runnable {
   }
 
   /**
-   * Fill the side combobox with slot numbers. When the slot is free enable the choice.
-   * If the slot is already taken by a user the choice is disabled
+   * Fill the slot combobox with slot numbers. When the slot is free enable the choice.
+   * If the slot is already taken by a user the choice is disabled.
+   *
+   * @param serverGameInfo The game info object containing the free slots
    */
-  private void fillSideCBO(ServerGameInfo serverGameInfo) {
-    cboSide.removeChildren();
+  private void fillSlotCBO(ServerGameInfo serverGameInfo) {
+    cboSlot.removeChildren();
 
     for (int freeSlotNr : serverGameInfo.getFreeSlots()) {
-      Widget choice = ThingleUtil.addChoice(page, cboSide, freeSlotNr + "");
+      Widget choice = ThingleUtil.addChoice(page, cboSlot, freeSlotNr + "");
 
       if (serverGameInfo.isFreeSlot(freeSlotNr)) {
         choice.setBoolean("enabled", true);
@@ -115,13 +119,13 @@ public class DetermineFreeSlots implements Runnable {
     }
   }
 
-  private void selectFirstAvailableSide(ServerGameInfo serverGameInfo) {
+  private void selectFirstAvailableSlot(ServerGameInfo serverGameInfo) {
     for (String userName : serverGameInfo.getUserNames()) {
       String slotNr = serverGameInfo.getSlotNrForUser(userName) + "";
 
       // If the current slot number is present in the list select it
-      if (cboSide.getText().equals(slotNr)) {
-        ThingleUtil.selectChild(cboSide, slotNr);
+      if (cboSlot.getText().equals(slotNr)) {
+        ThingleUtil.selectChild(cboSlot, slotNr);
         return;
       }
     }
@@ -131,7 +135,7 @@ public class DetermineFreeSlots implements Runnable {
 
       // Select the first empty slot
       if (serverGameInfo.isFreeSlot(slotNr)) {
-        ThingleUtil.selectChild(cboSide, slotNr + "");
+        ThingleUtil.selectChild(cboSlot, slotNr + "");
         return;
       }
     }
