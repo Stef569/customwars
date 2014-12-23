@@ -6,12 +6,17 @@ import com.customwars.client.model.map.Map;
 import com.customwars.client.network.MessageSender;
 import com.customwars.client.network.MessageSenderFactory;
 import com.customwars.client.network.NetworkException;
+import com.customwars.client.network.ServerGameConfig;
+import com.customwars.client.network.ServerPlayer;
 import com.customwars.client.tools.StringUtil;
 import com.customwars.client.ui.GUI;
 import com.customwars.client.ui.state.StateChanger;
 import com.customwars.client.ui.state.StateSession;
 import org.newdawn.slick.thingle.Page;
 import org.newdawn.slick.thingle.Widget;
+
+import java.awt.Color;
+import java.util.Arrays;
 
 /**
  * Handle user input when creating a server game
@@ -104,13 +109,28 @@ public class ServerGameCreateController {
       return;
     }
 
+    ServerPlayer[] players = new ServerPlayer[playerCount];
+    for (int i = 0; i < playerCount; i++) {
+      players[i] = createServerPlayer(i);
+    }
+
     try {
-      messageSender.createNewServerGame(gameName, gamePass, map, userName, userPassword, comment);
+      ServerGameConfig gameConfig = new ServerGameConfig(Arrays.asList(players));
+      messageSender.createNewServerGame(gameName, gamePass, map, userName, userPassword, comment, gameConfig);
+      messageSender.joinServerGame(gameName, gamePass, userName, userPassword, 1);
       GUI.showdialog("Game " + gameName + " created", "Success");
       back();
     } catch (NetworkException e) {
       GUI.showExceptionDialog("Could not create new server Game", e);
     }
+  }
+
+  private ServerPlayer createServerPlayer(int id) {
+    String coName = stateSession.getCO(id).getName();
+    Color color = stateSession.getColor(id);
+    int team = stateSession.getTeam(id);
+    String controller = stateSession.getControllerType(id);
+    return new ServerPlayer(id, coName, color, team, controller);
   }
 
   public void back() {

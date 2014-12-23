@@ -1,12 +1,16 @@
 package com.customwars.client.network.http.battleserver;
 
+import com.customwars.client.model.co.CO;
+import com.customwars.client.model.co.COFactory;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.network.MessageSenderAdapter;
 import com.customwars.client.network.NetworkException;
 import com.customwars.client.network.ServerGame;
+import com.customwars.client.network.ServerGameConfig;
 import com.customwars.client.network.ServerGameInfo;
+import com.customwars.client.network.ServerPlayer;
 import com.customwars.client.network.User;
 
 import java.awt.Color;
@@ -42,23 +46,41 @@ public class BattleServerMessageSender extends MessageSenderAdapter {
   }
 
   /**
-   * Create a new Server game and join the game as user 1
+   * 1. Create a new Server game with the given game name and game password
+   * 2. Store Player Color, Team, Controller, Co in the server Config. These values are set by the host.
+   * 3. Upload the initial game to the server
    */
-  public void createNewServerGame(String gameName, String gamePass, Map map, String userName, String userPassword, String comment) throws NetworkException {
+  public void createNewServerGame(String gameName, String gamePass, Map map, String userName, String userPassword, String comment, ServerGameConfig gameConfig) throws NetworkException {
     serverGame = new ServerGame(gameName, gamePass, map.getMapName(), map.getNumPlayers(), comment);
     user = new User(userName, userPassword);
 
     try {
       battleServerConnection.createGame(serverGame, user);
-      battleServerConnection.uploadMap(serverGame, map);
-      battleServerConnection.joinGame(serverGame, user, 1);
+      battleServerConnection.uploadGameConfig(serverGame, gameConfig);
+      Game game = createInitialGame(map, gameConfig);
+      battleServerConnection.uploadGame(serverGame, game);
     } catch (IOException ex) {
       throw new NetworkException(ex);
     }
   }
 
+  private Game createInitialGame(Map map, ServerGameConfig gameConfig) {
+    List<Player> gamePlayers = new ArrayList<Player>();
+    for (ServerPlayer player : gameConfig.getPlayers()) {
+      int slot = player.getSlot();
+      Color color = player.getColor();
+      String name = "p" + slot;
+      int team = player.getTeam();
+      boolean ai = player.isAIController();
+      CO co = COFactory.getCO(player.getCOName());
+      gamePlayers.add(new Player(slot, color, name, 0, team, ai, co));
+    }
+
+    return new Game(map, gamePlayers, map.getDefaultGameRules());
+  }
+
   /**
-   * Join an existing Server game
+   * Join an existing Server game. Register the slot for the given user name.
    */
   public void joinServerGame(String gameName, String gamePass, String userName, String userPassword, int slot) throws NetworkException {
     serverGame = new ServerGame(gameName, gamePass);
@@ -86,52 +108,56 @@ public class BattleServerMessageSender extends MessageSenderAdapter {
   }
 
   /**
-   * Start a servergame
-   * #1 Download the chosen map for this game
-   * #2 Create a Game and return it
+   * Start a server game
+   * 1. Check if the user can start this game
+   * 2. Download the initial game
+   * 3. Create a new Game and return it
    * The returned Game is not started yet
    */
   public Game startServerGame() throws NetworkException {
     try {
       battleServerConnection.canPlay(serverGame, user);
-      Map map = battleServerConnection.downloadMap(serverGame);
-      ServerGameInfo serverInfo = battleServerConnection.getServerGameInfo(serverGame.getGameName());
-      return createGame(map, serverInfo);
+      Game game = battleServerConnection.downloadGame(serverGame);
+      ServerGameInfo serverGameInfo = battleServerConnection.getServerGameInfo(serverGame.getGameName());
+      ServerGameConfig serverGameConfig = battleServerConnection.downloadGameConfig(serverGame);
+      return createGame(game, serverGameInfo, serverGameConfig);
     } catch (IOException ex) {
       throw new NetworkException(ex);
     }
   }
 
   /**
-   * Use the information stored on the server(server game info and the map)
-   * to create a Game
+   * Use the information stored on the server (server game info, ServerPlayers and the map) to create a Game
+   * The map is stored in the initial game.
    */
-  private static Game createGame(Map map, ServerGameInfo serverGameInfo) {
-    List<Player> mapPlayers = new ArrayList<Player>(map.getUniquePlayers());
+  private static Game createGame(Game initialGame, ServerGameInfo serverGameInfo, ServerGameConfig serverGameConfig) {
+    Map map = initialGame.getMap();
     String[] userNames = serverGameInfo.getUserNames();
-    List<Player> gamePlayers = new ArrayList<Player>();
+    List<ServerPlayer> serverPlayerList = serverGameConfig.getPlayers();
 
-    // The user names have the same order as the turns
-    // The first game player should be named as the first user name etc...
-    // The player in the map is linked to the turn position
-    // todo later to be replaced by linking map players to a color
-    // All players are enemies of each other
-    // todo how can 2 players team up?
-    for (int i = 0; i < userNames.length; i++) {
-      Player mapPlayer = mapPlayers.get(i);
-      Player player = createPlayer(mapPlayer, userNames[i], i, false);
-      gamePlayers.add(player);
+    List<Player> gamePlayers = new ArrayList<Player>();
+    for (int i = 0; i < serverPlayerList.size(); i++) {
+      ServerPlayer player = serverPlayerList.get(i);
+      Player newPlayer = createPlayer(i, player, userNames[i]);
+      gamePlayers.add(newPlayer);
     }
 
     return new Game(map, gamePlayers, map.getDefaultGameRules());
   }
 
-  private static Player createPlayer(Player mapPlayer, String playerName, int team, boolean ai) {
-    int mapPlayerID = mapPlayer.getId();
-    Color mapPlayerColor = mapPlayer.getColor();
-    return new Player(mapPlayerID, mapPlayerColor, playerName, 0, team, ai);
+  private static Player createPlayer(int id, ServerPlayer player, String playerName) {
+    Color color = player.getColor();
+    CO co = COFactory.getCO(player.getCOName());
+    return new Player(id, color, playerName, 0, player.getTeam(), player.isAIController(), co);
   }
 
+  /**
+   * Ends the current turn.
+   * 1. The game is uploaded to the server
+   * 2. The next player can now make his moves
+   *
+   * @param game The game with the changes from the current player
+   */
   public void endTurn(Game game) throws NetworkException {
     try {
       battleServerConnection.uploadGame(serverGame, game);
@@ -141,6 +167,11 @@ public class BattleServerMessageSender extends MessageSenderAdapter {
     }
   }
 
+  /**
+   * Allows the player to start making his moves.
+   *
+   * @return The game downloaded from the server containing the up to date positions of all game objects.
+   */
   public Game startTurn() throws NetworkException {
     try {
       battleServerConnection.canPlay(serverGame, user);
