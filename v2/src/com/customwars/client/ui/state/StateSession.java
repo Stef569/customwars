@@ -121,6 +121,10 @@ public class StateSession {
     return cos[player.getId()];
   }
 
+  public CO getCO(int playerID) {
+    return cos[playerID];
+  }
+
   public Color getColor(Player player) {
     return colors[player.getId()];
   }
@@ -138,7 +142,11 @@ public class StateSession {
   }
 
   public String getControllerType(Player player) {
-    return controllers[player.getId()];
+    return getControllerType(player.getId());
+  }
+
+      public String getControllerType(int playerID) {
+    return controllers[playerID];
   }
 
   public boolean hasMoreCOsThenStyles() {

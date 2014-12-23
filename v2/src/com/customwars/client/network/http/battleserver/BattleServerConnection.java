@@ -7,6 +7,7 @@ import com.customwars.client.model.game.Game;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.network.NetworkException;
 import com.customwars.client.network.ServerGame;
+import com.customwars.client.network.ServerGameConfig;
 import com.customwars.client.network.ServerGameInfo;
 import com.customwars.client.network.User;
 import com.customwars.client.network.http.HttpClient;
@@ -196,13 +197,36 @@ public class BattleServerConnection {
     }
   }
 
-  public void removePlayer(ServerGame serverGame, User user, int armyID) throws IOException, NetworkException {
-    String[] replies = sendCommand(REMOVE_PLAYER, serverGame.getGameName(), user.getName(), user.getPassword(), armyID + "");
+  public void removePlayer(ServerGame serverGame, User user, int slot) throws IOException, NetworkException {
+    String[] replies = sendCommand(REMOVE_PLAYER, serverGame.getGameName(), user.getName(), user.getPassword(), slot + "");
     String reply = replies[0];
 
     if (!reply.equals(UPDATE_OK)) {
-      throw new NetworkException("Could not remove player " + armyID);
+      throw new NetworkException("Could not remove player " + slot);
     }
+  }
+
+  public void uploadGameConfig(ServerGame serverGame, ServerGameConfig config) throws IOException, NetworkException {
+    HttpClient client = new HttpClient(serverURL + UPLOAD_MAP_SCRIPT);
+    File tempSaveFile = File.createTempFile(TEMP_SAVE_FILE_NAME, TEMP_SAVE_FILE_EXT);
+    ServerGameConfigIO.write(config, new FileOutputStream(tempSaveFile));
+    client.upload(serverGame.getGameName(), tempSaveFile);
+    tempSaveFile.delete();
+    String[] replies = client.readReplies();
+    String reply = replies[0];
+
+    if (!reply.equalsIgnoreCase(FILE_RECEIVED)) {
+      throw new NetworkException("Could not send file", replies);
+    }
+  }
+
+  public ServerGameConfig downloadGameConfig(ServerGame serverGame) throws IOException, NetworkException {
+    HttpClient client = new HttpClient(serverURL + DOWNLOAD_MAP_SCRIPT);
+    File tempSaveFile = File.createTempFile(TEMP_SAVE_FILE_NAME, TEMP_SAVE_FILE_EXT);
+    client.download(serverGame.getGameName(), tempSaveFile);
+    ServerGameConfig config = ServerGameConfigIO.read(new FileInputStream(tempSaveFile));
+    tempSaveFile.delete();
+    return config;
   }
 
   public void uploadMap(ServerGame serverGame, Map map) throws IOException, NetworkException {

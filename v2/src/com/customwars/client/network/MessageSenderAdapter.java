@@ -21,7 +21,7 @@ public class MessageSenderAdapter implements MessageSender {
   }
 
   @Override
-  public void createNewServerGame(String gameName, String gamePass, Map map, String userName, String userPassword, String comment) throws NetworkException {
+  public void createNewServerGame(String gameName, String gamePass, Map map, String userName, String userPassword, String comment, ServerGameConfig gameConfig) throws NetworkException {
   }
 
   @Override

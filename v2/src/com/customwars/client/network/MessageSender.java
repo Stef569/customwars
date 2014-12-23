@@ -17,7 +17,7 @@ public interface MessageSender {
 
   void createNewServerGame(String gameName, String gamePass, Map map,
                            String userName, String userPassword,
-                           String comment) throws NetworkException;
+                           String comment, ServerGameConfig config) throws NetworkException;
 
   void joinServerGame(String gameName, String gamePass,
                       String userName, String userPassword,
