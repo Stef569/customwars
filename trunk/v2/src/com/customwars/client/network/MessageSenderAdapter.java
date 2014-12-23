@@ -25,7 +25,7 @@ public class MessageSenderAdapter implements MessageSender {
   }
 
   @Override
-  public void joinServerGame(String gameName, String gamePass, String userName, String userPassword, int side) throws NetworkException {
+  public void joinServerGame(String gameName, String gamePass, String userName, String userPassword, int slot) throws NetworkException {
   }
 
   @Override
