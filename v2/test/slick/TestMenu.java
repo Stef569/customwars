@@ -21,12 +21,13 @@ import org.newdawn.slick.state.StateBasedGame;
  * @author Crecen
  */
 public class TestMenu extends CWState implements ComponentListener {
-
   private Music backgroundMusic;
   private Image image;
   private PopupMenu testmenu;
+  private int windowHeight;
 
   public void init(GameContainer container, StateBasedGame stateBasedGame) throws SlickException {
+    windowHeight = container.getHeight();
     backgroundMusic = new Music("testData/shortBackground.ogg");
     backgroundMusic.setVolume(0.5F);
 
@@ -63,16 +64,16 @@ public class TestMenu extends CWState implements ComponentListener {
     g.setColor(Color.lightGray);
     switch (testmenu.getCurrentItem()) {
       case 0:
-        g.drawString("Scroll a mini-map and see the terrain up close", 210, 440);
+        g.drawString("Scroll a mini-map and see the terrain up close", 210, windowHeight - 40);
         break;
       case 1:
-        g.drawString("The way buttons will be set on the keyboard.", 210, 440);
+        g.drawString("The way buttons will be set on the keyboard.", 210, windowHeight - 40);
         break;
       case 2:
-        g.drawString("Play a test game between the main coders", 210, 440);
+        g.drawString("Play a test game between the main coders", 210, windowHeight - 40);
         break;
       case 3:
-        g.drawString("Create a map", 210, 440);
+        g.drawString("Create a map", 210, windowHeight - 40);
         break;
     }
     g.setColor(Color.white);
