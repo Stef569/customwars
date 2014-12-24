@@ -31,7 +31,7 @@ Licensed Carlsbad Cubes - Wolf Paulus-->
         <textfield name="txt_chat" weightx="1"/>
         <button name="btn_add_chat_text" text="Send" action="sendChatMessage()"/>
     </panel>
-    <panel name="btnPanel" weighty="1" valign="bottom" gap="10">
+    <panel name="btnPanel" weightx="1" weighty="1" valign="bottom" gap="10">
         <button text="Back" action="back"/>
         <button name="btn_play" weightx="1" halign="right" text="Play" action="play"/>
     </panel>

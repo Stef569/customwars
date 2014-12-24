@@ -23,7 +23,7 @@ Licensed Carlsbad Cubes - Wolf Paulus-->
             <textfield name="user_password" weightx="1" halign="right"/>
         </panel>
     </panel>
-    <panel name="btnPanel" valign="bottom" weighty="1">
+    <panel name="btnPanel" valign="bottom" weightx="1" weighty="1">
         <button text="Back" action="back()"/>
         <button weightx="1" halign="right" text="Login" action="loginIntoServerGame"/>
     </panel>

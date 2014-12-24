@@ -13,7 +13,7 @@
             <panel name="map_city_count" weightx="1" halign="center"/>
         </panel>
     </panel>
-    <panel name="btnPanel" valign="bottom" weighty="1">
+    <panel name="btnPanel" valign="bottom" weightx="1" weighty="1">
         <button text="Back" action="back()"/>
         <button weightx="1" halign="right" text="Continue" action="continueToNextState()"/>
     </panel>
