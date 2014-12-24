@@ -22,8 +22,10 @@ import java.awt.Point;
 
 public class SinglePlayerMenuState extends CWState implements ComponentListener {
   private PopupMenu mainMenu;
+  private int windowHeight;
 
   public void init(GameContainer container, StateBasedGame game) throws SlickException {
+    windowHeight = container.getHeight();
     mainMenu = new PopupMenu(container);
     mainMenu.setBackGroundColor(new Color(0, 0, 0));
     mainMenu.setHoverColor(new Color(255, 255, 255, 0.08f));
@@ -49,13 +51,13 @@ public class SinglePlayerMenuState extends CWState implements ComponentListener 
     g.setColor(Color.lightGray);
     switch (mainMenu.getCurrentItem()) {
       case 0:
-        g.drawString("New Game", 210, 440);
+        g.drawString("New Game", 210, windowHeight - 40);
         break;
       case 1:
-        g.drawString("Load replay", 210, 440);
+        g.drawString("Load replay", 210, windowHeight - 40);
         break;
       case 2:
-        g.drawString("Go back to main menu", 210, 440);
+        g.drawString("Go back to main menu", 210, windowHeight - 40);
         break;
     }
   }
