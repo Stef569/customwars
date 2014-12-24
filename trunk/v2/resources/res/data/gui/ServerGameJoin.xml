@@ -27,7 +27,7 @@ Licensed Carlsbad Cubes - Wolf Paulus-->
             <combobox name="slot" weightx="1" halign="right"/>
         </panel>
     </panel>
-    <panel name="btnPanel" valign="bottom" left="10" bottom="10" right="10">
+    <panel name="btnPanel" weightx="1" valign="bottom" left="10" bottom="10" right="10">
         <button text="Back" action="back()"/>
         <button weightx="1" halign="right" text="Join Server Game" action="joinServerGame"/>
     </panel>

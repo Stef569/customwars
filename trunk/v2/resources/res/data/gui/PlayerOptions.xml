@@ -4,7 +4,7 @@ Licensed Carlsbad Cubes - Wolf Paulus--><!--Theodore, XUL Editor for Thinlet--><
        top="10" left="10" bottom="10" right="10">
   <panel name="centerPanel" weightx="1" weighty="1" halign="center" valign="center" columns="1" top="10" left="10"
          bottom="10" right="10" gap="20" border="true"/>
-  <panel name="btnPanel" weighty="1" valign="bottom">
+  <panel name="btnPanel" weightx="1" weighty="1" valign="bottom">
     <button text="Back" action="back()"/>
     <button weightx="1" halign="right" text="Continue" action="continueToNextState()"/>
   </panel>

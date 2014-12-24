@@ -47,8 +47,8 @@ public class TestGame {
 
   private AppGameContainer createContainer(StateBasedGame stateBasedGame) throws SlickException {
     boolean fullScreen = App.getBoolean("user.display.fullscreen", false);
-    int displayWidth = App.getInt("user.display.width", 640);
-    int displayHeight = App.getInt("user.display.height", 480);
+    int displayWidth = App.getInt("user.display.width", 800);
+    int displayHeight = App.getInt("user.display.height", 600);
 
     AppGameContainer appGameContainer = new AppGameContainer(stateBasedGame);
     appGameContainer.setDisplayMode(displayWidth, displayHeight, fullScreen);

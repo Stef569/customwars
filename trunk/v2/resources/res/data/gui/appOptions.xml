@@ -32,7 +32,7 @@ Licensed Carlsbad Cubes - Wolf Paulus-->
             <slider name="sli_music" action="musicChanged(this)"/>
         </panel>
     </panel>
-    <panel name="btnPanel" weighty="1" valign="bottom">
+    <panel name="btnPanel" weightx="1" weighty="1" valign="bottom">
         <button text="Back" action="back()"/>
         <button weightx="1" halign="right" text="Continue" action="continueToNextState()"/>
     </panel>
