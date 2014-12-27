@@ -35,4 +35,4 @@ You should now be greeted with a screen.
 ----
 <p>If a resource could not be found Make sure that the compiler copies all resources to the output dir:<p/>
 For IntelliJ select File > Settings > Compiler. Add the following Resource patterns:<br/>
-{{{?*.properties;?*.xml;?*.gif;?*.png;?*.jpeg;?*.jpg;?*.html;?*.dtd;?*.tld;?*.ftl;?*.txt;?*.wav;?*.tga;?*.fnt;?*.ttf}}}
+{{{?*.properties;?*.xml;?*.gif;?*.png;?*.jpeg;?*.jpg;?*.html;?*.dtd;?*.tld;?*.ftl;?*.txt;?*.wav;?*.tga;?*.fnt;?*.ttf;?*.ogg;}}}
