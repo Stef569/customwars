@@ -117,9 +117,9 @@ public class MapManager {
     String currentCategory = getCategory(map);
     for (String aCategory : mapsByCategory.keySet()) {
       if (aCategory.equals(currentCategory)) {
-        Iterator it = mapsByCategory.get(aCategory).iterator();
+        Iterator<Map> it = mapsByCategory.get(aCategory).iterator();
         while (it.hasNext()) {
-          Map aMap = (Map) it.next();
+          Map aMap = it.next();
           if (aMap.getMapName().equals(map.getMapName())) {
             it.remove();
             break;

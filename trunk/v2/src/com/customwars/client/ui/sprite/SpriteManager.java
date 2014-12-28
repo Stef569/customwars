@@ -84,9 +84,9 @@ public class SpriteManager implements PropertyChangeListener {
       citySprite.update(elapsedTime);
     }
 
-    Iterator it = unitSprites.values().iterator();
+    Iterator<UnitSprite> it = unitSprites.values().iterator();
     while (it.hasNext()) {
-      UnitSprite sprite = (UnitSprite) it.next();
+      UnitSprite sprite = it.next();
       sprite.update(elapsedTime);
 
       if (sprite.canBeRemoved()) {
