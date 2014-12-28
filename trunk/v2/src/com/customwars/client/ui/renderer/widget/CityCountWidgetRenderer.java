@@ -62,14 +62,13 @@ public class CityCountWidgetRenderer implements WidgetRenderer {
   }
 
   public void paint(ThingleGraphics tg, Widget widget, Rectangle bounds) {
-    if(map != null) {
+    if (map != null) {
       Graphics g = ((SlickGraphics) tg).getGraphics();
-      // Note that the thingle graphics start with the 0,0 point in the center
-      g.translate(-preferredSize.width / 2, 0);
+      g.translate(0, -BACKGROUND_MARGIN);
       renderBackGround(g);
       g.setColor(Color.white);
       renderContent(g);
-      g.translate(preferredSize.width / 2, 0);
+      g.translate(0, BACKGROUND_MARGIN);
     }
   }
 
