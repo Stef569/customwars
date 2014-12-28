@@ -91,9 +91,11 @@ public class TestData {
 
   // Terrains
   private static final Terrain plain = new Terrain(0, "plain", "plain", "", 0, 0, false, 0, plainMoveCosts);
+  private static final Terrain river = new Terrain(20, "river", "river", "", 0, -1, false, 0, riverMoveCosts);
   private static final Terrain verticalRiver = new Terrain(20, "river", "river", "", 0, -1, false, 0, riverMoveCosts);
   private static final Terrain mountain = new Terrain(17, "mountain", "mountain", "", 4, 2, false, 3, mountainMoveCosts);
   private static final Terrain sea = new Terrain(SEA, "ocean", "ocean", "", 0, -2, false, 0, seaMoveCosts);
+  private static final List<Terrain> baseTerrains = Arrays.asList(plain, river, mountain, sea);
 
   // Units
   private static final UnitStats infStats = new UnitStats(INF, INF, "infantry", "", 3000, 3, 3, 10, UNIT_MAX_HP, MAX_UNIT_SUPPLIES, 0, 0, true, false, true, false, false, false, null, null, null, ArmyBranch.LAND, MOVE_INF, new Range(0, 0), "", SMG, 0, 0, 0);
@@ -150,6 +152,7 @@ public class TestData {
     TerrainFactory.addTerrain(verticalRiver);
     TerrainFactory.addTerrain(mountain);
     TerrainFactory.addTerrain(sea);
+    TerrainFactory.addBaseTerrains(baseTerrains);
 
     WeaponFactory.addWeapon(smg);
     WeaponFactory.addWeapon(bazooka);
