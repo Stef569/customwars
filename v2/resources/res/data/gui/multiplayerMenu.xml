@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<panel name="container" columns="1" top="10" left="160" bottom="10" right="10">
+    <panel name="menu" weightx="1" weighty="1" halign="center" valign="center" columns="1" gap="20" >
+        <button text="create_server_game" action="selectItem(this)" enterComponent="enterComponent(0)"/>
+        <button text="join_server_game" action="selectItem(this)" enterComponent="enterComponent(1)"/>
+        <button text="log_into_server_game" action="selectItem(this)" enterComponent="enterComponent(2)"/>
+        <button text="back" width="280" action="selectItem(this)" enterComponent="enterComponent(3)"/>
+    </panel>
+</panel>
