@@ -6,12 +6,14 @@ import com.customwars.client.io.loading.ThinglePageLoader;
 import com.customwars.client.tools.ThingleUtil;
 import com.customwars.client.ui.state.input.CWCommand;
 import com.customwars.client.ui.state.input.CWInput;
+import org.newdawn.slick.Font;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.thingle.Page;
+import org.newdawn.slick.thingle.internal.slick.FontWrapper;
 
 import java.util.Arrays;
 import java.util.List;
@@ -23,17 +25,21 @@ public class GameRulesState extends CWState {
   private Page page;
   private Image backGroundImage;
   private GameRulesController controller;
+  private Font guiFont;
 
   public void init(GameContainer gameContainer, StateBasedGame stateBasedGame) throws SlickException {
     controller = new GameRulesController(stateChanger, stateSession);
+    guiFont = resources.getFont("gui_text");
     initPage();
     initPageContent();
     backGroundImage = resources.getSlickImg("light_menu_background");
+    page.layout();
   }
 
   private void initPage() {
     ThinglePageLoader thingleLoader = new ThinglePageLoader(App.get("gui.path"));
     page = thingleLoader.loadPage("gameRules.xml", "greySkin.properties", controller);
+    page.setFont(new FontWrapper(guiFont));
   }
 
   private void initPageContent() {

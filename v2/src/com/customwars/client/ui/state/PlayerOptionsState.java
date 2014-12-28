@@ -10,6 +10,7 @@ import com.customwars.client.tools.ThingleUtil;
 import com.customwars.client.ui.COSheet;
 import com.customwars.client.ui.state.input.CWCommand;
 import com.customwars.client.ui.state.input.CWInput;
+import org.newdawn.slick.Font;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
@@ -18,6 +19,7 @@ import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.thingle.Page;
 import org.newdawn.slick.thingle.Thingle;
 import org.newdawn.slick.thingle.Widget;
+import org.newdawn.slick.thingle.internal.slick.FontWrapper;
 import org.newdawn.slick.thingle.internal.slick.ImageWrapper;
 import org.newdawn.slick.thingle.spi.ThingleColor;
 
@@ -33,17 +35,21 @@ public class PlayerOptionsState extends CWState {
   private PlayerOptionsController controller;
   private Map map;
   private Image backgroundImg;
+  private Font guiFont;
 
   @Override
   public void init(GameContainer container, StateBasedGame game) throws SlickException {
     controller = new PlayerOptionsController(stateChanger, stateSession, resources);
     backgroundImg = resources.getSlickImg("light_menu_background");
+    guiFont = resources.getFont("gui_text");
+
     initPage();
   }
 
   private void initPage() {
     ThinglePageLoader thingleLoader = new ThinglePageLoader(App.get("gui.path"));
     page = thingleLoader.loadPage("PlayerOptions.xml", "greySkin.properties", controller);
+    page.setFont(new FontWrapper(guiFont));
   }
 
   @Override
@@ -114,6 +120,7 @@ public class PlayerOptionsState extends CWState {
     cboControllerType.setProperty("row", row);
     cboControllerType.setMethod("action", "controllerTypeChanged(this)", controller);
     cboControllerType.setBoolean("editable", false);
+    cboControllerType.setInteger("width", 140);
 
     List<String> translatedControllerValues = Arrays.asList(App.translate("ai"), App.translate("human"));
     ThingleUtil.fillCbo(page, cboControllerType, translatedControllerValues, Arrays.asList("ai", "human"));
@@ -147,6 +154,7 @@ public class PlayerOptionsState extends CWState {
     cboColor.setProperty("row", row);
     cboColor.setMethod("action", "colorChanged(this)", controller);
     cboColor.setBoolean("editable", false);
+    cboColor.setInteger("width", 30);
     fillWithColors(cboColor, row);
 
     // Select color combobox child by background color
