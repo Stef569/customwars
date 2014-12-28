@@ -5,20 +5,20 @@ Licensed Carlsbad Cubes - Wolf Paulus--><!--Theodore, XUL Editor for Thinlet--><
          bottom="10" right="10" gap="20" border="true">
     <panel gap="20">
       <label text="Fog" tooltip="Limit visibility in the game"/>
-      <combobox name="fog" weightx="1" halign="right" width="60" editable="false" action="fogChange(this)"/>
+      <combobox name="fog" weightx="1" halign="right" width="100" editable="false" action="fogChange(this)"/>
     </panel>
     <panel gap="20">
       <label text="Days" tooltip="Configure how many days a game should last"/>
-      <combobox name="day_limit" weightx="1" halign="right" width="60" editable="false"
+      <combobox name="day_limit" weightx="1" halign="right" width="140" editable="false"
                 action="dayLimitChange(day_limit)"/>
     </panel>
     <panel gap="20">
       <label text="Funds" tooltip="The funds received from each captured city"/>
-      <combobox name="funds" weightx="1" halign="right" width="60" editable="false" action="fundsChange(funds.text)"/>
+      <combobox name="funds" weightx="1" halign="right" width="100" editable="false" action="fundsChange(funds.text)"/>
     </panel>
     <panel gap="20">
       <label text="Income" tooltip="The start budget for each player"/>
-      <combobox name="income" weightx="1" halign="right" width="60" editable="false"
+      <combobox name="income" weightx="1" halign="right" width="140" editable="false"
                 action="incomeChange(income.text)"/>
     </panel>
   </panel>
