@@ -2,15 +2,12 @@ package slick;
 
 import com.customwars.client.io.img.slick.ImageStrip;
 import com.customwars.client.model.TestData;
-import com.customwars.client.ui.GUI;
 import com.customwars.client.ui.renderer.MiniMapRenderer;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.BasicGame;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
-
-import java.awt.Point;
 
 public class MiniMapTest extends BasicGame {
   private MiniMapRenderer miniMapRenderer;
@@ -24,9 +21,9 @@ public class MiniMapTest extends BasicGame {
     TestData.storeTestData();
     ImageStrip miniMap = new ImageStrip("testData/miniMap.png", 4, 4);
     miniMapRenderer = new MiniMapRenderer(HardCodedGame.getMap());
-    Point renderPoint = GUI.getCenteredRenderPoint(miniMapRenderer.getSize(), container);
-    miniMapRenderer.setLocation(renderPoint.x, renderPoint.y);
+    miniMapRenderer.setLocation(0, 0);
     miniMapRenderer.setTerrainMiniMap(miniMap);
+    miniMapRenderer.setScale(4.0f);
   }
 
   @Override
@@ -40,7 +37,7 @@ public class MiniMapTest extends BasicGame {
 
   public static void main(String[] args) throws SlickException {
     AppGameContainer appGameContainer = new AppGameContainer(new MiniMapTest());
-    appGameContainer.setDisplayMode(200, 200, false);
+    appGameContainer.setDisplayMode(800, 600, false);
     appGameContainer.setTargetFrameRate(60);
     appGameContainer.setShowFPS(false);
     appGameContainer.start();

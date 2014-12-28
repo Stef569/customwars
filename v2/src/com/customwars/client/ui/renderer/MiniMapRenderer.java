@@ -29,15 +29,15 @@ import java.awt.Point;
  * Cities are rendered as squares
  */
 public class MiniMapRenderer implements Renderable {
-  private static final int HQ_MAX_ALPHA = 255;
-  private static final int HQ_MIN_ALPHA = 0;
+  private static final int HQ_MAX_ALPHA = 250;
+  private static final int HQ_MIN_ALPHA = 10;
 
   private ImageStrip terrainMiniMap;
   private Map map;
   private int tileSize;
   private Point location;
   private int hqAlpha;
-  private int hqAlphaStep = 3;
+  private int hqAlphaStep = 5;
   private float scale = 1;
 
   public MiniMapRenderer() {
@@ -120,18 +120,31 @@ public class MiniMapRenderer implements Renderable {
 
   private void renderSquare(int x, int y, Graphics g, Color color, boolean animate) {
     Color prevColor = g.getColor();
-    g.setColor(color);
+    if (animate) {
+      color.a = hqAlpha;
+      g.setColor(color);
+    } else {
+      g.setColor(color);
+    }
+
     g.fillRect(x, y, tileSize, tileSize);
 
-    // Draw from right top -> right bottom
-    // and from left bottom -> right bottom
+
     if (animate) {
-      g.setColor(new Color(0, 0, 0, hqAlpha));
+      g.setColor(new Color(250, 250, 250, hqAlpha));
+      // Draw a white fading square
+      g.drawLine(x, y, x + tileSize - 1, y);
+      g.drawLine(x, y, x, y + tileSize - 1);
+      g.drawLine(x + tileSize - 1, y, x + tileSize - 1, y + tileSize - 1);
+      g.drawLine(x, y + tileSize - 1, x + tileSize - 1, y + tileSize - 1);
     } else {
       g.setColor(Color.black);
+      // Draw from right top -> right bottom
+      // and from left bottom -> right bottom
+      g.drawLine(x + tileSize - 1, y, x + tileSize - 1, y + tileSize - 1);
+      g.drawLine(x, y + tileSize - 1, x + tileSize - 1, y + tileSize - 1);
     }
-    g.drawLine(x + tileSize - 1, y, x + tileSize - 1, y + tileSize - 1);
-    g.drawLine(x, y + tileSize - 1, x + tileSize - 1, y + tileSize - 1);
+
     g.setColor(prevColor);
   }
 
