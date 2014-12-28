@@ -22,19 +22,23 @@ import java.awt.Point;
  * Scaled terrain Images are retrieved from the minimap Image
  * The minimap image should contain sub images of equal width and height
  * The tilesize is based on the minimap image.
+ * The whole minimap can be scaled @see #setScale(float)
+ * HQ's will blink by changing the alpha of the square.
  * <p/>
  * Units are rendered as circles
  * Cities are rendered as squares
  */
 public class MiniMapRenderer implements Renderable {
-  private static final int HQ_ALPHA_STEP = 7;
   private static final int HQ_MAX_ALPHA = 255;
   private static final int HQ_MIN_ALPHA = 0;
+
   private ImageStrip terrainMiniMap;
   private Map map;
   private int tileSize;
   private Point location;
   private int hqAlpha;
+  private int hqAlphaStep = 3;
+  private float scale = 1;
 
   public MiniMapRenderer() {
     this(null);
@@ -47,18 +51,27 @@ public class MiniMapRenderer implements Renderable {
 
   public void setTerrainMiniMap(ImageStrip terrainMiniMap) {
     this.terrainMiniMap = terrainMiniMap;
-    this.tileSize = terrainMiniMap.getTileWidth();
+    this.tileSize = (int) (terrainMiniMap.getTileWidth() * scale);
   }
 
   public void setMap(Map map) {
     this.map = map;
   }
 
+  public void setScale(float scale) {
+    this.scale = scale;
+    this.tileSize = (int) (terrainMiniMap.getTileWidth() * scale);
+  }
+
   public void update() {
-    if (hqAlpha >= HQ_MAX_ALPHA) {
-      hqAlpha -= HQ_ALPHA_STEP;
+    if (hqAlpha > HQ_MAX_ALPHA) {
+      hqAlphaStep = -hqAlphaStep;
+      hqAlpha = HQ_MAX_ALPHA;
     } else if (hqAlpha < HQ_MIN_ALPHA) {
-      hqAlpha += HQ_ALPHA_STEP;
+      hqAlphaStep = Math.abs(hqAlphaStep);
+      hqAlpha = HQ_MIN_ALPHA;
+    } else {
+      hqAlpha += hqAlphaStep;
     }
   }
 
@@ -97,7 +110,7 @@ public class MiniMapRenderer implements Renderable {
   private void renderTerrain(int x, int y, Graphics g, Terrain terrain) {
     int baseTerrainID = TerrainFactory.getBaseTerrainID(terrain);
     Image terrainImg = terrainMiniMap.getSubImage(baseTerrainID);
-    g.drawImage(terrainImg, x, y);
+    terrainImg.draw(x, y, scale);
   }
 
   private void renderCity(int x, int y, Graphics g, City city) {

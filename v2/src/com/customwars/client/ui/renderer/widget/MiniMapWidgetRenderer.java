@@ -29,6 +29,10 @@ public class MiniMapWidgetRenderer implements WidgetRenderer {
     miniMapRenderer.setMap(map);
   }
 
+  public void setScale(float scale) {
+    miniMapRenderer.setScale(scale);
+  }
+
   public void paint(ThingleGraphics tg, Widget widget, Rectangle panelBounds) {
     Graphics g = ((SlickGraphics) tg).getGraphics();
     int miniMapWidth = getPreferredWidth();
