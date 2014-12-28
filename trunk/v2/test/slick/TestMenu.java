@@ -1,68 +1,63 @@
 package slick;
 
 import com.customwars.client.model.game.Game;
-import com.customwars.client.ui.PopupMenu;
-import com.customwars.client.ui.StandardMenuItem;
 import com.customwars.client.ui.state.CWState;
-import com.customwars.client.ui.state.input.CWCommand;
-import com.customwars.client.ui.state.input.CWInput;
+import com.customwars.client.ui.thingle.MenuListener;
+import com.customwars.client.ui.thingle.ThingleMenu;
 import org.newdawn.slick.Color;
+import org.newdawn.slick.Font;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
-import org.newdawn.slick.Image;
-import org.newdawn.slick.Music;
 import org.newdawn.slick.SlickException;
-import org.newdawn.slick.Sound;
-import org.newdawn.slick.gui.AbstractComponent;
-import org.newdawn.slick.gui.ComponentListener;
 import org.newdawn.slick.state.StateBasedGame;
 
 /**
  * @author Crecen
  */
-public class TestMenu extends CWState implements ComponentListener {
-  private Music backgroundMusic;
-  private Image image;
-  private PopupMenu testmenu;
+public class TestMenu extends CWState {
   private int windowHeight;
+  private ThingleMenu mainMenu;
 
-  public void init(GameContainer container, StateBasedGame stateBasedGame) throws SlickException {
+  public void init(final GameContainer container, StateBasedGame stateBasedGame) throws SlickException {
     windowHeight = container.getHeight();
-    backgroundMusic = new Music("testData/shortBackground.ogg");
-    backgroundMusic.setVolume(0.5F);
-
-    image = new Image("testData/main.png");
-    Image mapOption = new Image("testData/mapTerrain.png");
-    Image keyInputOption = new Image("testData/keyConfig.png");
-    Image gameOption = new Image("testData/newGame.png");
-    Image endTurn = new Image("testData/mapEditor.png");
-
-    testmenu = new PopupMenu(container);
-    testmenu.addItems(
-      new StandardMenuItem(mapOption, container),
-      new StandardMenuItem(keyInputOption, container),
-      new StandardMenuItem(gameOption, "", container),
-      new StandardMenuItem(endTurn, container));
-
-    testmenu.setLocation(220, 50);
-    testmenu.setMenuTickSound(new Sound("testData/menutick.wav"));
-    testmenu.addListener(this);
+    Font font = resources.getFont("menu");
+    
+    mainMenu = new ThingleMenu("testData/", "testMenu.xml", new MenuListener() {
+      public void selected(int selectedIndex) {
+        switch (selectedIndex) {
+          case 0:
+            changeToState("terrainmenu");
+            break;
+          case 1:
+            changeToState("keymenu");
+            break;
+          case 2:
+            loadHardCodedMap();
+            changeToState("IN_GAME");
+            break;
+          case 3:
+            changeToState("MAP_EDITOR");
+            break;
+          case 4:
+            container.exit();
+            break;
+        }
+      }
+    });
+    mainMenu.setFont(font);
   }
 
   public void enter(GameContainer container, StateBasedGame game) throws SlickException {
     super.enter(container, game);
-    backgroundMusic.loop();
-    testmenu.setAcceptingInput(true);
+    mainMenu.enable();
   }
 
   public void render(GameContainer gameContainer, Graphics g) throws SlickException {
-    g.drawImage(image, 0, 0);
     g.setColor(Color.white);
-    g.drawString("ENTER: TO GO BACK TO MENU", 400, 10);
-    testmenu.render(gameContainer, g);
+    mainMenu.render();
 
     g.setColor(Color.lightGray);
-    switch (testmenu.getCurrentItem()) {
+    switch (mainMenu.getSelectedIndex()) {
       case 0:
         g.drawString("Scroll a mini-map and see the terrain up close", 210, windowHeight - 40);
         break;
@@ -75,40 +70,18 @@ public class TestMenu extends CWState implements ComponentListener {
       case 3:
         g.drawString("Create a map", 210, windowHeight - 40);
         break;
+      case 4:
+        g.drawString("Quit the game", 210, windowHeight - 40);
+        break;
     }
-    g.setColor(Color.white);
   }
 
   public void update(GameContainer gameContainer, int elapsedTime) throws SlickException {
   }
 
-  public void controlPressed(CWCommand command, CWInput cwInput) {
-    testmenu.controlPressed(command);
-  }
-
   public void leave(GameContainer container, StateBasedGame game) throws SlickException {
     super.leave(container, game);
-    backgroundMusic.stop();
-    testmenu.setAcceptingInput(false);
-  }
-
-  public void componentActivated(AbstractComponent source) {
-    PopupMenu popupMenu = (PopupMenu) source;
-    switch (popupMenu.getCurrentItem()) {
-      case 0:
-        changeToState("terrainmenu");
-        break;
-      case 1:
-        changeToState("keymenu");
-        break;
-      case 2:
-        loadHardCodedMap();
-        changeToState("IN_GAME");
-        break;
-      case 3:
-        changeToState("MAP_EDITOR");
-        break;
-    }
+    mainMenu.disable();
   }
 
   private void loadHardCodedMap() {
