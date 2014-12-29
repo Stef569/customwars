@@ -43,7 +43,10 @@ public class EndGameAction extends DirectAction {
 
   @Override
   protected void invokeAction() {
-    GUI.showConfirmationDialog("Are you sure you want to quit?", "Quit now?", new DialogListener(){
+    GUI.showConfirmationDialog(
+      App.translate("gui_err_confirm_end_game_msg"),
+      App.translate("gui_err_confirm_end_game_title"),
+      new DialogListener(){
       public void buttonClicked(DialogResult button) {
         if(button == DialogResult.YES) {
           endGame();         
