@@ -120,13 +120,14 @@ public class TerrainConnector {
   }
 
   private Terrain getBestMatchingTerrain() {
-    // Remove terrains that don't have the same name from the results
-    // They are removed here, because terrains with different names can connect to each other
+    // Remove terrains that don't have the same type from the results
+    // They are removed here, because terrains with different types can connect to each other
     // When placing a shoal terrain we don't expect to see a coast
     // When placing a pipe seam we don't expect to see a pipe, ...
-    removeTerrainsWithDifferentNamesFrom(perfectMatchingTerrains);
-    removeTerrainsWithDifferentNamesFrom(perfectAdjacentMatchingTerrains);
-    removeTerrainsWithDifferentNamesFrom(matchingTerrains);
+    // When placing a bridge we expect to connect with road types
+    removeTerrainsWithDifferentTypesFrom(perfectMatchingTerrains);
+    removeTerrainsWithDifferentTypesFrom(perfectAdjacentMatchingTerrains);
+    removeTerrainsWithDifferentTypesFrom(matchingTerrains);
 
     Terrain bestMatch = null;
     if (specialMatchingTerrain != null)
@@ -146,12 +147,12 @@ public class TerrainConnector {
     return bestMatch;
   }
 
-  private void removeTerrainsWithDifferentNamesFrom(Collection<Terrain> collection) {
+  private void removeTerrainsWithDifferentTypesFrom(Collection<Terrain> collection) {
     Iterator<Terrain> it = collection.iterator();
 
     while (it.hasNext()) {
       Terrain terrain = it.next();
-      if (!terrain.getName().equalsIgnoreCase(terrainToAdd.getName())) {
+      if (!terrain.getType().equalsIgnoreCase(terrainToAdd.getType())) {
         it.remove();
       }
     }
