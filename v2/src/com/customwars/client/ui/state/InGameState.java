@@ -443,7 +443,6 @@ public class InGameState extends CWState implements PropertyChangeListener {
     TileSprite cursor = (TileSprite) evt.getSource();
     Tile newCursorLocation = (Tile) cursor.getLocation();
     hud.moveOverTile(newCursorLocation);
-    SFX.playSound("maptick");
   }
 
   @Override
