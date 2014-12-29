@@ -11,6 +11,8 @@ import com.customwars.client.tools.ThingleUtil;
 import com.customwars.client.ui.GUI;
 import com.customwars.client.ui.state.StateChanger;
 import com.customwars.client.ui.state.StateSession;
+import com.customwars.client.ui.thingle.DialogListener;
+import com.customwars.client.ui.thingle.DialogResult;
 import org.apache.log4j.Logger;
 import org.newdawn.slick.thingle.Page;
 import org.newdawn.slick.thingle.Thingle;
@@ -51,9 +53,13 @@ public class ServerGameRoomController {
       startOrContinueGame();
     } catch (NetworkException e) {
       logger.warn("Could not send start game " + serverGameName, e);
-      if (GUI.askToResend(e) == GUI.YES_OPTION) {
-        play();
-      }
+      GUI.askToResend(e, new DialogListener() {
+        public void buttonClicked(DialogResult button) {
+          if (button == DialogResult.YES) {
+            play();
+          }
+        }
+      });
     }
   }
 

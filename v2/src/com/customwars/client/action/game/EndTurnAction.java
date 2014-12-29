@@ -10,6 +10,8 @@ import com.customwars.client.ui.GUI;
 import com.customwars.client.ui.state.InGameContext;
 import com.customwars.client.ui.state.StateChanger;
 import com.customwars.client.ui.state.StateSession;
+import com.customwars.client.ui.thingle.DialogListener;
+import com.customwars.client.ui.thingle.DialogResult;
 import org.apache.log4j.Logger;
 
 /**
@@ -20,8 +22,6 @@ import org.apache.log4j.Logger;
  *
  * In MP SNAIL GAME mode:
  * update the server, remove any destroyed players and goto the MAIN_MENU state
- *
- * @author stefan
  */
 public class EndTurnAction extends DirectAction {
   private static final Logger logger = Logger.getLogger(EndTurnAction.class);
@@ -64,16 +64,20 @@ public class EndTurnAction extends DirectAction {
     stateChanger.changeTo("MAIN_MENU");
   }
 
-  private void sendDestroyedPlayers(TurnBasedGame game) {
+  private void sendDestroyedPlayers(final TurnBasedGame game) {
     for (Player player : game.getAllPlayers()) {
       if (player.isDestroyed()) {
         try {
           messageSender.destroyPlayer(player);
         } catch (NetworkException ex) {
           logger.warn("Could not send destroy player", ex);
-          if (GUI.askToResend(ex) == GUI.YES_OPTION) {
-            sendDestroyedPlayers(game);
-          }
+          GUI.askToResend(ex, new DialogListener() {
+            public void buttonClicked(DialogResult button) {
+              if (button == DialogResult.YES) {
+                sendDestroyedPlayers(game);
+              }
+            }
+          });
         }
       }
     }
@@ -84,9 +88,13 @@ public class EndTurnAction extends DirectAction {
       messageSender.endTurn(session.game);
     } catch (NetworkException ex) {
       logger.warn("Could not send end turn", ex);
-      if (GUI.askToResend(ex) == GUI.YES_OPTION) {
-        sendEndTurn();
-      }
+      GUI.askToResend(ex, new DialogListener() {
+        public void buttonClicked(DialogResult button) {
+          if (button == DialogResult.YES) {
+            sendEndTurn();
+          }
+        }
+      });
     }
   }
 }

@@ -9,6 +9,7 @@ import com.customwars.client.ui.state.InGameContext;
 import com.customwars.client.ui.state.StateChanger;
 import com.customwars.client.ui.state.StateSession;
 import org.apache.log4j.Logger;
+import org.newdawn.slick.thingle.util.FileChooserListener;
 
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -51,13 +52,18 @@ public class LoadReplayAction extends DirectAction {
   @Override
   protected void invokeAction() {
     FileFilter filter = new FileNameExtensionFilter("CW2 Replays", "replay");
-    File replayFile = GUI.browseForFile("Load replay", filter, "Load");
+    GUI.browseForFile("Load replay", filter, "Load", new FileChooserListener() {
+      public void fileSelected(File replayFile) {
+        if (replayFile != null) {
+          loadReplay(replayFile);
+        } else {
+          logger.warn("No replay file chosen");
+        }
+      }
 
-    if (replayFile != null) {
-      loadReplay(replayFile);
-    } else {
-      logger.warn("No replay file chosen");
-    }
+      public void chooserCanceled() {
+      }
+    });
   }
 
   private void loadReplay(File replayFile) {

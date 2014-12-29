@@ -8,12 +8,12 @@ import com.customwars.client.network.MessageSender;
 import com.customwars.client.network.NetworkException;
 import com.customwars.client.ui.GUI;
 import com.customwars.client.ui.state.InGameContext;
+import com.customwars.client.ui.thingle.DialogListener;
+import com.customwars.client.ui.thingle.DialogResult;
 import org.apache.log4j.Logger;
 
 /**
  * The unit joins the target
- *
- * @author stefan
  */
 public class JoinAction extends DirectAction {
   private static final Logger logger = Logger.getLogger(JoinAction.class);
@@ -51,9 +51,13 @@ public class JoinAction extends DirectAction {
       messageSender.join(unit, target);
     } catch (NetworkException ex) {
       logger.warn("Could not send join unit", ex);
-      if (GUI.askToResend(ex) == GUI.YES_OPTION) {
-        sendJoin();
-      }
+      GUI.askToResend(ex, new DialogListener() {
+        public void buttonClicked(DialogResult button) {
+          if (button == DialogResult.YES) {
+            sendJoin();
+          }
+        }
+      });
     }
   }
 }

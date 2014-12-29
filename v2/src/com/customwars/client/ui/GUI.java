@@ -6,12 +6,17 @@ import com.customwars.client.network.NetworkException;
 import com.customwars.client.script.BeanShell;
 import com.customwars.client.tools.StringUtil;
 import com.customwars.client.ui.hud.ModelEventScreen;
+import com.customwars.client.ui.thingle.DialogButtons;
+import com.customwars.client.ui.thingle.DialogListener;
+import com.customwars.client.ui.thingle.DialogResult;
+import com.customwars.client.ui.thingle.SimpleThingleDialog;
+import com.customwars.client.ui.thingle.ThingleDialog;
+import com.customwars.client.ui.thingle.ThingleFileChooser;
 import org.apache.log4j.Logger;
 import org.newdawn.slick.gui.GUIContext;
+import org.newdawn.slick.thingle.util.FileChooserListener;
 
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 import java.awt.Dimension;
 import java.awt.Point;
@@ -19,18 +24,16 @@ import java.io.File;
 
 /**
  * Application wide gui's Contains a console and a game event viewer window.
+ * It handles the rendering of all the dialogs in the game.
  */
 public class GUI {
-  public static int YES_OPTION = 0;
-  public static int NO_OPTION = 1;
-
   private static final Logger logger = Logger.getLogger(GUI.class);
   private static JFrame eventFrame, consoleFrame;
   private static ModelEventScreen modelEventScreen;
   private static GUIContext guiContext;
   private static Camera2D camera;
   private static boolean inited;
-  private static ThingleDialog thingleDialog;
+  private static ThingleDialog currentDialog;
 
   public static void init(GUIContext guiContext) {
     GUI.guiContext = guiContext;
@@ -170,57 +173,72 @@ public class GUI {
     showdialog(errMsg, title);
   }
 
+  /**
+   * Show a dialog with one 'OK' button.
+   */
   public synchronized static void showdialog(String msg, String title) {
-    // Gracefully hide a previous shown dialog.
-    if (thingleDialog != null) {
-      thingleDialog.hide();
-    }
-
-    thingleDialog = new ThingleDialog(guiContext, msg, title);
-    thingleDialog.show();
+    DialogListener nullListener = new DialogListener() {
+      public void buttonClicked(DialogResult button) {
+      }
+    };
+    SimpleThingleDialog simpleDialog = new SimpleThingleDialog(guiContext, msg, title, DialogButtons.OK_BUTTON, nullListener);
+    showDialog(simpleDialog);
   }
 
-  public static int showConfirmationDialog(String msg, String title) {
-    return JOptionPane.showConfirmDialog(null, msg, title, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+  /**
+   * Show a dialog with 'Yes' 'No' buttons.
+   */
+  public synchronized static void showConfirmationDialog(String msg, String title, DialogListener listener) {
+    SimpleThingleDialog simpleDialog = new SimpleThingleDialog(guiContext, msg, title, DialogButtons.YES_NO_BUTTONS, listener);
+    showDialog(simpleDialog);
   }
 
   public static void renderDialog() {
-    if (thingleDialog != null) {
-      if (thingleDialog.isVisible()) {
-        thingleDialog.render();
+    if (currentDialog != null) {
+      if (currentDialog.isVisible()) {
+        guiContext.getInput().resetInputTransform();
+        currentDialog.render();
       } else {
-        thingleDialog = null;
+        logger.info("Removing Dialog " + currentDialog.getTitle());
+        currentDialog = null;
       }
     }
   }
 
   public static boolean isRenderingDialog() {
-    return thingleDialog != null && thingleDialog.isVisible();
+    return currentDialog != null && currentDialog.isVisible();
   }
 
-  public static File browseForFile(String title, String approveButtonText) {
-    return browseForFile(title, null, approveButtonText);
+  public static void browseForFile(String title, FileFilter filter, String approveButtonText, File initialDir, FileChooserListener listener) {
+    ThingleFileChooser fileChooser = ThingleFileChooser.createOpenDialog(title, filter, approveButtonText, initialDir, listener);
+    showDialog(fileChooser);
   }
 
-  public static File browseForFile(String title, FileFilter filter, String approveButtonText) {
-    JFileChooser fileChooser = new JFileChooser();
-    fileChooser.setDialogTitle(title);
-    fileChooser.setApproveButtonText(approveButtonText);
-
-    if (filter != null) {
-      fileChooser.setFileFilter(filter);
-    }
-
-    if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-      return fileChooser.getSelectedFile();
-    } else {
-      return null;
-    }
+  public static void browseForFile(String title, FileFilter filter, String approveButtonText, FileChooserListener listener) {
+    ThingleFileChooser fileChooser = ThingleFileChooser.createOpenDialog(title, filter, approveButtonText, listener);
+    showDialog(fileChooser);
   }
 
-  public static int askToResend(NetworkException ex) {
-    return showConfirmationDialog(
-      App.translate("gui_err_networkIO_msg") + " " + ex.getMessage(), App.translate("gui_err_networkIO_title")
+  public static void showSaveFileDialog(String title, FileFilter filter, String approveButtonText, FileChooserListener listener) {
+    ThingleFileChooser fileChooser = ThingleFileChooser.createSaveDialog(title, filter, approveButtonText, listener);
+    showDialog(fileChooser);
+  }
+
+  public static void showDialog(ThingleDialog dialog) {
+    logger.info("Show Dialog " + dialog.getTitle());
+    dialog.show();
+    currentDialog = dialog;
+  }
+
+  /**
+   * Show a dialog with the text There was a problem sending the message to the server, resend?
+   * and 2 buttons: 'Yes' 'No'
+   */
+  public static void askToResend(NetworkException ex, DialogListener listener) {
+    showConfirmationDialog(
+      App.translate("gui_err_networkIO_msg") + " " + ex.getMessage(),
+      App.translate("gui_err_networkIO_title"),
+      listener
     );
   }
 

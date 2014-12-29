@@ -10,6 +10,7 @@ import com.customwars.client.ui.GUI;
 import com.customwars.client.ui.state.InGameContext;
 import com.customwars.client.ui.state.StateSession;
 import org.apache.log4j.Logger;
+import org.newdawn.slick.thingle.util.FileChooserListener;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -46,12 +47,17 @@ public class SaveReplayAction extends DirectAction {
 
   @Override
   protected void invokeAction() {
-    File userChosenFile = GUI.browseForFile("Save replay", "Save");
+    GUI.showSaveFileDialog("Save replay", null, "Save", new FileChooserListener() {
+      public void fileSelected(File userChosenFile) {
+        if (userChosenFile != null) {
+          String replayFileName = StringUtil.appendTrailingSuffix(userChosenFile.getPath(), ".replay");
+          saveReplay(new File(replayFileName));
+        }
+      }
 
-    if (userChosenFile != null) {
-      String replayFileName = StringUtil.appendTrailingSuffix(userChosenFile.getPath(), ".replay");
-      saveReplay(new File(replayFileName));
-    }
+      public void chooserCanceled() {
+      }
+    });
   }
 
   private void saveReplay(File replayFile) {

@@ -18,6 +18,8 @@ import com.customwars.client.network.NetworkException;
 import com.customwars.client.ui.GUI;
 import com.customwars.client.ui.renderer.MapRenderer;
 import com.customwars.client.ui.state.InGameContext;
+import com.customwars.client.ui.thingle.DialogListener;
+import com.customwars.client.ui.thingle.DialogResult;
 import org.apache.log4j.Logger;
 
 /**
@@ -132,9 +134,13 @@ public class MoveAnimatedAction extends DelayedAction {
       messageSender.teleport(from, unit.getLocation());
     } catch (NetworkException ex) {
       logger.warn("Could not send move unit", ex);
-      if (GUI.askToResend(ex) == GUI.YES_OPTION) {
-        sendMove();
-      }
+      GUI.askToResend(ex, new DialogListener() {
+        public void buttonClicked(DialogResult button) {
+          if (button == DialogResult.YES) {
+            sendMove();
+          }
+        }
+      });
     }
   }
 
