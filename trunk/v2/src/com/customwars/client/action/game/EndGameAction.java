@@ -43,6 +43,16 @@ public class EndGameAction extends DirectAction {
 
   @Override
   protected void invokeAction() {
+    GUI.showConfirmationDialog("Are you sure you want to quit?", "Quit now?", new DialogListener(){
+      public void buttonClicked(DialogResult button) {
+        if(button == DialogResult.YES) {
+          endGame();         
+        }
+      }
+    });
+  }
+
+  private void endGame() {
     stateChanger.changeTo("GAME_OVER");
     destroyPlayer();
     endTurn();
