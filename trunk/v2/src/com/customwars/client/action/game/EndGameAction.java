@@ -10,6 +10,8 @@ import com.customwars.client.ui.GUI;
 import com.customwars.client.ui.state.InGameContext;
 import com.customwars.client.ui.state.StateChanger;
 import com.customwars.client.ui.state.StateSession;
+import com.customwars.client.ui.thingle.DialogListener;
+import com.customwars.client.ui.thingle.DialogResult;
 import org.apache.log4j.Logger;
 
 /**
@@ -65,9 +67,13 @@ public class EndGameAction extends DirectAction {
       messageSender.endTurn(game);
     } catch (NetworkException ex) {
       logger.warn("Could not send yield", ex);
-      if (GUI.askToResend(ex) == GUI.YES_OPTION) {
-        sendYield();
-      }
+      GUI.askToResend(ex, new DialogListener() {
+        public void buttonClicked(DialogResult button) {
+          if (button == DialogResult.YES) {
+            sendYield();
+          }
+        }
+      });
     }
   }
 }

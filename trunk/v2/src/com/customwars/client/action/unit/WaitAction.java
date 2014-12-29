@@ -8,12 +8,12 @@ import com.customwars.client.network.MessageSender;
 import com.customwars.client.network.NetworkException;
 import com.customwars.client.ui.GUI;
 import com.customwars.client.ui.state.InGameContext;
+import com.customwars.client.ui.thingle.DialogListener;
+import com.customwars.client.ui.thingle.DialogResult;
 import org.apache.log4j.Logger;
 
 /**
  * The unit is made Inactive(can no longer be controlled)
- *
- * @author stefan
  */
 public class WaitAction extends DirectAction {
   private static final Logger logger = Logger.getLogger(WaitAction.class);
@@ -41,9 +41,13 @@ public class WaitAction extends DirectAction {
       messageSender.sendWait(unit);
     } catch (NetworkException ex) {
       logger.warn("Could not send wait", ex);
-      if (GUI.askToResend(ex) == GUI.YES_OPTION) {
-        sendWait();
-      }
+      GUI.askToResend(ex, new DialogListener() {
+        public void buttonClicked(DialogResult button) {
+          if (button == DialogResult.YES) {
+            sendWait();
+          }
+        }
+      });
     }
   }
 }

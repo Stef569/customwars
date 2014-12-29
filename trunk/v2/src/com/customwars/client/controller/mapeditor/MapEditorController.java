@@ -17,6 +17,8 @@ import com.customwars.client.ui.GUI;
 import com.customwars.client.ui.renderer.MapEditorRenderer;
 import com.customwars.client.ui.sprite.SpriteManager;
 import com.customwars.client.ui.sprite.TileSprite;
+import com.customwars.client.ui.thingle.DialogListener;
+import com.customwars.client.ui.thingle.DialogResult;
 import org.apache.log4j.Logger;
 
 import java.awt.Color;
@@ -93,29 +95,25 @@ public class MapEditorController {
     return fileName != null && fileName.endsWith(mapFileExtension);
   }
 
-  public boolean saveMap(String mapName, String mapDescription, String author) throws IOException {
+  public void saveMap(String mapName, String mapDescription, String author) {
     validateMap(mapName);
 
-    boolean saved = false;
     if (resources.isMapCached(mapName)) {
-      if (GUI.showConfirmationDialog(
+      GUI.showConfirmationDialog(
         App.translate("gui_err_mapeditor_map_name_not_unique_msg"),
-        App.translate("gui_err_mapeditor_map_name_not_unique_title")) == GUI.YES_OPTION) {
-        saveMapNow(mapName, mapDescription, author);
-        saved = true;
-      }
+        App.translate("gui_err_mapeditor_map_name_not_unique_title"),
+        new SaveMapDialogListener(mapName, mapDescription, author));
     } else {
-      saveMapNow(mapName, mapDescription, author);
-      saved = true;
+      try {
+        saveMapNow(mapName, mapDescription, author);
+      } catch (IOException e) {
+        logger.error(e);
+        GUI.showExceptionDialog(
+          String.format("Could not save the map '%s'", mapName), e,
+          "Error while saving"
+        );
+      }
     }
-    return saved;
-  }
-
-  private void saveMapNow(String mapName, String mapDescription, String author) throws IOException {
-    map.setMapName(mapName);
-    map.setDescription(mapDescription);
-    map.setAuthor(author);
-    resources.saveMap(map);
   }
 
   private void validateMap(String mapName) {
@@ -305,5 +303,44 @@ public class MapEditorController {
 
   public void toggleConstantMode() {
     this.constantMode = !constantMode;
+  }
+
+  private class SaveMapDialogListener implements DialogListener {
+    private String mapName;
+    private String mapDescription;
+    private String author;
+
+    public SaveMapDialogListener(String mapName, String mapDescription, String author) {
+      this.mapName = mapName;
+      this.mapDescription = mapDescription;
+      this.author = author;
+    }
+
+    @Override
+    public void buttonClicked(DialogResult button) {
+      if (button == DialogResult.YES) {
+        try {
+          saveMapNow(mapName, mapDescription, author);
+
+          GUI.showdialog(
+            String.format("%s your map '%s'\nhas been saved to %s", author, mapName, App.get("home.maps.dir")),
+            "Saved"
+          );
+        } catch (Exception e) {
+          logger.error(e);
+          GUI.showExceptionDialog(
+            String.format("Could not save the map '%s'", mapName), e,
+            "Error while saving"
+          );
+        }
+      }
+    }
+  }
+
+  private void saveMapNow(String mapName, String mapDescription, String author) throws IOException {
+    map.setMapName(mapName);
+    map.setDescription(mapDescription);
+    map.setAuthor(author);
+    resources.saveMap(map);
   }
 }

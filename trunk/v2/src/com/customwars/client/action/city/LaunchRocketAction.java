@@ -14,6 +14,8 @@ import com.customwars.client.ui.GUI;
 import com.customwars.client.ui.renderer.GameRenderer;
 import com.customwars.client.ui.renderer.MapRenderer;
 import com.customwars.client.ui.state.InGameContext;
+import com.customwars.client.ui.thingle.DialogListener;
+import com.customwars.client.ui.thingle.DialogResult;
 import org.apache.log4j.Logger;
 
 import java.util.Collection;
@@ -68,9 +70,13 @@ public class LaunchRocketAction extends DirectAction {
       messageSender.launchRocket(rocketLauncher, rocketSilo, rocketDestination, effectRange);
     } catch (NetworkException ex) {
       logger.warn("Could not send launch rocket", ex);
-      if (GUI.askToResend(ex) == GUI.YES_OPTION) {
-        sendLaunchRocket();
-      }
+      GUI.askToResend(ex, new DialogListener() {
+        public void buttonClicked(DialogResult button) {
+          if (button == DialogResult.YES) {
+            sendLaunchRocket();
+          }
+        }
+      });
     }
   }
 

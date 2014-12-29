@@ -1,6 +1,7 @@
 package com.customwars.client.ui.state;
 
 import com.customwars.client.io.ResourceManager;
+import com.customwars.client.ui.GUI;
 import com.customwars.client.ui.state.input.CWCommand;
 import com.customwars.client.ui.state.input.CWInput;
 import org.newdawn.slick.Color;
@@ -24,7 +25,7 @@ public abstract class CWState extends BasicGameState {
   protected boolean entered;
 
   public final void controlPressed(CWCommand command) {
-    if (entered) {
+    if (entered && !GUI.isRenderingDialog()) {
       controlPressed(command, cwInput);
     }
   }
@@ -33,7 +34,7 @@ public abstract class CWState extends BasicGameState {
   }
 
   public final void controlReleased(CWCommand command) {
-    if (entered) {
+    if (entered && !GUI.isRenderingDialog()) {
       controlReleased(command, cwInput);
     }
   }
@@ -48,6 +49,8 @@ public abstract class CWState extends BasicGameState {
    * Subclasses that don't want this behaviour must override this method.
    */
   public void mousePressed(int button, int x, int y) {
+    if (GUI.isRenderingDialog()) return;
+
     if (button == Input.MOUSE_RIGHT_BUTTON) {
       changeToPreviousState();
     }

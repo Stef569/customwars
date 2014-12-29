@@ -5,19 +5,20 @@ import com.customwars.client.controller.mapeditor.MapEditorController;
 import com.customwars.client.model.map.Direction;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.ui.GUI;
-import com.customwars.client.ui.hud.Dialog;
 import com.customwars.client.ui.renderer.MapEditorRenderer;
 import com.customwars.client.ui.state.input.CWCommand;
 import com.customwars.client.ui.state.input.CWInput;
+import com.customwars.client.ui.thingle.DialogResult;
+import com.customwars.client.ui.thingle.InputDialogListener;
+import com.customwars.client.ui.thingle.ThingleInputDialog;
 import org.apache.log4j.Logger;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
+import org.newdawn.slick.thingle.util.FileChooserListener;
 
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
 import java.io.File;
 
 /**
@@ -61,6 +62,8 @@ public class MapEditorState extends CWState {
 
   @Override
   public void controlPressed(CWCommand command, CWInput cwInput) {
+    if (GUI.isRenderingDialog()) return;
+
     Tile cursorLocation = mapEditorRenderer.getCursorLocation();
     int selectedIndex = mapEditorRenderer.getSelectedIndex();
 
@@ -107,6 +110,8 @@ public class MapEditorState extends CWState {
 
   @Override
   public void mousePressed(int button, int x, int y) {
+    if (GUI.isRenderingDialog()) return;
+
     if (button == Input.MOUSE_LEFT_BUTTON) {
       mapEditorController.addToMap();
     } else if (button == Input.MOUSE_RIGHT_BUTTON) {
@@ -115,49 +120,36 @@ public class MapEditorState extends CWState {
   }
 
   private void saveMap() {
-    cwInput.setActive(false);
-    Dialog dialog = new Dialog("Save Map");
-    dialog.addTextField("Map name");
-    dialog.addTextField("Map description");
-    dialog.addTextField("Author");
-
-    int eventType = dialog.show();
-    handleSaveMapDialogInput(eventType, dialog);
-    cwInput.setActive(true);
+    ThingleInputDialog saveMapDialog = new ThingleInputDialog("Save Map", new InputDialogListener() {
+      public void buttonClicked(ThingleInputDialog dialog, DialogResult button) {
+        if (button == DialogResult.OK) {
+          handleSaveMapDialogInput(dialog);
+        }
+      }
+    });
+    saveMapDialog.addTextField("Map Name");
+    saveMapDialog.addTextField("Map Description");
+    saveMapDialog.addTextField("Author");
+    GUI.showDialog(saveMapDialog);
   }
 
-  public void handleSaveMapDialogInput(int eventType, Dialog dialog) {
-    if (eventType == JOptionPane.OK_OPTION) {
-      String mapName = dialog.getFieldValue("map name");
-      String mapDescription = dialog.getFieldValue("map description");
-      String author = dialog.getFieldValue("author");
-
-      try {
-        boolean saved = mapEditorController.saveMap(mapName, mapDescription, author);
-        if (saved) {
-          GUI.showdialog(
-            String.format("%s your map '%s'\nhas been saved to %s", author, mapName, App.get("home.maps.dir")),
-            "Saved"
-          );
-        }
-      } catch (Exception e) {
-        logger.error(e);
-        GUI.showExceptionDialog(
-          String.format("Could not save the map '%s'", mapName), e,
-          "Error while saving"
-        );
-      }
-    }
+  public void handleSaveMapDialogInput(ThingleInputDialog dialog) {
+    String mapName = dialog.getFieldValue("map name");
+    String mapDescription = dialog.getFieldValue("map description");
+    String author = dialog.getFieldValue("author");
+    mapEditorController.saveMap(mapName, mapDescription, author);
   }
 
   private void openMap() {
-    cwInput.setActive(false);
-    JFileChooser fileChooser = new JFileChooser(App.get("home.maps.dir"));
-    fileChooser.showOpenDialog(null);
+    File homeDir = new File(App.get("home.maps.dir"));
+    GUI.browseForFile("Open Map", null, "Open", homeDir, new FileChooserListener() {
+      public void fileSelected(File file) {
+        handleOpenMapDialogInput(file);
+      }
 
-    File file = fileChooser.getSelectedFile();
-    handleOpenMapDialogInput(file);
-    cwInput.setActive(true);
+      public void chooserCanceled() {
+      }
+    });
   }
 
   private void handleOpenMapDialogInput(File file) {
@@ -175,56 +167,58 @@ public class MapEditorState extends CWState {
   }
 
   private void createNewMap() {
-    cwInput.setActive(false);
-    Dialog dialog = new Dialog("New Map");
+    final ThingleInputDialog dialog = new ThingleInputDialog("New Map", new InputDialogListener() {
+      public void buttonClicked(ThingleInputDialog dialog, DialogResult button) {
+        if (button == DialogResult.OK) {
+          handleNewMapDialogInput(dialog);
+        }
+      }
+    });
     dialog.addTextField("Cols", "25");
     dialog.addTextField("Rows", "25");
-
-    int eventType = dialog.show();
-    handleNewMapDialogInput(eventType, dialog);
-    cwInput.setActive(true);
+    GUI.showDialog(dialog);
   }
 
-  private void handleNewMapDialogInput(int eventType, Dialog dialog) {
-    if (eventType == JOptionPane.OK_OPTION) {
-      String colsVal = dialog.getFieldValue("cols");
-      String rowsVal = dialog.getFieldValue("rows");
-      String errTitle = "Error while creating new map";
+  private void handleNewMapDialogInput(ThingleInputDialog dialog) {
+    String colsVal = dialog.getFieldValue("cols");
+    String rowsVal = dialog.getFieldValue("rows");
+    String errTitle = "Error while creating new map";
 
-      try {
-        int cols = Integer.parseInt(colsVal);
-        int rows = Integer.parseInt(rowsVal);
+    try {
+      int cols = Integer.parseInt(colsVal);
+      int rows = Integer.parseInt(rowsVal);
 
-        if (cols <= 1) {
-          GUI.showErrDialog(
-            cols + " is too small, please increase the cols value(>1)",
-            errTitle
-          );
-          return;
-        }
-
-        if (rows <= 1) {
-          GUI.showErrDialog(
-            rows + " is too small, please increase the rows value(>1)",
-            errTitle
-          );
-          return;
-        }
-
-        mapEditorController.createEmptyMap(cols, rows);
-      } catch (NumberFormatException e) {
-        logger.error(e);
-        GUI.showExceptionDialog(
-          "Please enter a numeric value", e,
+      if (cols <= 1) {
+        GUI.showErrDialog(
+          cols + " is too small, please increase the cols value(>1)",
           errTitle
         );
-      } catch (Exception e) {
-        logger.error(e);
+        return;
       }
+
+      if (rows <= 1) {
+        GUI.showErrDialog(
+          rows + " is too small, please increase the rows value(>1)",
+          errTitle
+        );
+        return;
+      }
+
+      mapEditorController.createEmptyMap(cols, rows);
+    } catch (NumberFormatException e) {
+      logger.error(e);
+      GUI.showExceptionDialog(
+        "Please enter a numeric value", e,
+        errTitle
+      );
+    } catch (Exception e) {
+      logger.error(e);
     }
   }
 
   public void moveCursor(CWCommand command) {
+    if (GUI.isRenderingDialog()) return;
+
     switch (command.getEnum()) {
       case UP:
         mapEditorController.moveCursor(Direction.NORTH);
@@ -243,6 +237,7 @@ public class MapEditorState extends CWState {
 
   @Override
   public void mouseMoved(int oldx, int oldy, int newx, int newy) {
+    if (GUI.isRenderingDialog()) return;
     mapEditorController.moveCursor(newx, newy);
   }
 

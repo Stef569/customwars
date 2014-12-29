@@ -9,6 +9,8 @@ import com.customwars.client.network.MessageSenderFactory;
 import com.customwars.client.network.NetworkException;
 import com.customwars.client.ui.GUI;
 import com.customwars.client.ui.renderer.GameOverRenderer;
+import com.customwars.client.ui.thingle.DialogListener;
+import com.customwars.client.ui.thingle.DialogResult;
 import org.apache.log4j.Logger;
 import org.newdawn.slick.Font;
 import org.newdawn.slick.GameContainer;
@@ -55,9 +57,13 @@ public class GameOverState extends CWState {
     }
 
     if (App.getBoolean("game.recordreplay.prompt")) {
-      if (GUI.showConfirmationDialog("Save replay", "save") == GUI.YES_OPTION) {
-        new SaveReplayAction(stateSession.replay).invoke(null);
-      }
+      GUI.showConfirmationDialog("Save replay", "save", new DialogListener() {
+        public void buttonClicked(DialogResult button) {
+          if (button == DialogResult.YES) {
+            new SaveReplayAction(stateSession.replay).invoke(null);
+          }
+        }
+      });
     }
 
     Player winner = null;
@@ -79,9 +85,13 @@ public class GameOverState extends CWState {
       messageSender.endGame();
     } catch (NetworkException ex) {
       logger.warn("Could not send end game", ex);
-      if (GUI.askToResend(ex) == GUI.YES_OPTION) {
-        sendEndGameToServer();
-      }
+      GUI.askToResend(ex, new DialogListener() {
+        public void buttonClicked(DialogResult button) {
+          if (button == DialogResult.YES) {
+            sendEndGameToServer();
+          }
+        }
+      });
     }
   }
 

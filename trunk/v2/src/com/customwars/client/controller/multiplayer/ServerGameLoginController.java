@@ -10,6 +10,8 @@ import com.customwars.client.tools.StringUtil;
 import com.customwars.client.ui.GUI;
 import com.customwars.client.ui.state.StateChanger;
 import com.customwars.client.ui.state.StateSession;
+import com.customwars.client.ui.thingle.DialogListener;
+import com.customwars.client.ui.thingle.DialogResult;
 import org.apache.log4j.Logger;
 import org.newdawn.slick.thingle.Page;
 import org.newdawn.slick.thingle.Widget;
@@ -87,9 +89,13 @@ public class ServerGameLoginController {
       stateChanger.changeTo("SERVER_GAME_ROOM");
     } catch (NetworkException e) {
       logger.warn("Could not send login", e);
-      if (GUI.askToResend(e) == GUI.YES_OPTION) {
-        loginIntoServerGame();
-      }
+      GUI.askToResend(e, new DialogListener() {
+        public void buttonClicked(DialogResult button) {
+          if (button == DialogResult.YES) {
+            loginIntoServerGame();
+          }
+        }
+      });
     }
   }
 

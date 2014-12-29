@@ -11,6 +11,8 @@ import com.customwars.client.network.MessageSender;
 import com.customwars.client.network.NetworkException;
 import com.customwars.client.ui.GUI;
 import com.customwars.client.ui.state.InGameContext;
+import com.customwars.client.ui.thingle.DialogListener;
+import com.customwars.client.ui.thingle.DialogResult;
 import org.apache.log4j.Logger;
 
 /**
@@ -47,9 +49,13 @@ public class AddUnitToTileAction extends DirectAction {
       messageSender.buildUnit(unit, location, newUnitOwner);
     } catch (NetworkException ex) {
       logger.warn("Could not send build unit", ex);
-      if (GUI.askToResend(ex) == GUI.YES_OPTION) {
-        sendBuildUnit();
-      }
+      GUI.askToResend(ex, new DialogListener() {
+        public void buttonClicked(DialogResult button) {
+          if (button == DialogResult.YES) {
+            sendBuildUnit();
+          }
+        }
+      });
     }
   }
 
