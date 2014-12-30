@@ -37,7 +37,7 @@ public class MiniMapRenderer implements Renderable {
   private int tileSize;
   private Point location;
   private int hqAlpha;
-  private int hqAlphaStep = 5;
+  private int hqAlphaStep = 3;
   private float scale = 1;
 
   public MiniMapRenderer() {
@@ -121,22 +121,22 @@ public class MiniMapRenderer implements Renderable {
   private void renderSquare(int x, int y, Graphics g, Color color, boolean animate) {
     Color prevColor = g.getColor();
     if (animate) {
-      color.a = hqAlpha;
-      g.setColor(color);
+      Color c = new Color(color.r, color.g, color.b, hqAlpha);
+      g.setColor(c);
     } else {
       g.setColor(color);
     }
 
     g.fillRect(x, y, tileSize, tileSize);
 
-
     if (animate) {
       g.setColor(new Color(250, 250, 250, hqAlpha));
+      int recSize = 5;
       // Draw a white fading square
-      g.drawLine(x, y, x + tileSize - 1, y);
-      g.drawLine(x, y, x, y + tileSize - 1);
-      g.drawLine(x + tileSize - 1, y, x + tileSize - 1, y + tileSize - 1);
-      g.drawLine(x, y + tileSize - 1, x + tileSize - 1, y + tileSize - 1);
+      g.fillRect(x, y, tileSize, recSize);
+      g.fillRect(x, y, recSize, tileSize);
+      g.fillRect(x + tileSize - recSize, y, recSize, tileSize);
+      g.fillRect(x, y + tileSize - recSize, tileSize, recSize);
     } else {
       g.setColor(Color.black);
       // Draw from right top -> right bottom

@@ -3,11 +3,11 @@
     <panel columns="2" gap="5" weighty="1">
         <panel gap="4">
             <label text="Category:    "/>
-            <combobox name="map_categories" weightx="1" action="filterMapsOnCategory(map_categories.text)"/>
+            <combobox name="map_categories" weightx="1" editable="false" action="filterMapsOnCategory(map_categories.text)"/>
         </panel>
         <label name="map_name" width="400" text="map name"/>
         <list name="map_list" width="310" weighty="1" rowspan="3" action="mapSelected()"/>
-        <panel name="mini_map" weighty="1"/>
+        <panel name="mini_map" weightx="1" weighty="1"/>
         <label name="map_description" text="map description"/>
         <panel>
             <panel name="map_city_count" weightx="1" halign="center"/>

@@ -12,6 +12,7 @@ import org.newdawn.slick.Font;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
+import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.thingle.Page;
@@ -28,6 +29,7 @@ public class MapSelectState extends CWState {
   private CityCountWidgetRenderer cityCountRenderer;
   private MapSelectController controller;
   private Font guiFont;
+  private float miniMapScale;
 
   public void init(GameContainer gameContainer, StateBasedGame stateBasedGame) throws SlickException {
     miniMapRenderer = new MiniMapWidgetRenderer(resources);
@@ -49,11 +51,10 @@ public class MapSelectState extends CWState {
 
     // Make sure that the map list occupies all vertical space.
     Widget mapCategoryCbo = page.getWidget("map_list");
-    mapCategoryCbo.setInteger("height", container.getHeight()-140);
+    mapCategoryCbo.setInteger("height", container.getHeight() - 140);
   }
 
   private void initWidgetRenderers() {
-    miniMapRenderer.setScale(3f);
     page.getWidget("mini_map").setRenderer(miniMapRenderer);
     page.getWidget("map_city_count").setRenderer(cityCountRenderer);
   }
@@ -69,6 +70,8 @@ public class MapSelectState extends CWState {
     super.enter(container, game);
     loadMapCategories();
     page.enable();
+    miniMapScale = 3f;
+    miniMapRenderer.setScale(miniMapScale);
   }
 
   private void initPageContent(List<String> mapCategories) {
@@ -103,6 +106,10 @@ public class MapSelectState extends CWState {
 
   @Override
   public void update(GameContainer container, int delta) throws SlickException {
+    if (container.getInput().isKeyPressed(Input.KEY_ADD)) {
+      miniMapScale += 0.5f;
+      miniMapRenderer.setScale(miniMapScale);
+    }
   }
 
   @Override
