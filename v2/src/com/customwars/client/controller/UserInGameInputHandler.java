@@ -14,11 +14,13 @@ import com.customwars.client.action.unit.StartUnitCycleAction;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Unit;
+import com.customwars.client.model.map.Direction;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.ui.PopupMenu;
 import com.customwars.client.ui.StandardMenuItem;
+import com.customwars.client.ui.renderer.MapRenderer;
 import com.customwars.client.ui.state.InGameContext;
 import org.apache.log4j.Logger;
 import org.newdawn.slick.gui.AbstractComponent;
@@ -36,6 +38,7 @@ public class UserInGameInputHandler implements InGameInputHandler {
   private final CursorController cursorController;
   private final Map map;
   private boolean canDeleteUnit;
+  private MapRenderer mapRenderer;
 
   public UserInGameInputHandler(InGameContext inGameContext) {
     this.game = inGameContext.getObj(Game.class);
@@ -43,6 +46,7 @@ public class UserInGameInputHandler implements InGameInputHandler {
     this.map = game.getMap();
     this.inGameContext = inGameContext;
     this.guiContext = inGameContext.getObj(GUIContext.class);
+    this.mapRenderer = inGameContext.getObj(MapRenderer.class);
   }
 
   public void handleA(Tile cursorLocation) {
@@ -190,8 +194,11 @@ public class UserInGameInputHandler implements InGameInputHandler {
     inGameContext.doAction(endTurn);
   }
 
-  public void cursorMoved(Location newLocation) {
-    updateDeleteUnitCursor(newLocation);
+  public void cursorMoved(Location oldLocation, Location newLocation, Direction moveDirection) {
+    if (!oldLocation.equals(newLocation)) {
+      updateDeleteUnitCursor(newLocation);
+      mapRenderer.cursorMoved(oldLocation, newLocation, moveDirection);
+    }
   }
 
   private void updateDeleteUnitCursor(Location newLocation) {
@@ -212,6 +219,6 @@ public class UserInGameInputHandler implements InGameInputHandler {
 
   private boolean canDeleteUnit(Unit unit) {
     return unit != null && unit.isActive() &&
-        unit.getOwner().equals(game.getActivePlayer());
+      unit.getOwner().equals(game.getActivePlayer());
   }
 }

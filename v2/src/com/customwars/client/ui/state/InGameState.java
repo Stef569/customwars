@@ -15,6 +15,7 @@ import com.customwars.client.model.game.Game;
 import com.customwars.client.model.game.GameReplay;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.map.Direction;
+import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.model.map.TileMap;
@@ -31,6 +32,7 @@ import com.customwars.client.ui.renderer.MapRenderer;
 import com.customwars.client.ui.sprite.TileSprite;
 import com.customwars.client.ui.state.input.CWCommand;
 import com.customwars.client.ui.state.input.CWInput;
+import com.customwars.client.ui.state.input.CommandEnum;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
@@ -380,7 +382,15 @@ public class InGameState extends CWState implements PropertyChangeListener {
   }
 
   public void moveCursor(CWCommand command) {
-    switch (command.getEnum()) {
+    Location oldLocation = gameRenderer.getCursorLocation();
+    moveCursor(command.getEnum());
+    Location newLocation = gameRenderer.getCursorLocation();
+    Direction moveDirection = map.getDirectionTo(oldLocation, newLocation);
+    inputHandler.cursorMoved(oldLocation, newLocation, moveDirection);
+  }
+
+  private void moveCursor(CommandEnum command) {
+    switch (command) {
       case UP:
         cursorControl.moveCursor(Direction.NORTH);
         break;
@@ -394,7 +404,6 @@ public class InGameState extends CWState implements PropertyChangeListener {
         cursorControl.moveCursor(Direction.EAST);
         break;
     }
-    inputHandler.cursorMoved(gameRenderer.getCursorLocation());
   }
 
   /**
@@ -420,8 +429,11 @@ public class InGameState extends CWState implements PropertyChangeListener {
   @Override
   public void mouseMoved(int oldx, int oldy, int newx, int newy) {
     if (isInputAllowed()) {
+      Location oldLocation = gameRenderer.getCursorLocation();
       cursorControl.moveCursor(newx, newy);
-      inputHandler.cursorMoved(gameRenderer.getCursorLocation());
+      Location newLocation = gameRenderer.getCursorLocation();
+      Direction moveDirection = map.getDirectionTo(oldLocation, newLocation);
+      inputHandler.cursorMoved(oldLocation, newLocation, moveDirection);
     }
   }
 

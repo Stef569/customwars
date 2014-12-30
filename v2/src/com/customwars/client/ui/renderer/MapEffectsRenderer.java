@@ -26,6 +26,8 @@ public class MapEffectsRenderer {
   private Location transportLocation;
   private Collection<Location> moveZone;
   private Collection<Location> attackZone;
+  private UnitMovePath unitMovePath;
+  private boolean mustRebuildPath;
 
   // View
   private final MapRenderer mapRenderer;
@@ -108,11 +110,13 @@ public class MapEffectsRenderer {
 
   /**
    * Shows a path of arrows from the active unit to the cursor location
-   * map generates a path of Directions.
+   * The user selects the locations to be included in the path.
+   * If the path exceeds the maximum length the map generates the shortest path to the destination.
+   *
+   * @see UnitMovePath
    */
   private void renderArrowPath(Graphics g) {
-    Location clicked = mapRenderer.getCursorLocation();
-    List<Direction> directionPath = map.getDirectionsPath(activeUnit, clicked);
+    List<Direction> directionPath = unitMovePath.getDirectionsPath();
     renderArrowPath(g, directionPath);
   }
 
@@ -195,6 +199,28 @@ public class MapEffectsRenderer {
   // Zones & Arrows
   //----------------------------------------------------------------------------
 
+  public void createMovePath() {
+    int maxMovement = activeUnit.getStats().getMovement();
+    unitMovePath = new UnitMovePath(map, maxMovement);
+  }
+
+  public void cursorMoved(Location oldLocation, Location newLocation, Direction moveDirection) {
+    if (unitMovePath != null) {
+      if (!activeUnit.getMoveZone().contains(newLocation)) {
+        mustRebuildPath = true;
+      } else {
+        if (unitMovePath.canAddDirection(activeUnit, moveDirection, newLocation)) {
+          if (mustRebuildPath) {
+            unitMovePath.createShortestPath(activeUnit, newLocation);
+            mustRebuildPath = false;
+          } else {
+            unitMovePath.addDirection(activeUnit, moveDirection, newLocation);
+          }
+        }
+      }
+    }
+  }
+
   public void removeZones() {
     removeMoveZone();
     removeAttackZone();
@@ -244,6 +270,10 @@ public class MapEffectsRenderer {
 
   public void setRenderArrowPath(boolean renderArrowPath) {
     this.renderArrowPath = renderArrowPath;
+
+    if (!renderArrowPath) {
+      unitMovePath = null;
+    }
   }
 
   public void setRenderArrowHead(boolean renderArrowHead) {

@@ -3,8 +3,6 @@ package com.customwars.client.model.map;
 /**
  * The 8 Compass Directions
  * STILL means no direction
- *
- * @author Stefan
  */
 public enum Direction {
   NORTH, EAST, SOUTH, WEST,
@@ -35,5 +33,43 @@ public enum Direction {
 
   public static boolean isWestQuadrant(Direction quadrant) {
     return quadrant == Direction.NORTHWEST || quadrant == Direction.SOUTHWEST;
+  }
+
+  /**
+   * Check if 2 directions are the opposite of each other
+   */
+  public static boolean isOpposite(Direction direction1, Direction direction2) {
+    return direction1 == getOpposite(direction2);
+  }
+
+  /**
+   * Returns the opposite direction of the given direction.
+   * <code>Direction North = getOpposite(Direction.SOUTH)</code>
+   *
+   * @param direction the direction to find the opposite for
+   * @return the opposite direction, the opposite of STILL return STILL
+   */
+  public static Direction getOpposite(Direction direction) {
+    switch (direction) {
+      case NORTH:
+        return Direction.SOUTH;
+      case EAST:
+        return Direction.WEST;
+      case SOUTH:
+        return Direction.NORTH;
+      case WEST:
+        return Direction.EAST;
+      case NORTHEAST:
+        return Direction.SOUTHWEST;
+      case SOUTHEAST:
+        return Direction.NORTHWEST;
+      case NORTHWEST:
+        return Direction.SOUTHEAST;
+      case SOUTHWEST:
+        return Direction.NORTHEAST;
+      case STILL:
+        return Direction.STILL;
+    }
+    throw new IllegalStateException("No opposite for " + direction);
   }
 }
