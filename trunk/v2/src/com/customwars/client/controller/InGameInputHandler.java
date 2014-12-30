@@ -1,5 +1,6 @@
 package com.customwars.client.controller;
 
+import com.customwars.client.model.map.Direction;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Tile;
 
@@ -17,5 +18,5 @@ public interface InGameInputHandler {
 
   void endTurn();
 
-  void cursorMoved(Location newLocation);
+  void cursorMoved(Location oldLocation, Location newLocation, Direction moveDirection);
 }

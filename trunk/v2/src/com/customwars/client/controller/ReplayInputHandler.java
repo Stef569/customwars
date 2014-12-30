@@ -1,6 +1,7 @@
 package com.customwars.client.controller;
 
 import com.customwars.client.model.game.GameReplay;
+import com.customwars.client.model.map.Direction;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.ui.state.InGameContext;
@@ -47,7 +48,7 @@ public class ReplayInputHandler implements InGameInputHandler {
   }
 
   @Override
-  public void cursorMoved(Location newLocation) {
+  public void cursorMoved(Location oldLocation, Location newLocation, Direction moveDirection) {
   }
 
   private void executeNextReplayAction() {

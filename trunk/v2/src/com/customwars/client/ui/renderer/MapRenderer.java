@@ -6,6 +6,7 @@ import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Terrain;
 import com.customwars.client.model.gameobject.Unit;
+import com.customwars.client.model.map.Direction;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
@@ -37,8 +38,6 @@ import java.util.List;
  * <p>Cities and units can have a image that is larger then the tile size, these images need to be translated upwards.
  * So that the bottom of the image is positioned on the tile bottom. A side effect is that units can be partly hidden
  * when they are 1 tile above a city. Because the city image overlaps the unit image</p>
- *
- * @author Stefan
  */
 public class MapRenderer implements Renderable {
   private static final int CO_ZONE_TOTAL_FADE_TIME = 380;// in ms, smaller value is faster fading
@@ -206,6 +205,10 @@ public class MapRenderer implements Renderable {
     g.setColor(origColor);
   }
 
+  public void cursorMoved(Location oldLocation, Location newLocation, Direction direction) {
+    effectsRenderer.cursorMoved(oldLocation, newLocation, direction);
+  }
+
   public void removeUnit(Unit unit) {
     if (activeUnit == unit) {
       activeUnit = null;
@@ -344,6 +347,13 @@ public class MapRenderer implements Renderable {
    */
   public void removeAttackZone() {
     effectsRenderer.removeAttackZone();
+  }
+
+  /**
+   * @see #effectsRenderer#createMovePath()
+   */
+  public void createMovePath() {
+    effectsRenderer.createMovePath();
   }
 
   /**

@@ -14,8 +14,6 @@ import org.apache.log4j.Logger;
 /**
  * Select the last unit on selectTile and make it the active unit in the game. This is the first action
  * for a unit.
- *
- * @author stefan
  */
 public class SelectAction extends DirectAction {
   private static final Logger logger = Logger.getLogger(SelectAction.class);
@@ -56,6 +54,7 @@ public class SelectAction extends DirectAction {
     mapRenderer.removeZones();
     mapRenderer.showMoveZone();
     mapRenderer.showArrows(true);
+    mapRenderer.createMovePath();
   }
 
   public void undo() {
