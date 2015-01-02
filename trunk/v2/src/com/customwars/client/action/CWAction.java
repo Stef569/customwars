@@ -6,19 +6,47 @@ import com.customwars.client.ui.state.InGameContext;
  * Interface for each Action in the game
  * an Action can be done and undone.
  * <p/>
- * When the action has been performed {@link #isCompleted()} will return true
+ * When the action has been performed {@link #isCompleted()} will return true.
  */
 public interface CWAction {
+  /**
+   * Invokes/executes this action
+   *
+   * @param context the game context in where this action is executed
+   */
   void invoke(InGameContext context);
 
+  /**
+   * Updates an action until it is finished
+   *
+   * @param elapsedTime The time that has passed in ms
+   */
   void update(int elapsedTime);
 
+  /**
+   * @return Can this action be undone
+   */
   boolean canUndo();
 
+  /**
+   * Undo this action, reverting any changes made
+   */
   void undo();
 
+  /**
+   * @return The name of this action for debugging purposes
+   */
   String getName();
 
+  /**
+   * @return Has this action been started.
+   * In other words is invoke called.
+   */
+  boolean isStarted();
+
+  /**
+   * @return Has this action completed all it's goals
+   */
   boolean isCompleted();
 
   /**

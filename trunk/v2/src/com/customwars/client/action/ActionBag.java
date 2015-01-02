@@ -21,6 +21,7 @@ public class ActionBag implements CWAction {
   private final String actionName;
   private InGameContext context;
   private String actionCommand;
+  private boolean completed;
 
   public ActionBag(String actionName) {
     this.actionName = actionName;
@@ -73,7 +74,7 @@ public class ActionBag implements CWAction {
     if (++index >= actions.size()) {
       index = 0;
       doAll = false;
-      started = false;
+      completed = true;
     }
   }
 
@@ -114,8 +115,12 @@ public class ActionBag implements CWAction {
     return actionName;
   }
 
+  public boolean isStarted() {
+    return started;
+  }
+
   public boolean isCompleted() {
-    return !started;
+    return completed;
   }
 
   public String getActionCommand() {

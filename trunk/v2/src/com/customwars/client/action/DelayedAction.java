@@ -9,8 +9,6 @@ import com.customwars.client.ui.state.InGameContext;
  * Subclass methods are invoked in this order:
  * init(inGameContext)
  * invokeAction ()
- *
- * @author stefan
  */
 public abstract class DelayedAction extends AbstractCWAction {
   private int time;
@@ -23,6 +21,8 @@ public abstract class DelayedAction extends AbstractCWAction {
   }
 
   public final void invoke(InGameContext context) {
+    super.invoke(context);
+
     if (!running) {
       init(context);
       running = true;

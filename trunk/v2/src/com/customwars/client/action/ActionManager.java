@@ -5,12 +5,15 @@ import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 /**
  * Allow Actions to be executed
  * Keep a history of actions that can be undone -> undoManager
  * Keep a history of actions that have an action command -> actionHistory
+ * Allow actions to be put in a queue.
  */
 public class ActionManager {
   private static final Logger logger = Logger.getLogger(ActionManager.class);
@@ -18,6 +21,7 @@ public class ActionManager {
   private final InGameContext inGameContext;
   private final List<CWAction> actionHistory;
   private CWAction currentAction;
+  private Queue<CWAction> queue;
 
   public ActionManager(InGameContext inGameContext) {
     this.inGameContext = inGameContext;
@@ -29,6 +33,8 @@ public class ActionManager {
    * Executes an action
    * If the action can be undone then it is added to the undo history, and {@link #canUndo()} will return true
    * If the action had an action command then it is added to the action history.
+   *
+   * @param action The action to execute
    */
   public void doAction(CWAction action) {
     if (action == null) {
@@ -57,13 +63,56 @@ public class ActionManager {
     }
   }
 
+  /**
+   * Creates a new queue containing the given actions.
+   * The actions will begin to execute right away.
+   * No undo history will be stored. Queued actions cannot be undone.
+   * Each executed action will be stored in the action history.
+   * There is no way to stop the executing.
+   *
+   * @param actions the actions to be executed
+   */
+  public void Queue(List<CWAction> actions) {
+    this.queue = new LinkedList<CWAction>(actions);
+  }
+
   public void update(int elapsedTime) {
     if (currentAction != null) {
-      currentAction.update(elapsedTime);
-
-      if (currentAction.isCompleted()) {
-        currentAction = null;
+      updateSingleAction(elapsedTime);
+    } else {
+      if (queue != null) {
+        updateQueue(elapsedTime);
       }
+    }
+  }
+
+  private void updateSingleAction(int elapsedTime) {
+    currentAction.update(elapsedTime);
+
+    if (currentAction.isCompleted()) {
+      currentAction = null;
+    }
+  }
+
+  private void updateQueue(int elapsedTime) {
+    CWAction action = queue.peek();
+
+    if (!action.isStarted()) {
+      action.invoke(inGameContext);
+
+      if (action.getActionCommand() != null) {
+        actionHistory.add(action);
+      }
+    }
+
+    if (action.isCompleted()) {
+      queue.remove();
+
+      if (queue.isEmpty()) {
+        queue = null;
+      }
+    } else {
+      action.update(elapsedTime);
     }
   }
 
