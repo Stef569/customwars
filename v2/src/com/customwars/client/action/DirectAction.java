@@ -5,8 +5,6 @@ import com.customwars.client.ui.state.InGameContext;
 /**
  * A direct Action is executed only once
  * isCompleted() return true after the first invocation.
- *
- * @author stefan
  */
 public abstract class DirectAction extends AbstractCWAction {
   public DirectAction(String name) {
@@ -18,6 +16,7 @@ public abstract class DirectAction extends AbstractCWAction {
   }
 
   public void invoke(InGameContext context) {
+    super.invoke(context);
     init(context);
     invokeAction();
     setActionCompleted(true);

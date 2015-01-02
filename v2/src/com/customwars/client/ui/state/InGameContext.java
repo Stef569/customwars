@@ -81,6 +81,10 @@ public class InGameContext {
     controllerManager.handleUnitBPress(unit);
   }
 
+  public void Queue(List<CWAction> actions) {
+    actionManager.Queue(actions);
+  }
+
   public void update(int elapsedTime) {
     actionManager.update(elapsedTime);
   }

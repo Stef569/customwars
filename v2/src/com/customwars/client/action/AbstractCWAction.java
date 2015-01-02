@@ -1,5 +1,7 @@
 package com.customwars.client.action;
 
+import com.customwars.client.ui.state.InGameContext;
+
 /**
  * Default implementation of a CWAction
  */
@@ -7,6 +9,7 @@ public abstract class AbstractCWAction implements CWAction {
   private String name;
   private boolean canUndo;
   private boolean actionCompleted;
+  private boolean started;
 
   public AbstractCWAction(String name) {
     this(name, true);
@@ -15,6 +18,11 @@ public abstract class AbstractCWAction implements CWAction {
   public AbstractCWAction(String name, boolean canUndo) {
     this.name = name;
     this.canUndo = canUndo;
+  }
+
+  @Override
+  public void invoke(InGameContext context) {
+    started = true;
   }
 
   public void undo() {
@@ -30,6 +38,11 @@ public abstract class AbstractCWAction implements CWAction {
 
   protected void setActionCompleted(boolean actionCompleted) {
     this.actionCompleted = actionCompleted;
+  }
+
+  @Override
+  public boolean isStarted() {
+    return started;
   }
 
   public boolean isCompleted() {
