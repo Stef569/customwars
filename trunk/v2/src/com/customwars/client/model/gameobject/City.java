@@ -13,8 +13,6 @@ import com.customwars.client.tools.NumberUtil;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.util.Arrays;
 import java.util.List;
 
@@ -370,7 +368,14 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
    * @return does this city has the ability to build the given unit
    */
   public boolean canBuild(Unit unit) {
-    return unit != null && builds.contains(unit.getStats().getName());
+    return unit != null && canBuild(unit.getStats().getName());
+  }
+
+  /**
+   * @return does this city has the ability to build the given unit
+   */
+  public boolean canBuild(String unitName) {
+    return builds.contains(unitName);
   }
 
   /**
@@ -468,7 +473,7 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
   public int getHp() {
     return hp;
   }
-  
+
   public int getMaxHp() {
     return maxHp;
   }

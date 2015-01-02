@@ -145,7 +145,7 @@ public class StateSession {
     return getControllerType(player.getId());
   }
 
-      public String getControllerType(int playerID) {
+  public String getControllerType(int playerID) {
     return controllers[playerID];
   }
 

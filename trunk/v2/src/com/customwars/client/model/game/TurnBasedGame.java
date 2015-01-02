@@ -28,8 +28,6 @@ import java.util.List;
  * <p/>
  * Neutral players are always in the IDLE state
  * Human and AI players are ACTIVE or DESTROYED.
- *
- * @author Stefan
  */
 public class TurnBasedGame implements Observable, Serializable {
   private static final Logger logger = Logger.getLogger(TurnBasedGame.class);
@@ -39,10 +37,10 @@ public class TurnBasedGame implements Observable, Serializable {
     IDLE, STARTED, GAME_OVER
   }
 
-  final Map map;          // The map containing all the tiles
-  private final Turn turn;      // The current turn + limits
-  private final List<Player> players; // The Human and AI players that are in this game
-  private Player activePlayer;  // There can only be one active player in a game at any time
+  final Map map;                          // The map containing all the tiles
+  private final Turn turn;                // The current turn + limits
+  private final List<Player> players;     // The Human and AI players that are in this game
+  private Player activePlayer;            // There can only be one active player in a game at any time
   private GameState state;
 
   /**
@@ -106,6 +104,8 @@ public class TurnBasedGame implements Observable, Serializable {
    * The units facing direction is based on the HQ location.
    * If the HQ is on the left side of the map the units will face to the right.
    * If the HQ is on the right side of the map the units will face to the left.
+   *
+   * @param player The player to find the unit facing direction for
    */
   private void detectUnitFacingDirection(Player player) {
     if (player.getHq() != null) {
@@ -235,7 +235,7 @@ public class TurnBasedGame implements Observable, Serializable {
   }
 
   /**
-   * Get All active players in this game
+   * Get All the players that are still alive.
    *
    * @return all active players in this game, excluding the neutral player
    */
