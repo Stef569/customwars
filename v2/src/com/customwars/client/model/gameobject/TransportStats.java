@@ -14,6 +14,7 @@ import java.util.List;
  * maxTransportCount=1
  */
 public class TransportStats implements Serializable {
+  private static final long serialVersionUID = 1L;
   private List<String> transports;        // Units that can be transported (empty when this unit can't transport)
   public final int maxTransportCount;     // Amount of units that can be transported
 

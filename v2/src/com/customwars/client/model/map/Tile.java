@@ -13,10 +13,9 @@ import java.util.List;
 /**
  * A Tile is a location that contains a Terrain(required) and
  * can be fogged. It can contain multiple locatables
- *
- * @author stefan
  */
 public class Tile extends AbstractLocation implements Observable {
+  private static final long serialVersionUID = 1L;
   private final CWPropertyChangeSupport changeSupport = new CWPropertyChangeSupport(this);
   private boolean fogged;
   private Terrain terrain;

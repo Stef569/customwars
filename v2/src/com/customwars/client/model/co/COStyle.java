@@ -7,6 +7,7 @@ import java.io.Serializable;
  * The visual style for a CO. Like: Blue Moon, Orange Star, Intelligent Defense Systems (IDS)‎
  */
 public class COStyle implements Serializable {
+  private static final long serialVersionUID = 1L;
   private final String name;
   private final Color color;
   private final int id;

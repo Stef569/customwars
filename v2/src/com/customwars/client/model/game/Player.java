@@ -33,6 +33,7 @@ import java.util.List;
  */
 public class Player extends GameObject {
   private static final Logger logger = Logger.getLogger(Player.class);
+  private static final long serialVersionUID = 1L;
   private static final int NEUTRAL_PLAYER_ID = -1;
   private static final int NEUTRAL_TEAM = -1;
   private static final String DUMMY_CO_NAME = "dummy";

@@ -38,6 +38,7 @@ import java.util.List;
  */
 public class Unit extends GameObject implements Mover, TurnHandler, Attacker, Defender {
   public static final Direction DEFAULT_ORIENTATION = Direction.EAST;
+  private static final long serialVersionUID = 1L;
   private static final int LOW_AMMO_PERCENTAGE = 50;
   private static final int LOW_SUPPLIES = 50;
 

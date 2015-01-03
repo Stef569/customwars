@@ -17,6 +17,7 @@ import java.io.ObjectInputStream;
  */
 public class ScriptedCO extends BasicCO {
   private static final Logger logger = Logger.getLogger(ScriptedCO.class);
+  private static final long serialVersionUID = 1L;
   private final ScriptManager scriptManager;
 
   public ScriptedCO(CO co, ScriptManager scriptManager) {

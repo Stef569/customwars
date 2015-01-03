@@ -9,6 +9,7 @@ import java.io.Serializable;
  */
 public class Turn implements Serializable {
   public static final int UNLIMITED = -1;
+  private static final long serialVersionUID = 1L;
   private final int dayLimit;
   private int turn;
   private int day;

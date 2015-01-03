@@ -16,6 +16,7 @@ import java.util.Map;
  * Immutable statistics of a Unit
  */
 public class UnitStats implements Serializable {
+  private static final long serialVersionUID = 1L;
   private static final Range DEFAULT_SUPPLY_RANGE = new Range(1, 1);
   final int unitID;       // The unit Type ie(1->INF, 2->APC,...)
   final int imgRowID;     // The id, used to retrieve the images for this unit

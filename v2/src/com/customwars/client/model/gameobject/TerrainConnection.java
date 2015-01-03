@@ -15,6 +15,7 @@ import java.util.List;
  * Directions: East and West
  */
 public class TerrainConnection implements Serializable {
+  private static final long serialVersionUID = 1L;
   private final String connectsTo;
   private final List<Direction> connectedDirections;
 

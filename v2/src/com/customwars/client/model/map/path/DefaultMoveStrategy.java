@@ -9,6 +9,7 @@ import com.customwars.client.model.map.Tile;
  * Default Move strategy for units
  */
 public class DefaultMoveStrategy implements MoveStrategy {
+  private static final long serialVersionUID = 1L;
   private final Mover mover;
 
   public DefaultMoveStrategy() {

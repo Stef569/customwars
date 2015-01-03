@@ -31,6 +31,7 @@ import java.util.List;
  */
 public class TurnBasedGame implements Observable, Serializable {
   private static final Logger logger = Logger.getLogger(TurnBasedGame.class);
+  private static final long serialVersionUID = 1L;
   private final PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
 
   static enum GameState {

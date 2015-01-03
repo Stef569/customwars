@@ -31,7 +31,8 @@ import java.util.List;
  * A City can be destroyed
  */
 public class City extends Terrain implements PropertyChangeListener, TurnHandler, Locatable, Defender {
-  private List<ArmyBranch> heals;       // The army branches this City can heal(Empty list means it cannot heal)
+  private static final long serialVersionUID = 1L;
+  private List<ArmyBranch> heals;      // The army branches this City can heal(Empty list means it cannot heal)
   private List<String> canBeCaptureBy; // The unit ids this City can be captured by(Empty list means it cannot be captured)
   private List<String> builds;         // The unit ids this City can build (Empty list means it cannot build)
   private List<String> canBeLaunchedBy;// The unit ids that can launch a rocket from this city (Empty list means it cannot launch rockets)
