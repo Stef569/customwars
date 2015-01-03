@@ -19,10 +19,27 @@ import org.newdawn.slick.thingle.Page;
 import org.newdawn.slick.thingle.Widget;
 import org.newdawn.slick.thingle.internal.slick.FontWrapper;
 
-import java.util.Collection;
 import java.util.List;
 
+/**
+ * Allows the player to select a map.
+ * The maps are divided into map categories [2P, 3P, 4P, Classic, ...]
+ * <p/>
+ * A scaled minimap is shown on the right side.
+ * Below the minimap is a panel that shows the count of each city type in the chosen map.
+ * <p/>
+ * Category: ___   Map name
+ * map1            -------------
+ * map2            |           |
+ * map3            |           |
+ * map4            |           |
+ * map5            -------------
+ * map6            Map description
+ * |1| | | | |3|
+ */
 public class MapSelectState extends CWState {
+  private static final float MINIMAP_SCALE_STEP = 0.5f;
+  private static final float MINIMAP_INITIAL_SCALE = 3f;
   private Page page;
   private Image backGroundImage;
   private MiniMapWidgetRenderer miniMapRenderer;
@@ -36,11 +53,11 @@ public class MapSelectState extends CWState {
     cityCountRenderer = new CityCountWidgetRenderer(resources);
     controller = new MapSelectController(resources, miniMapRenderer, cityCountRenderer, stateChanger, stateSession);
     guiFont = resources.getFont("gui_text");
+    backGroundImage = resources.getSlickImg("light_menu_background");
 
     initPage(gameContainer);
     initWidgetRenderers();
     loadMapCategories();
-    backGroundImage = resources.getSlickImg("light_menu_background");
     page.layout();
   }
 
@@ -70,7 +87,7 @@ public class MapSelectState extends CWState {
     super.enter(container, game);
     loadMapCategories();
     page.enable();
-    miniMapScale = 3f;
+    miniMapScale = MINIMAP_INITIAL_SCALE;
     miniMapRenderer.setScale(miniMapScale);
   }
 
@@ -81,14 +98,26 @@ public class MapSelectState extends CWState {
       for (String mapCategory : mapCategories) {
         ThingleUtil.addChoice(page, mapCategoryCbo, mapCategory);
       }
-      mapCategoryCbo.setText(mapCategories.get(0));
+      selectDefaultMapCategory(mapCategoryCbo);
     }
   }
 
-  private void initFilter(Collection<String> mapCategories) {
+  private void selectDefaultMapCategory(Widget mapCategoryCbo) {
+    // The previous category value is remembered
+    // Only select the default first category if none is chosen
+    int selectedIndex = mapCategoryCbo.getSelectedIndex();
+
+    if (selectedIndex == -1) {
+      mapCategoryCbo.setInteger("selected", 0);
+    }
+  }
+
+  private void initFilter(List<String> mapCategories) {
     if (!mapCategories.isEmpty()) {
-      String firstMapCat = mapCategories.toArray(new String[mapCategories.size()])[0];
-      controller.filterMapsOnCategory(firstMapCat);
+      Widget mapCategoryCbo = page.getWidget("map_categories");
+      int selectedIndex = mapCategoryCbo.getSelectedIndex();
+      String firstMapCategory = mapCategories.get(selectedIndex);
+      controller.filterMapsOnCategory(firstMapCategory);
     }
   }
 
@@ -107,7 +136,7 @@ public class MapSelectState extends CWState {
   @Override
   public void update(GameContainer container, int delta) throws SlickException {
     if (container.getInput().isKeyPressed(Input.KEY_ADD)) {
-      miniMapScale += 0.5f;
+      miniMapScale += MINIMAP_SCALE_STEP;
       miniMapRenderer.setScale(miniMapScale);
     }
   }
