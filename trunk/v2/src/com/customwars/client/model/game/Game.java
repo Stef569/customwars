@@ -27,6 +27,7 @@ import java.util.List;
  * game.endTurn();
  */
 public class Game extends TurnBasedGame implements PropertyChangeListener {
+  private static final long serialVersionUID = 1L;
   private int weather;            // The current weather in effect
   private int cityFunds;          // The amount of money each City produces each turn
   private final GameStatistics gameStatistics;  // Holds statistics for each player(number of units killed, cities captures,...)

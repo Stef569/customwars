@@ -13,6 +13,7 @@ import java.io.Serializable;
  */
 public class GameObject implements Observable, Serializable {
   protected CWPropertyChangeSupport changeSupport = new CWPropertyChangeSupport(this);
+  private static final long serialVersionUID = 1L;
 
   /**
    * The different states a gameObject can be in, at all times a gameObject is in one of these states

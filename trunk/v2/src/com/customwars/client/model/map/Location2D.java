@@ -6,6 +6,8 @@ import com.customwars.client.model.gameobject.Locatable;
  * A Location that has a Col and Row
  */
 public class Location2D extends AbstractLocation {
+  private static final long serialVersionUID = 1L;
+
   public Location2D(int col, int row) {
     super(col, row);
   }

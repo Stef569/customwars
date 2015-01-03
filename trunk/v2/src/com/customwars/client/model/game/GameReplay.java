@@ -22,6 +22,7 @@ import java.util.List;
  */
 public class GameReplay implements Serializable {
   private static final Logger logger = Logger.getLogger(GameReplay.class);
+  private static final long serialVersionUID = 1L;
   private Game initialGame;
   private List<String> replayQueue;
   private transient int currentReplayIndex;

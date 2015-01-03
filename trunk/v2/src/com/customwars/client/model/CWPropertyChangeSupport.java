@@ -9,6 +9,7 @@ import java.beans.PropertyChangeSupport;
  * the sending of events can be enabled/disabled.
  */
 public class CWPropertyChangeSupport extends PropertyChangeSupport {
+  private static final long serialVersionUID = 1L;
   private boolean sendEvents;
 
   public CWPropertyChangeSupport(Object sourceBean) {

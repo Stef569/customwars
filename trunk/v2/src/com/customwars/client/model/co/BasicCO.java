@@ -9,6 +9,7 @@ import com.customwars.client.model.gameobject.Unit;
  * To add functionality other CO's should extend this class and overwrite the functions of interest.
  */
 public class BasicCO extends AbstractCO {
+  private static final long serialVersionUID = 1L;
 
   public BasicCO(String name) {
     super(name);

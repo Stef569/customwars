@@ -33,6 +33,7 @@ import java.util.Set;
  */
 public class ScriptManager implements Serializable {
   private static final Logger logger = Logger.getLogger(ScriptManager.class);
+  private static final long serialVersionUID = 1L;
   private static final Class[] NO_ARGS = new Class[0];
   private transient Interpreter bsh;
   private final Set<String> scriptFiles;
@@ -124,10 +125,11 @@ public class ScriptManager implements Serializable {
    * String doIt() {
    * out.println(param);
    * }
-   * @see #isMethod(String)
+   *
    * @param methodName The name of the scripted method to execute
    * @param parameters The parameter name, value pairs that are available in the scripted method.
    * @return The return value of the scripted method. Null if there is no return value.
+   * @see #isMethod(String)
    */
   public Object invoke(String methodName, Parameter... parameters) {
     if (isMethod(methodName)) {

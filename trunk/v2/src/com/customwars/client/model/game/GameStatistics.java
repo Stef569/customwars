@@ -20,6 +20,7 @@ import java.util.Set;
  * cities_captured -> 1
  */
 public class GameStatistics implements Serializable {
+  private static final long serialVersionUID = 1L;
   private final Map<Integer, Map<String, Object>> playerStatistics;
 
   public GameStatistics() {
@@ -88,6 +89,6 @@ public class GameStatistics implements Serializable {
 
   public boolean hasStatFor(int playerID, String key) {
     return playerStatistics.containsKey(playerID) &&
-        playerStatistics.get(playerID).containsKey(key);
+      playerStatistics.get(playerID).containsKey(key);
   }
 }

@@ -11,11 +11,10 @@ import java.util.List;
 /**
  * A weapon has an amount of ammo, it can fire within a fire range
  * It can only attack ArmyBranches defined in attacks
- *
- * @author Stefan
  */
 public class Weapon extends GameObject {
   public static final int UNLIMITED_AMMO = 99;
+  private static final long serialVersionUID = 1L;
   private final String name;
   private final String description;
   private final Range fireRange;

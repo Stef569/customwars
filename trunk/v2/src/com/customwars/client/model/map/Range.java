@@ -10,6 +10,7 @@ import java.io.Serializable;
  */
 public class Range implements Serializable {
   public static final Range ZERO_RANGE = new Range(0, 0);
+  private static final long serialVersionUID = 1L;
   private final int minRange, maxRange;
 
   public Range(int minRange, int maxRange) {

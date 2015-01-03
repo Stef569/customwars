@@ -6,6 +6,7 @@ import java.util.Arrays;
  * Thrown when a network message could not be send
  */
 public class NetworkException extends Exception {
+  private static final long serialVersionUID = 1L;
   private static final String[] NO_REPLY = new String[]{};
   private String reply = "";
   private String message = "";

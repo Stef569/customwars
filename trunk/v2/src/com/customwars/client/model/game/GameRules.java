@@ -7,6 +7,7 @@ import java.io.Serializable;
  * turns, weather etc
  */
 public class GameRules implements Serializable {
+  private static final long serialVersionUID = 1L;
   private static final int DEFAULT_BUDGET = 2000;
   private static final int DEFAULT_PLAYER_BUDGET_START = 1000;
   private static final boolean DEFAULT_FOW = true;

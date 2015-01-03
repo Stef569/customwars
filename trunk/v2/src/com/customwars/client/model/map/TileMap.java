@@ -26,12 +26,12 @@ import java.util.List;
  * All tiles, surrounding tiles in a spiral and in a square.
  * This class does not contain game specific logic.
  *
- * @author Stefan
  * @see Location
  * @see Locatable
  * @see Direction
  */
 public class TileMap<T extends Location> implements Observable, Serializable {
+  private static final long serialVersionUID = 1L;
   private static final Logger logger = Logger.getLogger(TileMap.class);
   private final PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
   private transient MapIterators<T> mapIterators = new MapIterators<T>(this);

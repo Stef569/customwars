@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 public class Power implements Serializable {
   public static final Power NONE = new Power("", "");
+  private static final long serialVersionUID = 1L;
   private final String name, description;
   private boolean active;
 

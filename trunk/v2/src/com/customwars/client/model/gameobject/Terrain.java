@@ -19,12 +19,11 @@ import java.util.List;
  * <p/>
  * type is the terrain type that this terrain is inherited from(ie a horizontal road inherits from road)
  * spansOverType is used for bridges (ie a bridge is a road terrain that spans over a river)
- *
- * @author stefan
  */
 public class Terrain extends GameObject {
   public static final int IMPASSIBLE = Byte.MAX_VALUE;
   public static final int MIN_MOVE_COST = 1;
+  private static final long serialVersionUID = 1L;
   private final int id;
   private final String type, spansOverType;
   private final String name;

@@ -46,6 +46,7 @@ import java.util.Set;
  */
 public class Map extends TileMap<Tile> implements TurnHandler {
   private static final Logger logger = Logger.getLogger(Map.class);
+  private static final long serialVersionUID = 1L;
   private String mapName, author, description;    // The properties of the map
   private boolean fogOfWarOn;                     // Is fog of war in effect
   private transient PathFinder pathFinder;        // To builds paths within the map
@@ -410,8 +411,8 @@ public class Map extends TileMap<Tile> implements TurnHandler {
    * For indirect units check if the location is within the attack range.
    * For direct units check if the location is in or adjacent of the move zone.
    *
-   * @param attacker The attacker that wants to fire
-   * @param location The location that the attacker wants to fire on
+   * @param attacker    The attacker that wants to fire
+   * @param location    The location that the attacker wants to fire on
    * @param attackRange The range of the attacker in which it can fire
    * @return True if the location is within the attack range of the attacker
    */
@@ -841,7 +842,7 @@ public class Map extends TileMap<Tile> implements TurnHandler {
 
     Unit unitOnDropLocation = getUnitOn(dropLocation);
     return dropLocation.isFogged() || dropLocation.getLocatableCount() == 0 ||
-        unitOnDropLocation.isHidden() || unitOnDropLocation == transporter;
+      unitOnDropLocation.isHidden() || unitOnDropLocation == transporter;
   }
 
   private boolean canTraverseTile(Unit unit, Tile tile) {
