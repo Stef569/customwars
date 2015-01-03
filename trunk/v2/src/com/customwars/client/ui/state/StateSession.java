@@ -1,5 +1,6 @@
 package com.customwars.client.ui.state;
 
+import com.customwars.client.App;
 import com.customwars.client.model.co.CO;
 import com.customwars.client.model.co.COFactory;
 import com.customwars.client.model.game.Game;
@@ -15,8 +16,6 @@ import java.util.Collection;
 
 /**
  * Allows to pass data between states
- *
- * @author stefan
  */
 public class StateSession {
   public GameReplay replay;
@@ -71,9 +70,20 @@ public class StateSession {
 
       cos[playerID] = randomCO;
       teams[playerID] = team++;
-      String colorName = randomCO.getStyle().getColorName();
-      colors[playerID] = ColorUtil.toColor(colorName);
+      colors[playerID] = createColor(randomCO);
       controllers[playerID] = "HUMAN";
+    }
+  }
+
+  private Color createColor(CO co) {
+    Color neutralColor = App.getColor("plugin.neutral_color");
+    String colorName = co.getStyle().getColorName();
+    Color coColor = ColorUtil.toColor(colorName);
+
+    if (!coColor.equals(neutralColor)) {
+      return coColor;
+    } else {
+      return ColorUtil.getColorFromText("BLACK");
     }
   }
 

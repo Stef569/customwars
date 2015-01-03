@@ -164,10 +164,14 @@ public class PlayerOptionsState extends CWState {
   }
 
   private void fillWithColors(Widget cboColor, int row) {
+    Color neutralColor = App.getColor("plugin.neutral_color");
+
     for (Color color : resources.getSupportedColors()) {
-      Widget colorChoice = createCboColorChoice(color);
-      colorChoice.setProperty("row", row);
-      cboColor.add(colorChoice);
+      if (!color.equals(neutralColor)) {
+        Widget colorChoice = createCboColorChoice(color);
+        colorChoice.setProperty("row", row);
+        cboColor.add(colorChoice);
+      }
     }
   }
 
