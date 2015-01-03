@@ -28,6 +28,7 @@ import java.util.List;
 /**
  * Contains test data.
  */
+@SuppressWarnings("unchecked")
 public class TestData {
   private static final String[] EMPTY_ARR = new String[]{};
 

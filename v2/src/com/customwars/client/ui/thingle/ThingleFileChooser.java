@@ -297,12 +297,9 @@ public class ThingleFileChooser implements ThingleDialog {
     ArrayList<File> allFiles = new ArrayList<File>();
     allFiles.addAll(Arrays.asList(files));
 
-    Collections.sort(allFiles, new Comparator() {
+    Collections.sort(allFiles, new Comparator<File>() {
 
-      public int compare(Object arg0, Object arg1) {
-        File file1 = (File) arg0;
-        File file2 = (File) arg1;
-
+      public int compare(File file1, File file2) {
         if (file1.isDirectory() && !file2.isDirectory()) {
           return -1;
         }
@@ -390,7 +387,7 @@ public class ThingleFileChooser implements ThingleDialog {
   }
 
   /**
-   * Provess the entry of a file location
+   * Process the entry of a file location
    *
    * @param file The location provided
    */
