@@ -6,6 +6,7 @@ import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Direction;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Map;
+import com.customwars.client.model.map.TileMap;
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Graphics;
 
@@ -210,7 +211,10 @@ public class MapEffectsRenderer {
 
   public void cursorMoved(Location oldLocation, Location newLocation, Direction moveDirection) {
     if (unitMovePath != null) {
-      if (!activeUnit.getMoveZone().contains(newLocation)) {
+      boolean adjacent = TileMap.isAdjacent(oldLocation, newLocation);
+      boolean inMoveZone = activeUnit.getMoveZone().contains(newLocation);
+
+      if (!adjacent || !inMoveZone) {
         mustRebuildPath = true;
       } else {
         if (unitMovePath.canAddDirection(activeUnit, moveDirection, newLocation)) {
