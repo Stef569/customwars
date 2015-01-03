@@ -30,7 +30,7 @@ public class BeanShell {
    */
   private BeanShell() {
     consoleFrame = new JFrame("Console");
-    consoleFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    consoleFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
     JConsole console = new JConsole();
 
     consoleFrame.add(console);
