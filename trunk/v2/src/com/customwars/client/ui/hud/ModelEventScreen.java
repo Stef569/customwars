@@ -31,23 +31,21 @@ import java.util.List;
 
 /**
  * Shows Events send from the model in a swing Jlist
- * This is usefull for debugging,
+ * This is useful for debugging,
  * the list can be cleared and saved to a file
- * Some events are less usefull so they can be ignored by adding the
+ * Some events are less useful so they can be ignored by adding the
  * Class and the event to ignore to the filters Map
- *
- * @author stefan
  */
 public class ModelEventScreen implements PropertyChangeListener {
   private static final Logger logger = Logger.getLogger(ModelEventScreen.class);
   private final JPanel content = new JPanel(new BorderLayout());
-  private final JList list;
-  private final DefaultListModel listModel = new DefaultListModel();
+  private final JList<String> list;
+  private final DefaultListModel<String> listModel = new DefaultListModel<String>();
   private HashMap<Class, List<String>> filters;
   private Game game;
 
   public ModelEventScreen(JFrame frame) {
-    list = new JList(listModel);
+    list = new JList<String>(listModel);
     content.add(new JScrollPane(list));
 
     JMenuBar menuBar = new JMenuBar();
