@@ -217,7 +217,7 @@ moveCosts have the following order:
       <int>127</int>
       <int>127</int>
     </moveCosts>
-    <maxHp>20</maxHp>
+    <maxHp>99</maxHp>
     <description></description>
   </city>
   <city name="wall_seam" id="7" imgRowID="3" type='wall'>
@@ -232,7 +232,7 @@ moveCosts have the following order:
       <int>127</int>
       <int>127</int>
     </moveCosts>
-    <maxHp>20</maxHp>
+    <maxHp>99</maxHp>
     <description></description>
   </city>
   <city name="radar_tower" id="8" imgRowID="5" type='road'>
