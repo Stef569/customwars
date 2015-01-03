@@ -19,16 +19,16 @@ public class Weapon extends GameObject {
   private final String description;
   private final Range fireRange;
   private final int maxAmmo;
-  private final boolean balistic;             // Gives this weapon indirect firing ability even after moving
+  private final boolean ballistic;            // Gives this weapon indirect firing ability even after moving
   private final List<ArmyBranch> attacks;     // The Armybranches this weapon can attack
   private int ammo;
 
-  public Weapon(String name, String description, Range fireRange, int maxAmmo, boolean balistic, List<ArmyBranch> attacks) {
+  public Weapon(String name, String description, Range fireRange, int maxAmmo, boolean ballistic, List<ArmyBranch> attacks) {
     this.name = name;
     this.description = description;
     this.fireRange = fireRange;
     this.maxAmmo = maxAmmo;
-    this.balistic = balistic;
+    this.ballistic = ballistic;
     this.attacks = attacks;
     init();
   }
@@ -53,7 +53,7 @@ public class Weapon extends GameObject {
     description = otherWeapon.description;
     fireRange = otherWeapon.fireRange;
     maxAmmo = otherWeapon.maxAmmo;
-    balistic = otherWeapon.balistic;
+    ballistic = otherWeapon.ballistic;
     attacks = new ArrayList<ArmyBranch>(otherWeapon.attacks);
     ammo = otherWeapon.ammo;
   }
@@ -123,8 +123,8 @@ public class Weapon extends GameObject {
     return NumberUtil.calcPercentage(ammo, maxAmmo);
   }
 
-  public boolean isBalistic() {
-    return balistic;
+  public boolean isBallistic() {
+    return ballistic;
   }
 
   /**
