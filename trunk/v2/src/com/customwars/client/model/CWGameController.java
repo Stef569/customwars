@@ -102,7 +102,6 @@ public class CWGameController implements GameController {
       target.addAmmo(unit.getAvailableWeapon().getAmmo());
     }
 
-    target.setUnitState(unit.getUnitState());
     unit.destroy(false);
     controllerManager.removeUnitController(unit);
   }
