@@ -146,53 +146,57 @@ public class MapEffectsRenderer {
   }
 
   private void renderArrow(Graphics g, Direction previousDirection, Direction nextDirection, Location location) {
-    int x = location.getCol() * tileSize;
-    int y = location.getRow() * tileSize;
+    if (location != null) {
+      int x = location.getCol() * tileSize;
+      int y = location.getRow() * tileSize;
 
-    if (nextDirection == Direction.NORTH) {
-      if (previousDirection == Direction.EAST)
-        g.drawImage(arrowImages.getSubImage(4), x, y);
-      else if (previousDirection == Direction.WEST)
-        g.drawImage(arrowImages.getSubImage(5), x, y);
-      else
-        g.drawImage(arrowImages.getSubImage(1), x, y);
-    } else if (nextDirection == Direction.EAST) {
-      if (previousDirection == Direction.NORTH)
-        g.drawImage(arrowImages.getSubImage(2), x, y);
-      else if (previousDirection == Direction.SOUTH)
-        g.drawImage(arrowImages.getSubImage(5), x, y);
-      else
-        g.drawImage(arrowImages.getSubImage(0), x, y);
-    } else if (nextDirection == Direction.SOUTH) {
-      if (previousDirection == Direction.EAST)
-        g.drawImage(arrowImages.getSubImage(3), x, y);
-      else if (previousDirection == Direction.WEST)
-        g.drawImage(arrowImages.getSubImage(2), x, y);
-      else
-        g.drawImage(arrowImages.getSubImage(1), x, y);
-    } else if (nextDirection == Direction.WEST) {
-      if (previousDirection == Direction.NORTH)
-        g.drawImage(arrowImages.getSubImage(3), x, y);
-      else if (previousDirection == Direction.SOUTH) {
-        g.drawImage(arrowImages.getSubImage(4), x, y);
-      } else {
-        g.drawImage(arrowImages.getSubImage(0), x, y);
+      if (nextDirection == Direction.NORTH) {
+        if (previousDirection == Direction.EAST)
+          g.drawImage(arrowImages.getSubImage(4), x, y);
+        else if (previousDirection == Direction.WEST)
+          g.drawImage(arrowImages.getSubImage(5), x, y);
+        else
+          g.drawImage(arrowImages.getSubImage(1), x, y);
+      } else if (nextDirection == Direction.EAST) {
+        if (previousDirection == Direction.NORTH)
+          g.drawImage(arrowImages.getSubImage(2), x, y);
+        else if (previousDirection == Direction.SOUTH)
+          g.drawImage(arrowImages.getSubImage(5), x, y);
+        else
+          g.drawImage(arrowImages.getSubImage(0), x, y);
+      } else if (nextDirection == Direction.SOUTH) {
+        if (previousDirection == Direction.EAST)
+          g.drawImage(arrowImages.getSubImage(3), x, y);
+        else if (previousDirection == Direction.WEST)
+          g.drawImage(arrowImages.getSubImage(2), x, y);
+        else
+          g.drawImage(arrowImages.getSubImage(1), x, y);
+      } else if (nextDirection == Direction.WEST) {
+        if (previousDirection == Direction.NORTH)
+          g.drawImage(arrowImages.getSubImage(3), x, y);
+        else if (previousDirection == Direction.SOUTH) {
+          g.drawImage(arrowImages.getSubImage(4), x, y);
+        } else {
+          g.drawImage(arrowImages.getSubImage(0), x, y);
+        }
       }
     }
   }
 
   private void renderArrowHead(Graphics g, Direction baseDirection, Location location) {
-    int x = location.getCol() * tileSize;
-    int y = location.getRow() * tileSize;
+    if (location != null) {
+      int x = location.getCol() * tileSize;
+      int y = location.getRow() * tileSize;
 
-    if (baseDirection == Direction.NORTH)
-      g.drawImage(arrowImages.getSubImage(6), x, y);
-    else if (baseDirection == Direction.EAST)
-      g.drawImage(arrowImages.getSubImage(7), x, y);
-    else if (baseDirection == Direction.SOUTH)
-      g.drawImage(arrowImages.getSubImage(8), x, y);
-    else if (baseDirection == Direction.WEST)
-      g.drawImage(arrowImages.getSubImage(9), x, y);
+      if (baseDirection == Direction.NORTH)
+        g.drawImage(arrowImages.getSubImage(6), x, y);
+      else if (baseDirection == Direction.EAST)
+        g.drawImage(arrowImages.getSubImage(7), x, y);
+      else if (baseDirection == Direction.SOUTH)
+        g.drawImage(arrowImages.getSubImage(8), x, y);
+      else if (baseDirection == Direction.WEST)
+        g.drawImage(arrowImages.getSubImage(9), x, y);
+    }
   }
 
   //----------------------------------------------------------------------------
