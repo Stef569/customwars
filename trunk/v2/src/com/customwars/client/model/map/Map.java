@@ -675,7 +675,7 @@ public class Map extends TileMap<Tile> implements TurnHandler {
 
     while (iterator.hasNext()) {
       Location location = iterator.next();
-      if (getUnitOn(location) == null) {
+      if (!hasUnitOn(location)) {
         iterator.remove();
       }
     }
@@ -706,6 +706,17 @@ public class Map extends TileMap<Tile> implements TurnHandler {
   }
 
   /**
+   * Checks if there is a unit on the given location
+   *
+   * @param location the location to check for a unit
+   * @return true if a unit is present
+   * @see #getUnitOn(Location)
+   */
+  public boolean hasUnitOn(Location location) {
+    return getUnitOn(location) != null;
+  }
+
+  /**
    * @param location the location to retrieve a unit from
    * @return The last added unit from location
    *         if location doesn't contain a unit <b>NULL</b> is returned
@@ -724,6 +735,17 @@ public class Map extends TileMap<Tile> implements TurnHandler {
   public City getCityOn(int col, int row) {
     Location location = getTile(col, row);
     return getCityOn(location);
+  }
+
+  /**
+   * Checks if there is a city on the given location
+   *
+   * @param location the location to check for a city
+   * @return true if a city is present
+   * @see #getCityOn(Location)
+   */
+  public boolean hasCityOn(Location location) {
+    return getCityOn(location) != null;
   }
 
   /**
