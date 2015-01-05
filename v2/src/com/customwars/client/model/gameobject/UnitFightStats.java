@@ -17,7 +17,7 @@ import java.util.Map;
  */
 public class UnitFightStats {
   private static final List<Unit> allUnits;
-  private Map<String, List<Unit>> enemiesByName;
+  private final Map<String, List<Unit>> enemiesByName;
 
   static {
     allUnits = UnitFactory.getAllUnits();
@@ -47,7 +47,7 @@ public class UnitFightStats {
   /**
    * Find the enemies of the given unit. The enemy units are sorted by attack damage.
    * units that inflict the most damage will be at the start of the list.
-   * Enemy units that cannot be attacked by the given unit are excluded.
+   * Enemy units that cannot attack the given unit are excluded.
    *
    * @param unit The unit to search enemies for
    * @return a sorted list of enemies that can inflict the most damage to the unit.
@@ -81,7 +81,7 @@ public class UnitFightStats {
 
   /**
    * Get the enemies that can do the most damage against the given unit.
-   * Enemy units that cannot be attacked by the given unit are excluded.
+   * Enemy units that cannot attack the given unit are excluded.
    *
    * @param unitName The name of the unit to search enemies for
    * @return a sorted list of enemies that can inflict the most damage to the unit.
