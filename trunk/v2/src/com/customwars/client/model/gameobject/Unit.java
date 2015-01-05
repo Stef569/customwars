@@ -728,7 +728,7 @@ public class Unit extends GameObject implements Mover, TurnHandler, Attacker, De
   /**
    * @return if this unit can fire on the defender
    */
-  private boolean canFireOn(Defender defender) {
+  public boolean canFireOn(Defender defender) {
     ArmyBranch defenderArmyBranch = defender.getArmyBranch();
     boolean canFirePrimaryWeapon = hasPrimaryWeapon() && primaryWeapon.canFireOn(defenderArmyBranch);
     boolean canFireSecondaryWeapon = hasSecondaryWeapon() && secondaryWeapon.canFireOn(defenderArmyBranch);

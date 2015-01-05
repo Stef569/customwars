@@ -122,6 +122,17 @@ public class UnitFactory {
   }
 
   /**
+   * @return A Collection of all the unit names in this Factory
+   */
+  public static List<String> getAllUnitNames() {
+    if (unitsByName == null) {
+      return Collections.emptyList();
+    } else {
+      return new ArrayList<String>(unitsByName.keySet());
+    }
+  }
+
+  /**
    * @return a random unit
    *         Only works if unit ID's are linear starting from 0
    */
