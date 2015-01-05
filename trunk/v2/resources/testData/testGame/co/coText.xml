@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<cos>
+  <co name="brenner" style="TWELFTH_BATTALION">
+    <title>Great protector</title>
+    <hit>Dogs</hit>
+    <miss>Cats</miss>
+    <bio>Captain of the 12th Battalion. He has an unshakable faith in humanity's goodness and will aid any in need.</bio>
+    <skill>CO Zone: 3 Defense Boost: 0/2 All Units</skill>
+    <coZone>3</coZone>
+    <power name="Reinforce">
+      <description>Restores two HP to all units. Firepower increases.</description>
+    </power>
+    <intel/>
+    <quotes>
+      <string>Know thyself. Heal thyself.</string>
+      <string>I'm not leavng anyone behind.</string>
+      <string>Hold steady</string>
+      <string>Medics, tend to the wounded!</string>
+      <string>No general treats his troops as expendable.</string>
+      <string>Replacements are on the way.</string>
+    </quotes>
+    <victory>
+      <string/>
+    </victory>
+    <defeat>
+      <string/>
+    </defeat>
+  </co>
+  <co name="caulder" style="INTELLIGENT_DEFENSE_SYSTEMS">
+    <title>Terribly Sane</title>
+    <hit>Laboratories</hit>
+    <miss>Ethics Committees</miss>
+    <bio>The head of the private military contractor IDS. He seeks a world where he is free to carry out his terrible experiments.</bio>
+    <skill>CO Zone: 3 Ultimate Boost: 5/5 All Units, Units in zone recover 5HP.</skill>
+    <coZone>3</coZone>
+    <intel/>
+    <quotes>
+      <string>None</string>
+    </quotes>
+    <victory>
+      <string>None</string>
+    </victory>
+    <defeat>
+      <string>None</string>
+    </defeat>
+  </co>
+  <co name="forsythe" style="LAZURIAN_MILITARY">
+    <title>True Gentleman</title>
+    <hit>Pianos</hit>
+    <miss>Saxophones</miss>
+    <bio>The Lazurian Army commander. He was called out of retirement to defend his nation.</bio>
+    <skill>CO Zone: 5 Huge Boost: 1/1 All Units</skill>
+    <coZone>5</coZone>
+    <intel/>
+    <quotes>
+      <string>I am a soldier, not a killer</string>
+    </quotes>
+    <victory>
+      <string>None</string>
+    </victory>
+    <defeat>
+      <string>None</string>
+    </defeat>
+  </co>
+  <co name="gage" style="LAZURIAN_MILITARY">
+    <title>Strong and Silent</title>
+    <hit>Getting things done</hit>
+    <miss>Talking</miss>
+    <bio>A Lazurian soldier. He is a man of few words, but a consummate professional.</bio>
+    <skill>CO Zone: 2 Indirect Boost: 2/1 Ranged and Sea Units</skill>
+    <coZone>2</coZone>
+    <power name="Longshot">
+      <description>Boosts attack and defense of all naval and indirect attack units.</description>
+    </power>
+    <intel/>
+    <quotes>
+      <string>They don't pay me to think.</string>
+    </quotes>
+    <victory>
+      <string>Win!</string>
+    </victory>
+    <defeat>
+      <string>Unbelievable!</string>
+    </defeat>
+  </co>
+  <co name="greyfield" style="NEW_RUBINELLE_ARMY">
+    <title>Megalomaniac</title>
+    <hit>Pipes</hit>
+    <miss>Gum</miss>
+    <bio>Ambitious and powerhungry, he wants to destroy the Lazurian Army and rule the world as its new king.</bio>
+    <skill>CO Zone: 3 Sea Boost: 1/4 Naval units, Seaplanes, Copters.</skill>
+    <coZone>3</coZone>
+    <power name="Supply chain">
+      <description>Refills fuel, ammo, and materials.</description>
+    </power>
+    <intel/>
+    <quotes>
+      <string>I suppose I can spare a few supplies...</string>
+      <string>How dare you stand up to the might of Greyfield!</string>
+      <string>Mutiny? Do not fear, I am cruel but harsh!</string>
+      <string>I will not stand for this!</string>
+      <string>Overwhelming power requires a mountain of supplies!</string>
+      <string>It is time you learned what war truly is!</string>
+    </quotes>
+    <victory>
+      <string>Win!</string>
+    </victory>
+    <defeat>
+      <string>I'll see you hanged for this!</string>
+    </defeat>
+  </co>
+  <co name="isabella" style="TWELFTH_BATTALION">
+    <title>Amnesiac</title>
+    <hit>Flowers</hit>
+    <miss>Test Tubes</miss>
+    <bio>Has no memory of her past. Rescued by Will, she has joined the 12th Battalion. Where she dreams of living in peace.</bio>
+    <skill>CO Zone: 2 Mega Boost 1 / 1 All Units</skill>
+    <coZone>2</coZone>
+    <power name="Deep Strike">
+      <description>All units gain 2 additional move, while ranged units gain additional range.</description>
+    </power>
+    <intel/>
+    <quotes>
+      <string>Commence Deep Strike!</string>
+      <string>I may not remember my past, but I will always fight for the future!</string>
+      <string>Fear is all you have left...</string>
+      <string>I have to help with the fight...</string>
+      <string>They trusted me. Now it's time to pay them back!</string>
+      <string>This...reminds me of something...</string>
+      <string>I can do it! I know I can!</string>
+    </quotes>
+    <victory>
+      <string>I can't remember anything</string>
+    </victory>
+    <defeat>
+      <string>Unbelievable!</string>
+    </defeat>
+  </co>
+  <co name="lin" style="TWELFTH_BATTALION">
+    <title>Ice</title>
+    <hit>Mechanical Pencils</hit>
+    <miss>Crayons</miss>
+    <bio>The 12th Battalion's unflappable second in command.She has tremendous respect for Captain Brenner, although they disagree often.</bio>
+    <skill>No real weakness. Equally proficient with all types of units. Ready to fight wherever and whenever.</skill>
+    <coZone>1</coZone>
+    <power name="Scout">
+      <description>Ground units gain 2 peircing vision.</description>
+    </power>
+    <intel/>
+    <quotes>
+      <string>This is all according to plan...</string>
+      <string>I've gathered enough data about the situation.</string>
+      <string>Ha! You're too soft for war!</string>
+      <string>My strategy is foolproof!</string>
+      <string>This is where it all turns around!</string>
+    </quotes>
+    <victory>
+      <string>Keep a cool head.</string>
+    </victory>
+    <defeat>
+      <string>No...</string>
+    </defeat>
+  </co>
+  <co name="penny" style="INTELLIGENT_DEFENSE_SYSTEMS">
+    <title>Ill Omens</title>
+    <hit>Mr. Bear</hit>
+    <miss>Mr. Bear</miss>
+    <bio>The youngest child of Dr. Caulder. Numerous experiments have left her mind permanently shattered.</bio>
+    <skill>No real weakness. Equally proficient with all types of units. Ready to fight wherever and whenever.</skill>
+    <coZone>3</coZone>
+    <power name="Stormfront">
+      <description>The weather is changed for three turns.</description>
+    </power>
+    <intel/>
+    <quotes>
+      <string>Dimensional index rising, oscillating fluid bilfur...BOOM!</string>
+      <string>Do you like teddy bears?</string>
+      <string>Tee he he!</string>
+      <string>Lets give Enigma a try!</string>
+      <string>Nice weather we're having!</string>
+      <string>The weather's been so changeable recently!</string>
+    </quotes>
+    <victory>
+      <string>Yes!</string>
+    </victory>
+    <defeat>
+      <string>No...</string>
+    </defeat>
+  </co>
+  <co name="tabitha" style="INTELLIGENT_DEFENSE_SYSTEMS">
+    <title>Queen of Calamity</title>
+    <hit>Dark Chocolate</hit>
+    <miss>Hamburgers</miss>
+    <bio>Belongs to the private military company IDS. A daughter of Dr. Caulder, she is extremely cruel and vindictive.</bio>
+    <skill>CO Zone: 0 Mega Boost: 4/4 All Units</skill>
+    <coZone>0</coZone>
+    <power name="Firestorm">
+      <description>A 3x3 8 damage missile is launched.</description>
+    </power>
+    <intel/>
+    <quotes>
+      <string>Weak! Pathetic! Miserable!</string>
+      <string>Lowly worms! You deserve nothing less than total annihilation!</string>
+      <string>You're not even worth my time!</string>
+      <string>Burn. BURN! Ahahahahaha!</string>
+      <string>Feast your eyes on true power!</string>
+      <string>Don't die so quickly. I'm having so much fun!</string>
+    </quotes>
+    <victory>
+      <string>Yes!</string>
+    </victory>
+    <defeat>
+      <string>Stupid weak people!</string>
+    </defeat>
+  </co>
+  <co name="tasha" style="LAZURIAN_MILITARY">
+    <title>Queen of Calamity</title>
+    <hit>Leather</hit>
+    <miss>Wool</miss>
+    <bio>A Lazurian soldier who burns with the desire to avenge her late brother.</bio>
+    <skill>CO Zone: 1 Aerial Attack Boost: 4/2 Air Units</skill>
+    <coZone>1</coZone>
+    <power name="Sonic Boom">
+      <description>All air units gain 2 additional movement.</description>
+    </power>
+    <intel/>
+    <quotes>
+      <string>At last, revenge!</string>
+      <string>I've waited so long for this day.</string>
+      <string>This is for my brother!</string>
+      <string>Sweet revenge. I'll be sure to savor this.</string>
+      <string>Feast your eyes on true power!</string>
+      <string>I will fight on, even if it costs me my life!</string>
+      <string>Revenge!</string>
+    </quotes>
+    <victory>
+      <string>Yes!</string>
+    </victory>
+    <defeat>
+      <string>Noo...</string>
+    </defeat>
+  </co>
+  <co name="waylon" style="NEW_RUBINELLE_ARMY">
+    <title>Hedonist</title>
+    <hit>Disco</hit>
+    <miss>Dance Hall</miss>
+    <bio>A member of the Rubinelle Army who seeks only to fulfill his own pleasures and desires.</bio>
+    <skill>CO Zone:2 Aerial Defense Boost: 2/3 Air units</skill>
+    <coZone>2</coZone>
+    <power name="Wingman">
+      <description>All damage dealt to air units are quartered.</description>
+    </power>
+    <intel/>
+    <quotes>
+      <string>Time for Waylon to show off his moves!</string>
+      <string>We'll be finished by dinnertime!</string>
+      <string>Waylon's on the move. Yeah!</string>
+      <string>You've got no sense of style!</string>
+      <string>My airforce is invincible!</string>
+      <string>I'm over here! C'mon, give me your best shot!</string>
+    </quotes>
+    <victory>
+      <string>Yes!</string>
+    </victory>
+    <defeat>
+      <string>Noo...</string>
+    </defeat>
+  </co>
+  <co name="will" style="TWELFTH_BATTALION">
+    <title>When There's A Will</title>
+    <hit>Courage</hit>
+    <miss>Arrogance</miss>
+    <bio>A former Rubinelle military cadet who joined the 12th Battalion after being rescued by Captain Brenner whom he idolizes.</bio>
+    <skill>CO Zone: 2 Direct Boost: 2/0 Direct Units</skill>
+    <coZone>2</coZone>
+    <power name="Rally Cry">
+      <description>All direct units gain 2 movement.</description>
+    </power>
+    <intel/>
+    <quotes>
+      <string>They've left themselves open!</string>
+      <string>We survived the meteors. Nothing can stop us!</string>
+      <string>Everyone, move out!</string>
+      <string>This is it...</string>
+      <string>Nothing will stand between us and a better future!</string>
+      <string>When there's life, there's hope!</string>
+    </quotes>
+    <victory>
+      <string>Yes!</string>
+    </victory>
+    <defeat>
+      <string>Noo...</string>
+    </defeat>
+  </co>
+</cos>

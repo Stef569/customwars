@@ -1,0 +1,18 @@
+<list>
+  <COStyle name="TWELFTH_BATTALION" id="0">
+    <color>B84850</color>
+    <colorname>red</colorname>
+  </COStyle>
+  <COStyle name="INTELLIGENT_DEFENSE_SYSTEMS" id="1">
+    <color>585058</color>
+    <colorname>black</colorname>
+  </COStyle>
+  <COStyle name="LAZURIAN_MILITARY" id="2">
+    <color>4868C8</color>
+    <colorname>blue</colorname>
+  </COStyle>
+  <COStyle name="NEW_RUBINELLE_ARMY" id="3">
+    <color>988830</color>
+    <colorname>yellow</colorname>
+  </COStyle>
+</list>

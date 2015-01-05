@@ -1,0 +1,274 @@
+<!DOCTYPE list [<!ELEMENT list (weapon*)><!ELEMENT weapon (fireRange, attacks, maxAmmo, description)><!ATTLIST weapon name CDATA #REQUIRED>
+
+    <!ELEMENT fireRange (minRange, maxRange)><!ELEMENT minRange (#PCDATA)><!ELEMENT maxRange (#PCDATA)>
+
+    <!ELEMENT attacks (armyBranch*)><!ELEMENT armyBranch (#PCDATA)><!ELEMENT maxAmmo (#PCDATA)>
+
+    <!ELEMENT description (#PCDATA)>]>
+<list>
+  <weapon name="machine_gun">
+    <fireRange>
+      <minRange>1</minRange>
+      <maxRange>1</maxRange>
+    </fireRange>
+    <attacks>
+      <armyBranch>LAND</armyBranch>
+      <armyBranch>AIR</armyBranch>
+    </attacks>
+    <maxAmmo>99</maxAmmo>
+    <description></description>
+  </weapon>
+  <weapon name="bazooka">
+    <fireRange>
+      <minRange>1</minRange>
+      <maxRange>1</maxRange>
+    </fireRange>
+    <attacks>
+      <armyBranch>LAND</armyBranch>
+    </attacks>
+    <maxAmmo>3</maxAmmo>
+    <description>For taking out tanks in close Combat</description>
+  </weapon>
+  <weapon name="tank_machine_gun">
+    <fireRange>
+      <minRange>1</minRange>
+      <maxRange>1</maxRange>
+    </fireRange>
+    <attacks>
+      <armyBranch>LAND</armyBranch>
+    </attacks>
+    <maxAmmo>99</maxAmmo>
+    <description>For taking out units in close Combat</description>
+  </weapon>
+  <weapon name="tank_main_gun">
+    <fireRange>
+      <minRange>1</minRange>
+      <maxRange>1</maxRange>
+    </fireRange>
+    <attacks>
+      <armyBranch>LAND</armyBranch>
+      <armyBranch>NAVAL</armyBranch>
+    </attacks>
+    <maxAmmo>6</maxAmmo>
+    <description></description>
+  </weapon>
+  <weapon name="medium_tank_main_gun">
+    <fireRange>
+      <minRange>1</minRange>
+      <maxRange>1</maxRange>
+    </fireRange>
+    <attacks>
+      <armyBranch>LAND</armyBranch>
+      <armyBranch>NAVAL</armyBranch>
+    </attacks>
+    <maxAmmo>5</maxAmmo>
+    <description></description>
+  </weapon>
+  <weapon name="recon_main_gun">
+    <fireRange>
+      <minRange>1</minRange>
+      <maxRange>1</maxRange>
+    </fireRange>
+    <attacks>
+      <armyBranch>LAND</armyBranch>
+    </attacks>
+    <maxAmmo>5</maxAmmo>
+    <description></description>
+  </weapon>
+  <weapon name="long_range_cannon">
+    <fireRange>
+      <minRange>2</minRange>
+      <maxRange>3</maxRange>
+    </fireRange>
+    <attacks>
+      <armyBranch>LAND</armyBranch>
+      <armyBranch>NAVAL</armyBranch>
+    </attacks>
+    <maxAmmo>9</maxAmmo>
+    <description>none</description>
+  </weapon>
+  <weapon name="anti_air">
+    <fireRange>
+      <minRange>1</minRange>
+      <maxRange>1</maxRange>
+    </fireRange>
+    <attacks>
+      <armyBranch>LAND</armyBranch>
+      <armyBranch>AIR</armyBranch>
+    </attacks>
+    <maxAmmo>9</maxAmmo>
+    <description>none</description>
+  </weapon>
+  <weapon name="rockets">
+    <fireRange>
+      <minRange>3</minRange>
+      <maxRange>5</maxRange>
+    </fireRange>
+    <attacks>
+      <armyBranch>LAND</armyBranch>
+      <armyBranch>NAVAL</armyBranch>
+    </attacks>
+    <maxAmmo>6</maxAmmo>
+    <description></description>
+  </weapon>
+  <weapon name="anti_air_missile">
+    <fireRange>
+      <minRange>3</minRange>
+      <maxRange>6</maxRange>
+    </fireRange>
+    <attacks>
+      <armyBranch>AIR</armyBranch>
+    </attacks>
+    <maxAmmo>6</maxAmmo>
+    <description></description>
+  </weapon>
+  <weapon name="naval_cannon">
+    <fireRange>
+      <minRange>3</minRange>
+      <maxRange>5</maxRange>
+    </fireRange>
+    <attacks>
+      <armyBranch>LAND</armyBranch>
+      <armyBranch>NAVAL</armyBranch>
+    </attacks>
+    <maxAmmo>6</maxAmmo>
+    <description></description>
+  </weapon>
+  <weapon name="torpedo">
+    <fireRange>
+      <minRange>1</minRange>
+      <maxRange>1</maxRange>
+    </fireRange>
+    <attacks>
+      <armyBranch>NAVAL</armyBranch>
+    </attacks>
+    <maxAmmo>6</maxAmmo>
+    <description></description>
+  </weapon>
+  <weapon name="anti_ship_missile">
+    <fireRange>
+      <minRange>1</minRange>
+      <maxRange>1</maxRange>
+    </fireRange>
+    <attacks>
+      <armyBranch>NAVAL</armyBranch>
+    </attacks>
+    <maxAmmo>9</maxAmmo>
+    <description></description>
+  </weapon>
+  <weapon name="naval_anti_air_missile">
+    <fireRange>
+      <minRange>1</minRange>
+      <maxRange>1</maxRange>
+    </fireRange>
+    <attacks>
+      <armyBranch>AIR</armyBranch>
+    </attacks>
+    <maxAmmo>99</maxAmmo>
+    <description></description>
+  </weapon>
+  <weapon name="aircraft_anti_air_missile">
+    <fireRange>
+      <minRange>1</minRange>
+      <maxRange>1</maxRange>
+    </fireRange>
+    <attacks>
+      <armyBranch>AIR</armyBranch>
+    </attacks>
+    <maxAmmo>6</maxAmmo>
+    <description></description>
+  </weapon>
+  <weapon name="aircraft_machine_gun">
+    <fireRange>
+      <minRange>1</minRange>
+      <maxRange>1</maxRange>
+    </fireRange>
+    <attacks>
+      <armyBranch>AIR</armyBranch>
+      <armyBranch>LAND</armyBranch>
+    </attacks>
+    <maxAmmo>9</maxAmmo>
+    <description></description>
+  </weapon>
+  <weapon name="sea_plane_missile">
+    <fireRange>
+      <minRange>1</minRange>
+      <maxRange>1</maxRange>
+    </fireRange>
+    <attacks>
+      <armyBranch>AIR</armyBranch>
+      <armyBranch>LAND</armyBranch>
+      <armyBranch>NAVAL</armyBranch>
+    </attacks>
+    <maxAmmo>3</maxAmmo>
+    <description></description>
+  </weapon>
+  <weapon name="bomb">
+    <fireRange>
+      <minRange>1</minRange>
+      <maxRange>1</maxRange>
+    </fireRange>
+    <attacks>
+      <armyBranch>LAND</armyBranch>
+      <armyBranch>NAVAL</armyBranch>
+    </attacks>
+    <maxAmmo>6</maxAmmo>
+    <description></description>
+  </weapon>
+  <weapon name="heli_ground_missile">
+    <fireRange>
+      <minRange>1</minRange>
+      <maxRange>1</maxRange>
+    </fireRange>
+    <attacks>
+      <armyBranch>LAND</armyBranch>
+      <armyBranch>NAVAL</armyBranch>
+    </attacks>
+    <maxAmmo>6</maxAmmo>
+    <description></description>
+  </weapon>
+  <weapon name="heavy_tank_main_gun">
+    <fireRange>
+      <minRange>1</minRange>
+      <maxRange>1</maxRange>
+    </fireRange>
+    <attacks>
+      <armyBranch>LAND</armyBranch>
+      <armyBranch>NAVAL</armyBranch>
+    </attacks>
+    <maxAmmo>6</maxAmmo>
+    <description></description>
+  </weapon>
+  <weapon name="anti_tank_cannon">
+    <fireRange>
+      <minRange>1</minRange>
+      <maxRange>3</maxRange>
+    </fireRange>
+    <attacks>
+      <armyBranch>LAND</armyBranch>
+      <armyBranch>AIR</armyBranch>
+    </attacks>
+    <maxAmmo>6</maxAmmo>
+    <description></description>
+  </weapon>
+  <weapon name="flare_gun">
+    <fireRange>
+      <minRange>1</minRange>
+      <maxRange>5</maxRange>
+    </fireRange>
+    <attacks/>
+    <maxAmmo>3</maxAmmo>
+    <description>Fires a flare that reveals fogged tiles.</description>
+  </weapon>
+  <weapon name="gunboat_anti_ship_missile">
+    <fireRange>
+      <minRange>1</minRange>
+      <maxRange>1</maxRange>
+    </fireRange>
+    <attacks>
+      <armyBranch>NAVAL</armyBranch>
+    </attacks>
+    <maxAmmo>1</maxAmmo>
+    <description></description>
+  </weapon>
+</list>
