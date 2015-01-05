@@ -68,13 +68,13 @@ public class UnitFight extends BasicFight {
    *
    * @return The highest damage percentage or 0 when the attacker cannot attack the defender
    */
-  private int getAttackDamagePercentage(Unit attacker, Unit defender) {
+  public static int getAttackDamagePercentage(Unit attacker, Unit defender) {
     int baseDmg = getBaseDamage(attacker, defender);
     int altDmg = getAltDamage(attacker, defender);
     return NumberUtil.findHighest(baseDmg, altDmg);
   }
 
-  private int getBaseDamage(Unit attacker, Unit defender) {
+  private static int getBaseDamage(Unit attacker, Unit defender) {
     int attackerID = attacker.getStats().getID();
     int defenderID = defender.getStats().getID();
 
@@ -89,7 +89,7 @@ public class UnitFight extends BasicFight {
     }
   }
 
-  private int getAltDamage(Unit attacker, Unit defender) {
+  private static int getAltDamage(Unit attacker, Unit defender) {
     if (attacker.canFireSecondaryWeapon()) {
       return altDMG[attacker.getStats().getID()][defender.getStats().getID()];
     } else {
