@@ -1,0 +1,632 @@
+<!DOCTYPE list [<!ELEMENT list (unit*)>
+
+    <!ELEMENT unit (price, movement, vision,
+        canHide?, canDive?, canCapture?, canJoin?, canFlare?, canLaunchUnit?,
+        transports?, transformTerrains?, buildCities?, produces?, supplyUnits?, supplyUnitsInTransport?,
+        maxExperience?, maxHp, supplyRange?, maxSupplies, suppliesPerTurn?, suppliesPerTurnWhenHidden?,
+        maxConstructionMaterial?, healRate?,
+        armyBranch,movementType, primaryWeaponName?, secondaryWeaponName?, description)>
+
+    <!ATTLIST unit name CDATA #REQUIRED>
+    <!ATTLIST unit unitID CDATA #REQUIRED>
+    <!ATTLIST unit imgRowID CDATA #REQUIRED>
+
+    <!ELEMENT price (#PCDATA)>
+    <!ELEMENT movement (#PCDATA)>
+    <!ELEMENT vision (#PCDATA)>
+    <!ELEMENT canHide (#PCDATA)>
+    <!ELEMENT canDive (#PCDATA)>
+
+    <!ELEMENT canCapture (#PCDATA)>
+    <!ELEMENT canJoin (#PCDATA)>
+    <!ELEMENT canFlare (#PCDATA)>
+    <!ELEMENT canSupply (#PCDATA)>
+    <!ELEMENT canLaunchUnit (#PCDATA)>
+    <!ELEMENT canTransport (#PCDATA)>
+
+    <!ELEMENT transports (unitID*)>
+    <!ATTLIST transports max CDATA #REQUIRED>
+
+    <!ELEMENT transformTerrains (entry*)>
+    <!ELEMENT buildCities (entry*)>
+    <!ELEMENT produces (unitID*)>
+    <!ELEMENT supplyUnitsInTransport (unitID*)>
+    <!ELEMENT supplyUnits (unitID*)>
+
+    <!ELEMENT entry (id+)>
+    <!ELEMENT id (#PCDATA)>
+    <!ELEMENT unitID (#PCDATA)>
+    <!ELEMENT minRange (#PCDATA)>
+    <!ELEMENT maxRange (#PCDATA)>
+
+    <!ELEMENT maxExperience (#PCDATA)>
+    <!ELEMENT maxHp (#PCDATA)>
+    <!ELEMENT supplyRange (minRange, maxRange)>
+    <!ELEMENT maxSupplies (#PCDATA)>
+    <!ELEMENT suppliesPerTurn (#PCDATA)>
+    <!ELEMENT suppliesPerTurnWhenHidden (#PCDATA)>
+
+    <!ELEMENT maxConstructionMaterial (#PCDATA)>
+    <!ELEMENT healRate (#PCDATA)>
+    <!ELEMENT armyBranch (#PCDATA)>
+    <!ELEMENT movementType (#PCDATA)>
+
+    <!ELEMENT primaryWeaponName (#PCDATA)>
+    <!ELEMENT secondaryWeaponName (#PCDATA)>
+
+    <!ELEMENT description (#PCDATA)>
+
+    <!-- Move Types: -->
+    <!ENTITY INF "0">
+    <!ENTITY MECH "1">
+    <!ENTITY TIREA "2">
+    <!ENTITY TIREB "3">
+    <!ENTITY TANK "4">
+    <!ENTITY AIR "5">
+    <!ENTITY NAVAL "6">
+    <!ENTITY NAVAL_TRANSPORT "7">
+]>
+<list>
+  <unit name="infantry" unitID="0" imgRowID="0">
+    <price>1500</price>
+    <movement>3</movement>
+    <vision>2</vision>
+
+    <canCapture>true</canCapture>
+    <canJoin>true</canJoin>
+
+    <maxExperience>10</maxExperience>
+    <maxHp>100</maxHp>
+    <maxSupplies>99</maxSupplies>
+
+    <armyBranch>LAND</armyBranch>
+    <movementType>&INF;</movementType>
+
+    <secondaryWeaponName>machine_gun</secondaryWeaponName>
+    <description></description>
+  </unit>
+  <unit name="mech" unitID="1" imgRowID="1">
+    <price>2500</price>
+    <movement>2</movement>
+    <vision>2</vision>
+
+    <canCapture>true</canCapture>
+    <canJoin>true</canJoin>
+
+    <maxExperience>3</maxExperience>
+    <maxHp>100</maxHp>
+    <maxSupplies>99</maxSupplies>
+
+    <armyBranch>LAND</armyBranch>
+    <movementType>&MECH;</movementType>
+
+    <primaryWeaponName>bazooka</primaryWeaponName>
+    <secondaryWeaponName>machine_gun</secondaryWeaponName>
+
+    <description>Infantry units that are equipped to take out Tanks, they have a machine_gun as secondary weapon.
+    </description>
+  </unit>
+  <unit name="bikes" unitID="2" imgRowID="2">
+    <price>2500</price>
+    <movement>7</movement>
+    <vision>2</vision>
+
+    <canCapture>true</canCapture>
+    <canJoin>true</canJoin>
+
+    <maxExperience>3</maxExperience>
+    <maxHp>100</maxHp>
+    <maxSupplies>70</maxSupplies>
+
+    <armyBranch>LAND</armyBranch>
+    <movementType>&TIREB;</movementType>
+    <primaryWeaponName>machine_gun</primaryWeaponName>
+    <description></description>
+  </unit>
+  <unit name="recon" unitID="3" imgRowID="3">
+    <price>4000</price>
+    <movement>8</movement>
+    <vision>5</vision>
+
+    <canJoin>true</canJoin>
+
+    <maxExperience>3</maxExperience>
+    <maxHp>100</maxHp>
+    <maxSupplies>80</maxSupplies>
+
+    <armyBranch>LAND</armyBranch>
+    <movementType>&TIREA;</movementType>
+
+    <primaryWeaponName>recon_main_gun</primaryWeaponName>
+    <secondaryWeaponName>tank_machine_gun</secondaryWeaponName>
+    <description></description>
+  </unit>
+  <unit name="flare" unitID="4" imgRowID="4">
+    <price>5000</price>
+    <movement>5</movement>
+    <vision>2</vision>
+
+    <canJoin>true</canJoin>
+    <canFlare>true</canFlare>
+
+    <maxExperience>3</maxExperience>
+    <maxHp>100</maxHp>
+    <maxSupplies>60</maxSupplies>
+
+    <armyBranch>LAND</armyBranch>
+    <movementType>&TANK;</movementType>
+    <primaryWeaponName>flare_gun</primaryWeaponName>
+    <secondaryWeaponName>tank_machine_gun</secondaryWeaponName>
+    <description></description>
+  </unit>
+  <unit name="anti_air" unitID="5" imgRowID="5">
+    <price>7000</price>
+    <movement>6</movement>
+    <vision>2</vision>
+
+    <canJoin>true</canJoin>
+
+    <maxExperience>3</maxExperience>
+    <maxHp>100</maxHp>
+    <maxSupplies>60</maxSupplies>
+
+    <armyBranch>LAND</armyBranch>
+    <movementType>&TANK;</movementType>
+
+    <primaryWeaponName>anti_air</primaryWeaponName>
+    <description></description>
+  </unit>
+  <unit name="light_tank" unitID="6" imgRowID="6">
+    <price>7000</price>
+    <movement>6</movement>
+    <vision>3</vision>
+
+    <canJoin>true</canJoin>
+
+    <maxExperience>3</maxExperience>
+    <maxHp>100</maxHp>
+    <maxSupplies>70</maxSupplies>
+
+    <armyBranch>LAND</armyBranch>
+    <movementType>&TANK;</movementType>
+
+    <primaryWeaponName>tank_main_gun</primaryWeaponName>
+    <secondaryWeaponName>tank_machine_gun</secondaryWeaponName>
+    <description>Fast Armoured unit, great for scouting.</description>
+  </unit>
+  <unit name="medium_tank" unitID="7" imgRowID="7">
+    <price>12000</price>
+    <movement>5</movement>
+    <vision>2</vision>
+
+    <canJoin>true</canJoin>
+
+    <maxExperience>3</maxExperience>
+    <maxHp>100</maxHp>
+    <maxSupplies>50</maxSupplies>
+
+    <armyBranch>LAND</armyBranch>
+    <movementType>&TANK;</movementType>
+
+    <primaryWeaponName>medium_tank_main_gun</primaryWeaponName>
+    <secondaryWeaponName>tank_machine_gun</secondaryWeaponName>
+    <description></description>
+  </unit>
+  <unit name="heavy_tank" unitID="8" imgRowID="8">
+    <price>16000</price>
+    <movement>4</movement>
+    <vision>2</vision>
+
+    <canJoin>true</canJoin>
+
+    <maxExperience>3</maxExperience>
+    <maxHp>100</maxHp>
+    <maxSupplies>70</maxSupplies>
+
+    <armyBranch>LAND</armyBranch>
+    <movementType>&TANK;</movementType>
+
+    <primaryWeaponName>heavy_tank_main_gun</primaryWeaponName>
+    <secondaryWeaponName>tank_machine_gun</secondaryWeaponName>
+    <description></description>
+  </unit>
+  <unit name="artillery" unitID="9" imgRowID="9">
+    <price>6000</price>
+    <movement>5</movement>
+    <vision>3</vision>
+
+    <canJoin>true</canJoin>
+
+    <maxExperience>3</maxExperience>
+    <maxHp>100</maxHp>
+    <maxSupplies>50</maxSupplies>
+
+    <armyBranch>LAND</armyBranch>
+    <movementType>&TANK;</movementType>
+
+    <primaryWeaponName>long_range_cannon</primaryWeaponName>
+    <description></description>
+  </unit>
+  <unit name="anti_tank" unitID="10" imgRowID="10">
+    <price>11000</price>
+    <movement>4</movement>
+    <vision>2</vision>
+
+    <canJoin>true</canJoin>
+
+    <maxExperience>3</maxExperience>
+    <maxHp>100</maxHp>
+    <maxSupplies>50</maxSupplies>
+
+    <armyBranch>LAND</armyBranch>
+    <movementType>&TIREB;</movementType>
+    <primaryWeaponName>anti_tank_cannon</primaryWeaponName>
+    <description></description>
+  </unit>
+  <unit name="rockets" unitID="11" imgRowID="11">
+    <price>15000</price>
+    <movement>4</movement>
+    <vision>3</vision>
+
+    <canJoin>true</canJoin>
+
+    <maxExperience>3</maxExperience>
+    <maxHp>100</maxHp>
+    <maxSupplies>50</maxSupplies>
+
+    <armyBranch>LAND</armyBranch>
+    <movementType>&TIREA;</movementType>
+
+    <primaryWeaponName>rockets</primaryWeaponName>
+    <description>Rocket units are the best long range units at your disposal. They can fire on both land and sea units.
+    </description>
+  </unit>
+  <unit name="missiles" unitID="12" imgRowID="12">
+    <price>12000</price>
+    <movement>5</movement>
+    <vision>5</vision>
+
+    <canJoin>true</canJoin>
+
+    <maxExperience>3</maxExperience>
+    <maxHp>100</maxHp>
+    <maxSupplies>50</maxSupplies>
+
+    <armyBranch>LAND</armyBranch>
+    <movementType>&TIREA;</movementType>
+
+    <primaryWeaponName>anti_air_missile</primaryWeaponName>
+    <description></description>
+  </unit>
+  <unit name="apc" unitID="13" imgRowID="13">
+    <price>5000</price>
+    <movement>6</movement>
+    <vision>1</vision>
+
+    <canJoin>true</canJoin>
+    <transports max="1">
+      <unitID>infantry</unitID>
+      <unitID>mech</unitID>
+    </transports>
+
+    <buildCities>
+      <entry>
+        <id>plain</id>
+        <id>temp_airport</id>
+      </entry>
+      <entry>
+        <id>shoal</id>
+        <id>temp_port</id>
+      </entry>
+    </buildCities>
+
+    <supplyUnits>
+      <unitID>infantry</unitID>
+      <unitID>mech</unitID>
+      <unitID>bikes</unitID>
+      <unitID>recon</unitID>
+      <unitID>flare</unitID>
+      <unitID>anti_air</unitID>
+      <unitID>light_tank</unitID>
+      <unitID>medium_tank</unitID>
+      <unitID>heavy_tank</unitID>
+      <unitID>artillery</unitID>
+      <unitID>anti_tank</unitID>
+      <unitID>rockets</unitID>
+      <unitID>missiles</unitID>
+      <unitID>apc</unitID>
+      <unitID>jet</unitID>
+      <unitID>bomber</unitID>
+      <unitID>sea_plane</unitID>
+      <unitID>fighter</unitID>
+      <unitID>bcopter</unitID>
+      <unitID>tcopter</unitID>
+      <unitID>gun_boat</unitID>
+      <unitID>cruiser</unitID>
+      <unitID>sub</unitID>
+      <unitID>carrier</unitID>
+      <unitID>battleship</unitID>
+      <unitID>lander</unitID>
+    </supplyUnits>
+
+    <maxExperience>3</maxExperience>
+    <maxHp>100</maxHp>
+    <maxSupplies>99</maxSupplies>
+    <maxConstructionMaterial>1</maxConstructionMaterial>
+
+    <armyBranch>LAND</armyBranch>
+    <movementType>&TANK;</movementType>
+    <description>Can transport 1 unit(Infantry or Mech) can supply units, can build temp properties.</description>
+  </unit>
+
+  <unit name="jet" unitID="14" imgRowID="14">
+    <price>20000</price>
+    <movement>9</movement>
+    <vision>5</vision>
+
+    <canJoin>true</canJoin>
+
+    <maxExperience>3</maxExperience>
+    <maxHp>100</maxHp>
+    <maxSupplies>99</maxSupplies>
+    <suppliesPerTurn>5</suppliesPerTurn>
+
+    <armyBranch>AIR</armyBranch>
+    <movementType>&AIR;</movementType>
+
+    <primaryWeaponName>aircraft_anti_air_missile</primaryWeaponName>
+    <description>Can only attack other air units</description>
+  </unit>
+  <unit name="bomber" unitID="15" imgRowID="15">
+    <price>20000</price>
+    <movement>7</movement>
+    <vision>3</vision>
+
+    <canJoin>true</canJoin>
+
+    <maxExperience>3</maxExperience>
+    <maxHp>100</maxHp>
+    <maxSupplies>99</maxSupplies>
+    <suppliesPerTurn>5</suppliesPerTurn>
+
+    <armyBranch>AIR</armyBranch>
+    <movementType>&AIR;</movementType>
+
+    <primaryWeaponName>bomb</primaryWeaponName>
+    <description>Can bombard ground and naval units</description>
+  </unit>
+  <unit name="sea_plane" unitID="16" imgRowID="16">
+    <price>15000</price>
+    <movement>7</movement>
+    <vision>4</vision>
+
+    <canJoin>true</canJoin>
+
+    <maxExperience>3</maxExperience>
+    <maxHp>100</maxHp>
+    <maxSupplies>40</maxSupplies>
+    <suppliesPerTurn>5</suppliesPerTurn>
+
+    <armyBranch>AIR</armyBranch>
+    <movementType>&AIR;</movementType>
+
+    <primaryWeaponName>sea_plane_missile</primaryWeaponName>
+    <description></description>
+  </unit>
+  <unit name="fighter" unitID="17" imgRowID="17">
+    <price>13000</price>
+    <movement>8</movement>
+    <vision>4</vision>
+
+    <canJoin>true</canJoin>
+
+    <maxExperience>3</maxExperience>
+    <maxHp>100</maxHp>
+    <maxSupplies>99</maxSupplies>
+    <suppliesPerTurn>5</suppliesPerTurn>
+
+    <armyBranch>AIR</armyBranch>
+    <movementType>&AIR;</movementType>
+
+    <primaryWeaponName>aircraft_machine_gun</primaryWeaponName>
+    <description></description>
+  </unit>
+  <unit name="bcopter" unitID="18" imgRowID="18">
+    <price>9000</price>
+    <movement>6</movement>
+    <vision>2</vision>
+
+    <canJoin>true</canJoin>
+
+    <maxExperience>3</maxExperience>
+    <maxHp>100</maxHp>
+    <maxSupplies>99</maxSupplies>
+    <suppliesPerTurn>2</suppliesPerTurn>
+
+    <armyBranch>AIR</armyBranch>
+    <movementType>&AIR;</movementType>
+
+    <primaryWeaponName>heli_ground_missile</primaryWeaponName>
+    <secondaryWeaponName>machine_gun</secondaryWeaponName>
+    <description>Can attack ground, naval and other helicopter units</description>
+  </unit>
+  <unit name="tcopter" unitID="19" imgRowID="19">
+    <price>5000</price>
+    <movement>6</movement>
+    <vision>1</vision>
+
+    <canJoin>true</canJoin>
+
+    <transports max="1">
+      <unitID>infantry</unitID>
+      <unitID>mech</unitID>
+    </transports>
+
+    <maxHp>100</maxHp>
+    <maxSupplies>99</maxSupplies>
+    <suppliesPerTurn>2</suppliesPerTurn>
+
+    <armyBranch>AIR</armyBranch>
+    <movementType>&AIR;</movementType>
+    <description>Carries 1 inf or mech unit</description>
+  </unit>
+
+  <unit name="gun_boat" unitID="20" imgRowID="20">
+    <price>6000</price>
+    <movement>7</movement>
+    <vision>2</vision>
+
+    <canJoin>true</canJoin>
+    <transports max="1">
+      <unitID>infantry</unitID>
+      <unitID>mech</unitID>
+    </transports>
+
+    <maxExperience>3</maxExperience>
+    <maxHp>100</maxHp>
+    <maxSupplies>99</maxSupplies>
+    <suppliesPerTurn>1</suppliesPerTurn>
+
+    <armyBranch>NAVAL</armyBranch>
+    <movementType>&NAVAL_TRANSPORT;</movementType>
+    <primaryWeaponName>gunboat_anti_ship_missile</primaryWeaponName>
+    <description></description>
+  </unit>
+  <unit name="cruiser" unitID="21" imgRowID="21">
+    <price>16000</price>
+    <movement>6</movement>
+    <vision>5</vision>
+
+    <canJoin>true</canJoin>
+
+    <transports max="2">
+      <unitID>tcopter</unitID>
+      <unitID>bcopter</unitID>
+    </transports>
+
+    <maxExperience>3</maxExperience>
+    <maxHp>100</maxHp>
+    <maxSupplies>99</maxSupplies>
+    <suppliesPerTurn>1</suppliesPerTurn>
+
+    <armyBranch>NAVAL</armyBranch>
+    <movementType>&NAVAL;</movementType>
+
+    <primaryWeaponName>anti_ship_missile</primaryWeaponName>
+    <secondaryWeaponName>naval_anti_air_missile</secondaryWeaponName>
+    <description>Strong against both air units and submarines</description>
+  </unit>
+  <unit name="sub" unitID="22" imgRowID="22">
+    <price>20000</price>
+    <movement>6</movement>
+    <vision>5</vision>
+
+    <canHide>true</canHide>
+    <canDive>true</canDive>
+    <canJoin>true</canJoin>
+
+    <maxExperience>3</maxExperience>
+    <maxHp>100</maxHp>
+    <maxSupplies>70</maxSupplies>
+    <suppliesPerTurn>1</suppliesPerTurn>
+    <suppliesPerTurnWhenHidden>5</suppliesPerTurnWhenHidden>
+
+    <armyBranch>NAVAL</armyBranch>
+    <movementType>&NAVAL;</movementType>
+
+    <primaryWeaponName>torpedo</primaryWeaponName>
+    <description>After diving this unit remains hidden unless enemy units are adjacent</description>
+  </unit>
+  <unit name="carrier" unitID="23" imgRowID="23">
+    <price>28000</price>
+    <movement>5</movement>
+    <vision>4</vision>
+
+    <canJoin>true</canJoin>
+    <canLaunchUnit>true</canLaunchUnit>
+
+    <transports max="2">
+      <unitID>jet</unitID>
+      <unitID>bomber</unitID>
+      <unitID>tcopter</unitID>
+      <unitID>bcopter</unitID>
+      <unitID>sea_plane</unitID>
+      <unitID>fighter</unitID>
+    </transports>
+
+    <produces>
+      <unitID>sea_plane</unitID>
+    </produces>
+
+    <supplyUnitsInTransport>
+      <unitID>jet</unitID>
+      <unitID>bomber</unitID>
+      <unitID>tcopter</unitID>
+      <unitID>bcopter</unitID>
+      <unitID>sea_plane</unitID>
+      <unitID>fighter</unitID>
+    </supplyUnitsInTransport>
+
+    <maxExperience>3</maxExperience>
+    <maxHp>100</maxHp>
+    <maxSupplies>99</maxSupplies>
+    <suppliesPerTurn>1</suppliesPerTurn>
+    <maxConstructionMaterial>4</maxConstructionMaterial>
+    <healRate>2</healRate>
+
+    <armyBranch>NAVAL</armyBranch>
+    <movementType>&NAVAL;</movementType>
+
+    <primaryWeaponName>naval_anti_air_missile</primaryWeaponName>
+    <description>Can produce and carry 2 air units</description>
+  </unit>
+  <unit name="battleship" unitID="24" imgRowID="24">
+    <price>25000</price>
+    <movement>5</movement>
+    <vision>3</vision>
+
+    <canJoin>true</canJoin>
+
+    <maxExperience>3</maxExperience>
+    <maxHp>100</maxHp>
+    <maxSupplies>99</maxSupplies>
+    <suppliesPerTurn>1</suppliesPerTurn>
+
+    <armyBranch>NAVAL</armyBranch>
+    <movementType>&NAVAL;</movementType>
+
+    <primaryWeaponName>naval_cannon</primaryWeaponName>
+    <description>Most powerful naval ship</description>
+  </unit>
+  <unit name="lander" unitID="25" imgRowID="25">
+    <price>10000</price>
+    <movement>6</movement>
+    <vision>1</vision>
+
+    <canJoin>true</canJoin>
+    <transports max="2">
+      <unitID>infantry</unitID>
+      <unitID>mech</unitID>
+      <unitID>bikes</unitID>
+      <unitID>recon</unitID>
+      <unitID>flare</unitID>
+      <unitID>anti_air</unitID>
+      <unitID>light_tank</unitID>
+      <unitID>medium_tank</unitID>
+      <unitID>heavy_tank</unitID>
+      <unitID>artillery</unitID>
+      <unitID>anti_tank</unitID>
+      <unitID>rockets</unitID>
+      <unitID>missiles</unitID>
+      <unitID>apc</unitID>
+    </transports>
+
+    <maxHp>100</maxHp>
+    <maxSupplies>99</maxSupplies>
+    <suppliesPerTurn>1</suppliesPerTurn>
+
+    <armyBranch>NAVAL</armyBranch>
+    <movementType>&NAVAL_TRANSPORT;</movementType>
+    <description>Can transport 2 ground units</description>
+  </unit>
+</list>
