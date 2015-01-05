@@ -9,6 +9,7 @@ import com.customwars.client.model.gameobject.CityXStreamTest;
 import com.customwars.client.model.gameobject.TerrainTest;
 import com.customwars.client.model.gameobject.TerrainXStreamTest;
 import com.customwars.client.model.gameobject.UnitEventTest;
+import com.customwars.client.model.gameobject.UnitFightStatsTest;
 import com.customwars.client.model.gameobject.UnitFightTest;
 import com.customwars.client.model.gameobject.UnitTest;
 import com.customwars.client.model.gameobject.UnitXStreamTest;
@@ -23,7 +24,7 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
   BinCW2MapParserTest.class, FileSystemManagerTest.class, ControlsConfiguratorTest.class,
   GameTest.class, TileMapTest.class,
-  UnitTest.class, UnitEventTest.class, UnitFightTest.class, CityTest.class, TerrainTest.class,
+  UnitTest.class, UnitEventTest.class, UnitFightTest.class, UnitFightStatsTest.class, CityTest.class, TerrainTest.class,
   CityXStreamTest.class, TerrainXStreamTest.class, UnitXStreamTest.class
 })
 public class CwClientTestRunner {
