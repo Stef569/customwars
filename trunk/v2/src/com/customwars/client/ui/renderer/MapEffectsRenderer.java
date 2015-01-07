@@ -81,7 +81,7 @@ public class MapEffectsRenderer {
       }
     }
 
-    if (renderArrowPath && activeUnit != null) {
+    if (renderArrowPath && activeUnit != null && unitMovePath !=null) {
       renderArrowPath(g);
     }
   }
