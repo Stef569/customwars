@@ -13,8 +13,6 @@ import java.util.List;
 /**
  * Test the FileSystemManager by creating some maps in maps/test and maps/versus
  * when the test is done delete the maps folder and the map files, so they don't end up on svn.
- *
- * @author stefan
  */
 public class FileSystemManagerTest {
   private static String parentDir = "maps/";
@@ -26,27 +24,36 @@ public class FileSystemManagerTest {
   private String testMap3 = "testMap3.map";
   private String versusMap1 = "versus.map";
 
+  private static File parentDirFile, versusDirFile, testDirFile;
+
   private static FileSystemManager fsm;
 
   @Before
   public void beforeEachTest() throws IOException {
-    String path = new File(".").getCanonicalPath();
-    new File(path + parentDir).mkdir();
+    File temp = File.createTempFile("temp-file-name", ".tmp");
+    String path = temp.getAbsolutePath();
+
+    parentDirFile = new File(path + parentDir);
+    parentDirFile.mkdir();
+
     fsm = new FileSystemManager(parentDir);
-    new File(parentDir, testDir).mkdirs();
-    new File(parentDir, versusDir).mkdirs();
+
+    testDirFile = new File(parentDir, testDir);
+    testDirFile.mkdirs();
+
+    versusDirFile = new File(parentDir, versusDir);
+    versusDirFile.mkdirs();
   }
 
   @AfterClass
   public static void afterAllTests() {
-    File test = new File(parentDir, testDir);
     Assert.assertTrue(fsm.clearFiles("test"));
-    Assert.assertTrue(test.delete());
+    Assert.assertTrue(testDirFile.delete());
 
-    File versus = new File(parentDir, versusDir);
     Assert.assertTrue(fsm.clearFiles("versus"));
-    Assert.assertTrue(versus.delete());
-    Assert.assertTrue(new File(parentDir).delete());
+    Assert.assertTrue(versusDirFile.delete());
+
+    Assert.assertTrue(parentDirFile.delete());
   }
 
   @Test

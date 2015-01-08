@@ -2,6 +2,8 @@ package com.customwars.client.model.gameobject;
 
 import com.customwars.client.io.loading.ModelLoader;
 import com.customwars.client.io.loading.XMLDamageParser;
+import com.customwars.client.model.TestData;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -20,6 +22,11 @@ public class UnitFightStatsTest {
 
     InputStream damageStream = ResourceLoader.getResourceAsStream("resources/testData/testGame/damage.xml");
     new XMLDamageParser(damageStream).load();
+  }
+
+  @AfterClass
+  public static void afterAllTests() throws IOException {
+    TestData.clearTestData();
   }
 
   @Test
