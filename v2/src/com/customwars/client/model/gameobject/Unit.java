@@ -1027,6 +1027,10 @@ public class Unit extends GameObject implements Mover, TurnHandler, Attacker, De
     return stats.armyBranch == ArmyBranch.AIR;
   }
 
+  public String getName() {
+    return stats.getName();
+  }
+
   public int getPrice() {
     if (owner == null) {
       return stats.price;

@@ -19,7 +19,7 @@ import java.util.Map;
  * Each time a city is retrieved from this Factory reset is invoked, this allows the city to
  * put dynamic values to max and put values to default.
  *
- * @author stefan
+ * The name of the city stored in this Factory is always in upper case.
  */
 public class CityFactory {
   private static final Map<Integer, City> citiesById = new HashMap<Integer, City>();
@@ -105,6 +105,17 @@ public class CityFactory {
     }
     Collections.sort(allCities, SORT_CITY_ON_ID);
     return Collections.unmodifiableList(allCities);
+  }
+
+  /**
+   * @return A Collection of all the city names in this Factory
+   */
+  public static List<String> getAllCityNames() {
+    if (citiesByName == null) {
+      return Collections.emptyList();
+    } else {
+      return new ArrayList<String>(citiesByName.keySet());
+    }
   }
 
   public static City getRandomCity() {

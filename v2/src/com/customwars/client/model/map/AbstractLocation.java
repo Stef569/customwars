@@ -5,6 +5,7 @@ package com.customwars.client.model.map;
  * Subclasses should handle locatables on this location
  */
 public abstract class AbstractLocation implements Location {
+  private static final long serialVersionUID = 1L;
   private final int col, row;
 
   public AbstractLocation(int col, int row) {
@@ -35,9 +36,12 @@ public abstract class AbstractLocation implements Location {
 
   @Override
   public int hashCode() {
-    int result = col;
-    result = 31 * result + row;
-    return result;
+    return 31 * col + row;
+  }
+
+  @Override
+  public String toString() {
+    return "Location{" + getLocationString() + "}";
   }
 
   public String getLocationString() {

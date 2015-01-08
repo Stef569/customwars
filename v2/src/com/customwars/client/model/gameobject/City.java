@@ -394,7 +394,14 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
    * @return if this city is captured by the given unit
    */
   public boolean isCapturedBy(Unit unit) {
-    return isCaptured() && this.capturer == unit;
+    return isCaptured() && isBeingCapturedBy(unit);
+  }
+
+  /**
+   * @return If this city is being captured by the given unit
+   */
+  public boolean isBeingCapturedBy(Unit unit) {
+    return this.capturer == unit;
   }
 
   /**
