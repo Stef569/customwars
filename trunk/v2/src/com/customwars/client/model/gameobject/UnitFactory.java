@@ -21,7 +21,7 @@ import java.util.Map;
  * Each time a unit is retrieved from this Factory reset is invoked, this allows the unit to
  * put dynamic values to max and put values to default.
  *
- * @author stefan
+ * The name of the unit stored in this Factory is always in upper case.
  */
 public class UnitFactory {
   private static final Logger logger = Logger.getLogger(UnitFactory.class);
