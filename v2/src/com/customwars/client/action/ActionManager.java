@@ -68,12 +68,22 @@ public class ActionManager {
    * The actions will begin to execute right away.
    * No undo history will be stored. Queued actions cannot be undone.
    * Each executed action will be stored in the action history.
-   * There is no way to stop the executing.
+   * To stop the queued actions from executing, call clearQueue()
    *
    * @param actions the actions to be executed
    */
-  public void Queue(List<CWAction> actions) {
+  public void queue(List<CWAction> actions) {
     this.queue = new LinkedList<CWAction>(actions);
+  }
+
+  /**
+   * Clears all actions from the queue
+   */
+  public void clearQueue() {
+    if (queue != null) {
+      queue.clear();
+      queue = null;
+    }
   }
 
   public void update(int elapsedTime) {
