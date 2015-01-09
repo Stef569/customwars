@@ -81,8 +81,15 @@ public class InGameContext {
     controllerManager.handleUnitBPress(unit);
   }
 
-  public void Queue(List<CWAction> actions) {
-    actionManager.Queue(actions);
+  public void queue(List<CWAction> actions) {
+    actionManager.queue(actions);
+  }
+
+  /**
+   * Clears all actions from the queue
+   */
+  public void clearQueuedActions() {
+    actionManager.clearQueue();
   }
 
   public void update(int elapsedTime) {
@@ -167,7 +174,7 @@ public class InGameContext {
 
   public boolean isInUnitMode() {
     return isUnitSelectMode() || isUnitAttackMode() || isUnitDropMode() ||
-      isRocketLaunchMode();
+        isRocketLaunchMode();
   }
 
   public boolean isDefaultMode() {

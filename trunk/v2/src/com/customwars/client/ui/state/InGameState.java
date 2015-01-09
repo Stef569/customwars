@@ -277,6 +277,7 @@ public class InGameState extends CWState implements PropertyChangeListener {
 
   private void gameOver() {
     storeReplayActions();
+    inGameContext.clearQueuedActions();
     changeToState("GAME_OVER");
     inGameContext = null;
     gameOver = false;
