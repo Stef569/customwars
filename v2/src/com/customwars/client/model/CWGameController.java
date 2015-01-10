@@ -7,7 +7,6 @@ import com.customwars.client.model.game.Game;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.CityFactory;
-import com.customwars.client.model.gameobject.Locatable;
 import com.customwars.client.model.gameobject.Terrain;
 import com.customwars.client.model.gameobject.TerrainFactory;
 import com.customwars.client.model.gameobject.Unit;
@@ -44,7 +43,8 @@ public class CWGameController implements GameController {
 
   @Override
   public void teleport(Location from, Location to) {
-    game.getMap().teleport(from, to, from.getLastLocatable());
+    Unit unit = map.getUnitOn(from);
+    game.getMap().teleport(from, to, unit);
   }
 
   @Override
@@ -157,10 +157,9 @@ public class CWGameController implements GameController {
 
   private void inflictDamageToArea(Collection<Location> area, int damage) {
     for (Location location : area) {
-      Locatable locatable = location.getLastLocatable();
+      Unit unitInRange = map.getUnitOn(location);
 
-      if (locatable instanceof Unit) {
-        Unit unitInRange = (Unit) locatable;
+      if (unitInRange != null) {
         if (unitInRange.willBeDestroyedAfterTakingDamage(damage)) {
           unitInRange.setHp(1);
         } else {
