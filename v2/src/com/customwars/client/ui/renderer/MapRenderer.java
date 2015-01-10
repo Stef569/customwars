@@ -371,4 +371,11 @@ public class MapRenderer implements Renderable {
   public SpriteManager getSpriteManager() {
     return spriteManager;
   }
+
+  /**
+   * @see #effectsRenderer#getUnitMovePath()
+   */
+  public List<Location> getUnitMovePath() {
+    return effectsRenderer.getUnitMovePath();
+  }
 }

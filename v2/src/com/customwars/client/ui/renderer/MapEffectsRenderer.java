@@ -10,7 +10,9 @@ import com.customwars.client.model.map.TileMap;
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Graphics;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public class MapEffectsRenderer {
@@ -81,7 +83,7 @@ public class MapEffectsRenderer {
       }
     }
 
-    if (renderArrowPath && activeUnit != null && unitMovePath !=null) {
+    if (renderArrowPath && activeUnit != null && unitMovePath != null) {
       renderArrowPath(g);
     }
   }
@@ -290,5 +292,33 @@ public class MapEffectsRenderer {
 
   public void setActiveUnit(Unit activeUnit) {
     this.activeUnit = activeUnit;
+  }
+
+  /**
+   * @return The user chosen move path or an empty path
+   */
+  public List<Location> getUnitMovePath() {
+    if (unitMovePath != null) {
+      List<Direction> directionPath = unitMovePath.getDirectionsPath();
+      List<Location> movePath = convertDirectionsToTiles(directionPath);
+      return movePath;
+    } else {
+      return Collections.emptyList();
+    }
+  }
+
+  private List<Location> convertDirectionsToTiles(List<Direction> directionPath) {
+    List<Location> locations = new ArrayList<Location>();
+
+    Location base = activeUnit.getLocation();
+    locations.add(base);
+
+    for (Direction direction : directionPath) {
+      Location nextLocation = map.getRelativeTile(base, direction);
+      locations.add(nextLocation);
+      base = nextLocation;
+    }
+
+    return locations;
   }
 }
