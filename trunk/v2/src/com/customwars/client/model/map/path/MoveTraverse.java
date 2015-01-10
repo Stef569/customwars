@@ -27,8 +27,6 @@ import java.util.List;
  *
  * if a trapper was found within the path then
  * {@link #foundTrapper()} and {@link #isPathMoveComplete()} return true.
- *
- * @author stefan
  */
 public class MoveTraverse {
   private static final Logger logger = Logger.getLogger(MoveTraverse.class);
@@ -48,6 +46,31 @@ public class MoveTraverse {
     changeSupport = new PropertyChangeSupport(this);
   }
 
+  /**
+   * Prepares a move, the movePath defines the locations the unit must follow to reach it's destination.
+   *
+   * @param mover    The mover that wants to move
+   * @param movePath The path that the mover must traverse
+   */
+  public void prepareMove(Mover mover, List<Location> movePath) {
+    Args.checkForNull(mover);
+    Args.checkForNull(movePath);
+
+    prepareForNextMove();
+    this.mover = mover;
+    this.movePath = movePath;
+  }
+
+  /**
+   * Prepares a move from the mover location to the destination.
+   *
+   * The pathfinder will find the shortest route towards the destination.
+   *
+   * If the destination is out of reach, a warning is logged and the unit is 'trapped'
+   *
+   * @param mover       The mover that wants to move
+   * @param destination the destination to reach
+   */
   public void prepareMove(Mover mover, Location destination) {
     Args.checkForNull(mover);
     Args.checkForNull(destination);
@@ -59,8 +82,8 @@ public class MoveTraverse {
       this.movePath = pathFinder.getMovementPath(mover, destination);
     } else {
       logger.warn("Could not prepare move" +
-        " from " + mover.getLocation().getCol() + "," + mover.getLocation().getRow() +
-        " to " + destination.getCol() + "," + destination.getRow() +
+        " from " + mover.getLocation().getLocationString() +
+        " to " + destination.getLocationString() +
         " for " + mover);
 
       setPathMoveComplete();
@@ -81,7 +104,7 @@ public class MoveTraverse {
 
   /**
    * Updates the map position and orientation of the mover By moving one step further in the movePath
-   * movePath and mover are set by {@link #prepareMove(Mover,Location)}
+   * movePath and mover are set by {@link #prepareMove(Mover, Location)}
    * if the path is already completed or the movePath has not been generated then nothing happens.
    */
   public void update() {

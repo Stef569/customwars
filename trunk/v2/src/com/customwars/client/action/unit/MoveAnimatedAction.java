@@ -22,6 +22,8 @@ import com.customwars.client.ui.thingle.DialogListener;
 import com.customwars.client.ui.thingle.DialogResult;
 import org.apache.log4j.Logger;
 
+import java.util.List;
+
 /**
  * Moves the unit animated from the 'from' location to the 'to' location
  * by moving the unit on each tile between those locations.
@@ -76,8 +78,21 @@ public class MoveAnimatedAction extends DelayedAction {
 
     MapRenderer mapRenderer = inGameContext.getObj(MapRenderer.class);
     mapRenderer.removeZones();
+    prepareMove(mapRenderer);
     mapRenderer.showArrows(false);
-    moveTraverse.prepareMove(unit, to);
+  }
+
+  private void prepareMove(MapRenderer mapRenderer) {
+    List<Location> movePath = mapRenderer.getUnitMovePath();
+
+    // In case of a drop the move path will be empty
+    if (movePath.isEmpty()) {
+      // Generate a path
+      moveTraverse.prepareMove(unit, to);
+    } else {
+      // Use the user chosen path
+      moveTraverse.prepareMove(unit, movePath);
+    }
   }
 
   protected void invokeAction() {
