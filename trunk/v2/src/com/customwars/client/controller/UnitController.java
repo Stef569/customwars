@@ -5,7 +5,6 @@ import com.customwars.client.model.fight.Defender;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.City;
-import com.customwars.client.model.gameobject.Locatable;
 import com.customwars.client.model.gameobject.Terrain;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.gameobject.UnitFactory;
@@ -70,7 +69,7 @@ public abstract class UnitController {
   }
 
   boolean canWait(Tile selected) {
-    Unit unit = (Unit) selected.getLocatable(0);
+    Unit unit = map.getUnitOn(selected, 0);
     return selected.isFogged() || unit.isHidden() || selected.getLocatableCount() == 1;
   }
 
@@ -84,16 +83,10 @@ public abstract class UnitController {
    * Transport is the first unit
    */
   boolean canLoad(Tile selected) {
-    Unit transporter;
-    Locatable locatable = selected.getLocatable(0);
-    if (locatable instanceof Unit) {
-      transporter = (Unit) locatable;
-    } else {
-      return false;
-    }
+    Unit transporter = map.getUnitOn(selected, 0);
 
-    return transporter.canAdd(unit) &&
-      transporter.getOwner() == unit.getOwner();
+    return transporter != null && transporter.canAdd(unit) &&
+        transporter.getOwner() == unit.getOwner();
   }
 
   /**
@@ -178,12 +171,14 @@ public abstract class UnitController {
    */
   boolean canJoin(Tile selected) {
     // Get the target we want to join with
-    Unit target = (Unit) selected.getLocatable(0);
-    UnitStats unitStats = unit.getStats();
-    UnitStats targetStats = target.getStats();
+    Unit target = map.getUnitOn(selected, 0);
+    Unit selectedUnit = map.getUnitOn(selected, 1);
 
-    if (target != null && target != unit) {
-      if (selected.getLastLocatable() == unit && unitStats.getID() == targetStats.getID()) {
+    if (target != unit) {
+      UnitStats unitStats = unit.getStats();
+      UnitStats targetStats = target.getStats();
+
+      if (selectedUnit == unit && unitStats.getID() == targetStats.getID()) {
         if (target.getOwner() == unit.getOwner() && target.getHp() <= 9) {
           if (targetStats.canJoin() && unitStats.canJoin()) {
             if (targetStats.canTransport()) {
@@ -307,7 +302,7 @@ public abstract class UnitController {
    * Is this unit on the tile
    */
   boolean isUnitOn(Location tile) {
-    return tile != null && tile.getLastLocatable() == unit;
+    return tile != null && map.getUnitOn(tile) == unit;
   }
 
   /**

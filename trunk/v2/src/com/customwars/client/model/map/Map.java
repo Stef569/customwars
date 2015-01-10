@@ -147,17 +147,22 @@ public class Map extends TileMap<Tile> implements TurnHandler {
       int row = t.getRow();
       boolean fogged = t.isFogged();
       Terrain terrain = t.getTerrain();
-      Terrain terrainCopy = terrain instanceof City ? new City((City) terrain) : terrain;
+      boolean isCity = terrain instanceof City;
+      Terrain terrainCopy = isCity ? new City((City) terrain) : terrain;
 
       Tile tileCopy = new Tile(col, row, terrainCopy, fogged);
-      copyCityLocation(tileCopy);
+
+      if (isCity) {
+        copyCityLocation(tileCopy);
+      }
+
       copyUnits(t, tileCopy);
       setTile(tileCopy);
     }
   }
 
-  private void copyCityLocation(Location tileCopy) {
-    City city = getCityOn(tileCopy);
+  private void copyCityLocation(Tile tileCopy) {
+    City city = (City) tileCopy.getTerrain();
 
     if (city != null) {
       city.setLocation(tileCopy);
@@ -166,7 +171,7 @@ public class Map extends TileMap<Tile> implements TurnHandler {
 
   private void copyUnits(Tile oldTile, Tile newTile) {
     for (int i = 0; i < oldTile.getLocatableCount(); i++) {
-      Unit unitCopy = new Unit(getUnitOn(oldTile));
+      Unit unitCopy = new Unit((Unit) oldTile.getLastLocatable());
       newTile.add(unitCopy);
     }
   }
@@ -717,14 +722,37 @@ public class Map extends TileMap<Tile> implements TurnHandler {
   }
 
   /**
-   * @param location the location to retrieve a unit from
+   * @param location the location in the map to retrieve a unit from
    * @return The last added unit from location
    *         if location doesn't contain a unit <b>NULL</b> is returned
    */
   public Unit getUnitOn(Location location) {
-    Locatable locatable = location.getLastLocatable();
-    if (locatable instanceof Unit) {
-      return (Unit) locatable;
+    Tile t = getTile(location);
+
+    if (t != null) {
+      Locatable locatable = t.getLastLocatable();
+
+      if (locatable instanceof Unit) {
+        return (Unit) locatable;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * @param location the location in the map to retrieve a unit from
+   * @return The unit at the given index on the location
+   *         if location doesn't contain a unit <b>NULL</b> is returned
+   */
+  public Unit getUnitOn(Location location, int index) {
+    Tile t = getTile(location);
+
+    if (t != null) {
+      Locatable locatable = t.getLocatable(index);
+
+      if (locatable instanceof Unit) {
+        return (Unit) locatable;
+      }
     }
     return null;
   }
@@ -740,7 +768,7 @@ public class Map extends TileMap<Tile> implements TurnHandler {
   /**
    * Checks if there is a city on the given location
    *
-   * @param location the location to check for a city
+   * @param location the location in the map to check for a city
    * @return true if a city is present
    * @see #getCityOn(Location)
    */
@@ -749,15 +777,18 @@ public class Map extends TileMap<Tile> implements TurnHandler {
   }
 
   /**
-   * @param location the location to retrieve a city from
+   * @param location the location in the map to retrieve a city from
    * @return The city that is on the location
    *         if location doesn't contain a city <b>NULL</b> is returned
    */
   public City getCityOn(Location location) {
-    Tile t = (Tile) location;
-    Terrain terrain = t.getTerrain();
-    if (terrain instanceof City) {
-      return (City) terrain;
+    Tile t = getTile(location);
+
+    if (t != null) {
+      Terrain terrain = t.getTerrain();
+      if (terrain instanceof City) {
+        return (City) terrain;
+      }
     }
     return null;
   }

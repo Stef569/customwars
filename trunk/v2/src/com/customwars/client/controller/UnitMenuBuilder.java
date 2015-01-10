@@ -213,13 +213,13 @@ public class UnitMenuBuilder {
     }
 
     if (canJoin) {
-      Unit unitToJoin = (Unit) to.getLastLocatable();
+      Unit unitToJoin = map.getUnitOn(to);
       CWAction joinAction = ActionFactory.buildJoinAction(unit, unitToJoin);
       addToMenu(joinAction, App.translate("join"));
     }
 
     if (canLoad) {
-      Unit transport = (Unit) to.getLocatable(0);
+      Unit transport = map.getUnitOn(to, 0);
       CWAction loadAction = ActionFactory.buildLoadAction(unit, transport);
       addToMenu(loadAction, App.translate("load"));
     }
