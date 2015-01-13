@@ -121,4 +121,33 @@ public class UnitTest {
     Assert.assertFalse(unit.willBeDestroyedAfterTakingDamage(9));
     Assert.assertTrue(unit.willBeDestroyedAfterTakingDamage(10));
   }
+
+  @Test
+  public void testApcUnitCopy() {
+    // Create the units
+    Unit apc = UnitFactory.getUnit(TestData.APC);
+    Unit infantry = UnitFactory.getUnit(TestData.INF);
+
+    // load infantry into apc
+    apc.add(infantry);
+
+    // Add the apc to the map
+    map.getTile(0, 0).add(apc);
+
+    // Check transport values
+    Assert.assertTrue(infantry.isInTransport());
+    Assert.assertNotNull(infantry.getLocation());
+    Assert.assertFalse(apc.isInTransport());
+    Assert.assertTrue(apc.hasUnitsInTransport());
+
+    // Create a copy of the apc
+    Unit apcCopy = new Unit(apc);
+
+    // Recheck transport values
+    Assert.assertTrue(infantry.isInTransport());
+    Assert.assertNotNull(infantry.getLocation());
+    Assert.assertFalse(apcCopy.isInTransport());
+    Assert.assertTrue(apcCopy.hasUnitsInTransport());
+    Assert.assertTrue("The unit is located inside the apc unit", apcCopy.getUnitInTransport(0).isInTransport());
+  }
 }
