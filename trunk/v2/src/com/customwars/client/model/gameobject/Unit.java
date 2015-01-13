@@ -105,7 +105,9 @@ public class Unit extends GameObject implements Mover, TurnHandler, Attacker, De
   private void copyUnitsInTheTransport(List<Unit> unitsInTransport) {
     this.unitsInTransport = new LinkedList<Unit>();
     for (Unit unit : unitsInTransport) {
-      this.unitsInTransport.add(new Unit(unit));
+      Unit unitCopy = new Unit(unit);
+      unitCopy.transport = this;
+      this.unitsInTransport.add(unitCopy);
     }
   }
 
