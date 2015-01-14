@@ -62,6 +62,11 @@ public class GameOverRenderer implements Renderable {
       Widget column = createColumn(p.getName());
       header.add(column);
     }
+
+    // The table will always stretch across the screen.
+    // Add an empty header to prevent the last column to be stretched.
+    Widget emptyColumn = createColumn("");
+    header.add(emptyColumn);
     return header;
   }
 
