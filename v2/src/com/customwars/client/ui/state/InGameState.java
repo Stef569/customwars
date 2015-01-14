@@ -440,15 +440,30 @@ public class InGameState extends CWState implements PropertyChangeListener {
   public void propertyChange(PropertyChangeEvent evt) {
     String propertyName = evt.getPropertyName();
 
-    if (evt.getSource() instanceof Game && propertyName.equals("state")) {
-      gameStateChanged(evt);
-    } else if (evt.getSource() instanceof TileSprite && propertyName.equals("position")) {
-      cursorPositionChanged(evt);
+    if (evt.getSource() instanceof Game) {
+      if (propertyName.equals("state")) {
+        gameStateChanged(evt);
+      } else if (propertyName.equals("hqCaptured")) {
+        hqCaptured(evt);
+      } else if (evt.getSource() instanceof TileSprite && propertyName.equals("position")) {
+        cursorPositionChanged(evt);
+      }
     }
   }
 
   private void gameStateChanged(PropertyChangeEvent evt) {
     this.gameOver = game.isGameOver();
+  }
+
+  private void hqCaptured(PropertyChangeEvent evt) {
+    Player oldValue = (Player) evt.getOldValue();
+
+    // If the HQ was of an AI player make sure that the factories
+    // now belonging to the conqueror player are controllable.
+    if (oldValue.isAi()) {
+      ControllerManager controllers = inGameContext.getObj(ControllerManager.class);
+      controllers.createControllers();
+    }
   }
 
   private void cursorPositionChanged(PropertyChangeEvent evt) {
