@@ -27,7 +27,7 @@ public class EndTurnState extends CWState {
   public void enter(GameContainer container, StateBasedGame stateBasedGame) throws SlickException {
     super.enter(container, stateBasedGame);
     game = stateSession.game;
-    nextPlayer = game.getNextActivePlayer(game.getActivePlayer());
+    nextPlayer = game.getNextActivePlayer();
     nextDay = game.getDay() + 1;
   }
 
