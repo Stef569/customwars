@@ -1,0 +1,336 @@
+<!--
+id is a reference to the city image sheet
+moveCosts have the following order:
+  Infantry
+  Mech
+  Tire A
+  Tire B
+  Tank
+  Air
+  Naval
+  Naval Transport
+-->
+<list>
+  <city name="city" id="0" imgRowID="0" type='road'>
+    <canProduceFunds>true</canProduceFunds>
+    <hidden>true</hidden>
+    <defenseBonus>3</defenseBonus>
+    <moveCosts>
+      <int>1</int>
+      <int>1</int>
+      <int>1</int>
+      <int>1</int>
+      <int>1</int>
+      <int>1</int>
+      <int>127</int>
+      <int>127</int>
+    </moveCosts>
+    <vision>1</vision>
+
+    <heals>
+      <armyBranch>LAND</armyBranch>
+    </heals>
+    <healRate>2</healRate>
+    <canBeCaptureBy>
+      <unitID>infantry</unitID>
+      <unitID>mech</unitID>
+      <unitID>bikes</unitID>
+    </canBeCaptureBy>
+    <maxCapCount>20</maxCapCount>
+    <description>They give you money and heal units inside them.</description>
+  </city>
+  <city name="factory" id="1" imgRowID="1" type='road'>
+    <canProduceFunds>true</canProduceFunds>
+    <hidden>true</hidden>
+    <defenseBonus>3</defenseBonus>
+    <moveCosts>
+      <int>1</int>
+      <int>1</int>
+      <int>1</int>
+      <int>1</int>
+      <int>1</int>
+      <int>1</int>
+      <int>127</int>
+      <int>127</int>
+    </moveCosts>
+    <vision>1</vision>
+
+    <heals>
+      <armyBranch>LAND</armyBranch>
+    </heals>
+    <healRate>2</healRate>
+    <canBeCaptureBy>
+      <unitID>infantry</unitID>
+      <unitID>mech</unitID>
+      <unitID>bikes</unitID>
+    </canBeCaptureBy>
+    <builds>
+      <unitID>infantry</unitID>
+      <unitID>mech</unitID>
+      <unitID>bikes</unitID>
+      <unitID>recon</unitID>
+      <unitID>flare</unitID>
+      <unitID>anti_air</unitID>
+      <unitID>light_tank</unitID>
+      <unitID>medium_tank</unitID>
+      <unitID>heavy_tank</unitID>
+      <unitID>artillery</unitID>
+      <unitID>anti_tank</unitID>
+      <unitID>rockets</unitID>
+      <unitID>missiles</unitID>
+      <unitID>apc</unitID>
+    </builds>
+    <maxCapCount>20</maxCapCount>
+    <description>Factories heal, provide supplies and can create new ground units.</description>
+  </city>
+  <city name="airport" id="2" imgRowID="2" type='road'>
+    <canProduceFunds>true</canProduceFunds>
+    <hidden>true</hidden>
+    <defenseBonus>3</defenseBonus>
+    <moveCosts>
+      <int>1</int>
+      <int>1</int>
+      <int>1</int>
+      <int>1</int>
+      <int>1</int>
+      <int>1</int>
+      <int>127</int>
+      <int>127</int>
+    </moveCosts>
+    <vision>1</vision>
+
+    <heals>
+      <armyBranch>AIR</armyBranch>
+    </heals>
+    <healRate>2</healRate>
+    <canBeCaptureBy>
+      <unitID>infantry</unitID>
+      <unitID>mech</unitID>
+      <unitID>bikes</unitID>
+    </canBeCaptureBy>
+    <builds>
+      <unitID>jet</unitID>
+      <unitID>bomber</unitID>
+      <unitID>tcopter</unitID>
+      <unitID>bcopter</unitID>
+      <unitID>fighter</unitID>
+    </builds>
+    <maxCapCount>20</maxCapCount>
+    <description>empty</description>
+  </city>
+  <city name="port" id="3" imgRowID="3" type='road'>
+    <canProduceFunds>true</canProduceFunds>
+    <hidden>true</hidden>
+    <defenseBonus>3</defenseBonus>
+    <moveCosts>
+      <int>1</int>
+      <int>1</int>
+      <int>1</int>
+      <int>1</int>
+      <int>1</int>
+      <int>1</int>
+      <int>1</int>
+      <int>1</int>
+    </moveCosts>
+    <vision>1</vision>
+
+    <heals>
+      <armyBranch>NAVAL</armyBranch>
+    </heals>
+    <healRate>2</healRate>
+    <canBeCaptureBy>
+      <unitID>infantry</unitID>
+      <unitID>mech</unitID>
+      <unitID>bikes</unitID>
+    </canBeCaptureBy>
+    <builds>
+      <unitID>gun_boat</unitID>
+      <unitID>cruiser</unitID>
+      <unitID>sub</unitID>
+      <unitID>carrier</unitID>
+      <unitID>battleship</unitID>
+      <unitID>lander</unitID>
+    </builds>
+    <maxCapCount>20</maxCapCount>
+    <description></description>
+  </city>
+  <city name="hq" id="4" imgRowID="4" type='road'>
+    <canProduceFunds>true</canProduceFunds>
+    <hidden>true</hidden>
+    <defenseBonus>4</defenseBonus>
+    <moveCosts>
+      <int>1</int>
+      <int>1</int>
+      <int>1</int>
+      <int>1</int>
+      <int>1</int>
+      <int>1</int>
+      <int>127</int>
+      <int>127</int>
+    </moveCosts>
+    <vision>1</vision>
+
+    <heals>
+      <armyBranch>LAND</armyBranch>
+    </heals>
+    <healRate>2</healRate>
+    <canBeCaptureBy>
+      <unitID>infantry</unitID>
+      <unitID>mech</unitID>
+      <unitID>bikes</unitID>
+    </canBeCaptureBy>
+    <maxCapCount>20</maxCapCount>
+    <description></description>
+  </city>
+  <city name="missle_silo" id="5" imgRowID="0" type='road'>
+    <hidden>true</hidden>
+    <defenseBonus>3</defenseBonus>
+    <moveCosts>
+      <int>1</int>
+      <int>1</int>
+      <int>1</int>
+      <int>1</int>
+      <int>1</int>
+      <int>1</int>
+      <int>127</int>
+      <int>127</int>
+    </moveCosts>
+    <vision>1</vision>
+    <canBeLaunchedBy>
+      <unitID>infantry</unitID>
+      <unitID>mech</unitID>
+      <unitID>bikes</unitID>
+    </canBeLaunchedBy>
+
+    <maxCapCount>20</maxCapCount>
+    <description></description>
+  </city>
+  <city name="pipe_seam" id="6" imgRowID="1" type='pipe'>
+    <height>1</height>
+    <moveCosts>
+      <int>127</int>
+      <int>127</int>
+      <int>127</int>
+      <int>127</int>
+      <int>127</int>
+      <int>1</int>
+      <int>127</int>
+      <int>127</int>
+    </moveCosts>
+    <maxHp>99</maxHp>
+    <description></description>
+  </city>
+  <city name="wall_seam" id="7" imgRowID="3" type='wall'>
+    <height>1</height>
+    <moveCosts>
+      <int>127</int>
+      <int>127</int>
+      <int>127</int>
+      <int>127</int>
+      <int>127</int>
+      <int>1</int>
+      <int>127</int>
+      <int>127</int>
+    </moveCosts>
+    <maxHp>99</maxHp>
+    <description></description>
+  </city>
+  <city name="radar_tower" id="8" imgRowID="5" type='road'>
+    <hidden>true</hidden>
+    <defenseBonus>3</defenseBonus>
+    <moveCosts>
+      <int>1</int>
+      <int>1</int>
+      <int>1</int>
+      <int>1</int>
+      <int>1</int>
+      <int>1</int>
+      <int>127</int>
+      <int>127</int>
+    </moveCosts>
+    <vision>5</vision>
+
+    <canBeCaptureBy>
+      <unitID>infantry</unitID>
+      <unitID>mech</unitID>
+      <unitID>bikes</unitID>
+    </canBeCaptureBy>
+    <maxCapCount>20</maxCapCount>
+    <description>Reveals 5 tiles around this city in all directions.</description>
+  </city>
+  <city name="temp_airport" id="9" imgRowID="6" type='road'>
+    <hidden>true</hidden>
+    <defenseBonus>1</defenseBonus>
+    <moveCosts>
+      <int>1</int>
+      <int>1</int>
+      <int>1</int>
+      <int>1</int>
+      <int>1</int>
+      <int>1</int>
+      <int>127</int>
+      <int>127</int>
+    </moveCosts>
+
+    <heals>
+      <armyBranch>AIR</armyBranch>
+    </heals>
+    <healRate>2</healRate>
+    <canBeCaptureBy>
+      <unitID>infantry</unitID>
+      <unitID>mech</unitID>
+      <unitID>bikes</unitID>
+    </canBeCaptureBy>
+    <maxCapCount>20</maxCapCount>
+    <description>A small airfield that can repair and resupply your air units.</description>
+  </city>
+  <city name="temp_port" id="10" imgRowID="7" type='road'>
+    <hidden>true</hidden>
+    <defenseBonus>1</defenseBonus>
+    <moveCosts>
+      <int>1</int>
+      <int>1</int>
+      <int>1</int>
+      <int>1</int>
+      <int>1</int>
+      <int>1</int>
+      <int>1</int>
+      <int>1</int>
+    </moveCosts>
+
+    <heals>
+      <armyBranch>NAVAL</armyBranch>
+    </heals>
+    <healRate>2</healRate>
+    <canBeCaptureBy>
+      <unitID>infantry</unitID>
+      <unitID>mech</unitID>
+      <unitID>bikes</unitID>
+    </canBeCaptureBy>
+    <maxCapCount>20</maxCapCount>
+    <description>A small dock that can repair and resupply your fleet.</description>
+  </city>
+  <city name="comm_tower" id="11" imgRowID="8" type='road'>
+    <hidden>true</hidden>
+    <defenseBonus>3</defenseBonus>
+    <moveCosts>
+      <int>1</int>
+      <int>1</int>
+      <int>1</int>
+      <int>1</int>
+      <int>1</int>
+      <int>1</int>
+      <int>127</int>
+      <int>127</int>
+    </moveCosts>
+    <vision>1</vision>
+
+    <canBeCaptureBy>
+      <unitID>infantry</unitID>
+      <unitID>mech</unitID>
+      <unitID>bikes</unitID>
+    </canBeCaptureBy>
+    <maxCapCount>20</maxCapCount>
+    <description>Once captured, this structure boosts all unit's offense by 5%</description>
+  </city>
+</list>
