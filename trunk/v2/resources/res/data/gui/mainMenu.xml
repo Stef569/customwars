@@ -5,6 +5,7 @@
         <button text="multi_player" action="selectItem(this)" enterComponent="enterComponent(1)"/>
         <button text="map_editor" action="selectItem(this)" enterComponent="enterComponent(2)"/>
         <button text="options" action="selectItem(this)" enterComponent="enterComponent(3)"/>
-        <button text="exit" width="280" action="selectItem(this)" enterComponent="enterComponent(4)"/>
+        <button text="credits" action="selectItem(this)" enterComponent="enterComponent(4)"/>
+        <button text="exit" width="280" action="selectItem(this)" enterComponent="enterComponent(5)"/>
     </panel>
 </panel>

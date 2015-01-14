@@ -39,8 +39,34 @@ public class CWStates extends CWStateBasedGame {
     loadResources();
   }
 
+  /**
+   * MAIN MENU = 1
+   * CREDITS = 2
+   *
+   * SINGLE_PLAYER = 10
+   * MAP SELECT = 11
+   * CO SELECT = 12
+   * GAME RULES = 13
+   * IN GAME = 14
+   * END TURN = 15
+   * GAME OVER = 16
+   * PLAYER OPTIONS = 17
+   *
+   * MULTI_PLAYER = 20
+   * SERVER CREATE = 21
+   * SERVER JOIN = 22
+   * SERVER LOGIN = 23
+   * SERVER ROOM = 24
+   *
+   * GAME OPTIONS = 30
+   * CONTROLS = 31
+   * APP OPTIONS = 32
+   *
+   * MAP_EDITOR = 50
+   */
   private void buildStateList() {
     addState("MAIN_MENU", new MainMenuState());
+    addState("CREDITS", new CreditsState());
     addState("SINGLE_PLAYER", new SinglePlayerMenuState());
     addState("MULTI_PLAYER", new MultiPlayerMenuState());
     addState("MAP_EDITOR", new MapEditorState());

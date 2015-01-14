@@ -2,8 +2,8 @@ package com.customwars.client.ui.state.menu;
 
 import com.customwars.client.App;
 import com.customwars.client.ui.state.CWState;
-import com.customwars.client.ui.thingle.ThingleMenu;
 import com.customwars.client.ui.thingle.MenuListener;
+import com.customwars.client.ui.thingle.ThingleMenu;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Font;
 import org.newdawn.slick.GameContainer;
@@ -39,6 +39,9 @@ public class MainMenuState extends CWState {
             changeToState("OPTIONS_MENU");
             break;
           case 4:
+            changeToState("CREDITS");
+            break;
+          case 5:
             container.exit();
             break;
         }
@@ -78,6 +81,9 @@ public class MainMenuState extends CWState {
         g.drawString("Fine tune the options", 210, windowHeight - 40);
         break;
       case 4:
+        g.drawString("Shows the credits", 210, windowHeight - 40);
+        break;
+      case 5:
         g.drawString("Quit the game", 210, windowHeight - 40);
         break;
     }
