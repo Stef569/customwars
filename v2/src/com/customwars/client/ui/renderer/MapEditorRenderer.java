@@ -75,16 +75,18 @@ public class MapEditorRenderer implements Renderable {
     lineRenderer.addText("Open map:" + cwInput.getControlsAsText(CWInput.OPEN));
     lineRenderer.addText("New map:" + cwInput.getControlsAsText(CWInput.NEW));
     lineRenderer.addText("Constant mode:" + cwInput.getControlsAsText(CWInput.MAP_EDITOR_CONSTANT_MODE));
+    lineRenderer.addText("");
     lineRenderer.addText("Move the mouse near the bottom");
     lineRenderer.addText("to show the active panel");
-    lineRenderer.setLocation(350, 40);
+    lineRenderer.addText("Press ESC to exit");
+    lineRenderer.setLocation(10, 30);
   }
 
-  private void buildSelectPanels(GUIContext guiContex) {
+  private void buildSelectPanels(GUIContext guiContext) {
     panels = new ArrayList<SelectPanel>();
-    panels.add(new TerrainSelectPanel(guiContex));
-    panels.add(new CitySelectPanel(guiContex));
-    panels.add(new UnitSelectPanel(guiContex));
+    panels.add(new TerrainSelectPanel(guiContext));
+    panels.add(new CitySelectPanel(guiContext));
+    panels.add(new UnitSelectPanel(guiContext));
   }
 
   public void loadResources(ResourceManager resources) {
