@@ -27,6 +27,11 @@ public class UnitFight extends BasicFight {
   public int getAttackDamagePercentage() {
     Unit attackingUnit = (Unit) attacker;
     Unit defendingUnit = (Unit) defender;
+
+    if(attackingUnit.isDestroyed() || defendingUnit.isDestroyed()) {
+      return 0;
+    }
+
     int attackerHP = attackingUnit.getInternalHp();
     int attackMaxHP = attackingUnit.getInternalMaxHp();
     int attExpBonus = getExperienceBonus(attackingUnit);
