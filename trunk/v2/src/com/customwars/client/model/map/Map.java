@@ -727,13 +727,15 @@ public class Map extends TileMap<Tile> implements TurnHandler {
    *         if location doesn't contain a unit <b>NULL</b> is returned
    */
   public Unit getUnitOn(Location location) {
-    Tile t = getTile(location);
+    if (location != null) {
+      Tile t = getTile(location);
 
-    if (t != null) {
-      Locatable locatable = t.getLastLocatable();
+      if (t != null) {
+        Locatable locatable = t.getLastLocatable();
 
-      if (locatable instanceof Unit) {
-        return (Unit) locatable;
+        if (locatable instanceof Unit) {
+          return (Unit) locatable;
+        }
       }
     }
     return null;
@@ -745,13 +747,15 @@ public class Map extends TileMap<Tile> implements TurnHandler {
    *         if location doesn't contain a unit <b>NULL</b> is returned
    */
   public Unit getUnitOn(Location location, int index) {
-    Tile t = getTile(location);
+    if (location != null) {
+      Tile t = getTile(location);
 
-    if (t != null) {
-      Locatable locatable = t.getLocatable(index);
+      if (t != null) {
+        Locatable locatable = t.getLocatable(index);
 
-      if (locatable instanceof Unit) {
-        return (Unit) locatable;
+        if (locatable instanceof Unit) {
+          return (Unit) locatable;
+        }
       }
     }
     return null;
@@ -782,12 +786,14 @@ public class Map extends TileMap<Tile> implements TurnHandler {
    *         if location doesn't contain a city <b>NULL</b> is returned
    */
   public City getCityOn(Location location) {
-    Tile t = getTile(location);
+    if (location != null) {
+      Tile t = getTile(location);
 
-    if (t != null) {
-      Terrain terrain = t.getTerrain();
-      if (terrain instanceof City) {
-        return (City) terrain;
+      if (t != null) {
+        Terrain terrain = t.getTerrain();
+        if (terrain instanceof City) {
+          return (City) terrain;
+        }
       }
     }
     return null;
