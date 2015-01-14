@@ -178,8 +178,7 @@ public class InGameState extends CWState implements PropertyChangeListener {
     inputHandler = new UserInGameInputHandler(inGameContext);
     inGameContext.registerObj(InGameInputHandler.class, inputHandler);
 
-    controllerManager.initCityControllers();
-    controllerManager.initUnitControllers();
+    controllerManager.createControllers();
     initCursors(map);
   }
 
