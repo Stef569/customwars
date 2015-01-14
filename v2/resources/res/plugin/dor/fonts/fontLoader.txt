@@ -9,3 +9,4 @@ a default default.fnt default_00.tga
 r in_game = default
 t menu armalite.ttf 30
 t gui_text armalite.ttf 20
+t credits biotypsh.ttf 48
