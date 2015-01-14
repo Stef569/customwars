@@ -47,7 +47,7 @@ public class AppOptionsController {
     }
   }
 
-  public void continueToNextState() {
+  public void continueToMainMenu() {
     stateChanger.clearPreviousStatesHistory();
     stateChanger.changeTo("MAIN_MENU");
   }
