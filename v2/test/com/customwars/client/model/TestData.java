@@ -124,7 +124,7 @@ public class TestData {
   private static final Weapon carrierAA = new Weapon(CARRIER_ANTI_AIR, "", new Range(1, 1), 4, false, ARMY_BRANCH_AIR_ONLY);
 
   // City
-  private static City base = new City(0, 0, "road", "road", "base", "", 0, 0, plainMoveCosts, 1, true,
+  private static City city = new City(0, 0, "road", "road", "city", "", 0, 0, plainMoveCosts, 1, true,
     cityRoadConnection, ARMY_BRANCH_LAND_ONLY, infAndMech, null, null, 20, CITY_HEAL_RATE, 0, true);
 
   private static City factory = new City(1, 1, "road", "road", "factory", "", 0, 0, plainMoveCosts, 1, true,
@@ -171,7 +171,7 @@ public class TestData {
     UnitFactory.addUnit(rocket);
     UnitFactory.addUnit(carrier);
 
-    CityFactory.addCity(base);
+    CityFactory.addCity(city);
     CityFactory.addCity(factory);
     CityFactory.addCity(airport);
     CityFactory.addCity(hq);
