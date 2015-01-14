@@ -11,7 +11,7 @@ moveCosts have the following order:
   Naval Transport
 -->
 <list>
-  <city name="base" id="0" imgRowID="0" type='road'>
+  <city name="city" id="0" imgRowID="0" type='road'>
     <canProduceFunds>true</canProduceFunds>
     <hidden>true</hidden>
     <defenseBonus>3</defenseBonus>
