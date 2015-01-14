@@ -201,13 +201,14 @@ public class Game extends TurnBasedGame implements PropertyChangeListener {
    *
    * @param evt Event send by a hq
    */
-  private static void hqOwnerChange(PropertyChangeEvent evt) {
+  private void hqOwnerChange(PropertyChangeEvent evt) {
     Player oldOwner = (Player) evt.getOldValue();
     Player newOwner = (Player) evt.getNewValue();
 
     // Only destroy the old hq owner if that player is still playing
     if (oldOwner.isActive()) {
       oldOwner.destroy(newOwner);
+      firePropertyChange("hqCaptured", oldOwner, newOwner);
     }
   }
 
