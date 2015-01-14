@@ -251,12 +251,21 @@ public class TurnBasedGame implements Observable, Serializable {
   }
 
   /**
+   * Get the next active player after the current active player
+   *
+   * @return the next active player
+   */
+  public Player getNextActivePlayer() {
+    return getNextActivePlayer(activePlayer);
+  }
+
+  /**
    * Get the next active player after the given player
    *
    * @param player the player to start searching after for the next player
    * @return the next active player after player
    */
-  public Player getNextActivePlayer(Player player) {
+  private Player getNextActivePlayer(Player player) {
     Player nextActivePlayer = getNextPlayer(player);
     int playerSkipCount = 0;
 
