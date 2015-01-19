@@ -35,18 +35,14 @@ import java.util.List;
  * map4            |           |
  * map5            -------------
  * map6            Map description
- * |1| | | | |3|
  */
 public class MapSelectState extends CWState {
-  private static final float MINIMAP_SCALE_STEP = 0.5f;
-  private static final float MINIMAP_INITIAL_SCALE = 3f;
   private Page page;
   private Image backGroundImage;
   private MiniMapWidgetRenderer miniMapRenderer;
   private CityCountWidgetRenderer cityCountRenderer;
   private MapSelectController controller;
   private Font guiFont;
-  private float miniMapScale;
 
   public void init(GameContainer gameContainer, StateBasedGame stateBasedGame) throws SlickException {
     miniMapRenderer = new MiniMapWidgetRenderer(resources);
@@ -57,7 +53,7 @@ public class MapSelectState extends CWState {
 
     initPage(gameContainer);
     initWidgetRenderers();
-    loadMapCategories();
+    controller.loadMapCategories();
     page.layout();
   }
 
@@ -76,49 +72,11 @@ public class MapSelectState extends CWState {
     page.getWidget("map_city_count").setRenderer(cityCountRenderer);
   }
 
-  private void loadMapCategories() {
-    List<String> mapCategories = resources.getAllMapCategories();
-    initPageContent(mapCategories);
-    initFilter(mapCategories);
-  }
-
   @Override
   public void enter(GameContainer container, StateBasedGame game) throws SlickException {
     super.enter(container, game);
-    loadMapCategories();
+    controller.enter();
     page.enable();
-    miniMapScale = MINIMAP_INITIAL_SCALE;
-    miniMapRenderer.setScale(miniMapScale);
-  }
-
-  private void initPageContent(List<String> mapCategories) {
-    if (!mapCategories.isEmpty()) {
-      Widget mapCategoryCbo = page.getWidget("map_categories");
-      mapCategoryCbo.removeChildren();
-      for (String mapCategory : mapCategories) {
-        ThingleUtil.addChoice(page, mapCategoryCbo, mapCategory);
-      }
-      selectDefaultMapCategory(mapCategoryCbo);
-    }
-  }
-
-  private void selectDefaultMapCategory(Widget mapCategoryCbo) {
-    // The previous category value is remembered
-    // Only select the default first category if none is chosen
-    int selectedIndex = mapCategoryCbo.getSelectedIndex();
-
-    if (selectedIndex == -1) {
-      mapCategoryCbo.setInteger("selected", 0);
-    }
-  }
-
-  private void initFilter(List<String> mapCategories) {
-    if (!mapCategories.isEmpty()) {
-      Widget mapCategoryCbo = page.getWidget("map_categories");
-      int selectedIndex = mapCategoryCbo.getSelectedIndex();
-      String firstMapCategory = mapCategories.get(selectedIndex);
-      controller.filterMapsOnCategory(firstMapCategory);
-    }
   }
 
   @Override
@@ -136,8 +94,7 @@ public class MapSelectState extends CWState {
   @Override
   public void update(GameContainer container, int delta) throws SlickException {
     if (container.getInput().isKeyPressed(Input.KEY_ADD)) {
-      miniMapScale += MINIMAP_SCALE_STEP;
-      miniMapRenderer.setScale(miniMapScale);
+      controller.addPressed();
     }
   }
 
