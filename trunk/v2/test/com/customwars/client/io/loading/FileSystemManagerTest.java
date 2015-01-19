@@ -1,9 +1,10 @@
 package com.customwars.client.io.loading;
 
 import com.customwars.client.io.FileSystemManager;
+import com.customwars.client.tools.FileUtil;
 import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.File;
@@ -12,36 +13,32 @@ import java.util.List;
 
 /**
  * Test the FileSystemManager by creating some maps in maps/test and maps/versus
- * when the test is done delete the maps folder and the map files, so they don't end up on svn.
+ * when the test is done delete the maps folder and the map files.
  */
 public class FileSystemManagerTest {
-  private static String parentDir = "maps/";
-  private static String versusDir = "versus/";
-  private static String testDir = "test/";
-
-  private String testMap1 = "testMap1.map";
-  private String testMap2 = "testMap2.map";
-  private String testMap3 = "testMap3.map";
-  private String versusMap1 = "versus.map";
+  private static String PARENT_DIR = "maps/";
+  private static String VERSUS_DIR = "versus/";
+  private static String TEST_DIR = "test/";
+  private static String parentPath;
 
   private static File parentDirFile, versusDirFile, testDirFile;
-
+  private static File tempDir;
   private static FileSystemManager fsm;
 
-  @Before
-  public void beforeEachTest() throws IOException {
-    File temp = File.createTempFile("temp-file-name", ".tmp");
-    String path = temp.getAbsolutePath();
-
-    parentDirFile = new File(path + parentDir);
+  @BeforeClass
+  public static void beforeAllTests() throws IOException {
+    tempDir = FileUtil.createTempDir();
+    String tempPath = tempDir.getCanonicalPath();
+    parentPath = tempPath + File.separator + PARENT_DIR;
+    parentDirFile = new File(parentPath);
     parentDirFile.mkdir();
 
-    fsm = new FileSystemManager(parentDir);
+    fsm = new FileSystemManager(parentPath);
 
-    testDirFile = new File(parentDir, testDir);
+    testDirFile = new File(parentPath, TEST_DIR);
     testDirFile.mkdirs();
 
-    versusDirFile = new File(parentDir, versusDir);
+    versusDirFile = new File(parentPath, VERSUS_DIR);
     versusDirFile.mkdirs();
   }
 
@@ -54,20 +51,24 @@ public class FileSystemManagerTest {
     Assert.assertTrue(versusDirFile.delete());
 
     Assert.assertTrue(parentDirFile.delete());
+    tempDir.delete();
   }
 
   @Test
   public void readAllTestMaps() throws IOException {
     // Create some empty files in the test dir
-    Assert.assertTrue(fsm.createFile(testDir + testMap1));
-    Assert.assertTrue(fsm.createFile(testDir + testMap2));
-    Assert.assertTrue(fsm.createFile(testDir + testMap3));
+    String testMap1 = "testMap1.map";
+    Assert.assertTrue(fsm.createFile(TEST_DIR + testMap1));
+    String testMap2 = "testMap2.map";
+    Assert.assertTrue(fsm.createFile(TEST_DIR + testMap2));
+    String testMap3 = "testMap3.map";
+    Assert.assertTrue(fsm.createFile(TEST_DIR + testMap3));
 
     // Check if they are really created
-    List<File> testMaps = fsm.getFiles(testDir);
-    File testFile1 = new File(parentDir + testDir, testMap1).getAbsoluteFile();
-    File testFile2 = new File(parentDir + testDir, testMap2).getAbsoluteFile();
-    File testFile3 = new File(parentDir + testDir, testMap3).getAbsoluteFile();
+    List<File> testMaps = fsm.getFiles(TEST_DIR);
+    File testFile1 = new File(parentPath + TEST_DIR, testMap1).getAbsoluteFile();
+    File testFile2 = new File(parentPath + TEST_DIR, testMap2).getAbsoluteFile();
+    File testFile3 = new File(parentPath + TEST_DIR, testMap3).getAbsoluteFile();
     Assert.assertTrue(testMaps.contains(testFile1));
     Assert.assertTrue(testMaps.contains(testFile2));
     Assert.assertTrue(testMaps.contains(testFile3));
@@ -76,11 +77,12 @@ public class FileSystemManagerTest {
   @Test
   public void readAllVersusMaps() throws IOException {
     // Create some empty files in the versus dir
-    Assert.assertTrue(fsm.createFile(versusDir + versusMap1));
+    String versusMap1 = "versus.map";
+    Assert.assertTrue(fsm.createFile(VERSUS_DIR + versusMap1));
 
     // Check if they are really created
-    List<File> versusMaps = fsm.getFiles(versusDir);
-    File versusFile1 = new File(parentDir + versusDir, versusMap1).getAbsoluteFile();
+    List<File> versusMaps = fsm.getFiles(VERSUS_DIR);
+    File versusFile1 = new File(parentPath + VERSUS_DIR, versusMap1).getAbsoluteFile();
     Assert.assertTrue(versusMaps.contains(versusFile1));
   }
 
