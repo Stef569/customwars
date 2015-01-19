@@ -191,6 +191,15 @@ public class ResourceManager {
     return cwImageLib.getCoSheet(co.getName());
   }
 
+  public Image getLeftCOBar(Color color) {
+    int styleID = colorToCOStyleID(color);
+    return getSlickImg("cobar" + styleID);
+  }
+
+  public Image getRightCOBar(Color color) {
+    return getLeftCOBar(color).getFlippedCopy(true, false);
+  }
+
   public Image getLeftCOBar(CO co) {
     int styleID = co.getStyle().getID();
     return getSlickImg("cobar" + styleID);
@@ -198,6 +207,22 @@ public class ResourceManager {
 
   public Image getRightCOBar(CO co) {
     return getLeftCOBar(co).getFlippedCopy(true, false);
+  }
+
+  public Image getEndTurnImg(Color color) {
+    int styleID = colorToCOStyleID(color);
+    return getSlickImg("day" + styleID);
+  }
+
+  private int colorToCOStyleID(Color color) {
+    if (color.equals(Color.RED) || color.equals(Color.PINK) || color.equals(Color.MAGENTA)) return 0;
+    if (color.equals(Color.BLACK) || color.equals(Color.GRAY)) return 1;
+    if (color.equals(Color.BLUE) || color.equals(Color.CYAN)) return 2;
+    if (color.equals(Color.YELLOW) || color.equals(Color.ORANGE)) return 3;
+    if (color.equals(Color.GREEN)) return 4;
+
+    logger.debug("No CO style for color " + color.toString() + " using RED!");
+    return 0;
   }
 
   public Image getEndTurnImg(CO co) {

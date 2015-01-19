@@ -9,6 +9,8 @@ import org.newdawn.slick.Font;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 
+import java.awt.Color;
+
 /**
  * Render The money the player can spend, CO and the power gauge
  * The rendering can be performed from left to right or from right to left.
@@ -41,18 +43,19 @@ public class COPowerGaugeRenderer implements Renderable {
   public void render(Graphics g) {
     Player activePlayer = game.getActivePlayer();
     CO co = activePlayer.getCO();
+    Color color = activePlayer.getColor();
     int budget = activePlayer.getBudget();
 
     if (leftToRight) {
-      renderLeftToRight(g, co, budget + "");
+      renderLeftToRight(g, co, color, budget + "");
     } else {
-      renderRightToLeft(g, co, budget + "");
+      renderRightToLeft(g, co, color, budget + "");
     }
   }
 
-  private void renderLeftToRight(Graphics g, CO co, String budget) {
-    Image coBar = resources.getLeftCOBar(co);
-    COSheet coSheet = resources.getCOSheet(game.getActivePlayer().getCO());
+  private void renderLeftToRight(Graphics g, CO co, Color color, String budget) {
+    Image coBar = resources.getLeftCOBar(color);
+    COSheet coSheet = resources.getCOSheet(co);
     Image coHead = coSheet.getLeftHead(3);
 
     g.drawImage(coHead, 0, 0);
@@ -62,8 +65,8 @@ public class COPowerGaugeRenderer implements Renderable {
     renderBars(g, co, coHead.getWidth() + CO_BAR_CO_HEAD_MARGIN, CO_BAR_TOP_MARGIN);
   }
 
-  private void renderRightToLeft(Graphics g, CO co, String budget) {
-    Image coBar = resources.getRightCOBar(co);
+  private void renderRightToLeft(Graphics g, CO co, Color color, String budget) {
+    Image coBar = resources.getRightCOBar(color);
     COSheet coSheet = resources.getCOSheet(co);
     Image coHead = coSheet.getRightHead(3);
 
