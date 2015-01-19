@@ -33,7 +33,7 @@ public class EndTurnState extends CWState {
 
   public void render(GameContainer container, Graphics g) throws SlickException {
     if (entered) {
-      Image coBackgroundImg = resources.getEndTurnImg(nextPlayer.getCO());
+      Image coBackgroundImg = resources.getEndTurnImg(nextPlayer.getColor());
       Point center = GUI.getCenteredRenderPoint(coBackgroundImg.getWidth(), coBackgroundImg.getHeight(), container);
       g.drawImage(coBackgroundImg, center.x, center.y);
 
