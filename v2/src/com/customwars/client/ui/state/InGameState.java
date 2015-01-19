@@ -445,7 +445,11 @@ public class InGameState extends CWState implements PropertyChangeListener {
         gameStateChanged(evt);
       } else if (propertyName.equals("hqCaptured")) {
         hqCaptured(evt);
-      } else if (evt.getSource() instanceof TileSprite && propertyName.equals("position")) {
+      }
+    }
+
+    if (evt.getSource() instanceof TileSprite) {
+      if(propertyName.equals("position")) {
         cursorPositionChanged(evt);
       }
     }
