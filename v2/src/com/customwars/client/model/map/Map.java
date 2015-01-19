@@ -147,32 +147,49 @@ public class Map extends TileMap<Tile> implements TurnHandler {
       int row = t.getRow();
       boolean fogged = t.isFogged();
       Terrain terrain = t.getTerrain();
-      boolean isCity = terrain instanceof City;
-      Terrain terrainCopy = isCity ? new City((City) terrain) : terrain;
 
+      Unit unitCopy = copyUnit(t);
+      Terrain terrainCopy = copyTerrain(terrain, unitCopy);
       Tile tileCopy = new Tile(col, row, terrainCopy, fogged);
-
-      if (isCity) {
-        copyCityLocation(tileCopy);
-      }
-
-      copyUnits(t, tileCopy);
+      copyCityLocation(tileCopy);
+      tileCopy.add(unitCopy);
       setTile(tileCopy);
     }
   }
 
-  private void copyCityLocation(Tile tileCopy) {
-    City city = (City) tileCopy.getTerrain();
+  private Unit copyUnit(Tile t) {
+    int unitCount = t.getLocatableCount();
 
-    if (city != null) {
-      city.setLocation(tileCopy);
+    if (unitCount > 0) {
+      return new Unit((Unit) t.getLastLocatable());
+    } else {
+      return null;
     }
   }
 
-  private void copyUnits(Tile oldTile, Tile newTile) {
-    for (int i = 0; i < oldTile.getLocatableCount(); i++) {
-      Unit unitCopy = new Unit((Unit) oldTile.getLastLocatable());
-      newTile.add(unitCopy);
+  private Terrain copyTerrain(Terrain terrain, Unit unit) {
+    boolean isCity = terrain instanceof City;
+    boolean hasUnit = unit != null;
+
+    if (isCity) {
+      City otherCity = (City) terrain;
+
+      if (otherCity.isBeingCaptured() && hasUnit) {
+        return new City((City) terrain, unit);
+      } else {
+        return new City((City) terrain);
+      }
+    } else {
+      return terrain;
+    }
+  }
+
+  private void copyCityLocation(Tile tileCopy) {
+    Terrain terrain = tileCopy.getTerrain();
+
+    if (terrain instanceof City) {
+      City city = (City) tileCopy.getTerrain();
+      city.setLocation(tileCopy);
     }
   }
 

@@ -104,6 +104,23 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
     Args.validate(!UnitFactory.hasUnitForName(unitName), err);
   }
 
+  /**
+   * This copy constructor should be used when copying a city that is being captured by a unit.
+   * It creates a new City based on the values of the given other city.
+   *
+   * @param otherCity     The city to copy
+   * @param capturingUnit The unit that is capturing this city
+   */
+  public City(City otherCity, Unit capturingUnit) {
+    this(otherCity);
+    this.capturer = capturingUnit;
+  }
+
+  /**
+   * Copy constructor, creates a new City based on the values of the given other city
+   *
+   * @param otherCity The city to copy
+   */
   public City(City otherCity) {
     super(otherCity);
     this.imgRowID = otherCity.imgRowID;
@@ -395,6 +412,13 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
    */
   public boolean isCapturedBy(Unit unit) {
     return isCaptured() && isBeingCapturedBy(unit);
+  }
+
+  /**
+   * @return If this city is being captured
+   */
+  public boolean isBeingCaptured() {
+    return capturer != null;
   }
 
   /**
