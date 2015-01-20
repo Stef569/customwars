@@ -2,8 +2,8 @@ package com.customwars.client.model.map.path;
 
 import com.customwars.client.model.map.Direction;
 import com.customwars.client.model.map.Location;
+import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
-import com.customwars.client.model.map.TileMap;
 import com.customwars.client.tools.Args;
 import org.apache.log4j.Logger;
 
@@ -31,16 +31,16 @@ import java.util.List;
 public class MoveTraverse {
   private static final Logger logger = Logger.getLogger(MoveTraverse.class);
   private final PropertyChangeSupport changeSupport;
-  private final TileMap<Tile> map;          // The map the mover can move in
+  private final Map map;                    // The map the mover can move in
   private final PathFinder pathFinder;      // Path generator
   private List<Location> movePath;    // The path we are going to move over
   private Mover mover;                // Mover that is moving or is ready to move through the movePath
 
   private int pathIndex;              // The current position in the move path
-  private boolean pathMoveComplete;
+  private boolean pathMoveComplete;   // Indicates that the move has been completed (trapped or successful)
   private boolean foundTrapper;       // Indicates that a trapper was found on the movepath
 
-  public MoveTraverse(TileMap<Tile> map) {
+  public MoveTraverse(Map map) {
     this.map = map;
     pathFinder = new PathFinder(map);
     changeSupport = new PropertyChangeSupport(this);
