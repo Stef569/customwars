@@ -253,6 +253,21 @@ public class Game extends TurnBasedGame implements PropertyChangeListener {
     return true;
   }
 
+  /**
+   * Check if the players that are playing are all AI players.
+   *
+   * @return if the active players in the game are all AI players
+   */
+  public boolean isAIOnlyGame() {
+    for (Player player : getAllPlayers()) {
+      if (player.isActive() && !player.isAi()) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   public void setActiveUnit(Unit unit) {
     Unit oldVal = this.activeUnit;
     this.activeUnit = unit;
