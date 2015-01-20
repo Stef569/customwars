@@ -13,7 +13,7 @@ import java.util.Map;
  * To calculate the enemies {@code generate()} should be called.
  *
  * @see #generate
- * @see #getTopEnemies(String)
+ * @see #getTopEnemies(String, int)
  */
 public class UnitFightStats {
   private static final List<Unit> allUnits;
@@ -50,7 +50,7 @@ public class UnitFightStats {
    * Enemy units that cannot attack the given unit are excluded.
    *
    * @param unit The unit to search enemies for
-   * @return a sorted list of enemies that can inflict the most damage to the unit.
+   * @return A sorted list of enemies that can inflict the most damage to the unit.
    */
   private List<Unit> findEnemies(Unit unit) {
     List<Enemy> enemies = new ArrayList<Enemy>();
@@ -84,11 +84,38 @@ public class UnitFightStats {
    * Enemy units that cannot attack the given unit are excluded.
    *
    * @param unitName The name of the unit to search enemies for
-   * @return a sorted list of enemies that can inflict the most damage to the unit.
+   * @return A sorted list of all the enemies that can inflict the most damage to the unit.
    */
-  public List<Unit> getTopEnemies(String unitName) {
+  public List<Unit> getAllEnemies(String unitName) {
     if (enemiesByName.containsKey(unitName)) {
       return enemiesByName.get(unitName);
+    } else {
+      throw new IllegalArgumentException("no enemies for " + unitName);
+    }
+  }
+
+  /**
+   * Get the enemies that can do the most damage against the given unit.
+   * Enemy units that cannot attack the unit are excluded.
+   *
+   * @param unitName   The name of the unit to search enemies for
+   * @param maxEnemies The number of enemies to return
+   * @return A sorted list of enemies that can inflict the most damage to the unit.
+   *         With a maximum size of maxEnemies.
+   */
+  public List<Unit> getTopEnemies(String unitName, int maxEnemies) {
+    if (enemiesByName.containsKey(unitName)) {
+      List<Unit> enemies = enemiesByName.get(unitName);
+
+      if (enemies.size() < maxEnemies || maxEnemies > enemies.size()) {
+        maxEnemies = enemies.size();
+      }
+
+      List<Unit> topEnemies = new ArrayList<Unit>(maxEnemies);
+      for (int i = 0; i < maxEnemies; i++) {
+        topEnemies.add(enemies.get(i));
+      }
+      return topEnemies;
     } else {
       throw new IllegalArgumentException("no enemies for " + unitName);
     }
