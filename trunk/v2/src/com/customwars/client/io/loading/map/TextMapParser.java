@@ -254,7 +254,7 @@ public class TextMapParser {
     } else if (token.equals("BCTR")) {
       return "BCOPTER";
     } else if (token.equals("FGTR")) {
-      return "FIGHTER";
+      return "JET";
     } else if (token.equals("BMBR")) {
       return "BOMBER";
     } else if (token.equals("SEAP")) {

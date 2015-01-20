@@ -3,6 +3,8 @@ package com.customwars.client;
 import com.customwars.client.io.loading.BinCW2MapParserTest;
 import com.customwars.client.io.loading.ControlsConfiguratorTest;
 import com.customwars.client.io.loading.FileSystemManagerTest;
+import com.customwars.client.model.ai.AIBuildTest;
+import com.customwars.client.model.ai.fuzzy.AIBuildDataGeneratorTest;
 import com.customwars.client.model.game.GameTest;
 import com.customwars.client.model.gameobject.CityTest;
 import com.customwars.client.model.gameobject.CityXStreamTest;
@@ -25,7 +27,8 @@ import org.junit.runners.Suite;
   BinCW2MapParserTest.class, FileSystemManagerTest.class, ControlsConfiguratorTest.class,
   GameTest.class, TileMapTest.class,
   UnitTest.class, UnitEventTest.class, UnitFightTest.class, UnitFightStatsTest.class, CityTest.class, TerrainTest.class,
-  CityXStreamTest.class, TerrainXStreamTest.class, UnitXStreamTest.class
+  CityXStreamTest.class, TerrainXStreamTest.class, UnitXStreamTest.class,
+  AIBuildTest.class, AIBuildDataGeneratorTest.class
 })
 public class CwClientTestRunner {
   @BeforeClass
