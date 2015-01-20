@@ -1,8 +1,9 @@
 package com.customwars.client.model.map.path;
 
+import com.customwars.client.model.gameobject.Terrain;
 import com.customwars.client.model.map.Direction;
 import com.customwars.client.model.map.Location;
-import com.customwars.client.model.map.TileMap;
+import com.customwars.client.model.map.Map;
 import com.customwars.client.tools.Args;
 import org.apache.log4j.Logger;
 
@@ -21,12 +22,12 @@ import java.util.List;
  */
 public class PathFinder implements MovementCost {
   private static final Logger logger = Logger.getLogger(PathFinder.class);
-  TileMap map;
+  Map map;
   Dijkstra dijkstra;          // data
   Mover currentMover;         // remembering this saves an unnecessary recalculation of Dijk0
   Location currentLocation;
 
-  public PathFinder(TileMap map) {
+  public PathFinder(Map map) {
     this.map = map;
     dijkstra = new Dijkstra(map.getCols(), map.getRows());
     dijkstra.setMovementCosts(this);
@@ -39,7 +40,7 @@ public class PathFinder implements MovementCost {
    * @return a collection of tiles the mover can move too.
    */
   public List<Location> getMovementZone(Mover mover) {
-    calculatePaths(mover);
+    calculatePaths(mover, mover.getMovePoints());
 
     List<Point> points = dijkstra.getMoveZone();
     return pointsToTiles(points);
@@ -63,6 +64,84 @@ public class PathFinder implements MovementCost {
     }
     List<Point> points = dijkstra.getRoute(destination.getCol(), destination.getRow());
     return pointsToTiles(points);
+  }
+
+  /**
+   * Finds the shortest path towards a destination in the map.
+   * The destination can be anywhere in the map but the mover must be able to traverse the destination.
+   *
+   * It prevents units from walking towards the shore to get to a
+   * destination across the sea when a bridge 3 tiles away is available.
+   *
+   * @param mover       The mover to find the shortest path to the destination for
+   * @param destination The destination to build a path to
+   * @return The shortest path towards the destination
+   */
+  public List<Location> getShortestPath(Mover mover, Location destination) {
+    int moveCost = mover.getMoveStrategy().getMoveCost(map.getTile(destination.getCol(), destination.getRow()));
+
+    if (moveCost == Terrain.IMPASSIBLE) {
+      logger.debug(String.format(
+        "No route possible to destination %s for %s " + destination.getLocationString(), mover
+      ));
+      return Collections.emptyList();
+    }
+
+    // Using MAX VALUE ensures that we can reach the destination in the map
+    calculatePaths(mover, Integer.MAX_VALUE);
+
+    // Create path to the destination across the whole map
+    List<Point> route = dijkstra.getRoute(destination.getCol(), destination.getRow());
+
+    // Now trim the route, we actually can't move further then max movement of the mover
+    List<Point> trimmedRoute = trimRoute(mover, route);
+
+    // Remove the first Point
+    // As this is the mover location
+    trimmedRoute.remove(0);
+
+    List<Location> path = pointsToTiles(trimmedRoute);
+
+    if (!path.isEmpty()) {
+      // Remove end locations with a unit on it
+      trimLocationsWithUnitsOnThem(path);
+    }
+
+    return path;
+  }
+
+  private void trimLocationsWithUnitsOnThem(List<Location> path) {
+    int locationsToRemove = 0;
+    for (int i = path.size() - 1; i != 0; i--) {
+      Location location = path.get(i);
+
+      if (map.hasUnitOn(location)) {
+        locationsToRemove++;
+      } else {
+        break;
+      }
+    }
+
+    while (locationsToRemove > 0) {
+      int lastIndex = path.size() - 1;
+      path.remove(lastIndex);
+      locationsToRemove--;
+    }
+  }
+
+  private List<Point> trimRoute(Mover mover, List<Point> points) {
+    int maxMovePoints = mover.getMovePoints();
+    int usedMoveCosts = 0;
+    List<Point> path = new ArrayList<Point>();
+
+    for (Point p : points) {
+      if (usedMoveCosts < maxMovePoints) {
+        int moveCost = getMovementCost(p.x, p.y);
+        usedMoveCosts += moveCost;
+        path.add(p);
+      }
+    }
+    return path;
   }
 
   /**
@@ -118,6 +197,10 @@ public class PathFinder implements MovementCost {
   }
 
   private void calculatePaths(Mover mover) {
+    calculatePaths(mover, mover.getMovePoints());
+  }
+
+  private void calculatePaths(Mover mover, int maxMovePoints) {
     if (mover == null) {
       logger.warn("Mover is null");
       return;
@@ -132,9 +215,8 @@ public class PathFinder implements MovementCost {
 
       int xLoc = currentLocation.getCol();
       int yLoc = currentLocation.getRow();
-      int movement = currentMover.getMovePoints();
 
-      dijkstra.calculate(xLoc, yLoc, movement);
+      dijkstra.calculate(xLoc, yLoc, maxMovePoints);
     }
   }
 
