@@ -35,7 +35,8 @@ public class InGameContext {
     LAUNCH_ROCKET,    // Clicking on a tile fires the rocket
     UNIT_FLARE,       // Clicking on a tile fires a flare
     UNIT_DELETE,      // Clicking on a unit will delete that unit
-    UNIT_CYCLE        // Start Iterating between units
+    UNIT_CYCLE,       // Start Iterating between units
+    AI_ACTING         // The AI is acting
   }
 
   private INPUT_MODE inputMode;
@@ -81,7 +82,7 @@ public class InGameContext {
     controllerManager.handleUnitBPress(unit);
   }
 
-  public void queue(List<CWAction> actions) {
+  public void setQueue(List<CWAction> actions) {
     actionManager.queue(actions);
   }
 
@@ -211,6 +212,10 @@ public class InGameContext {
 
   public boolean isUnitDeleteMode() {
     return inputMode == INPUT_MODE.UNIT_DELETE;
+  }
+
+  public boolean isAIActingMode() {
+    return inputMode == INPUT_MODE.AI_ACTING;
   }
 
   public void addUnitInTransport(Unit unitInTransport) {
