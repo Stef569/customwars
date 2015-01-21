@@ -61,6 +61,15 @@ public class TextMapParser {
   public Map parseMap() {
     int rows = source.length;
     int cols = source[0].length;
+
+    for (int row = 0; row < rows; row++) {
+      if (source[row].length != cols) {
+        throw new IllegalArgumentException(String.format(
+          "All rows in the map must be of equal width. Row %s Actual:%s Expected:%s", row, source[row].length, cols)
+        );
+      }
+    }
+
     createMap(rows, cols);
 
     // Example:
@@ -181,10 +190,10 @@ public class TextMapParser {
       return "SEAS";
     } else if (token.equals("METR")) {
       return "METEOR";
+    } else if (token.equals("WALL")) {
+      return "WALL";
     } else if (token.equals("PIPE")) {
       return "PIPE";
-    } else if (token.equals("PIPS")) {
-      return "PIPE_SEAM";
     } else if (token.equals("FIRE")) {
       return "FIRE";
     } else {
@@ -213,8 +222,10 @@ public class TextMapParser {
       return "TEMP_AIRPORT";
     } else if (token.equals("TSPT")) {
       return "TEMP_PORT";
-    } else if (token.equals("WALL")) {
-      return "WALL_SEAM";
+    } else if (token.equals("WALS")) {
+      return "HORIZONTAL_WALL_SEAM";
+    } else if (token.equals("PIPS")) {
+      return "HORIZONTAL_PIPE_SEAM";
     } else {
       return null;
     }
