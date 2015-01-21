@@ -48,7 +48,7 @@ public class TestActionCommand {
 
   @Test
   public void moveAnimatedActionSingleActionTest() {
-    CWAction action = new MoveAnimatedAction(new Location2D(0, 0), new Location2D(5, 0));
+    CWAction action = new MoveAnimatedAction(null, new Location2D(0, 0), new Location2D(5, 0));
     Assert.assertEquals("0 0 5 0", action.getActionCommand());
   }
 

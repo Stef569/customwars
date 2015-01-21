@@ -49,10 +49,6 @@ public class MoveAnimatedAction extends DelayedAction {
     this.to = to;
   }
 
-  public MoveAnimatedAction(Location from, Location to) {
-    this((Unit) from.getLastLocatable(), from, to);
-  }
-
   protected void init(InGameContext inGameContext) {
     if (inGameContext.isTrapped()) {
       setActionCompleted(true);
@@ -131,7 +127,7 @@ public class MoveAnimatedAction extends DelayedAction {
   private void revealCarrier(Location carrierLocation) {
     // Remove and add the carrier to the tile
     // This triggers a show unit event and will reveal the carrier sprite.
-    Locatable carrier = carrierLocation.getLastLocatable();
+    Locatable carrier = map.getUnitOn(carrierLocation);
     carrierLocation.remove(carrier);
     carrierLocation.add(carrier);
     logger.debug("Revealed " + carrier);

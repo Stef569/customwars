@@ -4,7 +4,6 @@ import com.customwars.client.SFX;
 import com.customwars.client.action.DirectAction;
 import com.customwars.client.controller.CursorController;
 import com.customwars.client.model.game.Game;
-import com.customwars.client.model.gameobject.Locatable;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.ui.renderer.MapRenderer;
@@ -36,8 +35,8 @@ public class SelectAction extends DirectAction {
   }
 
   protected void invokeAction() {
-    Locatable locatable = selectTile.getLastLocatable();
-    selectUnit((Unit) locatable);
+    Unit unit = game.getMap().getUnitOn(selectTile);
+    selectUnit(unit);
     SFX.playSound("select");
 
     if (cursorControl.isTraversing()) {
