@@ -63,7 +63,7 @@ public class AIBuildTest {
       new String[]{"", "", "", "", "", "", "", "", "", "", ""},
       new String[]{"CITY-P*", "", "", "", "", "", "", "", "", "", ""},
       new String[]{"", "", "", "", "", "", "", "", "HQTR-P2", "", ""},
-      new String[]{"", "", "", "", "", "", "", "", "MECH-P2", "", "", ""}
+      new String[]{"", "", "", "", "", "", "", "", "MECH-P2", "", ""}
     };
 
     TextMapParser parser = new TextMapParser(simpleMap);
@@ -97,7 +97,7 @@ public class AIBuildTest {
       new String[]{"APRT-P1", "", "", "", "", "", "TANK-P2", "", "", "", ""},
       new String[]{"CITY-P1", "", "INFT-P2", "", "", "", "", "", "", "", ""},
       new String[]{"", "", "", "", "", "", "", "", "HQTR-P2", "", ""},
-      new String[]{"", "", "MECH-P2", "", "", "", "", "", "MECH-P2", "", "", ""}
+      new String[]{"", "", "MECH-P2", "", "", "", "", "", "MECH-P2", "", ""}
     };
 
     TextMapParser parser = new TextMapParser(simpleMap);
@@ -125,7 +125,7 @@ public class AIBuildTest {
       new String[]{"APRT-P1", "", "", "", "", "", "FGTR-P2", "", "", "", ""},
       new String[]{"CITY-P1", "", "FGTR-P2", "", "", "", "", "", "", "", ""},
       new String[]{"", "", "", "", "", "", "", "", "BMBR-P2", "", ""},
-      new String[]{"", "", "FGTR-P2", "", "", "", "", "", "FGTR-P2", "", "", ""}
+      new String[]{"", "", "FGTR-P2", "", "", "", "", "", "FGTR-P2", "", ""}
     };
 
     TextMapParser parser = new TextMapParser(simpleMap);
@@ -157,7 +157,7 @@ public class AIBuildTest {
       new String[]{"", "", "", "", "", "", "TANK-P2", "", "", "", ""},
       new String[]{"CITY-P1", "", "TANK-P2", "", "", "", "", "", "", "", ""},
       new String[]{"", "", "", "", "", "", "", "", "TANK-P2", "", ""},
-      new String[]{"", "", "TANK-P2", "", "", "", "", "", "TANK-P2", "", "", ""}
+      new String[]{"", "", "TANK-P2", "", "", "", "", "", "TANK-P2", "", ""}
     };
 
     TextMapParser parser = new TextMapParser(simpleMap);
@@ -205,7 +205,7 @@ public class AIBuildTest {
       new String[]{"", "", "", "", "", "", "", "", "", "", ""},
       new String[]{"CITY-P1", "", "", "", "", "", "", "", "", "INFT-P2", ""},
       new String[]{"", "", "", "", "", "", "", "", "", "BIKE-P2", ""},
-      new String[]{"", "", "", "", "", "", "", "", "INFT-P2", "", "HQTR-P2", ""}
+      new String[]{"", "", "", "", "", "", "", "", "INFT-P2", "", "HQTR-P2"}
     };
 
     TextMapParser parser = new TextMapParser(simpleMap);
@@ -240,7 +240,7 @@ public class AIBuildTest {
       new String[]{"", "", "", "", "", "", "AAIR-P2", "", "", "", ""},
       new String[]{"CITY-P1", "", "", "", "", "", "", "", "", "INFT-P2", ""},
       new String[]{"", "", "", "", "", "AAIR-P2", "", "", "", "BIKE-P2", ""},
-      new String[]{"", "", "", "", "", "AAIR-P2", "", "", "INFT-P2", "", "HQTR-P2", ""}
+      new String[]{"", "", "", "", "", "AAIR-P2", "", "", "INFT-P2", "", "HQTR-P2"}
     };
 
     TextMapParser parser = new TextMapParser(simpleMap);
