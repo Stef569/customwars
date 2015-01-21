@@ -100,6 +100,7 @@ public class CaptureRoutine implements AIRoutine {
       City city = citiesInRange.get(i);
       boolean enemyCity = !city.isAlliedWith(unit.getOwner());
       boolean emptyTile = !map.hasUnitOn(city.getLocation());
+      emptyTile = emptyTile || map.getUnitOn(city.getLocation()) == unit;
 
       // When low on hp it might be a better idea
       // to heal or join...
