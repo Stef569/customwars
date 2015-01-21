@@ -80,10 +80,9 @@ public class PlayerOptionsController {
   }
 
   public void controllerTypeChanged(Widget cboControllerType) {
-    // todo There is no AI yet
-    // int currentPlayerRow = getPlayerRow(cboControllerType);
-    // String controllerType = cboControllerType.getText();
-    // stateSession.setControllerType(controllerType, currentPlayerRow);
+    int currentPlayerRow = getPlayerRow(cboControllerType);
+    String controllerType = cboControllerType.getText();
+    stateSession.setControllerType(controllerType, currentPlayerRow);
   }
 
   private int getPlayerRow(Widget widget) {
