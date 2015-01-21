@@ -96,10 +96,6 @@ public class PathFinder implements MovementCost {
     // Now trim the route, we actually can't move further then max movement of the mover
     List<Point> trimmedRoute = trimRoute(mover, route);
 
-    // Remove the first Point
-    // As this is the mover location
-    trimmedRoute.remove(0);
-
     List<Location> path = pointsToTiles(trimmedRoute);
 
     if (!path.isEmpty()) {
@@ -130,14 +126,19 @@ public class PathFinder implements MovementCost {
   }
 
   private List<Point> trimRoute(Mover mover, List<Point> points) {
+    // Remove the first Point
+    // As this is the mover location
+    points.remove(0);
+
     int maxMovePoints = mover.getMovePoints();
     int usedMoveCosts = 0;
     List<Point> path = new ArrayList<Point>();
 
     for (Point p : points) {
-      if (usedMoveCosts < maxMovePoints) {
-        int moveCost = getMovementCost(p.x, p.y);
-        usedMoveCosts += moveCost;
+      int moveCost = getMovementCost(p.x, p.y);
+      usedMoveCosts += moveCost;
+
+      if (usedMoveCosts <= maxMovePoints) {
         path.add(p);
       }
     }
