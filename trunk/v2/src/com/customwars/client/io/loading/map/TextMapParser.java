@@ -62,14 +62,7 @@ public class TextMapParser {
     int rows = source.length;
     int cols = source[0].length;
 
-    for (int row = 0; row < rows; row++) {
-      if (source[row].length != cols) {
-        throw new IllegalArgumentException(String.format(
-          "All rows in the map must be of equal width. Row %s Actual:%s Expected:%s", row, source[row].length, cols)
-        );
-      }
-    }
-
+    checkRowSizes(rows, cols);
     createMap(rows, cols);
 
     // Example:
@@ -93,7 +86,18 @@ public class TextMapParser {
         }
       }
     }
+
     return map;
+  }
+
+  private void checkRowSizes(int rows, int cols) {
+    for (int row = 0; row < rows; row++) {
+      if (source[row].length != cols) {
+        throw new IllegalArgumentException(String.format(
+          "All rows in the map must be of equal width. Row %s Actual:%s Expected:%s", row, source[row].length, cols)
+        );
+      }
+    }
   }
 
   private void createMap(int rows, int cols) {
@@ -102,9 +106,14 @@ public class TextMapParser {
   }
 
   private void parseTokenGroup(int row, int col, String tokenText, String tokenGroup) {
-    String[] tokens = tokenGroup.split("-");
-    checkTokensLength(col, row, tokenText, tokens.length);
-    parseTokens(col, row, tokens);
+    if (tokenText.contains("-")) {
+      String[] tokens = tokenGroup.split("-");
+      checkTokensLength(col, row, tokenText, tokens.length);
+      parseTokens(col, row, tokens);
+    } else {
+      // Terrain
+      parseToken(col, row, tokenText, null);
+    }
   }
 
   private void checkTokensLength(int col, int row, String tokenText, int tokensLength) {
