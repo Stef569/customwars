@@ -47,11 +47,6 @@ public class CaptureRoutine implements AIRoutine {
 
     List<City> citiesInRange = gameInfo.getCitiesInRangeOf(unit);
     RoutineResult result = captureCity(citiesInRange);
-
-    if (result != null && !map.hasCityOn(result.destination)) {
-      System.out.println("wtf");
-    }
-
     return result;
   }
 
@@ -154,8 +149,13 @@ public class CaptureRoutine implements AIRoutine {
       List<Unit> activeUnitsInRangeOfCity = getActiveUnits(unitsInRangeOfCity);
 
       if (activeUnitsInRangeOfCity.size() > 1) {
-        Unit firstUnit = activeUnitsInRangeOfCity.get(0);
-        return createResult(firstUnit, city);
+        boolean enemyCity = !city.isAlliedWith(unit.getOwner());
+        boolean emptyTile = !map.hasUnitOn(city.getLocation());
+
+        if (enemyCity && emptyTile) {
+          Unit firstUnit = activeUnitsInRangeOfCity.get(0);
+          return createResult(firstUnit, city);
+        }
       }
     }
 
