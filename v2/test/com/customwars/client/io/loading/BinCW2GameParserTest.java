@@ -41,6 +41,7 @@ public class BinCW2GameParserTest {
 
   @AfterClass
   public static void afterAllTests() {
+    TestData.clearTestData();
     File file = new File(SAVE_PATH);
     if (file.exists()) file.delete();
   }
