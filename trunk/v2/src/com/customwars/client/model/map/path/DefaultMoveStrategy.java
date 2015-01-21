@@ -39,7 +39,7 @@ public class DefaultMoveStrategy implements MoveStrategy {
 
     if (tile.isFogged() || hasHiddenUnit) {
       return getTerrainCost(tile.getTerrain());
-    } else if (!tile.isFogged() && mover.hasTrapperOn(tile)) {
+    } else if (mover.hasTrapperOn(tile)) {
       return Terrain.IMPASSIBLE;
     } else {
       return getTerrainCost(tile.getTerrain());
