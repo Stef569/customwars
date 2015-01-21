@@ -482,7 +482,7 @@ public class BuildAIDataGenerator {
       }
     }
 
-    for (City city : getCitiesThatCanBuild(game.getNeutralPlayer())) {
+    for (City city : getCitiesThatCanBuild(map.getNeutralPlayer())) {
       Fuz.DISTANCE distance = data.getDistanceToNearestCity(city);
       logger.debug(city.getName() + " " + distance);
     }
