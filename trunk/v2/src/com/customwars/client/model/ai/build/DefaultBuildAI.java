@@ -114,7 +114,6 @@ public class DefaultBuildAI implements BuildAI {
                 availableFunds -= unit.getPrice();
                 unitsToBuildByFactory.put(factory, unit);
                 unitsBuild++;
-                continue;
               }
             }
           }
@@ -127,7 +126,7 @@ public class DefaultBuildAI implements BuildAI {
   protected void logBuildStrategy(List<BuildPriority> buildPriorities, int amount) {
     logger.debug("::: AI Build Priority top 10 :::");
 
-    for (int i = 0; i < amount; i++) {
+    for (int i = 0; i < amount && i<buildPriorities.size(); i++) {
       BuildPriority priority = buildPriorities.get(i);
       logger.debug(priority.toString());
     }
