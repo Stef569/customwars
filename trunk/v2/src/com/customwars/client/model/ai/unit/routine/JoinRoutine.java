@@ -26,11 +26,14 @@ public class JoinRoutine implements AIRoutine {
     for (Unit otherUnit : game.getActivePlayer().getArmy()) {
       if (unit.getStats().getID() == otherUnit.getStats().getID()) {
         if (unit != otherUnit) {
-          if (unit.isActive() && otherUnit.isActive()) {
-            boolean otherUnitIsDamaged = otherUnit.getHpPercentage() < 50;
+          if (unit.getMoveZone().contains(otherUnit.getLocation())) {
+            if (unit.isActive() && otherUnit.isActive()) {
+              boolean unitIsDamaged = unit.getHpPercentage() < 50;
+              boolean otherUnitIsDamaged = otherUnit.getHpPercentage() < 50;
 
-            if (otherUnitIsDamaged) {
-              return new RoutineResult(Fuz.UNIT_ORDER.JOIN, unit.getLocation(), otherUnit.getLocation());
+              if (unitIsDamaged || otherUnitIsDamaged) {
+                return new RoutineResult(Fuz.UNIT_ORDER.JOIN, unit.getLocation(), otherUnit.getLocation());
+              }
             }
           }
         }

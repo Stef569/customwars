@@ -1,7 +1,6 @@
 package com.customwars.client.model.ai.unit.routine;
 
 import com.customwars.client.model.ai.fuzzy.Fuz;
-import com.customwars.client.model.ai.unit.GameInformation;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.City;
@@ -10,6 +9,7 @@ import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.model.map.TileMap;
+import com.customwars.client.model.map.path.PathFinder;
 
 /**
  * Attempts to find the best destination location for this unit
@@ -18,11 +18,13 @@ public class MoveRoutine implements AIRoutine {
   private final Game game;
   private final Map map;
   private final Unit unit;
+  private final PathFinder pathFinder;
 
   public MoveRoutine(Game game, Unit unit) {
     this.unit = unit;
     this.game = game;
     this.map = game.getMap();
+    this.pathFinder = new PathFinder(map);
   }
 
   public RoutineResult think() {
@@ -54,8 +56,10 @@ public class MoveRoutine implements AIRoutine {
       if (city != null) {
         boolean free = !map.hasUnitOn(t);
         boolean allied = city.isAlliedWith(unit.getOwner());
+        boolean destructible = city.canGainExperienceFromDestroying();
+        boolean canMoveTo = pathFinder.canMoveTo(unit, city.getLocation());
 
-        if (free && !allied) {
+        if (free && !allied && !destructible && canMoveTo) {
           return t;
         }
       }
