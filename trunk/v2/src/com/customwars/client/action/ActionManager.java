@@ -74,6 +74,8 @@ public class ActionManager {
    */
   public void queue(List<CWAction> actions) {
     this.queue = new LinkedList<CWAction>(actions);
+    
+    logger.info(queue.size() + " actions queued.");
   }
 
   /**
@@ -90,7 +92,7 @@ public class ActionManager {
     if (currentAction != null) {
       updateSingleAction(elapsedTime);
     } else {
-      if (queue != null) {
+      if (queue != null && !queue.isEmpty()) {
         updateQueue(elapsedTime);
       }
     }
