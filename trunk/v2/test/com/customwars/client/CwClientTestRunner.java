@@ -16,6 +16,7 @@ import com.customwars.client.model.gameobject.UnitFightTest;
 import com.customwars.client.model.gameobject.UnitTest;
 import com.customwars.client.model.gameobject.UnitXStreamTest;
 import com.customwars.client.model.map.TileMapTest;
+import com.customwars.client.model.map.path.PathTest;
 import org.apache.log4j.Logger;
 import org.apache.log4j.varia.NullAppender;
 import org.junit.BeforeClass;
@@ -27,9 +28,10 @@ import org.junit.runners.Suite;
   BinCW2MapParserTest.class, FileSystemManagerTest.class, ControlsConfiguratorTest.class,
   GameTest.class, TileMapTest.class,
   UnitTest.class, UnitEventTest.class, UnitFightTest.class, UnitFightStatsTest.class, CityTest.class, TerrainTest.class,
-  CityXStreamTest.class, TerrainXStreamTest.class, UnitXStreamTest.class,
+  CityXStreamTest.class, TerrainXStreamTest.class, UnitXStreamTest.class, PathTest.class,
   AIBuildTest.class, AIBuildDataGeneratorTest.class
 })
+
 public class CwClientTestRunner {
   @BeforeClass
   public static void beforeAllTests() {
