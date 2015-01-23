@@ -40,7 +40,7 @@ This will make the Ai find the best route towards the destination through the ga
 
 The unit will attack the gateway city when it is in range. Units that can't attack will be trapped before the gateway.
 
-Better trapped near the destinastion then on your own factory.
+Better trapped near the destination then on your own factory.
 
 If the unit can really not move towards the destination find a tile around it that can be reached.
 
@@ -70,7 +70,7 @@ The Ai map and the "real" map must always be equal or strange things will happen
 = Seperation of concerns =
 The decision making progress should be decoupled from the execution of that decision. In CW2 this is done by having advisors.
 
-For example the build AI generates a build priority, it's up to the build AI to do something smart with this information.
+For example the build AI advisor generates a build priority, it's up to the build AI to do something smart with this information.
 
 Advisors can be created for each AI difficulty level.
 
