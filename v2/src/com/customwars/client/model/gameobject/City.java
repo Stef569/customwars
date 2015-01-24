@@ -126,6 +126,7 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
     this.imgRowID = otherCity.imgRowID;
     this.location = otherCity.location;
     this.owner = otherCity.owner;
+    this.launched = otherCity.launched;
     this.heals = otherCity.heals;
     this.canBeCaptureBy = otherCity.canBeCaptureBy;
     this.builds = otherCity.builds;
@@ -465,8 +466,8 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
 
   /**
    * @return How many capture points are left.
-   *         If the max = 20 and we already captured 5
-   *         then the remaining = 15
+   * If the max = 20 and we already captured 5
+   * then the remaining = 15
    */
   public int getRemainingCapturePoints() {
     return maxCapCount - capCount;
