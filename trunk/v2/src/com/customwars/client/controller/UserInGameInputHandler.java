@@ -107,9 +107,6 @@ public class UserInGameInputHandler implements InGameInputHandler {
   private void showContextMenu(Tile menuLocation) {
     PopupMenu popupMenu = new PopupMenu(guiContext, "Game menu");
 
-    StandardMenuItem endTurnMenuItem = buildMenuItem(App.translate("end_turn"), ActionFactory.buildEndTurnAction());
-    popupMenu.addItem(endTurnMenuItem);
-
     StandardMenuItem deleteUnitMenuItem = buildMenuItem(App.translate("delete_unit"), new StartDeleteUnitAction());
     popupMenu.addItem(deleteUnitMenuItem);
 
@@ -126,6 +123,9 @@ public class UserInGameInputHandler implements InGameInputHandler {
 
     StandardMenuItem endGameMenuItem = buildMenuItem(App.translate("end_game"), ActionFactory.buildEndGameAction());
     popupMenu.addItem(endGameMenuItem);
+
+    StandardMenuItem endTurnMenuItem = buildMenuItem(App.translate("end_turn"), ActionFactory.buildEndTurnAction());
+    popupMenu.addItem(endTurnMenuItem);
 
     inGameContext.doAction(new ShowPopupMenuAction(popupMenu, menuLocation));
   }
