@@ -298,7 +298,7 @@ public class BuildAIDataGenerator {
   }
 
   private void fuzzyGameProgress() {
-    if (game.getTurn() < 10) {
+    if (game.getDay() < 10) {
       data.gameProgress = Fuz.GAME_PROGRESS.EARLY_GAME;
     } else {
       data.gameProgress = Fuz.GAME_PROGRESS.IN_GAME;
@@ -404,13 +404,15 @@ public class BuildAIDataGenerator {
     List<Enemy> allEnemyUnits = new ArrayList<Enemy>();
 
     for (Unit unit : activePlayer.getArmy()) {
-      List<Enemy> enemyUnits = findEnemiesNearby(unit);
-      allEnemyUnits.addAll(enemyUnits);
+      if (!unit.isInTransport()) {
+        List<Enemy> enemyUnits = findEnemiesNearby(unit);
+        allEnemyUnits.addAll(enemyUnits);
+      }
     }
 
     Collections.sort(allEnemyUnits, new Comparator<Enemy>() {
       public int compare(Enemy o1, Enemy o2) {
-        return o2.distance - o1.distance;
+        return o1.distance - o2.distance;
       }
     });
 
@@ -491,7 +493,7 @@ public class BuildAIDataGenerator {
     printUnits(data.mostExpensiveUnits);
 
     logger.debug("Construction: " + data.constructionPossibilities);
-    logger.debug("Factories: " + Arrays.asList(data.factories));
+    logger.debug("Factories: " + data.factories.length);
   }
 
   private void printUnits(List<String> unitNames) {
