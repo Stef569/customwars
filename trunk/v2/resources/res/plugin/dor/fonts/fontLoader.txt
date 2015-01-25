@@ -1,12 +1,13 @@
 // Usage
 // To Load a StripImageFont s fontName <image reference> <starting char>
 // To load an AngelCodeFont a fontName <fnt> <tga>
-// To load a ttf font	    t fontName <ttf>
+// To load a ttf font	      t fontName <ttf> <font-size>
 // To reuse a font	        r fontName <=> <fontName to reuse>
 
 s numbers numbers 0
 a default default.fnt default_00.tga
 r in_game = default
+t day_text armalite.ttf 48
 t menu armalite.ttf 30
 t gui_text armalite.ttf 20
 t credits biotypsh.ttf 48

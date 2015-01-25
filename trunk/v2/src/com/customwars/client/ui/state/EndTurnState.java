@@ -3,6 +3,7 @@ package com.customwars.client.ui.state;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.ui.GUI;
+import org.newdawn.slick.Font;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
@@ -19,8 +20,10 @@ public class EndTurnState extends CWState {
   private Game game;
   private Player nextPlayer;
   private int nextDay;
+  private Font dayFont;
 
   public void init(GameContainer gameContainer, StateBasedGame stateBasedGame) throws SlickException {
+    dayFont = resources.getFont("day_text");
   }
 
   @Override
@@ -37,10 +40,10 @@ public class EndTurnState extends CWState {
       Point center = GUI.getCenteredRenderPoint(coBackgroundImg.getWidth(), coBackgroundImg.getHeight(), container);
       g.drawImage(coBackgroundImg, center.x, center.y);
 
-      int maxTextWidth = g.getFont().getWidth("Day 99");
+      int maxTextWidth = dayFont.getWidth("Day 99");
       int nextDayTextX = center.x + coBackgroundImg.getWidth() - maxTextWidth - 10;
       int nextDayTextY = center.y + 10;
-      g.drawString("Day " + nextDay, nextDayTextX, nextDayTextY);
+      dayFont.drawString(nextDayTextX, nextDayTextY, "Day " + nextDay);
     }
   }
 
