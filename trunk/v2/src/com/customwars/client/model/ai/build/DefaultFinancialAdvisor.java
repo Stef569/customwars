@@ -18,7 +18,7 @@ public class DefaultFinancialAdvisor implements FinancialAdvisor {
     int minimumFunds = 8000;
     int nextRoundFunds = availableFunds * 2;
 
-    if (game.getTurn() > 1) {
+    if (game.getDay() > 1) {
       if (nextRoundFunds < availableFunds) {
         toSpend = availableFunds;
       } else {
