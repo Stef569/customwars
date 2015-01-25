@@ -204,19 +204,23 @@ public class CaptureRoutine implements AIRoutine {
     for (Player player : game.getActivePlayers()) {
       if (player != game.getActivePlayer()) {
         for (Unit unit : player.getArmy()) {
-          for (Tile t : map.getSurroundingTiles(unit.getLocation(), 1, 3)) {
-            if (!t.isFogged()) {
-              Unit otherUnit = map.getUnitOn(t);
+          if (!unit.isInTransport()) {
+            for (Tile t : map.getSurroundingTiles(unit.getLocation(), 1, 3)) {
+              if (!t.isFogged()) {
+                if (map.hasUnitOn(t)) {
+                  Unit otherUnit = map.getUnitOn(t);
 
-              if (!otherUnit.isAlliedWith(game.getActivePlayer())) {
-                enemyUnitsCount++;
+                  if (!otherUnit.isAlliedWith(game.getActivePlayer())) {
+                    enemyUnitsCount++;
+                  }
+                }
               }
             }
-          }
 
-          if (enemyUnitsCount > maxUnits) {
-            maxUnits = enemyUnitsCount;
-            bestLocation = unit.getLocation();
+            if (enemyUnitsCount > maxUnits) {
+              maxUnits = enemyUnitsCount;
+              bestLocation = unit.getLocation();
+            }
           }
         }
       }
