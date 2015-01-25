@@ -822,10 +822,11 @@ public class Map extends TileMap<Tile> implements TurnHandler {
    *
    * @param transport The transport that wants to start dropping units
    * @return If all units in the transport can be dropped
-   * @see #getFreeDropLocations(Unit, Location)
+   * @see #getFreeDropLocations(Unit, Tile)
    */
   public List<Location> getFreeDropLocations(Unit transport) {
-    return getFreeDropLocations(transport, transport.getLocation());
+    Tile transportLocation = getTile(transport.getLocation());
+    return getFreeDropLocations(transport, transportLocation);
   }
 
   /**
@@ -835,17 +836,17 @@ public class Map extends TileMap<Tile> implements TurnHandler {
    * The center parameter allows a transport to find out if any units can be dropped
    * around a given center without actually moving to that location.
    *
-   * @param transport The transport where we want to find the free drop locations for.
-   * @param center    The center where the drop locations are located around.
-   * @return a list of adjacent locations where units inside the transport can be dropped on.
-   * @see #canDropAtLeast1Unit(Unit, Tile)
+   * @param transport       The transport where we want to find the free drop locations for.
+   * @param moveDestination The location of the transport after the move where the drop locations are located around.
+   * @return A list of adjacent locations where units inside the transport can be dropped on.
+   * @see #canDropAtLeast1Unit(Unit, Tile, Tile)
    */
-  public List<Location> getFreeDropLocations(Unit transport, Location center) {
+  public List<Location> getFreeDropLocations(Unit transport, Tile moveDestination) {
     if (!transport.hasUnitsInTransport()) return Collections.emptyList();
 
     List<Location> freeDropLocations = new ArrayList<Location>(4);
-    for (Tile tile : getSurroundingTiles(center, 1, 1)) {
-      if (canDropAtLeast1Unit(transport, tile)) {
+    for (Tile tile : getSurroundingTiles(moveDestination, 1, 1)) {
+      if (canDropAtLeast1Unit(transport, moveDestination, tile)) {
         freeDropLocations.add(tile);
       }
     }
@@ -860,17 +861,20 @@ public class Map extends TileMap<Tile> implements TurnHandler {
    * around a given center without actually moving to that location.
    *
    * @param transport       The transport that wants to drop the given unit
+   * @param moveDestination The location of the transport after the move where the drop locations are located around.
    * @param unitToBeDropped The unit that wants to be dropped out of the transport into the map
    * @param center          The location to search for free adjacent drop locations
    * @return a list of adjacent locations where units inside the transport can be dropped on
-   * @see #isFreeDropLocation(Unit, Unit, Tile)
+   * @see #isFreeDropLocation(Unit, Tile, Unit, Tile)
    */
-  public List<Location> getFreeDropLocations(Unit transport, Unit unitToBeDropped, Location center) {
+  public List<Location> getFreeDropLocations(Unit transport, Location moveDestination, Unit unitToBeDropped, Location center) {
     if (!transport.hasUnitsInTransport()) return Collections.emptyList();
+
+    Tile moveDestinationTile = getTile(moveDestination);
 
     List<Location> freeDropLocations = new ArrayList<Location>(4);
     for (Tile tile : getSurroundingTiles(center, 1, 1)) {
-      if (isFreeDropLocation(transport, unitToBeDropped, tile)) {
+      if (isFreeDropLocation(transport, moveDestinationTile, unitToBeDropped, tile)) {
         freeDropLocations.add(tile);
       }
     }
@@ -881,16 +885,17 @@ public class Map extends TileMap<Tile> implements TurnHandler {
    * Determines if at least 1 unit in the transport can be dropped on the drop location.
    * If the transport is empty false is returned.
    *
-   * @param dropLocation The tile that a unit wants to be dropped on
-   * @param transporter  The transport unit that attempts to drop a unit to the dropLocation
+   * @param dropLocation    The tile that a unit wants to be dropped on
+   * @param transporter     The transport unit that attempts to drop a unit to the dropLocation
+   * @param moveDestination The location of the transport after the move where the drop locations are located around.
    * @return Can a unit in the transport be dropped to the given drop location
-   * @see #isFreeDropLocation(Unit, Unit, Tile)
+   * @see #isFreeDropLocation(Unit, Tile, Unit, Tile)
    */
-  boolean canDropAtLeast1Unit(Unit transporter, Tile dropLocation) {
+  boolean canDropAtLeast1Unit(Unit transporter, Tile moveDestination, Tile dropLocation) {
     if (!transporter.hasUnitsInTransport()) return false;
 
     for (Unit unit : transporter.getUnitsInTransport()) {
-      if (!isFreeDropLocation(transporter, unit, dropLocation)) {
+      if (!isFreeDropLocation(transporter, moveDestination, unit, dropLocation)) {
         return false;
       }
     }
@@ -906,21 +911,29 @@ public class Map extends TileMap<Tile> implements TurnHandler {
    * <li>The drop location is occupied by a hidden unit</li>
    * <li>The unit on the drop location is equal to the transporter</li>
    * <li>At least 1 of the units in the transport can move over the drop location</li>
+   * <li>At least 1 of the units in the transport can move over the move destination</li>
    * </ul>
    *
-   * @param unit         The unit to be dropped
-   * @param dropLocation The tile that a unit wants to be dropped on
-   * @param transporter  The transport unit that attempts to drop a unit to the dropLocation
+   * @param unit            The unit to be dropped
+   * @param dropLocation    The tile that a unit wants to be dropped on
+   * @param transporter     The transport unit that attempts to drop a unit to the dropLocation
+   * @param moveDestination The location of the transport after the move where the drop locations are located around.
    * @return Can a unit be dropped to the given drop location
    */
-  public boolean isFreeDropLocation(Unit transporter, Unit unit, Tile dropLocation) {
+  public boolean isFreeDropLocation(Unit transporter, Tile moveDestination, Unit unit, Tile dropLocation) {
     if (!canTraverseTile(unit, dropLocation)) return false;
+    if (!canTraverseTile(unit, moveDestination)) return false;
 
     Unit unitOnDropLocation = getUnitOn(dropLocation);
     return dropLocation.isFogged() || dropLocation.getLocatableCount() == 0 ||
       unitOnDropLocation.isHidden() || unitOnDropLocation == transporter;
   }
 
+  /**
+   * Check if the unit can move over a tile
+   *
+   * @return if the terrain on the tile can be traversed by the given unit
+   */
   private boolean canTraverseTile(Unit unit, Tile tile) {
     int moveType = unit.getMovementType();
     Terrain dropLocationTerrain = tile.getTerrain();

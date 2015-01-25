@@ -72,19 +72,19 @@ public class MapTest {
     MapUtil.addUnitToMap(map, westDropLocation, apc2, p_blue);
 
     // North is a free adjacent tile since it does not contain any unit
-    Assert.assertTrue(map.canDropAtLeast1Unit(apc, northDropLocation));
+    Assert.assertTrue(map.canDropAtLeast1Unit(apc, apcLocation, northDropLocation));
 
     // East is taken by a hidden unit so it's free since we can't see that unit yet.
-    Assert.assertTrue(map.canDropAtLeast1Unit(apc, eastDropLocation));
+    Assert.assertTrue(map.canDropAtLeast1Unit(apc, apcLocation, eastDropLocation));
 
     // South drop location is already taken by a unit
-    Assert.assertFalse(map.canDropAtLeast1Unit(apc, southDropLocation));
+    Assert.assertFalse(map.canDropAtLeast1Unit(apc, apcLocation, southDropLocation));
 
     // Drop into another transport(apc2 on westDropLocation) is not supported
-    Assert.assertFalse(map.canDropAtLeast1Unit(apc, westDropLocation));
+    Assert.assertFalse(map.canDropAtLeast1Unit(apc, apcLocation, westDropLocation));
 
     // Drop into self is allowed
-    Assert.assertTrue(map.canDropAtLeast1Unit(apc, apcLocation));
+    Assert.assertTrue(map.canDropAtLeast1Unit(apc, apcLocation, apcLocation));
   }
 
   @Test
@@ -119,16 +119,16 @@ public class MapTest {
     eastDropLocation.setTerrain(TerrainFactory.getTerrain("river"));
 
     // North is a not free since none of the units in the transport can be dropped on it.
-    Assert.assertFalse(map.isFreeDropLocation(apc, artilleryInAPC, northDropLocation));
-    Assert.assertFalse(map.isFreeDropLocation(apc, mechInAPC, northDropLocation));
-    Assert.assertFalse(map.canDropAtLeast1Unit(apc, northDropLocation));
+    Assert.assertFalse(map.isFreeDropLocation(apc, apcLocation, artilleryInAPC, northDropLocation));
+    Assert.assertFalse(map.isFreeDropLocation(apc, apcLocation, mechInAPC, northDropLocation));
+    Assert.assertFalse(map.canDropAtLeast1Unit(apc, apcLocation, northDropLocation));
 
     // artillery cannot be dropped into the river east, but a mech can swim
-    Assert.assertFalse(map.isFreeDropLocation(apc, artilleryInAPC, eastDropLocation));
-    Assert.assertTrue(map.isFreeDropLocation(apc, mechInAPC, eastDropLocation));
+    Assert.assertFalse(map.isFreeDropLocation(apc, apcLocation, artilleryInAPC, eastDropLocation));
+    Assert.assertTrue(map.isFreeDropLocation(apc, apcLocation, mechInAPC, eastDropLocation));
 
     // The apc can drop at least 1 unit east(the mech).
-    Assert.assertTrue(map.canDropAtLeast1Unit(apc, eastDropLocation));
+    Assert.assertTrue(map.canDropAtLeast1Unit(apc, apcLocation, eastDropLocation));
 
     // 3 plains - 1 ocean gives 3 open drop locations.
     Assert.assertEquals(3, map.getFreeDropLocations(apc).size());
