@@ -78,16 +78,21 @@ public class TileMap<T extends Location> implements Observable, Serializable {
   }
 
   /**
-   * Teleport the locatable from Location <tt>from</tt> to Location <tt>to</tt>
+   * Teleport the locatable from one Location in the map to another Location
    * </p>
-   * <tt>from</tt> should contain the locatable else the teleport action will not be executed
-   * <tt>to</tt> can already contain a Locatable, in this case the locatable is added to the <tt>to</tt> tile.
+   * The <tt>from location</tt> in the map should contain the locatable else the teleport action will not be executed
+   * The <tt>destination</tt> in the map can already contain a Locatable, in this case the locatable is added to the <tt>to</tt> tile.
    *
-   * @param from      the location containing a locatable
-   * @param to        the location to teleport the locatable <tt>to</tt>
-   * @param locatable The locatable to teleport from the <tt>from</tt> location to the <tt>to</tt> location
+   * A warning is logged if the locatable is not present on the from location.
+   *
+   * @param fromLocation the location in the map to retrieve the locatable from
+   * @param destination  the location in the map to teleport the locatable <tt>to</tt>
+   * @param locatable    The locatable to teleport to the <tt>destination</tt>
    */
-  public void teleport(Location from, Location to, Locatable locatable) {
+  public void teleport(Location fromLocation, Location destination, Locatable locatable) {
+    Location from = getTile(fromLocation);
+    Location to = getTile(destination);
+
     if (from.contains(locatable)) {
       from.remove(locatable);
       to.add(locatable);
@@ -223,9 +228,9 @@ public class TileMap<T extends Location> implements Observable, Serializable {
   /**
    * @param loc the location(col,row) to retrieve the tile from
    * @return the tile @ the location or
-   *         null if
-   *         the location is outside the map bounds or
-   *         the map has not yet been filled with tiles.
+   * null if
+   * the location is outside the map bounds or
+   * the map has not yet been filled with tiles.
    */
   public T getTile(Location loc) {
     return getTile(loc.getCol(), loc.getRow());
@@ -237,9 +242,9 @@ public class TileMap<T extends Location> implements Observable, Serializable {
    * @param col column coordinate in range of 0 - getCols()-1
    * @param row row coordinate in range of 0 - getRows()-1
    * @return the tile @ (col, row) or
-   *         null if
-   *         the location is outside the map bounds or
-   *         the map has not yet been filled with tiles.
+   * null if
+   * the location is outside the map bounds or
+   * the map has not yet been filled with tiles.
    */
   public T getTile(int col, int row) {
     return isWithinMapBounds(col, row) ? tiles.get(col).get(row) : null;
@@ -251,8 +256,8 @@ public class TileMap<T extends Location> implements Observable, Serializable {
    * @param direction The Direction where a tile should be retrieved from relative to baseTile.
    * @param baseTile  The tile of which we want to retrieve the relative tile from.
    * @return The relative Tile
-   *         The baseTile if direction is Direction.STILL
-   *         Null if the direction relative to the current tile is out of the map
+   * The baseTile if direction is Direction.STILL
+   * Null if the direction relative to the current tile is out of the map
    */
   public T getRelativeTile(Location baseTile, Direction direction) {
     Location location = getRelativeLocation(baseTile, direction);
@@ -306,8 +311,8 @@ public class TileMap<T extends Location> implements Observable, Serializable {
    * @param baseTile     The tile of which we want to retrieve the direction to relativeTile from.
    * @param relativeTile The tile that touches the baseTile
    * @return The Direction of the given tile relative to the baseTile.
-   *         if the relativeTile does not touch the baseTile Direction.STILL is returned.
-   *         if baseTile or tile is null Direction.STILL is returned.
+   * if the relativeTile does not touch the baseTile Direction.STILL is returned.
+   * if baseTile or tile is null Direction.STILL is returned.
    */
   public Direction getDirectionTo(Location baseTile, Location relativeTile) {
     if (baseTile == null || relativeTile == null) {
