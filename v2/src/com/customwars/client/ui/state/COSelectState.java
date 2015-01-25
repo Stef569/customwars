@@ -42,6 +42,7 @@ public class COSelectState extends CWState {
   private Image layout, layoutOverlay;
   private ImageStrip coStyleTabImages;
   private LineRenderer intelRenderer;
+  private LineRenderer coPowerRenderer;
   private Input input;
 
   private CO[][] coByStyle;   // COStyle ID - CO
@@ -56,6 +57,7 @@ public class COSelectState extends CWState {
     loadImages();
     intelFont = resources.getFont("default");
     initIntelRenderer();
+    coPowerRenderer();
     fillCoStyleArray();
     selectCoStyle(0);
   }
@@ -75,6 +77,15 @@ public class COSelectState extends CWState {
     intelRenderer.setLocation(170, 70);
     intelRenderer.setMaxSize(INTEL_BOX_WIDTH, 155);
     intelRenderer.setOverflow(LineRenderer.OVERFLOW.HIDDEN);
+  }
+
+  private void coPowerRenderer() {
+    coPowerRenderer = new LineRenderer(intelFont);
+    coPowerRenderer.setBackgroundColor(Color.white);
+    coPowerRenderer.setTextColor(Color.black);
+    coPowerRenderer.setLocation(170, 253);
+    coPowerRenderer.setMaxSize(INTEL_BOX_WIDTH, 60);
+    coPowerRenderer.setOverflow(LineRenderer.OVERFLOW.HIDDEN);
   }
 
   private void fillCoStyleArray() {
@@ -158,6 +169,7 @@ public class COSelectState extends CWState {
       COSheet coSheet = resources.getCOSheet(co);
       g.drawImage(coSheet.getLeftHead(0), x, y);
       intelRenderer.render(g);
+      coPowerRenderer.render(g);
     }
   }
 
@@ -245,9 +257,12 @@ public class COSelectState extends CWState {
     int currentSquareIndex = getCOIndex(newx, newy);
     if (currentSquareIndex != -1) {
       this.currentCOIndex = currentSquareIndex;
-      createIntel(coByStyle[currentCOStyleIndex][currentCOIndex]);
+      CO co = coByStyle[currentCOStyleIndex][currentCOIndex];
+      createIntel(co);
+      createPowerInfo(co);
     } else {
       createIntel(DUMMY_CO);
+      createPowerInfo(DUMMY_CO);
     }
   }
 
@@ -259,6 +274,19 @@ public class COSelectState extends CWState {
       String[] lines = FontUtil.wrapToArray(coInfo, INTEL_BOX_WIDTH, intelFont);
       for (String intelLine : lines) {
         intelRenderer.addText(intelLine);
+      }
+    }
+  }
+
+  private void createPowerInfo(CO co) {
+    coPowerRenderer.clearText();
+
+    if (co != null) {
+      String coPower = co.getPowerName() + "\n" + co.getPowerDescription();
+      String[] lines = FontUtil.wrapToArray(coPower, INTEL_BOX_WIDTH, intelFont);
+
+      for (String intelLine : lines) {
+        coPowerRenderer.addText(intelLine);
       }
     }
   }
