@@ -72,7 +72,7 @@ public class StartDropAction extends DirectAction {
    *         Excluding drop tiles that are invalid or already taken by another unit.
    */
   private List<Location> getEmptyDropTiles(Location transportLocation) {
-    List<Location> freeDropLocations = map.getFreeDropLocations(transport, unitToBeDropped, transportLocation);
+    List<Location> freeDropLocations = map.getFreeDropLocations(transport, center, unitToBeDropped, transportLocation);
     List<Location> availableDropLocations = removeAlreadyUsedTiles(freeDropLocations);
 
     return availableDropLocations;
