@@ -81,7 +81,7 @@ public class PathTest {
   }
 
   @Test
-  public void testDestinationReacrhableThroughPipeSeam() {
+  public void testDestinationReachableThroughPipeSeam() {
     final String[][] simpleMap = new String[][]{
       new String[]{"TANK-P1", "", "", "", "", "", "", "", "", "", ""},
       new String[]{"HQTR-P1", "", "", "", "", "", "", "", "", "", ""},
@@ -116,12 +116,25 @@ public class PathTest {
     map.teleport(unit.getLocation(), path2.get(path2.size() - 1), unit);
 
     List<Location> path3 = pathFinder.getShortestPath(unit, HQ.getLocation());
+
+    Assert.assertFalse(
+      "The unit can move towards the pipe seam, but not through it",
+      pathFinder.canMoveTo(unit, pipeSeam.getLocation()));
+
+    Assert.assertTrue(
+      "The unit can move to a tile just before the pipe seam",
+      pathFinder.canMoveTo(unit, new Location2D(7, 6)));
+
     Assert.assertFalse(path3.isEmpty());
     map.teleport(unit.getLocation(), path3.get(path3.size() - 1), unit);
 
-    Location expected = new Location2D(7, 6);
-    String message = "Tank is before the pipe seam";
-    Assert.assertEquals(message, expected, unit.getLocation());
+    Assert.assertEquals(
+      "Tank is before the pipe seam",
+      new Location2D(7, 6), unit.getLocation());
+
+    Assert.assertFalse(
+      "The unit cannot move through the pipe seam",
+      pathFinder.canMoveTo(unit, HQ.getLocation()));
   }
 
   @Test
@@ -160,7 +173,9 @@ public class PathTest {
     List<Location> path = pathFinder.getShortestPath(unit, HQ.getLocation());
 
     Assert.assertFalse(path.isEmpty());
-    Assert.assertTrue(pathFinder.canMoveTo(unit, HQ.getLocation()));
+    Assert.assertFalse(
+      "It will take a couple of turns to reach the destination",
+      pathFinder.canMoveTo(unit, HQ.getLocation()));
   }
 
   @Test

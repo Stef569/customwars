@@ -103,6 +103,10 @@ public class PathFinder implements MovementCost {
       trimLocationsWithUnitsOnThem(path);
     }
 
+    // Remove the AI generated paths
+    // They are only good to find a direction towards a target
+    currentMover = null;
+    calculatePaths(mover);
     return path;
   }
 
