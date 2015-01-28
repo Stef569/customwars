@@ -13,7 +13,6 @@ import java.util.List;
  * status: completed
  * created by Benjamin Islip
  */
-
 public class Dijkstra {
   private int mapWidth, mapHeight;
   private int maxMovement;            // the maximum amount of nodes to be traversed
@@ -179,7 +178,7 @@ public class Dijkstra {
   }
 
   /**
-   * todo: make this method more effecient by making the calculate method add the values.
+   * todo: make this method more efficient by making the calculate method add the values.
    *
    * @return All the available movement options.
    */
