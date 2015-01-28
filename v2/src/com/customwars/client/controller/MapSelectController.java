@@ -29,7 +29,7 @@ public class MapSelectController {
   private final StateSession stateSession;
 
   private float miniMapScale;
-  private boolean miniMapScaleLoopDirectionUP;
+  private boolean miniMapScaleLoopDirectionZoomIn;
   private Page page;
 
   public MapSelectController(ResourceManager resources, MiniMapWidgetRenderer miniMapRenderer, CityCountWidgetRenderer citiesRenderer, StateChanger stateChanger, StateSession stateSession) {
@@ -119,6 +119,40 @@ public class MapSelectController {
 
     miniMapRenderer.setMap(map);
     citiesRenderer.setMap(map);
+    setInitialMiniMapScale(map);
+    miniMapScaleLoopDirectionZoomIn = true;
+  }
+
+  /**
+   * Auto zoom. Find the best zoom factor based on the map size.
+   * Where the map size is the biggest row or col of the map.
+   *
+   * @param map The map to calculate the best initial minimap scale for
+   */
+  private void setInitialMiniMapScale(Map map) {
+    int mapSize;
+
+    if (map.getCols() < map.getRows()) {
+      mapSize = map.getRows();
+    } else {
+      mapSize = map.getCols();
+    }
+
+    if (mapSize <= 10) {
+      miniMapScale = 6;
+    } else if (mapSize <= 15) {
+      miniMapScale = 5;
+    } else if (mapSize <= 20) {
+      miniMapScale = 4;
+    } else if (mapSize <= 25) {
+      miniMapScale = 3;
+    } else if (mapSize <= 35) {
+      miniMapScale = 2;
+    } else {
+      miniMapScale = 1;
+    }
+
+    miniMapRenderer.setScale(miniMapScale);
   }
 
   private Map getCurrentSelectedMap() {
@@ -133,17 +167,16 @@ public class MapSelectController {
   }
 
   public void addPressed() {
-    if (miniMapScaleLoopDirectionUP) {
-      miniMapScale = getValidScale(miniMapScale + MINIMAP_SCALE_STEP);
+    if (miniMapScaleLoopDirectionZoomIn) {
+      zoomIn();
     } else {
-      miniMapScale = getValidScale(miniMapScale - MINIMAP_SCALE_STEP);
+      zoomOut();
     }
-    miniMapRenderer.setScale(miniMapScale);
 
     if (miniMapScale == MINIMAP_MAX_SCALE) {
-      miniMapScaleLoopDirectionUP = false;
+      miniMapScaleLoopDirectionZoomIn = false;
     } else if (miniMapScale == MINIMAP_MIN_SCALE) {
-      miniMapScaleLoopDirectionUP = true;
+      miniMapScaleLoopDirectionZoomIn = true;
     }
   }
 
