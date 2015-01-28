@@ -4,7 +4,9 @@ import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Direction;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Map;
+import com.customwars.client.model.map.TileMap;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -16,6 +18,7 @@ public class UnitMovePath {
   private final Map map;
   private final int maxPathLength;
   private List<Direction> path;
+  private Location arrowHeadLocation;
 
   public UnitMovePath(Map map, int maxPathLength) {
     this.map = map;
@@ -49,10 +52,12 @@ public class UnitMovePath {
         path.add(direction);
       }
     }
+
+    arrowHeadLocation = moveLocation;
   }
 
   /**
-   * Check if the move path needs be shrinked
+   * Check if the move path needs be shortened
    */
   private boolean checkForShrink(Direction direction) {
     if (!path.isEmpty()) {
@@ -76,6 +81,22 @@ public class UnitMovePath {
 
   public void createShortestPath(Unit activeUnit, Location moveLocation) {
     path = map.getDirectionsPath(activeUnit, moveLocation);
+
+    if (path.isEmpty()) {
+      // When no path can be created an empty immutable path is returned
+      // If this is the case make sure we can modify the path in the future
+      path = new ArrayList<Direction>();
+    }
+
+    arrowHeadLocation = moveLocation;
+  }
+
+  /**
+   * Check if the location is adjacent of the arrow head.
+   * If there is no path false is returned.
+   */
+  public boolean isAdjacentOfArrow(Location location) {
+    return !path.isEmpty() && arrowHeadLocation != null && TileMap.isAdjacent(arrowHeadLocation, location);
   }
 
   /**
