@@ -7,6 +7,7 @@ import com.customwars.client.model.map.Direction;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.TileMap;
+import org.apache.log4j.Logger;
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Graphics;
 
@@ -16,6 +17,8 @@ import java.util.Collections;
 import java.util.List;
 
 public class MapEffectsRenderer {
+  private static final Logger logger = Logger.getLogger(MapEffectsRenderer.class);
+
   // Control
   private boolean renderArrowPath = true;
   private boolean renderArrowHead = true;
@@ -30,7 +33,6 @@ public class MapEffectsRenderer {
   private Collection<Location> moveZone;
   private Collection<Location> attackZone;
   private UnitMovePath unitMovePath;
-  private boolean mustRebuildPath;
 
   // View
   private final MapRenderer mapRenderer;
@@ -211,21 +213,33 @@ public class MapEffectsRenderer {
     unitMovePath = new UnitMovePath(map, maxMovement);
   }
 
+  /**
+   * This event is called when the cursor moves around in the game.
+   * Rapid mouse movement can cause a small distance between the old location and new location.
+   * Small distance means greater then 1 tile. If this is the case the move path must be rebuild.
+   *
+   * @param oldLocation   The location of the cursor before it moved
+   * @param newLocation   The new location of the cursor
+   * @param moveDirection The direction of the move, STILL if old and new are not adjacent.
+   */
   public void cursorMoved(Location oldLocation, Location newLocation, Direction moveDirection) {
     if (unitMovePath != null) {
       boolean adjacent = TileMap.isAdjacent(oldLocation, newLocation);
+      boolean adjacentOfArrow = unitMovePath.isAdjacentOfArrow(newLocation);
       boolean inMoveZone = activeUnit.getMoveZone().contains(newLocation);
+      boolean noMoveDirection = moveDirection == Direction.STILL;
 
-      if (!adjacent || !inMoveZone) {
-        mustRebuildPath = true;
+      String debug = adjacent ? "Adjacent" : "-";
+      debug += inMoveZone ? " In move zone" : " Out move zone";
+      debug += adjacentOfArrow ? " Adjacent of arrow head" : "  Not Adjacent of arrow head";
+
+      logger.debug(oldLocation.getLocationString() + " " + newLocation.getLocationString() + " " + moveDirection + " " + debug);
+
+      if (!adjacent || !adjacentOfArrow || !inMoveZone || noMoveDirection) {
+        unitMovePath.createShortestPath(activeUnit, newLocation);
       } else {
         if (unitMovePath.canAddDirection(activeUnit, moveDirection, newLocation)) {
-          if (mustRebuildPath) {
-            unitMovePath.createShortestPath(activeUnit, newLocation);
-            mustRebuildPath = false;
-          } else {
-            unitMovePath.addDirection(activeUnit, moveDirection, newLocation);
-          }
+          unitMovePath.addDirection(activeUnit, moveDirection, newLocation);
         }
       }
     }
