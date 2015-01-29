@@ -26,7 +26,7 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
   BinCW2MapParserTest.class, FileSystemManagerTest.class, ControlsConfiguratorTest.class,
-  GameTest.class, TileMapTest.class,
+  GameTest.class, TileMapTest.class, PathTest.class,
   UnitTest.class, UnitEventTest.class, UnitFightTest.class, UnitFightStatsTest.class, CityTest.class, TerrainTest.class,
   CityXStreamTest.class, TerrainXStreamTest.class, UnitXStreamTest.class, PathTest.class,
   AIBuildTest.class, AIBuildDataGeneratorTest.class
