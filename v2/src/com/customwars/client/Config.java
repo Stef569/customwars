@@ -122,6 +122,11 @@ public class Config {
       Properties userProperties = loadUserProperties(configPath);
       String language = userProperties.getProperty("user.lang");
       String pluginName = userProperties.getProperty("user.activeplugin");
+
+      if (pluginName.equals("default")) {
+        pluginName = "dor";
+      }
+
       String pluginPath = resourcesPath + "/plugin/" + pluginName;
 
       loadLang(language);
