@@ -38,17 +38,19 @@ public class AttackRoutine implements AIRoutine {
   }
 
   private RoutineResult searchForDirectAttacks(List<Defender> enemiesInRange) {
-    int highestDamage = 0;
-    Defender enemyToAttack = findBestEnemyToAttack(enemiesInRange, highestDamage);
+    Defender enemyToAttack = findBestEnemyToAttack(enemiesInRange);
 
-    if (enemyToAttack != null) {
-      return new RoutineResult(Fuz.UNIT_ORDER.ATTACK, unit.getLocation(), enemyToAttack.getLocation());
+    if (enemyToAttack instanceof Unit) {
+      return new RoutineResult(Fuz.UNIT_ORDER.ATTACK_UNIT, unit.getLocation(), enemyToAttack.getLocation());
+    } else if (enemyToAttack instanceof City) {
+      return new RoutineResult(Fuz.UNIT_ORDER.ATTACK_CITY, unit.getLocation(), enemyToAttack.getLocation());
     } else {
       return null;
     }
   }
 
-  private Defender findBestEnemyToAttack(List<Defender> enemiesInRange, int highestDamage) {
+  private Defender findBestEnemyToAttack(List<Defender> enemiesInRange) {
+    int highestDamage = 0;
     Defender enemyToAttack = null;
 
     for (Defender defender : enemiesInRange) {
