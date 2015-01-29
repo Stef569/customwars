@@ -443,18 +443,34 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
   /**
    * Can the given unit launch a rocket from this city
    *
+   * 1. This city can launch rockets
+   * 2. The rocket has not been launched yet
+   * 3. The rocket can be fire by the unit
+   *
    * @param unit The unit that will attempt to launch the rocket
    * @return if the unit can launch a rocket from this city
    */
   public boolean canLaunchRocket(Unit unit) {
-    return unit != null && canLaunchRocket() && canBeLaunchedBy.contains(unit.getStats().getName());
+    if (unit != null && canLaunchRocket() && !launched) {
+      String unitName = unit.getName();
+      return canBeLaunchedBy.contains(unitName);
+    } else {
+      return false;
+    }
   }
 
   /**
    * @return Does this city has the ability to launch a rocket
    */
   public boolean canLaunchRocket() {
-    return !canBeLaunchedBy.isEmpty() && !launched;
+    return !canBeLaunchedBy.isEmpty();
+  }
+
+  /**
+   * @return Is the rocket launched from this city
+   */
+  public boolean isLaunched() {
+    return launched;
   }
 
   /**
