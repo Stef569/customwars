@@ -102,6 +102,13 @@ public class CaptureRoutine implements AIRoutine {
       boolean emptyTile = !map.hasUnitOn(city.getLocation());
       emptyTile = emptyTile || map.getUnitOn(city.getLocation()) == unit;
 
+      // Don't try to Fire a rocket or capture an empty silo.
+      // Yes it's a city, no it cannot be captured.
+      if (city.isLaunched()) {
+        cityRating[i] = 0;
+        break;
+      }
+
       // When low on hp it might be a better idea
       // to heal or join...
       boolean lowHp = unit.getHpPercentage() < 45;
