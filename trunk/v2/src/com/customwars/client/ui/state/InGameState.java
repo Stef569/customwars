@@ -33,6 +33,8 @@ import com.customwars.client.ui.sprite.TileSprite;
 import com.customwars.client.ui.state.input.CWCommand;
 import com.customwars.client.ui.state.input.CWInput;
 import com.customwars.client.ui.state.input.CommandEnum;
+import com.customwars.client.ui.thingle.DialogListener;
+import com.customwars.client.ui.thingle.DialogResult;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
@@ -72,6 +74,7 @@ public class InGameState extends CWState implements PropertyChangeListener {
   private InGameCursorController cursorControl;
   private Input input;
   private boolean inputAllowed;
+  private boolean blockAllInput;
 
   public void init(GameContainer container, StateBasedGame stateBasedGame) throws SlickException {
     this.guiContext = container;
@@ -81,6 +84,7 @@ public class InGameState extends CWState implements PropertyChangeListener {
   @Override
   public void enter(GameContainer container, StateBasedGame stateBasedGame) throws SlickException {
     super.enter(container, stateBasedGame);
+    blockAllInput = false;
 
     switch (App.getGameMode()) {
       case SINGLE_PLAYER:
@@ -277,9 +281,20 @@ public class InGameState extends CWState implements PropertyChangeListener {
   private void gameOver() {
     storeReplayActions();
     inGameContext.clearQueuedActions();
-    changeToState("GAME_OVER");
-    inGameContext = null;
-    gameOver = false;
+
+    String message = App.translate("gui_confirm_game_over_msg");
+    String title = App.translate("gui_confirm_game_over_title");
+    GUI.showConfirmationDialog(message, title, new DialogListener() {
+      @Override
+      public void buttonClicked(DialogResult button) {
+        if (button == DialogResult.YES) {
+          changeToState("GAME_OVER");
+        } else {
+          // Stay in the game
+          blockAllInput = true;
+        }
+      }
+    });
   }
 
   private void storeReplayActions() {
@@ -301,7 +316,10 @@ public class InGameState extends CWState implements PropertyChangeListener {
 
   @Override
   public void controlPressed(CWCommand command, CWInput cwInput) {
-    if (isInputAllowed()) {
+    if (gameOver && !GUI.isRenderingDialog()) {
+      showQuitNowDialog();
+      input.consumeEvent();
+    } else if (isInputAllowed()) {
       if (inGameContext.canUndo() && command == CWInput.CANCEL) {
         inputHandler.undo();
         return;
@@ -341,7 +359,10 @@ public class InGameState extends CWState implements PropertyChangeListener {
 
   @Override
   public void mousePressed(int button, int x, int y) {
-    if (isInputAllowed()) {
+    if (gameOver && !GUI.isRenderingDialog()) {
+      showQuitNowDialog();
+      input.consumeEvent();
+    } else if (isInputAllowed()) {
       Tile cursorLocation = gameRenderer.getCursorLocation();
 
       if (button == Input.MOUSE_LEFT_BUTTON) {
@@ -370,6 +391,19 @@ public class InGameState extends CWState implements PropertyChangeListener {
         }
       }
     }
+  }
+
+  private void showQuitNowDialog() {
+    String message = App.translate("gui_err_confirm_end_game_msg");
+    String title = App.translate("gui_err_confirm_end_game_title");
+    GUI.showConfirmationDialog(message, title, new DialogListener() {
+      @Override
+      public void buttonClicked(DialogResult button) {
+        if (button == DialogResult.YES) {
+          changeToState("GAME_OVER");
+        }
+      }
+    });
   }
 
   @Override
@@ -413,7 +447,7 @@ public class InGameState extends CWState implements PropertyChangeListener {
    */
   private boolean isInputAllowed() {
     return entered && gameRenderer != null && gameRenderer.isDyingUnitAnimationCompleted() &&
-      inGameContext != null && inGameContext.isActionCompleted() && inputAllowed;
+      inGameContext != null && inGameContext.isActionCompleted() && inputAllowed && !blockAllInput;
   }
 
   public void mouseWheelMoved(int newValue) {
@@ -449,7 +483,7 @@ public class InGameState extends CWState implements PropertyChangeListener {
     }
 
     if (evt.getSource() instanceof TileSprite) {
-      if(propertyName.equals("position")) {
+      if (propertyName.equals("position")) {
         cursorPositionChanged(evt);
       }
     }
