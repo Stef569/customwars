@@ -30,14 +30,16 @@ public class GameInformation {
 
   private void buildCitiesInRange() {
     for (Unit unit : game.getActivePlayer().getArmy()) {
-      List<City> citiesInRange = buildCitiesInRange(unit);
-      citiesInRangeByUnit.put(unit, citiesInRange);
+      if (!unit.isInTransport()) {
+        List<City> citiesInRange = buildCitiesInRange(unit);
+        citiesInRangeByUnit.put(unit, citiesInRange);
 
-      for (City city : citiesInRange) {
-        if (!unitsInRangeByCity.containsKey(city)) {
-          unitsInRangeByCity.put(city, new ArrayList<Unit>());
+        for (City city : citiesInRange) {
+          if (!unitsInRangeByCity.containsKey(city)) {
+            unitsInRangeByCity.put(city, new ArrayList<Unit>());
+          }
+          unitsInRangeByCity.get(city).add(unit);
         }
-        unitsInRangeByCity.get(city).add(unit);
       }
     }
   }
@@ -57,7 +59,11 @@ public class GameInformation {
   }
 
   public List<City> getCitiesInRangeOf(Unit unit) {
-    return citiesInRangeByUnit.get(unit);
+    if (citiesInRangeByUnit.containsKey(unit)) {
+      return citiesInRangeByUnit.get(unit);
+    } else {
+      return Collections.emptyList();
+    }
   }
 
   public List<Unit> getUnitsInRangeOf(City city) {
