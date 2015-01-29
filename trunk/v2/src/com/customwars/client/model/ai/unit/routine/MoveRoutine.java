@@ -1,5 +1,6 @@
 package com.customwars.client.model.ai.unit.routine;
 
+import com.customwars.client.model.ArmyBranch;
 import com.customwars.client.model.ai.fuzzy.Fuz;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.game.Player;
@@ -28,20 +29,22 @@ public class MoveRoutine implements AIRoutine {
   }
 
   public RoutineResult think() {
-    Location cityLocation = findFreeEnemyCityLocation(unit);
+    if (unit.getArmyBranch() != ArmyBranch.NAVAL) {
+      Location cityLocation = findFreeEnemyCityLocation(unit);
 
-    if (cityLocation != null) {
-      RoutineResult result = new RoutineResult(Fuz.UNIT_ORDER.MOVE, unit.getLocation(), cityLocation);
-      result.debug = "city";
-      return result;
-    } else {
-      Location hqLocation = findClosestEnemyHQ(game.getActivePlayer());
+      if (cityLocation != null) {
+        RoutineResult result = new RoutineResult(Fuz.UNIT_ORDER.MOVE, unit.getLocation(), cityLocation);
+        result.debug = "city";
+        return result;
+      } else {
+        Location hqLocation = findClosestEnemyHQ(game.getActivePlayer());
 
-      if (hqLocation != null) {
-        if (!map.hasUnitOn(hqLocation)) {
-          RoutineResult result = new RoutineResult(Fuz.UNIT_ORDER.MOVE, unit.getLocation(), hqLocation);
-          result.debug = "hq";
-          return result;
+        if (hqLocation != null) {
+          if (!map.hasUnitOn(hqLocation)) {
+            RoutineResult result = new RoutineResult(Fuz.UNIT_ORDER.MOVE, unit.getLocation(), hqLocation);
+            result.debug = "hq";
+            return result;
+          }
         }
       }
     }
