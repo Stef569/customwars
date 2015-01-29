@@ -61,7 +61,7 @@ public class CityXStreamTest {
       "    <int>1</int>" +
       "    <int>2</int>" +
       "    <int>1</int>" +
-      "    <int>127</int>" +
+      "    <int>10000</int>" +
       "  </moveCosts>" +
       "  <vision>1</vision>" +
       "  <maxCapCount>20</maxCapCount>" +

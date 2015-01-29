@@ -10,174 +10,190 @@ moveCosts have the following order:
   Naval
   Naval Transport
 -->
+<!DOCTYPE list [<!ELEMENT list (terrain*)>
+        <!ELEMENT defenseBonus ( #PCDATA ) >
+        <!ELEMENT description ( #PCDATA ) >
+        <!ELEMENT height ( #PCDATA ) >
+        <!ELEMENT hidden ( #PCDATA ) >
+        <!ELEMENT int ( #PCDATA ) >
+        <!ELEMENT moveCosts ( int+ ) >
+
+        <!ELEMENT terrain ( defenseBonus | description | height | hidden | moveCosts | vision )* >
+        <!ATTLIST terrain id NMTOKEN #REQUIRED >
+        <!ATTLIST terrain name ID #REQUIRED >
+        <!ATTLIST terrain type NMTOKEN #REQUIRED >
+        <!ELEMENT vision ( #PCDATA ) >
+        <!ENTITY IMPASSABLE "10000">
+        ]>
 <list>
-  <terrain name="grass" id="0" type="grass">
-    <defenseBonus>0</defenseBonus>
-    <height>0</height>
-    <moveCosts>
-      <int>1</int>
-      <int>1</int>
-      <int>2</int>
-      <int>1</int>
-      <int>1</int>
-      <int>1</int>
-      <int>127</int>
-      <int>127</int>
-    </moveCosts>
-    <description>Grass is easily traversed but offers little defense.</description>
-  </terrain>
-  <terrain name="plain" id="18" type="plain">
-    <defenseBonus>1</defenseBonus>
-    <height>0</height>
-    <moveCosts>
-      <int>1</int>
-      <int>1</int>
-      <int>2</int>
-      <int>1</int>
-      <int>1</int>
-      <int>1</int>
-      <int>127</int>
-      <int>127</int>
-    </moveCosts>
-    <description></description>
-  </terrain>
-  <terrain name="forest" id="1" type="forest">
-    <hidden>True</hidden>
-    <defenseBonus>2</defenseBonus>
-    <height>0</height>
-    <moveCosts>
-      <int>1</int>
-      <int>1</int>
-      <int>3</int>
-      <int>3</int>
-      <int>2</int>
-      <int>1</int>
-      <int>127</int>
-      <int>127</int>
-    </moveCosts>
-    <description>The perfect place for an ambush, units that are placed within a forest are not visible for any unit unless directly adjacent to it.
-    </description>
-  </terrain>
-  <terrain name="road" id="2" type="road">
-    <defenseBonus>0</defenseBonus>
-    <height>0</height>
-    <moveCosts>
-      <int>1</int>
-      <int>1</int>
-      <int>1</int>
-      <int>1</int>
-      <int>1</int>
-      <int>1</int>
-      <int>127</int>
-      <int>127</int>
-    </moveCosts>
-    <description>Well-surface roads provide optimum mobility, but little cover.</description>
-  </terrain>
-  <terrain name="mountain" id="17" type="mountain">
-    <defenseBonus>4</defenseBonus>
-    <vision>3</vision>
-    <height>2</height>
-    <moveCosts>
-      <int>2</int>
-      <int>1</int>
-      <int>127</int>
-      <int>127</int>
-      <int>127</int>
-      <int>1</int>
-      <int>127</int>
-      <int>127</int>
-    </moveCosts>
-    <description>+3 vision for inf and mech units in Fog of War.</description>
-  </terrain>
-  <terrain name="river" id="19" type="river">
-    <defenseBonus>0</defenseBonus>
-    <height>-1</height>
-    <moveCosts>
-      <int>2</int>
-      <int>1</int>
-      <int>127</int>
-      <int>127</int>
-      <int>127</int>
-      <int>1</int>
-      <int>127</int>
-      <int>127</int>
-    </moveCosts>
-    <description>Fast flowing river, only inf and mech can pass</description>
-  </terrain>
-  <terrain name="ocean" id="30" type="ocean">
-    <defenseBonus>0</defenseBonus>
-    <height>-2</height>
-    <moveCosts>
-      <int>127</int>
-      <int>127</int>
-      <int>127</int>
-      <int>127</int>
-      <int>127</int>
-      <int>1</int>
-      <int>1</int>
-      <int>1</int>
-    </moveCosts>
-    <description></description>
-  </terrain>
-  <terrain name="shoal" id="65" type="shoal">
-    <defenseBonus>0</defenseBonus>
-    <height>-1</height>
-    <moveCosts>
-      <int>1</int>
-      <int>1</int>
-      <int>2</int>
-      <int>2</int>
-      <int>1</int>
-      <int>1</int>
-      <int>127</int>
-      <int>1</int>
-    </moveCosts>
-    <description></description>
-  </terrain>
-  <terrain name="reef" id="75" type="reef">
-    <hidden>True</hidden>
-    <defenseBonus>2</defenseBonus>
-    <height>-2</height>
-    <moveCosts>
-      <int>127</int>
-      <int>127</int>
-      <int>127</int>
-      <int>127</int>
-      <int>127</int>
-      <int>1</int>
-      <int>2</int>
-      <int>2</int>
-    </moveCosts>
-    <description></description>
-  </terrain>
-  <terrain name="pipe" id="82" type="pipe">
-    <defenseBonus>4</defenseBonus>
-    <height>1</height>
-    <moveCosts>
-      <int>127</int>
-      <int>127</int>
-      <int>127</int>
-      <int>127</int>
-      <int>127</int>
-      <int>1</int>
-      <int>127</int>
-      <int>127</int>
-    </moveCosts>
-    <description></description>
-  </terrain>
-  <terrain name="wall" id="99" type="wall">
-    <defenseBonus>4</defenseBonus>
-    <height>1</height>
-    <moveCosts>
-      <int>127</int>
-      <int>127</int>
-      <int>127</int>
-      <int>127</int>
-      <int>127</int>
-      <int>1</int>
-      <int>127</int>
-      <int>127</int>
-    </moveCosts>
-    <description></description>
-  </terrain>
+    <terrain name="grass" id="0" type="grass">
+        <defenseBonus>0</defenseBonus>
+        <height>0</height>
+        <moveCosts>
+            <int>1</int>
+            <int>1</int>
+            <int>2</int>
+            <int>1</int>
+            <int>1</int>
+            <int>1</int>
+            <int>&IMPASSABLE;</int>
+            <int>&IMPASSABLE;</int>
+        </moveCosts>
+        <description>Grass is easily traversed but offers little defense.</description>
+    </terrain>
+    <terrain name="plain" id="18" type="plain">
+        <defenseBonus>1</defenseBonus>
+        <height>0</height>
+        <moveCosts>
+            <int>1</int>
+            <int>1</int>
+            <int>2</int>
+            <int>1</int>
+            <int>1</int>
+            <int>1</int>
+            <int>&IMPASSABLE;</int>
+            <int>&IMPASSABLE;</int>
+        </moveCosts>
+        <description></description>
+    </terrain>
+    <terrain name="forest" id="1" type="forest">
+        <hidden>True</hidden>
+        <defenseBonus>2</defenseBonus>
+        <height>0</height>
+        <moveCosts>
+            <int>1</int>
+            <int>1</int>
+            <int>3</int>
+            <int>3</int>
+            <int>2</int>
+            <int>1</int>
+            <int>&IMPASSABLE;</int>
+            <int>&IMPASSABLE;</int>
+        </moveCosts>
+        <description>The perfect place for an ambush, units that are placed within a forest are not visible for any unit
+            unless directly adjacent to it.
+        </description>
+    </terrain>
+    <terrain name="road" id="2" type="road">
+        <defenseBonus>0</defenseBonus>
+        <height>0</height>
+        <moveCosts>
+            <int>1</int>
+            <int>1</int>
+            <int>1</int>
+            <int>1</int>
+            <int>1</int>
+            <int>1</int>
+            <int>&IMPASSABLE;</int>
+            <int>&IMPASSABLE;</int>
+        </moveCosts>
+        <description>Well-surface roads provide optimum mobility, but little cover.</description>
+    </terrain>
+    <terrain name="mountain" id="17" type="mountain">
+        <defenseBonus>4</defenseBonus>
+        <vision>3</vision>
+        <height>2</height>
+        <moveCosts>
+            <int>2</int>
+            <int>1</int>
+            <int>&IMPASSABLE;</int>
+            <int>&IMPASSABLE;</int>
+            <int>&IMPASSABLE;</int>
+            <int>1</int>
+            <int>&IMPASSABLE;</int>
+            <int>&IMPASSABLE;</int>
+        </moveCosts>
+        <description>+3 vision for inf and mech units in Fog of War.</description>
+    </terrain>
+    <terrain name="river" id="19" type="river">
+        <defenseBonus>0</defenseBonus>
+        <height>-1</height>
+        <moveCosts>
+            <int>2</int>
+            <int>1</int>
+            <int>&IMPASSABLE;</int>
+            <int>&IMPASSABLE;</int>
+            <int>&IMPASSABLE;</int>
+            <int>1</int>
+            <int>&IMPASSABLE;</int>
+            <int>&IMPASSABLE;</int>
+        </moveCosts>
+        <description>Fast flowing river, only inf and mech can pass</description>
+    </terrain>
+    <terrain name="ocean" id="30" type="ocean">
+        <defenseBonus>0</defenseBonus>
+        <height>-2</height>
+        <moveCosts>
+            <int>&IMPASSABLE;</int>
+            <int>&IMPASSABLE;</int>
+            <int>&IMPASSABLE;</int>
+            <int>&IMPASSABLE;</int>
+            <int>&IMPASSABLE;</int>
+            <int>1</int>
+            <int>1</int>
+            <int>1</int>
+        </moveCosts>
+        <description></description>
+    </terrain>
+    <terrain name="shoal" id="65" type="shoal">
+        <defenseBonus>0</defenseBonus>
+        <height>-1</height>
+        <moveCosts>
+            <int>1</int>
+            <int>1</int>
+            <int>2</int>
+            <int>2</int>
+            <int>1</int>
+            <int>1</int>
+            <int>&IMPASSABLE;</int>
+            <int>1</int>
+        </moveCosts>
+        <description></description>
+    </terrain>
+    <terrain name="reef" id="75" type="reef">
+        <hidden>True</hidden>
+        <defenseBonus>2</defenseBonus>
+        <height>-2</height>
+        <moveCosts>
+            <int>&IMPASSABLE;</int>
+            <int>&IMPASSABLE;</int>
+            <int>&IMPASSABLE;</int>
+            <int>&IMPASSABLE;</int>
+            <int>&IMPASSABLE;</int>
+            <int>1</int>
+            <int>2</int>
+            <int>2</int>
+        </moveCosts>
+        <description></description>
+    </terrain>
+    <terrain name="pipe" id="82" type="pipe">
+        <defenseBonus>4</defenseBonus>
+        <height>1</height>
+        <moveCosts>
+            <int>&IMPASSABLE;</int>
+            <int>&IMPASSABLE;</int>
+            <int>&IMPASSABLE;</int>
+            <int>&IMPASSABLE;</int>
+            <int>&IMPASSABLE;</int>
+            <int>1</int>
+            <int>&IMPASSABLE;</int>
+            <int>&IMPASSABLE;</int>
+        </moveCosts>
+        <description></description>
+    </terrain>
+    <terrain name="wall" id="99" type="wall">
+        <defenseBonus>4</defenseBonus>
+        <height>1</height>
+        <moveCosts>
+            <int>&IMPASSABLE;</int>
+            <int>&IMPASSABLE;</int>
+            <int>&IMPASSABLE;</int>
+            <int>&IMPASSABLE;</int>
+            <int>&IMPASSABLE;</int>
+            <int>1</int>
+            <int>&IMPASSABLE;</int>
+            <int>&IMPASSABLE;</int>
+        </moveCosts>
+        <description></description>
+    </terrain>
 </list>

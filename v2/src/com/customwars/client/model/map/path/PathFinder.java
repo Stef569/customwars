@@ -82,7 +82,7 @@ public class PathFinder implements MovementCost {
 
     if (moveCost == Terrain.IMPASSIBLE) {
       logger.debug(String.format(
-        "No route possible to destination %s for %s " + destination.getLocationString(), mover
+        "No route possible to destination %s for %s ", destination.getLocationString(), mover
       ));
       return Collections.emptyList();
     }
@@ -90,24 +90,36 @@ public class PathFinder implements MovementCost {
     // Using MAX VALUE ensures that we can reach the destination in the map
     calculatePaths(mover, Integer.MAX_VALUE);
 
-    // Create path to the destination across the whole map
-    List<Point> route = dijkstra.getRoute(destination.getCol(), destination.getRow());
+    if (dijkstra.canMoveTo(destination.getCol(), destination.getRow())) {
+      // Create path to the destination across the whole map
+      List<Point> route = dijkstra.getRoute(destination.getCol(), destination.getRow());
 
-    // Now trim the route, we actually can't move further then max movement of the mover
-    List<Point> trimmedRoute = trimRoute(mover, route);
+      if (route == null) {
+        return Collections.emptyList();
+      }
 
-    List<Location> path = pointsToTiles(trimmedRoute);
+      // Now trim the route, we actually can't move further then max movement of the mover
+      List<Point> trimmedRoute = trimRoute(mover, route);
 
-    if (!path.isEmpty()) {
-      // Remove end locations with a unit on it
-      trimLocationsWithUnitsOnThem(path);
+      List<Location> path = pointsToTiles(trimmedRoute);
+
+      if (!path.isEmpty()) {
+        // Remove end locations with a unit on it
+        trimLocationsWithUnitsOnThem(path);
+      }
+
+      // Remove the AI generated paths
+      // They are only good to find a direction towards a target
+      currentMover = null;
+      calculatePaths(mover);
+
+      return path;
+    } else {
+      logger.debug(String.format(
+        "No route possible to destination %s for %s ", destination.getLocationString(), mover
+      ));
+      return Collections.emptyList();
     }
-
-    // Remove the AI generated paths
-    // They are only good to find a direction towards a target
-    currentMover = null;
-    calculatePaths(mover);
-    return path;
   }
 
   private void trimLocationsWithUnitsOnThem(List<Location> path) {
