@@ -21,7 +21,8 @@ import java.util.List;
  * spansOverType is used for bridges (ie a bridge is a road terrain that spans over a river)
  */
 public class Terrain extends GameObject {
-  public static final int IMPASSIBLE = Byte.MAX_VALUE;
+  public static final int IMPASSIBLE = 10000;
+  public static final int DESTRUCTIBLE = 6000;
   public static final int MIN_MOVE_COST = 1;
   private static final long serialVersionUID = 1L;
   private final int id;
@@ -53,7 +54,7 @@ public class Terrain extends GameObject {
    * @param height              Height of this terrain eg ocean is lower then a Mountain
    * @param hidden              Is this terrain hidden within a moveZone
    * @param vision              The additional vision this terrain gives in fog of war
-   * @param moveCosts           The cost to move over this terrain for each movementType, starts at 1(no cost) to 127(Impassible)
+   * @param moveCosts           The cost to move over this terrain for each movementType, starts at 1(no cost) to Impassible
    * @param connectedDirections The Directions another terrain of the same type can be connected to
    */
   public Terrain(int id, String type, String connectType, String name, String description, int defenseBonus, int height, boolean hidden, int vision,

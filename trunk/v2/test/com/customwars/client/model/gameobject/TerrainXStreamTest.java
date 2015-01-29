@@ -53,7 +53,7 @@ public class TerrainXStreamTest {
       "        <int>1</int>" +
       "        <int>2</int>" +
       "        <int>1</int>" +
-      "        <int>127</int>" +
+      "        <int>10000</int>" +
       "    </moveCosts>" +
       "    <hidden>false</hidden>" +
       "  </terrain>" +
@@ -67,7 +67,7 @@ public class TerrainXStreamTest {
       "        <int>1</int>" +
       "        <int>2</int>" +
       "        <int>1</int>" +
-      "        <int>127</int>" +
+      "        <int>10000</int>" +
       "    </moveCosts>" +
       "    <hidden>false</hidden>" +
       "  </terrain>" +
