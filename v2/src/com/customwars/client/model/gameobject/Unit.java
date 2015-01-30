@@ -791,6 +791,14 @@ public class Unit extends GameObject implements Mover, TurnHandler, Attacker, De
     return lowAmmo;
   }
 
+  /**
+   * @return If this unit has the ability to move and attack in 1 turn
+   */
+  public boolean isBallistic() {
+    Weapon weapon = getAvailableAttackWeapon();
+    return weapon != null && weapon.isBallistic();
+  }
+
   // ---------------------------------------------------------------------------
   // Getters :: Supplies, hp
   // ---------------------------------------------------------------------------
