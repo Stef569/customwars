@@ -140,15 +140,15 @@ public abstract class UnitController {
   }
 
   /**
+   * Can the unit start to attack at least 1 enemy in range.
+   *
    * @param origUnitLocation Where the unit was located(used to determine if the unit has moved)
-   * @return if this unit can attack
+   * @return if this unit can start to attack
    */
   boolean canStartAttack(Location origUnitLocation) {
-    if (isInDirectUnitMoved(origUnitLocation)) return false;
+    if (!unit.isBallistic() && isInDirectUnitMoved(origUnitLocation)) return false;
 
-    Unit activeUnit = game.getActiveUnit();
-    List<Defender> enemiesInRange = game.getMap().getEnemiesInRangeOf(activeUnit);
-
+    List<Defender> enemiesInRange = game.getMap().getEnemiesInRangeOf(unit);
     return !enemiesInRange.isEmpty();
   }
 
