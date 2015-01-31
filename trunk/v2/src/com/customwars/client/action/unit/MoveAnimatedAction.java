@@ -15,6 +15,7 @@ import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.path.MoveTraverse;
 import com.customwars.client.network.MessageSender;
 import com.customwars.client.network.NetworkException;
+import com.customwars.client.tools.Args;
 import com.customwars.client.ui.GUI;
 import com.customwars.client.ui.renderer.MapRenderer;
 import com.customwars.client.ui.state.InGameContext;
@@ -47,6 +48,10 @@ public class MoveAnimatedAction extends DelayedAction {
     this.unit = unit;
     this.from = from;
     this.to = to;
+
+    Args.checkForNull(unit);
+    Args.checkForNull(from);
+    Args.checkForNull(to);
   }
 
   protected void init(InGameContext inGameContext) {
