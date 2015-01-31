@@ -2,8 +2,9 @@ package com.customwars.client.model.ai.unit.routine;
 
 import com.customwars.client.model.ai.fuzzy.Fuz;
 import com.customwars.client.model.ai.unit.GameInformation;
-import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Unit;
+
+import java.util.EnumSet;
 
 /**
  * Checks to see if the co power can be executed
@@ -20,5 +21,10 @@ public class CoRoutine implements AIRoutine {
   @Override
   public RoutineResult think() {
     return null;
+  }
+
+  @Override
+  public EnumSet<Fuz.UNIT_ORDER> getSupportedOrders() {
+    return EnumSet.of(Fuz.UNIT_ORDER.DO_CO_POWER);
   }
 }

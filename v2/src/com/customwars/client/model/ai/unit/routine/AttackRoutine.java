@@ -9,6 +9,7 @@ import com.customwars.client.model.gameobject.UnitFight;
 import com.customwars.client.model.gameobject.UnitVsCityFight;
 import com.customwars.client.model.map.Map;
 
+import java.util.EnumSet;
 import java.util.List;
 
 /**
@@ -79,5 +80,9 @@ public class AttackRoutine implements AIRoutine {
 
   private RoutineResult searchForIndirectAttacks() {
     return null;
+  }
+
+  public EnumSet<Fuz.UNIT_ORDER> getSupportedOrders() {
+    return EnumSet.of(Fuz.UNIT_ORDER.ATTACK_UNIT, Fuz.UNIT_ORDER.ATTACK_CITY);
   }
 }

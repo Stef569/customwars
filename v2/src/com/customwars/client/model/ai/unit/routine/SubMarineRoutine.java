@@ -3,6 +3,8 @@ package com.customwars.client.model.ai.unit.routine;
 import com.customwars.client.model.ai.fuzzy.Fuz;
 import com.customwars.client.model.gameobject.Unit;
 
+import java.util.EnumSet;
+
 /**
  * Controls a sub in the game.
  */
@@ -32,5 +34,10 @@ public class SubMarineRoutine implements AIRoutine {
     }
 
     return null;
+  }
+
+  @Override
+  public EnumSet<Fuz.UNIT_ORDER> getSupportedOrders() {
+    return EnumSet.of(Fuz.UNIT_ORDER.SUBMERGE, Fuz.UNIT_ORDER.SURFACE);
   }
 }

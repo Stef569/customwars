@@ -11,6 +11,7 @@ import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 
 /**
@@ -248,5 +249,10 @@ public class CaptureRoutine implements AIRoutine {
     } while (firstEnemyPlayer.isAlliedWith(game.getActivePlayer()));
 
     return firstEnemyPlayer.getHq().getLocation();
+  }
+
+  @Override
+  public EnumSet<Fuz.UNIT_ORDER> getSupportedOrders() {
+    return EnumSet.of(Fuz.UNIT_ORDER.CAPTURE);
   }
 }

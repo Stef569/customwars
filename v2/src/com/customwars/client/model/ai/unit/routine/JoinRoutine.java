@@ -4,6 +4,8 @@ import com.customwars.client.model.ai.fuzzy.Fuz;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.gameobject.Unit;
 
+import java.util.EnumSet;
+
 /**
  * Check if a join can be performed
  */
@@ -41,5 +43,10 @@ public class JoinRoutine implements AIRoutine {
     }
 
     return null;
+  }
+
+  @Override
+  public EnumSet<Fuz.UNIT_ORDER> getSupportedOrders() {
+    return EnumSet.of(Fuz.UNIT_ORDER.JOIN);
   }
 }

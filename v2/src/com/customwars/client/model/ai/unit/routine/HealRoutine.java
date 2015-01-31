@@ -5,6 +5,7 @@ import com.customwars.client.model.ai.unit.GameInformation;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Unit;
 
+import java.util.EnumSet;
 import java.util.List;
 
 /**
@@ -39,5 +40,10 @@ public class HealRoutine implements AIRoutine {
     }
 
     return null;
+  }
+
+  @Override
+  public EnumSet<Fuz.UNIT_ORDER> getSupportedOrders() {
+    return EnumSet.of(Fuz.UNIT_ORDER.HEAL);
   }
 }
