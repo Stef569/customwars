@@ -109,7 +109,7 @@ public class DefaultBuildAI implements BuildAI {
             Fuz.BUILD_PRIORITY priority = buildPriority.priority;
             int factoryRating = rateFactory(factory, unit, priority);
 
-            if (factoryRating >= 8 && !unitsToBuildByFactory.containsKey(factory)) {
+            if (factoryRating >= 6 && !unitsToBuildByFactory.containsKey(factory)) {
               if (canBuild(factory, unit)) {
                 availableFunds -= unit.getPrice();
                 unitsToBuildByFactory.put(factory, unit);
