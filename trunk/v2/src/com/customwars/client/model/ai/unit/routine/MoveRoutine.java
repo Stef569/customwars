@@ -12,6 +12,8 @@ import com.customwars.client.model.map.Tile;
 import com.customwars.client.model.map.TileMap;
 import com.customwars.client.model.map.path.PathFinder;
 
+import java.util.EnumSet;
+
 /**
  * Attempts to find the best destination location for this unit
  */
@@ -103,5 +105,10 @@ public class MoveRoutine implements AIRoutine {
     }
 
     return freeLocationNearHQ;
+  }
+
+  @Override
+  public EnumSet<Fuz.UNIT_ORDER> getSupportedOrders() {
+    return EnumSet.of(Fuz.UNIT_ORDER.MOVE);
   }
 }
