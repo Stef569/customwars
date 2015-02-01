@@ -109,7 +109,7 @@ public class InGameState extends CWState implements PropertyChangeListener {
     stateChanger.stopRecordingStateHistory();
     cursorControl.addListener(this);
 
-    if (ai == null) {
+    if (game.getTurn() == 0) {
       // Create single AI instance
       ai = new CustomWarsAI(game, inGameContext);
     }
