@@ -75,10 +75,17 @@ public class Game extends TurnBasedGame implements PropertyChangeListener {
    * by comparing their ID
    */
   private void replaceMapPlayers() {
-    Collection<Player> mapPlayers = map.getUniquePlayers();
-    for (Player player : mapPlayers) {
-      Player gamePlayer = getPlayerByID(player.getId());
-      map.replacePlayer(player, gamePlayer);
+    List<Player> mapPlayers = map.getUniquePlayers();
+    int destroyedPlayers = 0;
+
+    for (Player gamePlayer : getAllPlayers()) {
+      if (gamePlayer.isDestroyed()) {
+        destroyedPlayers++;
+        continue;
+      }
+
+      Player mapPlayer = mapPlayers.get(gamePlayer.getId() - destroyedPlayers);
+      map.replacePlayer(mapPlayer, gamePlayer);
     }
   }
 
