@@ -25,6 +25,13 @@ public interface GameController {
    */
   void drop(Unit transport, Unit unit, Location dropLocation);
 
+  /**
+   * Teleports the unit on the from location in the map to the to destination in the map.
+   * The location of the unit is changed to the destination.
+   *
+   * @param from The location in the map to teleport the unit from
+   * @param to   The location in the map to teleport the unit to
+   */
   void teleport(Location from, Location to);
 
   /**
@@ -57,7 +64,7 @@ public interface GameController {
    * If joining causes the target to go over the max HP of a unit then
    * translate that excess hp to money and add it to the budget of the unit owner.
    *
-   * @param unit The unit that wants to join with the target
+   * @param unit   The unit that wants to join with the target
    * @param target The unit that remains in the map after the join
    */
   void join(Unit unit, Unit target);
@@ -66,7 +73,7 @@ public interface GameController {
    * The attacking unit attacks the city
    *
    * @param attacker The unit that wants to attack the city
-   * @param city The city that will be attacked
+   * @param city     The city that will be attacked
    * @return the damage percentage done to the city
    */
   int attack(Unit attacker, City city);
@@ -96,8 +103,9 @@ public interface GameController {
   /**
    * Transform the terrain on the location to the transformToTerrain terrain.
    * Transforming a terrain costs 1 construction point.
-   * @param unit  The unit that wants to transform a terrain
-   * @param location The location of the terrain that will be transformed
+   *
+   * @param unit               The unit that wants to transform a terrain
+   * @param location           The location of the terrain that will be transformed
    * @param transformToTerrain The new terrain that will replace the previous terrain
    */
   void transformTerrain(Unit unit, Location location, Terrain transformToTerrain);
@@ -106,8 +114,8 @@ public interface GameController {
    * The unit fires a flare revealing flareRange tiles around the flareCenter.
    * The primary weapon ammo is decreased by 1.
    *
-   * @param unit The unit that wants to fire a flare
-   * @param flareCenter The centre location, where numOfTilesToReveal will be revealed
+   * @param unit               The unit that wants to fire a flare
+   * @param flareCenter        The centre location, where numOfTilesToReveal will be revealed
    * @param numOfTilesToReveal The radius of the spiral around the centre location.
    */
   void flare(Unit unit, Location flareCenter, int numOfTilesToReveal);
@@ -148,9 +156,9 @@ public interface GameController {
    * The player creates a new unit. The unit is placed on the location in the map.
    * Creating a unit costs the player the price of the unit.
    *
-   * @param unit The unit to be build and placed in the map on the given location
+   * @param unit     The unit to be build and placed in the map on the given location
    * @param location The location where the unit will be placed on
-   * @param player The player that will control this new unit
+   * @param player   The player that will control this new unit
    */
   void buildUnit(Unit unit, Location location, Player player);
 
