@@ -33,10 +33,6 @@ public class AIBuildDataGeneratorTest {
     new String[]{"MECH-P1,BASE-P*", "CITY-P*", "", "", "", "", "", "", "", "", "BASE-P1"}
   };
 
-  private Game game;
-  private Map map;
-  private Player p1, p2;
-
   @BeforeClass
   public static void beforeAllTests() throws IOException {
     // Load the data from the test directory into the Factories
@@ -44,21 +40,21 @@ public class AIBuildDataGeneratorTest {
     loader.load();
   }
 
-  public void createGame(Map map) {
-    this.map = map;
-    p1 = new Player(0, Color.RED, "Stef", 22000, 0, true, new BasicCO("penny"));
-    p2 = new Player(1, Color.BLUE, "JSR", 30000, 1, false, new BasicCO("penny"));
+  public Game createGame(Map map) {
+    Player p1 = new Player(0, Color.RED, "Stef", 22000, 0, true, new BasicCO("penny"));
+    Player p2 = new Player(1, Color.BLUE, "JSR", 30000, 1, false, new BasicCO("penny"));
     List<Player> players = Arrays.asList(p1, p2);
     GameRules gameRules = new GameRules();
     gameRules.setDayLimit(Turn.UNLIMITED);
     gameRules.setCityFunds(1000);
 
-    game = new Game(map, players, gameRules);
+    Game game = new Game(map, players, gameRules);
     game.startGame();
+    return game;
   }
 
-  private Map createMap() {
-    TextMapParser parser = new TextMapParser(testMapSource);
+  private Map createMap(String[][] source) {
+    TextMapParser parser = new TextMapParser(source);
     Map map = parser.parseMap();
     map.setFogOfWarOn(true);
     return map;
@@ -71,7 +67,9 @@ public class AIBuildDataGeneratorTest {
 
   @Test
   public void testGameDataGenerator() throws Exception {
-    createGame(createMap());
+    Map map = createMap(testMapSource);
+    Game game = createGame(map);
+
     BuildAIDataGenerator generator = new BuildAIDataGenerator(game);
     BuildAIInformation data = generator.generate();
 
@@ -84,7 +82,9 @@ public class AIBuildDataGeneratorTest {
 
   @Test
   public void testConstructionPossibilities() {
-    createGame(createMap());
+    Map map = createMap(testMapSource);
+    Game game = createGame(map);
+
     BuildAIDataGenerator generator = new BuildAIDataGenerator(game);
     BuildAIInformation data = generator.generate();
 
@@ -95,7 +95,11 @@ public class AIBuildDataGeneratorTest {
 
   @Test
   public void testCityCount() {
-    createGame(createMap());
+    Map map = createMap(testMapSource);
+    Game game = createGame(map);
+    Player p1 = game.getPlayerByID(0);
+    Player p2 = game.getPlayerByID(1);
+
     BuildAIDataGenerator generator = new BuildAIDataGenerator(game);
     BuildAIInformation data = generator.generate();
 
@@ -109,7 +113,9 @@ public class AIBuildDataGeneratorTest {
 
   @Test
   public void testDistancesForP1() {
-    createGame(createMap());
+    Map map = createMap(testMapSource);
+    Game game = createGame(map);
+
     BuildAIDataGenerator generator = new BuildAIDataGenerator(game);
     BuildAIInformation data = generator.generate();
 
@@ -123,7 +129,9 @@ public class AIBuildDataGeneratorTest {
 
   @Test
   public void testDistancesForP2() {
-    createGame(createMap());
+    Map map = createMap(testMapSource);
+    Game game = createGame(map);
+
     game.endTurn();
     BuildAIDataGenerator generator = new BuildAIDataGenerator(game);
     BuildAIInformation data = generator.generate();
@@ -173,9 +181,9 @@ public class AIBuildDataGeneratorTest {
       new String[]{"CITY-P*", "", "", "", "", "", "", "", "", "BASE-P1", "HQTR-P1"},
     };
 
-    TextMapParser parser = new TextMapParser(largeMap);
-    Map map = parser.parseMap();
-    createGame(map);
+    Map map = createMap(largeMap);
+    Game game = createGame(map);
+
     BuildAIDataGenerator generator = new BuildAIDataGenerator(game);
     BuildAIInformation data = generator.generate();
 
@@ -200,9 +208,9 @@ public class AIBuildDataGeneratorTest {
       new String[]{"", "BASE-P2", "BASE-P1", "", "", "", "", "", "", "", ""},
     };
 
-    TextMapParser parser = new TextMapParser(largeMap);
-    Map map = parser.parseMap();
-    createGame(map);
+    Map map = createMap(largeMap);
+    Game game = createGame(map);
+
     BuildAIDataGenerator generator = new BuildAIDataGenerator(game);
     BuildAIInformation data = generator.generate();
 
@@ -215,7 +223,9 @@ public class AIBuildDataGeneratorTest {
 
   @Test
   public void testFindMostExpensiveUnits() {
-    createGame(createMap());
+    Map map = createMap(testMapSource);
+    Game game = createGame(map);
+
     BuildAIDataGenerator generator = new BuildAIDataGenerator(game);
     BuildAIInformation data = generator.generate();
 

@@ -4,6 +4,11 @@ import com.customwars.client.io.loading.BinCW2MapParserTest;
 import com.customwars.client.io.loading.ControlsConfiguratorTest;
 import com.customwars.client.io.loading.FileSystemManagerTest;
 import com.customwars.client.model.ai.AIBuildTest;
+import com.customwars.client.model.ai.SimpleUnitAdvisorTest;
+import com.customwars.client.model.ai.UnitAIAttackTest;
+import com.customwars.client.model.ai.UnitAIBuildTest;
+import com.customwars.client.model.ai.UnitAICaptureTest;
+import com.customwars.client.model.ai.UnitAIMoveTest;
 import com.customwars.client.model.ai.fuzzy.AIBuildDataGeneratorTest;
 import com.customwars.client.model.game.GameTest;
 import com.customwars.client.model.gameobject.CityTest;
@@ -29,7 +34,8 @@ import org.junit.runners.Suite;
   GameTest.class, TileMapTest.class, PathTest.class,
   UnitTest.class, UnitEventTest.class, UnitFightTest.class, UnitFightStatsTest.class, CityTest.class, TerrainTest.class,
   CityXStreamTest.class, TerrainXStreamTest.class, UnitXStreamTest.class, PathTest.class,
-  AIBuildTest.class, AIBuildDataGeneratorTest.class
+  AIBuildTest.class, AIBuildDataGeneratorTest.class, SimpleUnitAdvisorTest.class, UnitAIAttackTest.class, UnitAIBuildTest.class,
+  UnitAICaptureTest.class, UnitAIMoveTest.class
 })
 
 public class CwClientTestRunner {
