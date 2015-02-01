@@ -66,4 +66,7 @@ public class AIUnitController {
     gameController.surface(unit);
   }
 
+  public void coPower() {
+    gameController.coPower();
+  }
 }

@@ -142,6 +142,7 @@ public class DefaultUnitAI implements UnitAI {
       case MOVE:
         controller.moveTo(order.moveDestination);
       case DO_CO_POWER:
+        controller.coPower();
         break;
     }
   }

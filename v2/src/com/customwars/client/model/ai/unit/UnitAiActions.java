@@ -93,7 +93,7 @@ public class UnitAiActions {
       case MOVE:
         return ActionFactory.buildMoveAction(unit, destination);
       case DO_CO_POWER:
-        break;
+        return ActionFactory.buildCOPowerAction(unit, unit.getLocation());
     }
 
     return null;
