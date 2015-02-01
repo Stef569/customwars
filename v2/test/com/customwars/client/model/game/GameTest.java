@@ -269,11 +269,11 @@ public class GameTest {
   @Test
   public void testActiveUnitsAfterGameStart() {
     buildHardCodedMap(5);
-    Player mapPlayer1 = new Player(0, Color.BLUE);
-    Player mapPlayer2 = new Player(1, Color.YELLOW);
-    Player mapPlayer3 = new Player(2, Color.GREEN);
-    Player mapPlayer4 = new Player(3, Color.BLACK);
-    Player mapPlayer5 = new Player(4, Color.CYAN);
+    Player mapPlayer1 = new Player(0, colors[0]);
+    Player mapPlayer2 = new Player(1, colors[1]);
+    Player mapPlayer3 = new Player(2, colors[2]);
+    Player mapPlayer4 = new Player(3, colors[3]);
+    Player mapPlayer5 = new Player(4, colors[4]);
 
     // Add some units to each player
     MapUtil.addUnitToMap(map, 0, 0, TestData.INF, mapPlayer1);
@@ -351,7 +351,7 @@ public class GameTest {
     buildHardCodedMap(2);
     MapUtil.addCityToMap(map, 0, 0, TestData.BASE, map.getNeutralPlayer());
     MapUtil.addCityToMap(map, 0, 1, TestData.BASE, map.getNeutralPlayer());
-    MapUtil.addCityToMap(map, 0, 2, TestData.BASE, new Player(1, Color.RED));
+    MapUtil.addCityToMap(map, 0, 2, TestData.BASE, new Player(1, colors[1]));
     Unit inf = MapUtil.addUnitToMap(map, 0, 0, TestData.INF, new Player(0, Color.BLACK));
 
     Player p1 = new Player(0, Color.BLACK, "First player", 0, 1, false);
@@ -381,6 +381,57 @@ public class GameTest {
     for (Unit unit : units) {
       Assert.assertEquals(unit.getState(), state);
     }
+  }
+
+  /**
+   */
+  @Test
+  public void testGameCopyAfterPlayerDestroyed() {
+    Player mapPlayer1 = new Player(0, colors[0]);
+    Player mapPlayer2 = new Player(1, colors[1]);
+    Player mapPlayer3 = new Player(2, colors[2]);
+    Player mapPlayer4 = new Player(3, colors[3]);
+    Player mapPlayer5 = new Player(4, colors[4]);
+
+    // Add some units to each player
+    MapUtil.addUnitToMap(map, 0, 0, TestData.INF, mapPlayer1);
+    MapUtil.addUnitToMap(map, 1, 0, TestData.INF, mapPlayer2);
+    MapUtil.addUnitToMap(map, 2, 0, TestData.INF, mapPlayer2);
+    MapUtil.addUnitToMap(map, 3, 0, TestData.INF, mapPlayer2);
+    MapUtil.addUnitToMap(map, 4, 0, TestData.INF, mapPlayer2);
+    MapUtil.addUnitToMap(map, 5, 0, TestData.INF, mapPlayer2);
+    MapUtil.addUnitToMap(map, 6, 0, TestData.INF, mapPlayer3);
+    MapUtil.addUnitToMap(map, 7, 0, TestData.INF, mapPlayer3);
+    MapUtil.addUnitToMap(map, 8, 0, TestData.INF, mapPlayer4);
+    MapUtil.addUnitToMap(map, 9, 0, TestData.INF, mapPlayer4);
+    MapUtil.addUnitToMap(map, 0, 1, TestData.INF, mapPlayer4);
+    MapUtil.addUnitToMap(map, 0, 2, TestData.INF, mapPlayer5);
+
+    // Game players
+    Player p1 = new Player(0, Color.RED, "Stef", 0, 0, false);
+    Player p2 = new Player(1, Color.BLUE, "Jan", 0, 0, false);
+    Player p3 = new Player(2, Color.WHITE, "Jsr", 0, 0, false);
+    Player p4 = new Player(3, Color.BLACK, "Joop", 0, 5, false);
+    Player p5 = new Player(4, Color.ORANGE, "player5", 0, 6, false);
+
+    startGame(new GameRules(), p1, p2, p3, p4, p5);
+
+    Assert.assertEquals("Stef", game.getPlayerByID(0).getName());
+    Assert.assertEquals("Jan", game.getPlayerByID(1).getName());
+    Assert.assertEquals("Jsr", game.getPlayerByID(2).getName());
+    Assert.assertEquals("Joop", game.getPlayerByID(3).getName());
+    Assert.assertEquals("player5", game.getPlayerByID(4).getName());
+
+    game.getPlayerByID(2).destroy(map.getNeutralPlayer());
+
+    Assert.assertEquals(4, map.getUniquePlayers().size());
+
+    Game gameCopy = new Game(game);
+    Assert.assertEquals("Stef", gameCopy.getPlayerByID(0).getName());
+    Assert.assertEquals("Jan", gameCopy.getPlayerByID(1).getName());
+    Assert.assertEquals("Jsr", gameCopy.getPlayerByID(2).getName());
+    Assert.assertEquals("Joop", gameCopy.getPlayerByID(3).getName());
+    Assert.assertEquals(0, gameCopy.getPlayerByID(2).getArmyCount());
   }
 
   /**

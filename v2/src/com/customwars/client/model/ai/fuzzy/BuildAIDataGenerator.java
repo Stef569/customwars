@@ -454,28 +454,6 @@ public class BuildAIDataGenerator {
     logger.debug("Map Type: " + data.mapType);
     logger.debug("Visible land tiles: " + data.visibleLandTiles + "%");
 
-    logger.debug("Units: ");
-    for (Player player : data.unitsCountByPlayer.keySet()) {
-      for (String unitName : UnitFactory.getAllUnitNames()) {
-        int count = data.getUnitCount(player, unitName);
-
-        if (count != 0) {
-          logger.debug(player.getName() + " " + unitName + " " + count);
-        }
-      }
-    }
-
-    logger.debug("Cities: ");
-    for (Player player : data.cityCountByPlayer.keySet()) {
-      for (City city : CityFactory.getBaseCities()) {
-        int count = data.getCityCount(player, city.getName());
-
-        if (count != 0) {
-          logger.debug(player.getName() + " " + city.getName() + " " + count);
-        }
-      }
-    }
-
     logger.debug("City Distances: ");
     for (Player player : game.getAllPlayers()) {
       for (City city : getCitiesThatCanBuild(player)) {
@@ -488,9 +466,6 @@ public class BuildAIDataGenerator {
       Fuz.DISTANCE distance = data.getDistanceToNearestCity(city);
       logger.debug(city.getName() + " " + distance);
     }
-
-    logger.debug("Expensive units: ");
-    printUnits(data.mostExpensiveUnits);
 
     logger.debug("Construction: " + data.constructionPossibilities);
     logger.debug("Factories: " + data.factories.length);

@@ -124,7 +124,7 @@ public class PathFinder implements MovementCost {
 
   private void trimLocationsWithUnitsOnThem(List<Location> path) {
     int locationsToRemove = 0;
-    for (int i = path.size() - 1; i != 0; i--) {
+    for (int i = path.size() - 1; i >= 0; i--) {
       Location location = path.get(i);
 
       if (map.hasUnitOn(location)) {
@@ -156,6 +156,8 @@ public class PathFinder implements MovementCost {
 
       if (usedMoveCosts <= maxMovePoints) {
         path.add(p);
+      } else {
+        break;
       }
     }
     return path;

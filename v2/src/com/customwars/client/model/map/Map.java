@@ -369,6 +369,33 @@ public class Map extends TileMap<Tile> implements TurnHandler {
   }
 
   /**
+   * Get every unit that can be attacked by the given unit.
+   * This method is for the AI to create a list of the units it can attack.
+   * At least 1 location next to the defender can be reached.
+   * This method is for direct units. Indirects should use getEnemiesInRangeOf.
+   *
+   * A defender can be a City or a Unit.
+   */
+  public List<Defender> getEnemiesInRangeOfIndirect(Unit unit) {
+    List<Defender> allEnemyTargets = new ArrayList<Defender>();
+
+    buildMovementZone(unit);
+    buildAttackZone(unit);
+
+    for (Location location : unit.getAttackZone()) {
+      List<Defender> enemies = getEnemiesInRangeOf(unit, location);
+
+      for (Defender defender : enemies) {
+        if (!allEnemyTargets.contains(defender)) {
+          allEnemyTargets.add(defender);
+        }
+      }
+    }
+
+    return allEnemyTargets;
+  }
+
+  /**
    * A unit is visible when the tile it is on is not fogged and the unit is not hidden.
    *
    * @param unit the unit to be checked for visibility
@@ -385,7 +412,7 @@ public class Map extends TileMap<Tile> implements TurnHandler {
 
   /**
    * Build a zone in which the mover can make a move and set it to the mover
-   * If the mover is within a transport then the move zone is null
+   * If the mover is within a transport then the move zone is empty
    * If the mover cannot move then the current mover location is set as the moveZone
    *
    * @param mover The mover to build a move zone for
@@ -394,7 +421,7 @@ public class Map extends TileMap<Tile> implements TurnHandler {
     List<Location> moveZone;
 
     if (mover.isInTransport()) {
-      moveZone = null;
+      moveZone = Collections.emptyList();
     } else {
       if (mover.canMove()) {
         moveZone = pathFinder.getMovementZone(mover);
@@ -407,7 +434,7 @@ public class Map extends TileMap<Tile> implements TurnHandler {
 
   /**
    * Build a zone in which the Attacker can attack and set it to the attacker
-   * If the attacker is within a transport then the attack zone is null
+   * If the attacker is within a transport then the attack zone is empty
    *
    * @param attacker The attacker to build the attack zone for
    */
@@ -416,7 +443,7 @@ public class Map extends TileMap<Tile> implements TurnHandler {
     Range attackRange = attacker.getAttackRange();
 
     if (attacker.isInTransport()) {
-      attackZone = null;
+      attackZone = Collections.emptyList();
     } else {
       for (Tile t : getAllTiles()) {
         if (inFireRange(attacker, t, attackRange)) {
@@ -969,7 +996,7 @@ public class Map extends TileMap<Tile> implements TurnHandler {
   /**
    * @return Each unique player in the map excluding the neutral player
    */
-  public Collection<Player> getUniquePlayers() {
+  public List<Player> getUniquePlayers() {
     Set<Player> players = new HashSet<Player>();
     for (Tile t : getAllTiles()) {
       Unit unit = getUnitOn(t);
@@ -983,7 +1010,7 @@ public class Map extends TileMap<Tile> implements TurnHandler {
         players.add(city.getOwner());
       }
     }
-    return Collections.unmodifiableCollection(players);
+    return Collections.unmodifiableList(new ArrayList<Player>(players));
   }
 
   /**

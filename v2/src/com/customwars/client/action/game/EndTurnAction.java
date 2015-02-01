@@ -42,7 +42,11 @@ public class EndTurnAction extends DirectAction {
   protected void invokeAction() {
     switch (App.getGameMode()) {
       case SINGLE_PLAYER:
-        stateChanger.changeTo("END_TURN");
+        if (session.game.getNextActivePlayer().isAi()) {
+          session.game.endTurn();
+        } else {
+          stateChanger.changeTo("END_TURN");
+        }
         break;
       case NETWORK_SNAIL_GAME:
         session.game.endTurn();

@@ -11,6 +11,7 @@ import com.customwars.client.controller.UserInGameInputHandler;
 import com.customwars.client.io.ResourceManager;
 import com.customwars.client.model.CWGameController;
 import com.customwars.client.model.GameController;
+import com.customwars.client.model.ai.CustomWarsAI;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.game.GameReplay;
 import com.customwars.client.model.game.Player;
@@ -61,6 +62,7 @@ public class InGameState extends CWState implements PropertyChangeListener {
   private Map map;
   private boolean gameOver;
   private InGameContext inGameContext;
+  private CustomWarsAI ai;
 
   // GUI
   private GUIContext guiContext;
@@ -106,6 +108,11 @@ public class InGameState extends CWState implements PropertyChangeListener {
     stateChanger.clearPreviousStatesHistory();
     stateChanger.stopRecordingStateHistory();
     cursorControl.addListener(this);
+
+    if (ai == null) {
+      // Create single AI instance
+      ai = new CustomWarsAI(game, inGameContext);
+    }
   }
 
   /**
@@ -265,6 +272,8 @@ public class InGameState extends CWState implements PropertyChangeListener {
       if (gameOver && isInputAllowed()) {
         gameOver();
       }
+
+      ai.update();
 
       inputAllowed = true;
       if (GUI.isRenderingDialog()) {
