@@ -31,7 +31,7 @@ public class MoveRoutine implements AIRoutine {
   }
 
   public RoutineResult think() {
-    if (unit.getArmyBranch() != ArmyBranch.NAVAL) {
+    if (unit.isLand()) {
       Location cityLocation = findFreeEnemyCityLocation(unit);
 
       if (cityLocation != null) {
