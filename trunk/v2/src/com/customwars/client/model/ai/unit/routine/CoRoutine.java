@@ -1,7 +1,8 @@
 package com.customwars.client.model.ai.unit.routine;
 
 import com.customwars.client.model.ai.fuzzy.Fuz;
-import com.customwars.client.model.ai.unit.GameInformation;
+import com.customwars.client.model.co.CO;
+import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.Unit;
 
 import java.util.EnumSet;
@@ -11,15 +12,23 @@ import java.util.EnumSet;
  */
 public class CoRoutine implements AIRoutine {
   private final Unit unit;
-  private final GameInformation data;
 
-  public CoRoutine(Unit unit, GameInformation data) {
+  public CoRoutine(Unit unit) {
     this.unit = unit;
-    this.data = data;
   }
 
   @Override
   public RoutineResult think() {
+    Player player = unit.getOwner();
+
+    if (player.isCOLoaded()) {
+      CO co = player.getCO();
+
+      if (co.canDoPower()) {
+        return new RoutineResult(Fuz.UNIT_ORDER.DO_CO_POWER, null, null);
+      }
+    }
+
     return null;
   }
 

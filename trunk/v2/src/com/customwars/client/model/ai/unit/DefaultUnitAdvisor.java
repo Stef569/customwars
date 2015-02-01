@@ -47,7 +47,7 @@ public class DefaultUnitAdvisor implements UnitAdvisor {
     routines.add(new AttackRoutine(game, unit));
     routines.add(new HealRoutine(unit, data));
     routines.add(new SubMarineRoutine(unit));
-    routines.add(new CoRoutine(unit, data));
+    routines.add(new CoRoutine(unit));
     routines.add(new MoveRoutine(game, unit));
   }
 
