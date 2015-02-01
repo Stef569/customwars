@@ -191,16 +191,12 @@ public class CaptureRoutine implements AIRoutine {
   }
 
   /**
-   * The location in the map that does some damage to unit(s) of the enemy
+   * Attempts to find enemy units grouped together.
+   * If there are no units search for a factory.
+   * If there is no factory then return the HQ location.
+   * If there is no HQ then return a random tile.
    */
   private Location findGoodRocketLocation() {
-    return findEnemyBlob();
-  }
-
-  /**
-   * Attempts to find enemy units grouped together
-   */
-  private Location findEnemyBlob() {
     int enemyUnitsCount = 0;
     int maxUnits = 0;
     Location bestLocation = null;
@@ -234,25 +230,52 @@ public class CaptureRoutine implements AIRoutine {
       }
     }
 
+    // No group of units could be found
+    // Try to search for a city target
     if (bestLocation == null) {
-      return getEnemyHQLocation();
+      Location cityLocation = findEnemyCity();
+
+      if (cityLocation != null) {
+        return cityLocation;
+      }
     } else {
       return bestLocation;
     }
+
+    return map.getRandomTile();
   }
 
-  private Location getEnemyHQLocation() {
+  private Location findEnemyCity() {
     Player firstEnemyPlayer;
     int i = 0;
     do {
       firstEnemyPlayer = game.getPlayerByID(i++);
     } while (firstEnemyPlayer.isAlliedWith(game.getActivePlayer()));
 
-    return firstEnemyPlayer.getHq().getLocation();
+    Location hqLocation = null;
+    Location factoryLocation = null;
+
+    for (City city : firstEnemyPlayer.getAllCities()) {
+      if (city.isHQ()) {
+        hqLocation = city.getLocation();
+        break;
+      } else if (city.canBuild()) {
+        factoryLocation = city.getLocation();
+        break;
+      }
+    }
+
+    if (factoryLocation != null) {
+      return factoryLocation;
+    } else if (hqLocation != null) {
+      return hqLocation;
+    } else {
+      return null;
+    }
   }
 
   @Override
   public EnumSet<Fuz.UNIT_ORDER> getSupportedOrders() {
-    return EnumSet.of(Fuz.UNIT_ORDER.CAPTURE);
+    return EnumSet.of(Fuz.UNIT_ORDER.CAPTURE, Fuz.UNIT_ORDER.FIRE_SILO_ROCKET);
   }
 }
