@@ -1,10 +1,14 @@
-<!DOCTYPE list [<!ELEMENT list (weapon*)><!ELEMENT weapon (fireRange, attacks, maxAmmo, description)><!ATTLIST weapon name CDATA #REQUIRED>
-
-    <!ELEMENT fireRange (minRange, maxRange)><!ELEMENT minRange (#PCDATA)><!ELEMENT maxRange (#PCDATA)>
-
-    <!ELEMENT attacks (armyBranch*)><!ELEMENT armyBranch (#PCDATA)><!ELEMENT maxAmmo (#PCDATA)>
-
-    <!ELEMENT description (#PCDATA)>]>
+<!DOCTYPE list [<!ELEMENT list (weapon*)>
+        <!ELEMENT weapon (fireRange, ballistic?, attacks, maxAmmo, description)>
+        <!ATTLIST weapon name CDATA #REQUIRED>
+        <!ELEMENT fireRange (minRange, maxRange)>
+        <!ELEMENT minRange (#PCDATA)>
+        <!ELEMENT maxRange (#PCDATA)>
+        <!ELEMENT ballistic (#PCDATA)>
+        <!ELEMENT attacks (armyBranch*)>
+        <!ELEMENT armyBranch (#PCDATA)>
+        <!ELEMENT maxAmmo (#PCDATA)>
+        <!ELEMENT description (#PCDATA)>]>
 <list>
   <weapon name="machine_gun">
     <fireRange>
@@ -127,6 +131,7 @@
       <minRange>3</minRange>
       <maxRange>5</maxRange>
     </fireRange>
+    <ballistic>true</ballistic>
     <attacks>
       <armyBranch>LAND</armyBranch>
       <armyBranch>NAVAL</armyBranch>
