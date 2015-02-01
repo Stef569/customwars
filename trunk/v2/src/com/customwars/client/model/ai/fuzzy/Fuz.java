@@ -76,7 +76,6 @@ public class Fuz {
     HEAL,
     HIDE,
     SUBMERGE,
-    DIVE,
     SURFACE,
     UNLOAD,
     BUILD_TEMP_BASE,

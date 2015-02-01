@@ -28,7 +28,7 @@ public class SubMarineRoutine implements AIRoutine {
         return new RoutineResult(Fuz.UNIT_ORDER.SURFACE, unit.getLocation(), unit.getLocation());
       } else {
         if (!unit.isSubmerged()) {
-          return new RoutineResult(Fuz.UNIT_ORDER.DIVE, unit.getLocation(), unit.getLocation());
+          return new RoutineResult(Fuz.UNIT_ORDER.SUBMERGE, unit.getLocation(), unit.getLocation());
         }
       }
     }

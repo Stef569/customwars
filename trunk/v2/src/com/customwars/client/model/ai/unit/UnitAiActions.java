@@ -78,8 +78,6 @@ public class UnitAiActions {
       case HIDE:
         break;
       case SUBMERGE:
-        break;
-      case DIVE:
         return ActionFactory.buildDiveAction(unit, destination);
       case SURFACE:
         return ActionFactory.buildSurfaceAction(unit, destination);

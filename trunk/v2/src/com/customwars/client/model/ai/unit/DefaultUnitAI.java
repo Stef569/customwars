@@ -125,8 +125,6 @@ public class DefaultUnitAI implements UnitAI {
       case HIDE:
         break;
       case SUBMERGE:
-        break;
-      case DIVE:
         controller.dive();
       case SURFACE:
         controller.surface();
