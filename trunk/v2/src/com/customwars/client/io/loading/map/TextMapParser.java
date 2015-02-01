@@ -189,14 +189,12 @@ public class TextMapParser {
       return "RIVER";
     } else if (token.equals("ROAD")) {
       return "ROAD";
-    } else if (token.equals("BRDG")) {
-      return "BRIDGE";
     } else if (token.equals("REEF")) {
       return "REEF";
     } else if (token.equals("SHOA")) {
-      return "SHOALS";
+      return "SHOAL";
     } else if (token.equals("SEAS")) {
-      return "SEAS";
+      return "OCEAN";
     } else if (token.equals("METR")) {
       return "METEOR";
     } else if (token.equals("WALL")) {
@@ -226,7 +224,7 @@ public class TextMapParser {
     } else if (token.equals("SILO")) {
       return "MISSLE_SILO";
     } else if (token.equals("RDAR")) {
-      return "COMM_TOWER";
+      return "RADAR_TOWER";
     } else if (token.equals("TAPT")) {
       return "TEMP_AIRPORT";
     } else if (token.equals("TSPT")) {
@@ -278,9 +276,11 @@ public class TextMapParser {
     } else if (token.equals("BMBR")) {
       return "BOMBER";
     } else if (token.equals("SEAP")) {
-      return "SEAPLANE";
+      return "SEA_PLANE";
     } else if (token.equals("DUST")) {
-      return "DUSTER";
+      return "FIGHTER";
+    } else if(token.equals("CRUS")) {
+      return "CRUISER";
     } else if (token.equals("BSHP")) {
       return "BATTLESHIP";
     } else if (token.equals("SUBM")) {

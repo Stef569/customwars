@@ -1,6 +1,7 @@
 package com.customwars.client.model.ai;
 
 import com.customwars.client.io.loading.ModelLoader;
+import com.customwars.client.io.loading.map.TextMapParser;
 import com.customwars.client.model.TestData;
 import com.customwars.client.model.ai.fuzzy.Fuz;
 import com.customwars.client.model.ai.unit.routine.CaptureRoutine;
@@ -15,7 +16,6 @@ import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Location2D;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.tools.MapUtil;
-import com.customwars.client.tools.TextMapParser;
 import junit.framework.Assert;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -36,7 +36,7 @@ public class UnitAICaptureTest {
     new String[]{"", "TAPT-P*", "", "", "", "", "", "", "", "", ""},
     new String[]{"", "", "", "", "", "", "", "", "MECH-P1", "", ""},
     new String[]{"CITY-P*", "", "", "", "", "", "", "", "HQTR-P1", "", ""},
-    new String[]{"MECH-P1,CITY-P*", "BASE-P*", "CITY-P*", "", "", "", "", "", "", "MECH-P1", "", ""}
+    new String[]{"MECH-P1,CITY-P*", "BASE-P*", "CITY-P*", "", "", "", "", "", "", "MECH-P1", ""}
   };
 
   @BeforeClass

@@ -1,6 +1,7 @@
 package com.customwars.client.model.ai;
 
 import com.customwars.client.io.loading.ModelLoader;
+import com.customwars.client.io.loading.map.TextMapParser;
 import com.customwars.client.model.TestData;
 import com.customwars.client.model.ai.build.BuildPriority;
 import com.customwars.client.model.ai.build.BuildStrategy;
@@ -13,7 +14,6 @@ import com.customwars.client.model.game.Player;
 import com.customwars.client.model.game.Turn;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.map.Map;
-import com.customwars.client.tools.TextMapParser;
 import junit.framework.Assert;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -62,7 +62,7 @@ public class UnitAIBuildTest {
       new String[]{"", "", "", "", "", "", "", "", "", "", ""},
       new String[]{"CITY-P*", "", "", "", "", "", "", "", "", "", ""},
       new String[]{"", "", "", "", "", "", "", "", "HQTR-P2", "", ""},
-      new String[]{"", "", "", "", "", "", "", "", "MECH-P2", "", "", ""}
+      new String[]{"", "", "", "", "", "", "", "", "MECH-P2", "", ""}
     };
 
     TextMapParser parser = new TextMapParser(simpleMap);
