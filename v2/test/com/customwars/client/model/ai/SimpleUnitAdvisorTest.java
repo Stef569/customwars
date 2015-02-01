@@ -1,6 +1,7 @@
 package com.customwars.client.model.ai;
 
 import com.customwars.client.io.loading.ModelLoader;
+import com.customwars.client.io.loading.map.TextMapParser;
 import com.customwars.client.model.TestData;
 import com.customwars.client.model.ai.unit.DefaultUnitAdvisor;
 import com.customwars.client.model.ai.unit.UnitOrder;
@@ -12,7 +13,6 @@ import com.customwars.client.model.game.Turn;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Location2D;
 import com.customwars.client.model.map.Map;
-import com.customwars.client.tools.TextMapParser;
 import junit.framework.Assert;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -105,7 +105,7 @@ public class SimpleUnitAdvisorTest {
       new String[]{"SEAS", "SEAS", "SEAS", "", "", "", "", "", "", "", ""},
       new String[]{"", "", "", "", "", "", "", "", "", "", ""},
       new String[]{"", "", "", "", "", "", "", "", "", "", ""},
-      new String[]{"HQTR-P2", "", "", "", "", "", "", "", "", "", "", ""}
+      new String[]{"HQTR-P2", "", "", "", "", "", "", "", "", "", ""}
     };
 
     TextMapParser parser = new TextMapParser(testMapSource);

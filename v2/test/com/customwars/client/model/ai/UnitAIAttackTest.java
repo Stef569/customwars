@@ -1,6 +1,7 @@
 package com.customwars.client.model.ai;
 
 import com.customwars.client.io.loading.ModelLoader;
+import com.customwars.client.io.loading.map.TextMapParser;
 import com.customwars.client.model.TestData;
 import com.customwars.client.model.ai.unit.DefaultUnitAI;
 import com.customwars.client.model.ai.unit.UnitOrder;
@@ -15,7 +16,6 @@ import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Location2D;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.script.ScriptManager;
-import com.customwars.client.tools.TextMapParser;
 import junit.framework.Assert;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
