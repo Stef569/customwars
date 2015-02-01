@@ -111,7 +111,9 @@ public class MoveAnimatedAction extends DelayedAction {
 
   void pathMoveComplete() {
     if (moveTraverse.foundTrapper()) {
-      SFX.playSound("trapped");
+      if(map.isFogOfWarOn()) {
+        SFX.playSound("trapped");
+      }
       inGameContext.setTrapped(true);
     } else {
       inGameContext.setTrapped(false);
