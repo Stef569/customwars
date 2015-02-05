@@ -9,4 +9,4 @@ The current stable version is:
 = Older versions =
 
 || *for Windows* || *for Linux* ||
-|| [http://customwars.stefp.be/downloads/CW2_1.5.zip Download CW2 1.5 - Windows (~9 MB)] || [http://customwars.stefp.be/downloads/CW2_1.5.tar Download CW2 1.5 - Linux] (~9MB) ||
+|| [http://customwars.stefp.be/downloads/CW2_1.5.zip Download CW2 1.5 - Windows](~9 MB) || [http://customwars.stefp.be/downloads/CW2_1.5.tar Download CW2 1.5 - Linux] (~9MB) ||
