@@ -6,6 +6,7 @@ import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.CityFactory;
 import com.customwars.client.model.gameobject.Terrain;
 import com.customwars.client.model.gameobject.TerrainFactory;
+import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.model.map.connector.TerrainConnector;
@@ -31,21 +32,42 @@ public class CityMapEditorControl implements MapEditorControl {
   public void addToTile(Tile t, int cityID, Color color) {
     removePreviousCity(t);
     City city = CityFactory.getCity(cityID);
+    city = checkCity(color, city);
+    color = checkColor(color, city);
 
-    if (NEUTRAL_COLOR.equals(color) && city.isHQ()) {
+    Player mapPlayer = map.getPlayer(color);
+    MapUtil.addCityToMap(map, t, city, mapPlayer);
+    terrainConnector.turnSurroundingTerrains(t, city);
+  }
+
+  private City checkCity(Color color, City cityToAdd) {
+    // The neutral HQ cannot be used
+    // Use a city instead
+    if (NEUTRAL_COLOR.equals(color) && cityToAdd.isHQ()) {
       logger.debug("The use of a neutral HQ is not allowed");
-      city = CityFactory.getCity(0);
+      cityToAdd = CityFactory.getCity(0);
     }
 
+    // A player can only have 1 HQ
+    // Overwrite previous HQ with city
+    // Place the HQ on chosen location t
+    City hq = map.getPlayer(color).getHq();
+    if (hq != null) {
+      Player player = map.getPlayer(color);
+      City city = CityFactory.getCity(0);
+      Location hqLocation = hq.getLocation();
+      MapUtil.addCityToMap(map, hqLocation, city, player);
+    }
+    return cityToAdd;
+  }
+
+  private Color checkColor(Color color, City city) {
     // Walls, pipes and other types of cities cannot be captured.
     // They default to a neutral owner.
     if (!city.canBeCaptured()) {
       color = NEUTRAL_COLOR;
     }
-
-    Player mapPlayer = map.getPlayer(color);
-    MapUtil.addCityToMap(map, t, city, mapPlayer);
-    terrainConnector.turnSurroundingTerrains(t, city);
+    return color;
   }
 
   private void removePreviousCity(Tile t) {
