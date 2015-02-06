@@ -10,6 +10,7 @@ import com.customwars.client.action.game.LoadGameAction;
 import com.customwars.client.action.game.SaveGameAction;
 import com.customwars.client.action.game.SaveReplayAction;
 import com.customwars.client.action.game.StartDeleteUnitAction;
+import com.customwars.client.action.game.ToggleInGameSoundAction;
 import com.customwars.client.action.unit.StartUnitCycleAction;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.gameobject.City;
@@ -120,6 +121,11 @@ public class UserInGameInputHandler implements InGameInputHandler {
 
     StandardMenuItem saveReplayMenuItem = buildMenuItem(App.translate("save_replay"), new SaveReplayAction());
     popupMenu.addItem(saveReplayMenuItem);
+
+    float soundVolume = SFX.getSoundEffectVolume();
+    String menuMessage = soundVolume == 0 ? App.translate("turn_sound_on") : App.translate("turn_sound_off");
+    StandardMenuItem toggleSoundMenuItem = buildMenuItem(menuMessage, new ToggleInGameSoundAction());
+    popupMenu.addItem(toggleSoundMenuItem);
 
     StandardMenuItem endGameMenuItem = buildMenuItem(App.translate("end_game"), ActionFactory.buildEndGameAction());
     popupMenu.addItem(endGameMenuItem);
