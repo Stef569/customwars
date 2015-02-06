@@ -266,15 +266,7 @@ public class City extends Terrain implements PropertyChangeListener, TurnHandler
 
   @Override
   public ArmyBranch getArmyBranch() {
-    int height = getHeight();
-
-    if (height < 0) {
-      return ArmyBranch.NAVAL;
-    } else if (isLand()) {
-      return ArmyBranch.LAND;
-    } else {
-      return ArmyBranch.AIR;
-    }
+    return ArmyBranch.LAND;
   }
 
   public boolean canBeDestroyed() {
