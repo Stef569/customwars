@@ -144,7 +144,7 @@
     <skill>No real weakness. Equally proficient with all types of units. Ready to fight wherever and whenever.</skill>
     <coZone>1</coZone>
     <power name="Scout">
-      <description>Ground units gain 2 peircing vision.</description>
+      <description>Ground units gain 2 piercing vision.</description>
     </power>
     <intel/>
     <quotes>
