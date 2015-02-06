@@ -2,6 +2,7 @@ package com.customwars.client.model;
 
 import com.customwars.client.App;
 import com.customwars.client.controller.ControllerManager;
+import com.customwars.client.model.co.CO;
 import com.customwars.client.model.fight.Fight;
 import com.customwars.client.model.game.Game;
 import com.customwars.client.model.game.Player;
@@ -17,6 +18,7 @@ import com.customwars.client.model.gameobject.UnitVsCityFight;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
+import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,6 +27,7 @@ import java.util.Collection;
  * CW implementation of a GameController
  */
 public class CWGameController implements GameController {
+  private Logger logger = Logger.getLogger(CWGameController.class);
   private final Game game;
   private final Map map;
   private final ControllerManager controllerManager;
@@ -33,6 +36,15 @@ public class CWGameController implements GameController {
     this.game = game;
     this.map = game.getMap();
     this.controllerManager = controllerManager;
+  }
+
+  public Unit select(Location location) {
+    Unit unit = map.getUnitOn(location);
+    logger.debug("Selecting " + unit);
+
+    game.setActiveUnit(unit);
+    map.buildMovementZone(unit);
+    return unit;
   }
 
   @Override
@@ -44,7 +56,7 @@ public class CWGameController implements GameController {
   @Override
   public void teleport(Location from, Location to) {
     Unit unit = map.getUnitOn(from);
-    game.getMap().teleport(from, to, unit);
+    map.teleport(from, to, unit);
   }
 
   @Override
@@ -52,6 +64,7 @@ public class CWGameController implements GameController {
     unit.setUnitState(UnitState.CAPTURING);
     city.capture(unit);
 
+    boolean captured;
     if (city.isCapturedBy(unit)) {
       unit.setUnitState(UnitState.IDLE);
       city.resetCapturing();
@@ -59,14 +72,20 @@ public class CWGameController implements GameController {
       if (!unit.getOwner().isAi()) {
         controllerManager.setHumanCityController(city);
       }
-      return true;
+      captured = true;
     } else {
-      return false;
+      captured = false;
     }
+
+    logger.debug(String.format("%s(hp=%s) is capturing %s captured:%s",
+      unit.getName(), unit.getHp(), city.getName(), captured ? "100%" : city.getCapCountPercentage() + "%"));
+    return captured;
   }
 
   @Override
   public void load(Unit unit, Unit transport) {
+    logger.debug("Loading " + unit.getName() + " into " + transport);
+
     unit.getLocation().remove(unit);
     transport.add(unit);
   }
@@ -78,11 +97,18 @@ public class CWGameController implements GameController {
       apc.supply(unit);
       supplyCount++;
     }
+
+    logger.debug(String.format(
+        "%s supplied %s nearby units",
+        apc.getName(), supplyCount)
+    );
     return supplyCount;
   }
 
   @Override
   public void join(Unit unit, Unit target) {
+    logger.debug("Join unit " + unit + " with " + target);
+
     //Add Money if joining cause the target to go over max HP
     int excessHP = unit.getHp() + target.getHp() - target.getMaxHp();
 
@@ -106,9 +132,14 @@ public class CWGameController implements GameController {
 
   @Override
   public int attack(Unit attacker, Unit defender) {
+    int attackerHPPreFight = attacker.getInternalHp();
+    int defenderHPPreFight = defender.getInternalHp();
+
     Fight unitFight = new UnitFight(map, attacker, defender);
     int damagePercentage = unitFight.getAttackDamagePercentage();
     unitFight.startFight();
+
+    logUnitFightStatistics(attacker, defender, attackerHPPreFight, defenderHPPreFight, damagePercentage);
 
     if (attacker.isDestroyed()) {
       controllerManager.removeUnitController(attacker);
@@ -120,12 +151,24 @@ public class CWGameController implements GameController {
     return damagePercentage;
   }
 
+  private void logUnitFightStatistics(Unit attacker, Unit defender, int attackerHPPreFight, int defenderHPPreFight, int damagePercentage) {
+    logger.debug(String.format("%s(%s/%s) is attacking %s(%s/%s) dmg:%s%% Outcome: attacker(%s) defender(%s)",
+      attacker.getName(), attackerHPPreFight, attacker.getInternalMaxHp(),
+      defender.getName(), defenderHPPreFight, defender.getInternalMaxHp(),
+      damagePercentage, attacker.getInternalHp(), defender.getInternalHp()));
+  }
+
   @Override
   public int attack(Unit attacker, City city) {
+    int attackerHPPreFight = attacker.getInternalHp();
+    int defenderHPPreFight = city.getHp();
+
     Tile cityLocation = (Tile) city.getLocation();
     Fight unitVsCityFight = new UnitVsCityFight(attacker, city);
     int damagePercentage = unitVsCityFight.getAttackDamagePercentage();
     unitVsCityFight.startFight();
+
+    logCityFightStatistics(attacker, city, attackerHPPreFight, defenderHPPreFight, damagePercentage);
 
     if (city.isDestroyed()) {
       controllerManager.removeCityController(city);
@@ -133,6 +176,13 @@ public class CWGameController implements GameController {
       cityLocation.setTerrain(terrain);
     }
     return damagePercentage;
+  }
+
+  private void logCityFightStatistics(Unit attacker, City defender, int attackerHPPreFight, int defenderHPPreFight, int damagePercentage) {
+    logger.debug(String.format("%s(%s/%s) is attacking %s(%s/%s) dmg:%s%% Outcome: attacker(%s) defender(%s)",
+      attacker.getName(), attackerHPPreFight, attacker.getInternalMaxHp(),
+      defender.getName(), defenderHPPreFight, defender.getHp(),
+      damagePercentage, attacker.getInternalHp(), defender.getHp()));
   }
 
   @Override
@@ -179,6 +229,11 @@ public class CWGameController implements GameController {
       t.setFogged(false);
     }
     unit.getPrimaryWeapon().fire(1);
+
+    logger.debug(String.format(
+        "Revealing %s tiles around %s",
+        numOfTilesToReveal, flareCenter.getLocationString())
+    );
   }
 
   @Override
@@ -194,12 +249,30 @@ public class CWGameController implements GameController {
     // When the city is constructed it is added to the player cities collection.
     unit.construct(city);
 
+    int constructionPercentage;
     if (unit.isConstructionComplete()) {
       stopConstructingCity(unit, location);
       addCityToTile(location, city, unit.getOwner());
-      return 100;
+      constructionPercentage = 100;
     } else {
-      return city.getCapCountPercentage();
+      constructionPercentage = city.getCapCountPercentage();
+    }
+
+    logConstructingProgress(unit, city.getName(), constructionPercentage);
+    return constructionPercentage;
+  }
+
+  private void logConstructingProgress(Unit unit, String cityName, int constructionPercentage) {
+    if (constructionPercentage == 100) {
+      logger.debug(
+        String.format("%s constructed a %s",
+          unit.getName(), cityName)
+      );
+    } else {
+      logger.debug(
+        String.format("%s is constructing a %s (%s/100)",
+          unit.getName(), cityName, constructionPercentage)
+      );
     }
   }
 
@@ -253,6 +326,8 @@ public class CWGameController implements GameController {
   }
 
   public void produceUnit(Unit producer, String unitToProduce) {
+    logger.debug(producer.getName() + " producing a " + unitToProduce);
+
     Unit unit = UnitFactory.getUnit(unitToProduce);
     Player player = producer.getOwner();
     player.addToBudget(-unit.getPrice());
@@ -278,6 +353,9 @@ public class CWGameController implements GameController {
 
   @Override
   public void loadCO(Unit unit) {
+    String coName = unit.getOwner().getCO().getName();
+    logger.debug(String.format("CO %s loaded into %s", coName, unit.getName()));
+
     unit.loadCO();
     unit.setExperience(unit.getStats().getMaxExperience());
     unit.getOwner().addToBudget(-unit.getPrice() / 2);
@@ -294,11 +372,19 @@ public class CWGameController implements GameController {
 
   @Override
   public void coPower() {
-    game.getActivePlayer().getCO().power(game);
+    CO co = game.getActivePlayer().getCO();
+    String powerName = co.getPowerName();
+    String powerDescription = co.getPowerDescription();
+    logger.debug(String.format("%s activates %s:%s", co.getName(), powerName, powerDescription));
+    co.power(game);
   }
 
   @Override
   public void coSuperPower() {
-    game.getActivePlayer().getCO().superPower(game);
+    CO co = game.getActivePlayer().getCO();
+    String superPowerName = co.getSuperPowerName();
+    String superPowerDescription = co.getSuperPowerDescription();
+    logger.debug(String.format("%s activates %s:%s", co.getName(), superPowerName, superPowerDescription));
+    co.superPower(game);
   }
 }

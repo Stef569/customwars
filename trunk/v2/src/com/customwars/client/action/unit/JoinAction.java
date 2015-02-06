@@ -41,7 +41,6 @@ public class JoinAction extends DirectAction {
   }
 
   private void join() {
-    logger.debug("Join unit " + unit + " with " + target);
     gameController.join(unit, target);
     if (App.isMultiplayer()) sendJoin();
   }

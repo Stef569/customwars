@@ -42,7 +42,6 @@ public class ProduceUnitAction extends DirectAction {
   }
 
   private void produce() {
-    logger.debug(producer.getStats().getName() + " producing a " + unitToProduce);
     gameController.produceUnit(producer, unitToProduce);
     if (App.isMultiplayer()) sendProduce();
   }

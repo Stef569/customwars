@@ -45,8 +45,6 @@ public class CaptureAction extends DirectAction {
 
   private void capture() {
     boolean captured = gameController.capture(unit, city);
-    logger.debug(String.format("%s(%s) is capturing %s captured:%s",
-      unit.getStats().getName(), unit.getHp(), city.getName(), captured ? "100%" : city.getCapCountPercentage() + "%"));
 
     if (captured) {
       SFX.playSound("captured");

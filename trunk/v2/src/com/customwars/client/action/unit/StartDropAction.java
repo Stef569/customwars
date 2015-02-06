@@ -16,13 +16,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Allow the given unit to be dropped on a free drop tile around the center location.
+ * Allow the given unit to be dropped on a free drop tile around the moveDestination location.
  * This action does not actually performs the drop but instead allows the user to choose from
  * all available drop locations indicated by a move zone.
  * <p/>
  * There are 2 locations for the transport:
  * transport.getLocation() -> The location of the transport before it moved.
- * center -> The destination of the move, where the user can choose an adjacent tile.
+ * moveDestination -> The destination of the move, where the user can choose an adjacent tile.
  */
 public class StartDropAction extends DirectAction {
   private static final Logger logger = Logger.getLogger(StartDropAction.class);
@@ -30,13 +30,13 @@ public class StartDropAction extends DirectAction {
   private CursorController cursorControl;
   private MapRenderer mapRenderer;
   private Map map;
-  private final Location center;
+  private final Location moveDestination;
   private final Unit transport;
   private final Unit unitToBeDropped;
 
-  public StartDropAction(Location center, Unit transport, Unit unitToBeDropped) {
+  public StartDropAction(Location moveDestination, Unit transport, Unit unitToBeDropped) {
     super("Start drop", true);
-    this.center = center;
+    this.moveDestination = moveDestination;
     this.transport = transport;
     this.unitToBeDropped = unitToBeDropped;
   }
@@ -49,14 +49,17 @@ public class StartDropAction extends DirectAction {
   }
 
   protected void invokeAction() {
-    List<Location> emptyDropTiles = getEmptyDropTiles(center);
+    List<Location> emptyDropTiles = getEmptyDropTiles(moveDestination);
 
     if (!emptyDropTiles.isEmpty()) {
-      logger.debug("Preparing to drop around tile " + center.getLocationString() + " empty tiles count " + emptyDropTiles.size());
+      logger.debug(String.format(
+          "Preparing to drop around tile %s empty tiles count %s",
+          moveDestination.getLocationString(), emptyDropTiles.size())
+      );
       mapRenderer.removeZones();
       mapRenderer.showArrowPath(false);
       mapRenderer.showArrowHead(true);
-      mapRenderer.setDropLocations(inGameContext.getDropQueue().getDropTiles(), center);
+      mapRenderer.setDropLocations(inGameContext.getDropQueue().getDropTiles(), moveDestination);
 
       // Only allow the cursor to move within the empty adjacent tiles
       // show the tiles as a movezone
@@ -72,7 +75,7 @@ public class StartDropAction extends DirectAction {
    *         Excluding drop tiles that are invalid or already taken by another unit.
    */
   private List<Location> getEmptyDropTiles(Location transportLocation) {
-    List<Location> freeDropLocations = map.getFreeDropLocations(transport, center, unitToBeDropped, transportLocation);
+    List<Location> freeDropLocations = map.getFreeDropLocations(transport, moveDestination, unitToBeDropped, transportLocation);
     List<Location> availableDropLocations = removeAlreadyUsedTiles(freeDropLocations);
 
     return availableDropLocations;

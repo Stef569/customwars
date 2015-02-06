@@ -50,7 +50,6 @@ public class FireFlareAction extends DirectAction {
 
   private void fireFlare() {
     gameController.flare(unit, flareCenter, flareRange);
-    logger.debug("Revealing " + flareRange + " tiles around " + flareCenter.getLocationString());
     if (App.isMultiplayer()) sendFlare();
   }
 

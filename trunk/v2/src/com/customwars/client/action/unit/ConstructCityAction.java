@@ -45,23 +45,8 @@ public class ConstructCityAction extends DirectAction {
   }
 
   private void constructCity() {
-    int constructionPercentage = gameController.constructCity(unit, cityID, to);
-    logConstructingProgress(constructionPercentage);
+    gameController.constructCity(unit, cityID, to);
     if (App.isMultiplayer()) sendConstructCity();
-  }
-
-  private void logConstructingProgress(int constructionPercentage) {
-    if (constructionPercentage == 100) {
-      logger.debug(
-        String.format("%s constructed a %s",
-          unit.getStats().getName(), cityID)
-      );
-    } else {
-      logger.debug(
-        String.format("%s is constructing a %s (%s/100)",
-          unit.getStats().getName(), cityID, constructionPercentage)
-      );
-    }
   }
 
   private void sendConstructCity() {

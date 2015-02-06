@@ -40,8 +40,7 @@ public class SupplyAction extends DirectAction {
   }
 
   private void supply() {
-    int supplyCount = gameController.supply(supplier);
-    logger.debug(supplier.getStats().getName() + " supplied " + supplyCount + " nearby units");
+    gameController.supply(supplier);
     if (App.isMultiplayer()) sendSupply();
   }
 

@@ -20,7 +20,6 @@ public class COSuperPowerAction extends DirectAction {
   private static final Logger logger = Logger.getLogger(COSuperPowerAction.class);
   private GameController gameController;
   private MessageSender messageSender;
-  private Game game;
 
   public COSuperPowerAction() {
     super("CO Super power", false);
@@ -28,17 +27,12 @@ public class COSuperPowerAction extends DirectAction {
 
   @Override
   protected void init(InGameContext inGameContext) {
-    game = inGameContext.getObj(Game.class);
     gameController = inGameContext.getObj(GameController.class);
     messageSender = inGameContext.getObj(MessageSender.class);
   }
 
   @Override
   protected void invokeAction() {
-    CO co = game.getActivePlayer().getCO();
-    String superPowerName = co.getSuperPowerName();
-    String superPowerDescription = co.getSuperPowerDescription();
-    logger.debug(co.getName() + " activates " + superPowerName + ":" + superPowerDescription);
     gameController.coSuperPower();
     if (App.isMultiplayer()) sendCOSuperPower();
   }
