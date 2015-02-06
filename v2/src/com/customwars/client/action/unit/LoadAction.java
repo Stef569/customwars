@@ -42,7 +42,6 @@ public class LoadAction extends DirectAction {
   }
 
   private void load() {
-    logger.debug("Loading " + unit + " into " + transport);
     gameController.load(unit, transport);
 
     if (transport.getStats().canLaunchUnit()) {

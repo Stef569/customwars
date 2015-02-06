@@ -20,7 +20,6 @@ public class COPowerAction extends DirectAction {
   private static final Logger logger = Logger.getLogger(COPowerAction.class);
   private GameController gameController;
   private MessageSender messageSender;
-  private Game game;
 
   public COPowerAction() {
     super("CO power", false);
@@ -28,17 +27,12 @@ public class COPowerAction extends DirectAction {
 
   @Override
   protected void init(InGameContext inGameContext) {
-    game = inGameContext.getObj(Game.class);
     gameController = inGameContext.getObj(GameController.class);
     messageSender = inGameContext.getObj(MessageSender.class);
   }
 
   @Override
   protected void invokeAction() {
-    CO co = game.getActivePlayer().getCO();
-    String powerName = co.getPowerName();
-    String powerDescription = co.getPowerDescription();
-    logger.debug(co.getName() + " activates " + powerName + ":" + powerDescription);
     gameController.coPower();
     if (App.isMultiplayer()) sendCOPower();
   }

@@ -23,7 +23,6 @@ public class AttackUnitAction extends DirectAction {
   private GameController gameController;
   private MessageSender messageSender;
   private final Unit attacker, defender;
-  private int damagePercentage, attackerHPPreFight, defenderHPPreFight;
 
   /**
    * @param attacker The unit that is attacking
@@ -51,28 +50,14 @@ public class AttackUnitAction extends DirectAction {
     // Send before the fight. One of the units may die...
     if (App.isMultiplayer()) sendAttackUnit();
 
-    gatherPreFightStats();
-    damagePercentage = gameController.attack(attacker, defender);
-    logFightStatistics();
+    gameController.attack(attacker, defender);
 
     if (attacker.isDestroyed() || defender.isDestroyed()) {
       SFX.playSound("explode");
     }
   }
 
-  private void gatherPreFightStats() {
-    attackerHPPreFight = attacker.getInternalHp();
-    defenderHPPreFight = defender.getInternalHp();
-  }
 
-  private void logFightStatistics() {
-    String attackerHP = attackerHPPreFight + "/" + attacker.getInternalMaxHp();
-    String defenderHP = defenderHPPreFight + "/" + defender.getInternalMaxHp();
-
-    logger.debug(String.format("%s(%s) is attacking %s(%s) dmg:%s%% Outcome: attacker(%s) defender(%s)",
-      attacker.getStats().getName(), attackerHP, defender.getStats().getName(), defenderHP,
-      damagePercentage, attacker.getInternalHp(), defender.getInternalHp()));
-  }
 
   private void sendAttackUnit() {
     try {

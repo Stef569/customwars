@@ -16,11 +16,21 @@ import java.util.Collection;
  * When the action is not possible the behaviour of these methods is not determined. Most probably they will throw a NPE.
  */
 public interface GameController {
+
+  /**
+   * Select the unit on the give location and make it the active unit in the game.
+   * This is the first action for a unit.
+   *
+   * @param location The location in the map with a unit on it
+   * @return The active unit in the game
+   */
+  Unit select(Location location);
+
   /**
    * Drops a unit from within the transport to a drop location
    *
-   * @param transport The transporter that wants to drop the given unit
-   * @param unit The unit to be dropped on the given drop location
+   * @param transport    The transporter that wants to drop the given unit
+   * @param unit         The unit to be dropped on the given drop location
    * @param dropLocation The location where the unit in the transport should be dropped on
    */
   void drop(Unit transport, Unit unit, Location dropLocation);
@@ -46,7 +56,7 @@ public interface GameController {
   /**
    * Remove the unit from the map and add it to the transport
    *
-   * @param unit The unit that wants to be loaded into the transport
+   * @param unit      The unit that wants to be loaded into the transport
    * @param transport The transporter that will load the given unit
    */
   void load(Unit unit, Unit transport);
