@@ -8,8 +8,6 @@ import org.newdawn.slick.Sound;
 
 /**
  * Handles Sounds and Music
- *
- * @author stefan
  */
 public class SFX {
   private static final Logger logger = Logger.getLogger(SFX.class);
@@ -80,5 +78,13 @@ public class SFX {
 
   public static void setGameContainer(GameContainer gameContainer) {
     SFX.container = gameContainer;
+  }
+
+  public static float getSoundEffectVolume() {
+    return container.getSoundVolume();
+  }
+
+  public static float getMusicVolume() {
+    return container.getMusicVolume();
   }
 }
