@@ -31,7 +31,9 @@ public class DamageRenderer implements Renderable {
    */
   private static final int OFFSET = 64;
 
-  // The position of a centered map
+  /**
+   * The position of a centered map
+   */
   private final Point center;
   private final Location defenderLocation;
   private final TextBox dmgTextBox;
@@ -41,7 +43,7 @@ public class DamageRenderer implements Renderable {
     this.center = center;
     this.defenderLocation = defenderLocation;
     Fight fight = FightFactory.createFight(map, attacker, defenderLocation);
-    String dmgPercentage = "Damage:" + fight.getBasicAttackDamagePercentage() + "%";
+    String dmgPercentage = "Damage:" + fight.getAttackDamagePercentage() + "%";
 
     Insets insets = new Insets(BOX_MARGIN, BOX_MARGIN, BOX_MARGIN, BOX_MARGIN);
     dmgTextBox = new TextBox(dmgPercentage, textFont, insets);
@@ -76,7 +78,7 @@ public class DamageRenderer implements Renderable {
     }
 
     // Graphics are auto centered, subtract center position
-    dmgTextBox.setLocation(boxWorldX-center.x, boxWorldY-center.y);
+    dmgTextBox.setLocation(boxWorldX - center.x, boxWorldY - center.y);
   }
 
   @Override
