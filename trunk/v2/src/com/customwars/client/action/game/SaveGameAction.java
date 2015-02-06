@@ -38,7 +38,7 @@ public class SaveGameAction extends DirectAction {
     OutputStream out = null;
 
     try {
-      out = saveGame(out);
+      out = saveGame();
       logger.info("Game saved to " + SAVE_PATH);
       GUI.showdialog("The Game has been saved", "Success!");
     } catch (IOException ex) {
@@ -49,8 +49,8 @@ public class SaveGameAction extends DirectAction {
     }
   }
 
-  private OutputStream saveGame(OutputStream out) throws IOException {
-    out = new FileOutputStream(SAVE_PATH);
+  private OutputStream saveGame() throws IOException {
+    OutputStream out = new FileOutputStream(SAVE_PATH);
     gameParser.writeGame(game, out);
     return out;
   }
