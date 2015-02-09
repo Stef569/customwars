@@ -31,13 +31,13 @@ import java.util.List;
 /**
  * Handles input in Map Editor mode
  * Unit City and terrain each have their own control object
- *
- * @author stefan
  */
 public class MapEditorController {
   private static final Logger logger = Logger.getLogger(MapEditorController.class);
+  private static final Color NEUTRAL_COLOR = App.getColor("plugin.neutral_color");
   private static final int STARTUP_MAP_COLS = 10;
   private static final int STARTUP_MAP_ROWS = 10;
+  private static final int UNIT_PANEL = 2;
   private final MapEditorRenderer mapEditorView;
   private final ResourceManager resources;
   private CursorController cursorController;
@@ -139,10 +139,10 @@ public class MapEditorController {
   }
 
   private void buildControls(Map map) {
-    controls = new ArrayList<MapEditorControl>();
+    controls = new ArrayList<MapEditorControl>(3);
     controls.add(new TerrainMapEditorControl(map));
     controls.add(new CityMapEditorControl(map));
-    controls.add(new UnitMapEditorControl(map));
+    controls.add(UNIT_PANEL, new UnitMapEditorControl(map));
   }
 
   private void initCursors(Map map) {
@@ -231,8 +231,14 @@ public class MapEditorController {
       newColorID = colors.size();
     }
 
-    this.colorID = newColorID;
-    recolor();
+    Color newColor = colors.get(newColorID);
+    if (activePanelID == UNIT_PANEL && newColor.equals(NEUTRAL_COLOR)) {
+      // Skip neutral units they cannot be placed in the map
+      changeToColor(newColorID + 1);
+    } else {
+      this.colorID = newColorID;
+      recolor();
+    }
   }
 
   public void recolor() {
