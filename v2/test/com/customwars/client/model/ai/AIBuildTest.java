@@ -5,6 +5,7 @@ import com.customwars.client.io.loading.map.TextMapParser;
 import com.customwars.client.model.TestData;
 import com.customwars.client.model.ai.build.BuildPriority;
 import com.customwars.client.model.ai.build.BuildStrategy;
+import com.customwars.client.model.ai.build.DefaultBuildAI;
 import com.customwars.client.model.ai.build.DefaultBuildAdvisor;
 import com.customwars.client.model.ai.fuzzy.Fuz;
 import com.customwars.client.model.co.BasicCO;
@@ -13,6 +14,7 @@ import com.customwars.client.model.game.GameRules;
 import com.customwars.client.model.game.Player;
 import com.customwars.client.model.game.Turn;
 import com.customwars.client.model.gameobject.City;
+import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Map;
 import junit.framework.Assert;
 import org.junit.AfterClass;
@@ -273,5 +275,33 @@ public class AIBuildTest {
     }
 
     return unitNames;
+  }
+
+  @Test
+  public void testFactorySurroundedByMountains() {
+    final String[][] simpleMap = new String[][]{
+      new String[]{"BASE-P1", "MNTN", "", "", "", "", "", "", "", "", ""},
+      new String[]{"MNTN", "MNTN", "", "", "", "", "", "", "", "", ""},
+      new String[]{"", "CITY-P*", "", "", "", "AAIR-P2", "", "", "", "", "HQTR-P2"}
+    };
+
+    TextMapParser parser = new TextMapParser(simpleMap);
+    Map map = parser.parseMap();
+    Game game = createGame(map);
+
+    // Our base is surrounded by mountains, who made this map?
+    // A neutral city can be captured!
+    // Let's make an infantry or mech
+    DefaultBuildAI buildAI = new DefaultBuildAI(new Game(game));
+
+    City factory = map.getCityOn(0, 0);
+    java.util.Map<City, Unit> unitsToBuild = buildAI.findUnitsToBuild();
+    Unit unit = unitsToBuild.get(factory);
+    List<String> expected = Arrays.asList("infantry", "mech");
+    List<String> notExpected = Arrays.asList("bikes", "bomber", "jet", "apc","tank", "anti_air");
+    Assert.assertTrue(expected.contains(unit.getName()));
+    Assert.assertFalse(notExpected.contains(unit.getName()));
+    Assert.assertNotNull(factory.getLocation());
+    Assert.assertEquals(0, factory.getLocation().getLocatableCount());
   }
 }

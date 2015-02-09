@@ -961,10 +961,11 @@ public class Map extends TileMap<Tile> implements TurnHandler {
    *
    * @return if the terrain on the tile can be traversed by the given unit
    */
-  private boolean canTraverseTile(Unit unit, Tile tile) {
+  public boolean canTraverseTile(Unit unit, Location location) {
     int moveType = unit.getMovementType();
-    Terrain dropLocationTerrain = tile.getTerrain();
-    return dropLocationTerrain.canBeTraverseBy(moveType);
+    Tile t = getTile(location);
+    Terrain terrain = t.getTerrain();
+    return terrain.canBeTraverseBy(moveType);
   }
 
   /**

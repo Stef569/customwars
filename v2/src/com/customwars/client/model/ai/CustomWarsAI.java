@@ -43,21 +43,6 @@ public class CustomWarsAI {
     controllers = inGameContext.getObj(ControllerManager.class);
   }
 
-  /**
-   * The AI will act.
-   *
-   * 1. Find the best game actions
-   * 2. Create CWActions
-   * 3. Execute the actions
-   */
-  public void act() {
-    this.buildAI = new DefaultBuildAI(game);
-    this.unitAI = new DefaultUnitAI(game, controllers);
-    inGameContext.setInputMode(InGameContext.INPUT_MODE.AI_ACTING);
-    List<CWAction> actions = createActions();
-    inGameContext.setQueue(actions);
-  }
-
   public void update() {
     if (game.getActivePlayer().isAi()) {
       int playerID = game.getActivePlayer().getId();
@@ -68,6 +53,25 @@ public class CustomWarsAI {
     }
 
     previousPlayerID = game.getActivePlayer().getId();
+  }
+
+  /**
+   * The AI will act.
+   *
+   * 1. Find the best game actions
+   * 2. Create CWActions
+   * 3. Execute the actions
+   */
+  public void act() {
+    // Create a copy of the game
+    // All the AI orders are immediately performed in here.
+    // A list of orders is build to be executed in the real game.
+    Game gameCopy = new Game(game);
+    this.buildAI = new DefaultBuildAI(gameCopy);
+    this.unitAI = new DefaultUnitAI(gameCopy, controllers);
+    inGameContext.setInputMode(InGameContext.INPUT_MODE.AI_ACTING);
+    List<CWAction> actions = createActions();
+    inGameContext.setQueue(actions);
   }
 
   /**
@@ -99,7 +103,7 @@ public class CustomWarsAI {
     List<CWAction> actions = new ArrayList<CWAction>();
 
     java.util.Map<City, Unit> unitsToBuild = buildAI.findUnitsToBuild();
-    BuildAIActions buildAiActions = new BuildAIActions(unitsToBuild);
+    BuildAIActions buildAiActions = new BuildAIActions(unitsToBuild, game);
     logBuild(unitsToBuild);
 
     List<CWAction> buildActions = buildAiActions.createActions();

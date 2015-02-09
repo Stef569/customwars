@@ -34,6 +34,7 @@ public class OrderFactory {
         if (destination != null) {
           return new UnitOrder(result.order, result.unitLocation, destination, result.target);
         }
+        break;
       case ATTACK_UNIT:
       case ATTACK_CITY:
         return createAttackOrder(result);
@@ -41,6 +42,8 @@ public class OrderFactory {
         // Move over the AI path
         return new UnitOrder(result.order, result.unitLocation, result.moveDestination, result.target);
     }
+
+    return null;
   }
 
   private UnitOrder createAttackOrder(RoutineResult result) {

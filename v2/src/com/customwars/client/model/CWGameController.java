@@ -344,7 +344,7 @@ public class CWGameController implements GameController {
   public void buildUnit(Unit unit, Location location, Player player) {
     player.addToBudget(-unit.getPrice());
     player.addUnit(unit);
-    location.add(unit);
+    map.getTile(location).add(unit);
 
     if (!player.isAi()) {
       controllerManager.setHumanUnitController(unit);
