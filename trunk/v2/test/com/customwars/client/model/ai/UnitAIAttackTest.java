@@ -79,7 +79,7 @@ public class UnitAIAttackTest {
     // An infantry of P2 is capturing the HQ!
     // Attacking that infantry with our mech has high priority
     Unit hero = map.getUnitOn(0, 2);
-    DefaultUnitAI advisor = new DefaultUnitAI(game, null);
+    DefaultUnitAI advisor = new DefaultUnitAI(new Game(game), null);
     List<UnitOrder> orders = advisor.findBestUnitOrders();
 
     Assert.assertEquals(new Location2D(0, 1), orders.get(0).moveDestination);
@@ -107,10 +107,11 @@ public class UnitAIAttackTest {
     // Problem: We are surrounded by enemies
     // Attack one of the enemies instead
     Unit hero = map.getUnitOn(0, 2);
-    DefaultUnitAI advisor = new DefaultUnitAI(game, null);
+    DefaultUnitAI advisor = new DefaultUnitAI(new Game(game), null);
     List<UnitOrder> orders = advisor.findBestUnitOrders();
 
     Assert.assertFalse(orders.isEmpty());
+    Assert.assertEquals("The unit location", hero.getLocation(), orders.get(0).unitLocation);
     Assert.assertEquals(new Location2D(0, 2), orders.get(0).moveDestination);
     List<Location2D> possibleTargets = Arrays.asList(new Location2D(0, 1), new Location2D(1, 2));
     Assert.assertTrue(possibleTargets.contains(orders.get(0).target));
@@ -131,7 +132,7 @@ public class UnitAIAttackTest {
     Unit enemyMech = map.getUnitOn(0, 0);
     Unit hero = map.getUnitOn(0, 2);
 
-    DefaultUnitAI advisor = new DefaultUnitAI(game, null);
+    DefaultUnitAI advisor = new DefaultUnitAI(new Game(game), null);
     List<UnitOrder> orders = advisor.findBestUnitOrders();
 
     Assert.assertEquals("The unit location", hero.getLocation(), orders.get(0).unitLocation);
@@ -153,7 +154,7 @@ public class UnitAIAttackTest {
     Unit enemyMech = map.getUnitOn(3, 0);
     Unit hero = map.getUnitOn(0, 2);
 
-    DefaultUnitAI advisor = new DefaultUnitAI(game, null);
+    DefaultUnitAI advisor = new DefaultUnitAI(new Game(game), null);
     List<UnitOrder> orders = advisor.findBestUnitOrders();
 
     Assert.assertEquals("The unit location", new Location2D(0, 2), orders.get(0).unitLocation);
@@ -175,7 +176,7 @@ public class UnitAIAttackTest {
     Unit enemyMech = map.getUnitOn(0, 0);
     Unit hero = map.getUnitOn(0, 2);
 
-    DefaultUnitAI advisor = new DefaultUnitAI(game, null);
+    DefaultUnitAI advisor = new DefaultUnitAI(new Game(game), null);
     List<UnitOrder> orders = advisor.findBestUnitOrders();
 
     Assert.assertEquals("The unit location", hero.getLocation(), orders.get(0).unitLocation);
@@ -198,7 +199,7 @@ public class UnitAIAttackTest {
     Unit enemyTank = map.getUnitOn(1, 0);
     Unit hero = map.getUnitOn(0, 2);
 
-    DefaultUnitAI advisor = new DefaultUnitAI(game, null);
+    DefaultUnitAI advisor = new DefaultUnitAI(new Game(game), null);
     List<UnitOrder> orders = advisor.findBestUnitOrders();
 
     // The mech on the lower right corner is unreachable by the anti air

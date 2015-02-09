@@ -15,16 +15,20 @@ import java.util.List;
 
 /**
  * The Unit AI asks for advice from the advisors and creates a list of unit orders.
+ * Always pass a copy of the game to this class as it will make changes to the game.
  */
 public class DefaultUnitAI implements UnitAI {
   private final ControllerManager controllerManager;
   private final Game gameCopy;
 
-  public DefaultUnitAI(Game currentGame, ControllerManager controllerManager) {
-    // Create a copy of the game
-    // All the AI orders are immediately performed in here.
-    // A list of orders is build to be executed in the real game.
-    this.gameCopy = new Game(currentGame);
+  /**
+   * Create a new Default Unit AI, this AI will create orders for each unit.
+   *
+   * @param gameCopy          a Copy of the game
+   * @param controllerManager The controller manager, controls each unit and city in the game.
+   */
+  public DefaultUnitAI(Game gameCopy, ControllerManager controllerManager) {
+    this.gameCopy = gameCopy;
     this.controllerManager = controllerManager;
   }
 

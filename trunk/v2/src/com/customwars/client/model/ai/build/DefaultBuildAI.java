@@ -8,6 +8,7 @@ import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.gameobject.UnitFactory;
 import com.customwars.client.model.gameobject.UnitFight;
 import com.customwars.client.model.map.Map;
+import com.customwars.client.tools.MapUtil;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
@@ -30,15 +31,15 @@ import java.util.List;
  */
 public class DefaultBuildAI implements BuildAI {
   private static final Logger logger = Logger.getLogger(DefaultBuildAI.class);
-  private final Game game;
+  private final Game gameCopy;
   private final Map map;
   private City[] factories;
   private BuildStrategy buildStrategy;
   private int availableFunds;
 
-  public DefaultBuildAI(Game game) {
-    this.game = game;
-    this.map = game.getMap();
+  public DefaultBuildAI(Game gameCopy) {
+    this.gameCopy = gameCopy;
+    this.map = gameCopy.getMap();
   }
 
   /**
@@ -48,7 +49,7 @@ public class DefaultBuildAI implements BuildAI {
    * @return A map of city -> unit pairs
    */
   public java.util.Map<City, Unit> findUnitsToBuild() {
-    factories = getCitiesThatCanBuild(game.getActivePlayer());
+    factories = getCitiesThatCanBuild(gameCopy.getActivePlayer());
 
     if (factories.length == 0) {
       return Collections.emptyMap();
@@ -72,10 +73,10 @@ public class DefaultBuildAI implements BuildAI {
   }
 
   private void listenToAdvisors() {
-    BuildAdvisor advisor = new DefaultBuildAdvisor(game);
+    BuildAdvisor advisor = new DefaultBuildAdvisor(gameCopy);
     buildStrategy = advisor.think();
 
-    FinancialAdvisor financialStrategy = new DefaultFinancialAdvisor(game);
+    FinancialAdvisor financialStrategy = new DefaultFinancialAdvisor(gameCopy);
     availableFunds = financialStrategy.getAvailableFunds();
   }
 
@@ -126,7 +127,7 @@ public class DefaultBuildAI implements BuildAI {
   protected void logBuildStrategy(List<BuildPriority> buildPriorities, int amount) {
     logger.debug("::: AI Build Priority top 10 :::");
 
-    for (int i = 0; i < amount && i<buildPriorities.size(); i++) {
+    for (int i = 0; i < amount && i < buildPriorities.size(); i++) {
       BuildPriority priority = buildPriorities.get(i);
       logger.debug(priority.toString());
     }
@@ -146,22 +147,24 @@ public class DefaultBuildAI implements BuildAI {
     int factoryRating = 0;
 
     if (factory.canBuild(unit.getName())) {
-      switch (priority) {
-        case VERY_HIGH:
-          factoryRating = 10;
-          break;
-        case HIGH:
-          factoryRating = 8;
-          break;
-        case NORMAL:
-          factoryRating = 6;
-          break;
-        case LOW:
-          factoryRating = 4;
-          break;
-        case VERY_LOW:
-          factoryRating = 1;
-          break;
+      if (unitCanMoveOffFactory(unit, factory)) {
+        switch (priority) {
+          case VERY_HIGH:
+            factoryRating = 10;
+            break;
+          case HIGH:
+            factoryRating = 8;
+            break;
+          case NORMAL:
+            factoryRating = 6;
+            break;
+          case LOW:
+            factoryRating = 4;
+            break;
+          case VERY_LOW:
+            factoryRating = 1;
+            break;
+        }
       }
 
       if (buildStrategy.hasCityBuildHintsFor(factory)) {
@@ -174,6 +177,20 @@ public class DefaultBuildAI implements BuildAI {
     }
 
     return factoryRating;
+  }
+
+  /**
+   * Temporarily add the unit to the factory, check if it can move.
+   *
+   * @return If the unit can move at least 1 tile off the factory location.
+   */
+  private boolean unitCanMoveOffFactory(Unit unit, City factory) {
+    MapUtil.addUnitToMap(map, factory.getLocation(), unit, gameCopy.getActivePlayer());
+    map.buildMovementZone(unit);
+    boolean canMove =  unit.getMoveZone().size() != 1;
+    factory.getLocation().remove(unit);
+    gameCopy.getActivePlayer().removeUnit(unit);
+    return canMove;
   }
 
   /**
@@ -222,7 +239,7 @@ public class DefaultBuildAI implements BuildAI {
    * @return can the city build the given unit
    */
   protected boolean canBuild(City city, Unit unit) {
-    Player player = game.getActivePlayer();
+    Player player = gameCopy.getActivePlayer();
     int unitPrice = unit.getPrice();
 
     boolean canBuild = city.canBuild(unit);

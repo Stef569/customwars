@@ -201,6 +201,21 @@ public class Player extends GameObject {
   }
 
   /**
+   * Searches for a city of the given type.
+   *
+   * @param cityType The city type. Ie 'city' 'factory' 'hq' 'pipe' 'wall' ...
+   * @return The city owned by this player of the given type or null if the city could not be found.
+   */
+  public City findCity(String cityType) {
+    for (City city : cities) {
+      if (city.getType().equals(cityType.toLowerCase())) {
+        return city;
+      }
+    }
+    return null;
+  }
+
+  /**
    * Remove the given city from this player.
    * If the city is a HQ it is removed and the hq is set to null.
    */
@@ -253,7 +268,7 @@ public class Player extends GameObject {
 
   /**
    * @return a list of each unit owned by this player,
-   *         note that this includes units inside transports!
+   * note that this includes units inside transports!
    */
   public Iterable<Unit> getArmy() {
     return new Iterable<Unit>() {
