@@ -30,7 +30,6 @@ public class RoutineResult {
    * The unit to attack for indirects
    */
   public final Location target;
-  public String debug;
 
   public RoutineResult(Fuz.UNIT_ORDER order, Location unitLocation, Location moveDestination, Location target) {
     this.order = order;
