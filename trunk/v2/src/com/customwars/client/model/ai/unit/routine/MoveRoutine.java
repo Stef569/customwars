@@ -36,7 +36,6 @@ public class MoveRoutine implements AIRoutine {
 
       if (cityLocation != null) {
         RoutineResult result = new RoutineResult(Fuz.UNIT_ORDER.MOVE, unit.getLocation(), cityLocation);
-        result.debug = "city";
         return result;
       } else {
         Location hqLocation = findClosestEnemyHQ(game.getActivePlayer());
@@ -44,7 +43,6 @@ public class MoveRoutine implements AIRoutine {
         if (hqLocation != null) {
           if (!map.hasUnitOn(hqLocation)) {
             RoutineResult result = new RoutineResult(Fuz.UNIT_ORDER.MOVE, unit.getLocation(), hqLocation);
-            result.debug = "hq";
             return result;
           }
         }
