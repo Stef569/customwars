@@ -78,7 +78,7 @@ public class MapEditorController {
     }
   }
 
-  public void loadMap(File file) throws IOException {
+  public Map loadMap(File file) throws IOException {
     if (!isValidMapFile(file)) {
       throw new IllegalArgumentException(file.getName() + " is not a valid CW2 map file");
     }
@@ -87,12 +87,13 @@ public class MapEditorController {
     boolean isCached = resources.isMapCached(mapName);
     Map map = isCached ? resources.getMap(mapName) : resources.loadMap(new FileInputStream(file));
     setMap(map);
+    return map;
   }
 
   private boolean isValidMapFile(File file) {
     String fileName = file.getName();
     String mapFileExtension = App.get("map.file.extension");
-    return fileName != null && fileName.endsWith(mapFileExtension);
+    return fileName.endsWith(mapFileExtension);
   }
 
   public void saveMap(String mapName, String mapDescription, String author) {

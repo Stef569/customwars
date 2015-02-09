@@ -3,6 +3,7 @@ package com.customwars.client.ui.state;
 import com.customwars.client.App;
 import com.customwars.client.controller.mapeditor.MapEditorController;
 import com.customwars.client.model.map.Direction;
+import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.Tile;
 import com.customwars.client.ui.GUI;
 import com.customwars.client.ui.renderer.MapEditorRenderer;
@@ -30,6 +31,7 @@ public class MapEditorState extends CWState {
   private static final Logger logger = Logger.getLogger(MapEditorState.class);
   private MapEditorController mapEditorController;
   private MapEditorRenderer mapEditorRenderer;
+  private Map lastLoadedMap;
 
   public void init(GameContainer gameContainer, StateBasedGame stateBasedGame) throws SlickException {
   }
@@ -127,9 +129,20 @@ public class MapEditorState extends CWState {
         }
       }
     });
-    saveMapDialog.addTextField("Map Name");
-    saveMapDialog.addTextField("Map Description");
-    saveMapDialog.addTextField("Author");
+
+    String defaultMapName = "";
+    String defaultMapDescription = "";
+    String defaultAuthor = App.get("user.name");
+
+    if (lastLoadedMap != null) {
+      defaultMapName = lastLoadedMap.getMapName();
+      defaultMapDescription = lastLoadedMap.getDescription();
+      defaultAuthor = lastLoadedMap.getAuthor();
+    }
+
+    saveMapDialog.addTextField("Map Name", defaultMapName);
+    saveMapDialog.addTextField("Map Description", defaultMapDescription);
+    saveMapDialog.addTextField("Author", defaultAuthor);
     GUI.showDialog(saveMapDialog);
   }
 
@@ -155,7 +168,7 @@ public class MapEditorState extends CWState {
   private void handleOpenMapDialogInput(File file) {
     if (file != null) {
       try {
-        mapEditorController.loadMap(file);
+        lastLoadedMap = mapEditorController.loadMap(file);
       } catch (Exception e) {
         logger.error(e);
         GUI.showExceptionDialog(
