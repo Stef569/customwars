@@ -93,7 +93,9 @@ public class MoveRoutine implements AIRoutine {
     }
 
     // We could not find any destination for this unit.
-    return null;
+    // Move to the nearest enemy unit
+    Location nearEnemyUnitLocation = findClosestEnemyUnit();
+    return nearEnemyUnitLocation;
   }
 
   private Location findFreeEnemyCityLocationWithinRange(Unit unit, int range) {
@@ -154,23 +156,7 @@ public class MoveRoutine implements AIRoutine {
   }
 
   private Location findBestMoveDestinationForAirUnits() {
-    // Move towards enemy units
-    for (Tile t : map.getAllTiles()) {
-      if (map.hasUnitOn(t)) {
-        Unit otherUnit = map.getUnitOn(t);
-        boolean allied = otherUnit.isAlliedWith(unit.getOwner());
-
-        if (!allied) {
-          Location freeSpot = findFreeSpotNearUnit(otherUnit);
-
-          if (freeSpot != null) {
-            return freeSpot;
-          }
-        }
-      }
-    }
-
-    return null;
+    return findClosestEnemyUnit();
   }
 
   private Location findBestMoveDestinationForNavalUnits() {
@@ -212,6 +198,26 @@ public class MoveRoutine implements AIRoutine {
 
       return null;
     }
+  }
+
+  private Location findClosestEnemyUnit() {
+    // Move towards enemy units
+    for (Tile t : map.getAllTiles()) {
+      if (map.hasUnitOn(t)) {
+        Unit otherUnit = map.getUnitOn(t);
+        boolean allied = otherUnit.isAlliedWith(unit.getOwner());
+
+        if (!allied) {
+          Location freeSpot = findFreeSpotNearUnit(otherUnit);
+
+          if (freeSpot != null) {
+            return freeSpot;
+          }
+        }
+      }
+    }
+
+    return null;
   }
 
   private Location findFreeSpotNearUnit(Unit otherUnit) {
