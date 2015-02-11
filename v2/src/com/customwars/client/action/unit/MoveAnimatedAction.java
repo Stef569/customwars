@@ -87,7 +87,8 @@ public class MoveAnimatedAction extends DelayedAction {
     List<Location> movePath = mapRenderer.getUnitMovePath();
 
     // In case of a drop the move path will be empty
-    if (movePath.isEmpty()) {
+    // If a unit is selected the path has a size of 1...
+    if (movePath.isEmpty() || movePath.size() == 1) {
       // Generate a path
       moveTraverse.prepareMove(unit, to);
     } else {
@@ -111,7 +112,7 @@ public class MoveAnimatedAction extends DelayedAction {
 
   void pathMoveComplete() {
     if (moveTraverse.foundTrapper()) {
-      if(map.isFogOfWarOn()) {
+      if (map.isFogOfWarOn()) {
         SFX.playSound("trapped");
       }
       inGameContext.setTrapped(true);

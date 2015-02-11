@@ -6,7 +6,7 @@ import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Direction;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Map;
-import com.customwars.client.model.map.TileMap;
+import com.customwars.client.ui.sprite.SpriteManager;
 import org.apache.log4j.Logger;
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Graphics;
@@ -223,23 +223,19 @@ public class MapEffectsRenderer {
    * @param moveDirection The direction of the move, STILL if old and new are not adjacent.
    */
   public void cursorMoved(Location oldLocation, Location newLocation, Direction moveDirection) {
+    SpriteManager sprites = mapRenderer.getSpriteManager();
     if (unitMovePath != null) {
-      boolean adjacent = TileMap.isAdjacent(oldLocation, newLocation);
-      boolean adjacentOfArrow = unitMovePath.isAdjacentOfArrow(newLocation);
-      boolean inMoveZone = activeUnit.getMoveZone().contains(newLocation);
-      boolean noMoveDirection = moveDirection == Direction.STILL;
-
-      String debug = adjacent ? "Adjacent" : "-";
-      debug += inMoveZone ? " In move zone" : " Out move zone";
-      debug += adjacentOfArrow ? " Adjacent of arrow head" : "  Not Adjacent of arrow head";
-
-      logger.debug(oldLocation.getLocationString() + " " + newLocation.getLocationString() + " " + moveDirection + " " + debug);
-
-      if (!adjacent || !adjacentOfArrow || !inMoveZone || noMoveDirection) {
-        unitMovePath.createShortestPath(activeUnit, newLocation);
+      if (unitMovePath.canAddDirection(activeUnit, oldLocation, moveDirection, newLocation)) {
+        sprites.setActiveCursor("SELECT");
+        unitMovePath.addDirection(activeUnit, moveDirection, newLocation);
       } else {
-        if (unitMovePath.canAddDirection(activeUnit, moveDirection, newLocation)) {
-          unitMovePath.addDirection(activeUnit, moveDirection, newLocation);
+        boolean enemyUnit = map.hasEnemyUnitOn(activeUnit.getOwner(), newLocation);
+
+        if (activeUnit.isDirect() && enemyUnit) {
+          sprites.setActiveCursor("ATTACK");
+        } else {
+          sprites.setActiveCursor("SELECT");
+          unitMovePath.createShortestPath(activeUnit, newLocation);
         }
       }
     }

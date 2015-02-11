@@ -401,7 +401,7 @@ public class Map extends TileMap<Tile> implements TurnHandler {
    * @param unit the unit to be checked for visibility
    * @return if the unit is visible to the active player
    */
-  private boolean isUnitVisible(Unit unit) {
+  public boolean isUnitVisible(Unit unit) {
     if (unit != null) {
       Tile t = (Tile) unit.getLocation();
       return !t.isFogged() && !unit.isHidden();
@@ -765,10 +765,23 @@ public class Map extends TileMap<Tile> implements TurnHandler {
     return getUnitOn(location) != null;
   }
 
+  public boolean hasEnemyUnitOn(Player player, Location location) {
+    Tile mapLocation = getTile(location);
+    Unit unit = getUnitOn(mapLocation);
+
+    if (unit != null && !mapLocation.isFogged()) {
+      boolean enemy = !unit.isAlliedWith(player);
+
+      return enemy;
+    } else {
+      return false;
+    }
+  }
+
   /**
    * @param location the location in the map to retrieve a unit from
    * @return The last added unit from location
-   *         if location doesn't contain a unit <b>NULL</b> is returned
+   * if location doesn't contain a unit <b>NULL</b> is returned
    */
   public Unit getUnitOn(Location location) {
     if (location != null) {
@@ -788,7 +801,7 @@ public class Map extends TileMap<Tile> implements TurnHandler {
   /**
    * @param location the location in the map to retrieve a unit from
    * @return The unit at the given index on the location
-   *         if location doesn't contain a unit <b>NULL</b> is returned
+   * if location doesn't contain a unit <b>NULL</b> is returned
    */
   public Unit getUnitOn(Location location, int index) {
     if (location != null) {
@@ -827,7 +840,7 @@ public class Map extends TileMap<Tile> implements TurnHandler {
   /**
    * @param location the location in the map to retrieve a city from
    * @return The city that is on the location
-   *         if location doesn't contain a city <b>NULL</b> is returned
+   * if location doesn't contain a city <b>NULL</b> is returned
    */
   public City getCityOn(Location location) {
     if (location != null) {
@@ -954,6 +967,18 @@ public class Map extends TileMap<Tile> implements TurnHandler {
     Unit unitOnDropLocation = getUnitOn(dropLocation);
     return dropLocation.isFogged() || dropLocation.getLocatableCount() == 0 ||
       unitOnDropLocation.isHidden() || unitOnDropLocation == transporter;
+  }
+
+  /**
+   * Check if the unit can move towards the given destination.
+   *
+   * @param unit            the unit that wants to perform the move
+   * @param moveDestination the destination to reach
+   * @return If the unit can move over the map towards the move destination.
+   */
+  public boolean canMoveTo(Unit unit, Location moveDestination) {
+    Tile t = getTile(moveDestination);
+    return canTraverseTile(unit, t) && pathFinder.canMoveTo(unit, t);
   }
 
   /**
@@ -1203,4 +1228,5 @@ public class Map extends TileMap<Tile> implements TurnHandler {
     this.pathFinder = new PathFinder(this);
     this.neutralPlayer = Player.createNeutralPlayer(App.getColor("plugin.neutral_color"));
   }
+
 }

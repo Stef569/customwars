@@ -52,6 +52,7 @@ public class SelectAction extends DirectAction {
     mapRenderer.showMoveZone();
     mapRenderer.showArrows(true);
     mapRenderer.createMovePath();
+    cursorControl.activateCursor("SELECT");
   }
 
   public void undo() {
@@ -65,5 +66,6 @@ public class SelectAction extends DirectAction {
     mapRenderer.removeZones();
     mapRenderer.showArrows(false);
     cursorControl.moveCursor(selectTile);
+    cursorControl.activateCursor("SELECT");
   }
 }
