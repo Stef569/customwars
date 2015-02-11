@@ -184,7 +184,10 @@ public class AttackRoutine implements AIRoutine {
           } else {
             UnitFight fight = new UnitFight(map, unit, defender);
             int attackDamage = fight.getAttackDamagePercentage();
-            attackPriorities.add(new AttackPriority(defender, attackDamage));
+
+            if (!fight.isSuicidalCounterAttack()) {
+              attackPriorities.add(new AttackPriority(defender, attackDamage));
+            }
           }
         }
       } else if (defender instanceof City) {
