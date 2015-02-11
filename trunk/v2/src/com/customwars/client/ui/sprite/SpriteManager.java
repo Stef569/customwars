@@ -53,6 +53,7 @@ public class SpriteManager implements PropertyChangeListener {
   private ImageStrip unitDecorationStrip;
 
   private TileSprite activeCursor;
+  private String activeCursorName;
   private Font numbersFont;
   private boolean renderSprites = true;
 
@@ -315,19 +316,29 @@ public class SpriteManager implements PropertyChangeListener {
   /**
    * Changes the activeCursor to the cursor mapped by cursorName
    *
-   * @param cursorName case insensitive name of the cursor ie 'Select' and 'SELECT' both return the same cursor
+   * @param cursorName case insensitive name of the cursor ie 'Select' and 'SELECT' both set the same cursor
    */
   public void setActiveCursor(String cursorName) {
-    if (hasCursor(cursorName)) {
-      if (activeCursor != null) {
-        uniqueAnimations.remove(activeCursor.anim);
+    cursorName = cursorName.toUpperCase();
+
+    if (!cursorName.equals(activeCursorName)) {
+      if (hasCursor(cursorName)) {
+        Location prevCursorLocation = null;
+
+        if (activeCursor != null) {
+          uniqueAnimations.remove(activeCursor.anim);
+          prevCursorLocation = activeCursor.getLocation();
+        }
+
+        TileSprite cursor = cursorSprites.get(cursorName);
+        cursor.setLocation(prevCursorLocation);
+        cursor.activate();
+        addUniqueSprite(cursor);
+        this.activeCursor = cursor;
+        this.activeCursorName = cursorName;
+      } else {
+        logger.warn(cursorName + " is not available, cursors:" + cursorSprites.keySet());
       }
-      TileSprite cursor = cursorSprites.get(cursorName.toUpperCase());
-      cursor.activate();
-      addUniqueSprite(cursor);
-      this.activeCursor = cursor;
-    } else {
-      logger.warn(cursorName + " is not available, cursors:" + cursorSprites.keySet());
     }
   }
 
@@ -402,7 +413,7 @@ public class SpriteManager implements PropertyChangeListener {
       if (propertyName.equals("owner")) {
         unitOwnerChange(evt);
       } else if (propertyName.equals("location")) {
-        unitLocationchange(evt);
+        unitLocationChange(evt);
       } else if (propertyName.equals("transport")) {
         transportChange(evt);
       }
@@ -450,7 +461,7 @@ public class SpriteManager implements PropertyChangeListener {
   /**
    * When the location of a unit changes to null, remove the unit sprite
    */
-  private void unitLocationchange(PropertyChangeEvent evt) {
+  private void unitLocationChange(PropertyChangeEvent evt) {
     Unit unit = (Unit) evt.getSource();
     Location newLocation = (Location) evt.getNewValue();
 
