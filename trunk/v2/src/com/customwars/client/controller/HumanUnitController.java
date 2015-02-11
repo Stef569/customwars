@@ -16,11 +16,11 @@ import com.customwars.client.ui.renderer.MapRenderer;
 import com.customwars.client.ui.state.InGameContext;
 import org.apache.log4j.Logger;
 
+import java.util.List;
+
 /**
  * Allows a human to control a unit
  * by using a gui
- *
- * @author stefan
  */
 public class HumanUnitController extends UnitController {
   private static final Logger logger = Logger.getLogger(HumanUnitController.class);
@@ -48,6 +48,8 @@ public class HumanUnitController extends UnitController {
       fireFlare(selected, to);
     } else if (canSelect(selected)) {
       select(selected);
+    } else if (canAttackUnit(selected) || canAttackCity(selected)) {
+      singleClickAttack(selected);
     } else if (canShowMenu(selected)) {
       showContextMenu(selected);
     } else {
@@ -102,6 +104,36 @@ public class HumanUnitController extends UnitController {
     inGameContext.doAction(new SelectAction(selected));
   }
 
+  /**
+   * Single click attack allows a direct unit to move and fire upon
+   * an enemy unit by making 1 click on the enemy unit.
+   *
+   * @param selected The tile that has been clicked on
+   */
+  private void singleClickAttack(Tile selected) {
+    // Single click attack only works for Direct units
+    if (unit.isDirect()) {
+      List<Location> unitMovePath = mapRenderer.getUnitMovePath();
+      Location moveDestination = unitMovePath.get(unitMovePath.size() - 1);
+      boolean freeTile = !map.hasUnitOn(moveDestination);
+
+      if (freeTile || unit.getLocation().equals(moveDestination)) {
+        attack(selected, moveDestination);
+      }
+    } else {
+      logger.debug("Only direct units can perform a single click attack");
+    }
+  }
+
+  /**
+   * A unit context menu can be shown:
+   * If an active unit has been selected.
+   * If the selected tile is within his move zone.
+   * All unit actions can only be performed in that zone.
+   *
+   * @param selected The tile that has been clicked on
+   * @return If the unit context menu can be shown
+   */
   private boolean canShowMenu(Tile selected) {
     Unit activeUnit = game.getActiveUnit();
     return activeUnit != null && activeUnit.isWithinMoveZone(selected);

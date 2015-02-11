@@ -5,6 +5,7 @@ import com.customwars.client.model.map.Direction;
 import com.customwars.client.model.map.Location;
 import com.customwars.client.model.map.Map;
 import com.customwars.client.model.map.TileMap;
+import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -15,6 +16,7 @@ import java.util.List;
  * The path is created by moving the cursor away from the unit.
  */
 public class UnitMovePath {
+  private static final Logger logger = Logger.getLogger(UnitMovePath.class);
   private final Map map;
   private final int maxPathLength;
   private List<Direction> path;
@@ -26,19 +28,22 @@ public class UnitMovePath {
     this.path = new LinkedList<Direction>();
   }
 
-  public boolean canAddDirection(Unit activeUnit, Direction moveDirection, Location newLocation) {
+  public boolean canAddDirection(Unit activeUnit, Location oldLocation, Direction moveDirection, Location newLocation) {
     if (activeUnit.getLocation().equals(newLocation)) return true;
-    boolean noMove = moveDirection == Direction.STILL;
+    boolean adjacent = TileMap.isAdjacent(oldLocation, newLocation);
+    boolean adjacentOfArrow = isAdjacentOfArrow(newLocation);
+    boolean inMoveZone = isInZone(activeUnit, newLocation);
+    boolean noMoveDirection = moveDirection == Direction.STILL;
 
-    return !noMove && isInMoveZone(activeUnit, newLocation);
+    return adjacent && adjacentOfArrow && inMoveZone && !noMoveDirection;
   }
 
-  private boolean isInMoveZone(Unit activeUnit, Location newLocation) {
-    if (activeUnit != null && activeUnit.getMoveZone() != null) {
-      if (activeUnit.getMoveZone().contains(newLocation)) {
-        return true;
-      }
+  private boolean isInZone(Unit activeUnit, Location newLocation) {
+    if (activeUnit != null) {
+      List<Location> moveZone = activeUnit.getMoveZone();
+      return moveZone != null && moveZone.contains(newLocation);
     }
+
     return false;
   }
 

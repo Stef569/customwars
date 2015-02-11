@@ -153,12 +153,28 @@ public abstract class UnitController {
   }
 
   boolean canAttackUnit(Tile selected) {
-    return map.getUnitOn(selected) != null;
+    Unit selectedEnemyUnit = map.getUnitOn(selected);
+    Player activePlayer = game.getActivePlayer();
+    map.buildMovementZone(unit);
+    map.buildAttackZone(unit);
+
+    return unit != null &&
+      selectedEnemyUnit != null &&
+      map.isUnitVisible(selectedEnemyUnit) &&
+      !selectedEnemyUnit.getOwner().isAlliedWith(activePlayer) &&
+      unit.getAttackZone().contains(selected);
   }
 
   boolean canAttackCity(Tile selected) {
-    City city = map.getCityOn(selected);
-    return city != null && city.canBeDestroyed();
+    City selectedEnemyCity = map.getCityOn(selected);
+    Player activePlayer = game.getActivePlayer();
+
+    return unit != null &&
+      selectedEnemyCity != null &&
+      !selected.isFogged() &&
+      selectedEnemyCity.canBeDestroyed() &&
+      !selectedEnemyCity.getOwner().isAlliedWith(activePlayer) &&
+      unit.getAttackZone().contains(selected);
   }
 
   /**
