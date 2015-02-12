@@ -69,7 +69,6 @@ public class AttackRoutine implements AIRoutine {
       Defender enemyToAttack = null;
       Location moveDestination = null;
       for (AttackPriority attackPriority : attackPriorities) {
-        if (attackPriority.priority > 45) {
           Defender enemy = attackPriority.enemy;
           Location bestAdjacentLocation = findBestAdjacentLocation(enemy);
 
@@ -78,7 +77,6 @@ public class AttackRoutine implements AIRoutine {
             moveDestination = bestAdjacentLocation;
             break;
           }
-        }
       }
 
       if (enemyToAttack != null) {
