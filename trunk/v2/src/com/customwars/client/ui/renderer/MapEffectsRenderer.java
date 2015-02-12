@@ -229,9 +229,11 @@ public class MapEffectsRenderer {
         sprites.setActiveCursor("SELECT");
         unitMovePath.addDirection(activeUnit, moveDirection, newLocation);
       } else {
-        boolean enemyUnit = map.hasEnemyUnitOn(activeUnit.getOwner(), newLocation);
+        boolean hasEnemyUnit = map.hasEnemyUnitOn(activeUnit.getOwner(), newLocation);
+        Unit enemyUnit = map.getUnitOn(newLocation);
+        boolean canAttack = activeUnit.canAttack(enemyUnit);
 
-        if (activeUnit.isDirect() && enemyUnit) {
+        if (activeUnit.isDirect() && hasEnemyUnit && canAttack) {
           sprites.setActiveCursor("ATTACK");
         } else {
           sprites.setActiveCursor("SELECT");
