@@ -269,11 +269,14 @@ public class InGameState extends CWState implements PropertyChangeListener {
       gameRenderer.setRenderAttackDamage(inGameContext.isUnitAttackMode());
 
       inGameContext.update(delta);
-      if (gameOver && isInputAllowed()) {
-        gameOver();
-      }
 
-      ai.update();
+      if (isInputAllowed()) {
+        if (gameOver) {
+          gameOver();
+        } else {
+          ai.update();
+        }
+      }
 
       inputAllowed = true;
       if (GUI.isRenderingDialog()) {
@@ -325,7 +328,8 @@ public class InGameState extends CWState implements PropertyChangeListener {
 
   @Override
   public void controlPressed(CWCommand command, CWInput cwInput) {
-    if (gameOver && !GUI.isRenderingDialog()) {
+    boolean showQuitNowDialog = inGameContext.isAIActingMode() || gameOver;
+    if (showQuitNowDialog && !GUI.isRenderingDialog()) {
       showQuitNowDialog();
       input.consumeEvent();
     } else if (isInputAllowed()) {
@@ -368,7 +372,8 @@ public class InGameState extends CWState implements PropertyChangeListener {
 
   @Override
   public void mousePressed(int button, int x, int y) {
-    if (gameOver && !GUI.isRenderingDialog()) {
+    boolean showQuitNowDialog = inGameContext.isAIActingMode() || gameOver;
+    if (showQuitNowDialog && !GUI.isRenderingDialog()) {
       showQuitNowDialog();
       input.consumeEvent();
     } else if (isInputAllowed()) {
