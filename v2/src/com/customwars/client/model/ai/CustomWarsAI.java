@@ -63,13 +63,14 @@ public class CustomWarsAI {
    * 3. Execute the actions
    */
   public void act() {
+    inGameContext.setAiActing(true);
+
     // Create a copy of the game
     // All the AI orders are immediately performed in here.
     // A list of orders is build to be executed in the real game.
     Game gameCopy = new Game(game);
     this.buildAI = new DefaultBuildAI(gameCopy);
     this.unitAI = new DefaultUnitAI(gameCopy, controllers);
-    inGameContext.setInputMode(InGameContext.INPUT_MODE.AI_ACTING);
     List<CWAction> actions = createActions();
     inGameContext.setQueue(actions);
   }
@@ -196,6 +197,7 @@ public class CustomWarsAI {
     protected void invokeAction() {
       if (!game.isGameOver()) {
         new ClearInGameStateAction().invoke(inGameContext);
+        inGameContext.setAiActing(false);
         game.endTurn();
       }
     }
