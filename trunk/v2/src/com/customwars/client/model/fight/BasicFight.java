@@ -61,7 +61,7 @@ public abstract class BasicFight implements Fight {
     return defender instanceof Attacker && attacker instanceof Defender;
   }
 
-  protected boolean isSuicidalCounterAttack() {
+  public boolean isSuicidalCounterAttack() {
     return getAttackDamagePercentage() == 0;
   }
 
