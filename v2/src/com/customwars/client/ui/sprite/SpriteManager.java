@@ -558,6 +558,13 @@ public class SpriteManager implements PropertyChangeListener {
     return citySprites.get(city);
   }
 
+  /**
+   * @return The name of the active cursor in the game
+   */
+  public String getActiveCursorName() {
+    return activeCursorName;
+  }
+
   public boolean isRenderingSprites() {
     return renderSprites;
   }
