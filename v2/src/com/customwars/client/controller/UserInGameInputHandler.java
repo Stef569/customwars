@@ -38,8 +38,8 @@ public class UserInGameInputHandler implements InGameInputHandler {
   private final Game game;
   private final CursorController cursorController;
   private final Map map;
+  private final MapRenderer mapRenderer;
   private boolean canDeleteUnit;
-  private MapRenderer mapRenderer;
 
   public UserInGameInputHandler(InGameContext inGameContext) {
     this.game = inGameContext.getObj(Game.class);
@@ -165,9 +165,9 @@ public class UserInGameInputHandler implements InGameInputHandler {
   }
 
   /**
-   * Return the active unit(if set)
-   * or the selected unit(if present on the cursor location)
-   * or null(both are not set)
+   * @return The active unit if a unit has already previously been selected.
+   * The selected unit if there is an active unit and a unit is present on the cursor location.
+   * Null in all other cases.
    */
   private Unit getUnit(Tile cursorLocation) {
     Unit activeUnit = game.getActiveUnit();
