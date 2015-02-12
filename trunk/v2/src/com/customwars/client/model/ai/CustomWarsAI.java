@@ -174,6 +174,7 @@ public class CustomWarsAI {
       return new AIEndTurnAction();
     } else {
       // Show the End Turn screen
+      inGameContext.setAiActing(false);
       return ActionFactory.buildEndTurnAction();
     }
   }
@@ -197,7 +198,6 @@ public class CustomWarsAI {
     protected void invokeAction() {
       if (!game.isGameOver()) {
         new ClearInGameStateAction().invoke(inGameContext);
-        inGameContext.setAiActing(false);
         game.endTurn();
       }
     }
