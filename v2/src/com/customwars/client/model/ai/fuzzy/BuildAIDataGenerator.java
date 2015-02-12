@@ -15,7 +15,6 @@ import com.customwars.client.tools.NumberUtil;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -455,25 +454,14 @@ public class BuildAIDataGenerator {
     logger.debug("Visible land tiles: " + data.visibleLandTiles + "%");
 
     logger.debug("City Distances: ");
-    for (Player player : game.getAllPlayers()) {
-      for (City city : getCitiesThatCanBuild(player)) {
-        Fuz.DISTANCE distance = data.getDistanceToNearestCity(city);
-        logger.debug(city.getName() + " " + distance);
-      }
-    }
-
-    for (City city : getCitiesThatCanBuild(map.getNeutralPlayer())) {
+    for (City city : getCitiesThatCanBuild(activePlayer)) {
       Fuz.DISTANCE distance = data.getDistanceToNearestCity(city);
-      logger.debug(city.getName() + " " + distance);
+      logger.debug(String.format("%s(%s) distance to nearest city: %s",
+        city.getName(), city.getLocation().getLocationString(), distance));
     }
 
     logger.debug("Construction: " + data.constructionPossibilities);
     logger.debug("Factories: " + data.factories.length);
   }
 
-  private void printUnits(List<String> unitNames) {
-    for (String unitName : unitNames) {
-      logger.debug(unitName);
-    }
-  }
 }

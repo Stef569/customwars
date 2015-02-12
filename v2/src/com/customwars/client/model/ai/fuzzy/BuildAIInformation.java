@@ -113,10 +113,10 @@ public class BuildAIInformation {
   }
 
   /**
-   * Finds the distance to a city near the given city.
+   * Finds the distance to an enemy city that can be captured near the given producing city.
    * Cities don't move so the distances are cached.
-   *
-   * @param city The city to find the closest city for
+
+   * @param city The city to find the closest city for. 1 of the factories of the active player.
    * @return The distance to any city
    */
   public Fuz.DISTANCE getDistanceToNearestCity(City city) {
