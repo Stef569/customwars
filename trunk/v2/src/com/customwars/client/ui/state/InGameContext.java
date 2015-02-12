@@ -36,7 +36,6 @@ public class InGameContext {
     UNIT_FLARE,       // Clicking on a tile fires a flare
     UNIT_DELETE,      // Clicking on a unit will delete that unit
     UNIT_CYCLE,       // Start Iterating between units
-    AI_ACTING         // The AI is acting
   }
 
   private INPUT_MODE inputMode;
@@ -46,6 +45,7 @@ public class InGameContext {
   private final DropLocationsQueue dropQueue;
   private final ActionManager actionManager;
   private final ClickHistory clickHistory = new ClickHistory(3);
+  private boolean aiActing;                         // If the AI is playing this will be true
 
   private final Map<Class, Object> objectLookup;
 
@@ -145,6 +145,16 @@ public class InGameContext {
     this.launching = launching;
   }
 
+  /**
+   * Sets the ai acting flag.
+   *
+   * @param aiActing True: The AI player started performing his moves.
+   *                 False: The AI player has performed all his moves.
+   */
+  public void setAiActing(boolean aiActing) {
+    this.aiActing = aiActing;
+  }
+
   public List<CWAction> getExecutedActions() {
     return actionManager.getExecutedActions();
   }
@@ -175,7 +185,7 @@ public class InGameContext {
 
   public boolean isInUnitMode() {
     return isUnitSelectMode() || isUnitAttackMode() || isUnitDropMode() ||
-        isRocketLaunchMode();
+      isRocketLaunchMode();
   }
 
   public boolean isDefaultMode() {
@@ -214,8 +224,14 @@ public class InGameContext {
     return inputMode == INPUT_MODE.UNIT_DELETE;
   }
 
+  /**
+   * When the ai starts his turn the acting mode is true.
+   * It remains true until the ai has completed all his moves.
+   *
+   * @return If the AI is performing his actions also known as 'acting'
+   */
   public boolean isAIActingMode() {
-    return inputMode == INPUT_MODE.AI_ACTING;
+    return aiActing;
   }
 
   public void addUnitInTransport(Unit unitInTransport) {
