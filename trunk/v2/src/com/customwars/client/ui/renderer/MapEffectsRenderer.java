@@ -223,20 +223,14 @@ public class MapEffectsRenderer {
    * @param moveDirection The direction of the move, STILL if old and new are not adjacent.
    */
   public void cursorMoved(Location oldLocation, Location newLocation, Direction moveDirection) {
-    SpriteManager sprites = mapRenderer.getSpriteManager();
     if (unitMovePath != null) {
       if (unitMovePath.canAddDirection(activeUnit, oldLocation, moveDirection, newLocation)) {
-        sprites.setActiveCursor("SELECT");
         unitMovePath.addDirection(activeUnit, moveDirection, newLocation);
       } else {
-        boolean hasEnemyUnit = map.hasEnemyUnitOn(activeUnit.getOwner(), newLocation);
-        Unit enemyUnit = map.getUnitOn(newLocation);
-        boolean canAttack = activeUnit.canAttack(enemyUnit);
+        SpriteManager sprites = mapRenderer.getSpriteManager();
 
-        if (activeUnit.isDirect() && hasEnemyUnit && canAttack) {
-          sprites.setActiveCursor("ATTACK");
-        } else {
-          sprites.setActiveCursor("SELECT");
+        // Don't rebuild the path if we are selecting a single click target
+        if (!sprites.getActiveCursorName().equals("ATTACK")) {
           unitMovePath.createShortestPath(activeUnit, newLocation);
         }
       }

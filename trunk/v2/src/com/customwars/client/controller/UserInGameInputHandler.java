@@ -13,6 +13,7 @@ import com.customwars.client.action.game.StartDeleteUnitAction;
 import com.customwars.client.action.game.ToggleInGameSoundAction;
 import com.customwars.client.action.unit.StartUnitCycleAction;
 import com.customwars.client.model.game.Game;
+import com.customwars.client.model.game.Player;
 import com.customwars.client.model.gameobject.City;
 import com.customwars.client.model.gameobject.Unit;
 import com.customwars.client.model.map.Direction;
@@ -203,6 +204,7 @@ public class UserInGameInputHandler implements InGameInputHandler {
   public void cursorMoved(Location oldLocation, Location newLocation, Direction moveDirection) {
     if (!oldLocation.equals(newLocation)) {
       updateDeleteUnitCursor(newLocation);
+      updateAttackUnitCursor(newLocation);
       mapRenderer.cursorMoved(oldLocation, newLocation, moveDirection);
     }
   }
@@ -227,4 +229,23 @@ public class UserInGameInputHandler implements InGameInputHandler {
     return unit != null && unit.isActive() &&
       unit.getOwner().equals(game.getActivePlayer());
   }
+
+  private void updateAttackUnitCursor(Location newLocation) {
+    Unit activeUnit = game.getActiveUnit();
+
+    if (activeUnit != null) {
+      boolean validMovePath = mapRenderer.getUnitMovePath() != null;
+      Player activePlayer = activeUnit.getOwner();
+      boolean hasEnemyUnit = map.hasEnemyUnitOn(activePlayer, newLocation);
+      Unit enemyUnit = map.getUnitOn(newLocation);
+      boolean canAttack = activeUnit.canAttack(enemyUnit);
+
+      if (activeUnit.isDirect() && validMovePath && hasEnemyUnit && canAttack) {
+        cursorController.activateCursor("ATTACK");
+      } else {
+        cursorController.activateCursor("SELECT");
+      }
+    }
+  }
+
 }
