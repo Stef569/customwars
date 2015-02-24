@@ -10,7 +10,7 @@ import org.newdawn.slick.thingle.Widget;
 
 /**
  * This code can be used in a thread.
- * It's main purpose is to ask the server: 'does the given server game exists'
+ * It's main purpose is to ask the server: 'Fetch the game info of a game'
  * <p/>
  * if there is a slot widget
  * When the server game exists the slot cbo widget is updated so it contains the free slots
