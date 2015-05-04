@@ -42,14 +42,24 @@ public class LoadGameAction extends DirectAction {
   @Override
   protected void invokeAction() {
     if (quickSaveGameFile.exists()) {
-      try {
-        loadGame();
-      } catch (IOException e) {
-        GUI.showExceptionDialog("Could not load quick save game", e, "Error");
-        logger.warn("Could not load quick save game", e);
-      }
+      GUI.showConfirmationDialog("Do you want to load the quick save game?", "Load Quick Save", new DialogListener() {
+        public void buttonClicked(DialogResult button) {
+          if (button == DialogResult.YES) {
+            loadQuickSaveGame();
+          }
+        }
+      });
     } else {
       logger.info("No quick save game previously saved");
+    }
+  }
+
+  private void loadQuickSaveGame() {
+    try {
+      loadGame();
+    } catch (IOException e) {
+      GUI.showExceptionDialog("Could not load quick save game", e, "Error");
+      logger.warn("Could not load quick save game", e);
     }
   }
 
