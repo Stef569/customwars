@@ -51,12 +51,14 @@ public class CityMapEditorControl implements MapEditorControl {
     // A player can only have 1 HQ
     // Overwrite previous HQ with city
     // Place the HQ on chosen location t
-    City hq = map.getPlayer(color).getHq();
-    if (hq != null) {
-      Player player = map.getPlayer(color);
-      City city = CityFactory.getCity(0);
-      Location hqLocation = hq.getLocation();
-      MapUtil.addCityToMap(map, hqLocation, city, player);
+    if(cityToAdd.isHQ()) {
+      City hq = map.getPlayer(color).getHq();
+      if (hq != null) {
+        Player player = map.getPlayer(color);
+        City city = CityFactory.getCity(0);
+        Location hqLocation = hq.getLocation();
+        MapUtil.addCityToMap(map, hqLocation, city, player);
+      }
     }
     return cityToAdd;
   }
