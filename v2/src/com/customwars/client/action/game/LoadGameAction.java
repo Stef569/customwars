@@ -8,6 +8,8 @@ import com.customwars.client.ui.GUI;
 import com.customwars.client.ui.state.InGameContext;
 import com.customwars.client.ui.state.StateChanger;
 import com.customwars.client.ui.state.StateSession;
+import com.customwars.client.ui.thingle.DialogListener;
+import com.customwars.client.ui.thingle.DialogResult;
 import org.apache.log4j.Logger;
 
 import java.io.File;
