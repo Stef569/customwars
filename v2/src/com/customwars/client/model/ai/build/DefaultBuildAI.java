@@ -184,10 +184,15 @@ public class DefaultBuildAI implements BuildAI {
 
   /**
    * Temporarily add the unit to the factory, check if it can move.
+   * If the factory is surrounded by enemy units always build a unit.
    *
    * @return If the unit can move at least 1 tile off the factory location.
    */
   private boolean unitCanMoveOffFactory(Unit unit, City factory) {
+    if(map.isSurroundedByEnemyUnits(unit)) {
+      return true;
+    }
+
     MapUtil.addUnitToMap(map, factory.getLocation(), unit, gameCopy.getActivePlayer());
     map.buildMovementZone(unit);
     boolean canMove =  unit.getMoveZone().size() != 1;
