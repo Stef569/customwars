@@ -76,21 +76,22 @@ public class CustomWarsAI {
   }
 
   /**
-   * 1. The Build AI creates a list of units to build on a factory in this turn.
-   * 2. The Build actions are created
-   * 3. The Unit AI thinks about what the units should do
-   * 4. The unit actions are created
+   * 1. The Unit AI thinks about what the units should do
+   * First in the list to make sure that units created in the previous turn move off the factory before checking if another unit can be build on that factory.
+   * 2. The unit actions are created
+   * 3. The Build AI creates a list of units to build on a factory in this turn.
+   * 4. The Build actions are created
    * 5. All actions are returned
    *
    * @return A list of actions to be executed in this turn
    */
   private List<CWAction> createActions() {
-    List<CWAction> buildActions = buildUnits();
     List<CWAction> unitActions = unitActions();
+    List<CWAction> buildActions = buildUnits();
 
     List<CWAction> actions = new ArrayList<CWAction>();
-    actions.addAll(buildActions);
     actions.addAll(unitActions);
+    actions.addAll(buildActions);
 
     if (!unitAI.isGameOver()) {
       CWAction endTurn = createEndTurnAction();

@@ -149,6 +149,9 @@ public class DefaultBuildAI implements BuildAI {
     if (factory.canBuild(unit.getName())) {
       if (unitCanMoveOffFactory(unit, factory)) {
         switch (priority) {
+           case CRITICAL:
+            factoryRating = 12;
+            break;
           case VERY_HIGH:
             factoryRating = 10;
             break;
