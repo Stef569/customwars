@@ -1,0 +1,6 @@
+/v1/client
+/v2/.idea
+/v2/out/
+*.iml
+/out/production/v2
+/out/test/v2
